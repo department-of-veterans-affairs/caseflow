@@ -1,0 +1,26 @@
+AllCops:
+  Include:
+    - '**/config.ru'
+    - '**/Rakefile'
+    - '**/*.rake'
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'vendor/**/*'
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+
+Rails:
+  Enabled: true
+
+Rails/Output:
+  Exclude:
+    - 'lib/**/*.rb'
