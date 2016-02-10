@@ -3,16 +3,12 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.5.1'
 # Use sqlite3 as the database for Active Record
-# gem 'sqlite3'
-gem 'activerecord-jdbcsqlite3-adapter'
+gem 'sqlite3', platforms: :ruby
+gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -32,7 +28,7 @@ gem "puma", "~> 2.16.0"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  gem 'byebug', platforms: :ruby
 
   # Used to colorize output for rake tasks
   gem "rainbow"
@@ -40,7 +36,7 @@ group :development, :test do
   # Linters
   gem 'rubocop', '~> 0.36.0', require: false
   gem 'scss_lint', require: false
-  gem 'jshint'
+  gem 'jshint', platforms: :ruby
 
   # Security scanners
   gem 'brakeman'
@@ -57,10 +53,10 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 2.0', platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
+  gem 'spring', platforms: :ruby
   
   # Include the IANA Time Zone Database on Windows, where Windows doens't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
