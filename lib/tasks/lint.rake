@@ -10,8 +10,10 @@ task :lint do
   puts "running rubocop..."
   rubocop_result = ShellCommand.run("rubocop #{opts} --color")
 
-  puts "\nrunning jshint..."
-  jshint_result = ShellCommand.run("rake jshint")
+  if not defined? JRUBY_VERSION
+    puts "\nrunning jshint..."
+    jshint_result = ShellCommand.run("rake jshint"
+  end
 
   puts "\n"
   if scss_result && rubocop_result && jshint_result
