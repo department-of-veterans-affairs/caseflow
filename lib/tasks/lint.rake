@@ -13,6 +13,9 @@ task :lint do
   unless defined? JRUBY_VERSION
     puts "\nrunning jshint..."
     jshint_result = ShellCommand.run("rake jshint")
+  else
+    # fake a passing result
+    jshint_result = true
   end
 
   puts "\n"
