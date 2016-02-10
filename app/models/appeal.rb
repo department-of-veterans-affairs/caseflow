@@ -55,6 +55,6 @@ class Appeal
 end
 
 class AppealRepository
-  def self.find(_vacols_id, _args)
+  def self.find(_vacols_id, _args = {})
   end
 end
