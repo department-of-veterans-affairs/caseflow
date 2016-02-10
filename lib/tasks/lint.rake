@@ -12,7 +12,7 @@ task :lint do
 
   if not defined? JRUBY_VERSION
     puts "\nrunning jshint..."
-    jshint_result = ShellCommand.run("rake jshint"
+    jshint_result = ShellCommand.run("rake jshint")
   end
 
   puts "\n"
