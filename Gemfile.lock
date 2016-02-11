@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 705973205bb21c02b63874e25caf0a86627f0944
+  revision: 3343029870fe4aea26cfe26cdffb85b58e380bbd
   specs:
     sniffybara (0.0.0)
       poltergeist

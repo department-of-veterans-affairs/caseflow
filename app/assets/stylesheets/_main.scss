@@ -295,6 +295,14 @@ dd {
 .cf-logo {
   color: $color-gray-dark;
   margin-right: rem(20px);
+  font-size: 1.7rem;
+  display: inline;
+}
+
+.cf-application-title {
+  font-size: 1.7rem;
+  font-weight: normal;
+  display: inline;
 }
 
 .cf-app-screen {
@@ -526,18 +534,6 @@ textarea {
   &:hover {
     background: transparent;
   }
-}
-
-
-
-//--- Alerts ---*/
-// Fixes USA Web Design Guideline paths */
-.usa-alert-error {
-  background-image: url(asset-path('icons/alerts/error.svg'));
-}
-
-.usa-alert-success {
-  background-image: url(asset-path('icons/alerts/success.svg'));
 }
 
 //--- Table styles ---*/

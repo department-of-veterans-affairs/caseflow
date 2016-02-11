@@ -1,0 +1,68 @@
+<% content_for :page_title do %>Mismatched Documents<% end %>
+
+<div class="usa-alert usa-alert-error cf-app-segment" role="alert">
+  <div class="usa-alert-body">
+    <h3 class="usa-alert-heading">Cannot find documents in VBMS</h3>
+    <p class="usa-alert-text">Some of the files listed in VACOLS could not be found in VBMS.</p>
+  </div>
+</div>
+
+<div class="cf-app-segment cf-app-segment--alt">
+  <h2>Find missing documents</h2>
+
+  <p>
+    Caseflow could not find the documents marked with an <%= svg_icon(:missing) %>
+    in the appellant's eFolder. This usually happens when something doesn't match up. Try checking:
+  </p>
+
+  <ul>
+    <li>The <strong>document type</strong> in VBMS to make sure it's labeled correctly</li>
+    <li>The <strong>document date</strong> &#8212; the date in VBMS must match the date in VACOLS</li>
+  </ul>
+
+  <p>
+    Once you've made corrections,
+    <button type="button" class="cf-action-refresh cf-btn-link cf-btn-link--inline">refresh this page</button>.
+  </p>
+
+  <p>
+    If you can’t find the document, click the
+    <strong>cancel certification</strong> link below.
+  </p>
+
+  <div class="cf-table-wrap">
+    <table class="usa-table-borderless cf-table-borderless" summary="Each row represents document mismatch">
+      <caption class="usa-sr-only">
+        This table compares received dates for forms stored in VACOLS and VBMS.
+      </caption>
+
+      <thead>
+        <tr>
+          <th></th>
+          <th>Document</th>
+          <th>VACOLS</th>
+          <th>VBMS</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <%= render partial: 'document_match', locals: { name: "NOD", match: @appeal.nod_match?, date: @appeal.nod_date } %>
+        <%= render partial: 'document_match', locals: { name: "SOC", match: @appeal.soc_match?, date: @appeal.soc_date } %>
+
+        <% @appeal.ssoc_dates.each_index do |i| %>
+          <%= render partial: 'document_match', 
+                     locals: { name: "SSOC #{i+1}", match: @appeal.ssoc_match?(@appeal.ssoc_dates[i]), date: @appeal.ssoc_dates[i] } %>
+        <% end %>
+
+        <%= render partial: 'document_match', locals: { name: "Form 9", match: @appeal.form9_match?, date: @appeal.form9_date } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="cf-app-segment">
+  <!-- a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel certification</a>-->
+  <!-- <button type="button" class="cf-push-right cf-action-refresh">Refresh Page</button> -->
+</div>
+
+<%#= render partial: 'cancel_cert_modal' %>

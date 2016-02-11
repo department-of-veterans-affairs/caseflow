@@ -13,22 +13,6 @@ class Appeal
     @documents ||= []
   end
 
-  def ready_to_certify?
-    nod_match? && soc_match? && form9_match? && ssoc_match?
-  end
-
-  class << self
-    attr_writer :repository
-
-    delegate :find, to: :repository
-
-    def repository
-      @repository ||= AppealRepository
-    end
-  end
-
-  private
-
   def nod_match?
     documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
@@ -41,16 +25,32 @@ class Appeal
     documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
   end
 
-  def ssoc_match?
-    ssoc_documents = documents_with_type(:ssoc)
+  def ssoc_all_match?
+    ssoc_dates.all? { |date| ssoc_match?(date) }
+  end
 
-    ssoc_dates.all? do |date|
-      ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
+  def ssoc_match?(date)
+    ssoc_documents = documents_with_type(:ssoc)
+    ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
+  end
+
+  def ready_to_certify?
+    nod_match? && soc_match? && form9_match? && ssoc_all_match?
+  end
+
+  class << self
+    attr_writer :repository
+
+    delegate :find, to: :repository
+
+    def repository
+      @repository ||= AppealRepository
     end
   end
 
   def documents_with_type(type)
-    documents.select { |doc| doc.type == type }
+    @documents_by_type ||= {}
+    @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
   end
 end
 
