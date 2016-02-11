@@ -1,7 +1,6 @@
 language: ruby
 rvm:
-    - jruby-9.0.3.0
-jdk: oraclejdk8
+  - 2.3.0
 
 branches:
     only:
