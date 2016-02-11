@@ -29,4 +29,9 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/1234C"
     expect(page).to have_content "Complete Electronic Form 8"
   end
+
+  scenario "404's if appeal doesn't exist in VACOLS" do
+    visit "certifications/new/4444NNNN"
+    expect(page.status_code).to eq(404)
+  end
 end
