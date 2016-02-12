@@ -4,8 +4,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :setup_fakes
+  rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
   private
+
+  def render_404
+    render file: "public/404.html", layout: nil, status: 404
+  end
 
   def setup_fakes
     Appeal.repository = Fakes::AppealRepository

@@ -41,7 +41,13 @@ class Appeal
   class << self
     attr_writer :repository
 
-    delegate :find, to: :repository
+    def find(vacols_id)
+      unless (appeal = @repository.find(vacols_id))
+        fail ActiveRecord::RecordNotFound
+      end
+
+      appeal
+    end
 
     def repository
       @repository ||= AppealRepository
