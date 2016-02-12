@@ -1,6 +1,22 @@
 class Appeal
   include ActiveModel::Model
 
+  TYPE_NAMES = {
+    original: "Original",
+    supplemental: "Supplemental",
+    post_remand: "Post Remand",
+    reconsideration: "Reconsideration",
+    vacate: "Vacate",
+    de_novo: "De Novo",
+    court_remand: "Court Remand",
+    designation_of_record: "Designation of Record",
+    clear_and_unmistakable_error: "Clear and Unmistakable Error"
+  }.freeze
+
+  FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
+
+  attr_accessor :vacols_id
+  attr_accessor :vso_name
   attr_accessor :nod_date, :soc_date, :form9_date
 
   attr_writer :ssoc_dates
@@ -11,6 +27,18 @@ class Appeal
   attr_writer :documents
   def documents
     @documents ||= []
+  end
+
+  attr_accessor :correspondent
+
+  attr_accessor :type
+  def type_name
+    TYPE_NAMES[type]
+  end
+
+  attr_accessor :file_type
+  def file_type_name
+    FILE_TYPE_NAMES[file_type]
   end
 
   def nod_match?
@@ -46,6 +74,7 @@ class Appeal
         fail ActiveRecord::RecordNotFound
       end
 
+      appeal.vacols_id = vacols_id
       appeal
     end
 
