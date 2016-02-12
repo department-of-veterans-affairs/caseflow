@@ -42,8 +42,8 @@ class Appeal
     attr_writer :repository
 
     def find(vacols_id)
-      unless( appeal = @repository.find(vacols_id) )
-        raise ActiveRecord::RecordNotFound
+      unless (appeal = @repository.find(vacols_id))
+        fail ActiveRecord::RecordNotFound
       end
 
       appeal

@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   private
 
   def render_404
-    render file: 'public/404.html', layout: nil, status: 404
+    render file: "public/404.html", layout: nil, status: 404
   end
 
   def setup_fakes
