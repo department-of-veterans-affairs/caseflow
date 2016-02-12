@@ -4,12 +4,25 @@ Appeal.repository = Fakes::AppealRepository
 
 RSpec.feature "Start Certification" do
   scenario "Starting a certification with missing documents" do
-    appeal = Fakes::AppealRepository.appeal_not_ready
-    Fakes::AppealRepository.records = {
-      "1234C" => appeal
-    }
-    appeal.ssoc_dates = [6.days.from_now, 7.days.from_now]
+    appeal = Appeal.new(
+      type: :original,
+      file_type: :vva,
+      vso_name: "The American Legion",
+      nod_date: 1.day.ago,
+      soc_date: Date.new(1987, 9, 6),
+      form9_date: 1.day.ago,
+      ssoc_dates: [6.days.from_now, 7.days.from_now],
+      documents: [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document],
+      correspondent: Correspondent.new(full_name: "Davy Crockett")
+    )
+    Fakes::AppealRepository.records = { "1234C" => appeal }
+
     visit "certifications/new/1234C"
+
+    expect(find("#correspondent-name")).to have_content("Davy Crockett")
+    expect(find("#appeal-type-header")).to have_content("Original")
+    expect(find("#file-type-header")).to have_content("VVA")
+    expect(find("#vso-header")).to have_content("The American Legion")
 
     expect(find("#page-title")).to have_content "Mismatched Documents"
     expect(find("#nod-match")).to have_content "No Matching Document"

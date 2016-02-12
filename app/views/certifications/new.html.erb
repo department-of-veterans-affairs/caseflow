@@ -1,1 +1,30 @@
 <% content_for :page_title do %>Complete Electronic Form 8<% end %>
+
+<div class="cf-form cf-app-segment">
+  <div class="usa-alert usa-alert-success cf-app-segment" role="alert">
+    <div class="usa-alert-body">
+      <h3 class="usa-alert-heading">All documents detected!</h3>
+      <p class="usa-alert-text">The Form 9, <abbr>NOD</abbr>, <abbr>SOC</abbr> and <abbr>SSOC</abbr>s (if applicable) were found in the eFolder.</p>
+    </div>
+  </div>
+
+  <div class="cf-app-segment cf-app-segment--alt">
+    <header>
+      <h2>Complete Electronic Form 8</h2>
+      <p>Caseflow pre-fills a Form 8 for each case using data from VACOLS and VBMS.
+      To finish the form, answer the remaining questions. When you are done, click <strong>continue</strong>.</p>
+      <p class="cf-required-msg">Fields marked with a <strong class="cf-error">*</strong> are required.</p>
+    </header>
+
+    <%= form_for @form8, url: { controller: "certifications", action: "create" }, html: { class: "usa-form-large" } do |f| %>
+      <div class="cf-form-textinput" id="1A-appellant">
+        <label for="1A-appellant-input">
+          <strong>1A</strong> Name of Appellant (If other than veteran)
+          <span class="usa-input-error-message"></span>
+        </label>
+
+        <input type="text" name="1A-appellant-input" maxlength="45" value="<%= appeal.correspondent.appellant_name %>">
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -9,21 +9,28 @@ class Fakes::AppealRepository
 
   def self.appeal_ready_to_certify
     Appeal.new(
+      type: :original,
+      file_type: :vbms,
+      vso_name: "Military Order of the Purple Heart",
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
-      documents: [nod_document, soc_document, form9_document]
+      documents: [nod_document, soc_document, form9_document],
+      correspondent: correspondent
     )
   end
 
   def self.appeal_not_ready
     Appeal.new(
+      type: :original,
+      file_type: :vbms,
+      vso_name: "Military Order of the Purple Heart",
       nod_date: 1.day.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
       ssoc_dates: [6.days.from_now, 7.days.from_now],
-      documents: [nod_document, soc_document]
-    )
+      documents: [nod_document, soc_document],
+      correspondent: correspondent)
   end
 
   def self.nod_document
@@ -36,6 +43,10 @@ class Fakes::AppealRepository
 
   def self.form9_document
     Document.new(type: :form9, received_at: 1.day.ago)
+  end
+
+  def self.correspondent
+    Correspondent.new(full_name: "Joe Snuffs")
   end
 
   def self.seed!

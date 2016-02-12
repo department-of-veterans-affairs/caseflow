@@ -63,14 +63,20 @@ describe Appeal do
 
   context ".find" do
     class FakeRepo
-      def self.find(id)
-        "SHANE #{id}"
+      def self.find(_id)
+        Appeal.new(vso_name: "Shane's VSO")
       end
     end
 
+    before { Appeal.repository = FakeRepo }
+    subject { Appeal.find("123C") }
+
     it "delegates to the repository" do
-      Appeal.repository = FakeRepo
-      expect(Appeal.find(123)).to eq("SHANE 123")
+      expect(subject.vso_name).to eq("Shane's VSO")
+    end
+
+    it "sets the vacols_id" do
+      expect(subject.vacols_id).to eq("123C")
     end
   end
 end

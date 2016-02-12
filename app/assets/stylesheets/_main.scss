@@ -1,6 +1,5 @@
 // Add scss includes explicitly here.
 @import 'us_web_design_standards';
-@import 'us_web_design_standards_fonts';
 
 $color-black: #000000;
 $caseflow-background: #f9f9f9;
@@ -308,6 +307,10 @@ dd {
 .cf-app-screen {
   margin: auto;
   width: 90%;
+}
+
+.cf-name-header {
+  font-size: 3rem;
 }
 
 //.cf-app-segment represents a chunk of an application's
