@@ -27,6 +27,11 @@
     <%= f.text_field :file_number,
           question_number: "2", label: "File No.", readonly: true %>
 
+    <%= f.text_field :veteran_name,
+          question_number: "3", label: "Full Veteran Name", required: true %>
+
+    <%= f.text_field :insurance_loan_number,
+          question_number: "4", label: "Insurance file number or loan number (if pertinent)" %>
   </div>
 
   <div class="cf-app-segment">
