@@ -466,6 +466,11 @@ textarea {
   max-width: 100% !important;
 }
 
+// Overrides USWDS */
+form {
+  max-width: none !important;
+}
+
 //------ Buttons --------*/
 // I hate using !important, but web design standards
 // form buttons have high specificity.
