@@ -1,6 +1,6 @@
 <% content_for :page_title do %>Complete Electronic Form 8<% end %>
 
-<div class="cf-form cf-app-segment">
+<%= form_for @form8, url: { controller: "certifications", action: "create" }, html: { class: "cf-form cf-app-segment" }, builder: CaseflowFormBuilder do |f| %>
   <div class="usa-alert usa-alert-success cf-app-segment" role="alert">
     <div class="usa-alert-body">
       <h3 class="usa-alert-heading">All documents detected!</h3>
@@ -16,15 +16,21 @@
       <p class="cf-required-msg">Fields marked with a <strong class="cf-error">*</strong> are required.</p>
     </header>
 
-    <%= form_for @form8, url: { controller: "certifications", action: "create" }, html: { class: "usa-form-large" } do |f| %>
-      <div class="cf-form-textinput" id="1A-appellant">
-        <label for="1A-appellant-input">
-          <strong>1A</strong> Name of Appellant (If other than veteran)
-          <span class="usa-input-error-message"></span>
-        </label>
+    <%= f.hidden_field :vacols_id %>
 
-        <input type="text" name="1A-appellant-input" maxlength="45" value="<%= appeal.correspondent.appellant_name %>">
-      </div>
-    <% end %>
+    <%= f.text_field :appellant,
+          question_number: "1A", label: "Name of Appellant (If other than veteran)" %>
+
+    <%= f.text_field :appellant_relationship,
+          question_number: "1B", label: "Relationship to Veteran" %>
+
+    <%= f.text_field :file_number,
+          question_number: "2", label: "File No.", readonly: true %>
+
   </div>
-</div>
+
+  <div class="cf-app-segment">
+    <a href="#" class="cf-action-openmodal cf-btn-link">Cancel certification</a>
+    <button type="submit" class="cf-push-right">Preview Completed Form 8</button>
+  </div>
+<% end %>

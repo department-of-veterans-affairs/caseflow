@@ -15,7 +15,7 @@ class Appeal
 
   FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
 
-  attr_accessor :vacols_id
+  attr_accessor :vacols_id, :vbms_id
   attr_accessor :vso_name
   attr_accessor :nod_date, :soc_date, :form9_date
 

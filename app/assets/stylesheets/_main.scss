@@ -117,7 +117,8 @@ legend {
   white-space: normal;
 }
 
-[disabled] {
+[disabled],
+[readonly] {
   background: $color-gray-lightest !important;
   opacity: .5 !important;
 }
@@ -464,6 +465,11 @@ select,
 // Overrides USWDS */
 textarea {
   max-width: 100% !important;
+}
+
+// Overrides USWDS */
+form {
+  max-width: none !important;
 }
 
 //------ Buttons --------*/
