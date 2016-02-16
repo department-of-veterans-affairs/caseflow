@@ -22,7 +22,7 @@ class Form8
     attr_writer :pdf_service
 
     def pdf_service
-      @pdf_service ||= PdfService
+      @pdf_service ||= PdfService.new
     end
 
     def new_from_appeal(appeal)
