@@ -117,7 +117,8 @@ legend {
   white-space: normal;
 }
 
-[disabled] {
+[disabled],
+[readonly] {
   background: $color-gray-lightest !important;
   opacity: .5 !important;
 }

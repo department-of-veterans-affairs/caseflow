@@ -6,6 +6,7 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.new(params[:form8])
+    @form8.save!
   end
 
   private
