@@ -19,7 +19,9 @@ class Form8
       "appellant_relationship" => appellant_relationship,
       "file_number" => file_number,
       "veteran_name" => veteran_name,
-      "insurance_loan_number" => insurance_loan_number
+      "insurance_loan_number" => insurance_loan_number,
+      "service_connection_for" => service_connection_for,
+      "nod_date" => nod_date
     }
   end
 

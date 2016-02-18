@@ -9,7 +9,6 @@ function typeKeys($el, str) {
   }
 }
 
-
 describe("DateField", function() {
   var $testContainer;
 

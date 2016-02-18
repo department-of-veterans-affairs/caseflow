@@ -35,12 +35,34 @@ RSpec.feature "Start Certification" do
   end
 
   scenario "Starting a certifications with all documents matching" do
-    Fakes::AppealRepository.records = {
-      "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
-    }
+    appeal = Appeal.new(
+      type: :original,
+      file_type: :vbms,
+      vbms_id: "VBMS-ID",
+      vso_name: "Military Order of the Purple Heart",
+      nod_date: 3.days.ago,
+      soc_date: Date.new(1987, 9, 6),
+      form9_date: 1.day.ago,
+      documents: [
+        Document.new(type: :nod, received_at: 3.days.ago),
+        Document.new(type: :soc, received_at: Date.new(1987, 9, 6)),
+        Document.new(type: :form9, received_at: 1.day.ago)
+      ],
+      veteran_name: "Davy Crockett",
+      appellant_name: "Susie Crockett",
+      appellant_relationship: "Daughter"
+    )
+    Fakes::AppealRepository.records = { "5678C" => appeal }
 
-    visit "certifications/new/1234C"
+    visit "certifications/new/5678C"
+
     expect(page).to have_content "Complete Electronic Form 8"
+
+    expect(page).to have_field "Name of Appellant", with: "Susie Crockett"
+    expect(page).to have_field "Relationship to Veteran", with: "Daughter"
+    expect(page).to have_field "File No.", with: "VBMS-ID"
+    expect(page).to have_field "Full Veteran Name", with: "Davy Crockett"
+    expect(page).to have_selector("#question5B.hidden-field", visible: false)
   end
 
   scenario "404's if appeal doesn't exist in VACOLS" do

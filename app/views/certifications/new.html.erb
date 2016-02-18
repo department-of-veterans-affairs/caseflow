@@ -1,6 +1,15 @@
 <% content_for :page_title do %>Complete Electronic Form 8<% end %>
 
-<%= form_for @form8, url: { controller: "certifications", action: "create" }, html: { class: "cf-form cf-app-segment" }, builder: CaseflowFormBuilder do |f| %>
+<script>
+  $(document).ready(function() { 
+    window.Form8.init();
+  });
+</script>
+
+<%= form_for @form8, url: { controller: "certifications", action: "create" },
+                    html: { id: "form8", class: "cf-form cf-app-segment" },
+                 builder: CaseflowFormBuilder do |f| %>
+
   <div class="usa-alert usa-alert-success cf-app-segment" role="alert">
     <div class="usa-alert-body">
       <h3 class="usa-alert-heading">All documents detected!</h3>
@@ -33,13 +42,12 @@
     <%= f.text_field :insurance_loan_number,
           question_number: "4", label: "Insurance file number or loan number (if pertinent)" %>
 
-
     <div class="cf-form-cond-req">
       <%= f.text_area :service_connection_for,
             question_number: "5A", label: "Service connection for:" %>
 
-      <%= f.date_field :nod_date,
-          question_number: "5B", label: "Date of notification of action appealed" %>
+      <%= f.date_field :nod_date, 
+            question_number: "5B", label: "Date of notification of action appealed", required: true %>
     </div>
   </div>
 
