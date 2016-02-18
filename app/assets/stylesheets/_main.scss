@@ -293,7 +293,7 @@ dd {
 }
 
 
-.cf-nav-whatsnew{
+.cf-nav-whatsnew {
   &::after {
     color: $color-secondary-dark;
     content: '\00A0\2605';
@@ -301,6 +301,7 @@ dd {
     font-size: 1.25rem;
     vertical-align: 2px;
   }
+
   &:hover::after {
     color: $color-secondary;
   }
