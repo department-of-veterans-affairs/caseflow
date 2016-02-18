@@ -259,6 +259,10 @@ dd {
   width: 18rem;
   padding: rem(10px) rem(20px);
 
+  &.active {
+    display:block;
+  }
+
   a {
     display: block;
   }

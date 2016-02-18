@@ -13,7 +13,7 @@ RSpec.feature "Start Certification" do
       form9_date: 1.day.ago,
       ssoc_dates: [6.days.from_now, 7.days.from_now],
       documents: [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document],
-      correspondent: Correspondent.new(full_name: "Davy Crockett")
+      veteran_name: "Davy Crockett"
     )
     Fakes::AppealRepository.records = { "1234C" => appeal }
 

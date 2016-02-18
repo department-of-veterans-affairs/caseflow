@@ -16,7 +16,8 @@ class Appeal
   FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
 
   attr_accessor :vacols_id, :vbms_id
-  attr_accessor :vso_name
+  attr_accessor :veteran_name, :appellant_name, :appellant_relationship, :vso_name
+  attr_accessor :insurance_loan_number # => case_record.bfpdnum
   attr_accessor :nod_date, :soc_date, :form9_date
 
   attr_writer :ssoc_dates
@@ -28,8 +29,6 @@ class Appeal
   def documents
     @documents ||= []
   end
-
-  attr_accessor :correspondent
 
   attr_accessor :type
   def type_name

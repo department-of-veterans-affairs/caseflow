@@ -28,3 +28,6 @@ Rails:
 Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 20
