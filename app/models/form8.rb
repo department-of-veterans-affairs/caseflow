@@ -4,25 +4,27 @@ class Form8
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :vacols_id, :appellant, :appellant_relationship, :file_number, :veteran_name,
-                :insurance_loan_number,
-                :service_connection_for, # => Caseflow.format_issues(@kase, 'service connection')
-                :nod_date
+  FORM_FIELDS = [
+    :vacols_id, :appellant, :appellant_relationship, :file_number, :veteran_name,
+    :insurance_loan_number,
+    :service_connection_for,
+    :service_connection_nod_date,
+    :increased_rating_for,
+    :increased_rating_nod_date,
+    :other_for,
+    :other_nod_date
+  ].freeze
+
+  FORM_FIELDS.each { |field| attr_accessor field }
 
   def save!
     Form8.pdf_service.save_form!(form: "VA8", values: serializable_hash)
   end
 
   def attributes
-    {
-      "appellant" => appellant,
-      "appellant_relationship" => appellant_relationship,
-      "file_number" => file_number,
-      "veteran_name" => veteran_name,
-      "insurance_loan_number" => insurance_loan_number,
-      "service_connection_for" => service_connection_for,
-      "nod_date" => nod_date
-    }
+    FORM_FIELDS.each_with_object({}) do |field, attributes_hash|
+      attributes_hash[field.to_s] = send(field)
+    end
   end
 
   class << self
@@ -32,6 +34,7 @@ class Form8
       @pdf_service ||= PdfService
     end
 
+    # TODO: test me.
     def new_from_appeal(appeal)
       new(
         vacols_id: appeal.vacols_id,
@@ -40,7 +43,9 @@ class Form8
         file_number: appeal.vbms_id,
         veteran_name: appeal.veteran_name,
         insurance_loan_number: appeal.insurance_loan_number,
-        nod_date: appeal.nod_date
+        service_connection_nod_date: appeal.nod_date,
+        increased_rating_nod_date: appeal.nod_date,
+        other_nod_date: appeal.nod_date
       )
     end
   end

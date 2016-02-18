@@ -1,6 +1,6 @@
 (function(){
   function $questionValue(questionNumber) {
-    return $("#question" + questionNumber + " input, " + 
+    return $("#question" + questionNumber + " input, " +
              "#question" + questionNumber + " textarea").val();
   }
 
@@ -8,10 +8,15 @@
     return $("#question" + questionNumber);
   }
 
+
   window.Form8 =  {
     state: {
       question5A: {},
-      question5B: { show: false }
+      question5B: { show: false },
+      question6A: {},
+      question6B: { show: false },
+      question7A: {},
+      question7B: { show: false }
     },
 
     init: function(){
@@ -26,18 +31,21 @@
 
     fetchState: function() {
       this.state.question5A.value = $questionValue("5A");
+      this.state.question6A.value = $questionValue("6A");
+      this.state.question7A.value = $questionValue("7A");
     },
+
 
     processState: function() {
       this.state.question5B.show = !!this.state.question5A.value;
+      this.state.question6B.show = !!this.state.question6A.value;
+      this.state.question7B.show = !!this.state.question7A.value;
     },
 
     render: function() {
-      if(this.state.question5B.show) {
-        $question("5B").removeClass('hidden-field');
-      } else {
-        $question("5B").addClass('hidden-field');
-      }
+      this.toggleQuestion("5B");
+      this.toggleQuestion("6B");
+      this.toggleQuestion("7B");
     },
 
     refresh: function() {
@@ -45,6 +53,16 @@
       this.processState();
       this.render();
     },
+
+    toggleQuestion: function(questionNumber) {
+      var $q = $question(questionNumber);
+
+      if(this.state["question" + questionNumber].show) {
+        $q.removeClass('hidden-field');
+      } else {
+        $q.addClass('hidden-field');
+      }
+    }
   };
 })();
 

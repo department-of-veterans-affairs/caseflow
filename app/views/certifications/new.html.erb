@@ -1,7 +1,7 @@
 <% content_for :page_title do %>Complete Electronic Form 8<% end %>
 
 <script>
-  $(document).ready(function() { 
+  $(document).ready(function() {
     window.Form8.init();
   });
 </script>
@@ -46,8 +46,24 @@
       <%= f.text_area :service_connection_for,
             question_number: "5A", label: "Service connection for:" %>
 
-      <%= f.date_field :nod_date, 
+      <%= f.date_field :service_connection_nod_date,
             question_number: "5B", label: "Date of notification of action appealed", required: true %>
+    </div>
+
+    <div class="cf-form-cond-req">
+      <%= f.text_area :increased_rating_for,
+            question_number: "6A", label: "Increased rating for:" %>
+
+      <%= f.date_field :increased_rating_nod_date,
+            question_number: "6B", label: "Date of notification of action appealed", required: true %>
+    </div>
+
+    <div class="cf-form-cond-req">
+      <%= f.text_area :other_for,
+            question_number: "7A", label: "Other:" %>
+
+      <%= f.date_field :other_nod_date,
+            question_number: "7B", label: "Date of notification of action appealed", required: true %>
     </div>
   </div>
 

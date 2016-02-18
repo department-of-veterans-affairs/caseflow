@@ -63,6 +63,8 @@ RSpec.feature "Start Certification" do
     expect(page).to have_field "File No.", with: "VBMS-ID"
     expect(page).to have_field "Full Veteran Name", with: "Davy Crockett"
     expect(page).to have_selector("#question5B.hidden-field", visible: false)
+    expect(page).to have_selector("#question6B.hidden-field", visible: false)
+    expect(page).to have_selector("#question7B.hidden-field", visible: false)
   end
 
   scenario "404's if appeal doesn't exist in VACOLS" do
