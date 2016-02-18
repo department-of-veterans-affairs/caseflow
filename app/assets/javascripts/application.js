@@ -13,3 +13,10 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
+
+// main
+$(document).ready(function () {
+    CFUtils.extendJQuery();
+    CFDropdown.bind();
+});
+
