@@ -32,6 +32,15 @@
 
     <%= f.text_field :insurance_loan_number,
           question_number: "4", label: "Insurance file number or loan number (if pertinent)" %>
+
+
+    <div class="cf-form-cond-req">
+      <%= f.text_area :service_connection_for,
+            question_number: "5A", label: "Service connection for:" %>
+
+      <%= f.date_field :nod_date,
+          question_number: "5B", label: "Date of notification of action appealed" %>
+    </div>
   </div>
 
   <div class="cf-app-segment">

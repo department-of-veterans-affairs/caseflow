@@ -1,15 +1,44 @@
 class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def text_field(attribute, options = {})
     options[:maxwidth] ||= 45
-    question_number = options.delete(:question_number)
-    label = ("<strong>#{question_number}</strong> " + options.delete(:label)).html_safe
-    readonly_class = options[:readonly] ? "cf-form-disabled" : ""
-    required_class = options.delete(:required) ? "required" : ""
+
+    wrapped_text_field(attribute, options, super(attribute, trim_options(options)))
+  end
+
+  def text_area(attribute, options = {})
+    options[:rows] = 3
 
     @template.content_tag :div,
-                          id: "#{attribute.to_s.dasherize}-#{question_number}",
-                          class: "cf-form-textinput #{readonly_class}" do
-      label(attribute, label, class: required_class) + super
+                          id: "#{attribute.to_s.dasherize}-#{options[:question_number]}",
+                          class: "cf-form-textarea" do
+      question_label(attribute, options) + super(attribute, trim_options(options))
     end
+  end
+
+  def date_field(attribute, options = {})
+    wrapped_text_field(attribute, options, super(attribute, trim_options(options)))
+  end
+
+  private
+
+  def wrapped_text_field(attribute, options, input)
+    readonly_class = options[:readonly] ? "cf-form-disabled" : ""
+
+    @template.content_tag :div,
+                          id: "#{attribute.to_s.dasherize}-#{options[:question_number]}",
+                          class: "cf-form-textinput #{readonly_class}" do
+      question_label(attribute, options) + input
+    end
+  end
+
+  def question_label(attribute, options)
+    required_class = options[:required] ? "required" : ""
+
+    label_content = ("<strong>#{options[:question_number]}</strong> " + options[:label]).html_safe
+    label(attribute, label_content, class: required_class)
+  end
+
+  def trim_options(options)
+    options.except(:question_number, :required, :label)
   end
 end
