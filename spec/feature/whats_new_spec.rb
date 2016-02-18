@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "What's New" do
-
   scenario "Initial visit shows what's new indicator" do
     visit "certifications/new/1234C"
     expect(find("#whats-new-item")["class"]).to eq("cf-nav-whatsnew")
