@@ -16,4 +16,29 @@ class ApplicationController < ActionController::Base
     Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
   end
+
+  before_action :check_whats_new_cookie, :check_logged_in
+
+  def check_whats_new_cookie
+    client_last_seen_version = cookies[:whats_new]
+    @show_whats_new_indicator = client_last_seen_version.nil? ||
+                                client_last_seen_version != WhatsNewService.version
+  end
+
+  LoggedInUser = Struct.new(:username, :regional_office)
+
+  def check_logged_in
+    @user = LoggedInUser.new("test-user", "test-ro")
+  end
+end
+
+class WhatsNewService
+  def self.determine_version
+    update_contents = File.read("app/views/whats_new/show.html.erb")
+    Digest::MD5.hexdigest(update_contents)
+  end
+
+  def self.version
+    @version ||= WhatsNewService.determine_version
+  end
 end
