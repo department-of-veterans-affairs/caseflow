@@ -222,7 +222,7 @@ dd {
 
 .cf-dropdown-trigger {
   cursor: pointer;
-  background-color: #ffffff;
+  background-color: $color-white;
 
   &::after {
     background: url(asset-path('assets/arrow-down.svg')) 50% 100% no-repeat;
@@ -260,7 +260,7 @@ dd {
   padding: rem(10px) rem(20px);
 
   &.active {
-    display:block;
+    display: block;
   }
 
   a {
