@@ -224,7 +224,7 @@ dd {
   cursor: pointer;
 
   &::after {
-    background: url(asset-path('icons/arrow-down.svg')) 50% 100% no-repeat;
+    background: url(asset-path('assets/arrow-down.svg')) 50% 100% no-repeat;
     background-size: 100% 100%;
     content: ' ';
     display: inline-block;
@@ -290,6 +290,20 @@ dd {
 .cf-nav-dropdown {
   position: absolute;
   right: 0;
+}
+
+
+.cf-nav-whatsnew{
+  &::after {
+    color: $color-secondary-dark;
+    content: '\00A0\2605';
+    display: inline-block;
+    font-size: 1.25rem;
+    vertical-align: 2px;
+  }
+  &:hover::after {
+    color: $color-secondary;
+  }
 }
 
 .cf-logo {
