@@ -14,7 +14,8 @@ class Form8
     :other_for,
     :other_nod_date,
     :representative_name,
-    :representative_type
+    :representative_type,
+    :representative_type_specify_other
   ].freeze
 
   FORM_FIELDS.each { |field| attr_accessor field }

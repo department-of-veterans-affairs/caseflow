@@ -9,7 +9,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     options[:rows] = 3
 
     @template.content_tag :div,
-                          id: question_id(attribute, options),
+                          id: question_id(options),
                           class: "cf-form-textarea" do
       question_label(attribute, options) + super(attribute, trim_options(options))
     end
@@ -24,25 +24,25 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
     legend = @template.content_tag :legend, class: required_class do
       label_content(options) +
-      @template.content_tag(:span, class: "usa-input-error-message") {}
+        @template.content_tag(:span, class: "usa-input-error-message") {}
     end
 
-    @template.content_tag :fieldset, class: "cf-form-showhide-radio" do
+    @template.content_tag :fieldset, id: question_id(options), class: "cf-form-showhide-radio" do
       legend + radio_button_options(attribute, options)
     end
   end
 
   private
 
-  def question_id(_attribute, options)
-    "question#{options[:question_number]}"
+  def question_id(options)
+    "question#{options[:question_number]}#{options[:part]}"
   end
 
   def wrapped_text_field(attribute, options, input)
     readonly_class = options[:readonly] ? "cf-form-disabled" : ""
 
     @template.content_tag :div,
-                          id: question_id(attribute, options),
+                          id: question_id(options),
                           class: "cf-form-textinput #{readonly_class}" do
       question_label(attribute, options) + input
     end
@@ -54,7 +54,11 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def label_content(options)
-    ("<strong>#{options[:question_number]}</strong> " + options[:label]).html_safe
+    if options[:secondary]
+      "<strong></strong><em>#{options[:label]}</em>".html_safe
+    else
+      "<strong>#{options[:question_number]}</strong> #{options[:label]}".html_safe
+    end
   end
 
   def radio_button_options(attribute, options = {})
@@ -72,6 +76,6 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def trim_options(options)
-    options.except(:question_number, :required, :label)
+    options.except(:question_number, :required, :label, :secondary)
   end
 end

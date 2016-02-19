@@ -67,11 +67,14 @@
     </div>
 
     <%= f.text_field :representative_name,
-          question_number: "8A", label: "Representative Name", required: true %>
+          question_number: "8A", part: "1", label: "Representative Name", required: true %>
 
     <%= f.radio_buttons_field :representative_type,
           values: ["Attorney", "Agent", "Organization", "Other"], required: true,
-          question_number: "8A", label: "Representative Type" %>
+          question_number: "8A", part: "2", label: "Representative Type" %>
+
+    <%= f.text_field :representative_type_specify_other,
+          question_number: "8A", part: "3", label: "Specify other", required: true, secondary: true %>
   </div>
 
   <div class="cf-app-segment">
