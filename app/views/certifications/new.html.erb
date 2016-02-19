@@ -100,6 +100,12 @@
 
     <%= f.text_field :hearing_requested_explaination,
           question_number: "10C", label: "If requested, but not held, explain" %>
+
+    <%= f.yes_no_field :contested_claims_procedures_applicable,
+          question_number: "11A", label: "Are contested claims procedures applicable in this case?", required: true %>
+
+    <%= f.yes_no_field :contested_claims_requirements_followed,
+          question_number: "11B", label: "Have the requirements of 38 U.S.C. 7105A been followed for all contested claims?", required: true %>
   </div>
 
   <div class="cf-app-segment">
