@@ -1,6 +1,10 @@
 //= require form8
 
 describe("Form8", function() {
+  beforeEach(function() {
+    Form8.initState();
+  });
+
   context(".processState", function() {
     context("when question 5A", function() {
       context("is empty", function() {

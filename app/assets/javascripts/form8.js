@@ -9,77 +9,79 @@
     return $("#question" + questionNumber);
   }
 
-
   window.Form8 =  {
-    state: {
-      question5A: {},
-      question5B: { show: false },
-      question6A: {},
-      question6B: { show: false },
-      question7A: {},
-      question7B: { show: false },
-      question8A2: {},
-      question8A3: { show: false },
-      question8B1: {},
-      question8B2: { show: false },
-      question8C: { show: false },
-      question9A: { show: false },
-      question9B: { show: false }
-    },
+    watchedQuestions: [
+      "5A", "5B",
+      "6A", "6B",
+      "7A", "7B",
+      "8A2", "8A3", "8B1", "8B2", "8C",
+      "9A", "9B",
+      "10A"
+    ],
 
     init: function(){
       var self = this;
       window.DateField.init();
 
+      this.initState();
       this.refresh();
+
       $("#form8 input, #form8 textarea").on("change keyup paste mouseup", function() {
         self.refresh();
       });
     },
 
+    initState: function() {
+      this.state = {};
+      var state = this.state;
+
+      this.watchedQuestions.forEach(function(questionNumber) {
+        state["question" + questionNumber] = { show: true };
+      });
+    },
+
     fetchState: function() {
-      this.state.question5A.value = questionValue("5A");
-      this.state.question6A.value = questionValue("6A");
-      this.state.question7A.value = questionValue("7A");
-      this.state.question8A2.value = questionValue("8A2");
-      this.state.question8B1.value = questionValue("8B1");
-      this.state.question9A.value = questionValue("9A");
+      var state = this.state;
+
+      this.watchedQuestions.forEach(function(questionNumber) {
+        state["question" + questionNumber].value = questionValue(questionNumber);
+      });
     },
 
     processState: function() {
-      this.state.question5B.show = !!this.state.question5A.value;
-      this.state.question6B.show = !!this.state.question6A.value;
-      this.state.question7B.show = !!this.state.question7A.value;
+      var state = this.state;
 
-      this.state.question8A3.show =
-      this.state.question8C.show =
-      this.state.question9A.show =
-      this.state.question9B.show = false;
+      state.question5B.show = !!state.question5A.value;
+      state.question6B.show = !!state.question6A.value;
+      state.question7B.show = !!state.question7A.value;
 
-      switch (this.state.question8A2.value) {
+      ["8A3", "8C", "9A", "9B"].forEach(function(questionNumber) {
+        state["question" + questionNumber].show = false;
+      });
+
+      switch (state.question8A2.value) {
       case "Agent":
-        this.state.question8C.show = true;
+        state.question8C.show = true;
         break;
       case "Organization":
-        this.state.question9A.show = true;
-        this.state.question9B.show = (this.state.question9A.value === "No");
+        state.question9A.show = true;
+        state.question9B.show = (state.question9A.value === "No");
         break;
       case "Other":
-        this.state.question8A3.show = true;
+        state.question8A3.show = true;
       }
 
-      this.state.question8B2.show = (this.state.question8B1.value === "Certification that valid POA is in another VA file");
+      state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
+
+      return state;
     },
 
     render: function() {
-      this.toggleQuestion("5B");
-      this.toggleQuestion("6B");
-      this.toggleQuestion("7B");
-      this.toggleQuestion("8A3");
-      this.toggleQuestion("8C");
-      this.toggleQuestion("9A");
-      this.toggleQuestion("9B");
-      this.toggleQuestion("8B2");
+      var self = this;
+
+      this.watchedQuestions.forEach(function(questionNumber) {
+        self.toggleQuestion(questionNumber);
+      });
     },
 
     refresh: function() {
