@@ -12,7 +12,9 @@ class Form8
     :increased_rating_for,
     :increased_rating_nod_date,
     :other_for,
-    :other_nod_date
+    :other_nod_date,
+    :representative_name,
+    :representative_type
   ].freeze
 
   FORM_FIELDS.each { |field| attr_accessor field }

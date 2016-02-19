@@ -65,6 +65,13 @@
       <%= f.date_field :other_nod_date,
             question_number: "7B", label: "Date of notification of action appealed", required: true %>
     </div>
+
+    <%= f.text_field :representative_name,
+          question_number: "8A", label: "Representative Name", required: true %>
+
+    <%= f.radio_buttons_field :representative_type,
+          values: ["Attorney", "Agent", "Organization", "Other"], required: true,
+          question_number: "8A", label: "Representative Type" %>
   </div>
 
   <div class="cf-app-segment">

@@ -482,6 +482,10 @@ select,
   margin-bottom: 0;
 }
 
+.cf-form-radio-option label {
+  margin-bottom: 0 !important;
+}
+
 // Overrides USWDS */
 textarea {
   max-width: 100% !important;
