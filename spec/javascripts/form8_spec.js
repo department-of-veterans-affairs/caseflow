@@ -140,5 +140,31 @@ describe("Form8", function() {
         });
       });
     });
+
+    context("when question 10A", function(){
+      context("is Yes", function() {
+        it("shows 10B and 10C", function() {
+          Form8.state.question10B.show =
+          Form8.state.question10C.show = false;
+          Form8.state.question10A.value =  "Yes";
+          Form8.processState();
+
+          expect(Form8.state.question10B.show).to.be.true;
+          expect(Form8.state.question10C.show).to.be.true;
+        });
+      });
+
+      context("is No", function() {
+        it("hides 10B and 10C", function() {
+          Form8.state.question10B.show =
+          Form8.state.question10C.show = false;
+          Form8.state.question10A.value =  "No";
+          Form8.processState();
+
+          expect(Form8.state.question10B.show).to.be.false;
+          expect(Form8.state.question10C.show).to.be.false;
+        });
+      });
+    });
   });
 });

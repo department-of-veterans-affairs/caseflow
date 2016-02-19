@@ -94,6 +94,12 @@
 
     <%= f.yes_no_field :hearing_requested,
           question_number: "10A", label: "Was hearing requested?", required: true %>
+
+    <%= f.yes_no_field :hearing_transcript_on_file,
+          question_number: "10B", label: "If the hearing was held, is transcript on file?" %>
+
+    <%= f.text_field :hearing_requested_explaination,
+          question_number: "10C", label: "If requested, but not held, explain" %>
   </div>
 
   <div class="cf-app-segment">

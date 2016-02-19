@@ -16,7 +16,7 @@
       "7A", "7B",
       "8A2", "8A3", "8B1", "8B2", "8C",
       "9A", "9B",
-      "10A"
+      "10A", "10B", "10C"
     ],
 
     init: function(){
@@ -72,6 +72,7 @@
       }
 
       state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
+      state.question10B.show = state.question10C.show = (state.question10A.value === "Yes");
 
       return state;
     },
