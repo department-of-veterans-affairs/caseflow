@@ -8,9 +8,8 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def text_area(attribute, options = {})
     options[:rows] = 3
 
-    @template.content_tag :div,
-                          id: question_id(options),
-                          class: "cf-form-textarea" do
+    @template.content_tag :div, id: question_id(options),
+                                class: "cf-form-textarea" do
       question_label(attribute, options) + super(attribute, trim_options(options))
     end
   end
@@ -21,15 +20,23 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
   def radio_buttons_field(attribute, options = {})
     required_class = options[:required] ? "required" : ""
+    inline_class = options[:inline] ? "cf-form-radio-inline" : ""
 
     legend = @template.content_tag :legend, class: required_class do
       label_content(options) +
         @template.content_tag(:span, class: "usa-input-error-message") {}
     end
 
-    @template.content_tag :fieldset, id: question_id(options), class: "cf-form-showhide-radio" do
+    @template.content_tag :fieldset, id: question_id(options),
+                                     class: "#{inline_class} cf-form-showhide-radio" do
       legend + radio_button_options(attribute, options)
     end
+  end
+
+  def yes_no_field(attribute, options = {})
+    options[:values] = %w(Yes No)
+    options[:inline] = true
+    radio_buttons_field(attribute, options)
   end
 
   private
@@ -41,9 +48,8 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def wrapped_text_field(attribute, options, input)
     readonly_class = options[:readonly] ? "cf-form-disabled" : ""
 
-    @template.content_tag :div,
-                          id: question_id(options),
-                          class: "cf-form-textinput #{readonly_class}" do
+    @template.content_tag :div, id: question_id(options),
+                                class: "cf-form-textinput #{readonly_class}" do
       question_label(attribute, options) + input
     end
   end

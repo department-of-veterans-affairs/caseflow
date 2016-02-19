@@ -75,6 +75,25 @@
 
     <%= f.text_field :representative_type_specify_other,
           question_number: "8A", part: "3", label: "Specify other", required: true, secondary: true %>
+
+    <%= f.radio_buttons_field :power_of_attorney,
+          values: ["POA", "Certification that valid POA is in another VA file"], inline: true,
+          question_number: "8B", part: "1", label: "What is the authority for recognizing such representative in this appeal?" %>
+
+    <%= f.text_field :power_of_attorney_file,
+          question_number: "8B", part: "2", label: "Specify file if applicable", required: true, secondary: true %>
+
+    <%= f.yes_no_field :agent_accredited,
+          question_number: "8C", label: "Is Agent on accredited list?", required: true %>
+
+    <%= f.yes_no_field :form_646_of_record,
+          question_number: "9A", label: "Is VA Form 646, or equivalent, of record?", required: true %>
+
+    <%= f.text_field :form_646_not_of_record_explaination,
+          question_number: "9B", label: "Why is the Form 646 not of record?", required: true %>
+
+    <%= f.yes_no_field :hearing_requested,
+          question_number: "10A", label: "Was hearing requested?", required: true %>
   </div>
 
   <div class="cf-app-segment">

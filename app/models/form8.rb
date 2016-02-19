@@ -15,7 +15,13 @@ class Form8
     :other_nod_date,
     :representative_name,
     :representative_type,
-    :representative_type_specify_other
+    :representative_type_specify_other,
+    :power_of_attorney,
+    :power_of_attorney_file,
+    :agent_accredited,
+    :form_646_of_record,
+    :form_646_not_of_record_explaination,
+    :hearing_requested
   ].freeze
 
   FORM_FIELDS.each { |field| attr_accessor field }
