@@ -17,7 +17,8 @@
       "8A2", "8A3", "8B1", "8B2", "8C",
       "9A", "9B",
       "10A", "10B", "10C",
-      "11A", "11B"
+      "11A", "11B",
+      "132"
     ],
 
     init: function(){
@@ -47,6 +48,8 @@
       this.watchedQuestions.forEach(function(questionNumber) {
         state["question" + questionNumber].value = questionValue(questionNumber);
       });
+
+      state.question13other = ($("#question13 #form8_record_other:checked").length === 1);
     },
 
     processState: function() {
@@ -75,6 +78,7 @@
       state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
       state.question10B.show = state.question10C.show = (state.question10A.value === "Yes");
       state.question11B.show = (state.question11A.value === "Yes");
+      state.question132.show = state.question13other;
 
       return state;
     },

@@ -19,17 +19,11 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def radio_buttons_field(attribute, options = {})
-    required_class = options[:required] ? "required" : ""
     inline_class = options[:inline] ? "cf-form-radio-inline" : ""
-
-    legend = @template.content_tag :legend, class: required_class do
-      label_content(options) +
-        @template.content_tag(:span, class: "usa-input-error-message") {}
-    end
 
     @template.content_tag :fieldset, id: question_id(options),
                                      class: "#{inline_class} cf-form-showhide-radio" do
-      legend + radio_button_options(attribute, options)
+      question_legend(options) + radio_button_options(attribute, options)
     end
   end
 
@@ -37,6 +31,12 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     options[:values] = %w(Yes No)
     options[:inline] = true
     radio_buttons_field(attribute, options)
+  end
+
+  def check_box_group(attributes, options = {})
+    @template.content_tag :fieldset, id: question_id(options) do
+      question_legend(options) + check_box_grid(attributes, options)
+    end
   end
 
   private
@@ -51,6 +51,15 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     @template.content_tag :div, id: question_id(options),
                                 class: "cf-form-textinput #{readonly_class}" do
       question_label(attribute, options) + input
+    end
+  end
+
+  def question_legend(options)
+    required_class = options[:required] ? "required" : ""
+
+    @template.content_tag :legend, class: required_class do
+      label_content(options) +
+        @template.content_tag(:span, class: "usa-input-error-message") {}
     end
   end
 
@@ -78,6 +87,24 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def radio_button_option(attribute, value)
     @template.content_tag :div, class: "cf-form-radio-option" do
       radio_button(attribute, value) + label(attribute, value, value: value)
+    end
+  end
+
+  def check_box_grid(attributes, options)
+    @template.content_tag(:div, class: "usa-grid-full cf-form-checkboxes") do
+      attributes.in_groups(3, false).map do |column_attributes|
+        check_box_column(column_attributes, options)
+      end.join("\n").html_safe
+    end
+  end
+
+  def check_box_column(attributes, _options)
+    @template.content_tag :div, class: "usa-width-one-third" do
+      attributes.map do |attribute|
+        @template.content_tag :div, class: "cf-form-checkbox" do
+          check_box(attribute[:attribute]) + label(attribute[:attribute], attribute[:label])
+        end
+      end.join("\n").html_safe
     end
   end
 

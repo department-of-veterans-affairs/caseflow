@@ -186,5 +186,25 @@ describe("Form8", function() {
         });
       });
     });
+
+    context("when question 13 other", function(){
+      context("is true", function() {
+        it("shows 13B", function() {
+          Form8.state.question13other = true;
+          Form8.state.question132.show = false;
+          Form8.processState();
+          expect(Form8.state.question132.show).to.be.true;
+        });
+      });
+
+      context("is No", function() {
+        it("hides 13B", function() {
+          Form8.state.question13other = false;
+          Form8.state.question132.show = true;
+          Form8.processState();
+          expect(Form8.state.question132.show).to.be.false;
+        });
+      });
+    });
   });
 });
