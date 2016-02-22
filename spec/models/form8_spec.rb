@@ -36,7 +36,7 @@ describe Form8 do
         increased_rating_nod_date: 3.days.ago,
         other_nod_date: 3.days.ago,
         soc_date: 2.days.ago,
-        certification_date: Time.now
+        certification_date: Time.zone.now
       )
     end
   end

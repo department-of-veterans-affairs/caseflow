@@ -91,7 +91,7 @@ class Form8
         increased_rating_nod_date: appeal.nod_date,
         other_nod_date: appeal.nod_date,
         soc_date: appeal.soc_date,
-        certification_date: Time.now
+        certification_date: Time.zone.now
       )
     end
   end
@@ -99,6 +99,7 @@ end
 
 class PdfService
   def self.save_form!(form:, values:)
+    "#{form} #{values}" # noop for now
     # TODO: connect this with pdftk
   end
 end

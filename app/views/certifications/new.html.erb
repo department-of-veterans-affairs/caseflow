@@ -111,7 +111,7 @@
           question_number: "12A", label: "Date of statement of the case furnished", required: true %>
 
     <%= f.radio_buttons_field :ssoc_required,
-          values: ["Required and furnished", "Not required"],
+          values: ["Required and furnished", "Not required"], required: true,
           question_number: "12B", label: "Supplemental statement of the case" %>
 
     <%= f.check_box_group record_type_check_boxes,
@@ -127,7 +127,7 @@
           question_number: "15", label: "Name and location of certifying office", readonly: true, required: true %>
 
     <%= f.text_field :certifying_username,
-          question_number: "15", label: "Organizational elements certifying appeal", readonly: true, required: true %>
+          question_number: "16", label: "Organizational elements certifying appeal", readonly: true, required: true %>
 
     <%= f.text_field :certifying_official_name,
           question_number: "17A", label: "Name of certifying official", required: true %>
