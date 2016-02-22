@@ -295,6 +295,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.2)
+    timecop (0.8.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     tzinfo-data (1.2016.1)
@@ -342,6 +343,7 @@ DEPENDENCIES
   sniffybara!
   spring
   sqlite3
+  timecop
   tzinfo-data
   uglifier (>= 1.3.0)
   us_web_design_standards!

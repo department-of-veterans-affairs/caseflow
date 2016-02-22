@@ -27,7 +27,7 @@
 
     <%= f.hidden_field :vacols_id %>
 
-    <%= f.text_field :appellant,
+    <%= f.text_field :appellant_name,
           question_number: "1A", label: "Name of Appellant (If other than veteran)" %>
 
     <%= f.text_field :appellant_relationship,
@@ -110,7 +110,7 @@
     <%= f.date_field :soc_date,
           question_number: "12A", label: "Date of statement of the case furnished", required: true %>
 
-    <%= f.radio_buttons_field :ssoc,
+    <%= f.radio_buttons_field :ssoc_required,
           values: ["Required and furnished", "Not required"],
           question_number: "12B", label: "Supplemental statement of the case" %>
 

@@ -5,7 +5,11 @@ class Form8
   extend ActiveModel::Naming
 
   FORM_FIELDS = [
-    :vacols_id, :appellant, :appellant_relationship, :file_number, :veteran_name,
+    :vacols_id,
+    :appellant_name,
+    :appellant_relationship,
+    :file_number,
+    :veteran_name,
     :insurance_loan_number,
     :service_connection_for,
     :service_connection_nod_date,
@@ -75,18 +79,19 @@ class Form8
       @pdf_service ||= PdfService
     end
 
-    # TODO: test me.
     def new_from_appeal(appeal)
       new(
         vacols_id: appeal.vacols_id,
-        appellant: appeal.appellant_name,
+        appellant_name: appeal.appellant_name,
         appellant_relationship: appeal.appellant_relationship,
         file_number: appeal.vbms_id,
         veteran_name: appeal.veteran_name,
         insurance_loan_number: appeal.insurance_loan_number,
         service_connection_nod_date: appeal.nod_date,
         increased_rating_nod_date: appeal.nod_date,
-        other_nod_date: appeal.nod_date
+        other_nod_date: appeal.nod_date,
+        soc_date: appeal.soc_date,
+        certification_date: Time.now
       )
     end
   end
