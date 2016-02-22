@@ -660,6 +660,10 @@ fieldset {
 .cf-form-radio-option {
   @include clearfix;
   margin-bottom: rem(20px);
+
+  label {
+    margin-bottom: 0 !important;
+  }
 }
 
 .cf-form-radio-inline {
@@ -668,6 +672,10 @@ fieldset {
     padding-right: rem(30px);
     margin-bottom: 0;
   }
+}
+
+.cf-form-checkboxes.usa-grid-full {
+  margin-bottom: 0;
 }
 
 .cf-form-checkboxes,

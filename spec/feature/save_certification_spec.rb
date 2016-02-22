@@ -26,15 +26,15 @@ RSpec.feature "Save Certification" do
     fill_in "Full Veteran Name", with: "Micah Bobby"
     fill_in "Insurance file number", with: "INSURANCE-NO"
     fill_in "Service connection for", with: "service connection stuff"
-    fill_in "5B", with: "02/01/2016"
+    fill_in "5B Date of notification of action appealed", with: "02/01/2016"
     fill_in "Increased rating for", with: "increased rating stuff"
-    fill_in "6B", with: "08/08/2008"
-    fill_in "7A", with: "other stuff"
-    fill_in "7B", with: "09/09/2009"
+    fill_in "6B Date of notification of action appealed", with: "08/08/2008"
+    fill_in "7A Other", with: "other stuff"
+    fill_in "7B Date of notification of action appealed", with: "09/09/2009"
 
     click_on "Preview Completed Form 8"
 
-    expect(FakePdfService.saved_values["appellant"]).to eq("Shane Bobby")
+    expect(FakePdfService.saved_values["appellant_name"]).to eq("Shane Bobby")
     expect(FakePdfService.saved_values["appellant_relationship"]).to eq("Brother")
     expect(FakePdfService.saved_values["file_number"]).to eq("VBMS-ID")
     expect(FakePdfService.saved_values["veteran_name"]).to eq("Micah Bobby")

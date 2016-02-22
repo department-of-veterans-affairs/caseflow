@@ -27,7 +27,7 @@
 
     <%= f.hidden_field :vacols_id %>
 
-    <%= f.text_field :appellant,
+    <%= f.text_field :appellant_name,
           question_number: "1A", label: "Name of Appellant (If other than veteran)" %>
 
     <%= f.text_field :appellant_relationship,
@@ -65,6 +65,78 @@
       <%= f.date_field :other_nod_date,
             question_number: "7B", label: "Date of notification of action appealed", required: true %>
     </div>
+
+    <%= f.text_field :representative_name,
+          question_number: "8A", part: "1", label: "Representative Name", required: true %>
+
+    <%= f.radio_buttons_field :representative_type,
+          values: ["Attorney", "Agent", "Organization", "Other"], required: true,
+          question_number: "8A", part: "2", label: "Representative Type" %>
+
+    <%= f.text_field :representative_type_specify_other,
+          question_number: "8A", part: "3", label: "Specify other", required: true, secondary: true %>
+
+    <%= f.radio_buttons_field :power_of_attorney,
+          values: ["POA", "Certification that valid POA is in another VA file"], inline: true,
+          question_number: "8B", part: "1", label: "What is the authority for recognizing such representative in this appeal?" %>
+
+    <%= f.text_field :power_of_attorney_file,
+          question_number: "8B", part: "2", label: "Specify file if applicable", required: true, secondary: true %>
+
+    <%= f.yes_no_field :agent_accredited,
+          question_number: "8C", label: "Is Agent on accredited list?", required: true %>
+
+    <%= f.yes_no_field :form_646_of_record,
+          question_number: "9A", label: "Is VA Form 646, or equivalent, of record?", required: true %>
+
+    <%= f.text_field :form_646_not_of_record_explaination,
+          question_number: "9B", label: "Why is the Form 646 not of record?", required: true %>
+
+    <%= f.yes_no_field :hearing_requested,
+          question_number: "10A", label: "Was hearing requested?", required: true %>
+
+    <%= f.yes_no_field :hearing_transcript_on_file,
+          question_number: "10B", label: "If the hearing was held, is transcript on file?" %>
+
+    <%= f.text_field :hearing_requested_explaination,
+          question_number: "10C", label: "If requested, but not held, explain" %>
+
+    <%= f.yes_no_field :contested_claims_procedures_applicable,
+          question_number: "11A", label: "Are contested claims procedures applicable in this case?", required: true %>
+
+    <%= f.yes_no_field :contested_claims_requirements_followed,
+          question_number: "11B", label: "Have the requirements of 38 U.S.C. 7105A been followed for all contested claims?", required: true %>
+
+    <%= f.date_field :soc_date,
+          question_number: "12A", label: "Date of statement of the case furnished", required: true %>
+
+    <%= f.radio_buttons_field :ssoc_required,
+          values: ["Required and furnished", "Not required"], required: true,
+          question_number: "12B", label: "Supplemental statement of the case" %>
+
+    <%= f.check_box_group record_type_check_boxes,
+          question_number: "13", label: "Records to be forwarded to Board of Veterans' Appeals" %>
+
+    <%= f.text_field :record_other_explaination,
+          question_number: "13", part: "2", label: "Specify other", required: true, secondary: true %>
+
+    <%= f.text_area :remarks,
+          question_number: "14", label: "Remarks:" %>
+
+    <%= f.text_field :certifying_office,
+          question_number: "15", label: "Name and location of certifying office", readonly: true, required: true %>
+
+    <%= f.text_field :certifying_username,
+          question_number: "16", label: "Organizational elements certifying appeal", readonly: true, required: true %>
+
+    <%= f.text_field :certifying_official_name,
+          question_number: "17A", label: "Name of certifying official", required: true %>
+
+    <%= f.text_field :certifying_official_title,
+          question_number: "17B", label: "Title of certifying official", required: true %>
+
+    <%= f.date_field :certification_date,
+          question_number: "17C", label: "Date", readonly: true, required: true %>
   </div>
 
   <div class="cf-app-segment">
