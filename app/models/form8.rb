@@ -87,7 +87,7 @@ class Form8
 end
 
 class PdfService
-  def save_form!(form:, values:)
+  def self.save_form!(form:, values:)
     # TODO: connect this with pdftk
   end
 end
