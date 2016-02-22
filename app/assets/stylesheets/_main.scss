@@ -492,6 +492,10 @@ form {
   max-width: none !important;
 }
 
+.hidden-field {
+  display: none;
+}
+
 //------ Buttons --------*/
 // I hate using !important, but web design standards
 // form buttons have high specificity.

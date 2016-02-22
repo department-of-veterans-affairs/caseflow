@@ -9,7 +9,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     options[:rows] = 3
 
     @template.content_tag :div,
-                          id: "#{attribute.to_s.dasherize}-#{options[:question_number]}",
+                          id: question_id(attribute, options),
                           class: "cf-form-textarea" do
       question_label(attribute, options) + super(attribute, trim_options(options))
     end
@@ -21,11 +21,15 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
   private
 
+  def question_id(_attribute, options)
+    "question#{options[:question_number]}"
+  end
+
   def wrapped_text_field(attribute, options, input)
     readonly_class = options[:readonly] ? "cf-form-disabled" : ""
 
     @template.content_tag :div,
-                          id: "#{attribute.to_s.dasherize}-#{options[:question_number]}",
+                          id: question_id(attribute, options),
                           class: "cf-form-textinput #{readonly_class}" do
       question_label(attribute, options) + input
     end
