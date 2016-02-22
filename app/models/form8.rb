@@ -27,8 +27,14 @@ class Form8
     :contested_claims_procedures_applicable,
     :contested_claims_requirements_followed,
     :soc_date,
-    :ssoc,
-    :record_other_explaination
+    :ssoc_required,
+    :record_other_explaination,
+    :remarks,
+    :certifying_office,
+    :certifying_username,
+    :certifying_official_name,
+    :certifying_official_title,
+    :certification_date
   ].freeze
 
   RECORD_TYPE_FIELDS = [

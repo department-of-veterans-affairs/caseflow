@@ -119,6 +119,24 @@
 
     <%= f.text_field :record_other_explaination,
           question_number: "13", part: "2", label: "Specify other", required: true, secondary: true %>
+
+    <%= f.text_area :remarks,
+          question_number: "14", label: "Remarks:" %>
+
+    <%= f.text_field :certifying_office,
+          question_number: "15", label: "Name and location of certifying office", readonly: true, required: true %>
+
+    <%= f.text_field :certifying_username,
+          question_number: "15", label: "Organizational elements certifying appeal", readonly: true, required: true %>
+
+    <%= f.text_field :certifying_official_name,
+          question_number: "17A", label: "Name of certifying official", required: true %>
+
+    <%= f.text_field :certifying_official_title,
+          question_number: "17B", label: "Title of certifying official", required: true %>
+
+    <%= f.date_field :certification_date,
+          question_number: "17C", label: "Date", readonly: true, required: true %>
   </div>
 
   <div class="cf-app-segment">
