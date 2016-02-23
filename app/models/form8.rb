@@ -91,6 +91,8 @@ class Form8
         increased_rating_nod_date: appeal.nod_date,
         other_nod_date: appeal.nod_date,
         soc_date: appeal.soc_date,
+        certifying_office: "PLACEHOLDER",
+        certifying_username: "PLACEHOLDER",
         certification_date: Time.zone.now
       )
     end
