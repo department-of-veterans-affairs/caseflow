@@ -1,11 +1,93 @@
 //= require form8
 
 describe("Form8", function() {
-  beforeEach(function() {
-    Form8.initState();
+  context(".validateRequiredQuestion", function() {
+    beforeEach(function() {
+      Form8.initState();
+    });
+
+    context("when question is showing", function() {
+      beforeEach(function() {
+        Form8.state.question5B.show = true;
+      });
+
+      context("when question's value is empty", function() {
+        beforeEach(function() {
+          Form8.state.question5B.value = "";
+        });
+
+        it("returns false", function() {
+          expect(Form8.validateRequiredQuestion("5B")).to.be.false;
+        });
+      });
+
+      context("when question has a value", function() {
+        beforeEach(function() {
+          Form8.state.question5B.value = "so much value";
+        });
+
+        it("returns true", function() {
+          expect(Form8.validateRequiredQuestion("5B")).to.be.true;
+        });
+      });
+    });
+
+    context("when question is hidden", function() {
+      beforeEach(function() {
+        Form8.state.question5B.show = false;
+      });
+
+      context("when question's value is empty", function() {
+        beforeEach(function() {
+          Form8.state.question5B.value = "";
+        });
+
+        it("returns true", function() {
+          expect(Form8.validateRequiredQuestion("5B")).to.be.true;
+        });
+      });
+    });
+  });
+
+  context(".validateSubmit", function() {
+    beforeEach(function() {
+      Form8.requiredQuestions  = {"5B": {message: "5B error"}, "6B": {message: "6B error"}};
+      Form8.initState();
+    });
+
+    context("when a required question is invalid", function() {
+      beforeEach(function(){
+        Form8.state.question5B.show = true;
+        Form8.state.question5B.value = "";
+      });
+
+      it("returns false", function() {
+        expect(Form8.validateSubmit()).to.be.false;
+      });
+
+      it("sets error message on question", function() {
+        Form8.validateSubmit();
+        expect(Form8.state.question5B.error.message).to.eq("5B error");
+      });
+    });
+
+    context("when all required questions are valid", function() {
+      beforeEach(function(){
+        Form8.state.question5B.value = "value";
+        Form8.state.question6B.value = "so much value";
+      });
+
+      it("returns true", function() {
+        expect(Form8.validateSubmit()).to.be.true;
+      });
+    });
   });
 
   context(".processState", function() {
+    beforeEach(function() {
+      Form8.initState();
+    });
+
     context("when question 5A", function() {
       context("is empty", function() {
         it("hides question 5B", function() {

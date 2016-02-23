@@ -50,22 +50,18 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
     @template.content_tag :div, id: question_id(options),
                                 class: "cf-form-textinput #{readonly_class}" do
-      question_label(attribute, options) + input
+      question_label(attribute, options) + error_container + input
     end
   end
 
   def question_legend(options)
-    required_class = options[:required] ? "required" : ""
-
-    @template.content_tag :legend, class: required_class do
-      label_content(options) +
-        @template.content_tag(:span, class: "usa-input-error-message") {}
+    @template.content_tag :legend, class: "question-label" do
+      label_content(options) + error_container
     end
   end
 
   def question_label(attribute, options)
-    required_class = options[:required] ? "required" : ""
-    label(attribute, label_content(options), class: required_class)
+    label(attribute, label_content(options), class: "question-label")
   end
 
   def label_content(options)
@@ -109,6 +105,10 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def trim_options(options)
-    options.except(:question_number, :required, :label, :secondary)
+    options.except(:question_number, :label, :secondary)
+  end
+
+  def error_container
+    @template.content_tag(:span, class: "usa-input-error-message") {}
   end
 end

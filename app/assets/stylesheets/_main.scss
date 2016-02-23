@@ -691,7 +691,7 @@ fieldset {
 }
 
 .usa-input-error {
-  [type="radio"]:invalid + label::before {
+  [type="radio"] + label::before {
     box-shadow: 0 0 0 2px $color-white, 0 0 0 4px $color-secondary-dark, 0 0 3px 4px $color-secondary, 0 0 7px 4px $color-secondary-dark;
   }
 }
