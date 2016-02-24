@@ -1,3 +1,10 @@
 <% content_for :page_title do %>Preview Electronic Form 8<% end %>
 
-<%= @form8.to_json %>
+<div class="cf-app-segment cf-app-segment--alt">
+  <h2>Review Form 8</h2>
+  <p>
+    Review the completed Form 8. If the form looks correct, click <strong>Upload and certify</strong> and the form will automatically be uploaded into VBMS.
+  </p>
+</div>
+
+<iframe class="cf-doc-embed cf-app-segment" src="<%= pdfjs.full_path(file: "/files/forms/" + @pdf_file_name)%>"></iframe>

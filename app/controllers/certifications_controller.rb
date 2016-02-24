@@ -8,7 +8,20 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.new(params[:form8])
-    @form8.save!
+    output_pdf = @form8.save!
+    @pdf_file_name = File.basename(output_pdf)
+  end
+
+  def show_pdf
+    # rails will strip the extension because '.' is a special character; add it back
+    file_name = "#{params[:id]}.pdf"
+    absolute_path = PdfService.absolute_path_of(file_name)
+
+    if File.exists?(absolute_path)
+      send_file(absolute_path, type: 'application/pdf', disposition: 'inline')
+    else
+      head :not_found
+    end
   end
 
   private
