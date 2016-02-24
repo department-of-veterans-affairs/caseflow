@@ -1,9 +1,16 @@
 require "rails_helper"
 
-Appeal.repository = Fakes::AppealRepository
-
 RSpec.feature "Start Certification" do
+  scenario "Starting a certification before logging in redirects to login page" do
+    Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
+
+    visit "certifications/new/ABCD"
+    expect(page).to have_current_path(login_path)
+  end
+
   scenario "Starting a certification with missing documents" do
+    User.authenticate!
+
     appeal = Appeal.new(
       type: :original,
       file_type: :vva,
@@ -35,6 +42,8 @@ RSpec.feature "Start Certification" do
   end
 
   scenario "Starting a certifications with all documents matching" do
+    User.authenticate!
+
     appeal = Appeal.new(
       type: :original,
       file_type: :vbms,
@@ -68,6 +77,8 @@ RSpec.feature "Start Certification" do
   end
 
   scenario "404's if appeal doesn't exist in VACOLS" do
+    User.authenticate!
+
     visit "certifications/new/4444NNNN"
     expect(page.status_code).to eq(404)
   end

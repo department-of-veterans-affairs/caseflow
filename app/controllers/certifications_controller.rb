@@ -1,4 +1,6 @@
 class CertificationsController < ApplicationController
+  before_action :verify_authentication
+
   def new
     render "mismatched_documents" unless appeal.ready_to_certify?
     @form8 = Form8.new_from_appeal(appeal)
