@@ -30,6 +30,9 @@ gem "puma", "~> 2.16.0"
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
+gem 'pdf-forms'
+
+gem 'pdfjs_viewer-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
