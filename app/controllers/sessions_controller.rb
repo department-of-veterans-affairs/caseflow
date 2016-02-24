@@ -9,6 +9,11 @@ class SessionsController < ApplicationController
     end
   end
 
+  def destroy
+    current_user.unauthenticate
+    redirect_to login_path
+  end
+
   private
 
   def authentication_params

@@ -117,4 +117,17 @@ describe User do
       end
     end
   end
+
+  context "#unauthenticate" do
+    before do
+      session[:regional_office] = "RO33"
+      session[:username] = "test user"
+    end
+
+    it "clears regional_office and username" do
+      user.unauthenticate
+      expect(session[:regional_office]).to be_nil
+      expect(session[:username]).to be_nil
+    end
+  end
 end

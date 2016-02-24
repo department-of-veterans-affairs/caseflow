@@ -41,6 +41,11 @@ class User
     # self.username = auth_hash['uid']
   end
 
+  def unauthenticate
+    @session[:regional_office] = nil
+    @session[:username] = nil
+  end
+
   def return_to=(path)
     @session[:return_to] = path
   end

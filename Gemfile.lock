@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 3343029870fe4aea26cfe26cdffb85b58e380bbd
+  revision: 2dd4500d078ee7472042ddab6657b8a2d7560bc5
   specs:
     sniffybara (0.0.0)
       poltergeist
@@ -149,7 +149,7 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
-    mime-types (2.99)
+    mime-types (2.99.1)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multi_json (1.11.2)
@@ -242,7 +242,7 @@ GEM
       sexp_processor (~> 4.0)
     ruby_parser (3.7.3)
       sexp_processor (~> 4.1)
-    rubyzip (1.1.7)
+    rubyzip (1.2.0)
     safe_yaml (1.0.4)
     sass (3.4.21)
     sass-rails (5.0.4)
@@ -257,7 +257,7 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    selenium-webdriver (2.51.0)
+    selenium-webdriver (2.52.0)
       childprocess (~> 0.5)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)

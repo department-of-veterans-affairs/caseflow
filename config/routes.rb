@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :certifications, path_names: { new: "new/:vacols_id" }
 
   get "login" => "sessions#new"
+  get "logout" => "sessions#destroy"
   get 'whats-new' => 'whats_new#show'
 
   # Example resource route with options:
