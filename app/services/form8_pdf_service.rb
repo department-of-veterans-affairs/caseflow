@@ -1,16 +1,22 @@
 require 'pdf_forms'
 
-class PdfService
-
+class Form8PdfService
   def self.pdf_forms
     @pdf_forms ||= PdfForms.new("pdftk")
   end
 
-  def self.save_form!(input_pdf_path:, form_values:)
-    output_pdf_path = completed_pdf_path
+  def self.save_form!(id:, input_pdf_path:, form_values:)
+    output_pdf_path = completed_pdf_path(id)
 
-    tmp_location = "#{output_pdf_path}.tmp"
-    self.pdf_forms.fill_form(input_pdf_path, tmp_location, form_values, flatten: true)
+    puts input_pdf_path
+    tmp_location = File.join(Rails.root, 'tmp', 'forms', "form8-#{id}.tmp")
+
+    self.pdf_forms.fill_form(
+      input_pdf_path,
+      tmp_location,
+      form_values,
+      flatten: true
+    )
 
     # Run it through `pdftk cat`. The reason for this is that editable PDFs have
     # an RSA signature on them which proves they are genuine. pdftk tries to
@@ -25,12 +31,11 @@ class PdfService
     output_pdf_path
   end
 
-  def self.completed_pdf_path
-    absolute_path_of("form8-#{SecureRandom.hex}.pdf")
+  def self.completed_pdf_path(id)
+    absolute_path_of("form8-#{id}.pdf")
   end
 
   def self.absolute_path_of(file_name)
-    File.join(Rails.root, 'tmp', 'forms', file_name)
+    File.join(Rails.root, 'tmp', 'forms',  file_name)
   end
-
 end

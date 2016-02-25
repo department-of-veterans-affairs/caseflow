@@ -13,16 +13,15 @@ Rails.application.routes.draw do
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
   resources :sessions
-  resources :certifications, path_names: { new: "new/:vacols_id" }
+  resources :certifications, path_names: { new: "new/:vacols_id" } do
+    get 'pdf', on: :member
+  end
 
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
   get 'whats-new' => 'whats_new#show'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
-
-  get '/files/forms/:id'=> 'certifications#show_pdf'
-
   # Example resource route with options:
   #   resources :products do
   #     member do

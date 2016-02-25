@@ -60,97 +60,100 @@ class Form8
   ].freeze
 
   PDF_FIELDS = {
-      :appellant_name => "form1[0].#subform[0].#area[0].TextField1[0]",
-      :appellant_relationship => "form1[0].#subform[0].#area[0].TextField1[1]",
-      :file_number => "form1[0].#subform[0].#area[0].TextField1[2]",
-      :veteran_name => "form1[0].#subform[0].#area[0].TextField1[3]",
-      :insurance_loan_number => "form1[0].#subform[0].#area[0].TextField1[4]",
-      :service_connection_for => "form1[0].#subform[0].#area[0].TextField1[5]",
-      :service_connection_nod_date => "form1[0].#subform[0].#area[0].TextField1[6]",
-      :increased_rating_for => "form1[0].#subform[0].#area[0].TextField1[7]",
-      :increased_rating_nod_date => "form1[0].#subform[0].#area[0].TextField1[8]",
-      :other_for => "form1[0].#subform[0].#area[0].TextField1[9]",
-      :other_nod_date => "form1[0].#subform[0].#area[0].TextField1[10]",
-      :representative_name => "form1[0].#subform[0].#area[0].TextField1[11]",
-      :representative_type => "form1[0].#subform[0].#area[0].TextField1[11]",
-      :representative_type_specify_other => "form1[0].#subform[0].#area[0].TextField1[12]",
+    :appellant_name => "form1[0].#subform[0].#area[0].TextField1[0]",
+    :appellant_relationship => "form1[0].#subform[0].#area[0].TextField1[1]",
+    :file_number => "form1[0].#subform[0].#area[0].TextField1[2]",
+    :veteran_name => "form1[0].#subform[0].#area[0].TextField1[3]",
+    :insurance_loan_number => "form1[0].#subform[0].#area[0].TextField1[4]",
+    :service_connection_for => "form1[0].#subform[0].#area[0].TextField1[5]",
+    :service_connection_nod_date => "form1[0].#subform[0].#area[0].TextField1[6]",
+    :increased_rating_for => "form1[0].#subform[0].#area[0].TextField1[7]",
+    :increased_rating_nod_date => "form1[0].#subform[0].#area[0].TextField1[8]",
+    :other_for => "form1[0].#subform[0].#area[0].TextField1[9]",
+    :other_nod_date => "form1[0].#subform[0].#area[0].TextField1[10]",
+    :representative_name => "form1[0].#subform[0].#area[0].TextField1[11]",
+    :representative_type => "form1[0].#subform[0].#area[0].TextField1[11]",
+    :representative_type_specify_other => "form1[0].#subform[0].#area[0].TextField1[12]",
 
-      :power_of_attorney => {
-          "POA"=>"form1[0].#subform[0].#area[0].CheckBox21[0]",
-          "Certification that valid POA is in another VA file"=>"form1[0].#subform[0].#area[0].CheckBox21[1]"
-      },
+    :power_of_attorney => {
+        "POA"=>"form1[0].#subform[0].#area[0].CheckBox21[0]",
+        "Certification that valid POA is in another VA file"=>"form1[0].#subform[0].#area[0].CheckBox21[1]"
+    },
 
-      :agent_accredited => {
-          "Yes"=> "form1[0].#subform[0].#area[0].CheckBox23[0]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[1]"
-      },
+    :agent_accredited => {
+        "Yes"=> "form1[0].#subform[0].#area[0].CheckBox23[0]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[1]"
+    },
 
-      :form_646_of_record => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[2]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[3]"
-      },
+    :form_646_of_record => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[2]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[3]"
+    },
 
-      :form_646_not_of_record_explaination => "form1[0].#subform[0].#area[0].TextField1[13]",
+    :form_646_not_of_record_explaination => "form1[0].#subform[0].#area[0].TextField1[13]",
 
-      :hearing_requested => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[4]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[5]"
-      },
+    :hearing_requested => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[4]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[5]"
+    },
 
-      :hearing_transcript_on_file => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[6]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[7]"
-      },
+    :hearing_transcript_on_file => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[6]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[7]"
+    },
 
-      :hearing_requested_explaination => "form1[0].#subform[0].#area[0].TextField1[14]",
+    :hearing_requested_explaination => "form1[0].#subform[0].#area[0].TextField1[14]",
 
-      :contested_claims_procedures_applicable => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[8]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[9]"
-      },
+    :contested_claims_procedures_applicable => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[8]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[9]"
+    },
 
-      :contested_claims_requirements_followed => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[10]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[11]"
-      },
+    :contested_claims_requirements_followed => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[10]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[11]"
+    },
 
-      :soc_date => "form1[0].#subform[0].#area[0].TextField1[15]",
+    :soc_date => "form1[0].#subform[0].#area[0].TextField1[15]",
 
-      :ssoc_required => {
-          "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[12]",
-          "No" => "form1[0].#subform[0].#area[0].CheckBox23[13]"
-      },
+    :ssoc_required => {
+        "Yes" => "form1[0].#subform[0].#area[0].CheckBox23[12]",
+        "No" => "form1[0].#subform[0].#area[0].CheckBox23[13]"
+    },
 
-      :record_cf_or_xcf => "form1[0].#subform[0].#area[0].CheckBox23[14]",
-      :record_inactive_cf => "form1[0].#subform[0].#area[0].CheckBox23[19]",
-      :record_dental_f => "form1[0].#subform[0].#area[0].CheckBox23[25]",
-      :record_r_and_e_f => "form1[0].#subform[0].#area[0].CheckBox23[15]",
-      :record_training_sub_f => "form1[0].#subform[0].#area[0].CheckBox23[20]",
-      :record_loan_guar_f => "form1[0].#subform[0].#area[0].CheckBox23[16]",
-      :record_outpatient_f => "form1[0].#subform[0].#area[0].CheckBox23[17]",
-      :record_hospital_cor => "form1[0].#subform[0].#area[0].CheckBox23[22]",
-      :record_clinical_rec => "form1[0].#subform[0].#area[0].CheckBox23[26]",
-      :record_x_rays => "form1[0].#subform[0].#area[0].CheckBox23[18]",
-      :record_slides => "form1[0].#subform[0].#area[0].CheckBox23[23]",
-      :record_tissue_blocks => "form1[0].#subform[0].#area[0].CheckBox23[27]",
-      :record_dep_ed_f => "form1[0].#subform[0].#area[0].CheckBox23[24]",
-      :record_insurance_f => "form1[0].#subform[0].#area[0].CheckBox23[21]",
-      :record_other => "form1[0].#subform[0].#area[0].CheckBox23[28]",
-      :record_other_explaination => "form1[0].#subform[0].#area[0].TextField1[16]",
-      :remarks => "form1[0].#subform[0].#area[0].TextField1[17]",
-      :certifying_office => "form1[0].#subform[0].#area[0].TextField1[18]",
-      :certifying_username => "form1[0].#subform[0].#area[0].TextField1[19]",
-      :certifying_official_name => "form1[0].#subform[0].#area[0].TextField1[20]",
-      :certifying_official_title => "form1[0].#subform[0].#area[0].TextField1[21]",
-      :certification_date => "form1[0].#subform[0].#area[0].TextField1[22]"
+    :record_cf_or_xcf => "form1[0].#subform[0].#area[0].CheckBox23[14]",
+    :record_inactive_cf => "form1[0].#subform[0].#area[0].CheckBox23[19]",
+    :record_dental_f => "form1[0].#subform[0].#area[0].CheckBox23[25]",
+    :record_r_and_e_f => "form1[0].#subform[0].#area[0].CheckBox23[15]",
+    :record_training_sub_f => "form1[0].#subform[0].#area[0].CheckBox23[20]",
+    :record_loan_guar_f => "form1[0].#subform[0].#area[0].CheckBox23[16]",
+    :record_outpatient_f => "form1[0].#subform[0].#area[0].CheckBox23[17]",
+    :record_hospital_cor => "form1[0].#subform[0].#area[0].CheckBox23[22]",
+    :record_clinical_rec => "form1[0].#subform[0].#area[0].CheckBox23[26]",
+    :record_x_rays => "form1[0].#subform[0].#area[0].CheckBox23[18]",
+    :record_slides => "form1[0].#subform[0].#area[0].CheckBox23[23]",
+    :record_tissue_blocks => "form1[0].#subform[0].#area[0].CheckBox23[27]",
+    :record_dep_ed_f => "form1[0].#subform[0].#area[0].CheckBox23[24]",
+    :record_insurance_f => "form1[0].#subform[0].#area[0].CheckBox23[21]",
+    :record_other => "form1[0].#subform[0].#area[0].CheckBox23[28]",
+    :record_other_explaination => "form1[0].#subform[0].#area[0].TextField1[16]",
+    :remarks => "form1[0].#subform[0].#area[0].TextField1[17]",
+    :certifying_office => "form1[0].#subform[0].#area[0].TextField1[18]",
+    :certifying_username => "form1[0].#subform[0].#area[0].TextField1[19]",
+    :certifying_official_name => "form1[0].#subform[0].#area[0].TextField1[20]",
+    :certifying_official_title => "form1[0].#subform[0].#area[0].TextField1[21]",
+    :certification_date => "form1[0].#subform[0].#area[0].TextField1[22]"
   }.freeze
 
+  attr_accessor :id
   FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   def save!
-    empty_form =  File.join(File.dirname( __FILE__) , "VA8.pdf")
-    @pdf_path = Form8.pdf_service.save_form!(input_pdf_path: empty_form,
+    @id = vacols_id
+    empty_form =  File.join(Rails.root, "lib/pdfs/VA8.pdf")
+    @pdf_path = Form8.pdf_service.save_form!(id: @id,
+                                             input_pdf_path: empty_form,
                                              form_values: Form8.to_pdf_values(serializable_hash))
   end
 
@@ -211,11 +214,19 @@ class Form8
     attrs
   end
 
+  def persisted?
+    false
+  end
+
+  def pdf_location
+    Form8.pdf_service.completed_pdf_path(id)
+  end
+
   class << self
     attr_writer :pdf_service
 
     def pdf_service
-      @pdf_service ||= PdfService
+      @pdf_service ||= Form8PdfService
     end
 
     def new_from_appeal(appeal)
