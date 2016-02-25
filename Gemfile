@@ -30,8 +30,8 @@ gem "puma", "~> 2.16.0"
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
+# PDF Tools
 gem 'pdf-forms'
-
 gem 'pdfjs_viewer-rails'
 
 group :development, :test do

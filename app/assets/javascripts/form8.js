@@ -191,12 +191,10 @@
 
     toggleQuestion: function(questionNumber) {
       var $q = $question(questionNumber);
+      var hideQuestion = !this.state["question" + questionNumber].show;
 
-      if(this.state["question" + questionNumber].show) {
-        $q.removeClass('hidden-field');
-      } else {
-        $q.addClass('hidden-field');
-      }
+      $q.toggleClass('hidden-field', hideQuestion);
+      $q.find('input, textarea').prop('disabled', hideQuestion);
     }
   };
 })();
