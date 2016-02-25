@@ -1,4 +1,23 @@
 describe Form8 do
+  context "#representative" do
+    let(:form8) { Form8.new }
+    subject { form8.representative }
+    before { form8.representative_name = "Joe" }
+
+    context "when representative_type isn't other" do
+      before { form8.representative_type = "Appeal" }
+      it { is_expected.to eq "Joe - Appeal" }
+    end
+
+    context "when representative_type is other" do
+      before do
+        form8.representative_type = "Other"
+        form8.representative_type_specify_other = "Bossman"
+      end
+      it { is_expected.to eq "Joe - Bossman" }
+    end
+  end
+
   context ".new_from_appeal" do
     before do
       Timecop.freeze

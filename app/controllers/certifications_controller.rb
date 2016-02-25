@@ -8,15 +8,15 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.new(params[:form8])
-    @form8.save!
-    redirect_to certification_path(@form8)
+    form8.save!
+    redirect_to certification_path(id: form8.id)
   end
 
   def show
   end
 
   def pdf
-    send_file(form8.pdf_location, type: 'application/pdf', disposition: 'inline')
+    send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
   end
 
   private
