@@ -1,0 +1,31 @@
+<% content_for :page_title do %>Login<% end %>
+
+<%= form_tag(action: :create) do %>
+  <% if @error_message %>
+    <div class="usa-alert usa-alert-error cf-app-segment" role="alert">
+      <div class="usa-alert-body">
+        <h3 class="usa-alert-heading"><%= @error_message %></h3>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="cf-app-segment">
+    <h1>Welcome to Caseflow!</h1>
+    <p>Caseflow helps you certify an appeal by making sure all documents necessary for certification are in the eFolder. If all documents are accounted for, Caseflow will assist with filling out an electronic Form 8.</p>
+
+    <p>Please log in using your <strong>VACOLS credentials.</strong></p>
+
+    <div class="cf-form-textinput">
+      <%= label_tag :regional_office, "VACOLS Login ID" %>
+      <%= text_field_tag :regional_office, nil, class: "cf-login-input", autofocus: true %>
+      <span class="cf-txt-example">Example: RO06</span>
+    </div>
+
+    <div class="cf-form-textinput">
+      <%= label_tag :password, "VACOLS Password" %>
+      <%= password_field_tag :password, nil, class: "cf-login-input", autofocus: true %>
+    </div>
+
+    <div><%= submit_tag "Login" %></div>
+  </div>
+<% end %>

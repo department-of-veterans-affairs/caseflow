@@ -26,23 +26,22 @@
         <h1 class="cf-logo">Caseflow</h1>
         <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
 
-        <%if !@user.nil? %>
-        <div class="cf-dropdown cf-nav-dropdown">
-          <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
-            <% if @user.username %>
-                <%= @user[:username] %><% if @user[:regional_office] %> (<%= @user[:regional_office] %>)<% end %>
-            <% else %>
-                <%= @user[:regional_office] %>
-            <% end %>
-          </a>
-          <ul id="menu" class="cf-dropdown-menu" aria-labeledby="menu-trigger">
-            <li><a href="/TODO">Help</a></li>
-            <li><a href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx" target="_blank">Send Feedback</a></li>
-            <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
-            <li><a href="/TODO">Sign out</a></li>
-          </ul>
-        </div>
-        <%end%>
+        <% if current_user %>
+          <div class="cf-dropdown cf-nav-dropdown">
+            <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
+              <%= current_user.display_name %>
+            </a>
+
+            <ul id="menu" class="cf-dropdown-menu" aria-labeledby="menu-trigger">
+              <li><a href="/TODO">Help</a></li>
+              <li><a href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx" target="_blank">Send Feedback</a></li>
+              <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
+              <li>
+                <a href="<%= url_for controller: 'sessions', action: 'destroy' %>">Sign out</a>
+              </li>
+            </ul>
+          </div>
+        <% end %>
       </div>
     </nav>
   </header>

@@ -3,7 +3,9 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :setup_fakes
+  before_action :setup_fakes,
+                :check_whats_new_cookie
+
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
   private
@@ -12,12 +14,15 @@ class ApplicationController < ActionController::Base
     render file: "public/404.html", layout: nil, status: 404
   end
 
+  def current_user
+    @current_user ||= User.from_session(session)
+  end
+  helper_method :current_user
+
   def setup_fakes
     Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
   end
-
-  before_action :check_whats_new_cookie, :check_logged_in
 
   def check_whats_new_cookie
     client_last_seen_version = cookies[:whats_new]
@@ -25,10 +30,11 @@ class ApplicationController < ActionController::Base
                                 client_last_seen_version != WhatsNewService.version
   end
 
-  LoggedInUser = Struct.new(:username, :regional_office)
-
-  def check_logged_in
-    @user = LoggedInUser.new("test-user", "test-ro")
+  def verify_authentication
+    unless current_user.authenticated?
+      current_user.return_to = request.original_url
+      redirect_to login_path
+    end
   end
 end
 

@@ -29,7 +29,35 @@ require "rspec/rails"
 require "capybara"
 Capybara.default_driver = :sniffybara
 
+# Convenience methods for stubbing current user
+module StubbableUser
+  def stub=(user)
+    @stub = user
+  end
+
+  def authenticate!
+    self.stub = User.new(session: { username: "DSUSER", regional_office: "RO13" })
+  end
+
+  def unauthenticate!
+    self.stub = nil
+  end
+
+  def new(*args)
+    @stub || super
+  end
+end
+User.class.prepend(StubbableUser)
+
+# Setup fakes
+Appeal.repository = Fakes::AppealRepository
+User.authentication_service = Fakes::AuthenticationService
+Fakes::AuthenticationService.ssoi_enabled = false
+Fakes::AuthenticationService.ssoi_username = "TEST"
+
 RSpec.configure do |config|
+  config.before(:all) { User.unauthenticate! }
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 

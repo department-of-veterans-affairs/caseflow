@@ -13,6 +13,8 @@ RSpec.feature "Save Certification" do
   end
 
   scenario "Submit form while missing required values" do
+    User.authenticate!
+
     Fakes::AppealRepository.records = {
       "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
     }
@@ -49,6 +51,8 @@ RSpec.feature "Save Certification" do
   end
 
   scenario "Saving a certification generates PDF form" do
+    User.authenticate!
+
     Form8.pdf_service = FakePdfService
     Fakes::AppealRepository.records = {
       "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
