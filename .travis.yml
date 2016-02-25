@@ -6,6 +6,9 @@ branches:
     only:
         - master
 
+before_script:
+  - sudo apt-get install pdftk
+
 script:
   - bundle exec rake
 
