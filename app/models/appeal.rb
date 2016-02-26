@@ -65,8 +65,13 @@ class Appeal
     nod_match? && soc_match? && form9_match? && ssoc_all_match?
   end
 
+  def certify!
+    Appeal.certify(self)
+  end
+
   class << self
     attr_writer :repository
+    delegate :certify, to: :repository
 
     def find(vacols_id)
       unless (appeal = @repository.find(vacols_id))
@@ -90,5 +95,15 @@ end
 
 class AppealRepository
   def self.find(_vacols_id, _args = {})
+  end
+
+  def self.cerify(_appeal)
+    # Set certification flags on VACOLS record
+    # upload Form 8 to VBMS
+
+    #  @kase.bfdcertool = Time.now
+    #  @kase.bf41stat = Date.strptime(params[:certification_date], Date::DATE_FORMATS[:va_date])
+    #  @kase.save
+    #  @kase.efolder_case.upload_form8(corr.snamef, corr.snamemi, corr.snamel, params[:file_name])
   end
 end

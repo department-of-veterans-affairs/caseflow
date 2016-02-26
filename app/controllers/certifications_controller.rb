@@ -13,10 +13,16 @@ class CertificationsController < ApplicationController
   end
 
   def show
+    render "confirm" if params[:confirm]
   end
 
   def pdf
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
+  end
+
+  def confirm
+    appeal.certify!
+    redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
   private
