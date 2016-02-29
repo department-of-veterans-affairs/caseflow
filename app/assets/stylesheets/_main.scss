@@ -276,6 +276,86 @@ dd {
   }
 }
 
+//------ Modals --------*/
+.cf-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display:none;
+
+  &.active {
+    display:block;
+  }
+
+  &::before {
+    content: ' ';
+    background: rgba(0,0,0,.4);
+    position: fixed;
+    height: inherit;
+    width: inherit;
+  }
+}
+
+.cf-modal-body {
+  @include transform(translateY(-50%));
+  top: 50%;
+  // Previous two lines vertically center this block
+  background: $color-white;
+  box-shadow: 0 0 2rem -3px rgba($color-base, .8);
+  color: $color-gray;
+  padding: 4.5rem;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1040px;
+  width: 70%;
+}
+
+.cf-modal-title {
+  font-size: rem(50px);
+  text-align: center;
+}
+
+.cf-modal-close {
+  background: transparent;
+  height: 1.5rem;
+  padding: .1rem;
+  position: absolute;
+  right: rem(20px);
+  top: rem(20px);
+  width: 1.5rem;
+
+  &:hover, &:focus, &:active {
+    background: transparent;
+
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+
+.cf-modal-text,
+.cf-modal-controls {
+  margin: auto;
+  width: 70%;
+}
+
+.cf-modal-text {
+  font-size: rem(20px);
+  line-height: 2;
+  text-align: center;
+}
+
+.cf-modal-controls {
+  position: relative;
+  bottom: 0;
+  margin-top: rem(60px);
+}
+
+
 // ===========================*
 // Application navigation bar  *
 // ============================*/
