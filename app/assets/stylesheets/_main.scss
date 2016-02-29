@@ -289,6 +289,11 @@ dd {
     display:block;
   }
 
+  // don't trip the accessibility warning for white on white, even if title isn't visible
+  svg title {
+    color:#767676
+  }
+
   &::before {
     content: ' ';
     background: rgba(0,0,0,.4);
