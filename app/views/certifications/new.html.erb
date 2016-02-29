@@ -140,7 +140,16 @@
   </div>
 
   <div class="cf-app-segment">
-    <a href="#" class="cf-action-openmodal cf-btn-link">Cancel certification</a>
+    <a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel certification</a>
     <button type="submit" class="cf-push-right">Preview Completed Form 8</button>
   </div>
+
+  <%= render partial: 'modal', locals: {
+      modal_id: 'confirm-cancel-certification',
+      modal_title: 'Cancel certification?',
+      modal_text: "Are you sure you can't certify this case? Any changes you made in Caseflow will not be saved and the certification date will not be set in VACOLS.",
+      modal_html: %Q{<div class="cf-push-row cf-modal-controls">
+        <button type="button" class="usa-button-outline cf-action-closemodal cf-push-left" data-controls="#confirm-cancel-certification">Go back</button>
+        <a href="#{url_for(controller: 'certifications', action: 'cancel')}" class="cf-push-right usa-button usa-button-secondary">Yes, I\'m sure</a>
+  }}%>
 <% end %>

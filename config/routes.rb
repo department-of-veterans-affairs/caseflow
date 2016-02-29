@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
   end
 
+  get "certifications/cancel/:vacols_id" => "certifications#cancel"
+
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
   get 'whats-new' => 'whats_new#show'
