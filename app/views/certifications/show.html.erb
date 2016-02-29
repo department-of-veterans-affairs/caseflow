@@ -1,0 +1,22 @@
+<% content_for :page_title do %>Preview Electronic Form 8<% end %>
+
+<div class="cf-app-segment cf-app-segment--alt">
+  <h2>Review Form 8</h2>
+  <p>
+    Review the completed Form 8. If the form looks correct, click <strong>Upload and certify</strong> and the form will automatically be uploaded into VBMS.
+  </p>
+</div>
+
+<iframe class="cf-doc-embed cf-app-segment" title="Form8 PDF"
+  src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.id)) %>"></iframe>
+
+<div class="cf-form cf-app-segment">
+  <button type="button" class="usa-button-gray cf-action-back cf-push-left" onclick="window.history.back()">
+    &laquo; Go back and make edits
+  </button>
+
+  <%= link_to "Upload and certify",
+    confirm_certification_path(id: form8.id),
+    method: :post,
+    class: "usa-button usa-button-blue cf-push-right" %>
+</div>

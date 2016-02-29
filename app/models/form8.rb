@@ -62,21 +62,30 @@ class Form8
   FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
-  def save!
-    Form8.pdf_service.save_form!(form: "VA8", values: serializable_hash)
+  alias_attribute :id, :vacols_id
+
+  def representative
+    type = representative_type == "Other" ? representative_type_specify_other : representative_type
+    "#{representative_name} - #{type}"
   end
 
-  def attributes
-    FORM_FIELDS.each_with_object({}) do |field, attributes_hash|
-      attributes_hash[field.to_s] = send(field)
-    end
+  def save!
+    Form8.pdf_service.save_pdf_for!(self)
+  end
+
+  def persisted?
+    false
+  end
+
+  def pdf_location
+    Form8.pdf_service.output_location_for(self)
   end
 
   class << self
     attr_writer :pdf_service
 
     def pdf_service
-      @pdf_service ||= PdfService
+      @pdf_service ||= Form8PdfService
     end
 
     def new_from_appeal(appeal)
@@ -96,12 +105,5 @@ class Form8
         certification_date: Time.zone.now
       )
     end
-  end
-end
-
-class PdfService
-  def self.save_form!(form:, values:)
-    "#{form} #{values}" # noop for now
-    # TODO: connect this with pdftk
   end
 end

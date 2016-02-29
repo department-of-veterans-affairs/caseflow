@@ -1,17 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Save Certification" do
-  class FakePdfService
-    def self.save_form!(form:, values:)
-      @saved_form = form
-      @saved_values = values
-    end
-
-    class << self
-      attr_reader :saved_values
-    end
-  end
-
   scenario "Submit form while missing required values" do
     User.authenticate!
 
@@ -50,7 +39,7 @@ RSpec.feature "Save Certification" do
     expect(page).to have_css("#question8A3.usa-input-error")
   end
 
-  scenario "Saving a certification generates PDF form" do
+  scenario "Saving a certification passes the correct values into the PDF service" do
     User.authenticate!
 
     Form8.pdf_service = FakePdfService
@@ -77,6 +66,14 @@ RSpec.feature "Save Certification" do
       find("label", text: "Attorney").click
     end
 
+    # Validate hidden values don't submit
+    within_fieldset("10A Was hearing requested?") do
+      find("label", text: "Yes").click
+    end
+    within_fieldset("10B If the hearing was held, is transcript on file?") do
+      find("label", text: "Yes").click
+    end
+    fill_in "10C If requested, but not held, explain", with: "i'm going to disappear"
     within_fieldset("10A Was hearing requested?") do
       find("label", text: "No").click
     end
@@ -86,7 +83,7 @@ RSpec.feature "Save Certification" do
     end
 
     within_fieldset("12B Supplemental statement of the case") do
-      find("label", text: "No").click
+      find("label", text: "Not required").click
     end
 
     fill_in "17A Name of certifying official", with: "Kavi"
@@ -94,16 +91,61 @@ RSpec.feature "Save Certification" do
 
     click_on "Preview Completed Form 8"
 
-    expect(FakePdfService.saved_values["appellant_name"]).to eq("Shane Bobby")
-    expect(FakePdfService.saved_values["appellant_relationship"]).to eq("Brother")
-    expect(FakePdfService.saved_values["file_number"]).to eq("VBMS-ID")
-    expect(FakePdfService.saved_values["veteran_name"]).to eq("Micah Bobby")
-    expect(FakePdfService.saved_values["insurance_loan_number"]).to eq("INSURANCE-NO")
-    expect(FakePdfService.saved_values["service_connection_for"]).to eq("service connection stuff")
-    expect(FakePdfService.saved_values["service_connection_nod_date"]).to eq("02/01/2016")
-    expect(FakePdfService.saved_values["increased_rating_for"]).to eq("increased rating stuff")
-    expect(FakePdfService.saved_values["increased_rating_nod_date"]).to eq("08/08/2008")
-    expect(FakePdfService.saved_values["other_for"]).to eq("other stuff")
-    expect(FakePdfService.saved_values["other_nod_date"]).to eq("09/09/2009")
+    expect(FakePdfService.saved_form8).to have_attributes(
+      appellant_name: "Shane Bobby",
+      appellant_relationship: "Brother",
+      file_number: "VBMS-ID",
+      veteran_name: "Micah Bobby",
+      insurance_loan_number: "INSURANCE-NO",
+      service_connection_for: "service connection stuff",
+      service_connection_nod_date: "02/01/2016",
+      increased_rating_for: "increased rating stuff",
+      increased_rating_nod_date: "08/08/2008",
+      other_for: "other stuff",
+      other_nod_date: "09/09/2009",
+      representative_type: "Attorney",
+      hearing_requested: "No",
+      hearing_transcript_on_file: nil,
+      hearing_requested_explaination: nil,
+      contested_claims_procedures_applicable: "No",
+      ssoc_required: "Not required",
+      certifying_official_name: "Kavi",
+      certifying_official_title: "DRO"
+    )
+
+    expect(page).to have_current_path(certification_path(id: "1234C"))
+  end
+
+  scenario "Saving a certification saves PDF form to correct location" do
+    appeal = Fakes::AppealRepository.appeal_ready_to_certify
+    expected_form8 = Form8.new(id: "2222C")
+    form8_location = Form8PdfService.output_location_for(expected_form8)
+
+    Fakes::AppealRepository.records = { "2222C" => appeal }
+    Form8.pdf_service = Form8PdfService
+    File.delete(form8_location) if File.exist?(form8_location)
+
+    visit "certifications/new/2222C"
+
+    fill_in "Full Veteran Name", with: "Micah Bobby"
+    fill_in "8A Representative Name", with: "Orington Roberts"
+    within_fieldset("8A Representative Type") do
+      find("label", text: "Attorney").click
+    end
+    within_fieldset("10A Was hearing requested?") do
+      find("label", text: "No").click
+    end
+    within_fieldset("11A Are contested claims procedures applicable in this case?") do
+      find("label", text: "No").click
+    end
+    within_fieldset("12B Supplemental statement of the case") do
+      find("label", text: "Not required").click
+    end
+    fill_in "17A Name of certifying official", with: "Kavi"
+    fill_in "17B Title of certifying official", with: "DRO"
+
+    click_on "Preview Completed Form 8"
+
+    expect(File.exist?(form8_location)).to be_truthy
   end
 end

@@ -1,6 +1,11 @@
 class Fakes::AppealRepository
   class << self
     attr_writer :records
+    attr_accessor :certified_appeal
+  end
+
+  def self.certify(appeal)
+    @certified_appeal = appeal
   end
 
   def self.find(id)
