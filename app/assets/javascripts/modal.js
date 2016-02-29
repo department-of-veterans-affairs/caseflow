@@ -19,7 +19,7 @@ window.Modal = (function($) {
   }
 
   function onKeyDown(e) {
-    var escKey = (e.which == 27);
+    var escKey = (e.which === 27);
 
     if (escKey) {
       $('.cf-modal').trigger('click');
