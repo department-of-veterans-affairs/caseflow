@@ -26,3 +26,9 @@ $(function () {
   "use strict";
   new Clipboard('[data-clipboard-text]');
 });
+
+/* Reusable 'refresh' pattern */
+$(function() {
+  $('.cf-action-refresh').on('click', function() {
+    location.reload(); return false;
+  });
