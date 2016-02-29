@@ -1,3 +1,5 @@
+/* globals Clipboard */
+
 // This is a manifest file that'll be compiled into application.js, which will include all the files
 // listed below.
 //
@@ -10,10 +12,17 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require clipboard
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
 
 $(function() {
   window.Dropdown.bind();
+});
+
+/* Copies appeals ID to clipboard */
+$(function () {
+  "use strict";
+  new Clipboard('[data-clipboard-text]');
 });
