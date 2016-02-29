@@ -49,10 +49,10 @@ module ApplicationHelper
 
   def svg_icon(name)
     {
-        missing: MISSING_ICON,
-        found: FOUND_ICON,
-        appeal: APPEAL_ICON,
-        close: CLOSE_ICON
+      missing: MISSING_ICON,
+      found: FOUND_ICON,
+      appeal: APPEAL_ICON,
+      close: CLOSE_ICON
     }[name].html_safe
   end
 end
