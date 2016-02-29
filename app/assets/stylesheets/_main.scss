@@ -277,26 +277,28 @@ dd {
 }
 
 //------ Modals --------*/
+
+
+// don't trip the accessibility warning for white on white, even if title isn't visible
+svg title {
+  color: $color-black;
+}
+
 .cf-modal {
   position: fixed;
   left: 0;
   top: 0;
   height: 100%;
   width: 100%;
-  display:none;
+  display: none;
 
   &.active {
-    display:block;
-  }
-
-  // don't trip the accessibility warning for white on white, even if title isn't visible
-  svg title {
-    color:#767676
+    display: block;
   }
 
   &::before {
     content: ' ';
-    background: rgba(0,0,0,.4);
+    background: rgba($color-black, .4);
     position: fixed;
     height: inherit;
     width: inherit;
@@ -332,7 +334,9 @@ dd {
   top: rem(20px);
   width: 1.5rem;
 
-  &:hover, &:focus, &:active {
+  &:hover,
+  &:focus,
+  &:active {
     background: transparent;
 
     path {
