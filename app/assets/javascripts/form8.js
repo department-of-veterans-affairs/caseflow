@@ -1,6 +1,6 @@
 //= require jquery
 
-(function(){
+(function() {
   function $question(questionNumber) {
     return $("#question" + questionNumber);
   }
@@ -12,7 +12,7 @@
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
 
 
-  window.Form8 =  {
+  window.Form8 = {
     interactiveQuestions: [
       "5A", "5B",
       "6A", "6B",
@@ -25,28 +25,28 @@
     ],
 
     requiredQuestions: {
-      "2":   { message: "" },
-      "3":   { message: "Please enter the veteran's full name." },
-      "5B":  { message: "Please enter the date of notification." },
-      "6B":  { message: "Please enter the date of notification." },
-      "7B":  { message: "Please enter the date of notification." },
-      "8A1": { message: "Please enter the representative name." },
-      "8A2": { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "8A3": { message: "" },
-      "8B2": { message: "Please provide the location." },
-      "8C":  { message: "" },
-      "9A":  { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "9B":  { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "10A": { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "11A": { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "11B": { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "12A": { message: "Please enter the date of the statement of the case." },
-      "12B": { message: DEFAULT_RADIO_ERROR_MESSAGE },
-      "15":  { message: "" },
-      "16":  { message: "" },
-      "17A": { message: "Please enter the name of the Certifying Official (usually your name)." },
-      "17B": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
-      "17C": { message: "" }
+      "2": {message: ""},
+      "3": {message: "Please enter the veteran's full name."},
+      "5B": {message: "Please enter the date of notification."},
+      "6B": {message: "Please enter the date of notification."},
+      "7B": {message: "Please enter the date of notification."},
+      "8A1": {message: "Please enter the representative name."},
+      "8A2": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "8A3": {message: ""},
+      "8B2": {message: "Please provide the location."},
+      "8C": {message: ""},
+      "9A": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "9B": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "10A": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "11A": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "11B": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "12A": {message: "Please enter the date of the statement of the case."},
+      "12B": {message: DEFAULT_RADIO_ERROR_MESSAGE},
+      "15": {message: ""},
+      "16": {message: ""},
+      "17A": {message: "Please enter the name of the Certifying Official (usually your name)."},
+      "17B": {message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)."},
+      "17C": {message: ""}
     },
 
     getRequiredQuestions: function() {
@@ -54,13 +54,15 @@
     },
 
     getWatchedQuestions: function() {
-      if(this.watchedQuestions) { return this.watchedQuestions; }
+      if (this.watchedQuestions) {
+        return this.watchedQuestions;
+      }
 
       this.watchedQuestions = $.unique(this.interactiveQuestions.concat(this.getRequiredQuestions()));
       return this.watchedQuestions;
     },
 
-    init: function(){
+    init: function() {
       var self = this;
       window.DateField.init();
 
@@ -85,7 +87,7 @@
       var state = this.state;
 
       this.getWatchedQuestions().forEach(function(questionNumber) {
-        state["question" + questionNumber] = { show: true };
+        state["question" + questionNumber] = {show: true};
       });
     },
 
@@ -112,15 +114,15 @@
       });
 
       switch (state.question8A2.value) {
-      case "Agent":
-        state.question8C.show = true;
-        break;
-      case "Organization":
-        state.question9A.show = true;
-        state.question9B.show = (state.question9A.value === "No");
-        break;
-      case "Other":
-        state.question8A3.show = true;
+        case "Agent":
+          state.question8C.show = true;
+          break;
+        case "Organization":
+          state.question9A.show = true;
+          state.question9B.show = (state.question9A.value === "No");
+          break;
+        case "Other":
+          state.question8A3.show = true;
       }
 
       state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
@@ -140,10 +142,10 @@
       var questionState = this.state["question" + questionNumber];
       var isValid = !!questionState.value || !questionState.show;
 
-      if(isValid) {
+      if (isValid) {
         questionState.error = null;
       }
-      else if(showError) {
+      else if (showError) {
         questionState.error = this.requiredQuestions[questionNumber];
       }
 
@@ -153,7 +155,7 @@
     validateSubmit: function() {
       var self = this;
 
-      var invalidQuestionNumbers = $.grep(this.getRequiredQuestions(), function(questionNumber, index){
+      var invalidQuestionNumbers = this.getRequiredQuestions().filter(function(questionNumber) {
         return !self.validateRequiredQuestion(questionNumber, true);
       });
 
@@ -189,15 +191,11 @@
       this.render();
 
       // invalid, focus first invalid field
-      if ( invalidQuestionNumbers.length > 0 ) {
+      if (invalidQuestionNumbers.length > 0) {
         $question(invalidQuestionNumbers[0]).find("input, textarea, select").first().focus();
-        return false;
       }
 
-      // valid
-      else {
-        return true;
-      }
+      return invalidQuestionNumbers.length === 0;
     },
 
     toggleQuestion: function(questionNumber) {
