@@ -18,7 +18,7 @@ class Appeal
   attr_accessor :vacols_id, :vbms_id
   attr_accessor :veteran_name, :appellant_name, :appellant_relationship, :vso_name
   attr_accessor :insurance_loan_number # => case_record.bfpdnum
-  attr_accessor :nod_date, :soc_date, :form9_date
+  attr_accessor :nod_date, :soc_date, :form9_date, :certification_date
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -54,6 +54,10 @@ class Appeal
 
   def ssoc_all_match?
     ssoc_dates.all? { |date| ssoc_match?(date) }
+  end
+
+  def certified?
+    certification_date != nil
   end
 
   def ssoc_match?(date)

@@ -79,4 +79,14 @@ describe Appeal do
       expect(subject.vacols_id).to eq("123C")
     end
   end
+
+  context "#certified?" do
+    subject { Appeal.new(certification_date: 2.days.ago) }
+
+    it "reads certification date off the appeal" do
+      expect(subject.certified?).to be_truthy
+      subject.certification_date = nil
+      expect(subject.certified?).to be_falsy
+    end
+  end
 end
