@@ -41,6 +41,17 @@ RSpec.feature "Start Certification" do
     expect(find("#ssoc-2-match")).to have_content "No Matching Document"
   end
 
+  scenario "Clicking the refresh button" do
+    User.authenticate!
+
+    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_not_ready }
+    visit "certifications/new/1234C"
+
+    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_ready_to_certify }
+    click_on "Refresh Page"
+    expect(page).to have_content "Complete Electronic Form 8"
+  end
+
   scenario "Starting a certifications with all documents matching" do
     User.authenticate!
 
