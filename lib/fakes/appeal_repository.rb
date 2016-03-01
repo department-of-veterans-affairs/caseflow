@@ -44,6 +44,23 @@ class Fakes::AppealRepository
     )
   end
 
+  def self.appeal_already_certified
+    Appeal.new(
+      type: :original,
+      file_type: :vbms,
+      vbms_id: "VBMS-ID",
+      vso_name: "Military Order of the Purple Heart",
+      nod_date: 3.days.ago,
+      soc_date: Date.new(1987, 9, 6),
+      certification_date: 1.day.ago,
+      form9_date: 1.day.ago,
+      documents: [nod_document, soc_document, form9_document],
+      veteran_name: "Davy Crockett",
+      appellant_name: "Susie Crockett",
+      appellant_relationship: "Daughter"
+    )
+  end
+
   def self.nod_document
     Document.new(type: :nod, received_at: 3.days.ago)
   end
@@ -60,7 +77,8 @@ class Fakes::AppealRepository
     unless Rails.env.test?
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
-        "456C" => Fakes::AppealRepository.appeal_not_ready
+        "456C" => Fakes::AppealRepository.appeal_not_ready,
+        "789C" => Fakes::AppealRepository.appeal_already_certified
       }
     end
   end
