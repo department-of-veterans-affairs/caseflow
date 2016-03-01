@@ -25,6 +25,10 @@ class CertificationsController < ApplicationController
     redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
+  def cancel
+    render layout: "application"
+  end
+
   private
 
   def form8

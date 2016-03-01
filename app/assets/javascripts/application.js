@@ -19,8 +19,8 @@
 
 $(function() {
   window.Dropdown.bind();
+  window.Modal.bind();
 });
-
 /* Copies appeals ID to clipboard */
 $(function () {
   "use strict";
