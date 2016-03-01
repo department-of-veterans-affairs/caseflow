@@ -4,7 +4,7 @@ rvm:
 
 branches:
     only:
-        - master
+      - master
 
 # Install PhantomJS 2.0 from source binary, remove once TravisCI environment has PhantomJS 2.0 installed
 # see https://github.com/travis-ci/travis-ci/issues/3225 for more details
@@ -21,7 +21,7 @@ before_script:
 script:
   - bundle exec rake
 
-bundler_args: "--without development, production"
+bundler_args: "--without development production"
 cache:
   - bundler
 
