@@ -20,8 +20,10 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def setup_fakes
-    Appeal.repository = Fakes::AppealRepository
-    Fakes::AppealRepository.seed!
+    unless Rails.env.production? || Rails.env.staging?
+      Appeal.repository = Fakes::AppealRepository
+      Fakes::AppealRepository.seed!
+    end
   end
 
   def check_whats_new_cookie

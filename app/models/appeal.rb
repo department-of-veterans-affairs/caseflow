@@ -1,24 +1,19 @@
 class Appeal
   include ActiveModel::Model
 
-  TYPE_NAMES = {
-    original: "Original",
-    supplemental: "Supplemental",
-    post_remand: "Post Remand",
-    reconsideration: "Reconsideration",
-    vacate: "Vacate",
-    de_novo: "De Novo",
-    court_remand: "Court Remand",
-    designation_of_record: "Designation of Record",
-    clear_and_unmistakable_error: "Clear and Unmistakable Error"
-  }.freeze
-
   FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
 
   attr_accessor :vacols_id, :vbms_id
-  attr_accessor :veteran_name, :appellant_name, :appellant_relationship, :vso_name
-  attr_accessor :insurance_loan_number # => case_record.bfpdnum
-  attr_accessor :nod_date, :soc_date, :form9_date, :certification_date
+  attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  attr_accessor :appellant_name, :appellant_relationship, :vso_name
+  attr_accessor :insurance_loan_number
+  attr_accessor :certification_date
+  attr_accessor :nod_date, :soc_date, :form9_date
+  attr_accessor :type
+
+  def veteran_name
+    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(', ')
+  end
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -28,11 +23,6 @@ class Appeal
   attr_writer :documents
   def documents
     @documents ||= []
-  end
-
-  attr_accessor :type
-  def type_name
-    TYPE_NAMES[type]
   end
 
   attr_accessor :file_type
@@ -78,7 +68,7 @@ class Appeal
     delegate :certify, to: :repository
 
     def find(vacols_id)
-      unless (appeal = @repository.find(vacols_id))
+      unless (appeal = repository.find(vacols_id))
         fail ActiveRecord::RecordNotFound
       end
 
@@ -89,25 +79,25 @@ class Appeal
     def repository
       @repository ||= AppealRepository
     end
+
+    def from_records(case_record:,folder_record:,correspondent_record:)
+      new(
+        vbms_id: case_record.bfcorlid,
+        type: Records::Case::TYPES[case_record.bfac],
+        file_type: folder_record.file_type,
+        vso_name: Records::Case::VSOS[case_record.bfso][:full_name],
+        veteran_first_name: correspondent_record.snamef,
+        veteran_middle_initial: correspondent_record.snamemi,
+        veteran_last_name: correspondent_record.snamel,
+        nod_date: case_record.bfdnod,
+        soc_date: case_record.bfdsoc,
+        form9_date: case_record.bfd19
+      )
+    end
   end
 
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
-  end
-end
-
-class AppealRepository
-  def self.find(_vacols_id, _args = {})
-  end
-
-  def self.cerify(_appeal)
-    # Set certification flags on VACOLS record
-    # upload Form 8 to VBMS
-
-    #  @kase.bfdcertool = Time.now
-    #  @kase.bf41stat = Date.strptime(params[:certification_date], Date::DATE_FORMATS[:va_date])
-    #  @kase.save
-    #  @kase.efolder_case.upload_form8(corr.snamef, corr.snamemi, corr.snamel, params[:file_name])
   end
 end

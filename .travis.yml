@@ -18,11 +18,10 @@ before_install:
 before_script:
   - sudo apt-get install pdftk
 
-
 script:
   - bundle exec rake
 
-bundler_args: "--without development"
+bundler_args: "--without development, production"
 cache:
   - bundler
 

@@ -26,13 +26,18 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 2.16.0"
 
-
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
 # PDF Tools
 gem 'pdf-forms'
 gem 'pdfjs_viewer-rails'
+
+group :production, :staging do
+  # Oracle DB
+  gem 'activerecord-oracle_enhanced-adapter'
+  gem 'ruby-oci8'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -66,7 +71,7 @@ group :development do
   gem 'web-console', '~> 2.0', platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring', platforms: :ruby
+  # gem 'spring', platforms: :ruby
   
   # Include the IANA Time Zone Database on Windows, where Windows doens't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
