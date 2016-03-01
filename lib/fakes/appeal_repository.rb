@@ -14,15 +14,16 @@ class Fakes::AppealRepository
 
   def self.appeal_ready_to_certify
     Appeal.new(
-      type: :original,
-      file_type: :vbms,
+      type: "Original",
+      file_type: "VBMS",
       vbms_id: "VBMS-ID",
       vso_name: "Military Order of the Purple Heart",
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
       documents: [nod_document, soc_document, form9_document],
-      veteran_name: "Davy Crockett",
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
       appellant_name: "Susie Crockett",
       appellant_relationship: "Daughter"
     )
@@ -30,15 +31,16 @@ class Fakes::AppealRepository
 
   def self.appeal_not_ready
     Appeal.new(
-      type: :original,
-      file_type: :vbms,
+      type: "Original",
+      file_type: "VBMS",
       vso_name: "Military Order of the Purple Heart",
       nod_date: 1.day.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
       ssoc_dates: [6.days.from_now, 7.days.from_now],
       documents: [nod_document, soc_document],
-      veteran_name: "Davy Crockett",
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
       appellant_name: "Susie Crockett",
       appellant_relationship: "Daughter"
     )

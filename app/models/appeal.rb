@@ -1,8 +1,6 @@
 class Appeal
   include ActiveModel::Model
 
-  FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
-
   attr_accessor :vacols_id, :vbms_id
   attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   attr_accessor :appellant_name, :appellant_relationship, :vso_name
@@ -12,7 +10,7 @@ class Appeal
   attr_accessor :type
 
   def veteran_name
-    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(', ')
+    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
 
   attr_writer :ssoc_dates
@@ -80,7 +78,7 @@ class Appeal
       @repository ||= AppealRepository
     end
 
-    def from_records(case_record:,folder_record:,correspondent_record:)
+    def from_records(case_record:, folder_record:, correspondent_record:)
       new(
         vbms_id: case_record.bfcorlid,
         type: Records::Case::TYPES[case_record.bfac],
