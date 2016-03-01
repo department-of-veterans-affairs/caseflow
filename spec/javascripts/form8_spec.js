@@ -62,7 +62,7 @@ describe("Form8", function() {
       });
 
       it("returns false", function() {
-        expect(Form8.validateSubmit()).to.be.false;
+        expect(Form8.validateSubmit()).to.not.be.empty;
       });
 
       it("sets error message on question", function() {
@@ -78,7 +78,7 @@ describe("Form8", function() {
       });
 
       it("returns true", function() {
-        expect(Form8.validateSubmit()).to.be.true;
+        expect(Form8.validateSubmit()).to.be.empty;
       });
     });
   });
