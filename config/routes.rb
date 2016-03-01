@@ -16,9 +16,8 @@ Rails.application.routes.draw do
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
     post 'confirm', on: :member
+    get 'cancel', on: :member
   end
-
-  get "certifications/cancel/:vacols_id" => "certifications#cancel"
 
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"

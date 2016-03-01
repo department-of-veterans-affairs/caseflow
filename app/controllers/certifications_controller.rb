@@ -26,7 +26,7 @@ class CertificationsController < ApplicationController
   end
 
   def cancel
-    render "cancel", layout: "application"
+    render layout: "application"
   end
 
   private
