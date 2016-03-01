@@ -150,12 +150,14 @@
       return isValid;
     },
 
-    validateSubmit: function() {
+    getInvalidQuestionNumbers: function() {
       var self = this;
 
-      return this.getRequiredQuestions().reduce(function(result, questionNumber) {
-        return self.validateRequiredQuestion(questionNumber, true) && result;
-      }, true);
+      var invalidQuestionNumbers = this.getRequiredQuestions().filter(function(questionNumber){
+        return !self.validateRequiredQuestion(questionNumber, true);
+      });
+
+      return invalidQuestionNumbers;
     },
 
     render: function() {
@@ -183,10 +185,15 @@
 
     onSubmit: function() {
       this.fetchState();
-      var result = this.validateSubmit();
+      var invalidQuestionNumbers = this.getInvalidQuestionNumbers();
       this.render();
 
-      return result;
+      // invalid, focus first invalid field
+      if (invalidQuestionNumbers.length > 0) {
+        $question(invalidQuestionNumbers[0]).find("input, textarea, select").first().focus();
+      }
+
+      return invalidQuestionNumbers.length === 0;
     },
 
     toggleQuestion: function(questionNumber) {

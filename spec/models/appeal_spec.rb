@@ -1,5 +1,5 @@
 describe Appeal do
-  context "#ready_to_certify?" do
+  context "#documents_match?" do
     let(:nod_document) { Document.new(type: :nod, received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: :soc, received_at: 2.days.ago) }
     let(:form9_document) { Document.new(type: :form9, received_at: 1.day.ago) }
@@ -13,7 +13,7 @@ describe Appeal do
       )
     end
 
-    subject { appeal.ready_to_certify? }
+    subject { appeal.documents_match? }
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
       it { is_expected.to be_truthy }
@@ -77,6 +77,16 @@ describe Appeal do
 
     it "sets the vacols_id" do
       expect(subject.vacols_id).to eq("123C")
+    end
+  end
+
+  context "#certified?" do
+    subject { Appeal.new(certification_date: 2.days.ago) }
+
+    it "reads certification date off the appeal" do
+      expect(subject.certified?).to be_truthy
+      subject.certification_date = nil
+      expect(subject.certified?).to be_falsy
     end
   end
 end
