@@ -14,10 +14,28 @@ class SessionsController < ApplicationController
     redirect_to login_path
   end
 
+  def ssoi_saml_callback
+    # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
+    auth_hash = request.env["omniauth.auth"]
+
+    if current_user.authenticate_ssoi(auth_hash)
+      # TODO: CF-classic stored caseId in session for this; would be better to include it in the callback URL
+      # redirect_to_case
+    else
+      ssoi_saml_failure(message: "Failed to authenticate")
+    end
+  end
+
+  def ssoi_saml_failure(message = params[:message])
+
+    # TODO: render message in a page
+    render message
+  end
+
   private
 
   def authentication_params
-    { regional_office: params["regional_office"], password: params["password"] }
+    {regional_office: params["regional_office"], password: params["password"]}
   end
 
   def ssoi_url
