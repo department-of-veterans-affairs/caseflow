@@ -34,6 +34,9 @@ gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_st
 gem 'pdf-forms'
 gem 'pdfjs_viewer-rails'
 
+# SSOI
+gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/omniauth-saml-va'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: :ruby
