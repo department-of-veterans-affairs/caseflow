@@ -1,6 +1,6 @@
 class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def text_field(attribute, options = {})
-    options[:maxwidth] ||= 45
+    options[:maxlength] ||= 45
 
     wrapped_text_field(attribute, options, super(attribute, trim_options(options)))
   end
@@ -106,7 +106,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def trim_options(options)
-    options.except(:question_number, :label, :secondary)
+    options.except(:question_number, :label, :secondary, :part)
   end
 
   def error_container
