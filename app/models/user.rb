@@ -67,17 +67,3 @@ class User
     end
   end
 end
-
-class AuthenticationService
-  def self.authenticate_vacols(_regional_office, _passsword)
-    true
-  end
-
-  def self.ssoi_authentication_enabled?
-    false
-  end
-
-  def self.ssoi_username
-    "TESTMODE"
-  end
-end
