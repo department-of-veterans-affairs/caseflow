@@ -78,7 +78,7 @@ class Fakes::AppealRepository
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_not_ready,
-        "789C" => Fakes::AppealRepository.appeal_already_certified,
+        "789C" => Fakes::AppealRepository.appeal_already_certified
       }
     end
   end
