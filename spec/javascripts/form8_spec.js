@@ -49,7 +49,7 @@ describe("Form8", function() {
     });
   });
 
-  context(".validateSubmit", function() {
+  context(".getInvalidQuestionNumbers", function() {
     beforeEach(function() {
       Form8.requiredQuestions  = {"5B": {message: "5B error"}, "6B": {message: "6B error"}};
       Form8.initState();
@@ -62,11 +62,11 @@ describe("Form8", function() {
       });
 
       it("returns false", function() {
-        expect(Form8.validateSubmit()).to.not.be.empty;
+        expect(Form8.getInvalidQuestionNumbers()).to.not.be.empty;
       });
 
       it("sets error message on question", function() {
-        Form8.validateSubmit();
+        Form8.getInvalidQuestionNumbers();
         expect(Form8.state.question5B.error.message).to.eq("5B error");
       });
     });
@@ -78,7 +78,7 @@ describe("Form8", function() {
       });
 
       it("returns true", function() {
-        expect(Form8.validateSubmit()).to.be.empty;
+        expect(Form8.getInvalidQuestionNumbers()).to.be.empty;
       });
     });
   });

@@ -150,7 +150,7 @@
       return isValid;
     },
 
-    validateSubmit: function() {
+    getInvalidQuestionNumbers: function() {
       var self = this;
 
       var invalidQuestionNumbers = this.getRequiredQuestions().filter(function(questionNumber){
@@ -185,7 +185,7 @@
 
     onSubmit: function() {
       this.fetchState();
-      var invalidQuestionNumbers = this.validateSubmit();
+      var invalidQuestionNumbers = this.getInvalidQuestionNumbers();
       this.render();
 
       // invalid, focus first invalid field
