@@ -153,9 +153,11 @@
     validateSubmit: function() {
       var self = this;
 
-      return this.getRequiredQuestions().reduce(function(result, questionNumber) {
-        return self.validateRequiredQuestion(questionNumber, true) && result;
-      }, true);
+      var invalidQuestionNumbers = $.grep(this.getRequiredQuestions(), function(questionNumber, index){
+        return !self.validateRequiredQuestion(questionNumber, true);
+      });
+
+      return invalidQuestionNumbers;
     },
 
     render: function() {
@@ -183,10 +185,19 @@
 
     onSubmit: function() {
       this.fetchState();
-      var result = this.validateSubmit();
+      var invalidQuestionNumbers = this.validateSubmit();
       this.render();
 
-      return result;
+      // invalid, focus first invalid field
+      if ( invalidQuestionNumbers.length > 0 ) {
+        $question(invalidQuestionNumbers[0]).find("input, textarea, select").first().focus();
+        return false;
+      }
+
+      // valid
+      else {
+        return true;
+      }
     },
 
     toggleQuestion: function(questionNumber) {
