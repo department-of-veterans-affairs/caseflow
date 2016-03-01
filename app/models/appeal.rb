@@ -65,7 +65,7 @@ class Appeal
     ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
   end
 
-  def ready_to_certify?
+  def documents_match?
     nod_match? && soc_match? && form9_match? && ssoc_all_match?
   end
 
