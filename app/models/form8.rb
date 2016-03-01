@@ -88,6 +88,7 @@ class Form8
       @pdf_service ||= Form8PdfService
     end
 
+    # rubocop:disable Metrics/AbcSize
     def new_from_appeal(appeal)
       new(
         vacols_id: appeal.vacols_id,
@@ -100,8 +101,12 @@ class Form8
         increased_rating_nod_date: appeal.nod_date,
         other_nod_date: appeal.nod_date,
         soc_date: appeal.soc_date,
-        certifying_office: "PLACEHOLDER",
-        certifying_username: "PLACEHOLDER",
+        representative_name: appeal.representative_name,
+        representative_type: appeal.representative_type,
+        hearing_requested: appeal.hearing_type ? "Yes" : "No",
+        ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
+        certifying_office: appeal.regional_office_name,
+        certifying_username: appeal.regional_office_key,
         certification_date: Time.zone.now
       )
     end

@@ -33,9 +33,9 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_authentication
-    unless current_user.authenticated?
-      current_user.return_to = request.original_url
-      redirect_to login_path
-    end
+    return true if current_user.authenticated?
+
+    current_user.return_to = request.original_url
+    redirect_to login_path
   end
 end

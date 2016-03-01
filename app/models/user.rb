@@ -32,9 +32,9 @@ class User
   end
 
   def authenticate(regional_office:, password:)
-    if User.authenticate_vacols(regional_office, password)
-      @session[:regional_office] = regional_office
-    end
+    return false unless User.authenticate_vacols(regional_office, password)
+
+    @session[:regional_office] = regional_office
   end
 
   def authenticate_ssoi(auth_hash)

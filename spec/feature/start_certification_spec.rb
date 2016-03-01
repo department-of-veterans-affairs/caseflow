@@ -14,7 +14,7 @@ RSpec.feature "Start Certification" do
     appeal = Appeal.new(
       type: "Original",
       file_type: "VVA",
-      vso_name: "The American Legion",
+      representative: "The American Legion",
       nod_date: 1.day.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
@@ -60,7 +60,7 @@ RSpec.feature "Start Certification" do
       type: "Original",
       file_type: "VBMS",
       vbms_id: "VBMS-ID",
-      vso_name: "Military Order of the Purple Heart",
+      representative: "Military Order of the Purple Heart",
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
@@ -72,7 +72,8 @@ RSpec.feature "Start Certification" do
       veteran_first_name: "Davy",
       veteran_last_name: "Crockett",
       veteran_middle_initial: "X",
-      appellant_name: "Susie Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
       appellant_relationship: "Daughter"
     )
     Fakes::AppealRepository.records = { "5678C" => appeal }
@@ -81,7 +82,7 @@ RSpec.feature "Start Certification" do
 
     expect(page).to have_content "Complete Electronic Form 8"
 
-    expect(page).to have_field "Name of Appellant", with: "Susie Crockett"
+    expect(page).to have_field "Name of Appellant", with: "Susie, Crockett"
     expect(page).to have_field "Relationship to Veteran", with: "Daughter"
     expect(page).to have_field "File No.", with: "VBMS-ID"
     expect(page).to have_field "Full Veteran Name", with: "Crockett, Davy, X"

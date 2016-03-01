@@ -31,7 +31,8 @@ describe Form8 do
       Appeal.new(
         vacols_id: "VACOLS-ID",
         vbms_id: "VBMS-ID",
-        appellant_name: "Micah Bobby",
+        appellant_first_name: "Micah",
+        appellant_last_name: "Bobby",
         appellant_relationship: "Brother",
         veteran_first_name: "Shane",
         veteran_last_name: "Bobby",
@@ -47,7 +48,7 @@ describe Form8 do
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
-        appellant_name: "Micah Bobby",
+        appellant_name: "Micah, Bobby",
         appellant_relationship: "Brother",
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane",

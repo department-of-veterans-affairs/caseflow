@@ -3,15 +3,16 @@ class Appeal
 
   attr_accessor :vacols_id, :vbms_id
   attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  attr_accessor :appellant_name, :appellant_relationship, :vso_name
+  attr_accessor :appellant_first_name, :appellant_middle_name, :appellant_last_name
+  attr_accessor :appellant_name, :appellant_relationship
+  attr_accessor :representative
+  attr_accessor :hearing_type
+  attr_accessor :regional_office_key
   attr_accessor :insurance_loan_number
   attr_accessor :certification_date
   attr_accessor :nod_date, :soc_date, :form9_date
   attr_accessor :type
-
-  def veteran_name
-    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
-  end
+  attr_accessor :file_type
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -23,9 +24,37 @@ class Appeal
     @documents ||= []
   end
 
-  attr_accessor :file_type
-  def file_type_name
-    FILE_TYPE_NAMES[file_type]
+  def veteran_name
+    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
+  end
+
+  def appellant_name
+    if appellant_first_name
+      [appellant_first_name, appellant_middle_name, appellant_last_name].select(&:present?).join(", ")
+    end
+  end
+
+  def representative_name
+    representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
+  end
+
+  def representative_type
+    case representative
+    when "None", "One Time Representative"
+      "Other"
+    when "Agent", "Attorney"
+      representative
+    else
+      "Organization"
+    end
+  end
+
+  def regional_office
+    Records::Case::ROS[regional_office_key] || {}
+  end
+
+  def regional_office_name
+    "#{regional_office[:city]}, #{regional_office[:state]}"
   end
 
   def nod_match?
@@ -78,18 +107,47 @@ class Appeal
       @repository ||= AppealRepository
     end
 
+    def ssoc_dates_from(case_record)
+      [
+        case_record.bfssoc1,
+        case_record.bfssoc2,
+        case_record.bfssoc3,
+        case_record.bfssoc4,
+        case_record.bfssoc5
+      ].reject(&:nil?)
+    end
+
+    def folder_type_from(folder_record)
+      if %w(Y 1 0).include?(folder_record.tivbms)
+        "VBMS"
+      elsif folder_record.tisubj == "Y"
+        "VVA"
+      else
+        "Paper"
+      end
+    end
+
+    # rubocop:disable Metrics/AbcSize
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
         vbms_id: case_record.bfcorlid,
         type: Records::Case::TYPES[case_record.bfac],
-        file_type: folder_record.file_type,
-        vso_name: Records::Case::VSOS[case_record.bfso][:full_name],
+        file_type: folder_type_from(folder_record),
+        representative: Records::Case::REPRESENTATIVES[case_record.bfso][:full_name],
         veteran_first_name: correspondent_record.snamef,
         veteran_middle_initial: correspondent_record.snamemi,
         veteran_last_name: correspondent_record.snamel,
+        appellant_first_name: correspondent_record.sspare1,
+        appellant_middle_name: correspondent_record.sspare2,
+        appellant_last_name: correspondent_record.sspare3,
+        appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
+        insurance_loan_number: case_record.bfpdnum,
         nod_date: case_record.bfdnod,
         soc_date: case_record.bfdsoc,
-        form9_date: case_record.bfd19
+        form9_date: case_record.bfd19,
+        ssoc_dates: ssoc_dates_from(case_record),
+        hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
+        regional_office_key: case_record.bfregoff
       )
     end
   end
