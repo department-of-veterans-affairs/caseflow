@@ -106,7 +106,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def trim_options(options)
-    options.except(:question_number, :label, :secondary)
+    options.except(:question_number, :label, :secondary, :part)
   end
 
   def error_container
