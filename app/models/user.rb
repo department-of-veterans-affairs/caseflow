@@ -24,9 +24,9 @@ class User
     if authenticated?
       "#{username} (#{regional_office})"
 
-    # just ssoi, not yet vacols authenticated
+    # just SSOI, not yet vacols authenticated
     elsif ssoi_authenticated?
-      "#{username}"
+      username.to_s
 
     # not authenticated at all
     else
