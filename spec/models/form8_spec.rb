@@ -36,7 +36,7 @@ describe Form8 do
     end
   end
 
-  context ".new_from_appeal" do
+  context ".from_appeal" do
     before do
       Timecop.freeze
     end
@@ -62,7 +62,7 @@ describe Form8 do
     end
 
     it "creates new form8 with values copied over correctly" do
-      form8 = Form8.new_from_appeal(appeal)
+      form8 = Form8.from_appeal(appeal)
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",

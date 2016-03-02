@@ -13,6 +13,7 @@ class Appeal
   attr_accessor :nod_date, :soc_date, :form9_date
   attr_accessor :type
   attr_accessor :file_type
+  attr_accessor :case_record
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -128,6 +129,7 @@ class Appeal
     end
 
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
         vbms_id: case_record.bfcorlid,
@@ -147,7 +149,9 @@ class Appeal
         form9_date: case_record.bfd19,
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
-        regional_office_key: case_record.bfregoff
+        regional_office_key: case_record.bfregoff,
+        certification_date: case_record.bfdcertool,
+        case_record: case_record
       )
     end
   end

@@ -5,7 +5,7 @@ class CertificationsController < ApplicationController
   def new
     return render "already_certified" if appeal.certified?
     return render "mismatched_documents" unless appeal.documents_match?
-    @form8 = Form8.new_from_appeal(appeal)
+    @form8 = Form8.from_appeal(appeal)
   end
 
   def create
