@@ -20,7 +20,7 @@ Style/ClassAndModuleChildren:
   Enabled: false
 
 Metrics/LineLength:
-  Max: 100
+  Max: 120
 
 Rails:
   Enabled: true
