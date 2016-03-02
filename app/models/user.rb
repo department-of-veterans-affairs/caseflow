@@ -20,10 +20,17 @@ class User
   end
 
   def display_name
-    if username
+    # fully authenticated
+    if authenticated?
       "#{username} (#{regional_office})"
+
+    # just ssoi, not yet vacols authenticated
+    elsif ssoi_authenticated?
+      "#{username}"
+
+    # not authenticated at all
     else
-      regional_office.to_s
+      nil
     end
   end
 
@@ -32,20 +39,12 @@ class User
   end
 
   def ssoi_authenticated?
-    # authenticated when disabled
-    !User.ssoi_authentication_enabled? or !username.blank?
+    !username.blank?
   end
 
   def authenticate(regional_office:, password:)
     if User.authenticate_vacols(regional_office, password)
       @session[:regional_office] = regional_office
-
-      # do dummy ssoi init
-      if not User.ssoi_authentication_enabled?
-        ssoi_attributes.keys.each do |key|
-          @session[key] = User.authentication_service.public_send("ssoi_#{key}")
-        end
-      end
     end
   end
 
@@ -60,9 +59,9 @@ class User
   end
 
   def unauthenticate
-    @session[:regional_office] = nil
+    @session.delete(:regional_office)
     ssoi_attributes.keys.each do |key|
-      @session[:key] = nil
+      @session.delete(key)
     end
   end
 
@@ -101,23 +100,5 @@ end
 class AuthenticationService
   def self.authenticate_vacols(_regional_office, _passsword)
     true
-  end
-
-  def self.ssoi_authentication_enabled?
-    has_xml = ENV.has_key?('SSOI_SAML_XML_LOCATION')
-    has_key = ENV.has_key?('SSOI_SAML_PRIVATE_KEY_LOCATION')
-    has_xml && has_key
-  end
-
-  def self.ssoi_username
-    "TESTMODE"
-  end
-
-  def self.ssoi_first_name
-    "Joe"
-  end
-
-  def self.ssoi_last_name
-    "Tester"
   end
 end

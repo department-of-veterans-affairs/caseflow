@@ -53,8 +53,6 @@ User.class.prepend(StubbableUser)
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
-Fakes::AuthenticationService.ssoi_enabled = false
-Fakes::AuthenticationService.ssoi_username = "TEST"
 
 RSpec.configure do |config|
   config.before(:all) { User.unauthenticate! }
