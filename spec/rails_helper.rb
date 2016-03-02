@@ -29,6 +29,7 @@ require_relative "support/fake_pdf_service"
 
 require "capybara"
 Capybara.default_driver = :sniffybara
+Sniffybara::Driver.path_exclusions << /vasaml/
 
 # Convenience methods for stubbing current user
 module StubbableUser
@@ -37,7 +38,7 @@ module StubbableUser
   end
 
   def authenticate!
-    self.stub = User.new(session: { username: "DSUSER", regional_office: "RO13" })
+    self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
   end
 
   def unauthenticate!

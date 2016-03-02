@@ -4,9 +4,8 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if current_user.authenticate(authentication_params)
-      redirect_to current_user.return_to || root_path
-    end
+    return render "new" unless current_user.authenticate(authentication_params)
+    redirect_to current_user.return_to || root_path
   end
 
   def destroy

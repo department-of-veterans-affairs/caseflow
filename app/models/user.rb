@@ -32,6 +32,10 @@ class User
     # else, not authenticated at all
   end
 
+  def can_access?(appeal)
+    regional_office == appeal.regional_office_key
+  end
+
   def authenticated?
     !regional_office.blank? && ssoi_authenticated?
   end
@@ -41,9 +45,9 @@ class User
   end
 
   def authenticate(regional_office:, password:)
-    if User.authenticate_vacols(regional_office, password)
-      @session[:regional_office] = regional_office
-    end
+    return false unless User.authenticate_vacols(regional_office, password)
+
+    @session[:regional_office] = regional_office
   end
 
   def authenticate_ssoi(auth_hash)
@@ -92,11 +96,5 @@ class User
     def ssoi_authentication_url
       "/auth/samlva"
     end
-  end
-end
-
-class AuthenticationService
-  def self.authenticate_vacols(_regional_office, _passsword)
-    true
   end
 end

@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
+  def unauthorized
+    render status: 403
+  end
+
   private
 
   def render_404
@@ -20,8 +24,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def setup_fakes
-    Appeal.repository = Fakes::AppealRepository
-    Fakes::AppealRepository.seed!
+    Fakes::Initializer.development! if Rails.env.development?
   end
 
   def check_whats_new_cookie
@@ -31,9 +34,9 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_authentication
-    unless current_user.authenticated?
-      current_user.return_to = request.original_url
-      redirect_to login_path
-    end
+    return true if current_user.authenticated?
+
+    current_user.return_to = request.original_url
+    redirect_to login_path
   end
 end

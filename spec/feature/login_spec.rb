@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Login" do
-
   before do
     Fakes::AppealRepository.records = {
         "1234C" => Fakes::AppealRepository.appeal_ready_to_certify

@@ -27,6 +27,23 @@ describe User do
     end
   end
 
+  context "#can_access?" do
+    before { session[:regional_office] = "RO1" }
+    let(:appeal) { Appeal.new }
+
+    subject { user.can_access?(appeal) }
+
+    context "when appeal ro key matches user's ro" do
+      before { appeal.regional_office_key = "RO1" }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when appeal ro key doesn't match user's ro" do
+      before { appeal.regional_office_key = "RO2" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#authenticated?" do
     subject { user.authenticated? }
 
