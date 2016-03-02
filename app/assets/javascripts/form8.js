@@ -188,9 +188,12 @@
       var invalidQuestionNumbers = this.getInvalidQuestionNumbers();
       this.render();
 
-      // invalid, focus first invalid field
       if (invalidQuestionNumbers.length > 0) {
+        // invalid, focus first invalid field
         $question(invalidQuestionNumbers[0]).find("input, textarea, select").first().focus();
+
+        // remove loading style
+        $(".cf-form").removeClass("cf-is-loading");
       }
 
       return invalidQuestionNumbers.length === 0;
