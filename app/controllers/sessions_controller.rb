@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
     redirect_to login_path
   end
 
-  protect_from_forgery with: :exception, except: %w/ssoi_saml_callback/
+  protect_from_forgery with: :exception, except: %w(ssoi_saml_callback)
 
   def ssoi_saml_callback
     # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
@@ -28,15 +28,14 @@ class SessionsController < ApplicationController
   end
 
   def ssoi_saml_failure(message = params[:message])
-
     # TODO: render message in a page
-    render :text => "failure #{message}"
+    render text: "failure #{message}"
   end
 
   private
 
   def authentication_params
-    {regional_office: params["regional_office"], password: params["password"]}
+    { regional_office: params["regional_office"], password: params["password"] }
   end
 
   def ssoi_url

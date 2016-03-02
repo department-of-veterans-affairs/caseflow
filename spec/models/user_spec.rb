@@ -14,10 +14,10 @@ describe User do
     subject { user.display_name }
 
     context "when username and RO are both set" do
-      before {
+      before do
         session[:username] = "Shaner"
         session[:regional_office] = "RO77"
-      }
+      end
       it { is_expected.to eq("Shaner (RO77)") }
     end
 
@@ -70,7 +70,7 @@ describe User do
     subject { user.authenticate(regional_office: "RO21", password: password) }
     before do
       Fakes::AuthenticationService.vacols_regional_offices = {
-          "RO21" => "pinkpowerranger"}
+        "RO21" => "pinkpowerranger" }
     end
 
     context "when vacols authentication passes" do
@@ -112,7 +112,7 @@ describe User do
     end
 
     it "succeeds if uid is present" do
-      result = user.authenticate_ssoi({"uid"=> "xyz@va.gov"})
+      result = user.authenticate_ssoi("uid" => "xyz@va.gov")
       expect(result).to be_truthy
       expect(user.username).to eq("xyz@va.gov")
     end

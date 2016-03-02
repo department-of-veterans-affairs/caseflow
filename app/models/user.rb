@@ -27,11 +27,9 @@ class User
     # just SSOI, not yet vacols authenticated
     elsif ssoi_authenticated?
       username.to_s
-
-    # not authenticated at all
-    else
-      nil
     end
+
+    # else, not authenticated at all
   end
 
   def authenticated?
@@ -49,7 +47,7 @@ class User
   end
 
   def authenticate_ssoi(auth_hash)
-    return false if not auth_hash.has_key? "uid"
+    return false unless auth_hash.key? "uid"
 
     ssoi_attributes.each do |key, value|
       @session[key] = auth_hash[value] if auth_hash[value]
@@ -76,7 +74,7 @@ class User
   private
 
   def ssoi_attributes
-    {:username => "uid", :first_name => "first_name", :last_name => "last_name"}
+    { username: "uid", first_name: "first_name", last_name: "last_name" }
   end
 
   class << self
