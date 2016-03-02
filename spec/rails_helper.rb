@@ -37,7 +37,7 @@ module StubbableUser
   end
 
   def authenticate!
-    self.stub = User.new(session: { username: "DSUSER", regional_office: "RO13" })
+    self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
   end
 
   def unauthenticate!
@@ -54,7 +54,7 @@ User.class.prepend(StubbableUser)
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
 Fakes::AuthenticationService.ssoi_enabled = false
-Fakes::AuthenticationService.ssoi_username = "TEST"
+Fakes::AuthenticationService.ssoi_username = "DSUSER"
 
 RSpec.configure do |config|
   config.before(:all) { User.unauthenticate! }

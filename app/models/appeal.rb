@@ -1,24 +1,18 @@
 class Appeal
   include ActiveModel::Model
 
-  TYPE_NAMES = {
-    original: "Original",
-    supplemental: "Supplemental",
-    post_remand: "Post Remand",
-    reconsideration: "Reconsideration",
-    vacate: "Vacate",
-    de_novo: "De Novo",
-    court_remand: "Court Remand",
-    designation_of_record: "Designation of Record",
-    clear_and_unmistakable_error: "Clear and Unmistakable Error"
-  }.freeze
-
-  FILE_TYPE_NAMES = { vbms: "VBMS", vva: "VVA", paper: "Paper" }.freeze
-
   attr_accessor :vacols_id, :vbms_id
-  attr_accessor :veteran_name, :appellant_name, :appellant_relationship, :vso_name
-  attr_accessor :insurance_loan_number # => case_record.bfpdnum
-  attr_accessor :nod_date, :soc_date, :form9_date, :certification_date
+  attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  attr_accessor :appellant_first_name, :appellant_middle_name, :appellant_last_name
+  attr_accessor :appellant_name, :appellant_relationship
+  attr_accessor :representative
+  attr_accessor :hearing_type
+  attr_accessor :regional_office_key
+  attr_accessor :insurance_loan_number
+  attr_accessor :certification_date
+  attr_accessor :nod_date, :soc_date, :form9_date
+  attr_accessor :type
+  attr_accessor :file_type
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -30,14 +24,37 @@ class Appeal
     @documents ||= []
   end
 
-  attr_accessor :type
-  def type_name
-    TYPE_NAMES[type]
+  def veteran_name
+    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
 
-  attr_accessor :file_type
-  def file_type_name
-    FILE_TYPE_NAMES[file_type]
+  def appellant_name
+    if appellant_first_name
+      [appellant_first_name, appellant_middle_name, appellant_last_name].select(&:present?).join(", ")
+    end
+  end
+
+  def representative_name
+    representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
+  end
+
+  def representative_type
+    case representative
+    when "None", "One Time Representative"
+      "Other"
+    when "Agent", "Attorney"
+      representative
+    else
+      "Organization"
+    end
+  end
+
+  def regional_office
+    Records::Case::ROS[regional_office_key] || {}
+  end
+
+  def regional_office_name
+    "#{regional_office[:city]}, #{regional_office[:state]}"
   end
 
   def nod_match?
@@ -78,7 +95,7 @@ class Appeal
     delegate :certify, to: :repository
 
     def find(vacols_id)
-      unless (appeal = @repository.find(vacols_id))
+      unless (appeal = repository.find(vacols_id))
         fail ActiveRecord::RecordNotFound
       end
 
@@ -89,25 +106,54 @@ class Appeal
     def repository
       @repository ||= AppealRepository
     end
+
+    def ssoc_dates_from(case_record)
+      [
+        case_record.bfssoc1,
+        case_record.bfssoc2,
+        case_record.bfssoc3,
+        case_record.bfssoc4,
+        case_record.bfssoc5
+      ].reject(&:nil?)
+    end
+
+    def folder_type_from(folder_record)
+      if %w(Y 1 0).include?(folder_record.tivbms)
+        "VBMS"
+      elsif folder_record.tisubj == "Y"
+        "VVA"
+      else
+        "Paper"
+      end
+    end
+
+    # rubocop:disable Metrics/AbcSize
+    def from_records(case_record:, folder_record:, correspondent_record:)
+      new(
+        vbms_id: case_record.bfcorlid,
+        type: Records::Case::TYPES[case_record.bfac],
+        file_type: folder_type_from(folder_record),
+        representative: Records::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+        veteran_first_name: correspondent_record.snamef,
+        veteran_middle_initial: correspondent_record.snamemi,
+        veteran_last_name: correspondent_record.snamel,
+        appellant_first_name: correspondent_record.sspare1,
+        appellant_middle_name: correspondent_record.sspare2,
+        appellant_last_name: correspondent_record.sspare3,
+        appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
+        insurance_loan_number: case_record.bfpdnum,
+        nod_date: case_record.bfdnod,
+        soc_date: case_record.bfdsoc,
+        form9_date: case_record.bfd19,
+        ssoc_dates: ssoc_dates_from(case_record),
+        hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
+        regional_office_key: case_record.bfregoff
+      )
+    end
   end
 
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
-  end
-end
-
-class AppealRepository
-  def self.find(_vacols_id, _args = {})
-  end
-
-  def self.cerify(_appeal)
-    # Set certification flags on VACOLS record
-    # upload Form 8 to VBMS
-
-    #  @kase.bfdcertool = Time.now
-    #  @kase.bf41stat = Date.strptime(params[:certification_date], Date::DATE_FORMATS[:va_date])
-    #  @kase.save
-    #  @kase.efolder_case.upload_form8(corr.snamef, corr.snamemi, corr.snamel, params[:file_name])
   end
 end

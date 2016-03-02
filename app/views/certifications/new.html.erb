@@ -66,15 +66,15 @@
             question_number: "7B", label: "Date of notification of action appealed" %>
     </div>
 
-    <%= f.text_field :representative_name,
-          question_number: "8A", part: "1", label: "Representative Name" %>
-
     <%= f.radio_buttons_field :representative_type,
           values: ["Attorney", "Agent", "Organization", "Other"],
           question_number: "8A", part: "2", label: "Representative Type" %>
 
     <%= f.text_field :representative_type_specify_other,
-          question_number: "8A", part: "3", label: "Specify other", secondary: true %>
+          question_number: "8A", part: "3", label: "Specify other representative type", secondary: true %>
+
+    <%= f.text_field :representative_name,
+          question_number: "8A", part: "1", label: "Representative Name" %>
 
     <%= f.radio_buttons_field :power_of_attorney,
           values: ["POA", "Certification that valid POA is in another VA file"], inline: true,
