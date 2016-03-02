@@ -18,6 +18,24 @@ describe Form8 do
     end
   end
 
+  context "remarks rolls over" do
+    let(:appeal) { Form8.new(remarks: "Hello, World") }
+
+    it "rolls over remarks properly" do
+      expect(appeal.remarks).to eq("Hello, World")
+
+      expect(appeal.remarks_rollover?).to be_falsey
+      expect(appeal.remarks_initial).to eq("Hello, World")
+      expect(appeal.remarks_continued).to be_nil
+
+      appeal.remarks = "A" * 200 + "Hello, World!"
+
+      expect(appeal.remarks_rollover?).to be_truthy
+      expect(appeal.remarks_initial).to eq("A" * 159 + " (see continued remarks page 2)")
+      expect(appeal.remarks_continued).to eq("\n\nContinued:\n" + ("A" * 41) + "Hello, World!")
+    end
+  end
+
   context ".new_from_appeal" do
     before do
       Timecop.freeze
