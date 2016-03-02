@@ -54,7 +54,7 @@ class Form8
     { name: "X-RAYS", attribute: :record_x_rays },
     { name: "SLIDES", attribute: :record_slides },
     { name: "TISSUE BLOCKS", attribute: :record_tissue_blocks },
-    { name: "DEP. ED. F (Ch. 35", attribute: :record_dep_ed_f },
+    { name: "DEP. ED. F (Ch. 35)", attribute: :record_dep_ed_f },
     { name: "INSURANCE F", attribute: :record_insurance_f },
     { name: "OTHER", attribute: :record_other }
   ].freeze
