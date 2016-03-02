@@ -16,3 +16,6 @@
 !/log/.keep
 /tmp
 /coverage
+
+# Ignore vim swap files
+*.swp
