@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Form8
   include ActiveModel::Model
   include ActiveModel::Conversion
@@ -40,6 +42,26 @@ class Form8
     :certifying_official_title,
     :certification_date
   ].freeze
+
+  REMARKS_SEE_PAGE_2 = " (see continued remarks page 2)".freeze
+  REMARKS_MAX_LENGTH = 159
+
+  def remarks_rollover?
+    return false if @remarks.nil?
+    @remarks.length > REMARKS_MAX_LENGTH + REMARKS_SEE_PAGE_2.length
+  end
+
+  def remarks_initial
+    if remarks_rollover?
+      "#{@remarks[0...REMARKS_MAX_LENGTH]}#{REMARKS_SEE_PAGE_2}"
+    else
+      @remarks
+    end
+  end
+
+  def remarks_continued
+    "\n\nContinued:\n#{@remarks[REMARKS_MAX_LENGTH...(@remarks.length)]}" if remarks_rollover?
+  end
 
   RECORD_TYPE_FIELDS = [
     { name: "CF OR XCF", attribute: :record_cf_or_xcf },
