@@ -2,7 +2,14 @@
 require "pdf_forms"
 
 class Form8PdfService
-  PDF_LOCATION_PREFIX = "form1[0].#subform[0].#area[0].".freeze
+  PDF_PAGE_1 = "form1[0].#subform[0].#area[0].".freeze
+  PDF_PAGE_2 = "form1[0].#subform[1].".freeze
+
+  # Currently, the only thing on Page 2 of the VA Form 8 is the continued
+  # remarks. As a result, we'll just say anything except for that is actually
+  # on Page 1.
+  FIELD_PAGES = Hash.new PDF_PAGE_1
+  FIELD_PAGES[:remarks_continued] = PDF_PAGE_2
 
   FIELD_LOCATIONS = {
     appellant_name: "TextField1[0]",
@@ -69,7 +76,8 @@ class Form8PdfService
     record_insurance_f: "CheckBox23[21]",
     record_other: "CheckBox23[28]",
     record_other_explaination: "TextField1[16]",
-    remarks: "TextField1[17]",
+    remarks_initial: "TextField1[17]",
+    remarks_continued: "TextField1[26]",
     certifying_office: "TextField1[18]",
     certifying_username: "TextField1[19]",
     certifying_official_name: "TextField1[20]",
@@ -88,7 +96,7 @@ class Form8PdfService
         value = PDF_CHECKBOX_SYMBOL
       end
 
-      location = PDF_LOCATION_PREFIX + location
+      location = FIELD_PAGES[attribute] + location
 
       pdf_values[location] = value
     end
