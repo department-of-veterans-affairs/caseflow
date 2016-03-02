@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   get 'whats-new' => 'whats_new#show'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
+
+  get "unauthorized" => "application#unauthorized"
   # Example resource route with options:
   #   resources :products do
   #     member do

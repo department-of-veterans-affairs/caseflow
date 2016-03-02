@@ -24,7 +24,8 @@ class Fakes::AppealRepository
       documents: [nod_document, soc_document, form9_document],
       veteran_first_name: "Davy",
       veteran_last_name: "Crockett",
-      appellant_name: "Susie Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
     )
@@ -42,7 +43,8 @@ class Fakes::AppealRepository
       documents: [nod_document, soc_document],
       veteran_first_name: "Davy",
       veteran_last_name: "Crockett",
-      appellant_name: "Susie Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
     )
@@ -53,15 +55,18 @@ class Fakes::AppealRepository
       type: :original,
       file_type: :vbms,
       vbms_id: "VBMS-ID",
-      vso_name: "Military Order of the Purple Heart",
+      representative: "Military Order of the Purple Heart",
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       certification_date: 1.day.ago,
       form9_date: 1.day.ago,
       documents: [nod_document, soc_document, form9_document],
-      veteran_name: "Davy Crockett",
-      appellant_name: "Susie Crockett",
-      appellant_relationship: "Daughter"
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      regional_office_key: "DSUSER"
     )
   end
 

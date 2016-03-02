@@ -21,7 +21,8 @@ RSpec.feature "Start Certification" do
       ssoc_dates: [6.days.from_now, 7.days.from_now],
       documents: [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document],
       veteran_first_name: "Davy",
-      veteran_last_name: "Crockett"
+      veteran_last_name: "Crockett",
+      regional_office_key: "DSUSER"
     )
     Fakes::AppealRepository.records = { "1234C" => appeal }
 
@@ -74,7 +75,8 @@ RSpec.feature "Start Certification" do
       veteran_middle_initial: "X",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      regional_office_key: "DSUSER"
     )
     Fakes::AppealRepository.records = { "5678C" => appeal }
 
@@ -96,5 +98,15 @@ RSpec.feature "Start Certification" do
 
     visit "certifications/new/4444NNNN"
     expect(page.status_code).to eq(404)
+  end
+
+  scenario "403's if user doesn't have access to appeal" do
+    User.authenticate!
+    appeal = Fakes::AppealRepository.appeal_ready_to_certify
+    appeal.regional_office_key = "NOT-YOUR-RO"
+    Fakes::AppealRepository.records = { "ABCD" => appeal }
+
+    visit "certifications/new/ABCD"
+    expect(page.status_code).to eq(403)
   end
 end

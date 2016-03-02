@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
+  def unauthorized
+    render status: 403
+  end
+
   private
 
   def render_404
@@ -20,10 +24,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def setup_fakes
-    unless Rails.env.production? || Rails.env.staging?
-      Appeal.repository = Fakes::AppealRepository
-      Fakes::AppealRepository.seed!
-    end
+    Fakes::Initializer.development! if Rails.env.development?
   end
 
   def check_whats_new_cookie
