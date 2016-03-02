@@ -61,10 +61,93 @@ describe Appeal do
     end
   end
 
+  context ".from_records" do
+    before { Timecop.freeze }
+    after { Timecop.return }
+
+    let(:case_record) do
+      OpenStruct.new(
+        bfcorlid: "VBMS-ID",
+        bfac: "4",
+        bfso: "Q",
+        bfpdnum: "INSURANCE-LOAN-NUMBER",
+        bfdnod: 10.days.ago,
+        bfdsoc: 9.days.ago,
+        bfd19: 8.days.ago,
+        bfssoc1: 7.days.ago,
+        bfssoc2: 6.days.ago,
+        bfha: "6",
+        bfregoff: "DSUSER"
+      )
+    end
+
+    let(:correspondent_record) do
+      OpenStruct.new(
+        snamef: "Phil",
+        snamemi: "J",
+        snamel: "Johnston",
+        sspare1: "Chris",
+        sspare2: "M",
+        sspare3: "Johnston",
+        susrtyp: "Brother"
+      )
+    end
+
+    let(:folder_record) do
+      OpenStruct.new(
+        tivbms: "Y"
+      )
+    end
+
+    subject do
+      Appeal.from_records(
+        case_record: case_record,
+        correspondent_record: correspondent_record,
+        folder_record: folder_record
+      )
+    end
+
+    it do
+      is_expected.to have_attributes(
+        vbms_id: "VBMS-ID",
+        type: "Reconsideration",
+        file_type: "VBMS",
+        representative: "Catholic War Veterans",
+        veteran_first_name: "Phil",
+        veteran_middle_initial: "J",
+        veteran_last_name: "Johnston",
+        appellant_first_name: "Chris",
+        appellant_middle_name: "M",
+        appellant_last_name: "Johnston",
+        appellant_relationship: "Brother",
+        insurance_loan_number: "INSURANCE-LOAN-NUMBER",
+        nod_date: 10.days.ago,
+        soc_date: 9.days.ago,
+        form9_date: 8.days.ago,
+        ssoc_dates: [7.days.ago, 6.days.ago],
+        hearing_type: :video_hearing,
+        regional_office_key: "DSUSER"
+      )
+    end
+
+    context "No appellant listed" do
+      let(:correspondent_record) do
+        OpenStruct.new(
+          snamef: "Phil",
+          snamemi: "J",
+          snamel: "Johnston",
+          susrtyp: "Brother"
+        )
+      end
+
+      it { is_expected.to have_attributes(appellant_relationship: "") }
+    end
+  end
+
   context ".find" do
     class FakeRepo
       def self.find(_id)
-        Appeal.new(vso_name: "Shane's VSO")
+        Appeal.new(representative: "Shane's VSO")
       end
     end
 
@@ -72,7 +155,7 @@ describe Appeal do
     subject { Appeal.find("123C") }
 
     it "delegates to the repository" do
-      expect(subject.vso_name).to eq("Shane's VSO")
+      expect(subject.representative).to eq("Shane's VSO")
     end
 
     it "sets the vacols_id" do

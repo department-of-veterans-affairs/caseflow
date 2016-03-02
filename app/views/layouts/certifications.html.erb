@@ -7,8 +7,8 @@
     <div class="cf-txt-uc cf-apppeal-id-control cf-push-right">
       Appeal ID &nbsp;
 
-      <button type="submit" title="Copy to clipboard" class="cf-apppeal-id" data-clipboard-text="<%= appeal.vacols_id %>">
-        <%= appeal.vacols_id %>
+      <button type="submit" title="Copy to clipboard" class="cf-apppeal-id" data-clipboard-text="<%= appeal.vbms_id %>">
+        <%= appeal.vbms_id %>
         <%= svg_icon(:appeal) %>
       </button>
     </div>
@@ -18,17 +18,17 @@
     <div class="cf-layout-3-up cf-txt-c">
       <section id="appeal-type-header">
         <h4 class="cf-txt-uc cf-layout-3-up-title">Appeal Type:</h4>
-        <p class="cf-layout-3-up-text"><%= appeal.type_name %></p>
+        <p class="cf-layout-3-up-text"><%= appeal.type %></p>
       </section>
 
       <section id="file-type-header">
         <h4 class="cf-txt-uc cf-layout-3-up-title cf-layout-3-up-title">File Type:</h4>
-        <p class="cf-layout-3-up-text"><%= appeal.file_type_name %></p>
+        <p class="cf-layout-3-up-text"><%= appeal.file_type %></p>
       </section>
 
       <section id="vso-header">
         <h4 class="cf-txt-uc cf-layout-3-up-title">Representative:</h4>
-        <p class="cf-layout-3-up-text"><%= appeal.vso_name %></p>
+        <p class="cf-layout-3-up-text"><%= appeal.representative %></p>
       </section>
     </div>
   </div>

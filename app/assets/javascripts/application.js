@@ -31,5 +31,5 @@ $(function () {
 $(function() {
   $('.cf-action-refresh').on('click', function() {
     location.reload(); return false;
-   });
+  });
 });

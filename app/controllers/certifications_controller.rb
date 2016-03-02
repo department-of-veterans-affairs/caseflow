@@ -1,5 +1,6 @@
 class CertificationsController < ApplicationController
   before_action :verify_authentication
+  before_action :verify_access
 
   def new
     return render "already_certified" if appeal.certified?
@@ -31,6 +32,11 @@ class CertificationsController < ApplicationController
   end
 
   private
+
+  def verify_access
+    return true if current_user.can_access?(appeal)
+    redirect_to "/unauthorized"
+  end
 
   def form8
     @form8 ||= Form8.new(id: params[:id])
