@@ -11,6 +11,8 @@
   src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.id)) %>"></iframe>
 
 <div class="cf-form cf-app-segment">
+  <%= loading_indicator %>
+
   <button type="button" class="usa-button-gray cf-action-back cf-push-left" onclick="window.history.back()">
     &laquo; Go back and make edits
   </button>
@@ -18,5 +20,5 @@
   <%= link_to "Upload and certify",
     confirm_certification_path(id: form8.id),
     method: :post,
-    class: "usa-button usa-button-blue cf-push-right" %>
+    class: "usa-button usa-button-blue cf-push-right cf-submit" %>
 </div>
