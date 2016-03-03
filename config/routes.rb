@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   post "auth/saml_callback" => "sessions#ssoi_saml_callback"
 
   # alias back to caseflow classic URL which is hardcoded on the VA SSOI side (for now)
-  post "/caseflow/users/auth/saml/callback" => "sessions#ssoi_saml_callback"
+  post "caseflow/users/auth/saml/callback" => "sessions#ssoi_saml_callback"
 
   get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
