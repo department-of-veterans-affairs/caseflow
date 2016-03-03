@@ -29,6 +29,13 @@ RSpec.feature "Login" do
 
   scenario "login with invalid credentials" do
     visit "certifications/new/1234C"
+
+    # SSOI login
+    expect(page).to have_content("Test VA Saml")
+    fill_in "Email:", with: "xyz@va.gov"
+    click_on "Sign In"
+
+    # vacols login
     fill_in "VACOLS Login ID", with: "DSUSER"
     fill_in "VACOLS Password", with: "bad password"
     click_on "Login"
