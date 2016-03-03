@@ -4,11 +4,15 @@ class User
   end
 
   def username
-    if User.ssoi_authentication_enabled?
-      @session[:username]
-    else
-      User.authentication_service.ssoi_username
-    end
+    @session[:username]
+  end
+
+  def first_name
+    @session[:first_name]
+  end
+
+  def last_name
+    @session[:last_name]
   end
 
   def regional_office
@@ -16,11 +20,16 @@ class User
   end
 
   def display_name
-    if username
+    # fully authenticated
+    if authenticated?
       "#{username} (#{regional_office})"
-    else
-      regional_office.to_s
+
+    # just SSOI, not yet vacols authenticated
+    elsif ssoi_authenticated?
+      username.to_s
     end
+
+    # else, not authenticated at all
   end
 
   def can_access?(appeal)
@@ -42,12 +51,20 @@ class User
   end
 
   def authenticate_ssoi(auth_hash)
-    # self.username = auth_hash['uid']
+    return false unless auth_hash.key? "uid"
+
+    ssoi_attributes.each do |key, value|
+      @session[key] = auth_hash[value] if auth_hash[value]
+    end
+
+    true
   end
 
   def unauthenticate
-    @session[:regional_office] = nil
-    @session[:username] = nil
+    @session.delete(:regional_office)
+    ssoi_attributes.keys.each do |key|
+      @session.delete(key)
+    end
   end
 
   def return_to=(path)
@@ -56,6 +73,12 @@ class User
 
   def return_to
     @session[:return_to]
+  end
+
+  private
+
+  def ssoi_attributes
+    { username: "uid", first_name: "first_name", last_name: "last_name" }
   end
 
   class << self
@@ -68,6 +91,10 @@ class User
 
     def authentication_service
       @authentication_service ||= AuthenticationService
+    end
+
+    def ssoi_authentication_url
+      "/auth/samlva"
     end
   end
 end
