@@ -4,7 +4,11 @@ class SessionsController < ApplicationController
   end
 
   def create
-    return render "new" unless current_user.authenticate(authentication_params)
+    unless current_user.authenticate(authentication_params)
+      flash[:error] = "Login ID and password did not work. Please try again."
+      return redirect_to login_path
+    end
+
     redirect_to current_user.return_to || root_path
   end
 
