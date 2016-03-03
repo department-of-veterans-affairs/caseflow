@@ -11,6 +11,7 @@ def ssoi_authentication_enabled?
   return ENV.has_key?(ENV_SAML_XML) && ENV.has_key?(ENV_SAML_KEY)
 end
 
+# :nocov:
 if ssoi_authentication_enabled?
   Rails.application.config.middleware.use OmniAuth::Builder do
     provider :samlva, 'CASEFLOW', ENV[ENV_SAML_KEY], ENV[ENV_SAML_XML],
@@ -26,3 +27,4 @@ else
              :request_path => Rails.application.config.ssoi_login_path
   end
 end
+# :nocov:
