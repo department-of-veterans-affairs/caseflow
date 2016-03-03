@@ -13,6 +13,23 @@ class SessionsController < ApplicationController
     redirect_to login_path
   end
 
+  protect_from_forgery with: :exception, except: %w(ssoi_saml_callback)
+
+  def ssoi_saml_callback
+    # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
+    auth_hash = request.env["omniauth.auth"] || {}
+
+    if current_user.authenticate_ssoi(auth_hash)
+      redirect_to current_user.return_to
+    else
+      ssoi_saml_failure("Failed to authenticate")
+    end
+  end
+
+  def ssoi_saml_failure(failure_message = params[:message])
+    render layout: "application", text: "<p>#{failure_message}</p>", status: 400
+  end
+
   private
 
   def authentication_params
