@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
 
+  get 'help' => 'help#show'
+
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
