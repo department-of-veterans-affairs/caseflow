@@ -103,12 +103,16 @@ class Form8PdfService
   end
 
   def self.save_pdf_for!(form8)
+    File.delete(tmp_location_for(form8)) if File.exists?(tmp_location_for(form8))
+
     pdf_forms.fill_form(
       empty_pdf_location,
       tmp_location_for(form8),
       pdf_values_for(form8),
       flatten: true
     )
+
+    File.delete(output_location_for(form8)) if File.exists?(output_location_for(form8))
 
     # Run it through `pdftk cat`. The reason for this is that editable PDFs have
     # an RSA signature on them which proves they are genuine. pdftk tries to
