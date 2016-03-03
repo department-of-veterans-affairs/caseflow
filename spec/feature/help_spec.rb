@@ -5,4 +5,4 @@ RSpec.feature "Help" do
     visit "/help"
     expect(page).to have_content("Caseflow Certification Help")
   end
-end 
+end
