@@ -18,8 +18,10 @@ if ssoi_authentication_enabled?
              :path_prefix => '/auth'
   end
 else
+  require 'fakes/test_auth_strategy'
+
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :developer, :callback_path => '/auth/saml_callback',
+    provider :test_auth_strategy, :callback_path => '/auth/saml_callback',
              :path_prefix => '/auth',
              :request_path => Rails.application.config.ssoi_login_path
   end

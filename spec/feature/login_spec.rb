@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.feature "Login" do
   before do
     Fakes::AppealRepository.records = {
-        "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
+      "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
     }
 
     Fakes::AuthenticationService.vacols_regional_offices = { "DSUSER" => "pa55word!" }
@@ -13,8 +13,7 @@ RSpec.feature "Login" do
     visit "certifications/new/1234C"
 
     # SSOI login
-    expect(page).to have_content("User Info")
-    fill_in "Name:", with: "Joe"
+    expect(page).to have_content("Test VA Saml")
     fill_in "Email:", with: "xyz@va.gov"
     click_on "Sign In"
 
@@ -32,8 +31,7 @@ RSpec.feature "Login" do
     visit "certifications/new/1234C"
 
     # SSOI login
-    expect(page).to have_content("User Info")
-    fill_in "Name:", with: "Joe"
+    expect(page).to have_content("Test VA Saml")
     fill_in "Email:", with: "xyz@va.gov"
     click_on "Sign In"
 
