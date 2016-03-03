@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<env:Header xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+	</env:Header>
+	<soap:Body>
+		<fetchDocumentResponse xmlns="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:aw="http://vbms.vba.va.gov/cdm/award/v4" xmlns:claim="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:com="http://vbms.vba.va.gov/cdm/common/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v4" xmlns:edoc="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v4">
+			<edoc:result>
+				<edoc:document actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-94244-6zotzp" id="{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-94244-6zotzp" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0" wsu:Id="id-350" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+					<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+				</edoc:document>
+				<edoc:content>
+					<doc:data>DQo=</doc:data>
+				</edoc:content>
+			</edoc:result>
+		</fetchDocumentResponse>
+	</soap:Body>
+</soap:Envelope>

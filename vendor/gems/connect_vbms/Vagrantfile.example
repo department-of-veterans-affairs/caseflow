@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Specify which port you wish to run the rails server, or default to :3333
+vagrant_port = ENV['VAGRANT_PORT'] || 3333
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # Every Vagrant virtual environment requires a box to build off of.
+  # config.vm.box = 'ubuntu.lts.64'
+  config.vm.box = 'ubuntu/precise64'
+
+  # Uncomment for VMWare support
+  # config.vm.box = 'hashicorp/precise64'
+
+  config.vm.hostname = 'connect-vbms-dev-box'
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine.
+  config.vm.network :forwarded_port, guest: vagrant_port, host: vagrant_port
+
+  # Modify resources available to VM
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ['modifyvm', :id, '--memory', ENV['VAGRANT_MEMORY'] || '4096']
+    vb.customize ['modifyvm', :id, '--cpus', '2']
+    vb.customize ['modifyvm', :id, '--ioapic', 'on']
+  end
+
+  # Uncomment for VMWare support
+  # config.vm.provider :vmware_fusion do |v|
+  #   v.gui = false
+  #   v.vmx["memsize"] = ENV['VAGRANT_MEMORY'] || "4096"
+  #   v.vmx["numvcpus"] = "2"
+  # end
+
+  # Enable provisioning with a shell script.
+  config.vm.provision :shell, path: 'bootstrap.sh', keep_color: true
+
+  config.vm.synced_folder '.', '/vagrant/connect_vbms'
+
+  config.ssh.forward_agent = true
+end
