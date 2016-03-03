@@ -1,0 +1,172 @@
+<% content_for :page_title do %>Help &amp; FAQ<% end %>
+
+<div id="help-page" class="cf-app-segment cf-app-segment--alt">
+  <h1>Help &amp; Frequently Asked Questions</h1>
+
+  <ul>
+    <li><a href="#instructions">How to use Caseflow</a></li>
+    <li><a href="#faq">Frequently Asked Questions</a></li>
+  </ul>
+
+  <section id="instructions">
+    <h2>How to use Caseflow</h2>
+    <dl>
+      <dt>How do I launch Caseflow?</dt>
+      <dd>
+        <p>
+          Right now Caseflow only works with a new and unreleased version of VACOLS.
+          To access this new VACOLS, press and hold the <kbd>Windows</kbd> Key (look for the <%= svg_icon(:windows_logo_old) %> or
+          <%= svg_icon(:windows_logo) %> icon) and the letter <kbd>R</kbd> on your keyboard.
+          A small dialogue box like the one shown below will open up.
+        </p>
+
+        <p>
+          Copy and paste the following into the box and click the &quot;Run&quot; button:
+          <kbd title="Click to copy" data-clipboard-text="\\bvacofil.dva.va.gov\dmdi$\ro\roaccesscf.vbs">\\bvacofil.dva.va.gov\dmdi$\ro\roaccesscf.vbs</kbd>
+
+          <%= image_tag 'help-page/help-page-run.png', {alt: 'Windows Run dialog'} %>
+        </p>
+      </dd>
+
+
+      <dt>How do I use Caseflow? </dt>
+      <dd>
+        <p>
+          Caseflow is already
+          integrated with VACOLS. All you need to do is search for an Appeal ID
+          and click the &quot;Certify Appeal&quot; in the search results or on
+          the update appeal page. Once dates for the Form 9, NOD, SOC, and
+          (optionally) SSOC have been entered into VACOLS, click the Certify
+          Appeal button in the VACOLS search results window or the Update
+          Appeal window.
+
+          <%= image_tag 'help-page/help-certify-appeals.png', {alt: 'VACOLS screens'} %>
+        </p>
+
+        <p>
+          Select VBMS paperless e-folder from the window that pops up then click certify.
+            <%= image_tag 'help-page/help-certify-appeal-paperless.png', {alt: 'Certify Appeal'} %>
+        </p>
+
+        <p>
+          The first time you use it you'll have to log in with your <strong>VA Username
+          and Password</strong> <strong><em>AND</em></strong> your <strong>VACOLS regional office</strong> login.
+
+          <%= image_tag 'help-page/ssoi-login.png', {alt: 'VA login screen'} %>
+
+          <%= image_tag 'help-page/help-page-login.png', {alt: 'Caseflow login screen'} %>
+        </p>
+
+        <p>
+          Once Caseflow is open, it will check to see if documents in the VBMS eFolder (such as
+          the NOD, SOC, and Form 9) match the dates entered in VACOLS. If they
+          do, not you will see a page similar to the one below, where you will be
+          asked to fix the dates in either VACOLS or VBMS. Once you fix the
+          dates click the <strong>Refresh </strong>button. If you can't find the document
+          in the eFolder, the appeal cannot be certified and you'll need to
+          click the <strong>This case cannot be certified</strong>.
+
+          <%= image_tag 'help-page/help-page-finddocs.png', {alt: 'Find Missing Documents screen'} %>
+        </p>
+
+        <p>
+          Once all the
+          documents are detected, you'll see a page similar to the one below. There,
+          you'll fill out details for the electronic Form 8. Once all of
+          the forms have been completed, click the <strong>Preview Completed Form 8</strong>
+          button to move on.
+
+          <%= image_tag 'help-page/help-page-questions.png', {alt: 'Form 8 Questions screen'} %>
+        </p>
+
+        <p>
+          On the next page, you'll be able to preview the completed Form 8. If anything
+          looks incorrect, go back and fix it on the previous page. Otherwise,
+          click the <strong>Upload and Certify</strong> link. The Form 8 will
+          automatically be uploaded to the eFolder and the appeal will be
+          certified to the Board of Veterans Appeals!
+
+          <%= image_tag 'help-page/help-page-review.png', {alt: 'Preview Form 8 screen'} %>
+        </p>
+
+        <p>
+          That's it! You'll receive a confirmation page indicating what you've done.
+          You can now close the browser window and open up another appeal using VACOLS.
+        </p>
+      </dd>
+    </dl>
+  </section>
+
+  <section id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <dl>
+      <dt>What is Caseflow?</dt>
+      <dd>Caseflow is a
+      web-based tool that makes it easy to automatically fill out an
+      electronic Form 8 and certify paperless appeals to the Board of
+      Veterans Appeals. It automatically checks to make sure documents such
+      as the Form 9, Notice of Disagreement (NOD), Statement of Case (SOC),
+      and Supplemental Statement of Case (SSOC) have been added to an
+      appeal.</dd>
+
+
+      <dt>Who has access to Caseflow?</dt>
+      <dd>Currently Caseflow is only available to a handful of users in select regional offices.
+      This is to ensure that Caseflow meets the requirements laid out by
+      our stakeholders, including you!</dd>
+
+
+      <dt>Why do I need to login with two different IDs?</dt>
+      <dd>We currently ask
+      users to log in with both their VA credentials and their VACOLS
+      credentials to ensure that the PII handled in Caseflow is secure. We
+      realize that this is inconvenient and we're working on a fix that
+      will allow you to only use VA credentials.</dd>
+
+
+      <dt>Does Caseflow work with paper appeals?</dt>
+      <dd>
+        <p>
+          No. Caseflow only
+          works with paperless appeals because we can't automatically detect
+          files in a paper appeals.
+        </p>
+
+        <p>
+          To certify a
+          hardcopy or Virtual VA appeal, follow the same steps you have always
+          taken but select the <strong>Hardcopy claims folder or Virtual VA</strong> when
+          you click the <strong>Certify Appeal</strong> button in VACOLS to manually
+          enter a Certification Date.
+
+          <%= image_tag 'help-page/help-certify-appeal-paperless.png', {alt: 'Certify Appeal'} %>
+        </p>
+      </dd>
+
+      <dt>What new features are you working on?</dt>
+      <dd>We heard from our
+      early testers that generating and uploading letters is a big pain for
+      VBA employees so we&#8217;re working on a way to make that easier.</dd>
+
+      <dt>Who made Caseflow?</dt>
+      <dd>Caseflow was
+      developed by the Board of Veteran Appeals and the Digital Service in
+      collaboration with VBA and users like you.
+      </dd>
+
+      <dt>What if I encounter a problem like a bug or Caseflow doesn't work?</dt>
+      <dd>At the top of every
+      page in Caseflow there is a <strong>Send feedback</strong> link like the one shown
+      below that will let you send us questions, feature ideas, or issues
+      you may encounter.
+      <%= image_tag 'help-page/help-page-pilot-stage.png', {alt: 'Image of Send Feedback image'} %>
+      </dd>
+
+      <dt>What if Caseflow doesn't work for an appeal I'm trying to certify?</dt>
+      <dd>If, for some reason,
+      you can’t certify an appeal using the new version of VACOLS or
+      Caseflow you can go back to current version of VACOLS and certify the
+      appeal as normal.</dd>
+    </dl>
+  </section>
+</div>

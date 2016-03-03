@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
+  def help
+  end
+
   def unauthorized
     render status: 403
   end

@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
   get 'whats-new' => 'whats_new#show'
+  get 'help' => 'application#help'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
