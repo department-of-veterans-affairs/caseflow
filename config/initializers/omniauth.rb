@@ -22,7 +22,7 @@ else
   require 'fakes/test_auth_strategy'
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :test_auth_strategy, :callback_path => '/auth/saml_callback',
+    provider :test_auth_strategy, :callback_path => '/caseflow/users/auth/saml/callback',
              :path_prefix => '/auth',
              :request_path => Rails.application.config.ssoi_login_path
   end
