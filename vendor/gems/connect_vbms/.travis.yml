@@ -1,0 +1,30 @@
+language: ruby
+cache: bundler
+
+matrix:
+  include:
+    - rvm: 2.1.6
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk7
+    - rvm: 2.1.6
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk8
+    - rvm: 2.2.3
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk7
+    - rvm: 2.2.3
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk8
+    - rvm: jruby-1.7.22
+      before_install: gem install bundler --no-ri --no-rdoc
+      before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
+      jdk: oraclejdk7
+    - rvm: jruby-1.7.22
+      before_install: gem install bundler --no-ri --no-rdoc
+      before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
+      jdk: oraclejdk8
+    - rvm: jruby-9.0.1.0
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk8
+
+  fast_finish: true

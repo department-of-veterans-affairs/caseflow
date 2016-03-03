@@ -37,6 +37,8 @@ gem 'pdfjs_viewer-rails'
 gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/omniauth-saml-va'
 
 group :production, :staging do
+  gem 'connect_vbms', path: './vendor/gems/connect_vbms'
+
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
   gem 'ruby-oci8'
