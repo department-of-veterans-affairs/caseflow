@@ -1,5 +1,5 @@
 
-describe User do
+describe Document do
   context ".from_vbms_document" do
     let(:vbms_document) do
       OpenStruct.new(doc_type: "179", received_at: "TEST")
