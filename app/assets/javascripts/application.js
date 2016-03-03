@@ -20,7 +20,9 @@
 $(function() {
   window.Dropdown.bind();
   window.Modal.bind();
+  window.LoadingIndicator.bind();
 });
+
 /* Copies appeals ID to clipboard */
 $(function () {
   "use strict";
