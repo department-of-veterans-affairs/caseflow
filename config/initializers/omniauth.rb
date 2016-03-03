@@ -15,14 +15,14 @@ end
 if ssoi_authentication_enabled?
   Rails.application.config.middleware.use OmniAuth::Builder do
     provider :samlva, 'CASEFLOW', ENV[ENV_SAML_KEY], ENV[ENV_SAML_XML],
-             :callback_path => '/auth/saml_callback',
+             :callback_path => '/caseflow/users/auth/saml/callback',
              :path_prefix => '/auth'
   end
 else
   require 'fakes/test_auth_strategy'
 
   Rails.application.config.middleware.use OmniAuth::Builder do
-    provider :test_auth_strategy, :callback_path => '/caseflow/users/auth/saml/callback',
+    provider :test_auth_strategy, :callback_path => '/auth/saml_callback',
              :path_prefix => '/auth',
              :request_path => Rails.application.config.ssoi_login_path
   end
