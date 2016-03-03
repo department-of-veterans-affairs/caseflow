@@ -719,6 +719,24 @@ form {
   }
 }
 
+.cf-loading-indicator {
+  display: none;
+  background-color: $color-white;
+  border-radius: 5px;
+  padding: 0.4rem 2.7em;
+  svg { vertical-align: middle; }
+}
+
+.cf-is-loading {
+  .cf-submit {
+    display: none;
+  }
+
+  .cf-loading-indicator {
+    display: block;
+  }
+}
+
 fieldset {
   margin-top: rem(20px);
   margin-bottom: rem(20px);
