@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<env:Header xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+	</env:Header>
+	<soap:Body wsu:Id="id-346" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+		<listDocumentsResponse xmlns="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:aw="http://vbms.vba.va.gov/cdm/award/v4" xmlns:claim="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:com="http://vbms.vba.va.gov/cdm/common/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v4" xmlns:edoc="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v4">
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-94244-6zotzp" id="{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-94244-6zotzp" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="546" fileNumber="784449089" filename="cui-test.pdf" id="{E1AC3203-81D7-4A56-90EC-BFBFD6E014F7}" mimeType="application/pdf" newMail="false" path="784449089/cui-test.pdf" source="cui" subject="cui-test.pdf" veteranFirstName="CUI" veteranLastName="TesterOne" veteranPersonId="0">
+				<doc:documentAssociations associationType="CLAIM" documentId="{E1AC3203-81D7-4A56-90EC-BFBFD6E014F7}">
+					<doc:associationValue>600012987</doc:associationValue>
+				</doc:documentAssociations>
+				<doc:receivedDt>2014-11-13-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150710-24845-16mmatf" id="{43368903-1570-4826-AF6E-0D0E0E4EB1B1}" mimeType="text/plain" newMail="true" path="784449089/tmp20150710-24845-16mmatf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-10-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150505-78356-fwix6j" id="{2D4B1209-680C-4DE6-A33B-B4CFEEFAFA09}" mimeType="text/plain" newMail="true" path="784449089/tmp20150505-78356-fwix6j" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-05-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150513-67187-yf1sz7" id="{521EEF0D-B130-429C-8046-85DD217DCBEF}" mimeType="text/plain" newMail="true" path="784449089/tmp20150513-67187-yf1sz7" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92012-k3gzyt" id="{DF0F6B15-02C1-40AC-B621-1005CDDF343E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92012-k3gzyt" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34521-1ew6w7v" id="{14081C17-E667-4FC8-80C0-455657969610}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34521-1ew6w7v" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-840eb7c9-7c31-43b4-af78-fcf8f9c8b732.pdf" id="{60E8AF17-8F21-48E8-8702-1D8DD51E30CD}" mimeType="application/pdf" newMail="true" path="784449089/cui-840eb7c9-7c31-43b4-af78-fcf8f9c8b732.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-8d271bf9-9c2f-4e56-bdef-a04ef6befb4c.pdf" id="{1BBBA01A-54B6-4C63-9B4D-6323B03B6E0C}" mimeType="application/pdf" newMail="true" path="784449089/cui-8d271bf9-9c2f-4e56-bdef-a04ef6befb4c.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150722-98295-y0b2he" id="{97C9871C-5A43-4A68-859A-01FD1EA9073D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150722-98295-y0b2he" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150624-70344-ggabm0" id="{0D13951C-CFA8-4145-8D1B-F5C692FCB0A5}" mimeType="text/plain" newMail="true" path="784449089/tmp20150624-70344-ggabm0" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-24-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150612-38318-xvtg4z" id="{A28AEC1C-2132-4D55-89A5-D0AB9F048C54}" mimeType="text/plain" newMail="true" path="784449089/tmp20150612-38318-xvtg4z" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-12-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92467-cnjlj" id="{8BD1E31E-1010-4F6A-85E8-4C6F8D15C593}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92467-cnjlj" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92052-815by2" id="{6D501722-4ED5-4732-984A-8B6A8670B3E4}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92052-815by2" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-4854-ev1pcf" id="{8B051E22-AEE3-45A8-B533-F4F01C20FF79}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-4854-ev1pcf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-6616-cmxiwc" id="{81332822-3FB4-4603-992F-28D53827A1E6}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-6616-cmxiwc" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-73474-igmi53" id="{83D55522-9BF5-4BD1-A35F-A832E733B309}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-73474-igmi53" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-92707-6vmpty" id="{A2785E22-DB14-4C93-B9A4-CD707A44D2F8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-92707-6vmpty" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-35034-1ri0sk" id="{13F8B125-354D-41C6-A9C7-376C6813DF46}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-35034-1ri0sk" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-98570-1hfacju" id="{1044D425-2DCF-43B2-9613-F466C51AF3B8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-98570-1hfacju" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150629-85892-1du3eot" id="{F8425827-DEE8-4A13-9E66-B9BDE421346E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150629-85892-1du3eot" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-800-1rkqoqz" id="{1CC56827-1FD8-48F3-8568-7E3FE995D955}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-800-1rkqoqz" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-ab224f79-da6c-4a02-b0f0-98c2a9178ddb.pdf" id="{41091C29-5830-4DB6-9555-7FA6B0B68781}" mimeType="application/pdf" newMail="true" path="784449089/cui-ab224f79-da6c-4a02-b0f0-98c2a9178ddb.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92118-14egzjo" id="{B5DA5B2A-F4F6-47CA-AB99-1D12F1E31011}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92118-14egzjo" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150623-59148-10zdg7p" id="{29E31B2B-51F2-44BA-991E-3A541276D313}" mimeType="text/plain" newMail="true" path="784449089/tmp20150623-59148-10zdg7p" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-23-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150629-85691-1da41jl" id="{0369E92C-F237-481E-98C8-89B23B81BACB}" mimeType="text/plain" newMail="true" path="784449089/tmp20150629-85691-1da41jl" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34448-1ep6t9e" id="{66232F2D-E16C-4B33-9B20-85AC419A073D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34448-1ep6t9e" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150505-78399-30o598" id="{7B3F962D-0A14-40C2-A1C0-3DDE63829387}" mimeType="text/plain" newMail="true" path="784449089/tmp20150505-78399-30o598" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-05-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-5359-1m6qzcl" id="{A18E4A2F-3CB9-44EF-9EB9-E24A06DAB37A}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-5359-1m6qzcl" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-16-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-92016-23xr6l" id="{DAF41633-4132-45AF-873F-8A3AF53ABA3C}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-92016-23xr6l" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150629-85832-1dun46z" id="{91F69B37-93DE-4E87-A05A-CBA16B1B3E24}" mimeType="text/plain" newMail="true" path="784449089/tmp20150629-85832-1dun46z" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-63784-qpndbs" id="{0CA7B137-1507-4C09-A815-088C496CF33F}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-63784-qpndbs" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-59846-1hofbe6" id="{7F497B3C-D12A-40DD-B4F5-D3A61F43DA49}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-59846-1hofbe6" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-44742-ocd8l8" id="{CAE34F3E-84E8-4387-864F-8336ADB14BE2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-44742-ocd8l8" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150626-54974-1c1jc8v" id="{B6CBD443-C6AB-4E50-83EA-EF81F1D3B2E6}" mimeType="text/plain" newMail="true" path="784449089/tmp20150626-54974-1c1jc8v" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="DAS eCRUD ICD.pdf" id="{8F0E3544-88C3-4C35-B746-182B72445742}" mimeType="application/pdf" newMail="true" path="784449089/DAS eCRUD ICD.pdf" source="VHA_CUI" subject="Knee" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-36401-16og024" id="{79D3BF45-24B2-43F0-A06C-1A0D9D094C69}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-36401-16og024" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-46232-1ysh7es" id="{854BA14B-2865-4B32-9FD6-2CD56FB20CFB}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-46232-1ysh7es" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="625" externalId="123" fileNumber="784449089" filename="VA8-c53b869b92f7622ab81e9fc9bf779a5f.pdf" id="{2568D94B-50A4-4535-A5F7-99975CBF3C36}" mimeType="application/pdf" newMail="true" path="784449089/VA8-c53b869b92f7622ab81e9fc9bf779a5f.pdf" source="Caseflow VBMS test" subject="form8" veteranFirstName="Joe" veteranLastName="Snuffy" veteranMiddleName="R" veteranPersonId="0">
+				<doc:receivedDt>2015-07-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-d83d46d2-a610-48fb-997e-237fad270f36.pdf" id="{F334D54C-FB35-4F70-BA12-5001863A8762}" mimeType="application/pdf" newMail="true" path="784449089/cui-d83d46d2-a610-48fb-997e-237fad270f36.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-71759-19aavww" id="{1924D64D-710A-4B1B-89CB-C96AFA306258}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-71759-19aavww" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-25580-10ox7bb" id="{24D2524E-81E3-4E27-9B52-9E8D1C57E433}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-25580-10ox7bb" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-2789557a-146e-4938-96a3-6af69cd41018.pdf" id="{7EF0314F-86E1-4165-A4C7-A3C485C1F3FE}" mimeType="application/pdf" newMail="true" path="784449089/cui-2789557a-146e-4938-96a3-6af69cd41018.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150822-62738-1p5knh4" id="{80D0574F-0000-C48A-813E-8A7AC2490BC6}" mimeType="text/plain" newMail="true" path="784449089/tmp20150822-62738-1p5knh4" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150822-63249-1k6sgze" id="{8058584F-0000-CC82-BF9E-DB22D9234A7F}" mimeType="text/plain" newMail="true" path="784449089/tmp20150822-63249-1k6sgze" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150822-65467-10wci0g" id="{4087584F-0000-CF89-9120-41107467B526}" mimeType="text/plain" newMail="true" path="784449089/tmp20150822-65467-10wci0g" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150822-65563-10yz3d4" id="{1088584F-0000-C518-855D-78C5C04C6B91}" mimeType="text/plain" newMail="true" path="784449089/tmp20150822-65563-10yz3d4" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150822-66227-1dltlon" id="{7094584F-0000-C41E-8105-F47E88BEBCB2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150822-66227-1dltlon" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150823-72062-1v7posk" id="{D0725D4F-0000-C881-B894-37ED30BC5944}" mimeType="text/plain" newMail="true" path="784449089/tmp20150823-72062-1v7posk" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-23-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-24881-q5jjdf" id="{90E1654F-0000-C31A-B8CE-2497F2D9442E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-24881-q5jjdf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-25169-1hbqpzu" id="{C0E2654F-0000-C417-B64F-1A0013678EC8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-25169-1hbqpzu" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-25601-1y5r2t8" id="{D0E6654F-0000-C615-84E3-4A1AA931862C}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-25601-1y5r2t8" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-26420-gnr2ra" id="{C0EC654F-0000-C41B-A401-75E9D8E6BBF6}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-26420-gnr2ra" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-95187-fza88w" id="{F0FA654F-0000-C42D-A591-7FED3E8BDAD1}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-95187-fza88w" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-27375-9fzuc6" id="{C0FC654F-0000-C31E-A45E-D08B8D1C632F}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-27375-9fzuc6" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-95535-11wroha" id="{6007664F-0000-CC1B-BAE3-7D775D3AA891}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-95535-11wroha" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-28097-1xlu5w9" id="{200A664F-0000-CA14-88B9-69CF8F4BA2DF}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-28097-1xlu5w9" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-28334-8tjb6v" id="{E00B664F-0000-C010-A815-B47B6B725D9D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-28334-8tjb6v" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-28643-1f5m1q5" id="{D00D664F-0000-CF18-AF16-3D93940D41AA}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-28643-1f5m1q5" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-28898-wwsotw" id="{200F664F-0000-CA11-B68D-50394FEE0F20}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-28898-wwsotw" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150825-29132-2x27wf" id="{A012664F-0000-C710-88A3-B94235F7A38B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150825-29132-2x27wf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-25-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150826-24892-1i1hflm" id="{50426B4F-0000-C516-A829-8EAF49C3EBD7}" mimeType="text/plain" newMail="true" path="784449089/tmp20150826-24892-1i1hflm" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150826-26110-1jv9zgn" id="{30436B4F-0000-C510-905E-D5798A275677}" mimeType="text/plain" newMail="true" path="784449089/tmp20150826-26110-1jv9zgn" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150826-27025-169b1ai" id="{40456B4F-0000-CF16-97A9-DC9CB9B0B600}" mimeType="text/plain" newMail="true" path="784449089/tmp20150826-27025-169b1ai" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150826-27527-dqnx56" id="{D04D6B4F-0000-C711-B0DF-91AD1A8946EE}" mimeType="text/plain" newMail="true" path="784449089/tmp20150826-27527-dqnx56" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-92430-ezt2on" id="{10BA6F4F-0000-C389-B313-34B2A1C0DE3B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-92430-ezt2on" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-92900-g9k85n" id="{00BC6F4F-0000-CC19-A497-C892DD459266}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-92900-g9k85n" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-98728-u38i2z" id="{20C16F4F-0000-CA11-A921-229508979279}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-98728-u38i2z" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-2162-1jeibab" id="{F0C16F4F-0000-C21A-915A-03B1BA6E0172}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-2162-1jeibab" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-3031-itqw8g" id="{C0C26F4F-0000-C111-A4BA-3402C7862A44}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-3031-itqw8g" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-9282-1ry22gf" id="{30C56F4F-0000-C919-AEE1-49CB1105961F}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-9282-1ry22gf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-19719-b8w0sc" id="{D0C76F4F-0000-C215-B2F4-0F7727062D22}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-19719-b8w0sc" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-32876-1eynyuo" id="{90CB6F4F-0000-C113-9937-203D2B739BFF}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-32876-1eynyuo" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-37553-1b5mdz" id="{F0CD6F4F-0000-C71A-BAB9-EEE87DBA9A79}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-37553-1b5mdz" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-39162-16dgxll" id="{00CF6F4F-0000-CE1F-BBE9-D035E2B7BBA3}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-39162-16dgxll" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-45370-bda0qr" id="{A0D26F4F-0000-CE10-AB21-D876A478DE0D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-45370-bda0qr" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150827-45831-1kcrs3c" id="{60D46F4F-0000-CC16-930A-4116EF622B32}" mimeType="text/plain" newMail="true" path="784449089/tmp20150827-45831-1kcrs3c" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-27-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150828-28144-1jxv6ne" id="{E053744F-0000-C316-AEBA-29C9D9DA2DF8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-28144-1jxv6ne" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-8fa2d0de-abba-4ab7-8034-d9712c1f9c25.pdf" id="{0F473151-5715-4A15-9972-4192B34F63E5}" mimeType="application/pdf" newMail="true" path="784449089/cui-8fa2d0de-abba-4ab7-8034-d9712c1f9c25.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-ccd668c2-3226-4ce2-bbd0-14d47ddfb0eb.pdf" id="{F81C6654-6192-4C0A-A3E2-72549B2905DD}" mimeType="application/pdf" newMail="true" path="784449089/cui-ccd668c2-3226-4ce2-bbd0-14d47ddfb0eb.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-77c2e20e-aeb9-4135-b40d-00add541021c.pdf" id="{AD8BB354-054D-4E1D-9067-45EA0A176A24}" mimeType="application/pdf" newMail="true" path="784449089/cui-77c2e20e-aeb9-4135-b40d-00add541021c.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150708-5401-tjpns4" id="{B5C14857-DCEC-4BB5-AD60-70E5E484B1AE}" mimeType="text/plain" newMail="true" path="784449089/tmp20150708-5401-tjpns4" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-3ff9ad41-5ab5-4dc4-bfc9-967a977d989c.pdf" id="{944C245B-CC7E-4CD8-AA4F-10E3CFCC4A20}" mimeType="application/pdf" newMail="true" path="784449089/cui-3ff9ad41-5ab5-4dc4-bfc9-967a977d989c.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150513-65743-7izpyj" id="{2845F35E-AF0A-4ACA-B588-01E0C5A9DECA}" mimeType="text/plain" newMail="true" path="784449089/tmp20150513-65743-7izpyj" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="625" externalId="123" fileNumber="784449089" filename="VA8-57a034353ccce268b347180d98ee7714.pdf" id="{A87D355F-998A-4100-B5EB-B425FD78CC0B}" mimeType="application/pdf" newMail="true" path="784449089/VA8-57a034353ccce268b347180d98ee7714.pdf" source="Caseflow VBMS test" subject="form8" veteranFirstName="Joe" veteranLastName="Snuffy" veteranMiddleName="R" veteranPersonId="0">
+				<doc:receivedDt>2015-07-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150511-5883-inp83d" id="{3A5A5A63-3A54-4D84-958E-578E9FDC910E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150511-5883-inp83d" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-11-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150505-78384-1uolkzh" id="{313C1F64-FEF6-4D9A-896C-E9AD3B5EECA9}" mimeType="text/plain" newMail="true" path="784449089/tmp20150505-78384-1uolkzh" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-05-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="546" fileNumber="784449089" filename="evaluation_55.pdf" id="{9420AF69-85EB-4E82-AC63-77067B0FF1B5}" mimeType="application/pdf" newMail="false" path="784449089/evaluation_55.pdf" subject="evaluation_55.pdf" veteranFirstName="CUI" veteranLastName="TesterOne" veteranPersonId="0">
+				<doc:documentAssociations associationType="CLAIM" documentId="{9420AF69-85EB-4E82-AC63-77067B0FF1B5}">
+					<doc:associationValue>600012987</doc:associationValue>
+				</doc:documentAssociations>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-44332-185jd1j" id="{A759D26A-436D-42AF-A8B8-89497556BCB2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-44332-185jd1j" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui7f3c1e37-7f04-4449-a91b-ffd9ffab2742.pdf" id="{DEC0DB6A-4387-4981-A7CC-0E793300F1C2}" mimeType="application/pdf" newMail="true" path="784449089/cui7f3c1e37-7f04-4449-a91b-ffd9ffab2742.pdf" source="cui" subject="PartialDate test" veteranFirstName="effff" veteranLastName="effff" veteranPersonId="0">
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="test.pdf" id="{2C643E6C-D70F-4F65-A640-740118A592E5}" mimeType="application/pdf" newMail="true" path="784449089/test.pdf" source="VHA_CUI" subject="Knee" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150614-57708-1txzsf6" id="{9FFC616F-428C-4579-8CA4-894BDB855442}" mimeType="text/plain" newMail="true" path="784449089/tmp20150614-57708-1txzsf6" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-14-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150511-97086-1timswi" id="{2416EA6F-0FE5-415F-9A40-909AD83EA85D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150511-97086-1timswi" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-11-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34499-55vbir" id="{FA4A0E75-3DEF-4F5C-9847-E9FB54233BA1}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34499-55vbir" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150614-58729-5v6yuz" id="{A0665875-3E8A-4A78-95F8-9B84B269990E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150614-58729-5v6yuz" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-14-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="546" fileNumber="784449089" filename="cui6b833067-f8c6-4588-b7b2-b6cf7898cf93.pdf" id="{280C6275-C834-49B9-908E-EE1D4C51B111}" mimeType="application/pdf" newMail="false" path="784449089/cui6b833067-f8c6-4588-b7b2-b6cf7898cf93.pdf" source="cui" subject="cui6b833067-f8c6-4588-b7b2-b6cf7898cf93.pdf" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:documentAssociations associationType="CLAIM" documentId="{280C6275-C834-49B9-908E-EE1D4C51B111}">
+					<doc:associationValue>600012987</doc:associationValue>
+				</doc:documentAssociations>
+				<doc:receivedDt>2014-11-16-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150614-58893-15utqst" id="{E2B6A875-B44D-4A0D-AFF0-ED6BCC1A38DE}" mimeType="text/plain" newMail="true" path="784449089/tmp20150614-58893-15utqst" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-14-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150624-70613-1got2cq" id="{1916B275-1AD3-48A8-8B15-35C96FBA3542}" mimeType="text/plain" newMail="true" path="784449089/tmp20150624-70613-1got2cq" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-24-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-1230-1xtf86e" id="{68932B76-E31B-4848-981E-A2CDD82878C5}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-1230-1xtf86e" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-93185-14z7glu" id="{0B884A77-204F-4FF2-98B9-523EB75604FE}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-93185-14z7glu" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150626-54534-c12j1e" id="{28E57F79-4BB6-4BE9-ACAE-B7F37C70516B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150626-54534-c12j1e" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-917-5daien" id="{511D737C-118F-4586-8A77-2D2DA5DAF444}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-917-5daien" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150817-95641-itvtcl" id="{58452D81-5234-4B7E-AEA8-10084F4D021E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150817-95641-itvtcl" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150505-79101-p3pdc8" id="{8C464581-622D-4DCA-9470-402248D02339}" mimeType="text/plain" newMail="true" path="784449089/tmp20150505-79101-p3pdc8" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-05-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-a6e44888-c467-4535-97f0-ee088a0289fc.pdf" id="{1BCA1983-47CC-4D12-8EB1-12E614E26ED2}" mimeType="application/pdf" newMail="true" path="784449089/cui-a6e44888-c467-4535-97f0-ee088a0289fc.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="a.pdf" id="{2C1C8F83-BFBD-4458-9668-E4F34F726A7A}" mimeType="application/pdf" newMail="true" path="784449089/a.pdf" source="VHA_CUI" subject="Knee" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92098-1op0rqa" id="{BC934086-7543-4980-9417-91407EE09FDA}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92098-1op0rqa" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-99040-1er7a8t" id="{1A013188-F971-4B5B-A10E-BFF4528E4F92}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-99040-1er7a8t" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-60164-1r4pnkl" id="{7CA6D089-3526-48BC-9D59-A29F57593623}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-60164-1r4pnkl" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-8ee25501-9dbf-4461-bcbb-d975a9f58672.pdf" id="{DA2CC28A-1803-4C87-ADE5-D63058F9873A}" mimeType="application/pdf" newMail="true" path="784449089/cui-8ee25501-9dbf-4461-bcbb-d975a9f58672.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-93360-1vyi9y4" id="{F11A4C8D-9FE9-414C-BA75-493A52499586}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-93360-1vyi9y4" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-6513-10dqwfm" id="{560B5591-D848-40A6-A3E2-AEADB44E83D4}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-6513-10dqwfm" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-72019-1kp2iuu" id="{042AD391-53AD-4278-BA7B-4A811B37BE81}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-72019-1kp2iuu" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150511-91186-1pziw4m" id="{67E92792-0333-48DE-8983-AF8C8B24B407}" mimeType="text/plain" newMail="true" path="784449089/tmp20150511-91186-1pziw4m" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-11-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-44722-z4p0es" id="{26B67994-ABB8-4BB1-9D34-C3F8C45367A9}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-44722-z4p0es" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34540-1tz1xqs" id="{60787A94-56EB-4DBD-A81B-AC6CD588866B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34540-1tz1xqs" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-3829-1wvgpyo" id="{257EDA94-A5D4-4A58-ACD5-4393CE2236B2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-3829-1wvgpyo" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150623-59505-1mcfktc" id="{F7327B9B-5052-46E5-9BCA-D2CAF81ED6D7}" mimeType="text/plain" newMail="true" path="784449089/tmp20150623-59505-1mcfktc" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-23-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92139-2zf5w2" id="{9237959D-F4FE-4E7D-A099-113DA57E20E8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92139-2zf5w2" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-74237-1t2oqfm" id="{DC2FFBA0-9FFE-4E08-A71E-EF59DAAB2928}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-74237-1t2oqfm" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34560-1goblw1" id="{5006FCA0-6727-4267-A9A6-90092382DE0B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34560-1goblw1" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150623-59376-jlfhv8" id="{C95577A1-A43D-4274-B1C7-FD8C13DF4669}" mimeType="text/plain" newMail="true" path="784449089/tmp20150623-59376-jlfhv8" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-23-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150629-85308-ilbz9u" id="{1DB4DDA2-DB4B-4F7A-8696-AAB722358E93}" mimeType="text/plain" newMail="true" path="784449089/tmp20150629-85308-ilbz9u" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-1079-rcycs" id="{C6FB55A6-BFDB-42B9-B014-379238B8C96D}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-1079-rcycs" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-3674-13l3q2x" id="{58EB04A8-AAFC-4B31-960D-2CD470E3D7B2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-3674-13l3q2x" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150511-77557-1splbay" id="{42C464AC-132E-4B8D-8102-BE649B9190D9}" mimeType="text/plain" newMail="true" path="784449089/tmp20150511-77557-1splbay" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-11-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="625" externalId="123" fileNumber="784449089" filename="VA8-1417de8af2c46529288fc83a2ecfa1d0.pdf" id="{54EE65AC-364A-46DE-81CF-ACC357D39D7C}" mimeType="application/pdf" newMail="true" path="784449089/VA8-1417de8af2c46529288fc83a2ecfa1d0.pdf" source="EFX VBMS test" subject="form8" veteranFirstName="Joe" veteranLastName="Snuffy" veteranMiddleName="R" veteranPersonId="0">
+				<doc:receivedDt>2015-07-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="546" fileNumber="784449089" filename="cui5f2f44cd-227d-4364-a05c-4063afb4b407.pdf" id="{F7CAE7AC-47B2-4DB6-ABE6-850AB8A0DE9A}" mimeType="application/pdf" newMail="false" path="784449089/cui5f2f44cd-227d-4364-a05c-4063afb4b407.pdf" source="cui" subject="cui5f2f44cd-227d-4364-a05c-4063afb4b407.pdf" veteranFirstName="CUI" veteranLastName="TesterOne" veteranPersonId="0">
+				<doc:documentAssociations associationType="CLAIM" documentId="{F7CAE7AC-47B2-4DB6-ABE6-850AB8A0DE9A}">
+					<doc:associationValue>600012987</doc:associationValue>
+				</doc:documentAssociations>
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" category="19" docType="20" fileNumber="784449089" filename="TEST DOCUMENT.pdf" id="{6C87FBAD-5180-4C64-920A-793DBD625565}" mimeType="application/pdf" newMail="false" path="784449089/TEST DOCUMENT.pdf" source="Accurint" subject="Test Document" veteranFirstName="CUI" veteranLastName="TesterOne" veteranPersonId="0">
+				<doc:receivedDt>2014-08-01-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-92635-14kwxn9" id="{F3F701AE-34AD-4C79-9B4D-1E98E5E4DA1E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-92635-14kwxn9" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-95441-1sts6si" id="{71901FB0-CAC2-4639-BB39-F92433ABB1FF}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-95441-1sts6si" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150720-72141-wt31iy" id="{2A9C00B3-EAB4-43CD-831C-21B3DE1A7A29}" mimeType="text/plain" newMail="true" path="784449089/tmp20150720-72141-wt31iy" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-20-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-66221-4s46kf" id="{9CE812B5-816A-4D76-9C2D-38ADF5F25365}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-66221-4s46kf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-92843-6whdgy" id="{7B3A7FB6-EB3F-4832-BA75-1778B2AA1A2C}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-92843-6whdgy" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150620-82125-1wc3jok" id="{57F50CB7-2E74-42FB-902E-ACA54C960E24}" mimeType="text/plain" newMail="true" path="784449089/tmp20150620-82125-1wc3jok" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-20-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-0864cd3a-3778-4240-aa5a-312308551c83.pdf" id="{FCC990B8-D2CA-4FA8-AA72-D7E0C3230171}" mimeType="application/pdf" newMail="true" path="784449089/cui-0864cd3a-3778-4240-aa5a-312308551c83.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92384-z1vu8h" id="{E139DFB9-DC15-4146-A43B-896E32795106}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92384-z1vu8h" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34460-1z08tcj" id="{B79394BA-4D8B-4967-B2BF-6A4EA7B287CB}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34460-1z08tcj" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-73603-1mkijxp" id="{61AAEEBE-6126-42D9-BBE8-B2632842AEA2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-73603-1mkijxp" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150612-37661-1r6d7qf" id="{06B5DBBF-5DA7-4915-AF7F-6C39905CFE28}" mimeType="text/plain" newMail="true" path="784449089/tmp20150612-37661-1r6d7qf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-12-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-34483-1o20hyl" id="{99BB35C0-1AAA-4596-92E1-9B3FE3E0FD1E}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-34483-1o20hyl" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150511-40445-1hdi89l" id="{1CDD84C4-B3B6-4610-8017-FE9D4FF308E2}" mimeType="text/plain" newMail="true" path="784449089/tmp20150511-40445-1hdi89l" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-11-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150512-16875-18otbvs" id="{80B0C0C4-8F83-4C77-8ACF-5CDC116E8A82}" mimeType="text/plain" newMail="true" path="784449089/tmp20150512-16875-18otbvs" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-12-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-38120-1oocznf" id="{A4DFE7C5-F232-4BEF-81B5-569D5E041991}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-38120-1oocznf" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-92532-160q1jw" id="{746A0CCA-A2F4-4A6F-B369-A07335195699}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-92532-160q1jw" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="625" externalId="123" fileNumber="784449089" filename="VA8-543adaad5e831e1e65bf4bec95ee528a.pdf" id="{705B74CC-9DAE-4937-82CB-67EE7BF6D904}" mimeType="application/pdf" newMail="true" path="784449089/VA8-543adaad5e831e1e65bf4bec95ee528a.pdf" source="Caseflow VBMS test" subject="form8" veteranFirstName="Joe" veteranLastName="Snuffy" veteranMiddleName="R" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="VBMS-SPEC-00007 Services Specification Document.pdf" id="{306AB7CC-FCD8-4260-BFF7-CB745AFC06AE}" mimeType="application/pdf" newMail="true" path="784449089/VBMS-SPEC-00007 Services Specification Document.pdf" source="VHA_CUI" subject="Knee" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:receivedDt>2014-11-17-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150707-72442-12h7141" id="{BE5C62CD-3D48-455E-AB4E-5C2CF74A0470}" mimeType="text/plain" newMail="true" path="784449089/tmp20150707-72442-12h7141" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-07-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150626-54834-1j41vyn" id="{355402CE-C786-4A3E-A69E-69E5CEC985C8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150626-54834-1j41vyn" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-26-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-64123-o6u8hu" id="{888F54CE-0953-47CB-A055-541DE1268565}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-64123-o6u8hu" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150608-61332-1w56q23" id="{A4D711D1-2E66-4A5C-B93A-5A76AC688E45}" mimeType="text/plain" newMail="true" path="784449089/tmp20150608-61332-1w56q23" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-08-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150624-71133-rf7vw9" id="{0CCE1DD1-868A-4F76-B8E5-9F3643AB116B}" mimeType="text/plain" newMail="true" path="784449089/tmp20150624-71133-rf7vw9" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-24-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cuiaf9bf9ed-3f8a-4261-a372-73881729de96.pdf" id="{A29140D1-37A4-47A8-A333-791C09115F8A}" mimeType="application/pdf" newMail="true" path="784449089/cuiaf9bf9ed-3f8a-4261-a372-73881729de96.pdf" source="VHA_CUI" subject="Knee" veteranFirstName="Joe" veteranLastName="citizen" veteranPersonId="0">
+				<doc:receivedDt>2014-11-16-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-6737-10f7tp8" id="{3E4EB7D3-F704-443B-8DC6-CF0DEBA267C5}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-6737-10f7tp8" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-d71a4197-e5bd-43d7-9573-cb669b3233c7.pdf" id="{C5647BD4-598C-46B3-B875-8765636803C5}" mimeType="application/pdf" newMail="true" path="784449089/cui-d71a4197-e5bd-43d7-9573-cb669b3233c7.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150624-70464-ae0hb3" id="{8585A0D5-BB64-456A-BF10-66C495791A0C}" mimeType="text/plain" newMail="true" path="784449089/tmp20150624-70464-ae0hb3" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-24-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150622-91807-sub6dd" id="{26D819D6-F456-44BD-9668-65FCF39FED45}" mimeType="text/plain" newMail="true" path="784449089/tmp20150622-91807-sub6dd" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-22-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-92791-1h8wnsa" id="{294E28D6-0A59-45E7-BDC1-6816EB067BD0}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-92791-1h8wnsa" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150720-71296-1tbkj23" id="{0AD24CD7-BC64-467E-9C45-566572091FDD}" mimeType="text/plain" newMail="true" path="784449089/tmp20150720-71296-1tbkj23" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-20-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150720-82033-kzx7j7" id="{427E8ED8-6548-4E30-9EA7-1BF968DE453A}" mimeType="text/plain" newMail="true" path="784449089/tmp20150720-82033-kzx7j7" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-20-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150505-78371-pxelzm" id="{15EA53D9-02B6-4D24-A299-3E7DD9C03240}" mimeType="text/plain" newMail="true" path="784449089/tmp20150505-78371-pxelzm" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-05-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150612-37924-z7z7r8" id="{97654DE3-74A5-4F05-8C65-BA2677B1C90A}" mimeType="text/plain" newMail="true" path="784449089/tmp20150612-37924-z7z7r8" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-12-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150817-95258-1vy9trg" id="{B53948E5-A062-41FC-BF37-4B1B26078D17}" mimeType="text/plain" newMail="true" path="784449089/tmp20150817-95258-1vy9trg" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150609-46124-43mkcb" id="{113FFCE7-8427-4EE7-BDDE-4EE4D5FE21CC}" mimeType="text/plain" newMail="true" path="784449089/tmp20150609-46124-43mkcb" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-09-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150717-8194-8utyox" id="{C50CB5E8-765F-4F4A-AD8B-C8CC7B14B050}" mimeType="text/plain" newMail="true" path="784449089/tmp20150717-8194-8utyox" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-07-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="cui-4f7157ff-28be-470b-a986-0e1d8ece3386.pdf" id="{B39A60EE-990E-401D-9E2C-BCBAE86BAE2A}" mimeType="application/pdf" newMail="true" path="784449089/cui-4f7157ff-28be-470b-a986-0e1d8ece3386.pdf" source="VHA_CUI" subject="VA Disability Assessment Endocrine" veteranFirstName="Joe" veteranLastName="Veteran" veteranPersonId="0">
+				<doc:receivedDt>2015-07-13-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92422-5xcp1e" id="{E191A7F0-EB80-4367-9F72-532C157292FC}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92422-5xcp1e" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-92079-8a820r" id="{46EF62F1-9955-4A78-AEA5-C6534D319F37}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-92079-8a820r" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150817-95398-6ovt2d" id="{8CFAF3F4-8493-421D-BE77-AE7A008B7895}" mimeType="text/plain" newMail="true" path="784449089/tmp20150817-95398-6ovt2d" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-17-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150506-88682-1seu3o" id="{F9A495F5-7639-4D62-862A-61775D8EE894}" mimeType="text/plain" newMail="true" path="784449089/tmp20150506-88682-1seu3o" source="VHA_CUI" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-05-06-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="546" externalId="123" fileNumber="784449089" filename="cuice5cc096-c5d4-45c4-bdd7-aca92a79b916.pdf" id="{A3029DF5-DF6A-408A-A062-3BDA9373B08C}" mimeType="application/pdf" newMail="true" path="784449089/cuice5cc096-c5d4-45c4-bdd7-aca92a79b916.pdf" source="cui" subject="cuice5cc096-c5d4-45c4-bdd7-aca92a79b916.pdf" veteranFirstName="CUI" veteranLastName="TesterOne" veteranPersonId="0">
+				<doc:receivedDt>2014-11-16-05:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150615-66952-1occypa" id="{B0B43CFA-8FCC-4728-83EA-8BDDD1B58DC8}" mimeType="text/plain" newMail="true" path="784449089/tmp20150615-66952-1occypa" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-15-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150629-85774-18z884i" id="{6B5C92FD-EF5D-4871-A51D-38F0A171A912}" mimeType="text/plain" newMail="true" path="784449089/tmp20150629-85774-18z884i" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-29-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="356" externalId="123" fileNumber="784449089" filename="tmp20150610-12467-3mes0" id="{42DAE5FE-2911-40AA-8161-71EBE8D6B157}" mimeType="text/plain" newMail="true" path="784449089/tmp20150610-12467-3mes0" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-06-10-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="00356" externalId="123" fileNumber="784449089" filename="tmp20150828-28242-1e0hq2x" id="{C054744F-0000-C913-8317-5D4F751A3E63}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-28242-1e0hq2x" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="00356" externalId="123" fileNumber="784449089" filename="tmp20150828-28365-1cc8tev" id="{B058744F-0000-C61D-BD09-7DC870621D78}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-28365-1cc8tev" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="00356" externalId="123" fileNumber="784449089" filename="tmp20150828-36305-1ekh8wn" id="{905A744F-0000-C31B-8707-31F094E4A9FC}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-36305-1ekh8wn" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="00356" externalId="123" fileNumber="784449089" filename="tmp20150828-28559-h3ht8j" id="{B05A744F-0000-C210-933E-0AD45AA663DB}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-28559-h3ht8j" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+			<edoc:result actionable="false" docType="00356" externalId="123" fileNumber="784449089" filename="tmp20150828-43341-tccfg6" id="{A061744F-0000-C211-89E1-9489D96D0756}" mimeType="text/plain" newMail="true" path="784449089/tmp20150828-43341-tccfg6" source="Connect VBMS test" subject="knee" veteranFirstName="Jane" veteranLastName="Citizen" veteranMiddleName="Q" veteranPersonId="0">
+				<doc:receivedDt>2015-08-28-04:00</doc:receivedDt>
+			</edoc:result>
+		</listDocumentsResponse>
+	</soap:Body>
+</soap:Envelope>
