@@ -17,7 +17,7 @@ class SessionsController < ApplicationController
 
   def ssoi_saml_callback
     # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
-    auth_hash = request.env["omniauth.auth"]
+    auth_hash = request.env["omniauth.auth"] || {}
 
     if current_user.authenticate_ssoi(auth_hash)
       redirect_to current_user.return_to
@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
   end
 
   def ssoi_saml_failure(failure_message = params[:message])
-    render layout: "application", text: "<p>#{failure_message}</p>"
+    render layout: "application", text: "<p>#{failure_message}</p>", status: 400
   end
 
   private
