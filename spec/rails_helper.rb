@@ -29,7 +29,7 @@ require_relative "support/fake_pdf_service"
 
 require "capybara"
 Capybara.default_driver = :sniffybara
-Sniffybara::Driver.path_exclusions << /vasaml/
+Sniffybara::Driver.path_exclusions << /samlva/
 
 # Convenience methods for stubbing current user
 module StubbableUser
