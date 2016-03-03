@@ -34,6 +34,8 @@ gem 'pdf-forms'
 gem 'pdfjs_viewer-rails'
 
 group :production, :staging do
+  gem 'connect_vbms', path: './vendor/gems/connect_vbms'
+
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
   gem 'ruby-oci8'
