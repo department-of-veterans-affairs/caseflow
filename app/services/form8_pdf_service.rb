@@ -103,16 +103,19 @@ class Form8PdfService
   end
 
   def self.save_pdf_for!(form8)
-    File.delete(tmp_location_for(form8)) if File.exist?(tmp_location_for(form8))
+    tmp_location = tmp_location_for(form8)
+    final_location = output_location_for(form8)
+
+    File.delete(tmp_location) if File.exist?(tmp_location)
 
     pdf_forms.fill_form(
       empty_pdf_location,
-      tmp_location_for(form8),
+      tmp_location,
       pdf_values_for(form8),
       flatten: true
     )
 
-    File.delete(output_location_for(form8)) if File.exist?(output_location_for(form8))
+    File.delete(final_location) if File.exist?(final_location)
 
     # Run it through `pdftk cat`. The reason for this is that editable PDFs have
     # an RSA signature on them which proves they are genuine. pdftk tries to
@@ -120,14 +123,14 @@ class Form8PdfService
     # signature doesn't match. The result is that (without `pdftk cat`) Acrobat
     # shows a warning (other PDF viewers don't care).
     pdf_forms.call_pdftk(
-      tmp_location_for(form8),
+      tmp_location,
       "cat",
       "output",
-      output_location_for(form8)
+      final_location
     )
 
     # Remove it from the tmp_location, leaving it only in final_location
-    File.delete(tmp_location_for(form8))
+    File.delete(tmp_location)
   end
 
   def self.output_location_for(form8)
