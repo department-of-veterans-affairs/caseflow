@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   get "logout" => "sessions#destroy"
   get 'whats-new' => 'whats_new#show'
 
+  get 'help' => 'help#show'
+
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
