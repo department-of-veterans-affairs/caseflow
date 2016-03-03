@@ -111,7 +111,7 @@ class Form8
     end
 
     # rubocop:disable Metrics/AbcSize
-    def new_from_appeal(appeal)
+    def from_appeal(appeal)
       new(
         vacols_id: appeal.vacols_id,
         appellant_name: appeal.appellant_name,

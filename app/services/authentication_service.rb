@@ -11,12 +11,4 @@ class AuthenticationService
     oci.logoff
     true
   end
-
-  def self.ssoi_authentication_enabled?
-    false
-  end
-
-  def self.ssoi_username
-    "TESTMODE"
-  end
 end

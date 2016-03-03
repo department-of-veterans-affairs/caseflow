@@ -5,7 +5,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
     visit "certifications/new/ABCD"
-    expect(page).to have_current_path(login_path)
+    expect(page).to have_current_path(Rails.application.config.ssoi_login_path)
   end
 
   scenario "Starting a certification with missing documents" do

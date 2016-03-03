@@ -1,4 +1,5 @@
 language: ruby
+dist: wily
 rvm:
   - 2.3.0
 

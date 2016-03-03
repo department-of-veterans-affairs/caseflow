@@ -4,28 +4,6 @@ describe User do
   let(:session) { {} }
   let(:user) { User.new(session: session) }
 
-  context "#username" do
-    subject { user.username }
-
-    context "when ssoi authentication is enabled" do
-      before do
-        Fakes::AuthenticationService.ssoi_enabled = true
-        session[:username] = "Russeller"
-      end
-
-      it { is_expected.to eq("Russeller") }
-    end
-
-    context "when ssoi authentication is disabled" do
-      before do
-        Fakes::AuthenticationService.ssoi_enabled = false
-        Fakes::AuthenticationService.ssoi_username = "Shaner"
-      end
-
-      it { is_expected.to eq("Shaner") }
-    end
-  end
-
   context "#regional_office" do
     subject { user.regional_office }
     before { session[:regional_office] = "RO17" }
@@ -35,19 +13,17 @@ describe User do
   context "#display_name" do
     subject { user.display_name }
 
-    before do
-      Fakes::AuthenticationService.ssoi_enabled = true
-      session[:regional_office] = "RO77"
-    end
-
-    context "when username is set" do
-      before { session[:username] = "Shaner" }
+    context "when username and RO are both set" do
+      before do
+        session[:username] = "Shaner"
+        session[:regional_office] = "RO77"
+      end
       it { is_expected.to eq("Shaner (RO77)") }
     end
 
-    context "when username isn't set" do
-      before { session[:username] = nil }
-      it { is_expected.to eq("RO77") }
+    context "when just username is set" do
+      before { session[:username] = "Shaner" }
+      it { is_expected.to eq("Shaner") }
     end
   end
 
@@ -70,7 +46,6 @@ describe User do
 
   context "#authenticated?" do
     subject { user.authenticated? }
-    before { Fakes::AuthenticationService.ssoi_enabled = true }
 
     context "when ssoi is authenticated" do
       before { session[:username] = "USER" }
@@ -96,7 +71,6 @@ describe User do
 
   context "#ssoi_authenticated?" do
     subject { user.ssoi_authenticated? }
-    before { Fakes::AuthenticationService.ssoi_enabled = true }
 
     context "when username is set" do
       before { session[:username] = "USER" }
@@ -145,6 +119,19 @@ describe User do
       user.unauthenticate
       expect(session[:regional_office]).to be_nil
       expect(session[:username]).to be_nil
+    end
+  end
+
+  context "#authenticate_ssoi" do
+    it "fails if missing id" do
+      result = user.authenticate_ssoi({})
+      expect(result).to be_falsey
+    end
+
+    it "succeeds if uid is present" do
+      result = user.authenticate_ssoi("uid" => "xyz@va.gov")
+      expect(result).to be_truthy
+      expect(user.username).to eq("xyz@va.gov")
     end
   end
 end
