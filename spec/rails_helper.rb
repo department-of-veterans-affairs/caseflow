@@ -29,6 +29,7 @@ require_relative "support/fake_pdf_service"
 
 require "capybara"
 Capybara.default_driver = :sniffybara
+Sniffybara::Driver.path_exclusions << /samlva/
 
 # Convenience methods for stubbing current user
 module StubbableUser
@@ -53,8 +54,6 @@ User.class.prepend(StubbableUser)
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
-Fakes::AuthenticationService.ssoi_enabled = false
-Fakes::AuthenticationService.ssoi_username = "DSUSER"
 
 RSpec.configure do |config|
   config.before(:all) { User.unauthenticate! }

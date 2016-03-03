@@ -26,7 +26,7 @@
         <h1 class="cf-logo">Caseflow</h1>
         <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
 
-        <% if current_user %>
+        <% if current_user.ssoi_authenticated? %>
           <div class="cf-dropdown cf-nav-dropdown">
             <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
               <%= current_user.display_name %>
