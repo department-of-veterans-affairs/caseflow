@@ -22,13 +22,12 @@ class SessionsController < ApplicationController
     if current_user.authenticate_ssoi(auth_hash)
       redirect_to current_user.return_to
     else
-      ssoi_saml_failure(message: "Failed to authenticate")
+      ssoi_saml_failure("Failed to authenticate")
     end
   end
 
-  def ssoi_saml_failure(message = params[:message])
-    # TODO: render message in a page
-    render text: "failure #{message}"
+  def ssoi_saml_failure(failure_message = params[:message])
+    render layout: "application", text: "<p>#{failure_message}</p>"
   end
 
   private
