@@ -1,10 +1,17 @@
 require "vbms"
+require "benchmark"
 
 class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
   def self.find(vacols_id, _args = {})
-    case_record = Records::Case.includes(:folder, :correspondent).find(vacols_id)
+    case_record = nil
+
+    stopwatch = Benchmark.measure do
+      case_record = Records::Case.includes(:folder, :correspondent).find(vacols_id)
+    end
+
+    Rails.logger.info("loaded VACOLS case in #{stopwatch.real}")
 
     appeal = Appeal.from_records(
       case_record: case_record,
@@ -22,7 +29,12 @@ class AppealRepository
   def self.certify(appeal)
     appeal.case_record.bfdcertool = Time.zone.now
     appeal.case_record.bf41stat = Time.zone.now.to_s(:va_date)
-    appeal.case_record.save!
+
+    stopwatch = Benchmark.measure do
+      appeal.case_record.save!
+    end
+
+    Rails.logger.info("saved VACOLS case in #{stopwatch.real}")
 
     upload_form8_for(appeal)
   end
@@ -48,15 +60,24 @@ class AppealRepository
       true
     )
 
-    @vbms_client.send(request)
+    send_and_log_request(request)
+
     File.delete(form8.pdf_location)
+  end
+
+  def self.send_and_log_request(request)
+    stopwatch = Benchmark.measure do
+      @vbms_client.send(request)
+    end
+
+    Rails.logger.info("sent VBMS request #{request.class} in #{stopwatch.real}")
   end
 
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::ListDocuments.new(sanitize_vbms_id(appeal.vbms_id))
-    @vbms_client.send_request(request)
+    send_and_log_request(request)
   end
 
   def self.vbms_config
