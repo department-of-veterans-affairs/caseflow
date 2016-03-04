@@ -110,7 +110,7 @@ class AppealRepository
       vbms_config["keypass"],
       vbms_config["cacert"],
       vbms_config["cert"],
-      logger: CaseflowLogger.new
+      CaseflowLogger.new
     )
   end
 end
