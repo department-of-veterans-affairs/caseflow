@@ -24,7 +24,8 @@ script:
 
 bundler_args: "--without development staging production"
 cache:
-  - bundler
+  directories:
+    - vendor/bundle
 
 notifications:
   email: false
