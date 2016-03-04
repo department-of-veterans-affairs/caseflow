@@ -36,7 +36,12 @@ gem 'pdfjs_viewer-rails'
 # SSOI
 gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/omniauth-saml-va'
 
+# Used to colorize output for rake tasks
+gem "rainbow"
+
 group :production, :staging do
+  gem 'therubyracer'
+
   gem 'connect_vbms', path: './vendor/gems/connect_vbms'
 
   # Oracle DB
@@ -47,9 +52,6 @@ end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: :ruby
-
-  # Used to colorize output for rake tasks
-  gem "rainbow"
 
   # Linters
   gem 'rubocop', '~> 0.36.0', require: false
