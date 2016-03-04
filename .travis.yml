@@ -2,6 +2,7 @@ language: ruby
 dist: wily
 rvm:
   - 2.3.0
+sudo: false  # Enable container based build environments.
 
 branches:
     only:
