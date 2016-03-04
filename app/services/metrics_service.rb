@@ -4,6 +4,6 @@ require "benchmark"
 class MetricsService
   def self.timer(description, &block)
     stopwatch = Benchmark.measure(&block)
-    Rails.logger.info("#{description}: #{stopwatch.real}")
+    Rails.logger.info("#{description}: #{stopwatch}")
   end
 end
