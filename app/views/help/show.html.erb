@@ -1,6 +1,6 @@
 <% content_for :page_title do %>Help<% end %>
 
-<div class="cf-app-segment cf-app-segment--alt">
+<div class="cf-app-segment cf-app-segment--alt cf-help-content">
     <h1>Caseflow Certification Help</h1>
 
     <h2>1. What is Caseflow Certification?</h2>
@@ -35,13 +35,20 @@
     SSOC have been entered into VACOLS, click the Certify Appeal button from the
     process menu. You can also select this option from the search results window or
     the update appeal window 
+    </p>
 
-    [Screenshot of process dropdown menu]  
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vacols-processes.png', {class: "cf-help-image", alt: 'VACOLS Processes dialog'} %>
+    </p>
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vacols-search.png', {class: "cf-help-image", alt: 'VACOLS Search dialog'} %>
+    </p>
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vacols-update.png', {class: "cf-help-image", alt: 'VACOLS Update dialog'} %>
+    </p>
+    <p>
 
-    [Screenshot of search results]  
-
-    [Screenshot of update appeal window] 
-
+    <p>
     When you click the certify button, you'll see a new window pop up. Since
     you are certifying a paperless appeal, you should select VBMS eFolder.  
 
@@ -57,9 +64,10 @@
     credentials (or PIV if you like). On the second login page, you'll need to log
     in using your regional office VACOLS credentials.
 
-    [Screenshot of IAM Login]
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/caseflow-login.png', {class: "cf-help-image", alt: 'VACOLS Login dialog'} %>
+    </p>
 
-    [Screenshot of VACOLS Login]
     </p>
 
     <h2>5. Why does Caseflow say it cannot find documents in the appellant’s
@@ -70,8 +78,10 @@
     eFolder (such as the NOD, SOC, and Form 9) match the dates entered in VACOLS.
     Caseflow will tell you it cannot find documents in VBMS if it cannot detect
     these documents.
+    </p>
 
-    [Screenshot of missing documents] 
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/caseflow-mismatched.png', {class: "cf-help-image", alt: 'Caseflow mismatched documents dialog'} %>
     </p>
 
     <h2 id='mismatched-documents'>6. What are the reasons Caseflow may not be
@@ -105,8 +115,10 @@
 
     If a document is missing from the eFolder, the appeal is not ready to be
     certified and you should click the Cancel Certification button.
+    </p>
 
-    [Screenshot of VBMS Document Settings]
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vbms-documentproperties.png', {class: "cf-help-image", alt: 'VBMS document properties dialog'} %>
     </p>
 
     <h2>7. What should I do if an eFolder document contains multiple
@@ -131,8 +143,6 @@
     Once all the documents are detected, you'll see a web form that lets you fill
     out all the details to complete a Form 8. A red asterisk (*) marks required
     questions.
-
-    [Screenshot of required question]
 
     To make things go a little faster, some of the fields are automatically
     pre-filled using data from VBMS and VACOLS. If something is pre-filled but
@@ -171,9 +181,14 @@
     If you are unable to certify the appeal using Caseflow Certification, you can
     click the Cancel Certification link. You'll see a confirmation indicating the
     certification has been cancelled and you can close the window.
+    </p>
 
-    [Screenshot of cancellation modal]
+    <p>
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/caseflow-cancelmodal.png', {class: "cf-help-image", alt: 'Caseflow Cancel Modal'} %>
+    </p>
 
+    <p>
     It's important to know that you cannot cancel a certification after clicking
     the Upload and Certify button because the Form 8 will have already been added
     to the eFolder and cannot be deleted.
@@ -195,8 +210,11 @@
     find the appeal in VACOLS, click the Certify button, then select the Hardcopy
     claims folder or Virtual VA option. From here you'll need to manually fill out
     a Form 8 for the appeal and type in the Certification Date this window.
+    </p>
 
-    [Screenshot of VACOLS appeal type selection]
+    <p>
+    <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vacols-certify.png', {class: "cf-help-image", alt: 'Caseflow Cancel Modal'} %>
     </p>
 
     <h2>14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</h2>
