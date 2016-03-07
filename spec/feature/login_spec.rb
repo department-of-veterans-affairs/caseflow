@@ -41,7 +41,7 @@ RSpec.feature "Login" do
     click_on "Login"
 
     expect(page).to have_current_path(login_path)
-    expect(find(".usa-alert-body")).to have_content("Login ID and password did not work. Please try again.")
+    expect(find(".usa-alert-body")).to have_content("The username and password you entered don't match")
 
     visit "certifications/new/1234C"
     expect(page).to have_current_path(login_path)
