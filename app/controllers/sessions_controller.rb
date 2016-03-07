@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
 
   def create
     unless current_user.authenticate(authentication_params)
-      flash[:error] = "Login ID and password did not work. Please try again."
+      flash[:error] = "The username and password you entered don't match, please try again."
       return redirect_to login_path
     end
 
