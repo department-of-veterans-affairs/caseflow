@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   def new
     return redirect_to(ssoi_url) unless current_user.ssoi_authenticated?
 
-    push_ga_event(eventCategory: "VACOLS Login", eventLabel: "Failed") if flash[:error]
+    push_ga_event(eventCategory: "VACOLS Login", eventAction: "Failed") if flash[:error]
   end
 
   def create

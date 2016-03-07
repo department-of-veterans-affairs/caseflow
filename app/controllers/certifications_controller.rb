@@ -4,16 +4,16 @@ class CertificationsController < ApplicationController
 
   def new
     if appeal.certified?
-      push_ga_event(eventCategory: "Certification", eventLabel: "Already Certified")
+      push_ga_event(eventCategory: "Certification", eventAction: "Already Certified")
       return render "already_certified"
     end
 
     unless appeal.documents_match?
-      push_ga_event(eventCategory: "Certification", eventLabel: "Mismatched Documents")
+      push_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents")
       return render "mismatched_documents"
     end
 
-    push_ga_event(eventCategory: "Certification", eventLabel: "Initiated")
+    push_ga_event(eventCategory: "Certification", eventAction: "Initiated")
     @form8 = Form8.from_appeal(appeal)
   end
 
@@ -25,11 +25,11 @@ class CertificationsController < ApplicationController
 
   def show
     if params[:confirm]
-      push_ga_event(eventCategory: "Certification", eventLabel: "Completed")
+      push_ga_event(eventCategory: "Certification", eventAction: "Completed")
       render "confirm"
     end
 
-    push_ga_event(eventCategory: "Certification", eventLabel: "Previewed")
+    push_ga_event(eventCategory: "Certification", eventAction: "Previewed")
   end
 
   def pdf
@@ -42,7 +42,7 @@ class CertificationsController < ApplicationController
   end
 
   def cancel
-    push_ga_event(eventCategory: "Certification", eventLabel: "Canceled")
+    push_ga_event(eventCategory: "Certification", eventAction: "Canceled")
     render layout: "application"
   end
 
