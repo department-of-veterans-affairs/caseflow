@@ -1,11 +1,13 @@
 class SessionsController < ApplicationController
   def new
     return redirect_to(ssoi_url) unless current_user.ssoi_authenticated?
+
+    push_ga_event(eventCategory: "VACOLS Login", eventAction: "Failed") if flash[:error]
   end
 
   def create
     unless current_user.authenticate(authentication_params)
-      flash[:error] = "Login ID and password did not work. Please try again."
+      flash[:error] = "The username and password you entered don't match, please try again."
       return redirect_to login_path
     end
 
