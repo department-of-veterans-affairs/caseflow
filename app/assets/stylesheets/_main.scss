@@ -103,7 +103,6 @@ h6 {
   &:not(.usa-alert-heading) {
     font-family: inherit;
     margin-top: 0;
-    margin-bottom: 0;
   }
 }
 
@@ -421,6 +420,7 @@ svg title {
 
 .cf-name-header {
   font-size: 3rem;
+  margin-bottom: 0;
 }
 
 //.cf-app-segment represents a chunk of an application's
