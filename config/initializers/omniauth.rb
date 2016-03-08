@@ -15,7 +15,7 @@ end
 if ssoi_authentication_enabled?
   Rails.application.config.middleware.use OmniAuth::Builder do
     provider :samlva, 'CASEFLOW', ENV[ENV_SAML_KEY], ENV[ENV_SAML_XML],
-             :callback_path => '/caseflow/users/auth/saml/callback',
+             :callback_path => '/auth/saml_callback',
              :path_prefix => '/auth'
   end
 else
