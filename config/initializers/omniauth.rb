@@ -1,3 +1,5 @@
+require 'omniauth/strategies/saml/validation_error'
+
 ENV_SAML_XML = 'SSOI_SAML_XML_LOCATION'
 ENV_SAML_KEY = 'SSOI_SAML_PRIVATE_KEY_LOCATION'
 
