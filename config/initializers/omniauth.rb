@@ -1,3 +1,5 @@
+require 'omniauth/strategies/saml/validation_error'
+
 ENV_SAML_XML = 'SSOI_SAML_XML_LOCATION'
 ENV_SAML_KEY = 'SSOI_SAML_PRIVATE_KEY_LOCATION'
 
@@ -15,7 +17,7 @@ end
 if ssoi_authentication_enabled?
   Rails.application.config.middleware.use OmniAuth::Builder do
     provider :samlva, 'CASEFLOW', ENV[ENV_SAML_KEY], ENV[ENV_SAML_XML],
-             :callback_path => '/caseflow/users/auth/saml/callback',
+             :callback_path => '/auth/saml_callback',
              :path_prefix => '/auth'
   end
 else
