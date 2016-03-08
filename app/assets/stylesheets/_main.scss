@@ -402,9 +402,19 @@ svg title {
 
 .cf-logo {
   color: $color-gray-dark;
-  margin-right: rem(20px);
+  margin-right: rem(10px);
   font-size: 1.7rem;
   display: inline;
+}
+
+.cf-logo-image {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: .5em;
+  height: 32px;
+  width: 32px;
+  @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
 }
 
 .cf-application-title {
