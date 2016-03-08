@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
     auth_hash = request.env["omniauth.auth"] || {}
 
     if current_user.authenticate_ssoi(auth_hash)
-      redirect_to current_user.return_to
+      redirect_to current_user.return_to || login_path
     else
       ssoi_saml_failure("Failed to authenticate")
     end
