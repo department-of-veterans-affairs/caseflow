@@ -109,4 +109,14 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/ABCD"
     expect(page.status_code).to eq(403)
   end
+
+  scenario "VBMS-specific 500 on vbms error" do
+    User.authenticate!
+    appeal = Fakes::AppealRepository.appeal_raises_vbms_error
+    Fakes::AppealRepository.records = { "ABCD" => appeal }
+
+    visit "certifications/new/ABCD"
+    expect(page.status_code).to eq(500)
+    expect(page).to have_content("Unable to communicate with VBMS at this time.")
+  end
 end
