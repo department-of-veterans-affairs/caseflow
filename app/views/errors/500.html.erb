@@ -1,9 +1,11 @@
 <% content_for :page_title do %>Error 500<% end %>
 
 <div class="cf-txt-c cf-app-segment cf-app-segment--alt">
-  <h1 class="cf-error cf-msg-screen-heading">Something went wrong.</h1>
+  <h1 class="cf-error cf-msg-screen-heading"><% if @vbms %>VBMS Failure<% else %>Something went wrong.<% end %></h1>
   <% if @vbms %>
-  <h2 class="cf-msg-screen-deck">Unable to communicate with VBMS at this time.</h2>
+  <h2 class="cf-msg-screen-deck">Unable to communicate with the VBMS system at this time.</h2>
   <% end %>
-  <p class="cf-msg-screen-text">If you continue to see this page, please contact the help desk.</p>
+  <p class="cf-msg-screen-text">
+    <% if @vbms %>Please give VBMS a few moments to come back online, then <a href="javascript:location.reload();">refresh</a> this page. <% end %>
+    If you continue to see this page, please contact the help desk.</p>
 </div>
