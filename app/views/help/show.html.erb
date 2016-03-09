@@ -1,20 +1,49 @@
 <% content_for :page_title do %>Help<% end %>
 
 <div class="cf-app-segment cf-app-segment--alt cf-help-content">
-    <h1>Caseflow Certification Help</h1>
+  <h1>Caseflow Certification Help</h1>
 
-    <h2>1. What is Caseflow Certification?</h2>
+  <ul id="toc" class="usa-unstyled-list">
+    <li><a href="#what-is-caseflow">1. What is Caseflow Certification?</a></li>
+    <li><a href="#what-does-caseflow-do">2. What does Caseflow Certification do?</a></li>
+    <li><a href="#how-to-launch">3. How do I launch Caseflow Certification?</a></li>
+    <li><a href="#how-to-login">4. How do I log in to Caseflow Certification?</a></li>
+    <li><a href="#cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
+      eFolder?</a></li>
+    <li><a href="#mismatched-documents">6. What are the reasons Caseflow may not be
+      able to find documents in VBMS?</a></li>
+    <li><a href="#multiple-document-types">7. What should I do if an eFolder document contains multiple
+      types of information?</a></li>
+    <li><a href="#electronic-form8">8. How do I fill out an electronic Form 8?</a></li>
+    <li><a href="#preview-form8">9. What is the Preview Form 8 page?</a></li>
+    <li><a href="#upload-and-certify">10. What happens when I click the&nbsp;Upload and Certify&nbsp;button?</a></li>
+    <li><a href="#encounter-problem">11. What if I encounter a problem that prevents me from
+      certifying the appeal?</a></li>
+    <li><a href="#need-help">12. What do I do if I need help?</a></li>
+    <li><a href="#paper-appeals">13. How do I certify paper appeals?</a></li>
+    <li><a href="#virtual-va">14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</a></li>
+    <li><a href="#no-va646">15. What if my appeal does not have a completed VA-646 form?</a></li>
+    <li><a href="#notification-letters">16. How should I send out notification letters after I’ve certified
+      the appeal?</a></li>
+    <li><a href="#merged-appeals">17. Can I use Caseflow Certification with appeals that have been merged
+      together?</a></li>
+    <li><a href="#remanded-appeals">18. Should I use Caseflow to process remanded appeals?</a></li>
+    <li><a href="#software-updates">19. When will you update Caseflow Certification?</a></li>
+    <li><a href="#more-help">20. What if I still need help?</a></li>
+  </ul>
 
-    <p>
+  <h2 id="what-is-caseflow">1. What is Caseflow Certification?</h2>
+
+  <p>
     Caseflow Certification, a web-based tool that makes it easy to automatically
     fill out an electronic Form 8 for paperless appeals. The tool was built by the
     United States Digital Service at the Department of Veterans Affairs, in close
     collaboration with Decision Review Officers and other employees in regional
     offices all over the country.
-    </p>
+  </p>
 
-    <h2>2. What does Caseflow Certification do?</h2>
-    <p>
+  <h2 id="what-does-caseflow-do">2. What does Caseflow Certification do?</h2>
+  <p>
     Caseflow eliminates the need to fill out a PDF Form 8 for appeals. It
     automatically checks to make sure documents such as the VA Form 9, Notice of
     Disagreement (NOD), Statement of Case (SOC), and Supplemental Statements of
@@ -25,106 +54,106 @@
     to easily upload that document to the VBMS eFolder.
 
     You should use Caseflow with paperless appeals that are ready to be certified.
-    </p>
+  </p>
 
-    <h2>3. How do I launch Caseflow Certification?</h2>
+  <h2 id="how-to-launch">3. How do I launch Caseflow Certification?</h2>
 
-    <p>
+  <p>
     Once you're ready to certify an appeal, open and log in to VACOLS then search
     for the Appeal ID. Once the date for the Form 9, NOD, SOC, and (optionally)
     SSOC have been entered into VACOLS, click the Certify Appeal button from the
     process menu. You can also select this option from the search results window or
-    the update appeal window 
-    </p>
+    the update appeal window
+  </p>
 
-    <p class="cf-help-image-wrapper">
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/vacols-processes.png', {class: "cf-help-image", alt: 'VACOLS Processes dialog'} %>
-    </p>
-    <p class="cf-help-image-wrapper">
+  </p>
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/vacols-search.png', {class: "cf-help-image", alt: 'VACOLS Search dialog'} %>
-    </p>
-    <p class="cf-help-image-wrapper">
+  </p>
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/vacols-update.png', {class: "cf-help-image", alt: 'VACOLS Update dialog'} %>
-    </p>
-    <p>
+  </p>
+  <p>
 
-    <p>
+  <p>
     When you click the certify button, you'll see a new window pop up. Since
-    you are certifying a paperless appeal, you should select VBMS eFolder.  
+    you are certifying a paperless appeal, you should select VBMS eFolder.
 
     Next, you'll see a notification in VACOLS and a new window will open up
     launching Caseflow.
-    </p>
+  </p>
 
-    <h2>4. How do I log in to Caseflow Certification?</h2>
+  <h2 id="how-to-login">4. How do I log in to Caseflow Certification?</h2>
 
-    <p>
+  <p>
     If it's the first time you're using Caseflow Certification in a while you'll be
     asked to log in twice. The first time you'll want to log using your standard VA
     credentials (or PIV if you like). On the second login page, you'll need to log
     in using your regional office VACOLS credentials.
 
-    <p class="cf-help-image-wrapper">
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/caseflow-login.png', {class: "cf-help-image", alt: 'VACOLS Login dialog'} %>
-    </p>
+  </p>
 
-    </p>
+  </p>
 
-    <h2>5. Why does Caseflow say it cannot find documents in the appellant’s
+  <h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
     eFolder?</h2>
 
-    <p>
+  <p>
     Once you're logged in, Caseflow will check to see if documents in the VBMS
     eFolder (such as the NOD, SOC, and Form 9) match the dates entered in VACOLS.
     Caseflow will tell you it cannot find documents in VBMS if it cannot detect
     these documents.
-    </p>
+  </p>
 
-    <p class="cf-help-image-wrapper">
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/caseflow-mismatched.png', {class: "cf-help-image", alt: 'Caseflow mismatched documents dialog'} %>
-    </p>
+  </p>
 
-    <h2 id='mismatched-documents'>6. What are the reasons Caseflow may not be
+  <h2 id="mismatched-documents">6. What are the reasons Caseflow may not be
     able to find documents in VBMS?</h2>
 
-    <p>
+  <p>
     There are usually three reasons Caseflow wouldn't be able to find a document:
 
-    <h3>1. The dates of the document in question are inconsistent
+  <h3>1. The dates of the document in question are inconsistent
     between VACOLS and VBMS.</h3>
 
-    <p>
+  <p>
     If the dates are inconsistent you can change the date in either VACOLS or VBMS
     to match the other then click the Refresh button in Caseflow.
-    </p>
+  </p>
 
-    <h3>2. The label of the document in question is missing or incorrect in VBMS</h3>
+  <h3>2. The label of the document in question is missing or incorrect in VBMS</h3>
 
-    <p>
+  <p>
     If a document is missing a label or uses something other than one of the labels
     listed below, you should add correct label to the document in the VBMS document
     settings and click the refresh button in Caseflow.
 
-    <ol>
-      <li>Statement of Case (SOC)</li>
-      <li>Notice of Disagreement</li>
-      <li>Supplemental Statement of Case (SSOC)</li>
-      <li>VA 9 Appeal to Board of Appeals</li>
-      <li>The document in question has not been uploaded to VBMS.</li>
-    </ol>
+  <ol>
+    <li>Statement of Case (SOC)</li>
+    <li>Notice of Disagreement</li>
+    <li>Supplemental Statement of Case (SSOC)</li>
+    <li>VA 9 Appeal to Board of Appeals</li>
+    <li>The document in question has not been uploaded to VBMS.</li>
+  </ol>
 
-    If a document is missing from the eFolder, the appeal is not ready to be
-    certified and you should click the Cancel Certification button.
-    </p>
+  If a document is missing from the eFolder, the appeal is not ready to be
+  certified and you should click the Cancel Certification button.
+  </p>
 
-    <p class="cf-help-image-wrapper">
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/vbms-documentproperties.png', {class: "cf-help-image", alt: 'VBMS document properties dialog'} %>
-    </p>
+  </p>
 
-    <h2>7. What should I do if an eFolder document contains multiple
+  <h2 id="multiple-document-types">7. What should I do if an eFolder document contains multiple
     types of information?</h2>
 
-    <p>
+  <p>
     Occasionally, especially with older appeals, an NOD or a Form 9 will be
     included in a document with a more general label such as a Statement in Support
     of Claim. These documents could contain other information such as testimony or
@@ -135,11 +164,11 @@
 
     VBMS is pursuing a long-term solution to add multiple labels to a document to
     avoid the need to duplicate documents.
-    </p>
+  </p>
 
-    <h2>8. How do I fill out an electronic Form 8?</h2>
+  <h2 id="electronic-form8">8. How do I fill out an electronic Form 8?</h2>
 
-    <p>
+  <p>
     Once all the documents are detected, you'll see a web form that lets you fill
     out all the details to complete a Form 8. A red asterisk (*) marks required
     questions.
@@ -154,130 +183,130 @@
 
     Once you've finished filling out all the relevant details on this page, click
     the Preview Completed Form 8 button.
-    </p>
+  </p>
 
-    <h2>9. What is the Preview Form 8 page?</h2>
+  <h2 id="preview-form8">9. What is the Preview Form 8 page?</h2>
 
-    <p>
+  <p>
     This page allows you to preview the completed Form 8. If anything looks wrong
     you can click the Go back and make edits button to fix the problem on the
     previous page. If, after review, the Form 8 looks correct, click the Upload and
     Certify button.
-    </p>
+  </p>
 
-    <h2>10. What happens when I click the Upload and Certify button?</h2>
+  <h2 id="upload-and-certify">10. What happens when I click the Upload and Certify button?</h2>
 
-    <p>
+  <p>
     The Form 8 will automatically be uploaded to the eFolder, a certification date
     will be added to the appeal, and the appeal will be certified to the Board of
     Veterans Appeals!  Once you see the "Congratulations" page you can close the
     browser window and open up another appeal using VACOLS.
-    </p>
+  </p>
 
-    <h2>11. What if I encounter a problem that prevents me from
+  <h2 id="encounter-problem">11. What if I encounter a problem that prevents me from
     certifying the appeal?</h2>
 
-    <p>
+  <p>
     If you are unable to certify the appeal using Caseflow Certification, you can
     click the Cancel Certification link. You'll see a confirmation indicating the
     certification has been cancelled and you can close the window.
-    </p>
+  </p>
 
-    <p>
-    <p class="cf-help-image-wrapper">
+  <p>
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/caseflow-cancelmodal.png', {class: "cf-help-image", alt: 'Caseflow Cancel Modal'} %>
-    </p>
+  </p>
 
-    <p>
+  <p>
     It's important to know that you cannot cancel a certification after clicking
     the Upload and Certify button because the Form 8 will have already been added
     to the eFolder and cannot be deleted.
-    </p>
+  </p>
 
-    <h2>12. What do I do if I need help?</h2>
+  <h2 id="need-help">12. What do I do if I need help?</h2>
 
-    <p>
+  <p>
     If you need help remembering how to use Caseflow Certification and want to get
     back to these instructions, you can click the dropdown menu in the top right of
     Caseflow and select the Help option.
-    </p>
+  </p>
 
-    <h2>13. How do I certify paper appeals?</h2>
+  <h2 id="paper-appeals">13. How do I certify paper appeals?</h2>
 
-    <p>
+  <p>
     You can only certify paperless appeals with Caseflow Certification. If you have
     a paper appeal, you'll have to manually fill out a Form 8. Once it's completed,
     find the appeal in VACOLS, click the Certify button, then select the Hardcopy
     claims folder or Virtual VA option. From here you'll need to manually fill out
     a Form 8 for the appeal and type in the Certification Date this window.
-    </p>
+  </p>
 
-    <p>
-    <p class="cf-help-image-wrapper">
+  <p>
+  <p class="cf-help-image-wrapper">
     <%= image_tag 'help/vacols-certify.png', {class: "cf-help-image", alt: 'Caseflow Cancel Modal'} %>
-    </p>
+  </p>
 
-    <h2>14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</h2>
+  <h2 id="virtual-va">14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</h2>
 
-    <p>
+  <p>
     Caseflow Certification does not work with appeals where the Form 9, NOD, SOC,
     or SSOC are stored in Virtual VA. If, in the rare case, you have an appeal that
     has these specific documents in a Virtual VA, you'll have to manually fill out
     and upload a regular Form 8 and manually enter the Certification Date in
     VACOLS. Once the Form 8 is completed, open the appeal in VACOLS, click the
     Certify button, and select the Hardcopy claims folder or Virtual VA option.
-    </p>
+  </p>
 
-    <h2>15. What if my appeal does not have a completed VA-646 form?</h2>
+  <h2 id="no-va646">15. What if my appeal does not have a completed VA-646 form?</h2>
 
-    <p>
+  <p>
     You should make sure the appeal has a completed VA-646 from the appellant’s
-    representative before using Caseflow Certification. 
-    </p>
+    representative before using Caseflow Certification.
+  </p>
 
-    <h2>16. How should I send out notification letters after I’ve certified
+  <h2 id="notification-letters">16. How should I send out notification letters after I’ve certified
     the appeal?</h2>
 
-    <p>
+  <p>
     At this time, you’ll need to use your current procedures to send letters to the
     appellant, representative or others involved in the appeal. We’ve received
     feedback that this is a burdensome process and we’re working on a way to
     automate this.
-    </p>
+  </p>
 
-    <h2>17. Can I use Caseflow Certification with appeals that have been merged
+  <h2 id="merged-appeals">17. Can I use Caseflow Certification with appeals that have been merged
     together?</h2>
 
-    <p>
+  <p>
     Yes! When an appeal is merged, VACOLS uses the oldest appeals document dates
     (NOD, SOC, Form 9 dates). Caseflow works off of the date entered in VACOLS. So
     if there were multiple Form 9s, Caseflow would look for the oldest Form 9 for
     the appeal, just as employees at the Board do today.
-    </p>
+  </p>
 
-    <h2>18. Should I use Caseflow to process remanded appeals?</h2>
+  <h2 id="remanded-appeals">18. Should I use Caseflow to process remanded appeals?</h2>
 
-    <p>
+  <p>
     At this time, you do not need to use Caseflow to process remands because the
     appeal will already be certified and have a completed VA-Form 8. You should
     continue to follow existing procedures to process remands.
-    </p>
+  </p>
 
-    <h2>19. When will you update Caseflow Certification?</h2>
-    <p>
+  <h2 id="software-updates">19. When will you update Caseflow Certification?</h2>
+  <p>
     Caseflow Certification will continue to be improved and any feedback that you
     submit will be directly received and reviewed by our team. We are currently
     working to introduce functionality in VBMS that will allow you to assign
     multiple labels to appeals-related documents when required. Once this
     functionality is available, we'll share this update and you will no longer need
     to duplicate documents as we described earlier.
-    </p>
+  </p>
 
-    <h2>20. What if I still need help?</h2>
+  <h2 id="more-help">20. What if I still need help?</h2>
 
-    <p>
+  <p>
     If you still encounter issues, have questions that aren’t answered here, or
     have ideas for improvements, reach out to the National Service Desk by calling
     1-855-NSD-HELP (1-855-673-4357).
-    </p>
+  </p>
 </div>
