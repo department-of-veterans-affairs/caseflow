@@ -175,7 +175,7 @@ dd {
 }
 
 .cf-icon-success--bg {
-  background: url(asset-path('icons/icon-check.svg')) bottom no-repeat;
+  background: image-url('icons/icon-check.svg') bottom no-repeat;
   background-size: auto 2rem;
   display: inline-block;
   height: 3rem;
@@ -224,7 +224,7 @@ dd {
   background-color: $color-white;
 
   &::after {
-    background: url(asset-path('assets/arrow-down.svg')) 50% 100% no-repeat;
+    background: image-url('arrow-down.svg') 50% 100% no-repeat;
     background-size: 100% 100%;
     content: ' ';
     display: inline-block;
