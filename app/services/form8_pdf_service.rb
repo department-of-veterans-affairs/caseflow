@@ -146,6 +146,6 @@ class Form8PdfService
   end
 
   def self.pdf_forms
-    @pdf_forms ||= PdfForms.new("pdftk", :data_format => 'XFdf')
+    @pdf_forms ||= PdfForms.new("pdftk", :data_format => "XFdf")
   end
 end
