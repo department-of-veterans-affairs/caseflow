@@ -146,6 +146,8 @@ class Form8PdfService
   end
 
   def self.pdf_forms
+    # from the pdf-forms readme: XFDF is supposed to have
+    # better support for non-western encodings
     @pdf_forms ||= PdfForms.new("pdftk", data_format: "XFdf")
   end
 end
