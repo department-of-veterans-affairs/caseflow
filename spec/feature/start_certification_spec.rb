@@ -117,6 +117,6 @@ RSpec.feature "Start Certification" do
 
     visit "certifications/new/ABCD"
     expect(page.status_code).to eq(500)
-    expect(page).to have_content("Unable to communicate with VBMS at this time.")
+    expect(page).to have_content("Unable to communicate with the VBMS system at this time.")
   end
 end
