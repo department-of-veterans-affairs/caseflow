@@ -31,7 +31,7 @@
   <header>
     <nav class="cf-nav">
       <div class="usa-grid-full">
-        <h1 class="cf-logo">Caseflow</h1>
+        <h1 class="cf-logo"><span class="cf-logo-image"></span>Caseflow</h1>
         <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
 
         <% if current_user.ssoi_authenticated? %>
@@ -45,7 +45,7 @@
               <li><a href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx" target="_blank">Send Feedback</a></li>
               <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
               <li>
-                <a href="<%= url_for controller: 'sessions', action: 'destroy', id: nil %>">Sign out</a>
+                <a href="<%= url_for controller: 'sessions', action: 'destroy'%>">Sign out</a>
               </li>
             </ul>
           </div>
