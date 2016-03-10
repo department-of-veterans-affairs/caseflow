@@ -29,9 +29,6 @@ Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
 
-Metrics/AbcSize:
-  Max: 30
-
 Metrics/MethodLength:
   Max: 20
 
@@ -39,4 +36,4 @@ Metrics/ClassLength:
   Max: 400
 
 Metrics/AbcSize:
-  Max: 20
+  Max: 30
