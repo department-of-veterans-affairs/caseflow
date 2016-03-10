@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
-  resources :sessions
+  resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
     post 'confirm', on: :member
@@ -31,6 +31,12 @@ Rails.application.routes.draw do
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
+
+  %w( 404 500 ).each do |code|
+    get code, :to => "errors#show", :status_code => code
+  end
+
+
   # Example resource route with options:
   #   resources :products do
   #     member do

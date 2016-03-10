@@ -175,7 +175,7 @@ dd {
 }
 
 .cf-icon-success--bg {
-  background: url(asset-path('icons/icon-check.svg')) bottom no-repeat;
+  background: image-url('icons/icon-check.svg') bottom no-repeat;
   background-size: auto 2rem;
   display: inline-block;
   height: 3rem;
@@ -224,7 +224,7 @@ dd {
   background-color: $color-white;
 
   &::after {
-    background: url(asset-path('assets/arrow-down.svg')) 50% 100% no-repeat;
+    background: image-url('arrow-down.svg') 50% 100% no-repeat;
     background-size: 100% 100%;
     content: ' ';
     display: inline-block;
@@ -402,9 +402,19 @@ svg title {
 
 .cf-logo {
   color: $color-gray-dark;
-  margin-right: rem(20px);
+  margin-right: rem(10px);
   font-size: 1.7rem;
   display: inline;
+}
+
+.cf-logo-image {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: .5em;
+  height: 32px;
+  width: 32px;
+  @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
 }
 
 .cf-application-title {
