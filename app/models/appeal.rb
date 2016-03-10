@@ -155,6 +155,18 @@ class Appeal
     end
   end
 
+  def document_dates_by_type
+    results = {}
+
+    @documents.each do |doc|
+      dates = results[doc.type] || []
+      dates << doc.received_at.to_date
+      results[doc.type] = dates
+    end
+
+    results
+  end
+
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
