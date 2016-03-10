@@ -10,11 +10,9 @@ class Fakes::AppealRepository
   end
 
   def self.find(id)
-    record = nil
-
     # timing a hash access is unnecessery but this adds coverage to MetricsService in dev mode
-    MetricsService.timer "load appeal #{id}" do
-      record = @records[id]
+    record = MetricsService.timer "load appeal #{id}" do
+      @records[id]
     end
 
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record.vbms_id
