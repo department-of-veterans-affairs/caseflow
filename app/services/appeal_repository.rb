@@ -109,6 +109,11 @@ class AppealRepository
   end
 
   def self.init_vbms_client
+    return VBMS::Client.from_env_vars(
+      logger: CaseflowLogger.new,
+      env_name: ENV["CONNECT_VBMS_ENV"]
+    ) if Rails.application.secrets.vbms["env"]
+
     VBMS::Client.new(
       vbms_config["url"],
       vbms_config["keyfile"],

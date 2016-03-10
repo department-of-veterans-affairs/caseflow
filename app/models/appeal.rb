@@ -128,7 +128,6 @@ class Appeal
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/MethodLength
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
