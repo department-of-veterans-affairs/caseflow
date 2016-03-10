@@ -92,7 +92,7 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::ListDocuments.new(sanitize_vbms_id(appeal.vbms_id))
-    send_and_log_request(request, appeal.vbms_id)
+    send_and_log_request(appeal.vbms_id, request)
   end
 
   def self.vbms_config
