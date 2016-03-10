@@ -19,6 +19,7 @@ class CertificationsController < ApplicationController
 
     unless appeal.documents_match?
       push_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents")
+      Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"
       return render "mismatched_documents"
     end
 
