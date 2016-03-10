@@ -25,5 +25,6 @@ module CaseflowCertification
 
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('services')
+    config.exceptions_app = self.routes
   end
 end

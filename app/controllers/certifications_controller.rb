@@ -1,6 +1,15 @@
+require "vbms_error"
+
 class CertificationsController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
+
+  rescue_from VBMSError, with: :on_vbms_error
+
+  def on_vbms_error
+    @vbms = true
+    render "errors/500", layout: "application", status: 500
+  end
 
   def new
     if appeal.certified?
