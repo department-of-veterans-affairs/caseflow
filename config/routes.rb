@@ -31,6 +31,12 @@ Rails.application.routes.draw do
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
+
+  %w( 404 500 ).each do |code|
+    get code, :to => "errors#show", :status_code => code
+  end
+
+
   # Example resource route with options:
   #   resources :products do
   #     member do

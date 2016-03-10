@@ -18,10 +18,8 @@ class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
   def self.find(vacols_id, _args = {})
-    case_record = nil
-
-    MetricsService.timer "loaded VACOLS case #{vacols_id}" do
-      case_record = Records::Case.includes(:folder, :correspondent).find(vacols_id)
+    case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
+      Records::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
     appeal = Appeal.from_records(
@@ -82,13 +80,17 @@ class AppealRepository
     MetricsService.timer "sent VBMS request #{request.class} for #{vbms_id}" do
       @vbms_client.send(request)
     end
+
+  # rethrow as application-level error
+  rescue VBMS::ClientError
+    raise VBMSError
   end
 
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::ListDocuments.new(sanitize_vbms_id(appeal.vbms_id))
-    send_and_log_request(request, appeal.vbms_id)
+    send_and_log_request(appeal.vbms_id, request)
   end
 
   def self.vbms_config
