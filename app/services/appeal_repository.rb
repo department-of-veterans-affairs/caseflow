@@ -95,7 +95,12 @@ class AppealRepository
     config = Rails.application.secrets.vbms.clone
 
     %w(keyfile saml key cacert cert).each do |file|
-      config[file] = File.join(config["env_dir"], config[file])
+      vbms_env_dir = config["env_dir"]
+      vbms_file = config[file]
+      fail "missing vbms env dir" unless vbms_env_dir
+      fail "missing vbms file #{vbms_file}" unless vbms_file
+
+      config[file] = File.join(vbms_env_dir, vbms_file)
     end
 
     config
