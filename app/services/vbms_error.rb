@@ -1,0 +1,2 @@
+class VBMSError < StandardError
+end
