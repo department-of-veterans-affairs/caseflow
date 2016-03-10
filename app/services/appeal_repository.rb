@@ -18,10 +18,8 @@ class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
   def self.find(vacols_id, _args = {})
-    case_record = nil
-
-    MetricsService.timer "loaded VACOLS case #{vacols_id}" do
-      case_record = Records::Case.includes(:folder, :correspondent).find(vacols_id)
+    case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
+      Records::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
     appeal = Appeal.from_records(
