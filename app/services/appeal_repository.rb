@@ -80,6 +80,10 @@ class AppealRepository
     MetricsService.timer "sent VBMS request #{request.class} for #{vbms_id}" do
       @vbms_client.send(request)
     end
+
+  # rethrow as application-level error
+  rescue VBMS::ClientError
+    raise VBMSError
   end
 
   def self.fetch_documents_for(appeal)

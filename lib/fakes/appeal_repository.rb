@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
     attr_writer :records
@@ -10,9 +11,13 @@ class Fakes::AppealRepository
 
   def self.find(id)
     # timing a hash access is unnecessery but this adds coverage to MetricsService in dev mode
-    MetricsService.timer "load appeal #{id}" do
+    record = MetricsService.timer "load appeal #{id}" do
       @records[id]
     end
+
+    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record.vbms_id
+
+    record
   end
 
   def self.appeal_ready_to_certify
@@ -73,6 +78,14 @@ class Fakes::AppealRepository
     )
   end
 
+  RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
+
+  def self.appeal_raises_vbms_error
+    a = appeal_ready_to_certify.clone
+    a.vbms_id = RAISE_VBMS_ERROR_ID
+    a
+  end
+
   def self.nod_document
     Document.new(type: :nod, received_at: 3.days.ago)
   end
@@ -90,7 +103,8 @@ class Fakes::AppealRepository
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_not_ready,
-        "789C" => Fakes::AppealRepository.appeal_already_certified
+        "789C" => Fakes::AppealRepository.appeal_already_certified,
+        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error
       }
     end
   end
