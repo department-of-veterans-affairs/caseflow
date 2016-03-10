@@ -9,14 +9,10 @@ class Fakes::AppealRepository
   end
 
   def self.find(id)
-    record = nil
-
     # timing a hash access is unnecessery but this adds coverage to MetricsService in dev mode
     MetricsService.timer "load appeal #{id}" do
-      record = @records[id]
+      @records[id]
     end
-
-    record
   end
 
   def self.appeal_ready_to_certify
