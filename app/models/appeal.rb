@@ -128,7 +128,6 @@ class Appeal
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/MethodLength
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
@@ -154,6 +153,18 @@ class Appeal
         case_record: case_record
       )
     end
+  end
+
+  def document_dates_by_type
+    results = {}
+
+    @documents.each do |doc|
+      dates = results[doc.type] || []
+      dates << doc.received_at.to_date
+      results[doc.type] = dates
+    end
+
+    results
   end
 
   def documents_with_type(type)

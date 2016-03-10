@@ -110,7 +110,6 @@ class Form8
       @pdf_service ||= Form8PdfService
     end
 
-    # rubocop:disable Metrics/AbcSize
     def from_appeal(appeal)
       new(
         vacols_id: appeal.vacols_id,
