@@ -84,6 +84,23 @@ describe User do
   end
 
   context "#authenticate" do
+    subject { user.authenticate(regional_office: "rO21", password: password) }
+    before do
+      Fakes::AuthenticationService.vacols_regional_offices = {
+        "RO21" => "pinkpowerranger" }
+    end
+
+    context "when user enters lowercase RO" do
+      let(:password) { "pinkpowerranger" }
+
+      it "sets regional_office in the session" do
+        is_expected.to be_truthy
+        expect(session[:regional_office]).to eq("RO21")
+      end
+    end
+  end
+
+  context "#authenticate" do
     subject { user.authenticate(regional_office: "RO21", password: password) }
     before do
       Fakes::AuthenticationService.vacols_regional_offices = {
