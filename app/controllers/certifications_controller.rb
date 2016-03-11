@@ -60,6 +60,7 @@ class CertificationsController < ApplicationController
 
   def verify_access
     return true if current_user.can_access?(appeal)
+    current_user.return_to = request.original_url
     redirect_to "/unauthorized"
   end
 
