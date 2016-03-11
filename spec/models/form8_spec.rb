@@ -28,11 +28,53 @@ describe Form8 do
       expect(appeal.remarks_initial).to eq("Hello, World")
       expect(appeal.remarks_continued).to be_nil
 
-      appeal.remarks = "A" * 200 + "Hello, World!"
+      appeal.remarks = "A" * 606 + "Hello, World!"
 
       expect(appeal.remarks_rollover?).to be_truthy
-      expect(appeal.remarks_initial).to eq("A" * 159 + " (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n\nContinued:\n" + ("A" * 41) + "Hello, World!")
+      expect(appeal.remarks_initial).to eq("A" * 575 + " (see continued remarks page 2)")
+      expect(appeal.remarks_continued).to eq("\n\nContinued:\n" + ("A" * 31) + "Hello, World!")
+    end
+
+    it "rolls over remarks with newlines properly" do
+      appeal.remarks = "\n" * 6 + "Hello, World!"
+
+      expect(appeal.remarks_rollover?).to be_truthy
+      expect(appeal.remarks_initial).to eq("\n" * 5 + " (see continued remarks page 2)")
+      expect(appeal.remarks_continued).to eq("\n\nContinued:\nHello, World!")
+    end
+
+    it "rolls over wrapped text properly" do
+      appeal.remarks = "On February 10, 2007, Obama announced his candidacy for President of the United States in " \
+      "front of the Old State Capitol building in Springfield, Illinois.[104][105] The choice of the announcement " \
+      "site was viewed as symbolic because it was also where Abraham Lincoln delivered his historic \"House " \
+      "Divided\" speech in 1858.[104][106] Obama emphasized issues of rapidly ending the Iraq War, increasing " \
+      "energy independence, and reforming the health care system,[107] in a campaign that projected themes of " \
+      "hope and change.[108] Numerous candidates entered the Democratic Party presidential primaries. The field " \
+      "narrowed to a duel between Obama and Senator Hillary Clinton after early contests, with the race remaining " \
+      "close throughout the primary process but with Obama gaining a steady lead in pledged delegates due to " \
+      "better long-range planning, superior fundraising, dominant organizing in caucus states, and better " \
+      "exploitation of delegate allocation rules.[109] On June 7, 2008, Clinton ended her campaign and endorsed " \
+      "Obama.[110]"
+
+      expect(appeal.remarks_rollover?).to be_truthy
+      expect(appeal.remarks_initial).to eq("On February 10, 2007, Obama announced his candidacy for President of the " \
+                                               "United States in front of the Old State Capitol building in " \
+                                               "Springfield, Illinois.[104][105] The choice of the announcement site " \
+                                               "was viewed as symbolic because it was also where Abraham Lincoln " \
+                                               "delivered his historic \"House Divided\" speech in 1858.[104][106] " \
+                                               "Obama emphasized issues of rapidly ending the Iraq War, increasing " \
+                                               "energy independence, and reforming the health care system,[107] in a " \
+                                               "campaign that projected themes of hope and change.[108] Numerous " \
+                                               "candidates entered the Democratic (see continued remarks page 2)")
+
+      expect(appeal.remarks_continued).to eq("\n\nContinued:\nParty presidential primaries. The field narrowed to a " \
+                                                 "duel between Obama and Senator Hillary Clinton after early " \
+                                                 "contests, with the race remaining close throughout the primary " \
+                                                 "process but with Obama gaining a steady lead in pledged delegates " \
+                                                 "due to better long-range planning, superior fundraising, dominant " \
+                                                 "organizing in caucus states, and better exploitation of delegate " \
+                                                 "allocation rules.[109] On June 7, 2008, Clinton ended her campaign " \
+                                                 "and endorsed Obama.[110]")
     end
   end
 
