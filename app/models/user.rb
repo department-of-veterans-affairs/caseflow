@@ -47,7 +47,7 @@ class User
   def authenticate(regional_office:, password:)
     return false unless User.authenticate_vacols(regional_office, password)
 
-    @session[:regional_office] = regional_office
+    @session[:regional_office] = regional_office.upcase
   end
 
   def authenticate_ssoi(auth_hash)
