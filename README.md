@@ -6,7 +6,7 @@
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
 
-`$ bundle install --without production`
+`$ bundle install --without production staging`
 
 And by default, Rails will run in the development environment, which will mock out data.
 
