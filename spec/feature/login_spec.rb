@@ -81,6 +81,6 @@ RSpec.feature "Login" do
     fill_in "VACOLS Password", with: "pa55word!"
     click_on "Login"
 
-    expect(page).to have_content("What’s New?")
+    expect(page).to have_content("Help")
   end
 end
