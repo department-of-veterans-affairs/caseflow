@@ -21,7 +21,7 @@
       <tbody>
 <% @offices.each do |ro| %>
         <tr>
-          <td><%= ro.caseflow? %></td>
+          <td><%= ro.caseflow? ? svg_icon(:found) : svg_icon(:missing) %> </td>
           <td><%= ro.city %></td>
           <td><%= ro.state %></td>
           <td><%= ro.ro_id %></td>
