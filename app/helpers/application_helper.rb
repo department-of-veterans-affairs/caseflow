@@ -48,14 +48,14 @@ module ApplicationHelper
     </svg>
   HTML
 
-  LOADING_ICON = <<-HTML.freeze
-    <svg id="SVG-Circus-a3588196-df64-0703-ef88-f8c73c9558db"
+  LOADING_ICON_FRONT = <<-HTML.freeze
+    <svg
       width="30"
       height="30"
       version="1.1" xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 500 500"
-      preserveAspectRatio="xMidYMid meet">
+      class="icon-loading-front">
 
       <path
         opacity="1"
@@ -75,17 +75,18 @@ module ApplicationHelper
         c-4.9,12.8-17.4,21.5-31.1,21.5c-1.6,0-3.2-0.1-4.8-0.4l-80-11.7c-0.8-0.1-1.6-0.2-2.4-0.2c-6.9,0-11.6,4.5-13.6,8.8
         c-2.6,5.4-1.8,11.4,2,16.1l49.3,60.5c9.9,12.2,10.1,29.3,0.3,41.7l-50.2,63.4c-5.4,6.8-3,13.5-1.8,16c2,4.2,6.7,8.7,13.5,8.7
         c0.9,0,1.8-0.1,2.7-0.2l77-12.4C172.3,345.5,174.1,345.4,175.9,345.4z">
-
-        <animateTransform
-                attributeType="xml"
-                attributeName="transform"
-                type="rotate"
-                from="0 250 250"
-                to="-360 250 250"
-                dur="2s"
-                repeatCount="indefinite"
-            />
       </path>
+    </svg>
+  HTML
+
+  LOADING_ICON_BACK = <<-HTML.freeze
+    <svg
+      width="30"
+      height="30"
+      version="1.1" xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 0 500 500"
+      class="icon-loading-back">
 
       <path
         opacity="1"
@@ -104,18 +105,7 @@ module ApplicationHelper
         c-1.8,0.3-3.5,0.4-5.3,0.4c-13.7,0-25.9-8.2-30.9-21L266,60.9c-2.4-6-7.7-9.6-14.2-9.6c-5.1,0-11.5,2.6-14.3,9.8L209.8,134
         c-4.9,12.8-17.4,21.5-31.1,21.5c-1.6,0-3.2-0.1-4.8-0.4l-80-11.7c-0.8-0.1-1.6-0.2-2.4-0.2c-6.9,0-11.6,4.5-13.6,8.8
         c-2.6,5.4-1.8,11.4,2,16.1l49.3,60.5c9.9,12.2,10.1,29.3,0.3,41.7l-50.2,63.4c-5.4,6.8-3,13.5-1.8,16c2,4.2,6.7,8.7,13.5,8.7
-        c0.9,0,1.8-0.1,2.7-0.2l77-12.4C172.3,345.5,174.1,345.4,175.9,345.4z"
-        transform="translate(250 250)">
-
-        <animateTransform
-                attributeType="xml"
-                attributeName="transform"
-                type="rotate"
-                from="0 250 250"
-                to="360 250 250"
-                dur="2s"
-                repeatCount="indefinite"
-            />
+        c0.9,0,1.8-0.1,2.7-0.2l77-12.4C172.3,345.5,174.1,345.4,175.9,345.4z">
       </path>
     </svg>
   HTML
@@ -126,13 +116,14 @@ module ApplicationHelper
       found: FOUND_ICON,
       appeal: APPEAL_ICON,
       close: CLOSE_ICON,
-      loading: LOADING_ICON
+      loading_front: LOADING_ICON_FRONT,
+      loading_back: LOADING_ICON_BACK
     }[name].html_safe
   end
 
   def loading_indicator
     content_tag :div, class: "cf-loading-indicator cf-push-right" do
-      "Loading #{svg_icon(:loading)}".html_safe
+      "Loading #{svg_icon(:loading_front)} #{svg_icon(:loading_back)}".html_safe
     end
   end
 end
