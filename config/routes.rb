@@ -16,12 +16,11 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
+  resources :offices, only: :index
 
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
   post "auth/saml_callback" => "sessions#ssoi_saml_callback"
-
-  get "status" => "offices#list"
 
   get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
