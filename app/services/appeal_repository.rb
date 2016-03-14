@@ -47,7 +47,9 @@ class AppealRepository
   end
 
   def self.sanitize_vbms_id(vbms_id)
-    "0000#{vbms_id.gsub(/[^0-9]/, '')}"[-8..-1]
+    id = vbms_id.gsub(/[^0-9]/, "")
+    id = "0#{id}" if vbms_id.ends_with?("C") && id.length == 7
+    id
   end
 
   def self.upload_form8_for(appeal)
