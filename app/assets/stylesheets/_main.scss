@@ -15,6 +15,10 @@ body {
   background: $caseflow-background;
 }
 
+a:visited {
+  color: $color-primary; // Override USWDS
+}
+
 .cf-success {
   color: $color-green;
 }
