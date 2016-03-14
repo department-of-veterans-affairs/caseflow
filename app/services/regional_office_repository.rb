@@ -1,5 +1,4 @@
 class RegionalOfficeRepository
-
   def self.find(ro_id, _args = {})
     office_record = MetricsService.timer "loaded RO #{ro_id}" do
       Records::RegionalOffice.find(vacols_id)
@@ -13,6 +12,6 @@ class RegionalOfficeRepository
     ros = MetricsService.timer "loading all ROs" do
       Records::RegionalOffice.where("STAFF.STAFKEY IN (?)", ro_ids)
     end
-    ros.map {|v| RegionalOffice.from_record(office_record: v) }
+    ros.map { |v| RegionalOffice.from_record(office_record: v) }
   end
 end
