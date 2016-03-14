@@ -47,10 +47,8 @@ class AppealRepository
   end
 
   def self.sanitize_vbms_id(vbms_id)
-    id = vbms_id.gsub(/[^0-9]/, '')
-    if vbms_id.ends_with?("C") && id.length == 7
-      id = "0#{id}"
-    end
+    id = vbms_id.gsub(/[^0-9]/, "")
+    id = "0#{id}" if vbms_id.ends_with?("C") && id.length == 7
     id
   end
 
