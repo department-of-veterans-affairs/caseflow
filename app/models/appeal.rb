@@ -51,7 +51,7 @@ class Appeal
   end
 
   def regional_office
-    Records::Case::ROS[regional_office_key] || {}
+    Records::RegionalOffice::ROS[regional_office_key] || {}
   end
 
   def regional_office_name

@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get "logout" => "sessions#destroy"
   post "auth/saml_callback" => "sessions#ssoi_saml_callback"
 
+  get "status" => "offices#list"
+
   get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
 
