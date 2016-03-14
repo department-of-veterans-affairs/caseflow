@@ -91,8 +91,9 @@ class AppealRepository
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::ListDocuments.new(sanitize_vbms_id(appeal.vbms_id))
-    send_and_log_request(appeal.vbms_id, request)
+    sanitized_id = sanitize_vbms_id(appeal.vbms_id)
+    request = VBMS::Requests::ListDocuments.new(sanitized_id)
+    send_and_log_request(sanitized_id, request)
   end
 
   def self.vbms_config
