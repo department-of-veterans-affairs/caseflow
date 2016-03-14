@@ -1,5 +1,3 @@
-require "vbms_error"
-
 class OfficesController < ApplicationController
   before_action :verify_authentication
 
