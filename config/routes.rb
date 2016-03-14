@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
+  resources :offices, only: :index
 
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
