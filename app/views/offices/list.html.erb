@@ -3,6 +3,35 @@
 
 <h1>Testing</h1>
 
+<div class="cf-app-segment cf-app-segment--alt">
+  <h2>ROs with Caseflow Enabled</h2>
+
+  <div class="cf-table-wrap">
+    <table class="usa-table-borderless cf-table-borderless" summary="Each row represents an RO's Caseflow status">
+      <caption class="usa-sr-only">
+        This table shows if an RO has Caseflow enabled
+      </caption>
+
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>City</th>
+          <th>State</th>
+          <th>ID</th>
+        </tr>
+      </thead>
+
+      <tbody>
 <% @offices.each do |ro| %>
-    <%= ro.city %>
+        <tr>
+          <td><%= ro.caseflow? %></td>
+          <td><%= ro.city %></td>
+          <td><%= ro.state %></td>
+          <td><%= ro.ro_id %></td>
+        </tr>
 <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+

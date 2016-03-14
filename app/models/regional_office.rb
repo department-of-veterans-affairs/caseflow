@@ -3,9 +3,10 @@ class RegionalOffice
 
   attr_accessor :ro_id
   attr_accessor :city, :state
+  attr_accessor :caseflow_enabled
 
   def caseflow?
-    return false
+    @caseflow_enabled == "Y"
   end
 
   class << self
@@ -35,6 +36,7 @@ class RegionalOffice
         ro_id: ro_id,
         city: location[:city],
         state: location[:state],
+        caseflow_enabled: office_record.sspare2
       )
     end
   end
