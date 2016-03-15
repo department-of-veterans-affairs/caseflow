@@ -39,7 +39,7 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.appeal_not_ready
+  def self.appeal_mismatched_docs
     Appeal.new(
       type: "Original",
       file_type: "VBMS",
@@ -108,7 +108,7 @@ class Fakes::AppealRepository
     unless Rails.env.test?
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
-        "456C" => Fakes::AppealRepository.appeal_not_ready,
+        "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data

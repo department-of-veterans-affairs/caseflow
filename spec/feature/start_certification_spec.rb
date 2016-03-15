@@ -46,7 +46,7 @@ RSpec.feature "Start Certification" do
   scenario "Clicking the refresh button" do
     User.authenticate!
 
-    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_not_ready }
+    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_mismatched_docs }
     visit "certifications/new/1234C"
 
     Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_ready_to_certify }
