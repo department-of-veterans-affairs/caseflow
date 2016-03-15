@@ -81,13 +81,13 @@ class Fakes::AppealRepository
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
-    a = appeal_ready_to_certify.clone
+    a = appeal_ready_to_certify
     a.vbms_id = RAISE_VBMS_ERROR_ID
     a
   end
 
   def self.appeal_missing_data
-    a = appeal_ready_to_certify.clone
+    a = appeal_ready_to_certify
     a.form9_date = nil
     a
   end
