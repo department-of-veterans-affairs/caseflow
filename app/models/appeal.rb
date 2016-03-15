@@ -171,4 +171,15 @@ class Appeal
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
   end
+
+  def sanitized_vbms_id
+    numeric = vbms_id.gsub(/[^0-9]/, "")
+
+    # ensure 8 digits if "C"-type id
+    if vbms_id.ends_with?("C")
+      numeric.rjust(8, "0")
+    else
+      numeric
+    end
+  end
 end
