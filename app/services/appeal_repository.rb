@@ -47,7 +47,9 @@ class AppealRepository
   end
 
   def self.sanitize_vbms_id(vbms_id)
-    "0000#{vbms_id.gsub(/[^0-9]/, '')}"[-8..-1]
+    id = vbms_id.gsub(/[^0-9]/, "")
+    id = "0#{id}" if vbms_id.ends_with?("C") && id.length == 7
+    id
   end
 
   def self.upload_form8_for(appeal)
@@ -89,8 +91,9 @@ class AppealRepository
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::ListDocuments.new(sanitize_vbms_id(appeal.vbms_id))
-    send_and_log_request(appeal.vbms_id, request)
+    sanitized_id = sanitize_vbms_id(appeal.vbms_id)
+    request = VBMS::Requests::ListDocuments.new(sanitized_id)
+    send_and_log_request(sanitized_id, request)
   end
 
   def self.vbms_config
