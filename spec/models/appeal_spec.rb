@@ -172,4 +172,22 @@ describe Appeal do
       expect(subject.certified?).to be_falsy
     end
   end
+
+  context "#sanitized_vbms_id" do
+    subject { Appeal.new(vbms_id: "123C") }
+
+    it "left-pads case-number ids" do
+      expect(subject.sanitized_vbms_id).to eq("00000123")
+    end
+
+    it "left-pads 7-digit case-number ids" do
+      subject.vbms_id = "2923988C"
+      expect(subject.sanitized_vbms_id).to eq("02923988")
+    end
+
+    it "doesn't left-pad social security ids" do
+      subject.vbms_id = "123S"
+      expect(subject.sanitized_vbms_id).to eq("123")
+    end
+  end
 end
