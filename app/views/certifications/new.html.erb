@@ -28,26 +28,26 @@
     <%= f.hidden_field :vacols_id %>
 
     <%= f.text_field :appellant_name,
-          question_number: "1A", label: "Name of Appellant (If other than veteran)" %>
+          question_number: "1A", label: "Name of Appellant (If other than veteran):" %>
 
     <%= f.text_field :appellant_relationship,
-          question_number: "1B", label: "Relationship to Veteran" %>
+          question_number: "1B", label: "Relationship to Veteran:" %>
 
     <%= f.text_field :file_number,
-          question_number: "2", label: "File No.", readonly: true %>
+          question_number: "2", label: "File Number:", readonly: true %>
 
     <%= f.text_field :veteran_name,
-          question_number: "3", label: "Full Veteran Name" %>
+          question_number: "3", label: "Full Veteran Name:" %>
 
     <%= f.text_field :insurance_loan_number,
-          question_number: "4", label: "Insurance file number or loan number (if pertinent)" %>
+          question_number: "4", label: "Insurance file number or loan number (if pertinent):" %>
 
     <div class="cf-form-cond-req">
       <%= f.text_area :service_connection_for,
             question_number: "5A", label: "Service connection for:" %>
 
       <%= f.date_field :service_connection_nod_date,
-            question_number: "5B", label: "Date of notification of action appealed" %>
+            question_number: "5B", label: "Date of notification of action appealed:" %>
     </div>
 
     <div class="cf-form-cond-req">
@@ -55,7 +55,7 @@
             question_number: "6A", label: "Increased rating for:" %>
 
       <%= f.date_field :increased_rating_nod_date,
-            question_number: "6B", label: "Date of notification of action appealed" %>
+            question_number: "6B", label: "Date of notification of action appealed:" %>
     </div>
 
     <div class="cf-form-cond-req">
@@ -63,25 +63,25 @@
             question_number: "7A", label: "Other:" %>
 
       <%= f.date_field :other_nod_date,
-            question_number: "7B", label: "Date of notification of action appealed" %>
+            question_number: "7B", label: "Date of notification of action appealed:" %>
     </div>
 
     <%= f.radio_buttons_field :representative_type,
           values: ["Attorney", "Agent", "Organization", "Other"],
-          question_number: "8A", part: "2", label: "Representative Type" %>
+          question_number: "8A", part: "2", label: "Representative Type:" %>
 
     <%= f.text_field :representative_type_specify_other,
-          question_number: "8A", part: "3", label: "Specify other representative type", secondary: true %>
+          question_number: "8A", part: "3", label: "Specify other representative type:", secondary: true %>
 
     <%= f.text_field :representative_name,
-          question_number: "8A", part: "1", label: "Representative Name" %>
+          question_number: "8A", part: "1", label: "Representative Name:" %>
 
     <%= f.radio_buttons_field :power_of_attorney,
           values: ["POA", "Certification that valid POA is in another VA file"], inline: true,
           question_number: "8B", part: "1", label: "What is the authority for recognizing such representative in this appeal?" %>
 
     <%= f.text_field :power_of_attorney_file,
-          question_number: "8B", part: "2", label: "Specify file if applicable", secondary: true %>
+          question_number: "8B", part: "2", label: "Specify file if applicable:", secondary: true %>
 
     <%= f.yes_no_field :agent_accredited,
           question_number: "8C", label: "Is Agent on accredited list?" %>
@@ -99,7 +99,7 @@
           question_number: "10B", label: "If the hearing was held, is transcript on file?" %>
 
     <%= f.text_field :hearing_requested_explaination,
-          question_number: "10C", label: "If requested, but not held, explain" %>
+          question_number: "10C", label: "If requested, but not held, explain:" %>
 
     <%= f.yes_no_field :contested_claims_procedures_applicable,
           question_number: "11A", label: "Are contested claims procedures applicable in this case?" %>
@@ -108,35 +108,35 @@
           question_number: "11B", label: "Have the requirements of 38 U.S.C. 7105A been followed for all contested claims?" %>
 
     <%= f.date_field :soc_date,
-          question_number: "12A", label: "Date of statement of the case furnished" %>
+          question_number: "12A", label: "Date of statement of the case furnished:" %>
 
     <%= f.radio_buttons_field :ssoc_required,
           values: ["Required and furnished", "Not required"],
-          question_number: "12B", label: "Supplemental statement of the case" %>
+          question_number: "12B", label: "Supplemental statement of the case:" %>
 
     <%= f.check_box_group record_type_check_boxes,
-          question_number: "13", label: "Records to be forwarded to Board of Veterans' Appeals" %>
+          question_number: "13", label: "Records to be forwarded to Board of Veterans' Appeals:" %>
 
     <%= f.text_field :record_other_explaination,
-          question_number: "13", part: "2", label: "Specify other", secondary: true %>
+          question_number: "13", part: "2", label: "Specify other:", secondary: true %>
 
     <%= f.text_area :remarks,
           question_number: "14", label: "Remarks:" %>
 
     <%= f.text_field :certifying_office,
-          question_number: "15", label: "Name and location of certifying office", readonly: true %>
+          question_number: "15", label: "Name and location of certifying office:", readonly: true %>
 
     <%= f.text_field :certifying_username,
-          question_number: "16", label: "Organizational elements certifying appeal", readonly: true %>
+          question_number: "16", label: "Organizational elements certifying appeal:", readonly: true %>
 
     <%= f.text_field :certifying_official_name,
-          question_number: "17A", label: "Name of certifying official" %>
+          question_number: "17A", label: "Name of certifying official:" %>
 
     <%= f.text_field :certifying_official_title,
-          question_number: "17B", label: "Title of certifying official" %>
+          question_number: "17B", label: "Title of certifying official:" %>
 
     <%= f.date_field :certification_date,
-          question_number: "17C", label: "Date", readonly: true %>
+          question_number: "17C", label: "Date:", readonly: true %>
   </div>
 
   <div class="cf-app-segment">
