@@ -133,6 +133,11 @@ end
 class Remarks
   include ActionView::Helpers::TextHelper
 
+  REMARKS_SEE_PAGE_2 = " (see continued remarks page 2)".freeze
+  REMARKS_CONTINUED = "\n\nContinued:\n".freeze
+  REMARKS_MAX_LINES = 6
+  REMARKS_MAX_LINE_LENGTH = 101
+
   def initialize(raw)
     parsed = parse(raw || "")
     @initial = parsed[0]
@@ -198,9 +203,4 @@ class Remarks
       [raw, nil]
     end
   end
-
-  REMARKS_SEE_PAGE_2 = " (see continued remarks page 2)".freeze
-  REMARKS_CONTINUED = "\n\nContinued:\n".freeze
-  REMARKS_MAX_LINES = 6
-  REMARKS_MAX_LINE_LENGTH = 101
 end
