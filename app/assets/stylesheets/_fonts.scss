@@ -7,3 +7,13 @@
        url('source-sans-pro.woff2') format('woff2'),
        url('source-sans-pro.woff') format('woff');
 }
+
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Merriweather'),
+       local('Merriweather-Regular'),
+       url('merriweather.woff2') format('woff2'),
+       url('merriweather.woff') format('woff');
+}
