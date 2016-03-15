@@ -984,11 +984,11 @@ fieldset {
 }
 
 .icon-loading-front {
-  @include animation(backwardspin 9.0s linear infinite);
+  @include animation(backwardspin 9s linear infinite);
 }
 
 .icon-loading-back {
-  @include animation(spin 9.0s linear infinite);
+  @include animation(spin 9s linear infinite);
   margin-left: -33px;
 }
 
@@ -996,6 +996,7 @@ fieldset {
   from {
     @include transform(rotate(0deg));
   }
+
   to {
     @include transform(rotate(360deg));
   }
@@ -1003,9 +1004,10 @@ fieldset {
 
 @include keyframes(backwardspin) {
   from {
-    @include transform(scale(1.0) rotate(-30deg));
+    @include transform(scale(1) rotate(-30deg));
   }
+
   to {
-    @include transform(scale(1.0) rotate(-390deg));
+    @include transform(scale(1) rotate(-390deg));
   }
 }
