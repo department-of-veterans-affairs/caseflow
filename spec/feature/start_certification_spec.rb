@@ -86,7 +86,7 @@ RSpec.feature "Start Certification" do
 
     expect(page).to have_field "Name of Appellant", with: "Susie, Crockett"
     expect(page).to have_field "Relationship to Veteran", with: "Daughter"
-    expect(page).to have_field "File No.", with: "VBMS-ID"
+    expect(page).to have_field "File Number", with: "VBMS-ID"
     expect(page).to have_field "Full Veteran Name", with: "Crockett, Davy, X"
     expect(page).to have_selector("#question5B.hidden-field", visible: false)
     expect(page).to have_selector("#question6B.hidden-field", visible: false)
