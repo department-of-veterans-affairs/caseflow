@@ -982,3 +982,32 @@ fieldset {
     }
   }
 }
+
+.icon-loading-front {
+  @include animation(backwardspin 9s linear infinite);
+}
+
+.icon-loading-back {
+  @include animation(spin 9s linear infinite);
+  margin-left: -33px;
+}
+
+@include keyframes(spin) {
+  from {
+    @include transform(rotate(0deg));
+  }
+
+  to {
+    @include transform(rotate(360deg));
+  }
+}
+
+@include keyframes(backwardspin) {
+  from {
+    @include transform(scale(1) rotate(-30deg));
+  }
+
+  to {
+    @include transform(scale(1) rotate(-390deg));
+  }
+}
