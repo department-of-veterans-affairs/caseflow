@@ -86,6 +86,12 @@ class Fakes::AppealRepository
     a
   end
 
+  def self.appeal_missing_data
+    a = appeal_ready_to_certify.clone
+    a.form9_date = nil
+    a
+  end
+
   def self.nod_document
     Document.new(type: :nod, received_at: 3.days.ago)
   end
@@ -104,7 +110,8 @@ class Fakes::AppealRepository
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_not_ready,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
-        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error
+        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
+        "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
     end
   end

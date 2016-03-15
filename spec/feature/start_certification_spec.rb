@@ -119,4 +119,14 @@ RSpec.feature "Start Certification" do
     expect(page.status_code).to eq(500)
     expect(page).to have_content("Unable to communicate with the VBMS system at this time.")
   end
+
+  scenario "Appeal missing data" do
+    User.authenticate!
+    appeal = Fakes::AppealRepository.appeal_missing_data
+    Fakes::AppealRepository.records = { "ABCD" => appeal }
+
+    visit "certifications/new/ABCD"
+    expect(page.status_code).to eq(409)
+    expect(page).to have_content("Appeal is not ready for certification.")
+  end
 end
