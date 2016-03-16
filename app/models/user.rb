@@ -19,6 +19,10 @@ class User
     @session[:regional_office]
   end
 
+  def timezone
+    (Records::RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+  end
+
   def display_name
     # fully authenticated
     if authenticated?
