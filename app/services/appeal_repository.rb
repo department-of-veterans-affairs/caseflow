@@ -37,7 +37,7 @@ class AppealRepository
 
   def self.certify(appeal)
     appeal.case_record.bfdcertool = Time.zone.now
-    appeal.case_record.bf41stat = Time.zone.now.to_s(:va_date)
+    appeal.case_record.bf41stat = Time.zone.now.beginning_of_day.to_s(:va_date)
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
