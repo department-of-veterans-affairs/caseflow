@@ -10,6 +10,20 @@ describe User do
     it { is_expected.to eq("RO17") }
   end
 
+  context "#timezone" do
+    context "when ro is set" do
+      subject { user.timezone }
+      before { session[:regional_office] = "RO26" }
+      it { is_expected.to eq("America/Indiana/Indianapolis") }
+    end
+
+    context "when ro isn't set" do
+      subject { user.timezone }
+      before { session[:regional_office] = nil }
+      it { is_expected.to eq("America/Chicago") }
+    end
+  end
+
   context "#display_name" do
     subject { user.display_name }
 
