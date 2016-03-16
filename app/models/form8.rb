@@ -44,7 +44,7 @@ class Form8
   ].freeze
 
   def remarks_parsed
-    @remarks_parsed || Remarks.new(@remarks)
+    @remarks_parsed || RolledOverText.new(@remarks, 6)
   end
 
   def remarks_rollover?
@@ -130,16 +130,16 @@ class Form8
   end
 end
 
-class Remarks
+class RolledOverText
   include ActionView::Helpers::TextHelper
 
-  REMARKS_SEE_PAGE_2 = " (see continued remarks page 2)".freeze
-  REMARKS_CONTINUED = "\n\nContinued:\n".freeze
-  REMARKS_MAX_LINES = 6
-  REMARKS_MAX_LINE_LENGTH = 101
+  def initialize(raw, max_lines, opts = {})
+    @initial_append = " " + (opts[:initial_append] || "(see continued remarks page 2)").strip
+    @continued_prepend = "\n\n" + (opts[:continued_prepend] || "Continued:").strip + "\n"
+    @max_lines = max_lines
+    @max_line_length = opts[:max_line_length] || 101
 
-  def initialize(raw)
-    parsed = parse(raw || "")
+    parsed = parse_to_array(raw || "")
     @initial = parsed[0]
     @continued = parsed[1]
   end
@@ -157,47 +157,47 @@ class Remarks
   private
 
   def wrap(raw)
-    word_wrap(raw, line_width: REMARKS_MAX_LINE_LENGTH)
+    word_wrap(raw, line_width: @max_line_length)
   end
 
   def rollover_wrapped(wrapped, raw)
     lines = wrapped.split("\n")
-    last_line = lines[REMARKS_MAX_LINES - 1]
-    last_line_cutoff_index = REMARKS_MAX_LINE_LENGTH - REMARKS_SEE_PAGE_2.length
+    last_line = lines[@max_lines - 1]
+    last_line_cutoff_index = @max_line_length - @initial_append.length
 
     # find last space
     last_line_cutoff_index = last_line.rindex(" ", last_line_cutoff_index) || last_line.length
 
     # transalte to position in raw
-    num_separators = REMARKS_MAX_LINES - 1
-    length_up_to_last_line = lines.slice(0, REMARKS_MAX_LINES - 1).reduce(0) do |sum, line|
+    num_separators = @max_lines - 1
+    length_up_to_last_line = lines.slice(0, @max_lines - 1).reduce(0) do |sum, line|
       sum + line.length
     end
 
     cutoff_index_in_raw = length_up_to_last_line + last_line_cutoff_index + num_separators
 
-    initial = raw[0, cutoff_index_in_raw] + REMARKS_SEE_PAGE_2
-    continued = REMARKS_CONTINUED + raw[cutoff_index_in_raw + 1, raw.length]
+    initial = raw[0, cutoff_index_in_raw] + @initial_append
+    continued = @continued_prepend + raw[cutoff_index_in_raw + 1, raw.length]
 
     [initial, continued]
   end
 
   def rollover_breaking(raw, maxlength)
-    initial = "#{raw[0...maxlength]}#{REMARKS_SEE_PAGE_2}"
-    continued = REMARKS_CONTINUED + raw[maxlength...(raw.length)]
+    initial = "#{raw[0...maxlength]}#{@initial_append}"
+    continued = @continued_prepend + raw[maxlength...(raw.length)]
     [initial, continued]
   end
 
-  def parse(raw)
+  def parse_to_array(raw)
     wrapped = wrap(raw)
     num_newlines = wrapped.count("\n") + 1
-    do_rollover = num_newlines > REMARKS_MAX_LINES
-    breaking_maxlength = REMARKS_MAX_LINES * REMARKS_MAX_LINE_LENGTH
+    do_rollover = num_newlines > @max_lines
+    breaking_maxlength = @max_lines * @max_line_length
 
     if do_rollover
       rollover_wrapped(wrapped, raw)
     elsif raw.length > breaking_maxlength
-      rollover_breaking(raw, breaking_maxlength - REMARKS_SEE_PAGE_2.length)
+      rollover_breaking(raw, breaking_maxlength - @initial_append.length)
     else
       # don't process, will be wrapped in PDF
       [raw, nil]
