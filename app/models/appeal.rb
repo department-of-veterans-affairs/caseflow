@@ -149,7 +149,7 @@ class Appeal
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
         regional_office_key: case_record.bfregoff,
-        certification_date: case_record.bfdcertool,
+        certification_date: case_record.bf41stat,
         case_record: case_record
       )
     end
