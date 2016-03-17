@@ -1,3 +1,4 @@
+require_relative "../rails_helper"
 describe Form8 do
   context "#representative" do
     let(:form8) { Form8.new }
@@ -32,7 +33,7 @@ describe Form8 do
 
       expect(appeal.remarks_rollover?).to be_truthy
       expect(appeal.remarks_initial).to eq("A" * 575 + " (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n\nContinued:\n" + ("A" * 31) + "Hello, World!")
+      expect(appeal.remarks_continued).to eq("\n \nContinued:\n" + ("A" * 31) + "Hello, World!")
     end
 
     it "rolls over remarks with newlines properly" do
@@ -40,7 +41,7 @@ describe Form8 do
 
       expect(appeal.remarks_rollover?).to be_truthy
       expect(appeal.remarks_initial).to eq("\n" * 5 + " (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n\nContinued:\nHello, World!")
+      expect(appeal.remarks_continued).to eq("\n \nContinued:\nHello, World!")
     end
 
     it "rolls over wrapped text properly" do
@@ -67,7 +68,7 @@ describe Form8 do
                                                "campaign that projected themes of hope and change.[108] Numerous " \
                                                "candidates entered the Democratic (see continued remarks page 2)")
 
-      expect(appeal.remarks_continued).to eq("\n\nContinued:\nParty presidential primaries. The field narrowed to a " \
+      expect(appeal.remarks_continued).to eq("\n \nContinued:\nParty presidential primaries. The field narrowed to a " \
                                                  "duel between Obama and Senator Hillary Clinton after early " \
                                                  "contests, with the race remaining close throughout the primary " \
                                                  "process but with Obama gaining a steady lead in pledged delegates " \
@@ -75,6 +76,22 @@ describe Form8 do
                                                  "organizing in caucus states, and better exploitation of delegate " \
                                                  "allocation rules.[109] On June 7, 2008, Clinton ended her campaign " \
                                                  "and endorsed Obama.[110]")
+    end
+  end
+
+  context "service connection rolls over" do
+    let(:appeal) { Form8.new(service_connection_for: "one\ntwo\nthree") }
+
+    it "rolls over properly" do
+      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(appeal.remarks_continued).to eq("\n \nService Connection For Continued:\nthree")
+    end
+
+    it "rolls over and combines with remarks rollover" do
+      appeal.remarks = "one\ntwo\n\three\nfour\nfive\nsix\nseven"
+      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(appeal.remarks_continued).to eq("\n \nContinued:\nseven" \
+                                                 "\n \nService Connection For Continued:\nthree")
     end
   end
 
