@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "What's New" do
   scenario "What's new indicator is reset after visiting /whats-new" do
-    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_not_ready }
+    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_mismatched_docs }
     User.authenticate!
 
     visit "certifications/new/1234C"

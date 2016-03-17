@@ -17,6 +17,10 @@ class CertificationsController < ApplicationController
       return render "already_certified"
     end
 
+    if appeal.missing_certification_data?
+      return render "not_ready", layout: "application", status:  409
+    end
+
     unless appeal.documents_match?
       push_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents")
       Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"

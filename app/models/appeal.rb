@@ -87,6 +87,10 @@ class Appeal
     nod_match? && soc_match? && form9_match? && ssoc_all_match?
   end
 
+  def missing_certification_data?
+    [nod_date, soc_date, form9_date].any?(&:nil?)
+  end
+
   def certify!
     Appeal.certify(self)
   end
