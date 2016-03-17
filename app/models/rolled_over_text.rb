@@ -10,9 +10,10 @@ class RolledOverText
     parsed = parse_to_array(raw || "")
     @initial = parsed[0]
     @continued = parsed[1]
+    @raw = raw
   end
 
-  attr_reader :initial, :continued
+  attr_reader :initial, :continued, :raw
 
   def rollover?
     !@continued.nil?

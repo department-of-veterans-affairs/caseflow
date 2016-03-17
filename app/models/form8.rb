@@ -13,6 +13,7 @@ class Form8
     :file_number,
     :veteran_name,
     :insurance_loan_number,
+    :service_connection_for,
     :service_connection_nod_date,
     :increased_rating_for,
     :increased_rating_nod_date,
@@ -34,6 +35,7 @@ class Form8
     :soc_date,
     :ssoc_required,
     :record_other_explaination,
+    :remarks,
     :certifying_office,
     :certifying_username,
     :certifying_official_name,
@@ -42,6 +44,8 @@ class Form8
   ].freeze
 
   def service_connection_for_rolled
+    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
+                                            @service_connection_for_rolled.raw != @service_connection_for
     @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
                                                           continued_prepend: "Service Connection For Continued:")
   end
@@ -51,6 +55,7 @@ class Form8
   end
 
   def remarks_rolled
+    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
     @remarks_rolled ||= RolledOverText.new(@remarks, 6)
   end
 
@@ -93,22 +98,9 @@ class Form8
   FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
-  attr_reader :remarks, :service_connection_for
-
   alias_attribute :id, :vacols_id
 
   private :service_connection_for_rolled, :remarks_rolled
-
-  # override attr writers
-  def remarks=(value)
-    @remarks = value
-    @remarks_rolled = nil
-  end
-
-  def service_connection_for=(value)
-    @service_connection_for = value
-    @service_connection_for_rolled = nil
-  end
 
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type
