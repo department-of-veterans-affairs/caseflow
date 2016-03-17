@@ -38,6 +38,7 @@ class AppealRepository
   def self.certify(appeal)
     appeal.case_record.bfdcertool = Time.zone.now
     appeal.case_record.bf41stat = Time.zone.now.beginning_of_day.to_s(:va_date)
+    appeal.case_record.bftbind = "X" if appeal.hearing_type == :travel_board
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
