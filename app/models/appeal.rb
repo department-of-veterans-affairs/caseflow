@@ -153,7 +153,7 @@ class Appeal
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
         regional_office_key: case_record.bfregoff,
-        certification_date: case_record.bfdcertool,
+        certification_date: case_record.bf41stat,
         case_record: case_record
       )
     end
@@ -174,5 +174,16 @@ class Appeal
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
+  end
+
+  def sanitized_vbms_id
+    numeric = vbms_id.gsub(/[^0-9]/, "")
+
+    # ensure 8 digits if "C"-type id
+    if vbms_id.ends_with?("C")
+      numeric.rjust(8, "0")
+    else
+      numeric
+    end
   end
 end

@@ -3,7 +3,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :setup_fakes,
+  before_action :set_timezone,
+                :setup_fakes,
                 :check_whats_new_cookie
 
   def unauthorized
@@ -25,6 +26,10 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.from_session(session)
   end
   helper_method :current_user
+
+  def set_timezone
+    Time.zone = current_user.timezone
+  end
 
   def setup_fakes
     Fakes::Initializer.development! if Rails.env.development?

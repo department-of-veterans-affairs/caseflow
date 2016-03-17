@@ -37,19 +37,13 @@ class AppealRepository
 
   def self.certify(appeal)
     appeal.case_record.bfdcertool = Time.zone.now
-    appeal.case_record.bf41stat = Time.zone.now.to_s(:va_date)
+    appeal.case_record.bf41stat = Time.zone.now.beginning_of_day.to_s(:va_date)
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
     end
 
     upload_form8_for(appeal)
-  end
-
-  def self.sanitize_vbms_id(vbms_id)
-    id = vbms_id.gsub(/[^0-9]/, "")
-    id = "0#{id}" if vbms_id.ends_with?("C") && id.length == 7
-    id
   end
 
   def self.upload_form8_for(appeal)
@@ -65,7 +59,7 @@ class AppealRepository
 
   def self.upload_documents_request(appeal, form8)
     VBMS::Requests::UploadDocumentWithAssociations.new(
-      sanitize_vbms_id(appeal.vbms_id),
+      appeal.sanitized_vbms_id,
       Time.zone.now,
       appeal.veteran_first_name,
       appeal.veteran_middle_initial,
@@ -91,7 +85,7 @@ class AppealRepository
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
-    sanitized_id = sanitize_vbms_id(appeal.vbms_id)
+    sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::ListDocuments.new(sanitized_id)
     send_and_log_request(sanitized_id, request)
   end
