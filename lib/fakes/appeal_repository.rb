@@ -39,7 +39,7 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.appeal_not_ready
+  def self.appeal_mismatched_docs
     Appeal.new(
       type: "Original",
       file_type: "VBMS",
@@ -81,8 +81,14 @@ class Fakes::AppealRepository
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
-    a = appeal_ready_to_certify.clone
+    a = appeal_ready_to_certify
     a.vbms_id = RAISE_VBMS_ERROR_ID
+    a
+  end
+
+  def self.appeal_missing_data
+    a = appeal_ready_to_certify
+    a.form9_date = nil
     a
   end
 
@@ -102,9 +108,10 @@ class Fakes::AppealRepository
     unless Rails.env.test?
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
-        "456C" => Fakes::AppealRepository.appeal_not_ready,
+        "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
-        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error
+        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
+        "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
     end
   end
