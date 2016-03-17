@@ -86,6 +86,14 @@ class Form8
 
   alias_attribute :id, :vacols_id
 
+  def attributes
+    record_attrs = RECORD_TYPE_FIELDS.map { |field| field[:attribute] }
+
+    (record_attrs + FORM_FIELDS).each_with_object({}) do |field, result|
+      result[field] = send(field)
+    end
+  end
+
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type
     "#{representative_name} - #{type}"
