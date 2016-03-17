@@ -1,5 +1,25 @@
 require_relative "../rails_helper"
 describe Form8 do
+  context "#attributes" do
+    let(:form8) do
+      Form8.new(
+        appellant_name: "Brad Pitt",
+        appellant_relationship: "Fancy man",
+        file_number: "1234QWERTY",
+        veteran_name: "Joe Patriot"
+      )
+    end
+
+    subject { Form8.new(form8.attributes) }
+
+    it do
+      is_expected.to have_attributes(appellant_name: "Brad Pitt",
+                                     appellant_relationship: "Fancy man",
+                                     file_number: "1234QWERTY",
+                                     veteran_name: "Joe Patriot")
+    end
+  end
+
   context "#representative" do
     let(:form8) { Form8.new }
     subject { form8.representative }
