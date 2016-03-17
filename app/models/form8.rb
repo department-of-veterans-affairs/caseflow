@@ -13,7 +13,6 @@ class Form8
     :file_number,
     :veteran_name,
     :insurance_loan_number,
-    :service_connection_for,
     :service_connection_nod_date,
     :increased_rating_for,
     :increased_rating_nod_date,
@@ -35,7 +34,6 @@ class Form8
     :soc_date,
     :ssoc_required,
     :record_other_explaination,
-    :remarks,
     :certifying_office,
     :certifying_username,
     :certifying_official_name,
@@ -43,20 +41,35 @@ class Form8
     :certification_date
   ].freeze
 
-  def remarks_parsed
-    @remarks_parsed || RolledOverText.new(@remarks, 6)
+  def service_connection_for_rolled
+    @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
+                                                          continued_prepend: "Service Connection For Continued:")
+  end
+
+  def service_connection_for_initial
+    service_connection_for_rolled.initial unless service_connection_for_rolled.empty?
+  end
+
+  def remarks_rolled
+    @remarks_rolled ||= RolledOverText.new(@remarks, 6)
   end
 
   def remarks_rollover?
-    remarks_parsed.rollover?
+    !rolled_over_fields.empty?
   end
 
   def remarks_initial
-    remarks_parsed.initial unless remarks_parsed.empty?
+    remarks_rolled.initial unless remarks_rolled.empty?
   end
 
   def remarks_continued
-    remarks_parsed.continued unless remarks_parsed.empty?
+    rolled_over = rolled_over_fields
+
+    rolled_over.map(&:continued).join unless rolled_over.empty?
+  end
+
+  def rolled_over_fields
+    [remarks_rolled, service_connection_for_rolled].find_all(&:rollover?)
   end
 
   RECORD_TYPE_FIELDS = [
@@ -80,7 +93,22 @@ class Form8
   FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
+  attr_reader :remarks, :service_connection_for
+
   alias_attribute :id, :vacols_id
+
+  private :service_connection_for_rolled, :remarks_rolled
+
+  # override attr writers
+  def remarks=(value)
+    @remarks = value
+    @remarks_rolled = nil
+  end
+
+  def service_connection_for=(value)
+    @service_connection_for = value
+    @service_connection_for_rolled = nil
+  end
 
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type
@@ -135,7 +163,7 @@ class RolledOverText
 
   def initialize(raw, max_lines, opts = {})
     @initial_append = " " + (opts[:initial_append] || "(see continued remarks page 2)").strip
-    @continued_prepend = "\n\n" + (opts[:continued_prepend] || "Continued:").strip + "\n"
+    @continued_prepend = "\n \n" + (opts[:continued_prepend] || "Continued:").strip + "\n"
     @max_lines = max_lines
     @max_line_length = opts[:max_line_length] || 101
 
@@ -184,14 +212,14 @@ class RolledOverText
 
   def rollover_breaking(raw, maxlength)
     initial = "#{raw[0...maxlength]}#{@initial_append}"
-    continued = @continued_prepend + raw[maxlength...(raw.length)]
+    continued = @continued_prepend + raw[maxlength...raw.length]
     [initial, continued]
   end
 
   def parse_to_array(raw)
     wrapped = wrap(raw)
-    num_newlines = wrapped.count("\n") + 1
-    do_rollover = num_newlines > @max_lines
+    num_lines = wrapped.count("\n") + 1
+    do_rollover = num_lines > @max_lines
     breaking_maxlength = @max_lines * @max_line_length
 
     if do_rollover

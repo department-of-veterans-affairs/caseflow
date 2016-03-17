@@ -17,7 +17,7 @@ class Form8PdfService
     file_number: "TextField1[2]",
     veteran_name: "TextField1[3]",
     insurance_loan_number: "TextField1[4]",
-    service_connection_for: "TextField1[5]",
+    service_connection_for_initial: "TextField1[5]",
     service_connection_nod_date: "TextField1[6]",
     increased_rating_for: "TextField1[7]",
     increased_rating_nod_date: "TextField1[8]",
