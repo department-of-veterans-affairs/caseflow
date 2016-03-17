@@ -46,7 +46,7 @@ RSpec.feature "Start Certification" do
   scenario "Clicking the refresh button" do
     User.authenticate!
 
-    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_not_ready }
+    Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_mismatched_docs }
     visit "certifications/new/1234C"
 
     Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_ready_to_certify }
@@ -118,5 +118,15 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/ABCD"
     expect(page.status_code).to eq(500)
     expect(page).to have_content("Unable to communicate with the VBMS system at this time.")
+  end
+
+  scenario "Appeal missing data" do
+    User.authenticate!
+    appeal = Fakes::AppealRepository.appeal_missing_data
+    Fakes::AppealRepository.records = { "ABCD" => appeal }
+
+    visit "certifications/new/ABCD"
+    expect(page.status_code).to eq(409)
+    expect(page).to have_content("Appeal is not ready for certification.")
   end
 end
