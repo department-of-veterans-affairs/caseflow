@@ -19,7 +19,7 @@ describe Form8 do
     end
   end
 
-  context "remarks rolls over" do
+  context "#remarks_rolled" do
     let(:appeal) { Form8.new(remarks: "Hello, World") }
 
     it "rolls over remarks properly" do
@@ -79,7 +79,7 @@ describe Form8 do
     end
   end
 
-  context "service connection rolls over" do
+  context "#service_connection_for_rolled" do
     let(:appeal) { Form8.new(service_connection_for: "one\ntwo\nthree") }
 
     it "rolls over properly" do
