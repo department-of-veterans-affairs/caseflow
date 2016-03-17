@@ -28,11 +28,12 @@ class CertificationsController < ApplicationController
     end
 
     push_ga_event(eventCategory: "Certification", eventAction: "Initiated")
-    @form8 = Form8.from_appeal(appeal)
+    @form8 = saved_form8 || Form8.from_appeal(appeal)
   end
 
   def create
     @form8 = Form8.new(params[:form8])
+    session[:form8] = @form8.attributes
     form8.save!
     redirect_to certification_path(id: form8.id)
   end
@@ -66,6 +67,11 @@ class CertificationsController < ApplicationController
     return true if current_user.can_access?(appeal)
     current_user.return_to = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def saved_form8
+    return nil unless session[:form8] && session[:form8][:id] == params[:id]
+    @saved_form8 ||= Form8.new(session[:form8])
   end
 
   def form8
