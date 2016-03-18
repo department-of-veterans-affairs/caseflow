@@ -43,24 +43,38 @@ class Form8
     :certification_date
   ].freeze
 
-  REMARKS_SEE_PAGE_2 = " (see continued remarks page 2)".freeze
-  REMARKS_MAX_LENGTH = 159
+  def service_connection_for_rolled
+    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
+                                            @service_connection_for_rolled.raw != @service_connection_for
+    @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
+                                                          continued_prepend: "Service Connection For Continued:")
+  end
+
+  def service_connection_for_initial
+    service_connection_for_rolled.initial unless service_connection_for_rolled.empty?
+  end
+
+  def remarks_rolled
+    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
+    @remarks_rolled ||= RolledOverText.new(@remarks, 6)
+  end
 
   def remarks_rollover?
-    return false if @remarks.nil?
-    @remarks.length > REMARKS_MAX_LENGTH + REMARKS_SEE_PAGE_2.length
+    !rolled_over_fields.empty?
   end
 
   def remarks_initial
-    if remarks_rollover?
-      "#{@remarks[0...REMARKS_MAX_LENGTH]}#{REMARKS_SEE_PAGE_2}"
-    else
-      @remarks
-    end
+    remarks_rolled.initial unless remarks_rolled.empty?
   end
 
   def remarks_continued
-    "\n\nContinued:\n#{@remarks[REMARKS_MAX_LENGTH...(@remarks.length)]}" if remarks_rollover?
+    rolled_over = rolled_over_fields
+
+    rolled_over.map(&:continued).join unless rolled_over.empty?
+  end
+
+  def rolled_over_fields
+    [remarks_rolled, service_connection_for_rolled].find_all(&:rollover?)
   end
 
   RECORD_TYPE_FIELDS = [
@@ -85,6 +99,16 @@ class Form8
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   alias_attribute :id, :vacols_id
+
+  private :service_connection_for_rolled, :remarks_rolled
+
+  def attributes
+    record_attrs = RECORD_TYPE_FIELDS.map { |field| field[:attribute] }
+
+    (record_attrs + FORM_FIELDS).each_with_object({}) do |field, result|
+      result[field] = send(field)
+    end
+  end
 
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type

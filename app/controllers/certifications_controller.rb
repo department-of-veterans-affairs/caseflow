@@ -17,6 +17,10 @@ class CertificationsController < ApplicationController
       return render "already_certified"
     end
 
+    if appeal.missing_certification_data?
+      return render "not_ready", layout: "application", status:  409
+    end
+
     unless appeal.documents_match?
       push_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents")
       Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"
@@ -24,11 +28,12 @@ class CertificationsController < ApplicationController
     end
 
     push_ga_event(eventCategory: "Certification", eventAction: "Initiated")
-    @form8 = Form8.from_appeal(appeal)
+    @form8 = saved_form8 || Form8.from_appeal(appeal)
   end
 
   def create
     @form8 = Form8.new(params[:form8])
+    session[:form8] = @form8.attributes
     form8.save!
     redirect_to certification_path(id: form8.id)
   end
@@ -62,6 +67,11 @@ class CertificationsController < ApplicationController
     return true if current_user.can_access?(appeal)
     current_user.return_to = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def saved_form8
+    return nil unless session[:form8] && session[:form8][:id] == params[:id]
+    @saved_form8 ||= Form8.new(session[:form8])
   end
 
   def form8
