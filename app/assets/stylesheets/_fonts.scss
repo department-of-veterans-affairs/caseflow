@@ -4,8 +4,8 @@
   font-weight: 400;
   src: local('Source Sans Pro'),
        local('SourceSansPro-Regular'),
-       url('source-sans-pro.woff2') format('woff2'),
-       url('source-sans-pro.woff') format('woff');
+       asset-url('source-sans-pro.woff2') format('woff2'),
+       asset-url('source-sans-pro.woff') format('woff');
 }
 
 @font-face {
@@ -14,6 +14,6 @@
   font-weight: 400;
   src: local('Merriweather'),
        local('Merriweather-Regular'),
-       url('merriweather.woff2') format('woff2'),
-       url('merriweather.woff') format('woff');
+       asset-url('merriweather.woff2') format('woff2'),
+       asset-url('merriweather.woff') format('woff');
 }
