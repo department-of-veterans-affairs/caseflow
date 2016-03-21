@@ -10,7 +10,7 @@ class Appeal
   attr_accessor :regional_office_key
   attr_accessor :insurance_loan_number
   attr_accessor :certification_date
-  attr_accessor :nod_date, :soc_date, :form9_date
+  attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   attr_accessor :type
   attr_accessor :file_type
   attr_accessor :case_record
@@ -147,6 +147,7 @@ class Appeal
         appellant_last_name: correspondent_record.sspare3,
         appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
         insurance_loan_number: case_record.bfpdnum,
+        notification_date: case_record.bfdrodec,
         nod_date: case_record.bfdnod,
         soc_date: case_record.bfdsoc,
         form9_date: case_record.bfd19,
