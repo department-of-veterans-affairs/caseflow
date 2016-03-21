@@ -35,6 +35,7 @@ PATH
 
 GEM
   remote: https://rubygems.org/
+  remote: https://rails-assets.tenex.tech/
   specs:
     actionmailer (4.2.5.2)
       actionpack (= 4.2.5.2)
@@ -220,6 +221,7 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.2.5.2)
       sprockets-rails
+    rails-assets-rxjs (4.0.7)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
     rails-dom-testing (1.0.7)
@@ -380,6 +382,7 @@ DEPENDENCIES
   pdfjs_viewer-rails
   puma (~> 2.16.0)
   rails (= 4.2.5.2)
+  rails-assets-rxjs!
   rainbow
   rspec
   rspec-rails

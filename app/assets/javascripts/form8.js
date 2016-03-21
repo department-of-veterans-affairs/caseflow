@@ -1,4 +1,5 @@
 //= require jquery
+//= require rxjs
 
 (function(){
   function $question(questionNumber) {
@@ -9,10 +10,19 @@
     return $question(questionNumber).find("input[type='text'], textarea, input[type='radio']:checked").val();
   }
 
+  function valueFromEvent(event) {
+    return event.target.value;
+  }
+
+  function initQuestionStream(questionNumber) {
+    return Rx.Observable.fromEvent($question(questionNumber), 'input click')
+      .map(valueFromEvent)
+      .startWith(questionValue(questionNumber));
+  }
+
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
 
-
-  window.Form8 =  {
+  window.Form8 = {
     interactiveQuestions: [
       "5A", "5B",
       "6A", "6B",
@@ -49,6 +59,36 @@
       "17C": { message: "" }
     },
 
+    init: function(){
+      window.DateField.init();
+
+      this.getRequiredQuestions().forEach(function(questionNumber) {
+        $question(questionNumber).find(".question-label").addClass("required");
+      });
+
+      this.initStreams();
+    },
+
+    initStreams: function() {
+      var formStream = this.initFormStream()
+        .map(this.processShowing)
+        .map(this.processValidation.bind(this));
+
+      var submitStream = Rx.Observable.fromEvent($("#form8"), "submit");
+
+      var formShowErrorsStream = formStream
+        .sample(submitStream)
+        .combineLatest(submitStream, this.processFormSubmit.bind(this))
+        .flatMap(function() { return Rx.Observable.from([true, false]); })
+        .startWith(false);
+
+      formStream = formStream
+        .scan(function (old, current) { return { previous: old.current, current: current }; }, {})
+        .combineLatest(formShowErrorsStream, this.processErrorMessages.bind(this));
+
+      formStream.subscribe(this.renderForm.bind(this));
+    },
+
     getRequiredQuestions: function() {
       return Object.keys(this.requiredQuestions);
     },
@@ -60,151 +100,131 @@
       return this.watchedQuestions;
     },
 
-    init: function(){
+    isRequiredQuestionValid: function(value) {
+      return !!value;
+    },
+
+    initFormStream: function() {
+      var formStream = Rx.Observable.return(null);
+
+      // create a stream of objects representing the state of each question in the form
+      this.getWatchedQuestions().forEach(function(questionNumber) {
+        formStream = formStream.combineLatest(
+          initQuestionStream(questionNumber),
+          function(form, questionValue) {
+            form = $.extend({}, form) || {};
+
+            form[questionNumber] = {
+              value: questionValue,
+              show: true,
+              valid: true
+            };
+            return form;
+          }
+        );
+      });
+
+      // exception to find the checked state of the other checkbox in question 13
+      var otherCheckboxStream = Rx.Observable.fromEvent($question("13"), 'input click')
+        .map(function() { return ($("#question13 #form8_record_other:checked").length === 1); })
+        .startWith($("#question13 #form8_record_other:checked").length === 1);
+
+      formStream = formStream.combineLatest(otherCheckboxStream, function(form, otherValue) {
+        form["13other"] = otherValue;
+        return form;
+      });
+
+      return formStream;
+    },
+
+    processValidation: function(form) {
       var self = this;
-      window.DateField.init();
-
-      this.initState();
-      this.reevalulate();
-
-      $("#form8 input, #form8 textarea").on("change keyup paste mouseup", function() {
-        return self.reevalulate();
-      });
-
-      $("#form8").on("submit", function() {
-        return self.onSubmit();
-      });
 
       this.getRequiredQuestions().forEach(function(questionNumber) {
-        $question(questionNumber).find(".question-label").addClass("required");
-      });
-    },
-
-    initState: function() {
-      this.state = {};
-      var state = this.state;
-
-      this.getWatchedQuestions().forEach(function(questionNumber) {
-        state["question" + questionNumber] = { show: true };
-      });
-    },
-
-    fetchState: function() {
-      var state = this.state;
-
-      this.getWatchedQuestions().forEach(function(questionNumber) {
-        state["question" + questionNumber].value = questionValue(questionNumber);
+        form[questionNumber].valid = form[questionNumber].show ? self.isRequiredQuestionValid(form[questionNumber].value) : true;
       });
 
-      state.question13other = ($("#question13 #form8_record_other:checked").length === 1);
+      return form;
     },
 
-    processState: function() {
-      var state = this.state;
-      var self = this;
-
-      state.question5B.show = !!state.question5A.value;
-      state.question6B.show = !!state.question6A.value;
-      state.question7B.show = !!state.question7A.value;
+    processShowing: function(form) {
+      form["5B"].show = !!form["5A"].value;
+      form["6B"].show = !!form["6A"].value;
+      form["7B"].show = !!form["7A"].value;
 
       ["8A3", "8C", "9A", "9B"].forEach(function(questionNumber) {
-        state["question" + questionNumber].show = false;
+        form[questionNumber].show = false;
       });
 
-      switch (state.question8A2.value) {
+      switch (form["8A2"].value) {
       case "Agent":
-        state.question8C.show = true;
+        form["8C"].show = true;
         break;
       case "Organization":
-        state.question9A.show = true;
-        state.question9B.show = (state.question9A.value === "No");
+        form["9A"].show = true;
+        form["9B"].show = (form["9A"].value === "No");
         break;
       case "Other":
-        state.question8A3.show = true;
+        form["8A3"].show = true;
       }
 
-      state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
-      state.question10B.show = state.question10C.show = (state.question10A.value === "Yes");
-      state.question11B.show = (state.question11A.value === "Yes");
-      state.question132.show = state.question13other;
+      form["8B2"].show = (form["8B1"].value === "Certification that valid POA is in another VA file");
+      form["10B"].show = form["10C"].show = (form["10A"].value === "Yes");
+      form["11B"].show = (form["11A"].value === "Yes");
+      form["132"].show = form["13other"];
 
+      return form;
+    },
+
+    processErrorMessages: function(forms, showErrorMessages) {
+      var self = this;
+      var previousForm = forms.previous,
+          form = forms.current;
 
       this.getRequiredQuestions().forEach(function(questionNumber) {
-        self.validateRequiredQuestion(questionNumber, false);
+        if(form[questionNumber].valid) {
+          form[questionNumber].error = null;
+        }
+        else if(showErrorMessages) {
+          form[questionNumber].error = self.requiredQuestions[questionNumber];
+        }
+        else if(previousForm && previousForm[questionNumber].error) {
+          form[questionNumber].error = previousForm[questionNumber].error;
+        }
       });
 
-      return state;
+      return form;
     },
 
-    validateRequiredQuestion: function(questionNumber, showError) {
-      var questionState = this.state["question" + questionNumber];
-      var isValid = !!questionState.value || !questionState.show;
-
-      if(isValid) {
-        questionState.error = null;
-      }
-      else if(showError) {
-        questionState.error = this.requiredQuestions[questionNumber];
-      }
-
-      return isValid;
-    },
-
-    getInvalidQuestionNumbers: function() {
-      var self = this;
-
-      var invalidQuestionNumbers = this.getRequiredQuestions().filter(function(questionNumber){
-        return !self.validateRequiredQuestion(questionNumber, true);
+    processFormSubmit: function(form, submitEvent) {
+      var invalidQuestions = this.getRequiredQuestions().filter(function(questionNumber) {
+        return !form[questionNumber].valid;
       });
 
-      return invalidQuestionNumbers;
+      if(invalidQuestions.length > 0) {
+        // focus first invalid field
+        $question(invalidQuestions[0]).find("input, textarea, select").first().focus();
+
+        $(".cf-form").removeClass("cf-is-loading");
+
+        // cancel submission if there are any invalid questions
+        submitEvent.preventDefault();
+      }
     },
 
-    render: function() {
-      var self = this;
-
-      this.getRequiredQuestions().forEach(function(questionNumber) {
-        var error = self.state["question" + questionNumber].error;
-        var errorMessage = error ? error.message : "";
+    renderForm: function(form) {
+      this.getWatchedQuestions().forEach(function(questionNumber) {
         var $q = $question(questionNumber);
 
+        var hideQuestion = !form[questionNumber].show;
+        $q.toggleClass('hidden-field', hideQuestion);
+        $q.find('input, textarea').prop('disabled', hideQuestion);
+
+        var error = form[questionNumber].error;
+        var errorMessage = error ? error.message : "";
         $q.find(".usa-input-error-message").html(errorMessage);
         $q.toggleClass("usa-input-error", !!error);
       });
-
-      this.interactiveQuestions.forEach(function(questionNumber) {
-        self.toggleQuestion(questionNumber);
-      });
-    },
-
-    reevalulate: function() {
-      this.fetchState();
-      this.processState();
-      this.render();
-    },
-
-    onSubmit: function() {
-      this.fetchState();
-      var invalidQuestionNumbers = this.getInvalidQuestionNumbers();
-      this.render();
-
-      if (invalidQuestionNumbers.length > 0) {
-        // invalid, focus first invalid field
-        $question(invalidQuestionNumbers[0]).find("input, textarea, select").first().focus();
-
-        // remove loading style
-        $(".cf-form").removeClass("cf-is-loading");
-      }
-
-      return invalidQuestionNumbers.length === 0;
-    },
-
-    toggleQuestion: function(questionNumber) {
-      var $q = $question(questionNumber);
-      var hideQuestion = !this.state["question" + questionNumber].show;
-
-      $q.toggleClass('hidden-field', hideQuestion);
-      $q.find('input, textarea').prop('disabled', hideQuestion);
     }
   };
 })();
