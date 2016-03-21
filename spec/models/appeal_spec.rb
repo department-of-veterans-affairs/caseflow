@@ -61,6 +61,21 @@ describe Appeal do
     end
   end
 
+  context ".normalize_vacols_date" do
+    subject { Appeal.normalize_vacols_date(datetime) }
+
+    context "when datetime is nil" do
+      let(:datetime) { nil }
+      it { is_expected.to be_nil }
+    end
+
+    context "when datetime is in a non-UTC timezone" do
+      before { Time.zone = "America/Chicago" }
+      let(:datetime) { Time.new(2013, 9, 5, 16, 0, 0, "-08:00") }
+      it { is_expected.to eq(Time.zone.local(2013, 9, 6)) }
+    end
+  end
+
   context ".from_records" do
     before { Timecop.freeze }
     after { Timecop.return }
@@ -122,11 +137,14 @@ describe Appeal do
         appellant_last_name: "Johnston",
         appellant_relationship: "Brother",
         insurance_loan_number: "INSURANCE-LOAN-NUMBER",
-        notification_date: 11.days.ago,
-        nod_date: 10.days.ago,
-        soc_date: 9.days.ago,
-        form9_date: 8.days.ago,
-        ssoc_dates: [7.days.ago, 6.days.ago],
+        notification_date: Appeal.normalize_vacols_date(11.days.ago),
+        nod_date: Appeal.normalize_vacols_date(10.days.ago),
+        soc_date: Appeal.normalize_vacols_date(9.days.ago),
+        form9_date: Appeal.normalize_vacols_date(8.days.ago),
+        ssoc_dates: [
+          Appeal.normalize_vacols_date(7.days.ago),
+          Appeal.normalize_vacols_date(6.days.ago)
+        ],
         hearing_type: :video_hearing,
         regional_office_key: "DSUSER"
       )
