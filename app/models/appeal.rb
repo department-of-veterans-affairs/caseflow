@@ -119,7 +119,7 @@ class Appeal
         case_record.bfssoc3,
         case_record.bfssoc4,
         case_record.bfssoc5
-      ].reject(&:nil?)
+      ].map { |datetime| normalize_vacols_date(datetime) }.reject(&:nil?)
     end
 
     def folder_type_from(folder_record)
@@ -132,7 +132,19 @@ class Appeal
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # dates in VACOLS are incorrectly recorded as UTC.
+    def normalize_vacols_date(datetime)
+      return nil unless datetime
+      utc_datetime = datetime.in_time_zone("UTC")
+
+      Time.zone.local(
+        utc_datetime.year,
+        utc_datetime.month,
+        utc_datetime.day
+      )
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
         vbms_id: case_record.bfcorlid,
@@ -147,10 +159,10 @@ class Appeal
         appellant_last_name: correspondent_record.sspare3,
         appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
         insurance_loan_number: case_record.bfpdnum,
-        notification_date: case_record.bfdrodec,
-        nod_date: case_record.bfdnod,
-        soc_date: case_record.bfdsoc,
-        form9_date: case_record.bfd19,
+        notification_date: normalize_vacols_date(case_record.bfdrodec),
+        nod_date: normalize_vacols_date(case_record.bfdnod),
+        soc_date: normalize_vacols_date(case_record.bfdsoc),
+        form9_date: normalize_vacols_date(case_record.bfd19),
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
         regional_office_key: case_record.bfregoff,
