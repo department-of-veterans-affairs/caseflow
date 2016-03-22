@@ -34,31 +34,36 @@ require_relative "support/sauce_driver"
 require "capybara"
 Sniffybara::Driver.path_exclusions << /samlva/
 
-if ENV['SAUCE_SPECS']
-  Capybara.default_driver = :sauce_driver
-else
-  Capybara.default_driver = :sniffybara
-end
+Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 
 # Convenience methods for stubbing current user
 module StubbableUser
-  def stub=(user)
-    @stub = user
+  module ClassMethods
+    def stub=(user)
+      @stub = user
+    end
+
+    def authenticate!
+      self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
+    end
+
+    def unauthenticate!
+      self.stub = nil
+    end
+
+    def from_session(session)
+      @stub || super(session)
+    end
   end
 
-  def authenticate!
-    self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
-  end
-
-  def unauthenticate!
-    self.stub = nil
-  end
-
-  def new(*args)
-    @stub || super
+  def self.prepended(base)
+    class << base
+      prepend ClassMethods
+    end
   end
 end
-User.class.prepend(StubbableUser)
+
+User.prepend(StubbableUser)
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository

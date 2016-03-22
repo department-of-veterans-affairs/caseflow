@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.feature "Save Certification" do
   before do
     visit "/logout"
+    User.authenticate!
   end
 
   scenario "Submit form while missing required values" do
