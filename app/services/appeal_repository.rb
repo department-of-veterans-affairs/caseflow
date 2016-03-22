@@ -102,7 +102,7 @@ class AppealRepository
 
     %w(keyfile saml key cacert cert).each do |file|
       vbms_file = config[file]
-      fail "missing vbms file #{vbms_file}" unless vbms_file
+      fail "missing vbms file #{file}" unless vbms_file
 
       config[file] = File.join(vbms_base_dir, vbms_env_name, vbms_file)
     end
