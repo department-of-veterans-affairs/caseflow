@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "Save Certification" do
+  before do
+    visit "/logout"
+  end
+
   scenario "Submit form while missing required values" do
     User.authenticate!
 
@@ -102,11 +106,11 @@ RSpec.feature "Save Certification" do
     fill_in "Full Veteran Name", with: "Micah Bobby"
     fill_in "Insurance file number", with: "INSURANCE-NO"
     fill_in "Service connection for", with: "service connection stuff"
-    fill_in "5B Date of notification of action appealed", with: "02/01/2016"
+    page.execute_script("$('#question5B input').val('02/01/2016')")
     fill_in "Increased rating for", with: "increased rating stuff"
-    fill_in "6B Date of notification of action appealed", with: "08/08/2008"
+    page.execute_script("$('#question6B input').val('08/08/2008')")
     fill_in "7A Other", with: "other stuff"
-    fill_in "7B Date of notification of action appealed", with: "09/09/2009"
+    page.execute_script("$('#question7B input').val('09/09/2009')")
     fill_in "8A Representative Name", with: "Orington Roberts"
 
     within_fieldset("8A Representative Type") do

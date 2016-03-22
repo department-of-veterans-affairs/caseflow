@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
                 :setup_fakes,
                 :check_whats_new_cookie
 
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   def unauthorized
     render status: 403
   end
@@ -21,6 +23,10 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def not_found
+    render "errors/404", layout: "application", status: 404
+  end
 
   def current_user
     @current_user ||= User.from_session(session)
