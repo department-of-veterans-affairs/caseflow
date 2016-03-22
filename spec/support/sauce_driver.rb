@@ -4,10 +4,7 @@ Capybara.register_driver :sauce_driver do |app|
   caps = Selenium::WebDriver::Remote::Capabilities.internet_explorer
   caps["platform"] = "Windows 7"
   caps["version"] = "9.0"
-
-  if ENV['TRAVIS_JOB_NUMBER']
-    caps['tunnel-identifier'] = ENV['TRAVIS_JOB_NUMBER']
-  end
+  caps["tunnel-identifier"] = ENV["TRAVIS_JOB_NUMBER"] if ENV["TRAVIS_JOB_NUMBER"]
 
   Capybara::Selenium::Driver.new(
     app,
