@@ -75,17 +75,18 @@ RSpec.feature "Save Certification" do
     visit "certifications/new/5555C"
     expect(find_field("Full Veteran Name").value).to eq("Joe Patriot")
     expect(find_field("8A Representative Name").value).to eq("Jane Patriot")
+
     within_fieldset("8A Representative Type") do
-      find_field("Attorney").value.should_not be_blank
+      expect(find_field("Attorney", visible: false)).to be_checked
     end
     within_fieldset("10A Was hearing requested?") do
-      find_field("No").value.should_not be_blank
+      expect(find_field("No", visible: false)).to be_checked
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
-      find_field("No").value.should_not be_blank
+      expect(find_field("No", visible: false)).to be_checked
     end
     within_fieldset("12B Supplemental statement of the case") do
-      find_field("Not required").value.should_not be_blank
+      expect(find_field("Not required", visible: false)).to be_checked
     end
     expect(find_field("17A Name of certifying official").value).to eq("Gieuseppe")
     expect(find_field("17B Title of certifying official").value).to eq("DRO")
