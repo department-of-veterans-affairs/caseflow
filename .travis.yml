@@ -24,7 +24,6 @@ before_script:
 
 script:
   - bundle exec rake
-  - if [ "$TRAVIS_BRANCH" == "issue54" ]; then rake spec:browsers; fi
 
 bundler_args: "--without development staging production"
 cache:
