@@ -6,8 +6,8 @@ class Form8
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  # change this attribute whenever a change is made to this class that isn't backwards-compatible with
-  # past serialized forms (e.g., changing the type of an attribute from string to date)
+  # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
+  # (e.g., changing the type of an attribute from string to date)
   SERIALIZATION_VERSION = 1
 
   FORM_FIELDS = [
