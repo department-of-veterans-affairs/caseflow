@@ -70,8 +70,10 @@ class CertificationsController < ApplicationController
   end
 
   def saved_form8
-    return nil unless session[:form8] && session[:form8][:id] == params[:id]
-    @saved_form8 ||= Form8.new(session[:form8])
+    saved = session[:form8]
+
+    return nil unless saved && saved["vacols_id"] == params["vacols_id"]
+    @saved_form8 ||= Form8.from_session(saved)
   rescue
     return nil
   end
