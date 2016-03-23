@@ -6,6 +6,10 @@ class Form8
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
+  # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
+  # (e.g., changing the type of an attribute from string to date)
+  SERIALIZATION_VERSION = 1
+
   FORM_FIELDS = [
     :vacols_id,
     :appellant_name,
@@ -42,6 +46,11 @@ class Form8
     :certifying_official_title,
     :certification_date
   ].freeze
+
+  def initialize(params = {})
+    super(params)
+    self.version = SERIALIZATION_VERSION unless params.key?(:version)
+  end
 
   def service_connection_for_rolled
     @service_connection_for_rolled = nil if @service_connection_for_rolled &&
@@ -98,6 +107,7 @@ class Form8
   FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
+  attr_accessor :version
   alias_attribute :id, :vacols_id
 
   private :service_connection_for_rolled, :remarks_rolled
@@ -105,7 +115,7 @@ class Form8
   def attributes
     record_attrs = RECORD_TYPE_FIELDS.map { |field| field[:attribute] }
 
-    (record_attrs + FORM_FIELDS).each_with_object({}) do |field, result|
+    (record_attrs + FORM_FIELDS + [:version]).each_with_object({}) do |field, result|
       result[field] = send(field)
     end
   end
@@ -132,6 +142,11 @@ class Form8
 
     def pdf_service
       @pdf_service ||= Form8PdfService
+    end
+
+    def from_session(params)
+      return nil if params["version"] != SERIALIZATION_VERSION
+      Form8.new(params)
     end
 
     def from_appeal(appeal)
