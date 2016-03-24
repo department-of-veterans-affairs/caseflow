@@ -1,6 +1,11 @@
 require "rails_helper"
 
 RSpec.feature "Save Certification" do
+  before do
+    visit "/logout"
+    User.authenticate!
+  end
+
   scenario "Submit form while missing required values" do
     User.authenticate!
 
@@ -70,17 +75,18 @@ RSpec.feature "Save Certification" do
     visit "certifications/new/5555C"
     expect(find_field("Full Veteran Name").value).to eq("Joe Patriot")
     expect(find_field("8A Representative Name").value).to eq("Jane Patriot")
+
     within_fieldset("8A Representative Type") do
-      find_field("Attorney").value.should_not be_blank
+      expect(find_field("Attorney", visible: false)).to be_checked
     end
     within_fieldset("10A Was hearing requested?") do
-      find_field("No").value.should_not be_blank
+      expect(find_field("No", visible: false)).to be_checked
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
-      find_field("No").value.should_not be_blank
+      expect(find_field("No", visible: false)).to be_checked
     end
     within_fieldset("12B Supplemental statement of the case") do
-      find_field("Not required").value.should_not be_blank
+      expect(find_field("Not required", visible: false)).to be_checked
     end
     expect(find_field("17A Name of certifying official").value).to eq("Gieuseppe")
     expect(find_field("17B Title of certifying official").value).to eq("DRO")
@@ -167,11 +173,11 @@ RSpec.feature "Save Certification" do
     fill_in "Full Veteran Name", with: "Micah Bobby"
     fill_in "Insurance file number", with: "INSURANCE-NO"
     fill_in "Service connection for", with: "service connection stuff"
-    fill_in "5B Date of notification of action appealed", with: "02/01/2016"
+    page.execute_script("$('#question5B input').val('02/01/2016')")
     fill_in "Increased rating for", with: "increased rating stuff"
-    fill_in "6B Date of notification of action appealed", with: "08/08/2008"
+    page.execute_script("$('#question6B input').val('08/08/2008')")
     fill_in "7A Other", with: "other stuff"
-    fill_in "7B Date of notification of action appealed", with: "09/09/2009"
+    page.execute_script("$('#question7B input').val('09/09/2009')")
     fill_in "8A Representative Name", with: "Orington Roberts"
 
     within_fieldset("8A Representative Type") do

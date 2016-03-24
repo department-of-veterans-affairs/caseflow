@@ -29,6 +29,7 @@ class Fakes::AppealRepository
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
+      notification_date: 1.day.ago,
       documents: [nod_document, soc_document, form9_document],
       veteran_first_name: "Davy",
       veteran_last_name: "Crockett",
