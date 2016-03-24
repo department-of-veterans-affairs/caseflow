@@ -11,6 +11,7 @@ branches:
 # see https://github.com/travis-ci/travis-ci/issues/3225 for more details
 before_install:
   - ./bin/get-phantomjs
+  - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
 
 before_script:
   - sudo apt-get install pdftk
