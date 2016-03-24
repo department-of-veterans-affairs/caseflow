@@ -1,20 +1,7 @@
-require 'csv'
-require 'parallel'
+# frozen_string_literal: true
 
-
-PAPER_ONLY_OFFICES = [
-  # General Councel
-  "RO89",
-
-  # Education Centers
-  "RO91", "RO92", "RO93", "RO94",
-
-  # Pension
-  "RO80", "RO81", "RO82", "RO83",
-
-  # VHA CO
-  "RO99"
-].freeze
+require "csv"
+require "parallel"
 
 class Report
   def self.spreadsheet_values(row)
@@ -30,7 +17,7 @@ class Report
     mismatched_fields = RELEVANT_FIELDS.select do |vacols_field, vbms_field|
       c.send(vacols_field) != c.send(vbms_field)
     end
-    mismatched_fields.map {|_, _, field_name| field_name }.join(", ")
+    mismatched_fields.map { |_, _, field_name| field_name }.join(", ")
   end
 
   def run!
@@ -39,13 +26,15 @@ class Report
       rows = find
 
       Parallel.each(rows, in_threads: 4, progress: "Loading Records") do |row|
-      # rows.each do |row|
         record = nil
         begin
           record = load_record row
-          csv << self.class.spreadsheet_values(record) unless !include_record? record
+          csv << self.class.spreadsheet_values(record) if include_record? record
         rescue => e
-          Rails.logger.error "event=report.case.exception bfkey=#{row.bfkey} message=#{e.message} traceback=#{e.backtrace}"
+          Rails.logger.error %(event=report.case.exception
+bfkey=#{row.bfkey}
+message=#{e.message}
+traceback=#{e.backtrace})
         end
         cleanup record unless record.nil?
       end
@@ -54,6 +43,20 @@ class Report
 end
 
 class MismatchReport < Report
+  PAPER_ONLY_OFFICES = [
+    # General Councel
+    "RO89",
+
+    # Education Centers
+    "RO91", "RO92", "RO93", "RO94",
+
+    # Pension
+    "RO80", "RO81", "RO82", "RO83",
+
+    # VHA CO
+    "RO99"
+  ].freeze
+
   def self.spreadsheet_columns
     [
       "BFKEY",
@@ -67,17 +70,6 @@ class MismatchReport < Report
       "IS MERGED"
     ]
   end
-
-  # vacols_case.bfkey,
-  # TYPE_ACTION[vacols_case.bfac],
-  # vacols_case.folder.file_type,
-  # vacols_case.regional_office_full,
-  # vacols_case.bfdnod,
-  # vacols_case.bf41stat,
-  # Caseflow::Reports.hearing_pending(vacols_case),
-  #
-  # vacols_case.bfcorlid,
-  # Caseflow::Reports.bool_cell(vacols_case.merged?),
 
   def self.spreadsheet_values(appeal)
     [
