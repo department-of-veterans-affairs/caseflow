@@ -43,7 +43,8 @@ class Appeal
   end
 
   def action_name
-    {"1" => "1-Original",
+    {
+      "1" => "1-Original",
       "2" => "2-Supplemental",
       "3" => "3-Post-remand",
       "4" => "4-Reconsideration",
@@ -52,12 +53,12 @@ class Appeal
       "7" => "7-Court remand",
       "8" => "8-DOR",
       "9" => "9-CUE",
-      "P" => "P-Post decision development",
+      "P" => "P-Post decision development"
     }[action_code]
   end
 
   def hearing_pending
-    return hearing_requested && !hearing_held
+    hearing_requested && !hearing_held
   end
 
   def representative_type
@@ -109,7 +110,7 @@ class Appeal
   end
 
   def any_appeals_document?
-      [:nod, :form9, :soc, :ssoc].any? { |t| documents_with_type(t).length != 0 }
+    [:nod, :form9, :soc, :ssoc].any? { |t| documents_with_type(t).length != 0 }
   end
 
   def missing_certification_data?
@@ -198,7 +199,7 @@ class Appeal
         hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
         # bfha: Hearing action (NULL -> No hearing happened)
         hearing_held: !case_record.bfha.nil?,
-        merged: case_record.bfdc == 'M'
+        merged: case_record.bfdc == "M"
       )
     end
   end
