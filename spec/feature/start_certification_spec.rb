@@ -95,9 +95,10 @@ RSpec.feature "Start Certification" do
 
   scenario "404's if appeal doesn't exist in VACOLS" do
     User.authenticate!
+    Fakes::AppealRepository.records = {}
 
     visit "certifications/new/4444NNNN"
-    expect(page.status_code).to eq(404)
+    expect(page).to have_content("Page not found")
   end
 
   scenario "403's if user doesn't have access to appeal" do
@@ -107,7 +108,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => appeal }
 
     visit "certifications/new/ABCD"
-    expect(page.status_code).to eq(403)
+    expect(page).to have_content("Unauthorized")
   end
 
   scenario "VBMS-specific 500 on vbms error" do
@@ -116,7 +117,6 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => appeal }
 
     visit "certifications/new/ABCD"
-    expect(page.status_code).to eq(500)
     expect(page).to have_content("Unable to communicate with the VBMS system at this time.")
   end
 
@@ -126,7 +126,6 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => appeal }
 
     visit "certifications/new/ABCD"
-    expect(page.status_code).to eq(409)
     expect(page).to have_content("Appeal is not ready for certification.")
   end
 end

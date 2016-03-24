@@ -30,7 +30,14 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 ```
 
-### Windows, Linux
+#### Windows
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+
+2) Unzip both packages into `[DIR]`
+
+3) Add `[DIR]` to your `PATH`
+
+### Linux
 Installation instructions TBD.
 
 ### Run the app
