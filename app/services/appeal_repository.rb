@@ -35,9 +35,16 @@ class AppealRepository
     appeal
   end
 
+  def self.dateshift_to_utc(value)
+    Time.utc(value.year, value.month, value.day, 0, 0, 0)
+  end
+
   def self.certify(appeal)
-    appeal.case_record.bfdcertool = Time.zone.now
-    appeal.case_record.bf41stat = Time.zone.now.beginning_of_day.to_s(:va_date)
+    certification_date = AppealRepository.dateshift_to_utc Time.zone.now
+
+    appeal.case_record.bfdcertool = certification_date
+    appeal.case_record.bf41stat = certification_date
+
     appeal.case_record.bftbind = "X" if appeal.hearing_type == :travel_board
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
