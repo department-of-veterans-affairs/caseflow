@@ -21,7 +21,10 @@ class AppealRepository
     case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
       Records::Case.includes(:folder, :correspondent).find(vacols_id)
     end
+    create_appeal(case_record)
+  end
 
+  def self.create_appeal(case_record)
     appeal = Appeal.from_records(
       case_record: case_record,
       folder_record: case_record.folder,
