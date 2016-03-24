@@ -15,6 +15,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    session[:form8] = nil
     current_user.unauthenticate
     redirect_to login_path
   end
