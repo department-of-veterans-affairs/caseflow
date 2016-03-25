@@ -2,6 +2,8 @@
 require "pdf_forms"
 
 class Form8PdfService
+  CLEAN_PDFS_AFTER = 1.day
+
   PDF_PAGE_1 = "form1[0].#subform[0].#area[0].".freeze
   PDF_PAGE_2 = "form1[0].#subform[1].".freeze
 
@@ -133,12 +135,16 @@ class Form8PdfService
     File.delete(tmp_location)
   end
 
+  def self.output_location
+    File.join(Rails.root, "tmp", "pdfs")
+  end
+
   def self.output_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.pdf")
+    File.join(output_location, "form8-#{form8.id}.pdf")
   end
 
   def self.tmp_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.tmp")
+    File.join(output_location, "form8-#{form8.id}.tmp")
   end
 
   def self.empty_pdf_location
@@ -149,5 +155,33 @@ class Form8PdfService
     # from the pdf-forms readme: XFDF is supposed to have
     # better support for non-western encodings
     @pdf_forms ||= PdfForms.new("pdftk", data_format: "XFdf")
+  end
+
+  def self.mark_for_clean
+    filename = File.join(output_location, "clean-after-#{(Time.zone.now + CLEAN_PDFS_AFTER).to_i}.txt")
+
+    File.open(filename, "w") do |file|
+      Dir[File.join(output_location, "*.pdf")].each do |clean_filename|
+        file.puts clean_filename
+      end
+    end
+  end
+
+  def self.clean
+    Dir[File.join(output_location, "clean-after-*.txt")].each do |filename|
+      timestamp = /clean-after-(.*)\.txt/.match(filename)[1].to_i
+      clean_files_for(filename) if Time.zone.at(timestamp) < Time.zone.now
+    end
+  end
+
+  def self.clean_files_for(cleanfile)
+    File.open(cleanfile, "r") do |f|
+      f.each_line do |line|
+        file_to_delete = line.delete("\n")
+        File.delete(file_to_delete) if File.exist?(file_to_delete)
+      end
+    end
+
+    File.delete(cleanfile)
   end
 end
