@@ -9,5 +9,7 @@ begin
       t.pattern = "spec/feature/**/*_spec.rb"
     end
   end
+  # rubocop:disable Lint/HandleExceptions
 rescue LoadError, NameError
 end
+# rubocop:enable Lint/HandleExceptions
