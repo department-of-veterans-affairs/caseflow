@@ -13,3 +13,6 @@ log_tags << lambda { |req|
 }
 
 Rails.application.config.log_tags = log_tags
+
+# roll logger over every 1MB, retain 10
+config.logger = Logger.new(config.paths["log"].first, 10, 1.megabyte) unless Rails.env.development?

@@ -35,10 +35,7 @@ Rails.application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
-
-  # roll logger over every 1MB, retain 10
-  config.logger = Logger.new(config.paths["log"].first, 10, 1.megabytes)
-
+  
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end
