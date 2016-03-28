@@ -12,4 +12,11 @@ log_tags << lambda { |req|
   ro ? "#{username} (#{ro})" : username
 }
 
-Rails.application.config.log_tags = log_tags
+# :nocov:
+config = Rails.application.config
+config.log_tags = log_tags
+
+# roll logger over every 1MB, retain 10
+logger_path = config.paths["log"].first
+config.logger = Logger.new(logger_path, 10, 1.megabyte) unless Rails.env.development?
+# :nocov:
