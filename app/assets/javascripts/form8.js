@@ -67,6 +67,11 @@
       this.initState();
       this.reevalulate();
 
+
+      ["5A", "6A", "7A", "14"].forEach(function(questionNumber) {
+        new window.CharacterCounter($question(questionNumber));
+      });
+
       $("#form8 input, #form8 textarea").on("change keyup paste mouseup", function() {
         return self.reevalulate();
       });
