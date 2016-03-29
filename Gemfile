@@ -40,7 +40,7 @@ gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/
 gem "rainbow"
 
 group :production, :staging do
-  gem 'therubyracer'
+  gem 'therubyracer', platforms: :ruby
 
   gem 'connect_vbms', path: './vendor/gems/connect_vbms'
 

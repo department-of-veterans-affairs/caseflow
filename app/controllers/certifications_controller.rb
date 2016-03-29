@@ -13,7 +13,7 @@ class CertificationsController < ApplicationController
 
   def new
     if appeal.certified?
-      push_ga_event(eventCategory: "Certification", eventAction: "Already Certified")
+      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Already Certified"))
       return render "already_certified"
     end
 
@@ -22,12 +22,12 @@ class CertificationsController < ApplicationController
     end
 
     unless appeal.documents_match?
-      push_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents")
+      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents"))
       Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"
       return render "mismatched_documents"
     end
 
-    push_ga_event(eventCategory: "Certification", eventAction: "Initiated")
+    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Initiated"))
     @form8 = saved_form8 || Form8.from_appeal(appeal)
   end
 
@@ -42,11 +42,11 @@ class CertificationsController < ApplicationController
 
   def show
     if params[:confirm]
-      push_ga_event(eventCategory: "Certification", eventAction: "Completed")
+      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Completed"))
       render "confirm"
     end
 
-    push_ga_event(eventCategory: "Certification", eventAction: "Previewed")
+    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Previewed"))
   end
 
   def pdf
@@ -59,11 +59,15 @@ class CertificationsController < ApplicationController
   end
 
   def cancel
-    push_ga_event(eventCategory: "Certification", eventAction: "Canceled")
+    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Canceled"))
     render layout: "application"
   end
 
   private
+
+  def new_ga_event(opts = {})
+    { eventLabel: current_user.regional_office, eventValue: appeal.vacols_id }.merge!(opts)
+  end
 
   def verify_access
     return true if current_user.can_access?(appeal)
