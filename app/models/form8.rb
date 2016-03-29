@@ -128,8 +128,8 @@ class Form8
 
     max_size_bytes = 3.kilobytes
 
-    Rails.logger.warn("serialized form exceeds maximum length of #{max_size_bytes};" /
-                          " length #{size_bytes} exceeds maximum") if size_bytes > max_size_bytes
+    Rails.logger.warn("serialized form exceeds maximum length of #{max_size_bytes}; " \
+     "length #{size_bytes} exceeds maximum") if size_bytes > max_size_bytes
 
     size_bytes <= max_size_bytes
   end
