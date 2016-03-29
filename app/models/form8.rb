@@ -160,16 +160,11 @@ class Form8
 
     def from_string_params(params)
       date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date]
+                     :other_notification_date, :soc_date]
 
       date_fields.each do |f|
         raw_value = params[f]
-        begin
-          params[f] = Date.strptime(raw_value, "%m/%d/%y") if raw_value && raw_value.is_a?(String)
-          # ignore parse errors
-        rescue StandardError => e
-          Rails.logger.warn("invalid date format #{raw_value}", e)
-        end
+        params[f] = Date.strptime(raw_value, "%m/%d/%Y") rescue nil if raw_value && raw_value.is_a?(String)
       end
 
       Form8.new(params)
