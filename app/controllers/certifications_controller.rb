@@ -32,7 +32,7 @@ class CertificationsController < ApplicationController
   end
 
   def create
-    @form8 = Form8.new(params[:form8])
+    @form8 = Form8.from_string_params(params[:form8])
 
     session[:form8] = @form8.attributes if @form8.fits_in_cookie?
 

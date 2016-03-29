@@ -158,9 +158,31 @@ class Form8
       @pdf_service ||= Form8PdfService
     end
 
+    def from_string_params(params)
+      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
+                     :other_notification_date]
+
+      date_fields.each do |f|
+        raw_value = params[f]
+        begin
+          params[f] = Date.strptime(raw_value, "%m/%d/%y") if raw_value && raw_value.is_a?(String)
+          # ignore parse errors
+        rescue
+        end
+      end
+
+      Form8.new(params)
+    end
+
     def from_session(params)
       return nil if params["version"] != SERIALIZATION_VERSION
-      Form8.new(params)
+
+      # pass through type-conversion for backwards compatability with improperly serialized forms
+      form = from_string_params(params.symbolize_keys)
+
+      # reset
+      form.certification_date = Time.zone.now
+      form
     end
 
     def from_appeal(appeal)
