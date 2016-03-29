@@ -734,6 +734,12 @@ form {
   }
 }
 
+.cf-required {
+  color: $color-secondary;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
 .cf-loading-indicator {
   display: none;
   background-color: $color-white;
