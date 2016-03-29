@@ -126,4 +126,11 @@ module ApplicationHelper
       "Loading #{svg_icon(:loading_front)} #{svg_icon(:loading_back)}".html_safe
     end
   end
+
+  def current_ga_path
+    full_path = request.env["PATH_INFO"]
+    route = Rails.application.routes.recognize_path(full_path)
+    return full_path unless route
+    ["", route[:controller], route[:action]].join("/")
+  end
 end
