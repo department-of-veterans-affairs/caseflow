@@ -33,16 +33,9 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.new(params[:form8])
-    serialized_form8 = @form8.attributes
 
-    # rough estimate
-    serialized_length = serialized_form8.to_s.bytesize
+    session[:form8] = @form8.attributes if @form8.fits_in_cookie?
 
-    if serialized_length <= 3.kilobytes
-      session[:form8] = serialized_form8
-    else
-      logger.warn "unable to serialize form; length #{serialized_length} exceeds maximum"
-    end
     form8.save!
     redirect_to certification_path(id: form8.id)
   end
