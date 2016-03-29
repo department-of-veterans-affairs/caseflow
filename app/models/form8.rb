@@ -164,7 +164,11 @@ class Form8
 
       date_fields.each do |f|
         raw_value = params[f]
-        params[f] = Date.strptime(raw_value, "%m/%d/%Y") rescue nil if raw_value && raw_value.is_a?(String)
+        params[f] = begin
+                      Date.strptime(raw_value, "%m/%d/%Y")
+                    rescue
+                      nil
+                    end if raw_value && raw_value.is_a?(String)
       end
 
       Form8.new(params)
