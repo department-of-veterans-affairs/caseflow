@@ -167,7 +167,8 @@ class Form8
         begin
           params[f] = Date.strptime(raw_value, "%m/%d/%y") if raw_value && raw_value.is_a?(String)
           # ignore parse errors
-        rescue
+        rescue StandardError => e
+          Rails.logger.warn("invalid date format #{raw_value}", e)
         end
       end
 
