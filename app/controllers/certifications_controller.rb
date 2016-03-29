@@ -33,7 +33,9 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.new(params[:form8])
-    session[:form8] = @form8.attributes
+
+    session[:form8] = @form8.attributes if @form8.fits_in_cookie?
+
     form8.save!
     redirect_to certification_path(id: form8.id)
   end

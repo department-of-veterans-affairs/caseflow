@@ -44,7 +44,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :service_connection_for,
-            question_number: "5A", label: "Service connection for:" %>
+            question_number: "5A", label: "Service connection for:", maxlength: 5500 %>
 
       <%= f.date_field :service_connection_notification_date,
             question_number: "5B", label: "Date of notification of action appealed:" %>
@@ -52,7 +52,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :increased_rating_for,
-            question_number: "6A", label: "Increased rating for:" %>
+            question_number: "6A", label: "Increased rating for:", maxlength: 138 %>
 
       <%= f.date_field :increased_rating_notification_date,
             question_number: "6B", label: "Date of notification of action appealed:" %>
@@ -60,10 +60,10 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :other_for,
-            question_number: "7A", label: "Other:" %>
+            question_number: "7A", label: "Other:", maxlength: 138 %>
 
       <%= f.date_field :other_notification_date,
-            question_number: "7B", label: "Date of notification of action appealed:" %>
+            question_number: "7B", label: "Date of notification of action appealed:", maxlength: 138 %>
     </div>
 
     <%= f.radio_buttons_field :representative_type,
@@ -121,7 +121,7 @@
           question_number: "13", part: "2", label: "Specify other:", secondary: true %>
 
     <%= f.text_area :remarks,
-          question_number: "14", label: "Remarks:" %>
+          question_number: "14", label: "Remarks:", maxlength: 5500 %>
 
     <%= f.text_field :certifying_office,
           question_number: "15", label: "Name and location of certifying office:", readonly: true %>

@@ -120,6 +120,20 @@ class Form8
     end
   end
 
+  def fits_in_cookie?
+    serialized_form8 = attributes
+
+    # rough estimate
+    size_bytes = serialized_form8.to_s.bytesize
+
+    max_size_bytes = 3.kilobytes
+
+    Rails.logger.warn("serialized form exceeds maximum length of #{max_size_bytes}; " \
+     "length #{size_bytes} exceeds maximum") if size_bytes > max_size_bytes
+
+    size_bytes <= max_size_bytes
+  end
+
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type
     "#{representative_name} - #{type}"
