@@ -33,8 +33,7 @@ class CertificationsController < ApplicationController
 
   def create
     @form8 = Form8.from_string_params(params[:form8])
-
-    session[:form8] = @form8.attributes if @form8.fits_in_cookie?
+    Rails.cache.write(form8_cache_key, @form8.attributes)
     form8.save!
     redirect_to certification_path(id: form8.id)
   end
@@ -68,6 +67,10 @@ class CertificationsController < ApplicationController
     { eventLabel: current_user.regional_office, eventValue: appeal.vacols_id }.merge!(opts)
   end
 
+  def form8_cache_key
+    session.id + "_form8"
+  end
+
   def verify_access
     return true if current_user.can_access?(appeal)
     current_user.return_to = request.original_url
@@ -75,7 +78,7 @@ class CertificationsController < ApplicationController
   end
 
   def saved_form8
-    saved = session[:form8]
+    saved = Rails.cache.read(form8_cache_key)
 
     return nil unless saved && saved["vacols_id"] == params["vacols_id"]
     @saved_form8 ||= Form8.from_session(saved)

@@ -115,18 +115,6 @@ describe Form8 do
     end
   end
 
-  context "#fits_in_cookie?" do
-    it "returns false if contents exceed 3kb" do
-      form = Form8.new(remarks: "a" * 4.kilobytes)
-      expect(form.fits_in_cookie?).to be_falsey
-    end
-
-    it "returns true if contents do not exceed 3kb" do
-      form = Form8.new(remarks: "a" * 1.kilobyte)
-      expect(form.fits_in_cookie?).to be_truthy
-    end
-  end
-
   context ".from_appeal" do
     before do
       Timecop.freeze

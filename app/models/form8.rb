@@ -117,21 +117,7 @@ class Form8
 
     (record_attrs + FORM_FIELDS + [:version]).each_with_object({}) do |field, result|
       result[field] = send(field)
-    end
-  end
-
-  def fits_in_cookie?
-    serialized_form8 = attributes
-
-    # rough estimate
-    size_bytes = serialized_form8.to_s.bytesize
-
-    max_size_bytes = 3.kilobytes
-
-    Rails.logger.warn("serialized form exceeds maximum length of #{max_size_bytes}; " \
-     "length #{size_bytes} exceeds maximum") if size_bytes > max_size_bytes
-
-    size_bytes <= max_size_bytes
+    end.stringify_keys
   end
 
   def representative
