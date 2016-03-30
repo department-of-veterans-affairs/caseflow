@@ -14,8 +14,8 @@ RSpec.feature "Save Certification" do
     }
 
     visit "certifications/new/1234C"
-    expect(page).to have_css("#question3 label.required")
-    expect(page).to have_css("#question10A legend.required")
+    expect(page).to have_css("#question3 label .cf-required")
+    expect(page).to have_css("#question10A legend .cf-required")
 
     fill_in "Full Veteran Name", with: ""
     within_fieldset("8A Representative Type") do

@@ -23,7 +23,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
     @template.content_tag :fieldset, id: question_id(options),
                                      class: "#{inline_class} cf-form-showhide-radio" do
-      question_legend(options) + radio_button_options(attribute, options)
+      question_legend(options) + error_container + radio_button_options(attribute, options)
     end
   end
 
@@ -35,7 +35,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
   def check_box_group(attributes, options = {})
     @template.content_tag :fieldset, id: question_id(options) do
-      question_legend(options) + check_box_grid(attributes, options)
+      question_legend(options) + error_container + check_box_grid(attributes, options)
     end
   end
 
@@ -56,7 +56,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
   def question_legend(options)
     @template.content_tag :legend, class: "question-label" do
-      label_content(options) + error_container
+      label_content(options)
     end
   end
 
