@@ -26,6 +26,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 2.16.0"
 
+# Bower assets
+source 'https://rails-assets.tenex.tech/' do
+  gem 'rails-assets-rxjs'
+end
+
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 

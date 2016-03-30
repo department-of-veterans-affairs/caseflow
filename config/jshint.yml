@@ -19,3 +19,4 @@ options:
   globals:
     jQuery:   true
     "$":      true
+    Rx:       true
