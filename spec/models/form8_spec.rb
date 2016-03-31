@@ -20,6 +20,23 @@ describe Form8 do
     end
   end
 
+  context "date fields" do
+    let(:form8) { Form8.new }
+
+    it "converts strings to dates" do
+      form8.certification_date = "03/03/2003"
+
+      expect(form8.certification_date).to be_a(Date)
+      expect(form8.certification_date).to eq(Date.new(2003, 03, 03))
+    end
+
+    it "sets to nil when bad string" do
+      form8.certification_date = "..."
+
+      expect(form8.certification_date).to be_nil
+    end
+  end
+
   context "#representative" do
     let(:form8) { Form8.new }
     subject { form8.representative }

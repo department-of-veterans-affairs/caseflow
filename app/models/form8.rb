@@ -47,44 +47,13 @@ class Form8
     :certification_date
   ].freeze
 
-  def initialize(params = {})
-    super(params)
-    self.version = SERIALIZATION_VERSION unless params.key?(:version)
-  end
-
-  def service_connection_for_rolled
-    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
-                                            @service_connection_for_rolled.raw != @service_connection_for
-    @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
-                                                          continued_prepend: "Service Connection For Continued:")
-  end
-
-  def service_connection_for_initial
-    service_connection_for_rolled.initial unless service_connection_for_rolled.empty?
-  end
-
-  def remarks_rolled
-    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
-    @remarks_rolled ||= RolledOverText.new(@remarks, 6)
-  end
-
-  def remarks_rollover?
-    !rolled_over_fields.empty?
-  end
-
-  def remarks_initial
-    remarks_rolled.initial unless remarks_rolled.empty?
-  end
-
-  def remarks_continued
-    rolled_over = rolled_over_fields
-
-    rolled_over.map(&:continued).join unless rolled_over.empty?
-  end
-
-  def rolled_over_fields
-    [remarks_rolled, service_connection_for_rolled].find_all(&:rollover?)
-  end
+  DATE_FIELDS = [
+    :certification_date,
+    :service_connection_notification_date,
+    :increased_rating_notification_date,
+    :other_notification_date,
+    :soc_date
+  ].freeze
 
   RECORD_TYPE_FIELDS = [
     { name: "CF OR XCF", attribute: :record_cf_or_xcf },
@@ -110,7 +79,62 @@ class Form8
   attr_accessor :version
   alias_attribute :id, :vacols_id
 
-  private :service_connection_for_rolled, :remarks_rolled
+  def initialize(params = {})
+    super(params)
+    self.version = SERIALIZATION_VERSION unless params.key?(:version)
+  end
+
+  def to_date(value)
+    if value.is_a?(String)
+      Date.strptime(value, "%m/%d/%Y")
+    else
+      value
+    end
+  rescue ArgumentError
+    nil
+  end
+
+  DATE_FIELDS.each do |date_field_name|
+    define_method "#{date_field_name}=" do |value|
+      instance_variable_set("@#{date_field_name}".to_s, to_date(value))
+    end
+  end
+
+  def service_connection_for_rolled
+    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
+                                            @service_connection_for_rolled.raw != @service_connection_for
+    @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
+                                                          continued_prepend: "Service Connection For Continued:")
+  end
+  private :service_connection_for_rolled
+
+  def service_connection_for_initial
+    service_connection_for_rolled.initial unless service_connection_for_rolled.empty?
+  end
+
+  def remarks_rolled
+    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
+    @remarks_rolled ||= RolledOverText.new(@remarks, 6)
+  end
+  private :remarks_rolled
+
+  def remarks_rollover?
+    !rolled_over_fields.empty?
+  end
+
+  def remarks_initial
+    remarks_rolled.initial unless remarks_rolled.empty?
+  end
+
+  def remarks_continued
+    rolled_over = rolled_over_fields
+
+    rolled_over.map(&:continued).join unless rolled_over.empty?
+  end
+
+  def rolled_over_fields
+    [remarks_rolled, service_connection_for_rolled].find_all(&:rollover?)
+  end
 
   def attributes
     record_attrs = RECORD_TYPE_FIELDS.map { |field| field[:attribute] }
@@ -144,27 +168,11 @@ class Form8
       @pdf_service ||= Form8PdfService
     end
 
-    def from_string_params(params)
-      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date, :soc_date]
-
-      date_fields.each do |f|
-        raw_value = params[f]
-        params[f] = begin
-                      Date.strptime(raw_value, "%m/%d/%Y")
-                    rescue
-                      nil
-                    end if raw_value && raw_value.is_a?(String)
-      end
-
-      Form8.new(params)
-    end
-
     def from_session(params)
       return nil if params["version"] != SERIALIZATION_VERSION
 
       # pass through type-conversion for backwards compatability with improperly serialized forms
-      form = from_string_params(params.symbolize_keys)
+      form = new(params.symbolize_keys)
 
       # reset
       form.certification_date = Time.zone.now
