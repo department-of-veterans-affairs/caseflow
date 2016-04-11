@@ -49,7 +49,6 @@ class Records::Case < ActiveRecord::Base
     "2" => { full_name: nil, short: nil },
     "3" => { full_name: nil, short: nil },
     "4" => { full_name: nil, short: nil },
-    "4" => { full_name: nil, short: nil },
     "9" => { full_name: nil, short: nil },
     ">" => { full_name: nil, short: nil },
     "?" => { full_name: nil, short: nil },
