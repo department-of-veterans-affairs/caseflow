@@ -46,6 +46,13 @@ class Records::Case < ActiveRecord::Base
     "Y" => { full_name: "Blinded Veterans Association", short: "Blinded Vet Assoc" },
     "Z" => { full_name: "National Veterans Legal Services Program", short: "NVLSP" },
     "1" => { full_name: "National Veterans Organization of America", short: "NVOA" },
+    "2" => { full_name: nil, short: nil },
+    "3" => { full_name: nil, short: nil },
+    "4" => { full_name: nil, short: nil },
+    "4" => { full_name: nil, short: nil },
+    "9" => { full_name: nil, short: nil },
+    ">" => { full_name: nil, short: nil },
+    "?" => { full_name: nil, short: nil },
     nil => { full_name: nil, short: nil }
   }.freeze
 
