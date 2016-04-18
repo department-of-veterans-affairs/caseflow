@@ -8,7 +8,7 @@
 </div>
 
 <iframe class="cf-doc-embed cf-app-segment" title="Form8 PDF"
-  src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.id)) %>"></iframe>
+  src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.id, time: Time.now.to_i)) %>"></iframe>
 
 <div class="cf-form cf-app-segment">
   <%= loading_indicator %>
