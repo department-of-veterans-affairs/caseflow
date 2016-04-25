@@ -51,7 +51,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :increased_rating_for,
-            question_number: "6A", label: "Increased rating for:", maxlength: 138 %>
+            question_number: "6A", label: "Increased rating for:", maxlength: 1000 %>
 
       <%= f.date_field :increased_rating_notification_date,
             question_number: "6B", label: "Date of notification of action appealed:" %>
@@ -59,10 +59,10 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :other_for,
-            question_number: "7A", label: "Other:", maxlength: 138 %>
+            question_number: "7A", label: "Other:", maxlength: 1000 %>
 
       <%= f.date_field :other_notification_date,
-            question_number: "7B", label: "Date of notification of action appealed:", maxlength: 138 %>
+            question_number: "7B", label: "Date of notification of action appealed:" %>
     </div>
 
     <%= f.radio_buttons_field :representative_type,
