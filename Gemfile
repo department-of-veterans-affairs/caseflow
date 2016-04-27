@@ -26,6 +26,10 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 2.16.0"
 
+# for reports
+gem 'parallel', '~> 1.6.1'
+gem 'ruby-progressbar', '~> 1.7.0'
+
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
