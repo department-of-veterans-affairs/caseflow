@@ -94,8 +94,11 @@
     <%= f.yes_no_field :hearing_requested,
           question_number: "10A", label: "Was hearing requested?" %>
 
+    <%= f.yes_no_field :hearing_held,
+          question_number: "10B", part: "1", label: "Was the hearing held?" %>
+
     <%= f.yes_no_field :hearing_transcript_on_file,
-          question_number: "10B", label: "If the hearing was held, is transcript on file?" %>
+          question_number: "10B", part: "2", label: "Is the hearing transcript on file?", secondary: true %>
 
     <%= f.text_field :hearing_requested_explaination,
           question_number: "10C", label: "If requested, but not held, explain:" %>
