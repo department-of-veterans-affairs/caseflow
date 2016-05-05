@@ -188,7 +188,7 @@ RSpec.feature "Save Certification" do
     within_fieldset("10A Was hearing requested?") do
       find("label", text: "Yes").click
     end
-    within_fieldset("10B If the hearing was held, is transcript on file?") do
+    within_fieldset("10B Was the hearing held?") do
       find("label", text: "Yes").click
     end
     fill_in "10C If requested, but not held, explain", with: "i'm going to disappear"

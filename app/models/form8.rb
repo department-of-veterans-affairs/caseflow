@@ -32,6 +32,7 @@ class Form8
     :form_646_of_record,
     :form_646_not_of_record_explaination,
     :hearing_requested,
+    :hearing_held,
     :hearing_transcript_on_file,
     :hearing_requested_explaination,
     :contested_claims_procedures_applicable,
