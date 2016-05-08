@@ -32,7 +32,7 @@ class CertificationsController < ApplicationController
   end
 
   def create
-    @form8 = Form8.from_string_params(params[:form8])
+    @form8 = Form8.new(params[:form8])
     Rails.cache.write(form8_cache_key, @form8.attributes)
     form8.save!
     redirect_to certification_path(id: form8.id)
