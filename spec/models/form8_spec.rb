@@ -99,6 +99,42 @@ describe Form8 do
     end
   end
 
+  context "#remarks_continued" do
+    subject { form8.remarks_continued }
+    let(:line) { "Words\n" }
+    let(:form8) do
+      Form8.new(
+        remarks: remarks,
+        service_connection_for: service_connection_for,
+        increased_rating_for: increased_rating_for,
+        other_for: other_for
+      )
+    end
+
+    context "when no fields roll over" do
+      let(:service_connection_for) { "" }
+      let(:increased_rating_for) { "" }
+      let(:other_for) { "" }
+      let(:remarks) { "" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when all fields roll over" do
+      let(:service_connection_for) { "#{line * 2}SERVICE CONNECTION YES" }
+      let(:increased_rating_for) { "#{line * 2}INCREASED RATING YEAH" }
+      let(:other_for) { "#{line * 2}OTHER THINGS" }
+      let(:remarks) { "#{line * 6}REMARKS WOO" }
+
+      it do
+        is_expected.to eq("\n \nContinued:\nREMARKS WOO" \
+                             "\n \nService Connection For Continued:\nSERVICE CONNECTION YES" \
+                             "\n \nIncreased Rating For Continued:\nINCREASED RATING YEAH" \
+                             "\n \nOther Continued:\nOTHER THINGS")
+      end
+    end
+  end
+
   context "#service_connection_for_rolled" do
     let(:appeal) { Form8.new(service_connection_for: "one\ntwo\nthree") }
 
