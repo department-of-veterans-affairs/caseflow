@@ -39,8 +39,10 @@ gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/
 # Used to colorize output for rake tasks
 gem "rainbow"
 
+# execjs runtime
+gem 'therubyracer', platforms: :ruby
+
 group :production, :staging do
-  gem 'therubyracer', platforms: :ruby
 
   gem 'connect_vbms', path: './vendor/gems/connect_vbms'
 
@@ -79,7 +81,7 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
-  
+
   # Include the IANA Time Zone Database on Windows, where Windows doens't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
   gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
