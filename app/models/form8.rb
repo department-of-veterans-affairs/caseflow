@@ -53,6 +53,24 @@ class Form8
     self.version = SERIALIZATION_VERSION unless params.key?(:version)
   end
 
+  def increased_rating_for_initial
+    increased_rating_for_rolled.initial unless increased_rating_for_rolled.empty?
+  end
+
+  def increased_rating_for_rolled
+    RolledOverText.new(@increased_rating_for, 2, continued_prepend: "Increased Rating For Continued:")
+  end
+  private :increased_rating_for_rolled
+
+  def other_for_initial
+    other_for_rolled.initial unless other_for_rolled.empty?
+  end
+
+  def other_for_rolled
+    RolledOverText.new(@other_for, 2, continued_prepend: "Other Continued:")
+  end
+  private :other_for_rolled
+
   def service_connection_for_rolled
     @service_connection_for_rolled = nil if @service_connection_for_rolled &&
                                             @service_connection_for_rolled.raw != @service_connection_for
@@ -84,7 +102,7 @@ class Form8
   end
 
   def rolled_over_fields
-    [remarks_rolled, service_connection_for_rolled].find_all(&:rollover?)
+    [remarks_rolled, service_connection_for_rolled, increased_rating_for_rolled, other_for_rolled].find_all(&:rollover?)
   end
 
   RECORD_TYPE_FIELDS = [
