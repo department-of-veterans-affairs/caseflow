@@ -7,10 +7,13 @@ class Appeal
   attr_accessor :appellant_name, :appellant_relationship
   attr_accessor :representative
   attr_accessor :hearing_type
+  attr_accessor :action_code
   attr_accessor :regional_office_key
   attr_accessor :insurance_loan_number
   attr_accessor :certification_date
   attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
+  attr_accessor :hearing_requested, :hearing_held
+  attr_accessor :merged
   attr_accessor :type
   attr_accessor :file_type
   attr_accessor :case_record
@@ -37,6 +40,25 @@ class Appeal
 
   def representative_name
     representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
+  end
+
+  def action_name
+    {
+      "1" => "1-Original",
+      "2" => "2-Supplemental",
+      "3" => "3-Post-remand",
+      "4" => "4-Reconsideration",
+      "5" => "5-Vacate",
+      "6" => "6-De novo",
+      "7" => "7-Court remand",
+      "8" => "8-DOR",
+      "9" => "9-CUE",
+      "P" => "P-Post decision development"
+    }[action_code]
+  end
+
+  def hearing_pending
+    hearing_requested && !hearing_held
   end
 
   def representative_type
@@ -85,6 +107,10 @@ class Appeal
 
   def documents_match?
     nod_match? && soc_match? && form9_match? && ssoc_all_match?
+  end
+
+  def any_appeals_document?
+    [:nod, :form9, :soc, :ssoc].any? { |t| documents_with_type(t).length != 0 }
   end
 
   def missing_certification_data?
@@ -167,7 +193,13 @@ class Appeal
         hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
-        case_record: case_record
+        action_code: case_record.bfac,
+        case_record: case_record,
+        # bfhr: Hearing requested ("1" -> Central Office, "2" -> Travel Board)
+        hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+        # bfha: Hearing action (NULL -> No hearing happened)
+        hearing_held: !case_record.bfha.nil?,
+        merged: case_record.bfdc == "M"
       )
     end
   end
@@ -187,6 +219,11 @@ class Appeal
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
+  end
+
+  def clear_documents!
+    @documents = []
+    @documents_by_type = {}
   end
 
   def sanitized_vbms_id

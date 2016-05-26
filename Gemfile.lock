@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 2951535ae2a35dd5a5bd8dbd04d05635b52ded69
+  revision: d621881a2ef8311434d9cdcea5519026f9182981
   specs:
-    sniffybara (0.0.0)
+    sniffybara (0.0.1)
       poltergeist
       rainbow
       selenium-webdriver
@@ -65,7 +65,7 @@ GEM
       activemodel (= 4.2.5.2)
       activesupport (= 4.2.5.2)
       arel (~> 6.0)
-    activerecord-oracle_enhanced-adapter (1.6.6)
+    activerecord-oracle_enhanced-adapter (1.6.7)
     activesupport (4.2.5.2)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -138,8 +138,8 @@ GEM
     jbuilder (2.4.1)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
-    jquery-rails (4.1.0)
-      rails-dom-testing (~> 1.0)
+    jquery-rails (4.1.1)
+      rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     jshint (1.4.0)
@@ -164,10 +164,12 @@ GEM
     lumberjack (1.0.10)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
-    mail (2.6.3)
-      mime-types (>= 1.16, < 3)
+    mail (2.6.4)
+      mime-types (>= 1.16, < 4)
     method_source (0.8.2)
-    mime-types (2.99.1)
+    mime-types (3.0)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0221)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multi_json (1.11.2)
@@ -185,6 +187,7 @@ GEM
     omniauth-saml (1.5.0)
       omniauth (~> 1.3)
       ruby-saml (~> 1.1, >= 1.1.1)
+    parallel (1.6.2)
     parser (2.3.0.6)
       ast (~> 2.2)
     pdf-forms (1.0.0)
@@ -245,7 +248,7 @@ GEM
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
       rspec-mocks (~> 3.4.0)
-    rspec-core (3.4.3)
+    rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -294,9 +297,8 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    selenium-webdriver (2.52.0)
+    selenium-webdriver (2.53.0)
       childprocess (~> 0.5)
-      multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
     sexp_processor (4.7.0)
@@ -335,11 +337,10 @@ GEM
     timecop (0.8.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2016.1)
+    tzinfo-data (1.2016.3)
       tzinfo (>= 1.0.0)
-    uglifier (2.7.2)
-      execjs (>= 0.3.0)
-      json (>= 1.8.0)
+    uglifier (3.0.0)
+      execjs (>= 0.3.0, < 3)
     uuid (2.3.8)
       macaddr (~> 1.0)
     web-console (2.3.0)
@@ -376,6 +377,7 @@ DEPENDENCIES
   jshint
   konacha
   omniauth-saml-va!
+  parallel (~> 1.6.1)
   pdf-forms
   pdfjs_viewer-rails
   puma (~> 2.16.0)
@@ -385,6 +387,7 @@ DEPENDENCIES
   rspec-rails
   rubocop (~> 0.36.0)
   ruby-oci8
+  ruby-progressbar (~> 1.7.0)
   sass-rails (~> 5.0)
   scss_lint
   sdoc (~> 0.4.0)
