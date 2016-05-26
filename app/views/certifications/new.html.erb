@@ -101,7 +101,7 @@
           question_number: "10B", part: "2", label: "Is the hearing transcript on file?", secondary: true %>
 
     <%= f.text_field :hearing_requested_explaination,
-          question_number: "10C", label: "If requested, but not held, explain:" %>
+          question_number: "10C", label: "If requested, but not held, explain:", maxlength: 60 %>
 
     <%= f.yes_no_field :contested_claims_procedures_applicable,
           question_number: "11A", label: "Are contested claims procedures applicable in this case?" %>
