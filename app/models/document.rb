@@ -6,7 +6,9 @@ class Document
     "95" => :soc,
     "97" => :ssoc,
     "179" => :form9,
-    "713" => :nod
+    "713" => :nod,
+    "856" => :nod,
+    "857" => :form9
   }.freeze
 
   attr_accessor :type, :received_at
