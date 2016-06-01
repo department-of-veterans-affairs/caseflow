@@ -2,7 +2,7 @@ describe Appeal do
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: :nod, received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: :soc, received_at: 2.days.ago) }
-    let(:form9_document) { Document.new(type: :form9, received_at: 1.day.ago) }
+    let(:form9_document) { Document.new(type: nil, alt_types: [:form9], received_at: 1.day.ago) }
 
     let(:appeal) do
       Appeal.new(

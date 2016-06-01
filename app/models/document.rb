@@ -11,11 +11,23 @@ class Document
     "857" => :form9
   }.freeze
 
-  attr_accessor :type, :received_at
+  ALT_TYPES = {
+    "Appeals - Notice of Disagreement (NOD)" => :nod,
+    "Appeals - Statement of the Case (SOC)" => :soc,
+    "Appeals - Substantive Appeal to Board of Veterans' Appeals" => :form9,
+    "Appeals - Supplemental Statement of the Case (SSOC)" => :ssoc
+  }.freeze
+
+  attr_accessor :type, :alt_types, :received_at
+
+  def type?(type)
+    (self.type == type) || (alt_types || []).include?(type)
+  end
 
   def self.from_vbms_document(vbms_document)
     new(
       type: TYPES[vbms_document.doc_type] || :other,
+      alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
       received_at: vbms_document.received_at
     )
   end
