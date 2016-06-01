@@ -7,11 +7,11 @@ RSpec::Core::RakeTask.new(:spec)
 task default: [:build_java, :spec, :rubocop]
 
 task :build_java do
-  sh "make -C src build"
+  sh 'make -C src build'
 end
 
 task :docs do
-  sh "make -C docs html"
+  sh 'make -C docs html'
 end
 
 desc 'Run RuboCop on the src directory'

@@ -6,7 +6,7 @@ module VBMS
       'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
       'xmlns:cdm' => 'http://vbms.vba.va.gov/cdm',
       'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include'
-    }
+    }.freeze
 
     def self.soap
       Nokogiri::XML::Builder.new do |xml|
