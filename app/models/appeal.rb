@@ -186,7 +186,7 @@ class Appeal
 
   def documents_with_type(type)
     @documents_by_type ||= {}
-    @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
+    @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
   end
 
   def sanitized_vbms_id

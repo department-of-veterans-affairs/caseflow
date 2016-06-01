@@ -5,6 +5,7 @@ describe VBMS::Responses::Document do
     let(:xml_string) { File.open(fixture_path('requests/fetch_document.xml')).read }
     let(:xml) { Nokogiri::XML(xml_string) }
     let(:doc) { xml.at_xpath('//v4:document', VBMS::XML_NAMESPACES) }
+    let(:alt_doc_types) { ['Appeals - Notice of Disagreement (NOD)', 'Appeals - Statement of the Case (SOC)'] }
 
     subject { VBMS::Responses::Document.create_from_xml(doc) }
 
@@ -14,6 +15,7 @@ describe VBMS::Responses::Document do
     specify { expect(subject.source).to eq('VHA_CUI') }
     specify { expect(subject.mime_type).to eq('text/plain') }
     specify { expect(subject.received_at).to eq(Date.parse('2015-05-06')) }
+    specify { expect(subject.alt_doc_types).to eq(alt_doc_types) }
 
     it 'should support the common type coercion used on some elements' do
       expect(subject.doc_type.to_i).to eq(356)

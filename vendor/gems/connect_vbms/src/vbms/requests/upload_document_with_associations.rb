@@ -33,7 +33,7 @@ module VBMS
         @received_at.getlocal('-05:00').strftime('%Y-%m-%d-05:00')
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
       def render_xml
         filename = File.basename(@pdf_file)
 
@@ -61,7 +61,7 @@ module VBMS
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
 
       def multipart?
         true

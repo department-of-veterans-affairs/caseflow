@@ -22,11 +22,9 @@ end
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
-  if value.nil?
-    return nil
-  else
-    return File.join(env_dir, value)
-  end
+  return nil if value.nil?
+
+  File.join(env_dir, value)
 end
 
 def fixture_path(filename)
