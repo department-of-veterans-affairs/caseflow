@@ -177,7 +177,7 @@ class Appeal
 
     @documents.each do |doc|
       dates = results[doc.type] || []
-      dates << doc.received_at.to_date
+      dates << doc.received_at.to_date unless doc.received_at.nil?
       results[doc.type] = dates
     end
 
