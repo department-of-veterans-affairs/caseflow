@@ -53,6 +53,10 @@ class Form8
     self.version = SERIALIZATION_VERSION unless params.key?(:version)
   end
 
+  def hearing_on_file
+    hearing_transcript_on_file || hearing_held
+  end
+
   def increased_rating_for_initial
     increased_rating_for_rolled.initial unless increased_rating_for_rolled.empty?
   end

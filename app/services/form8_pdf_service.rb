@@ -42,7 +42,7 @@ class Form8PdfService
       "Yes" => "CheckBox23[4]",
       "No" => "CheckBox23[5]"
     },
-    hearing_transcript_on_file: {
+    hearing_on_file: {
       "Yes" => "CheckBox23[6]",
       "No" => "CheckBox23[7]"
     },
