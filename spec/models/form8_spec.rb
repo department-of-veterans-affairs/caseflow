@@ -24,18 +24,16 @@ describe Form8 do
     let(:form8) { Form8.new }
     subject { form8.hearing_on_file }
 
-    context "when hearing_held is set and hearing_transcript_on_file is null" do
-      before { form8.hearing_held = "No" }
-      it { is_expected.to eq "No" }
-    end
-
-    context "when hearing_transcript_on_file is not null" do
-      before do
-        form8.hearing_held = "Yes"
-        form8.hearing_transcript_on_file = "No"
+    context "when hearing_transcript_on_file is nil" do
+      context "when hearing_held is set to No" do
+        before { form8.hearing_held = "No" }
+        it { is_expected.to eq("No") }
       end
 
-      it { is_expected.to eq "No" }
+      context "when hearing_held is set to Yes" do
+        before { form8.hearing_held = "Yes" }
+        it { is_expected.to be_falsey }
+      end
     end
   end
 

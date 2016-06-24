@@ -191,6 +191,9 @@ RSpec.feature "Save Certification" do
     within_fieldset("10B Was the hearing held?") do
       find("label", text: "Yes").click
     end
+    within_fieldset("Is the hearing transcript on file?") do
+      find("label", text: "Yes").click
+    end
     fill_in "10C If requested, but not held, explain", with: "i'm going to disappear"
     within_fieldset("10A Was BVA hearing requested?") do
       find("label", text: "No").click
@@ -223,7 +226,7 @@ RSpec.feature "Save Certification" do
       other_notification_date: Date.strptime("09/09/2009", "%m/%d/%Y"),
       representative_type: "Attorney",
       hearing_requested: "No",
-      hearing_transcript_on_file: nil,
+      hearing_transcript_on_file: "Yes",
       hearing_requested_explaination: nil,
       contested_claims_procedures_applicable: "No",
       ssoc_required: "Not required",

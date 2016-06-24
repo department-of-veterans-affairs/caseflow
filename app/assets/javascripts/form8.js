@@ -38,6 +38,7 @@
       "9A":  { message: DEFAULT_RADIO_ERROR_MESSAGE },
       "9B":  { message: DEFAULT_RADIO_ERROR_MESSAGE },
       "10A": { message: DEFAULT_RADIO_ERROR_MESSAGE },
+      "10B2": { message: DEFAULT_RADIO_ERROR_MESSAGE },
       "11A": { message: DEFAULT_RADIO_ERROR_MESSAGE },
       "11B": { message: DEFAULT_RADIO_ERROR_MESSAGE },
       "12A": { message: "Please enter the date of the statement of the case." },
