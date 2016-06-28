@@ -29,7 +29,7 @@ Metrics/MethodLength:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#short-methods
   Enabled: true
   CountComments: false
-  Max: 20
+  Max: 30
 
 Metrics/ModuleLength:
   Description: Avoid modules longer than 100 lines of code.

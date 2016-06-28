@@ -177,7 +177,7 @@ class Appeal
 
     @documents.each do |doc|
       dates = results[doc.type] || []
-      dates << doc.received_at.to_date
+      dates << doc.received_at.to_date unless doc.received_at.nil?
       results[doc.type] = dates
     end
 
@@ -186,7 +186,7 @@ class Appeal
 
   def documents_with_type(type)
     @documents_by_type ||= {}
-    @documents_by_type[type] ||= documents.select { |doc| doc.type == type }
+    @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
   end
 
   def sanitized_vbms_id

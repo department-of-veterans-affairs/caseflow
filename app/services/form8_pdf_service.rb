@@ -19,9 +19,9 @@ class Form8PdfService
     insurance_loan_number: "TextField1[4]",
     service_connection_for_initial: "TextField1[5]",
     service_connection_notification_date: "TextField1[6]",
-    increased_rating_for: "TextField1[7]",
+    increased_rating_for_initial: "TextField1[7]",
     increased_rating_notification_date: "TextField1[8]",
-    other_for: "TextField1[9]",
+    other_for_initial: "TextField1[9]",
     other_notification_date: "TextField1[10]",
     representative: "TextField1[11]",
     power_of_attorney_file: "TextField1[12]",
@@ -42,7 +42,7 @@ class Form8PdfService
       "Yes" => "CheckBox23[4]",
       "No" => "CheckBox23[5]"
     },
-    hearing_transcript_on_file: {
+    hearing_on_file: {
       "Yes" => "CheckBox23[6]",
       "No" => "CheckBox23[7]"
     },
@@ -90,6 +90,8 @@ class Form8PdfService
   def self.pdf_values_for(form8)
     FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
+
+      value = value.to_formatted_s(:short_date) if value.is_a?(Date)
 
       if location.is_a?(Hash)
         location = location[value]

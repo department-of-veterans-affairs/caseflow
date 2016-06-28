@@ -51,7 +51,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :increased_rating_for,
-            question_number: "6A", label: "Increased rating for:", maxlength: 138 %>
+            question_number: "6A", label: "Increased rating for:", maxlength: 1000 %>
 
       <%= f.date_field :increased_rating_notification_date,
             question_number: "6B", label: "Date of notification of action appealed:" %>
@@ -59,10 +59,10 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :other_for,
-            question_number: "7A", label: "Other:", maxlength: 138 %>
+            question_number: "7A", label: "Other:", maxlength: 1000 %>
 
       <%= f.date_field :other_notification_date,
-            question_number: "7B", label: "Date of notification of action appealed:", maxlength: 138 %>
+            question_number: "7B", label: "Date of notification of action appealed:" %>
     </div>
 
     <%= f.radio_buttons_field :representative_type,
@@ -92,13 +92,16 @@
           question_number: "9B", label: "Why is the Form 646 not of record?" %>
 
     <%= f.yes_no_field :hearing_requested,
-          question_number: "10A", label: "Was hearing requested?" %>
+          question_number: "10A", label: "Was BVA hearing requested?" %>
+
+    <%= f.yes_no_field :hearing_held,
+          question_number: "10B", part: "1", label: "Was the hearing held?" %>
 
     <%= f.yes_no_field :hearing_transcript_on_file,
-          question_number: "10B", label: "If the hearing was held, is transcript on file?" %>
+          question_number: "10B", part: "2", label: "Is the hearing transcript on file?", secondary: true %>
 
     <%= f.text_field :hearing_requested_explaination,
-          question_number: "10C", label: "If requested, but not held, explain:" %>
+          question_number: "10C", label: "If requested, but not held, explain:", maxlength: 60 %>
 
     <%= f.yes_no_field :contested_claims_procedures_applicable,
           question_number: "11A", label: "Are contested claims procedures applicable in this case?" %>

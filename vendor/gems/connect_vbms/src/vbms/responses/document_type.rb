@@ -17,7 +17,7 @@ module VBMS
         { type_id: type_id, description: description }
       end
 
-      alias_method :to_s, :inspect
+      alias to_s inspect
     end
   end
 end

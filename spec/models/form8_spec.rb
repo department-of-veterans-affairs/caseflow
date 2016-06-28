@@ -20,6 +20,23 @@ describe Form8 do
     end
   end
 
+  context "#hearing_on_file" do
+    let(:form8) { Form8.new }
+    subject { form8.hearing_on_file }
+
+    context "when hearing_transcript_on_file is nil" do
+      context "when hearing_held is set to No" do
+        before { form8.hearing_held = "No" }
+        it { is_expected.to eq("No") }
+      end
+
+      context "when hearing_held is set to Yes" do
+        before { form8.hearing_held = "Yes" }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
   context "#representative" do
     let(:form8) { Form8.new }
     subject { form8.representative }
@@ -96,6 +113,42 @@ describe Form8 do
                                                  "organizing in caucus states, and better exploitation of delegate " \
                                                  "allocation rules.[109] On June 7, 2008, Clinton ended her campaign " \
                                                  "and endorsed Obama.[110]")
+    end
+  end
+
+  context "#remarks_continued" do
+    subject { form8.remarks_continued }
+    let(:line) { "Words\n" }
+    let(:form8) do
+      Form8.new(
+        remarks: remarks,
+        service_connection_for: service_connection_for,
+        increased_rating_for: increased_rating_for,
+        other_for: other_for
+      )
+    end
+
+    context "when no fields roll over" do
+      let(:service_connection_for) { "" }
+      let(:increased_rating_for) { "" }
+      let(:other_for) { "" }
+      let(:remarks) { "" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when all fields roll over" do
+      let(:service_connection_for) { "#{line * 2}SERVICE CONNECTION YES" }
+      let(:increased_rating_for) { "#{line * 2}INCREASED RATING YEAH" }
+      let(:other_for) { "#{line * 2}OTHER THINGS" }
+      let(:remarks) { "#{line * 6}REMARKS WOO" }
+
+      it do
+        is_expected.to eq("\n \nContinued:\nREMARKS WOO" \
+                             "\n \nService Connection For Continued:\nSERVICE CONNECTION YES" \
+                             "\n \nIncreased Rating For Continued:\nINCREASED RATING YEAH" \
+                             "\n \nOther Continued:\nOTHER THINGS")
+      end
     end
   end
 
