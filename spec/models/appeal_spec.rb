@@ -133,7 +133,7 @@ describe Appeal do
         veteran_middle_initial: "J",
         veteran_last_name: "Johnston",
         appellant_first_name: "Chris",
-        appellant_middle_name: "M",
+        appellant_middle_initial: "M",
         appellant_last_name: "Johnston",
         appellant_relationship: "Brother",
         insurance_loan_number: "INSURANCE-LOAN-NUMBER",

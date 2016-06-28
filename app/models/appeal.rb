@@ -3,7 +3,7 @@ class Appeal
 
   attr_accessor :vacols_id, :vbms_id
   attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  attr_accessor :appellant_first_name, :appellant_middle_name, :appellant_last_name
+  attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   attr_accessor :appellant_name, :appellant_relationship
   attr_accessor :representative
   attr_accessor :hearing_type
@@ -31,7 +31,7 @@ class Appeal
 
   def appellant_name
     if appellant_first_name
-      [appellant_first_name, appellant_middle_name, appellant_last_name].select(&:present?).join(", ")
+      [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
     end
   end
 
@@ -155,7 +155,7 @@ class Appeal
         veteran_middle_initial: correspondent_record.snamemi,
         veteran_last_name: correspondent_record.snamel,
         appellant_first_name: correspondent_record.sspare1,
-        appellant_middle_name: correspondent_record.sspare2,
+        appellant_middle_initial: correspondent_record.sspare2,
         appellant_last_name: correspondent_record.sspare3,
         appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
         insurance_loan_number: case_record.bfpdnum,
