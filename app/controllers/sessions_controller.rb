@@ -1,5 +1,13 @@
 class SessionsController < ApplicationController
   def new
+
+    if ENV["IAM_SERVICE_DISABLED"]
+      @error_title = "VA Login Service Unavailable"
+      @error_subtitle = "The VA's common login service, is currently down."
+      @error_retry_external_service = "the system"
+      return render "errors/500", layout: "application", status: 500
+    end
+
     return redirect_to(ssoi_url) unless current_user.ssoi_authenticated?
 
     push_ga_event(eventCategory: "VACOLS Login", eventAction: "Failed") if flash[:error]
