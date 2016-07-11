@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   def new
-
     if Rails.application.config.iam_service_disabled
       @error_title = "VA Login Service Unavailable"
       @error_subtitle = "The VA's common login service is currently down."
