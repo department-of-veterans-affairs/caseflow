@@ -9,6 +9,10 @@ RSpec.feature "Login" do
     Fakes::AuthenticationService.vacols_regional_offices = { "DSUSER" => "pa55word!" }
   end
 
+  after do
+    Rails.application.config.iam_service_disabled = false
+  end
+
   scenario "login with valid credentials" do
     visit "certifications/new/1234C"
 
@@ -82,5 +86,12 @@ RSpec.feature "Login" do
     click_on "Login"
 
     expect(page).to have_content("Caseflow Certification Help")
+  end
+
+  scenario "IAM is down" do
+    Rails.application.config.iam_service_disabled = true
+    visit "certifications/new/1234C"
+
+    expect(page).to have_content("VA Login Service Unavailable")
   end
 end
