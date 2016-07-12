@@ -92,6 +92,6 @@ RSpec.feature "Login" do
     Rails.application.config.iam_service_disabled = true
     visit "certifications/new/1234C"
 
-    expect(page).to have_content("VA Login Service Unavailable")
+    expect(page).to have_content("Login Service Unavailable")
   end
 end
