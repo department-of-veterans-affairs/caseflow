@@ -54,7 +54,7 @@ class Form8
   end
 
   def hearing_on_file
-    hearing_transcript_on_file || (hearing_held == "No" && "No")
+    (hearing_held == "Yes" && hearing_transcript_on_file)
   end
 
   def increased_rating_for_initial
