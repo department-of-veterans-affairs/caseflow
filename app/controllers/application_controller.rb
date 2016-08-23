@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   private
 
   def ssl_enabled?
-    Rails.env.production?
+    Rails.env.production? && !(request.path =~ /health-check/)
   end
 
   def strict_transport_security

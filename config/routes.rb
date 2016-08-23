@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   end
   resources :offices, only: :index
 
+  get "health-check", to: "health_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
   post "auth/saml_callback" => "sessions#ssoi_saml_callback"
