@@ -29,7 +29,7 @@ class User
       "#{username} (#{regional_office})"
 
     # just SSOI, not yet vacols authenticated
-    elsif ssoi_authenticated?
+    else
       username.to_s
     end
 
@@ -41,11 +41,7 @@ class User
   end
 
   def authenticated?
-    !regional_office.blank? && ssoi_authenticated?
-  end
-
-  def ssoi_authenticated?
-    !username.blank?
+    !regional_office.blank?
   end
 
   def authenticate(regional_office:, password:)
@@ -71,14 +67,6 @@ class User
     end
   end
 
-  def return_to=(path)
-    @session[:return_to] = path
-  end
-
-  def return_to
-    @session[:return_to]
-  end
-
   private
 
   def ssoi_attributes
@@ -90,6 +78,8 @@ class User
     delegate :authenticate_vacols, :ssoi_authentication_enabled?, to: :authentication_service
 
     def from_session(session)
+      return nil unless session[:username]
+
       new(session: session)
     end
 

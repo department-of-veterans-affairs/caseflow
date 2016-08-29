@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
       return render "errors/500", layout: "application", status: 503
     end
 
-    return redirect_to(ssoi_url) unless current_user.ssoi_authenticated?
+    return redirect_to(ssoi_url) unless current_user
 
     push_ga_event(eventCategory: "VACOLS Login", eventAction: "Failed") if flash[:error]
   end
@@ -18,12 +18,15 @@ class SessionsController < ApplicationController
       return redirect_to login_path
     end
 
-    redirect_to current_user.return_to || root_path
+    redirect_to session["return_to"] || root_path
   end
 
   def destroy
-    session[:form8] = nil
-    current_user.unauthenticate
+    if current_user
+      current_user.unauthenticate
+      @current_user = nil
+    end
+
     redirect_to login_path
   end
 
@@ -32,9 +35,10 @@ class SessionsController < ApplicationController
   def ssoi_saml_callback
     # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
     auth_hash = request.env["omniauth.auth"] || {}
+    user = User.new(session: session)
 
-    if current_user.authenticate_ssoi(auth_hash)
-      redirect_to current_user.return_to || login_path
+    if user.authenticate_ssoi(auth_hash)
+      redirect_to session["return_to"] || login_path
     else
       ssoi_saml_failure("Failed to authenticate")
     end

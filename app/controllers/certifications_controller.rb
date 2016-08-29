@@ -70,12 +70,15 @@ class CertificationsController < ApplicationController
   end
 
   def form8_cache_key
+    # force initialization of cache, there's probably a better way to do this
+    session["init"] = true
+
     session.id + "_form8"
   end
 
   def verify_access
-    return true if current_user.can_access?(appeal)
-    current_user.return_to = request.original_url
+    return true if current_user && current_user.can_access?(appeal)
+    session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
 
