@@ -41,6 +41,30 @@ describe User do
     end
   end
 
+  context "#can?" do
+    subject { user.can?("Do the thing") }
+
+    context "when user is not a CSS user" do
+      let(:session) { { id: "SHANE" } }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when roles are nil" do
+      let(:session) { { "user" => {} } }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when roles don't contain the thing" do
+      let(:session) { { "user" => { "roles" => ["Do the other thing"] } } }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when roles contains the thing" do
+      let(:session) { { "user" => { "roles" => ["Do the thing"] } } }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#can_access?" do
     before { session[:regional_office] = "RO1" }
     let(:appeal) { Appeal.new }

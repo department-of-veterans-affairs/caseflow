@@ -77,7 +77,7 @@ class CertificationsController < ApplicationController
   end
 
   def verify_access
-    return true if current_user && current_user.can_access?(appeal)
+    return true if current_user && current_user.can_access?(appeal) && current_user.can?("Certify Appeal")
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end

@@ -7,8 +7,16 @@ class User
     @session[:username] || @session["user"]["id"]
   end
 
+  def css?
+    @session["user"]
+  end
+
   def regional_office
     @session[:regional_office]
+  end
+
+  def roles
+    @session["user"]["roles"]
   end
 
   def timezone
@@ -24,8 +32,12 @@ class User
     else
       username.to_s
     end
+  end
 
-    # else, not authenticated at all
+  def can?(thing)
+    return true unless css?
+    return false if roles.nil?
+    roles.include? thing
   end
 
   def can_access?(appeal)
