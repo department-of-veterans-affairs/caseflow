@@ -4,15 +4,7 @@ class User
   end
 
   def username
-    @session[:username]
-  end
-
-  def first_name
-    @session[:first_name]
-  end
-
-  def last_name
-    @session[:last_name]
+    @session[:username] || @session["user"]["id"]
   end
 
   def regional_office
@@ -78,7 +70,7 @@ class User
     delegate :authenticate_vacols, :ssoi_authentication_enabled?, to: :authentication_service
 
     def from_session(session)
-      return nil unless session[:username]
+      return nil if !session[:username] && session["user"].nil?
 
       new(session: session)
     end

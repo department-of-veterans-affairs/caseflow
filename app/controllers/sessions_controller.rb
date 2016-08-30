@@ -54,7 +54,11 @@ class SessionsController < ApplicationController
     { regional_office: params["regional_office"], password: params["password"] }
   end
 
+  def css_enabled?
+    request.original_url =~ /certification\.cf\..*ds.va.gov/
+  end
+
   def ssoi_url
-    User.ssoi_authentication_url
+    css_enabled? ? ENV["SSO_URL"] : User.ssoi_authentication_url
   end
 end
