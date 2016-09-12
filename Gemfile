@@ -36,6 +36,9 @@ gem 'pdfjs_viewer-rails'
 # SSOI
 gem 'omniauth-saml-va', git: 'https://github.com/department-of-veterans-affairs/omniauth-saml-va'
 
+# Error reporting to Sentry
+gem "sentry-raven"
+
 # Used to colorize output for rake tasks
 gem "rainbow"
 
