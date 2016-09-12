@@ -55,7 +55,7 @@ class SessionsController < ApplicationController
   end
 
   def css_enabled?
-    request.original_url =~ /certification\.cf\..*ds.va.gov/
+    request.original_url =~ /certification\.cf\..*ds\.va\.gov/
   end
 
   def ssoi_url
