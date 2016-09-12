@@ -19,7 +19,7 @@ class AppealRepository
 
   def self.find(vacols_id, _args = {})
     case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
-      Records::Case.includes(:folder, :correspondent).find(vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
     appeal = Appeal.from_records(
