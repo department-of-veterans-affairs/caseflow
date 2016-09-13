@@ -1,4 +1,4 @@
-class VACOLS::Case < ActiveRecord::Base
+class VACOLS::Case < VACOLS::Record
   self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
   self.primary_key = "bfkey"

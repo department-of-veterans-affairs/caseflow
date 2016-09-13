@@ -1,4 +1,4 @@
-class VACOLS::RegionalOffice < ActiveRecord::Base
+class VACOLS::RegionalOffice < VACOLS::Record
   self.table_name = "vacols.staff"
   self.primary_key = "stafkey"
 

@@ -187,6 +187,7 @@ GEM
     pdfjs_viewer-rails (0.0.8)
       rails (> 4.2.0)
       sass-rails (~> 5.0)
+    pg (0.18.4)
     pkg-config (1.1.7)
     poltergeist (1.9.0)
       capybara (~> 2.1)
@@ -358,6 +359,7 @@ DEPENDENCIES
   omniauth-saml-va!
   pdf-forms
   pdfjs_viewer-rails
+  pg
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
   rainbow
