@@ -5,6 +5,9 @@ options = {
   expire_after: 2.weeks
 }
 
-options[:domain] = ENV["COOKIE_DOMAIN"] if ENV["COOKIE_DOMAIN"]
+options[:domain] = :all
+
+# Convert to this when IAM is removed
+# options[:domain] = ENV["COOKIE_DOMAIN"] if ENV["COOKIE_DOMAIN"]
 
 Rails.application.config.session_store :cookie_store, options
