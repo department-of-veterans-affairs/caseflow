@@ -14,23 +14,15 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    if appeal.certified?
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Already Certified"))
-      return render "already_certified"
+    @certification = Certification.from_vacols_id!(params[:vacols_id])
+
+    case @certification.start!
+    when :already_certified    then render "already_certified"
+    when :data_missing         then render "not_ready", status: 409
+    when :mismatched_documents then render "mismatched_documents"
     end
 
-    if appeal.missing_certification_data?
-      return render "not_ready", layout: "application", status:  409
-    end
-
-    unless appeal.documents_match?
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents"))
-      Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"
-      return render "mismatched_documents"
-    end
-
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Initiated"))
-    @form8 = saved_form8 || Form8.from_appeal(appeal)
+    @form8 = @certification.form8(form8_cache_key)
   end
 
   def create
@@ -73,22 +65,13 @@ class CertificationsController < ApplicationController
     # force initialization of cache, there's probably a better way to do this
     session["init"] = true
 
-    session.id + "_form8"
+    "#{session.id}_form8"
   end
 
   def verify_access
     return true if current_user && current_user.can_access?(appeal) && current_user.can?("Certify Appeal")
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
-  end
-
-  def saved_form8
-    saved = Rails.cache.read(form8_cache_key)
-
-    return nil unless saved && saved["vacols_id"] == params["vacols_id"]
-    @saved_form8 ||= Form8.from_session(saved)
-  rescue
-    return nil
   end
 
   def form8

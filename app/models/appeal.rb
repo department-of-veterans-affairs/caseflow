@@ -59,15 +59,15 @@ class Appeal
   end
 
   def nod_match?
-    documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
+    nod_date && documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
 
   def soc_match?
-    documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
+    soc_date && documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
   end
 
   def form9_match?
-    documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
+    form9_date && documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
   end
 
   def ssoc_all_match?
@@ -170,18 +170,6 @@ class Appeal
         case_record: case_record
       )
     end
-  end
-
-  def document_dates_by_type
-    results = {}
-
-    @documents.each do |doc|
-      dates = results[doc.type] || []
-      dates << doc.received_at.to_date unless doc.received_at.nil?
-      results[doc.type] = dates
-    end
-
-    results
   end
 
   def documents_with_type(type)

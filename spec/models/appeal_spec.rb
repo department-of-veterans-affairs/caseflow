@@ -171,7 +171,11 @@ describe Appeal do
       end
     end
 
-    before { Appeal.repository = FakeRepo }
+    before do
+      @old_repo = Appeal.repository
+      Appeal.repository = FakeRepo
+    end
+    after { Appeal.repository = @old_repo }
     subject { Appeal.find("123C") }
 
     it "delegates to the repository" do
