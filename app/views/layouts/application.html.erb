@@ -56,10 +56,6 @@
 
         ga('create', 'UA-74789258-1', 'auto');
         ga('send', 'pageview', '<%= current_ga_path %>');
-
-        <%(@ga_events||[]).each do |ga_event|%>
-        ga('send', <%=raw(ga_event.to_json)%>);
-        <%end%>
       </script>
   <%end%>
 

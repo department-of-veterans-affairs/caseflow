@@ -8,8 +8,6 @@ class SessionsController < ApplicationController
     end
 
     return redirect_to(ssoi_url) unless current_user
-
-    push_ga_event(eventCategory: "VACOLS Login", eventAction: "Failed") if flash[:error]
   end
 
   def create

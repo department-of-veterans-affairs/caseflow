@@ -33,12 +33,7 @@ class CertificationsController < ApplicationController
   end
 
   def show
-    if params[:confirm]
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Completed"))
-      render "confirm"
-    end
-
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Previewed"))
+    render "confirm" if params[:confirm]
   end
 
   def pdf
@@ -56,15 +51,10 @@ class CertificationsController < ApplicationController
   end
 
   def cancel
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Canceled"))
     render layout: "application"
   end
 
   private
-
-  def new_ga_event(opts = {})
-    { eventLabel: current_user.regional_office, eventValue: appeal.vacols_id }.merge!(opts)
-  end
 
   def form8_cache_key
     # force initialization of cache, there's probably a better way to do this
