@@ -32,7 +32,7 @@ RSpec.feature "Login" do
   end
 
   scenario "login with invalid credentials" do
-    visit "certifications/new/1234C"
+    visit "auth/samlva"
 
     # SSOI login
     expect(page).to have_content("Test VA Saml")

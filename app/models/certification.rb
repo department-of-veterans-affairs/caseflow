@@ -20,6 +20,11 @@ class Certification < ActiveRecord::Base
     certification_status
   end
 
+  def complete!
+    appeal.certify!
+    update_attributes!(completed_at: Time.zone.now)
+  end
+
   def appeal
     @appeal ||= Appeal.find(vacols_id)
   end

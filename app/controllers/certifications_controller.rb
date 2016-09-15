@@ -14,7 +14,7 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    @certification = Certification.from_vacols_id!(params[:vacols_id])
+    @certification = Certification.from_vacols_id!(vacols_id)
 
     case @certification.start!
     when :already_certified    then render "already_certified"
@@ -46,7 +46,12 @@ class CertificationsController < ApplicationController
   end
 
   def confirm
-    appeal.certify!
+    @certification = Certification.find_by(vacols_id: vacols_id)
+
+    # Account for appeals that don't have a certification record
+    # We'll eventually take this split out.
+    @certification ? @certification.complete! : appeal.certify!
+
     redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
@@ -79,8 +84,12 @@ class CertificationsController < ApplicationController
   end
   helper_method :form8
 
+  def vacols_id
+    params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
+  end
+
   def appeal
-    @appeal ||= Appeal.find(params[:id] || params[:vacols_id] || params[:form8][:vacols_id])
+    @appeal ||= Appeal.find(vacols_id)
   end
   helper_method :appeal
 end
