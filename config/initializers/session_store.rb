@@ -5,7 +5,10 @@ options = {
   expire_after: 2.weeks
 }
 
-options[:domain] = :all
+if ENV["DEPLOY_ENV"]
+  options[:domain] = :all
+  options[:tld_length] = (ENV["DEPLOY_ENV"] == "prod") ? 3 : 4
+end
 
 # Convert to this when IAM is removed
 # options[:domain] = ENV["COOKIE_DOMAIN"] if ENV["COOKIE_DOMAIN"]
