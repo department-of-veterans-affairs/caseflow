@@ -4,7 +4,7 @@ describe Certification do
   let(:appeal) { Appeal.new(vacols_id: "4949", vbms_id: "VB12", certification_date: certification_date) }
 
   before do
-    Timecop.freeze
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal }
   end
 
