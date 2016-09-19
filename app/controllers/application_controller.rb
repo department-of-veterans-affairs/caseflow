@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def set_timezone
-    Time.zone = current_user.timezone
+    Time.zone = current_user.timezone if current_user
   end
 
   def setup_fakes
@@ -59,9 +59,9 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_authentication
-    return true if current_user.authenticated?
+    return true if current_user && current_user.authenticated?
 
-    current_user.return_to = request.original_url
+    session["return_to"] = request.original_url
     redirect_to login_path
   end
 end

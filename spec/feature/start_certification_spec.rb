@@ -8,8 +8,15 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path(Rails.application.config.ssoi_login_path)
   end
 
+  scenario "Starting a certification when user isn't assigned 'Certify Appeal' function" do
+    User.authenticate!(roles: ["Download eFolder"])
+    visit "certifications/new/ABCD"
+
+    expect(page).to have_current_path("/unauthorized")
+  end
+
   scenario "Starting a certification with missing documents" do
-    User.authenticate!
+    User.authenticate!(roles: ["Certify Appeal"])
 
     appeal = Appeal.new(
       type: "Original",

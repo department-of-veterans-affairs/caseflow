@@ -4,19 +4,19 @@ class User
   end
 
   def username
-    @session[:username]
+    @session[:username] || @session["user"]["id"]
   end
 
-  def first_name
-    @session[:first_name]
-  end
-
-  def last_name
-    @session[:last_name]
+  def css?
+    @session["user"]
   end
 
   def regional_office
     @session[:regional_office]
+  end
+
+  def roles
+    @session["user"]["roles"]
   end
 
   def timezone
@@ -29,11 +29,15 @@ class User
       "#{username} (#{regional_office})"
 
     # just SSOI, not yet vacols authenticated
-    elsif ssoi_authenticated?
+    else
       username.to_s
     end
+  end
 
-    # else, not authenticated at all
+  def can?(thing)
+    return true unless css?
+    return false if roles.nil?
+    roles.include? thing
   end
 
   def can_access?(appeal)
@@ -41,11 +45,7 @@ class User
   end
 
   def authenticated?
-    !regional_office.blank? && ssoi_authenticated?
-  end
-
-  def ssoi_authenticated?
-    !username.blank?
+    !regional_office.blank?
   end
 
   def authenticate(regional_office:, password:)
@@ -71,14 +71,6 @@ class User
     end
   end
 
-  def return_to=(path)
-    @session[:return_to] = path
-  end
-
-  def return_to
-    @session[:return_to]
-  end
-
   private
 
   def ssoi_attributes
@@ -90,6 +82,8 @@ class User
     delegate :authenticate_vacols, :ssoi_authentication_enabled?, to: :authentication_service
 
     def from_session(session)
+      return nil if !session[:username] && session["user"].nil?
+
       new(session: session)
     end
 

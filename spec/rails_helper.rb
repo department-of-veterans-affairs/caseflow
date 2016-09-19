@@ -43,8 +43,15 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!
-      self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
+    def authenticate!(roles: nil)
+      if roles
+        self.stub = User.new(session: {
+                               regional_office: "DSUSER",
+                               "user" => { "roles" => roles, "id" => "DSUSER" }
+                             })
+      else
+        self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
+      end
     end
 
     def unauthenticate!
