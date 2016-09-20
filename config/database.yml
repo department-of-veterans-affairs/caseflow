@@ -39,7 +39,7 @@ production:
   <<: *default
   url: <%= ENV["POSTGRES_URL"] %>
 
-production:
+production_vacols:
   adapter: oracle_enhanced
   username: <%= ENV["VACOLS_USERNAME"] %>
   password: <%= ENV["VACOLS_PASSWORD"] %>
