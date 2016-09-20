@@ -77,7 +77,7 @@ describe Appeal do
   end
 
   context ".from_records" do
-    before { Timecop.freeze }
+    before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
     after { Timecop.return }
 
     let(:case_record) do
@@ -171,7 +171,11 @@ describe Appeal do
       end
     end
 
-    before { Appeal.repository = FakeRepo }
+    before do
+      @old_repo = Appeal.repository
+      Appeal.repository = FakeRepo
+    end
+    after { Appeal.repository = @old_repo }
     subject { Appeal.find("123C") }
 
     it "delegates to the repository" do

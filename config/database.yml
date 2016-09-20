@@ -5,16 +5,29 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: sqlite3
-  pool: 5
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
   timeout: 5000
 
 development:
   <<: *default
-  database: db/development.sqlite3
+  username: <%= `whoami` %>
+  database: caseflow_certification_development
+
+development_vacols:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/development-vacols.sqlite3
+
+staging:
+  <<: *default
+  username: <%= `whoami` %>
+  database: caseflow_certification_staging
 
 # For connecting to the DEV VACOLS Database
-staging:
+staging_vacols:
   adapter: oracle_enhanced
   username: <%= ENV["VACOLS_USERNAME"] %>
   password: <%= ENV["VACOLS_PASSWORD"] %>
@@ -22,17 +35,29 @@ staging:
   port: 1526
   database: BVAP.VACO.VA.GOV
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  <<: *default
-  database: db/test.sqlite3
-
 production:
+  <<: *default
+  url: <%= ENV["POSTGRES_URL"] %>
+
+production_vacols:
   adapter: oracle_enhanced
   username: <%= ENV["VACOLS_USERNAME"] %>
   password: <%= ENV["VACOLS_PASSWORD"] %>
   host: <%= ENV["VACOLS_HOST"] %>
   port: <%= ENV["VACOLS_PORT"] %>
   database: <%= ENV["VACOLS_DATABASE"] %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  username: <%= `whoami` %>
+  database: caseflow_certification_test
+
+test_vacols:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/development-vacols.sqlite3
+

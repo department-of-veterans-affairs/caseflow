@@ -51,7 +51,7 @@ class Appeal
   end
 
   def regional_office
-    Records::RegionalOffice::CITIES[regional_office_key] || {}
+    VACOLS::RegionalOffice::CITIES[regional_office_key] || {}
   end
 
   def regional_office_name
@@ -59,15 +59,15 @@ class Appeal
   end
 
   def nod_match?
-    documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
+    nod_date && documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
 
   def soc_match?
-    documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
+    soc_date && documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
   end
 
   def form9_match?
-    documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
+    form9_date && documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
   end
 
   def ssoc_all_match?
@@ -148,9 +148,9 @@ class Appeal
     def from_records(case_record:, folder_record:, correspondent_record:)
       new(
         vbms_id: case_record.bfcorlid,
-        type: Records::Case::TYPES[case_record.bfac],
+        type: VACOLS::Case::TYPES[case_record.bfac],
         file_type: folder_type_from(folder_record),
-        representative: Records::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+        representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
         veteran_first_name: correspondent_record.snamef,
         veteran_middle_initial: correspondent_record.snamemi,
         veteran_last_name: correspondent_record.snamel,
@@ -164,24 +164,12 @@ class Appeal
         soc_date: normalize_vacols_date(case_record.bfdsoc),
         form9_date: normalize_vacols_date(case_record.bfd19),
         ssoc_dates: ssoc_dates_from(case_record),
-        hearing_type: Records::Case::HEARING_TYPES[case_record.bfha],
+        hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
         case_record: case_record
       )
     end
-  end
-
-  def document_dates_by_type
-    results = {}
-
-    @documents.each do |doc|
-      dates = results[doc.type] || []
-      dates << doc.received_at.to_date unless doc.received_at.nil?
-      results[doc.type] = dates
-    end
-
-    results
   end
 
   def documents_with_type(type)

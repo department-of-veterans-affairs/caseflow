@@ -16,15 +16,6 @@ class ApplicationController < ActionController::Base
     render status: 403
   end
 
-  # @param ga_event A hash containing :eventCategory (required), :eventLabel, :eventValue. See
-  # https://developers.google.com/analytics/devguides/collection/analyticsjs/events for full details.
-  def push_ga_event(ga_event)
-    @ga_events ||= []
-    ga_event[:hitType] = "event"
-    ArgumentError.new("eventCategory required") if ga_event[:eventCategory].nil?
-    @ga_events << ga_event
-  end
-
   private
 
   def ssl_enabled?

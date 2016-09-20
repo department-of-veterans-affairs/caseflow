@@ -26,7 +26,7 @@ class RegionalOffice
 
     def from_record(office_record:)
       ro_id = office_record.stafkey
-      location = Records::RegionalOffice::CITIES[ro_id] || {}
+      location = VACOLS::RegionalOffice::CITIES[ro_id] || {}
 
       new(
         ro_id: ro_id,

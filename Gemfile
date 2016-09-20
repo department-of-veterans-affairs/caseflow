@@ -45,6 +45,8 @@ gem "rainbow"
 # execjs runtime
 gem 'therubyracer', platforms: :ruby
 
+gem 'pg', platforms: :ruby
+
 group :production, :staging do
 
   gem 'connect_vbms', path: './vendor/gems/connect_vbms'

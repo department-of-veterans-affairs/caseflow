@@ -1,6 +1,12 @@
 require "rails_helper"
 
 RSpec.feature "Start Certification" do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Certification.delete_all
+  end
+  after { Timecop.return }
+
   scenario "Starting a certification before logging in redirects to login page" do
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
@@ -45,9 +51,18 @@ RSpec.feature "Start Certification" do
     expect(find("#soc-match")).to_not have_content "No Matching Document"
     expect(find("#soc-match")).to have_content "09/06/1987"
     expect(find("#form-9-match")).to have_content "No Matching Document"
-    expect(find("#form-9-match")).to have_content "No Matching Document"
+    expect(find("#ssoc-1-match")).to have_content "No Matching Document"
     expect(find("#ssoc-2-match")).to have_content "SSOC 2"
     expect(find("#ssoc-2-match")).to have_content "No Matching Document"
+
+    certification = Certification.last
+    expect(certification.vacols_id).to eq("1234C")
+    expect(certification.nod_matching_at).to be_nil
+    expect(certification.soc_matching_at).to eq(Time.zone.now)
+    expect(certification.form9_matching_at).to be_nil
+    expect(certification.ssocs_required).to be_truthy
+    expect(certification.ssocs_matching_at).to be_nil
+    expect(certification.form8_started_at).to be_nil
   end
 
   scenario "Clicking the refresh button" do
@@ -98,6 +113,10 @@ RSpec.feature "Start Certification" do
     expect(page).to have_selector("#question5B.hidden-field", visible: false)
     expect(page).to have_selector("#question6B.hidden-field", visible: false)
     expect(page).to have_selector("#question7B.hidden-field", visible: false)
+
+    certification = Certification.last
+    expect(certification.vacols_id).to eq("5678C")
+    expect(certification.form8_started_at).to eq(Time.zone.now)
   end
 
   scenario "404's if appeal doesn't exist in VACOLS" do

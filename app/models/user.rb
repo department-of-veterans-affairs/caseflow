@@ -20,7 +20,7 @@ class User
   end
 
   def timezone
-    (Records::RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    (VACOLS::RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
   end
 
   def display_name

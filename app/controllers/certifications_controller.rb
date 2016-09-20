@@ -14,23 +14,15 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    if appeal.certified?
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Already Certified"))
-      return render "already_certified"
+    @certification = Certification.from_vacols_id!(vacols_id)
+
+    case @certification.start!
+    when :already_certified    then render "already_certified"
+    when :data_missing         then render "not_ready", status: 409
+    when :mismatched_documents then render "mismatched_documents"
     end
 
-    if appeal.missing_certification_data?
-      return render "not_ready", layout: "application", status:  409
-    end
-
-    unless appeal.documents_match?
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Mismatched Documents"))
-      Rails.logger.info "mismatched documents; types: #{appeal.document_dates_by_type}"
-      return render "mismatched_documents"
-    end
-
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Initiated"))
-    @form8 = saved_form8 || Form8.from_appeal(appeal)
+    @form8 = @certification.form8(form8_cache_key)
   end
 
   def create
@@ -41,12 +33,7 @@ class CertificationsController < ApplicationController
   end
 
   def show
-    if params[:confirm]
-      push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Completed"))
-      render "confirm"
-    end
-
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Previewed"))
+    render "confirm" if params[:confirm]
   end
 
   def pdf
@@ -54,26 +41,26 @@ class CertificationsController < ApplicationController
   end
 
   def confirm
-    appeal.certify!
+    @certification = Certification.find_by(vacols_id: vacols_id)
+
+    # Account for appeals that don't have a certification record
+    # We'll eventually take this split out.
+    @certification ? @certification.complete! : appeal.certify!
+
     redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
   def cancel
-    push_ga_event(new_ga_event(eventCategory: "Certification", eventAction: "Canceled"))
     render layout: "application"
   end
 
   private
 
-  def new_ga_event(opts = {})
-    { eventLabel: current_user.regional_office, eventValue: appeal.vacols_id }.merge!(opts)
-  end
-
   def form8_cache_key
     # force initialization of cache, there's probably a better way to do this
     session["init"] = true
 
-    session.id + "_form8"
+    "#{session.id}_form8"
   end
 
   def verify_access
@@ -82,22 +69,17 @@ class CertificationsController < ApplicationController
     redirect_to "/unauthorized"
   end
 
-  def saved_form8
-    saved = Rails.cache.read(form8_cache_key)
-
-    return nil unless saved && saved["vacols_id"] == params["vacols_id"]
-    @saved_form8 ||= Form8.from_session(saved)
-  rescue
-    return nil
-  end
-
   def form8
     @form8 ||= Form8.new(id: params[:id])
   end
   helper_method :form8
 
+  def vacols_id
+    params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
+  end
+
   def appeal
-    @appeal ||= Appeal.find(params[:id] || params[:vacols_id] || params[:form8][:vacols_id])
+    @appeal ||= Appeal.find(vacols_id)
   end
   helper_method :appeal
 end
