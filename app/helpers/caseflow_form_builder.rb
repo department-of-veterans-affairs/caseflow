@@ -1,12 +1,14 @@
 class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def text_field(attribute, options = {})
     options[:maxlength] ||= 45
+    options["aria-disabled"] = true if options[:readonly]
 
     wrapped_text_field(attribute, options, super(attribute, trim_options(options)))
   end
 
   def text_area(attribute, options = {})
     options[:rows] = 3
+    options["aria-disabled"] = true if options[:readonly]
 
     @template.content_tag :div, id: question_id(options),
                                 class: "cf-form-textarea" do
@@ -15,6 +17,8 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def date_field(attribute, options = {})
+    options["aria-disabled"] = true if options[:readonly]
+
     wrapped_text_field(attribute, options, super(attribute, trim_options(options)))
   end
 

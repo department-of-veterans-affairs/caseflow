@@ -8,8 +8,6 @@
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-
 <!--
 
  _   _ ____    ____  _       _ _        _   ____                  _              ____   __     ___
@@ -76,7 +74,7 @@
               <%= current_user.display_name %>
             </a>
 
-            <ul id="menu" class="cf-dropdown-menu" aria-labeledby="menu-trigger">
+            <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
               <li><a href="/help">Help</a></li>
               <li><a href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx" target="_blank">Send Feedback</a></li>
               <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
