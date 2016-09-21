@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons"
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7.1'
 # Use sqlite3 as the database for Active Record
