@@ -76,7 +76,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'guard-rspec'
   gem 'capybara'
-  gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git'
+  gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "axe"
   gem 'simplecov'
   gem 'timecop'
   gem 'konacha'
