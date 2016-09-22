@@ -1,17 +1,4 @@
 GIT
-  remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 8fb866215a64c422e39eddf750a3ad4dd5905b11
-  ref: 8fb8662
-  specs:
-    caseflow (0.1.2)
-      bourbon
-      d3-rails
-      jquery-rails
-      momentjs-rails
-      neat
-      us_web_design_standards
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/omniauth-saml-va
   revision: 90e7b22eccb1a70dff9421e600598004590295d7
   specs:
@@ -45,6 +32,17 @@ PATH
       mail
       nokogiri (~> 1.6)
       xmlenc (~> 0.5.0)
+
+PATH
+  remote: ~/Developer/gov.va/caseflow-commons
+  specs:
+    caseflow (0.1.3)
+      bourbon
+      d3-rails
+      jquery-rails
+      momentjs-rails
+      neat
+      us_web_design_standards
 
 GEM
   remote: https://rubygems.org/
@@ -179,7 +177,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.9.0)
-    momentjs-rails (2.11.1)
+    moment_timezone-rails (0.5.0)
+    momentjs-rails (2.15.1)
       railties (>= 3.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
@@ -380,6 +379,7 @@ DEPENDENCIES
   jquery-rails
   jshint
   konacha
+  moment_timezone-rails
   omniauth-saml-va!
   pdf-forms
   pdfjs_viewer-rails

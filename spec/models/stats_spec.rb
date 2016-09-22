@@ -12,7 +12,7 @@ describe Stats do
   let(:prev_weekly_stats) { Rails.cache.read("stats-2016-w06") }
 
   context "#values" do
-    let(:stats) { Stats.new(time: Time.zone.now, interval: "daily") }
+    let(:stats) { Stats.new(time: Stats.now, interval: "daily") }
     subject { stats.values }
 
     context "when cached stat values exist" do

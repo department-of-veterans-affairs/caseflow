@@ -4,3 +4,18 @@
 .cf-logo-image {
   @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
 }
+
+.cf-stats-section {
+  &.-activity,
+  &.-certification {
+    svg .bar { fill: $color-primary-alt; }
+  }
+
+  &.-timing {
+    svg .bar { fill: $color-green-light; }
+  }
+
+  &.-missing {
+    svg .bar { fill: $color-secondary; }
+  }
+}
