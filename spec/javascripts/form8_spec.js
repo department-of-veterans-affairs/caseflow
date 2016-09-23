@@ -1,4 +1,4 @@
-//= require form8
+//= require application/form8
 
 describe("Form8", function() {
   context(".validateRequiredQuestion", function() {

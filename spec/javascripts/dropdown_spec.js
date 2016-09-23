@@ -1,5 +1,5 @@
 //= require jquery
-//= require dropdown
+//= require application/dropdown
 
 describe("Dropdown", function() {
   var $testContainer;
