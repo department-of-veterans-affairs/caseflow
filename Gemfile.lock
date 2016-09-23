@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: 634671a4eaa96a5896a4eeb5d6d4e2e178a0109f
+  revision: 79b9686fd838f717750e57a7c36dd2252b0a31a6
   branch: axe
   specs:
     sniffybara (0.0.1)
