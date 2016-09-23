@@ -32,7 +32,8 @@ class StatsController < ApplicationController
   helper_method :format_time_duration_stat
 
   def format_rate_stat(num, denom)
-    "#{@stats[0].values[denom] == 0 ? '??' : (@stats[0].values[num] / @stats[0].values[denom] * 100).round} <span class=\"cf-stat-unit\">%</span>".html_safe
+    "#{@stats[0].values[denom] == 0 ? '??' : (@stats[0].values[num] / @stats[0].values[denom] * 100).round} " \
+      "<span class=\"cf-stat-unit\">%</span>".html_safe
   end
   helper_method :format_rate_stat
 end

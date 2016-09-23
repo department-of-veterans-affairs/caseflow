@@ -65,7 +65,7 @@ class Certification < ActiveRecord::Base
   end
 
   def self.ssoc_required
-    where("ssocs_required IS NOT NULL")
+    where(ssocs_required: true)
   end
 
   def self.was_missing_ssoc

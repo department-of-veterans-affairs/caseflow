@@ -1,3 +1,5 @@
+<% content_for :page_title do %>Certification Dashboard<% end %>
+
 <% content_for :head do %>
   <%= javascript_include_tag 'stats' %>
   <script>
@@ -11,18 +13,16 @@
 <% end %>
 
 <div class="cf-app-segment cf-app-segment--alt">
-  <h1 class="cf-txt-c">Caseflow Certification Dashboard</h1>
-
-  <ul class="cf-tab-navigation">
-    <% Stats::INTERVALS.each do |interval| %>
-      <li>
-        <%= link_to interval.to_s.capitalize, stats_path(interval),
-              class: "cf-tab #{(@stats[0].interval == interval) && "cf-active"}" %>
-      </li>
-    <% end %>
-  </ul>
-
   <div class="cf-stats">
+    <ul class="cf-tab-navigation">
+      <% Stats::INTERVALS.each do |interval| %>
+        <li>
+          <%= link_to interval.to_s.capitalize, stats_path(interval),
+                class: "cf-tab #{(@stats[0].interval == interval) && "cf-active"}" %>
+        </li>
+      <% end %>
+    </ul>
+
     <div class="cf-stats-section -activity">
       <h3>Activity <span class="data-date"></span></h3>
       <div class="cf-stat-panel data-chart" data-key="certifications_started">

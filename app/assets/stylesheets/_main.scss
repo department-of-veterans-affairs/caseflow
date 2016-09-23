@@ -5,17 +5,25 @@
   @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
 }
 
+.cf-stats {
+  margin-top: 0;
+
+  .cf-tab-navigation {
+    margin: 0 0 2em;
+  }
+}
+
 .cf-stats-section {
   &.-activity,
   &.-certification {
-    svg .bar { fill: $color-primary-alt; }
+    .bar { fill: $color-primary-alt; }
   }
 
   &.-timing {
-    svg .bar { fill: $color-green-light; }
+    .bar { fill: $color-green-light; }
   }
 
   &.-missing {
-    svg .bar { fill: $color-secondary; }
+    .bar { fill: $color-secondary; }
   }
 }
