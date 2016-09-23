@@ -38,7 +38,18 @@ sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 3) Add `[DIR]` to your `PATH`
 
 ### Linux
-Installation instructions TBD.
+Note: This has only been tested on Debian based OS. However, it should also work
+for Fedora based OS.
+ 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
+
+ 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
+
+ 1. Setup both packages according to the Oracle documentation:
+```sh
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2`
+cd /opt/oracle/instantclient_11_2
+sudo ln -s libclntsh.so.12.1 libclntsh.so
+```
 
 ### Run the app
 Now you'll be able to install the gems required to run the app connected to VBMS and VACOLS:
@@ -53,4 +64,3 @@ export VACOLS_PASSWORD=secret_password
 
 Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
-
