@@ -33,6 +33,7 @@ require_relative "support/sauce_driver"
 
 require "capybara"
 Sniffybara::Driver.path_exclusions << /samlva/
+Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 
