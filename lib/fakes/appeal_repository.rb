@@ -60,6 +60,25 @@ class Fakes::AppealRepository
     )
   end
 
+  def self.appeal_mismatched_ssoc
+    Appeal.new(
+      type: "Original",
+      file_type: "VBMS",
+      representative: "Military Order of the Purple Heart",
+      nod_date: 3.day.ago,
+      soc_date: Date.new(1987, 9, 6),
+      form9_date: 1.day.ago,
+      ssoc_dates: [6.days.from_now, 7.days.from_now],
+      documents: [nod_document, soc_document, form9_document],
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      regional_office_key: "DSUSER"
+    )
+  end
+
   def self.appeal_mismatched_docs
     Appeal.new(
       type: "Original",

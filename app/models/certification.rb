@@ -50,18 +50,18 @@ class Certification < ActiveRecord::Base
     #   .or(self.was_missing_ssoc)
     #   .or(self.was_missing_form9)
 
-    where("nod_matching_at > form8_started_at " \
-          "or soc_matching_at > form8_started_at " \
-          "or (ssocs_required IS NULL or ssocs_matching_at > form8_started_at) " \
-          "or form9_matching_at > form8_started_at")
+    where("(nod_matching_at IS NULL or nod_matching_at > form8_started_at) " \
+          "or (soc_matching_at IS NULL or soc_matching_at > form8_started_at) " \
+          "or (ssocs_required = 't' and (ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at)) " \
+          "or (form9_matching_at IS NULL or form9_matching_at > form8_started_at)")
   end
 
   def self.was_missing_nod
-    where("nod_matching_at > form8_started_at")
+    where("nod_matching_at IS NULL or nod_matching_at > form8_started_at")
   end
 
   def self.was_missing_soc
-    where("soc_matching_at > form8_started_at")
+    where("soc_matching_at IS NULL or soc_matching_at > form8_started_at")
   end
 
   def self.ssoc_required
@@ -69,11 +69,11 @@ class Certification < ActiveRecord::Base
   end
 
   def self.was_missing_ssoc
-    ssoc_required.where("ssocs_matching_at > form8_started_at")
+    ssoc_required.where("ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at")
   end
 
   def self.was_missing_form9
-    where("form9_matching_at > form8_started_at")
+    where("form9_matching_at IS NULL or form9_matching_at > form8_started_at")
   end
 
   private

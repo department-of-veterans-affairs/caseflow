@@ -6,6 +6,7 @@ describe Certification do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal }
+    Certification.delete_all
   end
 
   after { Timecop.return }
@@ -44,6 +45,44 @@ describe Certification do
         expect(certification.ssocs_matching_at).to be_nil
         expect(certification.form8_started_at).to be_nil
       end
+
+      it "is included in the relevant stats" do
+        subject
+
+        expect(Certification.was_missing_doc.count).to eq(1)
+        expect(Certification.was_missing_nod.count).to eq(1)
+        expect(Certification.was_missing_soc.count).to eq(0)
+        expect(Certification.was_missing_ssoc.count).to eq(0)
+        expect(Certification.was_missing_form9.count).to eq(0)
+      end
+    end
+
+    context "when ssocs are mismatched" do
+      let(:appeal) { Fakes::AppealRepository.appeal_mismatched_ssoc }
+
+      it "is included in the relevant stats" do
+        subject
+
+        expect(Certification.was_missing_doc.count).to eq(1)
+        expect(Certification.was_missing_nod.count).to eq(0)
+        expect(Certification.was_missing_soc.count).to eq(0)
+        expect(Certification.was_missing_ssoc.count).to eq(1)
+        expect(Certification.was_missing_form9.count).to eq(0)
+      end
+    end
+
+    context "when multiple docs are mismatched" do
+      let(:appeal) { Fakes::AppealRepository.appeal_mismatched_docs }
+
+      it "is included in the relevant stats" do
+        subject
+
+        expect(Certification.was_missing_doc.count).to eq(1)
+        expect(Certification.was_missing_nod.count).to eq(1)
+        expect(Certification.was_missing_soc.count).to eq(1)
+        expect(Certification.was_missing_ssoc.count).to eq(1)
+        expect(Certification.was_missing_form9.count).to eq(1)
+      end
     end
 
     context "when appeal is ready to start" do
@@ -58,6 +97,12 @@ describe Certification do
         expect(certification.ssocs_required).to be_falsey
         expect(certification.ssocs_matching_at).to be_nil
         expect(certification.form8_started_at).to eq(Time.zone.now)
+      end
+
+      it "no ssoc does not trip missing ssoc stat" do
+        subject
+
+        expect(Certification.was_missing_ssoc.count).to eq(0)
       end
 
       context "when appeal has ssoc" do
