@@ -65,7 +65,7 @@ class Fakes::AppealRepository
       type: "Original",
       file_type: "VBMS",
       representative: "Military Order of the Purple Heart",
-      nod_date: 3.day.ago,
+      nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
       ssoc_dates: [6.days.from_now, 7.days.from_now],
