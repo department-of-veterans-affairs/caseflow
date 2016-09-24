@@ -152,6 +152,43 @@ describe Certification do
     end
   end
 
+  context "#time_to_certify" do
+    subject { certification.time_to_certify }
+
+    before do
+      certification.start!
+    end
+
+    context "when appeal has already been certified" do
+      let(:appeal) { Fakes::AppealRepository.appeal_already_certified }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when appeal has yet to be certified" do
+      let(:appeal) { Fakes::AppealRepository.appeal_ready_to_certify }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when appeal has been certified using Caseflow" do
+      let(:appeal) { Fakes::AppealRepository.appeal_ready_to_certify }
+
+      before do
+        Timecop.freeze(Time.utc(2015, 1, 1, 13, 0, 0))
+        certification.complete!
+      end
+
+      it "returns the time since certification started" do
+        expect(subject).to eq(1.hour)
+      end
+    end
+  end
+
   context ".from_vacols_id!" do
     let(:vacols_id) { "1122" }
     subject { Certification.from_vacols_id!(vacols_id) }
