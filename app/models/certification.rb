@@ -33,6 +33,49 @@ class Certification < ActiveRecord::Base
     @form8 ||= saved_form8(cache_key) || Form8.from_appeal(appeal)
   end
 
+  def time_to_certify
+    return nil if !completed_at || !form8_started_at
+    completed_at - form8_started_at
+  end
+
+  def self.completed
+    where("completed_at IS NOT NULL")
+  end
+
+  def self.was_missing_doc
+    # Once we switch to Rails 5:
+    #
+    # self.was_missing_nod
+    #   .or(self.was_missing_soc)
+    #   .or(self.was_missing_ssoc)
+    #   .or(self.was_missing_form9)
+
+    where("(nod_matching_at IS NULL or nod_matching_at > form8_started_at) " \
+          "or (soc_matching_at IS NULL or soc_matching_at > form8_started_at) " \
+          "or (ssocs_required = 't' and (ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at)) " \
+          "or (form9_matching_at IS NULL or form9_matching_at > form8_started_at)")
+  end
+
+  def self.was_missing_nod
+    where("nod_matching_at IS NULL or nod_matching_at > form8_started_at")
+  end
+
+  def self.was_missing_soc
+    where("soc_matching_at IS NULL or soc_matching_at > form8_started_at")
+  end
+
+  def self.ssoc_required
+    where(ssocs_required: true)
+  end
+
+  def self.was_missing_ssoc
+    ssoc_required.where("ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at")
+  end
+
+  def self.was_missing_form9
+    where("form9_matching_at IS NULL or form9_matching_at > form8_started_at")
+  end
+
   private
 
   def now

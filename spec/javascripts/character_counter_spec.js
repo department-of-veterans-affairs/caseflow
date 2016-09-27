@@ -1,5 +1,5 @@
 //= require jquery
-//= require character_counter
+//= require application/character_counter
 
 describe("CharacterCounter", function() {
   var $testContainer, $field;

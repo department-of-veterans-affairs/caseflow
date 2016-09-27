@@ -1,5 +1,5 @@
 //= require jquery
-//= require date_field
+//= require application/date_field
 
 function typeKeys($el, str) {
   for (var i = 0; i < str.length; i++) {

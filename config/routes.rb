@@ -26,6 +26,8 @@ Rails.application.routes.draw do
   get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
 
+  get 'stats(/:interval)', to: 'stats#show', as: 'stats'
+
   get 'help' => 'help#show'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works

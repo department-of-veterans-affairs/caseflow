@@ -8,6 +8,10 @@
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
 
+  <% if content_for?(:head) %><%= yield :head %><% end %>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <!--
 
  _   _ ____    ____  _       _ _        _   ____                  _              ____   __     ___

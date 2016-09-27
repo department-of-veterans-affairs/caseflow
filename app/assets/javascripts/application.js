@@ -15,7 +15,7 @@
 //= require clipboard
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require_tree ./application
 
 $(function() {
   window.Dropdown.bind();
