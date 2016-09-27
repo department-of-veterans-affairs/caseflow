@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 1134c667e56ae5604abce662023585dc3c268b17
-  ref: 1134c66
+  revision: b743c64156efa7298ae81d945833c9f1db93a8cb
+  ref: b743c64
   specs:
-    caseflow (0.1.4)
+    caseflow (0.1.5)
       bourbon
       d3-rails
       jquery-rails
@@ -112,7 +112,7 @@ GEM
     coderay (1.1.1)
     colorize (0.7.7)
     concurrent-ruby (1.0.2)
-    d3-rails (4.2.5)
+    d3-rails (4.2.6)
       railties (>= 3.1)
     debug_inspector (0.0.2)
     diff-lcs (1.2.5)
@@ -401,4 +401,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.11.2
+   1.13.1
