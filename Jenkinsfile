@@ -7,7 +7,7 @@ node {
        stage 'Checkout'
             checkout scm
 
-       stage 'Build'
+       stage 'Build and test'
 
             print "Running Build"
             sh 'bundle install'
