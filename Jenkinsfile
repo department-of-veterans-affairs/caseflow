@@ -10,7 +10,7 @@ node {
        stage 'Build'
 
             print "Running Build"
-            sh 'bundle install --production'
+            sh 'bundle install'
        }
 
 
