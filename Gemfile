@@ -50,10 +50,9 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "d71251eb3d066748b395d58633af5bd5863ef928"
+
 group :production, :staging do
-
-  gem 'connect_vbms', path: './vendor/gems/connect_vbms'
-
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
   gem 'ruby-oci8'
