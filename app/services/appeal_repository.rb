@@ -118,7 +118,7 @@ class AppealRepository
   end
 
   def self.init_vbms_client
-    return VBMS::Client.from_env_vars(
+    VBMS::Client.from_env_vars(
       logger: CaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
