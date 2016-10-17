@@ -29,18 +29,6 @@ node {
   // withCredentials allows us to expose the secrets in Credential Binding
   // Plugin to get the credentials from Jenkins secrets.
   withCredentials([
-    // [
-    //   // TODO: This should be a AWS IAMS Role.
-    //   $class: 'StringBinding',
-    //   credentialsId: 'AWS_ACCESS_KEY_ID',
-    //   variable: 'AWS_ACCESS_KEY_ID',
-    // ],
-    // [
-    //   // TODO: This should be a AWS IAM Role.
-    //   $class: 'StringBinding',
-    //   credentialsId : 'AWS_SECRET_ACCESS_KEY',
-    //   variable: 'AWS_SECRET_ACCESS_KEY',
-    // ],
     [
       // Token to access the appeals deployment repo.
       $class: 'StringBinding',
