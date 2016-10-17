@@ -88,13 +88,14 @@ node {
       // awhile to complete.
       stage ('deploy') {
         dir ('./appeals-deployment') {
-          sh "ansible-playbook deploy-to-aws.yml \
+          sh "echo \"${env.VAULT_PASS}\" | \
+            ansible-playbook deploy-to-aws.yml \
               --verbose \
               -i localhost \
               -e app_name=${APP_NAME} \
               -e deploy_env=${APP_ENV} \
               -e app_version=${APP_VERSION} \
-              --vault-password-file=\"${env.VAULT_PASS}\""
+              --vault-password-file=/bin/cat"
         }
       }
 

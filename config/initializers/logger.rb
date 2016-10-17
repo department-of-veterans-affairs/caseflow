@@ -4,14 +4,16 @@ def get_session(req)
 end
 
 # :nocov:
-log_tags = []
-log_tags << lambda { |req|
+ip = IPSocket.getaddress(Socket.gethostname)
+logged_in_user = lambda { |req|
   session = get_session(req)
   username = session["username"]
   nil unless username
   ro = session["regional_office"]
   ro ? "#{username} (#{ro})" : username
 }
+
+log_tags = [:host, ip, logged_in_user]
 
 config = Rails.application.config
 config.log_tags = log_tags
