@@ -37,6 +37,7 @@ class User
   def can?(thing)
     return true unless css?
     return false if roles.nil?
+    return true if roles.include? "System Admin"
     roles.include? thing
   end
 

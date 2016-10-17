@@ -12,6 +12,19 @@ GIT
       us_web_design_standards
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
+  revision: d71251eb3d066748b395d58633af5bd5863ef928
+  ref: d71251eb3d066748b395d58633af5bd5863ef928
+  specs:
+    connect_vbms (1.0.0)
+      httpclient (~> 2.6.0.1)
+      httpi (~> 2.4)
+      mail
+      nokogiri (~> 1.6)
+      xmldsig (~> 0.3.1)
+      xmlenc (~> 0.5.0)
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/omniauth-saml-va
   revision: 90e7b22eccb1a70dff9421e600598004590295d7
   specs:
@@ -36,15 +49,6 @@ GIT
     us_web_design_standards (0.0.2)
       railties
       sass (~> 3.4)
-
-PATH
-  remote: ./vendor/gems/connect_vbms
-  specs:
-    connect_vbms (0.1.2)
-      httpclient (~> 2.6.0.1)
-      mail
-      nokogiri (~> 1.6)
-      xmlenc (~> 0.5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -142,6 +146,9 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     hashie (3.4.4)
     httpclient (2.6.0.1)
+    httpi (2.4.2)
+      rack
+      socksify
     i18n (0.7.0)
     jbuilder (2.5.0)
       activesupport (>= 3.0.0, < 5.1)
@@ -318,6 +325,7 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     slop (3.6.0)
+    socksify (1.7.0)
     sprockets (3.7.0)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -349,6 +357,8 @@ GEM
     websocket-driver (0.6.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    xmldsig (0.3.2)
+      nokogiri
     xmlenc (0.5.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
