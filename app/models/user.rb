@@ -41,10 +41,6 @@ class User
     roles.include? thing
   end
 
-  def can_access?(appeal)
-    regional_office == appeal.regional_office_key
-  end
-
   def authenticated?
     !regional_office.blank?
   end

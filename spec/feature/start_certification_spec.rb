@@ -127,16 +127,6 @@ RSpec.feature "Start Certification" do
     expect(page).to have_content("Page not found")
   end
 
-  scenario "403's if user doesn't have access to appeal" do
-    User.authenticate!
-    appeal = Fakes::AppealRepository.appeal_ready_to_certify
-    appeal.regional_office_key = "NOT-YOUR-RO"
-    Fakes::AppealRepository.records = { "ABCD" => appeal }
-
-    visit "certifications/new/ABCD"
-    expect(page).to have_content("Unauthorized")
-  end
-
   scenario "VBMS-specific 500 on vbms error" do
     User.authenticate!
     appeal = Fakes::AppealRepository.appeal_raises_vbms_error
