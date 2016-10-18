@@ -7,11 +7,13 @@ class Appeal
   attr_accessor :appellant_name, :appellant_relationship
   attr_accessor :representative
   attr_accessor :hearing_type
+  attr_accessor :hearing_requested, :hearing_held
   attr_accessor :regional_office_key
   attr_accessor :insurance_loan_number
   attr_accessor :certification_date
   attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   attr_accessor :type
+  attr_accessor :merged
   attr_accessor :file_type
   attr_accessor :case_record
 
@@ -48,6 +50,10 @@ class Appeal
     else
       "Organization"
     end
+  end
+
+  def hearing_pending
+    hearing_requested && !hearing_held
   end
 
   def regional_office
@@ -165,9 +171,12 @@ class Appeal
         form9_date: normalize_vacols_date(case_record.bfd19),
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
+        hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+        hearing_held: !case_record.bfha.nil?,
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
-        case_record: case_record
+        case_record: case_record,
+        merged: case_record.bfdc == "M"
       )
     end
   end
@@ -175,6 +184,11 @@ class Appeal
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+  end
+
+  def clear_documents!
+    @documents = []
+    @documents_by_type = {}
   end
 
   def sanitized_vbms_id
