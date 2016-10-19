@@ -17,8 +17,10 @@ class MismatchReport < Report
       "CORLID",
       "IS MERGED",
       "NOD DATE ALTERNATIVES",
-      "NOD LABEL ALTERNATIVES",
+      "SOC DATE ALTERNATIVES",
       "FORM 9 DATE ALTERNATIVES",
+      "SSOC DATE ALTERNATIVES",
+      "NOD LABEL ALTERNATIVES",
       "FORM 9 LABEL ALTERNATIVES"
     ]
   end
@@ -37,8 +39,10 @@ class MismatchReport < Report
       appeal.vbms_id,
       bool_str(appeal.merged),
       nod_date_alternatives(appeal),
-      nod_label_alternatives(appeal),
+      soc_date_alternatives(appeal),
       form9_date_alternatives(appeal),
+      ssoc_date_alternatives(appeal),
+      nod_label_alternatives(appeal),
       form9_label_alternatives(appeal)
     ]
   end
@@ -79,6 +83,31 @@ class MismatchReport < Report
     appeal.documents_with_type(:form9)
           .map(&:received_at)
           .select { |date| (appeal.form9_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
+          .join(", ")
+  end
+
+  def self.soc_date_alternatives(appeal)
+    return "" if appeal.soc_match?
+
+    # Do we have a SOC from within 3 days of what VACOLS shows?
+    appeal.documents_with_type(:soc)
+          .map(&:received_at)
+          .select { |date| (appeal.soc_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
+          .join(", ")
+  end
+
+  def self.ssoc_date_alternatives(appeal)
+    return "" if appeal.ssoc_match?
+
+    # Do we have a SSOC from within 3 days of what VACOLS shows?
+    appeal.documents_with_type(:soc)
+          .map(&:received_at)
+          .select do |date|
+            appeal.ssoc_dates.any do |appdate|
+              appdate.to_date != date.to_date &&
+                (appeal.soc_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD
+            end
+          end
           .join(", ")
   end
 
