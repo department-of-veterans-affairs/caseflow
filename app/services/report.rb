@@ -23,7 +23,7 @@ class Report
   end
 
   def run!
-    filename = "#{self.class.output_filename}_#{Time.zone.today.strftime('%Y-%m-%d')}.csv"
+    filename = "reports/#{self.class.output_filename}_#{Time.zone.today.strftime('%Y-%m-%d')}.csv"
 
     CSV.open(filename, "wb") do |csv|
       csv << self.class.table_columns
