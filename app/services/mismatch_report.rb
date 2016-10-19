@@ -48,7 +48,7 @@ class MismatchReport < Report
       AND folder.tivbms IN ?
       -- Only efolder cases need apply
 
-    }, 2.weeks.ago, "ADV", %w(Y 1 0), PAPER_ONLY_OFFICES)
+    }, 2.weeks.ago, "ADV", %w(Y 1 0))
   end
 
   def load_record(case_record)

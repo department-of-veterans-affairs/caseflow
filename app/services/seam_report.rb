@@ -51,9 +51,7 @@ class SeamReport < Report
     VACOLS::Case.joins(:folder, :correspondent).where(%{
 
       bf41stat < ?
-      -- We ignore super recent cases, since there may be race conditions
-      -- with the case getting to the scanning vendor and documents reaching
-      -- the efolder.
+      -- We ignore super recent cases, as there may be work in progress.
 
       AND bfmpro = ?
       -- We're only thinking about cases that have not yet been received by
