@@ -7,8 +7,7 @@ class Report
   end
 
   def self.bool_str(val)
-    "Y" if val
-    "N"
+    val ? "Y" : "N"
   end
 
   def self.mismatched_docs(appeal)

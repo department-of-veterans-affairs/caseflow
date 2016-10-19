@@ -28,6 +28,7 @@ class Document
     new(
       type: TYPES[vbms_document.doc_type] || :other,
       alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
+      vbms_doc_type: vbms_document.doc_type,
       received_at: vbms_document.received_at
     )
   end

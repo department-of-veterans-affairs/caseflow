@@ -14,7 +14,11 @@ class MismatchReport < Report
       "CERT DATE",
       "HAS HEARING PENDING",
       "CORLID",
-      "IS MERGED"
+      "IS MERGED",
+      "NOD DATE ALTERNATIVES",
+      "NOD LABEL ALTERNATIVES",
+      "FORM 9 DATE ALTERNATIVES",
+      "FORM 9 LABEL ALTERNATIVES"
     ]
   end
 
@@ -29,8 +33,68 @@ class MismatchReport < Report
       appeal.certification_date,
       bool_str(appeal.hearing_pending),
       appeal.vbms_id,
-      bool_str(appeal.merged)
+      bool_str(appeal.merged),
+      nod_date_alternatives(appeal),
+      nod_label_alternatives(appeal),
+      form9_date_alternatives(appeal),
+      form9_label_alternatives(appeal)
     ]
+  end
+
+  ALTERNATIVE_AGE_THRESHOLD = 3 # days
+
+  ALTERNATIVE_DOC_TYPES = {
+    34  => "Correspondence",
+    115 => "VA 21-4138 Statement In Support of Claim",
+    475 => "Third Party Correspondence"
+  }.freeze
+
+  def self.nod_date_alternatives(appeal)
+    return "" if appeal.nod_match?
+
+    # Do we have an NOD from within 3 days of what VACOLS shows?
+    appeal.documents_with_type(:nod)
+          .map(&:received_at)
+          .select { |date| (appeal.nod_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
+          .join(", ")
+  end
+
+  def self.form9_date_alternatives(appeal)
+    return "" if appeal.form9_match?
+
+    # Do we have a Form 9 from within 3 days of what VACOLS shows?
+    appeal.documents_with_type(:form9)
+          .map(&:received_at)
+          .select { |date| (appeal.form9_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
+          .join(", ")
+  end
+
+  def self.nod_label_alternatives(appeal)
+    return "" if appeal.nod_match?
+
+    # Do we have a document on the NOD date marked as something else?
+    appeal.documents
+          .map do |doc|
+            ALTERNATIVE_DOC_TYPES[doc.vbms_doc_type.to_i] if
+              appeal.nod_date.to_date == doc.received_at.to_date &&
+              ALTERNATIVE_DOC_TYPES.include?(doc.vbms_doc_type.try(:to_i))
+          end
+          .compact
+          .join(", ")
+  end
+
+  def self.form9_label_alternatives(appeal)
+    return "" if appeal.form9_match?
+
+    # Do we have a document on the Form 9 date marked as something else?
+    appeal.documents
+          .map do |doc|
+            ALTERNATIVE_DOC_TYPES[doc.vbms_doc_type.to_i] if
+              appeal.form9_date.to_date == doc.received_at.to_date &&
+              ALTERNATIVE_DOC_TYPES.include?(doc.vbms_doc_type.try(:to_i))
+          end
+          .compact
+          .join(", ")
   end
 
   def find_records
@@ -45,7 +109,7 @@ class MismatchReport < Report
       -- We're only thinking about cases that have not yet been received by
       -- BVA, so we limit our search to cases in ADV (Advance) status.
 
-      AND folder.tivbms IN ?
+      AND folder.tivbms IN (?)
       -- Only efolder cases need apply
 
     }, 2.weeks.ago, "ADV", %w(Y 1 0))
