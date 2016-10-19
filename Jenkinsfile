@@ -21,9 +21,17 @@ def notify(message, color='good') {
 }
 
 node {
+  // Default to UAT environment, but allow Jenkins to override this in
+  // environment variables.
+  def APP_ENV;
+  if(env.APP_ENV) {
+    APP_ENV = env.APP_ENV
+  } else {
+    APP_ENV = 'uat'
+    print "APP_ENV is not defined, defaulting to ${APP_ENV}"
+  }
 
   def APP_NAME = 'certification';
-  def APP_ENV = 'uat';
   def APP_VERSION = 'HEAD'
 
   // withCredentials allows us to expose the secrets in Credential Binding
@@ -112,6 +120,7 @@ node {
         |${currentBuild.getAbsoluteUrl()}console""".stripMargin()
 
         notify message, 'danger'
+        error(message)
       }
     }
   }
