@@ -17,7 +17,7 @@ class Report
       csv << self.class.table_columns
       rows = find_records
 
-      Parallel.each(rows, in_threads: 6, progress: "Loading records") do |row|
+      Parallel.each(rows, in_threads: 4, progress: "Loading records") do |row|
         record = nil
         begin
           record = load_record row
