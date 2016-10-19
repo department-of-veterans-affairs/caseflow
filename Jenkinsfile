@@ -95,16 +95,16 @@ node {
       // Execute the ansible playbook to deploy the AMI. This stage will take
       // awhile to complete.
       stage ('deploy') {
-        // dir ('./appeals-deployment') {
-        //   sh "echo \"${env.VAULT_PASS}\" | \
-        //     ansible-playbook deploy-to-aws.yml \
-        //       --verbose \
-        //       -i localhost \
-        //       -e app_name=${APP_NAME} \
-        //       -e deploy_env=${APP_ENV} \
-        //       -e app_version=${APP_VERSION} \
-        //       --vault-password-file=/bin/cat"
-        // }
+        dir ('./appeals-deployment') {
+          sh "echo \"${env.VAULT_PASS}\" | \
+            ansible-playbook deploy-to-aws.yml \
+              --verbose \
+              -i localhost \
+              -e app_name=${APP_NAME} \
+              -e deploy_env=${APP_ENV} \
+              -e app_version=${APP_VERSION} \
+              --vault-password-file=/bin/cat"
+        }
       }
 
       // Notify Slack that the job has completed.
