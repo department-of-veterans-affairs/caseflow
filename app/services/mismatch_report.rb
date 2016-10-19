@@ -41,6 +41,17 @@ class MismatchReport < Report
     ]
   end
 
+  def self.mismatched_docs(appeal)
+    mismatched = []
+
+    mismatched << "NOD" unless appeal.nod_match?
+    mismatched << "SOC" unless appeal.soc_match?
+    mismatched << "Form 9" unless appeal.form9_match?
+    mismatched << "SSOC" unless appeal.ssoc_all_match?
+
+    mismatched.join(", ")
+  end
+
   ALTERNATIVE_AGE_THRESHOLD = 3 # days
 
   ALTERNATIVE_DOC_TYPES = {

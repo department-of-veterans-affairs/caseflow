@@ -10,17 +10,6 @@ class Report
     val ? "Y" : "N"
   end
 
-  def self.mismatched_docs(appeal)
-    mismatched = []
-
-    mismatched << "NOD" unless appeal.nod_match?
-    mismatched << "SOC" unless appeal.soc_match?
-    mismatched << "Form 9" unless appeal.form9_match?
-    mismatched << "SSOC" unless appeal.ssoc_all_match?
-
-    mismatched.join(", ")
-  end
-
   def run!
     filename = "reports/#{self.class.output_filename}_#{Time.zone.today.strftime('%Y-%m-%d')}.csv"
 

@@ -18,7 +18,7 @@ class Document
     "Appeals - Supplemental Statement of the Case (SSOC)" => :ssoc
   }.freeze
 
-  attr_accessor :type, :alt_types, :received_at
+  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)

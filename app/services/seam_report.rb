@@ -9,7 +9,7 @@ class SeamReport < Report
       "TYPE",
       "FILE TYPE",
       "AOJ",
-      "MISMATCHED DATES",
+      "DOCS IN VBMS",
       "NOD DATE",
       "CERT DATE",
       "HAS HEARING PENDING",
@@ -24,13 +24,26 @@ class SeamReport < Report
       appeal.type,
       appeal.file_type,
       appeal.regional_office_name,
-      mismatched_docs(appeal),
+      vbms_docs(appeal),
       appeal.nod_date,
       appeal.certification_date,
       bool_str(appeal.hearing_pending),
       appeal.vbms_id,
       bool_str(appeal.merged)
     ]
+  end
+
+  def self.vbms_docs(appeal)
+    docs = []
+
+    {
+      nod:   "NOD",
+      soc:   "SOC",
+      form9: "Form 9",
+      ssoc:  "SSOC"
+    }.each { |type, label| docs << label if appeal.documents_with_type(type).length.nonzero? }
+
+    docs.join(", ")
   end
 
   PAPER_ONLY_OFFICES = [
