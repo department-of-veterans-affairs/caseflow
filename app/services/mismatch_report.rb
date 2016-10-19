@@ -97,13 +97,13 @@ class MismatchReport < Report
   end
 
   def self.ssoc_date_alternatives(appeal)
-    return "" if appeal.ssoc_match?
+    return "" if appeal.ssoc_all_match?
 
     # Do we have a SSOC from within 3 days of what VACOLS shows?
     appeal.documents_with_type(:soc)
           .map(&:received_at)
           .select do |date|
-            appeal.ssoc_dates.any do |appdate|
+            appeal.ssoc_dates.any? do |appdate|
               appdate.to_date != date.to_date &&
                 (appeal.soc_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD
             end
