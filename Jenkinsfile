@@ -34,8 +34,6 @@ node {
   def APP_NAME = 'certification';
   def APP_VERSION = 'HEAD'
 
-  print APP_ENV
-
   // withCredentials allows us to expose the secrets in Credential Binding
   // Plugin to get the credentials from Jenkins secrets.
   withCredentials([
