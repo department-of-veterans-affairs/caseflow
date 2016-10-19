@@ -21,10 +21,20 @@ def notify(message, color='good') {
 }
 
 node {
+  // Default to UAT environment, but allow Jenkins to override this in
+  // environment variables.
+  def APP_ENV;
+  if(env.APP_ENV) {
+    APP_ENV = env.APP_ENV
+  } else {
+    APP_ENV = 'uat'
+    print "APP_ENV is not defined, defaulting to ${APP_ENV}"
+  }
 
   def APP_NAME = 'certification';
-  def APP_ENV = 'uat';
   def APP_VERSION = 'HEAD'
+
+  print APP_ENV
 
   // withCredentials allows us to expose the secrets in Credential Binding
   // Plugin to get the credentials from Jenkins secrets.
@@ -87,16 +97,16 @@ node {
       // Execute the ansible playbook to deploy the AMI. This stage will take
       // awhile to complete.
       stage ('deploy') {
-        dir ('./appeals-deployment') {
-          sh "echo \"${env.VAULT_PASS}\" | \
-            ansible-playbook deploy-to-aws.yml \
-              --verbose \
-              -i localhost \
-              -e app_name=${APP_NAME} \
-              -e deploy_env=${APP_ENV} \
-              -e app_version=${APP_VERSION} \
-              --vault-password-file=/bin/cat"
-        }
+        // dir ('./appeals-deployment') {
+        //   sh "echo \"${env.VAULT_PASS}\" | \
+        //     ansible-playbook deploy-to-aws.yml \
+        //       --verbose \
+        //       -i localhost \
+        //       -e app_name=${APP_NAME} \
+        //       -e deploy_env=${APP_ENV} \
+        //       -e app_version=${APP_VERSION} \
+        //       --vault-password-file=/bin/cat"
+        // }
       }
 
       // Notify Slack that the job has completed.
@@ -112,6 +122,7 @@ node {
         |${currentBuild.getAbsoluteUrl()}console""".stripMargin()
 
         notify message, 'danger'
+        error(message)
       }
     }
   }
