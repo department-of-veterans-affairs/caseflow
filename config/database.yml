@@ -31,9 +31,9 @@ staging_vacols:
   adapter: oracle_enhanced
   username: <%= ENV["VACOLS_USERNAME"] %>
   password: <%= ENV["VACOLS_PASSWORD"] %>
-  host: <%= ENV["VACOLS_HOST"] || vacols.dev.vaco.va.gov %>
+  host: <%= ENV["VACOLS_HOST"] || "vacols.dev.vaco.va.gov" %>
   port: <%= ENV["VACOLS_PORT"] || 1526 %>
-  database: <%= ENV["VACOLS_DATABASE"] || BVAP.VACO.VA.GOV %>
+  database: <%= ENV["VACOLS_DATABASE"] || "BVAP.VACO.VA.GOV" %>
 
 production:
   <<: *default
