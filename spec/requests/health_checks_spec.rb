@@ -1,6 +1,6 @@
 describe "Health Check API" do
   it "returns meta info about the app" do
-    Rails.application.config.build_version = { deployed_at: "the best day ever"}
+    Rails.application.config.build_version = { deployed_at: "the best day ever" }
 
     get "/health-check"
 
