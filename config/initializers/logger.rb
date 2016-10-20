@@ -7,7 +7,7 @@ end
 ip = IPSocket.getaddress(Socket.gethostname)
 logged_in_user = lambda { |req|
   session = get_session(req)
-  username = session["username"]
+  username = session["user"] ? session["user"]["id"] : session["username"]
   nil unless username
   ro = session["regional_office"]
   ro ? "#{username} (#{ro})" : username
