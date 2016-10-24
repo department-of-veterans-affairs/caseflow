@@ -52,7 +52,7 @@ class Appeal
     end
   end
 
-  def hearing_pending
+  def hearing_pending?
     hearing_requested && !hearing_held
   end
 

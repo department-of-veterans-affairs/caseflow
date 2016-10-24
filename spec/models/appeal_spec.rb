@@ -93,6 +93,7 @@ describe Appeal do
         bfssoc1: 7.days.ago,
         bfssoc2: 6.days.ago,
         bfha: "6",
+        bfhr: "1",
         bfregoff: "DSUSER"
       )
     end
@@ -146,6 +147,8 @@ describe Appeal do
           Appeal.normalize_vacols_date(6.days.ago)
         ],
         hearing_type: :video_hearing,
+        hearing_requested: true,
+        hearing_held: true,
         regional_office_key: "DSUSER"
       )
     end
@@ -194,6 +197,18 @@ describe Appeal do
       expect(subject.certified?).to be_truthy
       subject.certification_date = nil
       expect(subject.certified?).to be_falsy
+    end
+  end
+
+  context "#hearing_pending?" do
+    subject { Appeal.new(hearing_requested: false, hearing_held: false) }
+
+    it "determines whether an appeal is awaiting a hearing" do
+      expect(subject.hearing_pending?).to be_falsy
+      subject.hearing_requested = true
+      expect(subject.hearing_pending?).to be_truthy
+      subject.hearing_held = true
+      expect(subject.hearing_pending?).to be_falsy
     end
   end
 

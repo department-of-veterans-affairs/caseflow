@@ -35,7 +35,7 @@ class MismatchReport < Report
       appeal.nod_date,
       appeal.certification_date,
       bool_str(appeal.case_record.bfdcertool),
-      bool_str(appeal.hearing_pending),
+      bool_str(appeal.hearing_pending?),
       appeal.vbms_id,
       bool_str(appeal.merged),
       nod_date_alternatives(appeal),

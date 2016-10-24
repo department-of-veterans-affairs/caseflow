@@ -27,7 +27,7 @@ class SeamReport < Report
       vbms_docs(appeal),
       appeal.nod_date,
       appeal.certification_date,
-      bool_str(appeal.hearing_pending),
+      bool_str(appeal.hearing_pending?),
       appeal.vbms_id,
       bool_str(appeal.merged)
     ]
