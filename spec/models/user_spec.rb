@@ -5,9 +5,23 @@ describe User do
   let(:user) { User.new(session: session) }
 
   context "#regional_office" do
-    subject { user.regional_office }
-    before { session[:regional_office] = "RO17" }
-    it { is_expected.to eq("RO17") }
+    context "when station_id is nil" do
+      subject { user.regional_office }
+      before { session[:regional_office] = "RO17" }
+      it { is_expected.to eq("RO17") }
+    end
+
+    context "when RO can't be determined using station_id" do
+      subject { user.regional_office }
+      before { session["user"] = { "station_id" => "405" } }
+      it { is_expected.to be_nil }
+    end
+
+    context "when RO can be determined using station_id" do
+      subject { user.regional_office }
+      before { session["user"] = { "station_id" => "301" } }
+      it { is_expected.to eq("RO01") }
+    end
   end
 
   context "#timezone" do

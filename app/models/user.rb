@@ -7,8 +7,9 @@ class User
     @session["user"] && @session["user"]["id"]
   end
 
+  # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
   def regional_office
-    @session[:regional_office]
+    station_offices.is_a?(String) ? station_offices : @session[:regional_office]
   end
 
   def roles
@@ -44,6 +45,12 @@ class User
     return false unless User.authenticate_vacols(regional_office, password)
 
     @session[:regional_office] = regional_office.upcase
+  end
+
+  private
+
+  def station_offices
+    VACOLS::RegionalOffice::STATIONS[@session["user"] && @session["user"]["station_id"]]
   end
 
   class << self
