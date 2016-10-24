@@ -10,7 +10,7 @@ RSpec.feature "Login" do
   end
 
   after do
-    Rails.application.config.iam_service_disabled = false
+    Rails.application.config.sso_service_disabled = false
   end
 
   scenario "login with valid credentials" do
@@ -88,8 +88,8 @@ RSpec.feature "Login" do
     expect(page).to have_content("Caseflow Certification Help")
   end
 
-  scenario "IAM is down" do
-    Rails.application.config.iam_service_disabled = true
+  scenario "Single Sign On is down" do
+    Rails.application.config.sso_service_disabled = true
     visit "certifications/new/1234C"
 
     expect(page).to have_content("Login Service Unavailable")
