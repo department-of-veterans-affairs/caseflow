@@ -21,9 +21,7 @@ Rails.application.routes.draw do
   get "health-check", to: "health_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
-  post "auth/saml_callback" => "sessions#ssoi_saml_callback"
 
-  get "auth/failure" => "sessions#ssoi_saml_failure"
   get 'whats-new' => 'whats_new#show'
 
   get 'stats(/:interval)', to: 'stats#show', as: 'stats'

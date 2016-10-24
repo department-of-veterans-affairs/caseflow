@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
       return render "errors/500", layout: "application", status: 503
     end
 
-    return redirect_to(ssoi_url) unless current_user
+    return redirect_to(ENV["SSO_URL"]) unless current_user
   end
 
   def create
@@ -20,43 +20,14 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    if current_user
-      current_user.unauthenticate
-      @current_user = nil
-    end
-
-    redirect_to login_path
-  end
-
-  protect_from_forgery with: :exception, except: %w(ssoi_saml_callback)
-
-  def ssoi_saml_callback
-    # https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
-    auth_hash = request.env["omniauth.auth"] || {}
-    user = User.new(session: session)
-
-    if user.authenticate_ssoi(auth_hash)
-      redirect_to session["return_to"] || login_path
-    else
-      ssoi_saml_failure("Failed to authenticate")
-    end
-  end
-
-  def ssoi_saml_failure(failure_message = params[:message])
-    render layout: "application", text: "<p>#{failure_message}</p>", status: 400
+    session.delete(:regional_office)
+    session.delete("user")
+    redirect_to "/"
   end
 
   private
 
   def authentication_params
     { regional_office: params["regional_office"], password: params["password"] }
-  end
-
-  def css_enabled?
-    request.original_url =~ /certification\.cf\..*ds\.va\.gov/
-  end
-
-  def ssoi_url
-    css_enabled? ? ENV["SSO_URL"] : User.ssoi_authentication_url
   end
 end
