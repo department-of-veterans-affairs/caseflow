@@ -1,20 +1,20 @@
 
 describe Document do
   context "#type?" do
-    subject { document.type?(:nod) }
+    subject { document.type?("NOD") }
 
     context "when primary type matches" do
-      let(:document) { Document.new(type: :nod) }
+      let(:document) { Document.new(type: "NOD") }
       it { is_expected.to be_truthy }
     end
 
     context "when an alt type matches" do
-      let(:document) { Document.new(type: :form9, alt_types: [:soc, :nod]) }
+      let(:document) { Document.new(type: "Form 9", alt_types: %w(SOC NOD)) }
       it { is_expected.to be_truthy }
     end
 
     context "when no types match" do
-      let(:document) { Document.new(type: :form9, alt_types: [:soc]) }
+      let(:document) { Document.new(type: "Form 9", alt_types: ["SOC"]) }
       it { is_expected.to be_falsy }
     end
   end
@@ -31,7 +31,7 @@ describe Document do
         )
       end
 
-      it { is_expected.to have_attributes(type: :form9, received_at: "TEST", alt_types: [:nod, :soc]) }
+      it { is_expected.to have_attributes(type: "Form 9", received_at: "TEST", alt_types: %w(NOD SOC)) }
     end
 
     context "when doesn't have alt doc types" do
@@ -39,7 +39,7 @@ describe Document do
         OpenStruct.new(doc_type: "179", received_at: "TEST", alt_doc_types: nil)
       end
 
-      it { is_expected.to have_attributes(type: :form9, received_at: "TEST") }
+      it { is_expected.to have_attributes(type: "Form 9", received_at: "TEST") }
     end
   end
 end

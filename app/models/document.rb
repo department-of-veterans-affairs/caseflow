@@ -2,20 +2,23 @@ class Document
   include ActiveModel::Model
 
   TYPES = {
-    "73" => :nod,
-    "95" => :soc,
-    "97" => :ssoc,
-    "179" => :form9,
-    "713" => :nod,
-    "856" => :nod,
-    "857" => :form9
+    "34" => "Correspondence",
+    "73" => "NOD",
+    "95" => "SOC",
+    "97" => "SSOC",
+    "115" => "VA 21-4138 Statement In Support of Claim",
+    "179" => "Form 9",
+    "475" => "Third Party Correspondence",
+    "713" => "NOD",
+    "856" => "NOD",
+    "857" => "Form 9"
   }.freeze
 
   ALT_TYPES = {
-    "Appeals - Notice of Disagreement (NOD)" => :nod,
-    "Appeals - Statement of the Case (SOC)" => :soc,
-    "Appeals - Substantive Appeal to Board of Veterans' Appeals" => :form9,
-    "Appeals - Supplemental Statement of the Case (SSOC)" => :ssoc
+    "Appeals - Notice of Disagreement (NOD)" => "NOD",
+    "Appeals - Statement of the Case (SOC)" => "SOC",
+    "Appeals - Substantive Appeal to Board of Veterans' Appeals" => "Form 9",
+    "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at
@@ -28,7 +31,6 @@ class Document
     new(
       type: TYPES[vbms_document.doc_type] || :other,
       alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
-      vbms_doc_type: vbms_document.doc_type,
       received_at: vbms_document.received_at
     )
   end

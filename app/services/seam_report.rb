@@ -36,12 +36,9 @@ class SeamReport < Report
   def self.vbms_docs(appeal)
     docs = []
 
-    {
-      nod:   "NOD",
-      soc:   "SOC",
-      form9: "Form 9",
-      ssoc:  "SSOC"
-    }.each { |type, label| docs << label if appeal.documents_with_type(type).length.nonzero? }
+    ["NOD", "Form 9", "SOC", "SSOC"].each do |type|
+      docs << type if appeal.documents_with_type(type).length.nonzero?
+    end
 
     docs.join(", ")
   end
@@ -87,7 +84,7 @@ class SeamReport < Report
   end
 
   def include_record?(appeal)
-    [:nod, :form9, :soc, :ssoc].any? { |t| appeal.documents_with_type(t).length.nonzero? }
+    ["NOD", "Form 9", "SOC", "SSOC"].any? { |t| appeal.documents_with_type(t).length.nonzero? }
   end
 
   def cleanup_record(appeal)

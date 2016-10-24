@@ -60,17 +60,17 @@ class MismatchReport < Report
 
   ALTERNATIVE_AGE_THRESHOLD = 3 # days
 
-  ALTERNATIVE_DOC_TYPES = {
-    34  => "Correspondence",
-    115 => "VA 21-4138 Statement In Support of Claim",
-    475 => "Third Party Correspondence"
-  }.freeze
+  ALTERNATIVE_DOC_TYPES = [
+    "Correspondence",
+    "VA 21-4138 Statement In Support of Claim",
+    "Third Party Correspondence"
+  ].freeze
 
   def self.nod_date_alternatives(appeal)
     return "" if appeal.nod_match?
 
     # Do we have an NOD from within 3 days of what VACOLS shows?
-    appeal.documents_with_type(:nod)
+    appeal.documents_with_type("NOD")
           .map(&:received_at)
           .select { |date| (appeal.nod_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
           .join(", ")
@@ -80,7 +80,7 @@ class MismatchReport < Report
     return "" if appeal.form9_match?
 
     # Do we have a Form 9 from within 3 days of what VACOLS shows?
-    appeal.documents_with_type(:form9)
+    appeal.documents_with_type("Form 9")
           .map(&:received_at)
           .select { |date| (appeal.form9_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
           .join(", ")
@@ -90,7 +90,7 @@ class MismatchReport < Report
     return "" if appeal.soc_match?
 
     # Do we have a SOC from within 3 days of what VACOLS shows?
-    appeal.documents_with_type(:soc)
+    appeal.documents_with_type("SOC")
           .map(&:received_at)
           .select { |date| (appeal.soc_date.to_date - date.to_date).abs <= ALTERNATIVE_AGE_THRESHOLD }
           .join(", ")
@@ -100,7 +100,7 @@ class MismatchReport < Report
     return "" if appeal.ssoc_all_match?
 
     # Do we have a SSOC from within 3 days of what VACOLS shows?
-    appeal.documents_with_type(:soc)
+    appeal.documents_with_type("SSOC")
           .map(&:received_at)
           .select do |date|
             appeal.ssoc_dates.any? do |appdate|
@@ -117,9 +117,9 @@ class MismatchReport < Report
     # Do we have a document on the NOD date marked as something else?
     appeal.documents
           .map do |doc|
-            ALTERNATIVE_DOC_TYPES[doc.vbms_doc_type.to_i] if
+            doc.type if
               appeal.nod_date.to_date == doc.received_at.to_date &&
-              ALTERNATIVE_DOC_TYPES.include?(doc.vbms_doc_type.try(:to_i))
+              ALTERNATIVE_DOC_TYPES.include?(doc.type)
           end
           .compact
           .join(", ")
@@ -131,9 +131,9 @@ class MismatchReport < Report
     # Do we have a document on the Form 9 date marked as something else?
     appeal.documents
           .map do |doc|
-            ALTERNATIVE_DOC_TYPES[doc.vbms_doc_type.to_i] if
+            doc.type if
               appeal.form9_date.to_date == doc.received_at.to_date &&
-              ALTERNATIVE_DOC_TYPES.include?(doc.vbms_doc_type.try(:to_i))
+              ALTERNATIVE_DOC_TYPES.include?(doc.type)
           end
           .compact
           .join(", ")

@@ -65,15 +65,15 @@ class Appeal
   end
 
   def nod_match?
-    nod_date && documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
+    nod_date && documents_with_type("NOD").any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
 
   def soc_match?
-    soc_date && documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
+    soc_date && documents_with_type("SOC").any? { |doc| doc.received_at.to_date == soc_date.to_date }
   end
 
   def form9_match?
-    form9_date && documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
+    form9_date && documents_with_type("Form 9").any? { |doc| doc.received_at.to_date == form9_date.to_date }
   end
 
   def ssoc_all_match?
@@ -85,7 +85,7 @@ class Appeal
   end
 
   def ssoc_match?(date)
-    ssoc_documents = documents_with_type(:ssoc)
+    ssoc_documents = documents_with_type("SSOC")
     ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
   end
 

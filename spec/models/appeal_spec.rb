@@ -1,8 +1,8 @@
 describe Appeal do
   context "#documents_match?" do
-    let(:nod_document) { Document.new(type: :nod, received_at: 3.days.ago) }
-    let(:soc_document) { Document.new(type: :soc, received_at: 2.days.ago) }
-    let(:form9_document) { Document.new(type: nil, alt_types: [:form9], received_at: 1.day.ago) }
+    let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
+    let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
+    let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
     let(:appeal) do
       Appeal.new(
@@ -21,9 +21,9 @@ describe Appeal do
       context "and ssoc dates match" do
         before do
           appeal.documents += [
-            Document.new(type: :ssoc, received_at: 6.days.ago),
-            Document.new(type: :ssoc, received_at: 7.days.ago),
-            Document.new(type: :ssoc, received_at: 9.days.ago)
+            Document.new(type: "SSOC", received_at: 6.days.ago),
+            Document.new(type: "SSOC", received_at: 7.days.ago),
+            Document.new(type: "SSOC", received_at: 9.days.ago)
           ]
           appeal.ssoc_dates = [6.days.ago, 7.days.ago]
         end
@@ -50,8 +50,8 @@ describe Appeal do
     context "when at least one ssoc doesn't match" do
       before do
         appeal.documents += [
-          Document.new(type: :ssoc, received_at: 6.days.ago),
-          Document.new(type: :ssoc, received_at: 7.days.ago)
+          Document.new(type: "SSOC", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 7.days.ago)
         ]
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
