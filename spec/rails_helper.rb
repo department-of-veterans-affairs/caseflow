@@ -32,7 +32,6 @@ require_relative "support/sauce_driver"
 # ActiveRecord::Migration.maintain_test_schema!
 
 require "capybara"
-Sniffybara::Driver.path_exclusions << /samlva/
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
@@ -45,14 +44,14 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
-      if roles
-        self.stub = User.new(session: {
-                               regional_office: "DSUSER",
-                               "user" => { "roles" => roles, "id" => "DSUSER" }
-                             })
-      else
-        self.stub = User.new(session: { username: "DSUSER", regional_office: "DSUSER" })
-      end
+      self.stub = User.new(
+        session: {
+          regional_office: "DSUSER",
+          "user" => {
+            "id" => "DSUSER",
+            "roles" => roles || ["Certify Appeal"]
+          }
+        })
     end
 
     def unauthenticate!

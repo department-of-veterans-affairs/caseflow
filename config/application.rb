@@ -28,6 +28,6 @@ module CaseflowCertification
     config.exceptions_app = self.routes
 
     config.cache_store = :memory_store, {expires_in: 24.hours, size: 256.megabytes}
-    config.iam_service_disabled = ENV["IAM_SERVICE_DISABLED"]
+    config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
   end
 end

@@ -11,7 +11,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
     visit "certifications/new/ABCD"
-    expect(page).to have_current_path(Rails.application.config.ssoi_login_path)
+    expect(page).to have_current_path("/login")
   end
 
   scenario "Starting a certification when user isn't assigned 'Certify Appeal' function" do

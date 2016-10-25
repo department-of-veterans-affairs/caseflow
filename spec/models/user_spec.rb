@@ -5,9 +5,23 @@ describe User do
   let(:user) { User.new(session: session) }
 
   context "#regional_office" do
-    subject { user.regional_office }
-    before { session[:regional_office] = "RO17" }
-    it { is_expected.to eq("RO17") }
+    context "when station_id is nil" do
+      subject { user.regional_office }
+      before { session[:regional_office] = "RO17" }
+      it { is_expected.to eq("RO17") }
+    end
+
+    context "when RO can't be determined using station_id" do
+      subject { user.regional_office }
+      before { session["user"] = { "station_id" => "405" } }
+      it { is_expected.to be_nil }
+    end
+
+    context "when RO can be determined using station_id" do
+      subject { user.regional_office }
+      before { session["user"] = { "station_id" => "301" } }
+      it { is_expected.to eq("RO01") }
+    end
   end
 
   context "#timezone" do
@@ -29,25 +43,20 @@ describe User do
 
     context "when username and RO are both set" do
       before do
-        session[:username] = "Shaner"
+        session["user"] = { "id" => "Shaner" }
         session[:regional_office] = "RO77"
       end
       it { is_expected.to eq("Shaner (RO77)") }
     end
 
     context "when just username is set" do
-      before { session[:username] = "Shaner" }
+      before { session["user"] = { "id" => "Shaner" } }
       it { is_expected.to eq("Shaner") }
     end
   end
 
   context "#can?" do
     subject { user.can?("Do the thing") }
-
-    context "when user is not a CSS user" do
-      let(:session) { { id: "SHANE" } }
-      it { is_expected.to be_truthy }
-    end
 
     context "when roles are nil" do
       let(:session) { { "user" => {} } }
@@ -120,32 +129,6 @@ describe User do
         is_expected.to be_falsey
         expect(session[:regional_office]).to be_nil
       end
-    end
-  end
-
-  context "#unauthenticate" do
-    before do
-      session[:regional_office] = "RO33"
-      session[:username] = "test user"
-    end
-
-    it "clears regional_office and username" do
-      user.unauthenticate
-      expect(session[:regional_office]).to be_nil
-      expect(session[:username]).to be_nil
-    end
-  end
-
-  context "#authenticate_ssoi" do
-    it "fails if missing id" do
-      result = user.authenticate_ssoi({})
-      expect(result).to be_falsey
-    end
-
-    it "succeeds if uid is present" do
-      result = user.authenticate_ssoi("uid" => "xyz@va.gov")
-      expect(result).to be_truthy
-      expect(user.username).to eq("xyz@va.gov")
     end
   end
 end

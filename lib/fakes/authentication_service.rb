@@ -1,5 +1,10 @@
 class Fakes::AuthenticationService
+  cattr_accessor :user_session
   cattr_accessor :vacols_regional_offices
+
+  def self.default_user_session
+    user_session
+  end
 
   def self.authenticate_vacols(regional_office, password)
     normalized_ro = find_ro(regional_office)
