@@ -61,7 +61,8 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "363" => "RO63",
     "372" => "RO72",
     "373" => "RO73",
-    "377" => "RO77"
+    "377" => "RO77",
+    "283" => "DSUSER"
   }.freeze
 
   CITIES = {
