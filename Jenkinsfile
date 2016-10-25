@@ -37,7 +37,7 @@ node {
     // since the deployment scripts are separated from the source code.
     stage ('checkout-deploy-repo') {
       sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
-      dir ('./appeals-deployment/ansible') {
+      dir ('./appeals-deployment') {
         sh 'git submodule init'
         sh 'git submodule update'
 
