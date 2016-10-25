@@ -7,19 +7,27 @@ RSpec.feature "Login" do
     }
 
     Fakes::AuthenticationService.vacols_regional_offices = { "DSUSER" => "pa55word!" }
+    Fakes::AuthenticationService.user_session = {
+      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405"
+    }
   end
 
   after do
-    Rails.application.config.iam_service_disabled = false
+    Rails.application.config.sso_service_disabled = false
+  end
+
+  scenario "User who's station ID has one RO doesn't require login" do
+    Fakes::AuthenticationService.user_session = {
+      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "314"
+    }
+    visit "certifications/new/1234C"
+
+    expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
+    expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
   end
 
   scenario "login with valid credentials" do
     visit "certifications/new/1234C"
-
-    # SSOI login
-    expect(page).to have_content("Test VA Saml")
-    fill_in "Email:", with: "xyz@va.gov"
-    click_on "Sign In"
 
     # vacols login
     expect(page).to have_content("VACOLS credentials")
@@ -28,16 +36,11 @@ RSpec.feature "Login" do
     click_on "Login"
 
     expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
-    expect(find("#menu-trigger")).to have_content("xyz@va.gov (DSUSER)")
+    expect(find("#menu-trigger")).to have_content("ANNE MERICA (DSUSER)")
   end
 
   scenario "login with invalid credentials" do
-    visit "auth/samlva"
-
-    # SSOI login
-    expect(page).to have_content("Test VA Saml")
-    fill_in "Email:", with: "xyz@va.gov"
-    click_on "Sign In"
+    visit "certifications/new/1234C"
 
     # vacols login
     fill_in "VACOLS Login ID", with: "DSUSER"
@@ -51,13 +54,8 @@ RSpec.feature "Login" do
     expect(page).to have_current_path(login_path)
   end
 
-  scenario "logging out redirects to login page" do
+  scenario "logging out redirects to home page" do
     visit "certifications/new/1234C"
-
-    # SSOI login
-    expect(page).to have_content("Test VA Saml")
-    fill_in "Email:", with: "xyz@va.gov"
-    click_on "Sign In"
 
     # vacols login
     expect(page).to have_content("VACOLS credentials")
@@ -65,31 +63,14 @@ RSpec.feature "Login" do
     fill_in "VACOLS Password", with: "pa55word!"
     click_on "Login"
 
-    click_on "xyz@va.gov (DSUSER)"
+    click_on "ANNE MERICA (DSUSER)"
     click_on "Sign out"
     visit "certifications/new/1234C"
-    expect(page).to have_current_path(Rails.application.config.ssoi_login_path)
+    expect(page).to have_current_path("/login")
   end
 
-  scenario "redirected to login page by default after ssoi login" do
-    visit "/login"
-
-    # SSOI login
-    expect(page).to have_content("Test VA Saml")
-    fill_in "Email:", with: "xyz@va.gov"
-    click_on "Sign In"
-
-    # vacols login
-    expect(page).to have_content("VACOLS credentials")
-    fill_in "VACOLS Login ID", with: "DSUSER"
-    fill_in "VACOLS Password", with: "pa55word!"
-    click_on "Login"
-
-    expect(page).to have_content("Caseflow Certification Help")
-  end
-
-  scenario "IAM is down" do
-    Rails.application.config.iam_service_disabled = true
+  scenario "Single Sign On is down" do
+    Rails.application.config.sso_service_disabled = true
     visit "certifications/new/1234C"
 
     expect(page).to have_content("Login Service Unavailable")

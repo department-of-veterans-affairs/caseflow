@@ -6,6 +6,11 @@ class Fakes::Initializer
       "RO13" => "RO13"
     }
 
+    User.authentication_service.user_session = {
+      "id" => "ANNE MERICA",
+      "roles" => ["Certify Appeal"]
+    }
+
     Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
   end

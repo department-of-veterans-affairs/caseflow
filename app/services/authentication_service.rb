@@ -1,4 +1,8 @@
 class AuthenticationService
+  def self.default_user_session
+    nil
+  end
+
   def self.authenticate_vacols(regional_office, password)
     db = Rails.application.config.database_configuration["#{Rails.env}_vacols"]
 
