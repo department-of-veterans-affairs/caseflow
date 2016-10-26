@@ -108,7 +108,7 @@ describe Certification do
       context "when appeal has ssoc" do
         before do
           appeal.ssoc_dates = [10.days.ago]
-          appeal.documents << Document.new(type: :ssoc, received_at: 10.days.ago)
+          appeal.documents << Document.new(type: "SSOC", received_at: 10.days.ago)
         end
 
         it "returns success and sets ssoc_required" do

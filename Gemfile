@@ -42,6 +42,9 @@ gem "sentry-raven"
 # Used to colorize output for rake tasks
 gem "rainbow"
 
+# Used to speed up reporting
+gem "parallel"
+
 # execjs runtime
 gem 'therubyracer', platforms: :ruby
 

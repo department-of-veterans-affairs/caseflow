@@ -22,6 +22,10 @@ class AppealRepository
       VACOLS::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
+    create_appeal(case_record)
+  end
+
+  def self.create_appeal(case_record)
     appeal = Appeal.from_records(
       case_record: case_record,
       folder_record: case_record.folder,
@@ -82,7 +86,7 @@ class AppealRepository
 
   def self.send_and_log_request(vbms_id, request)
     MetricsService.timer "sent VBMS request #{request.class} for #{vbms_id}" do
-      @vbms_client.send(request)
+      @vbms_client.send_request(request)
     end
 
   # rethrow as application-level error

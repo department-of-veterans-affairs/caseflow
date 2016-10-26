@@ -1,8 +1,8 @@
 describe Appeal do
   context "#documents_match?" do
-    let(:nod_document) { Document.new(type: :nod, received_at: 3.days.ago) }
-    let(:soc_document) { Document.new(type: :soc, received_at: 2.days.ago) }
-    let(:form9_document) { Document.new(type: nil, alt_types: [:form9], received_at: 1.day.ago) }
+    let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
+    let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
+    let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
     let(:appeal) do
       Appeal.new(
@@ -21,9 +21,9 @@ describe Appeal do
       context "and ssoc dates match" do
         before do
           appeal.documents += [
-            Document.new(type: :ssoc, received_at: 6.days.ago),
-            Document.new(type: :ssoc, received_at: 7.days.ago),
-            Document.new(type: :ssoc, received_at: 9.days.ago)
+            Document.new(type: "SSOC", received_at: 6.days.ago),
+            Document.new(type: "SSOC", received_at: 7.days.ago),
+            Document.new(type: "SSOC", received_at: 9.days.ago)
           ]
           appeal.ssoc_dates = [6.days.ago, 7.days.ago]
         end
@@ -50,8 +50,8 @@ describe Appeal do
     context "when at least one ssoc doesn't match" do
       before do
         appeal.documents += [
-          Document.new(type: :ssoc, received_at: 6.days.ago),
-          Document.new(type: :ssoc, received_at: 7.days.ago)
+          Document.new(type: "SSOC", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 7.days.ago)
         ]
 
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
@@ -93,7 +93,9 @@ describe Appeal do
         bfssoc1: 7.days.ago,
         bfssoc2: 6.days.ago,
         bfha: "6",
-        bfregoff: "DSUSER"
+        bfhr: "1",
+        bfregoff: "DSUSER",
+        bfdc: "M"
       )
     end
 
@@ -146,7 +148,10 @@ describe Appeal do
           Appeal.normalize_vacols_date(6.days.ago)
         ],
         hearing_type: :video_hearing,
-        regional_office_key: "DSUSER"
+        hearing_requested: true,
+        hearing_held: true,
+        regional_office_key: "DSUSER",
+        merged: true
       )
     end
 
@@ -194,6 +199,18 @@ describe Appeal do
       expect(subject.certified?).to be_truthy
       subject.certification_date = nil
       expect(subject.certified?).to be_falsy
+    end
+  end
+
+  context "#hearing_pending?" do
+    subject { Appeal.new(hearing_requested: false, hearing_held: false) }
+
+    it "determines whether an appeal is awaiting a hearing" do
+      expect(subject.hearing_pending?).to be_falsy
+      subject.hearing_requested = true
+      expect(subject.hearing_pending?).to be_truthy
+      subject.hearing_held = true
+      expect(subject.hearing_pending?).to be_falsy
     end
   end
 
