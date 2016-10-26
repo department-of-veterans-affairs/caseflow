@@ -10,7 +10,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-## Initial Setup
+## Initial Setup (MacOSX)
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) installed.
 
 Then run the following:
@@ -20,6 +20,9 @@ Then run the following:
 
 Install pdftk using the instructions from here:
 [https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg]()
+
+Note this link was found on Stack Overflow and is not the same link that is on the pdftk website.
+The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
@@ -32,6 +35,11 @@ And by default, Rails will run in the development environment, which will mock o
 `$ rails s`
 
 You can access the site at [http://localhost:3000](), which takes you to the help page.
+
+To log in, you can use the following credentials:
+
+Username: "DSUSER"
+Password: "RO13"
 
 To get to the various pages in the workflow we have a set of five URLs of dummy data. 
 
