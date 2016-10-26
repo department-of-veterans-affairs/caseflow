@@ -6,11 +6,9 @@ options = {
 }
 
 if ENV["DEPLOY_ENV"]
-  options[:domain] = :all
   options[:tld_length] = (ENV["DEPLOY_ENV"] == "prod") ? 4 : 5
 end
 
-# Convert to this when IAM is removed
-# options[:domain] = ENV["COOKIE_DOMAIN"] if ENV["COOKIE_DOMAIN"]
+options[:domain] = ENV["COOKIE_DOMAIN"] if ENV["COOKIE_DOMAIN"]
 
 Rails.application.config.session_store :cookie_store, options

@@ -11,7 +11,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
     visit "certifications/new/ABCD"
-    expect(page).to have_current_path(Rails.application.config.ssoi_login_path)
+    expect(page).to have_current_path("/login")
   end
 
   scenario "Starting a certification when user isn't assigned 'Certify Appeal' function" do
@@ -125,16 +125,6 @@ RSpec.feature "Start Certification" do
 
     visit "certifications/new/4444NNNN"
     expect(page).to have_content("Page not found")
-  end
-
-  scenario "403's if user doesn't have access to appeal" do
-    User.authenticate!
-    appeal = Fakes::AppealRepository.appeal_ready_to_certify
-    appeal.regional_office_key = "NOT-YOUR-RO"
-    Fakes::AppealRepository.records = { "ABCD" => appeal }
-
-    visit "certifications/new/ABCD"
-    expect(page).to have_content("Unauthorized")
   end
 
   scenario "VBMS-specific 500 on vbms error" do

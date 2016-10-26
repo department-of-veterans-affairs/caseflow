@@ -25,13 +25,6 @@ GIT
       xmlenc (~> 0.5.0)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/omniauth-saml-va
-  revision: 90e7b22eccb1a70dff9421e600598004590295d7
-  specs:
-    omniauth-saml-va (0.1)
-      omniauth-saml (~> 1.6.0)
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
   revision: 79b9686fd838f717750e57a7c36dd2252b0a31a6
   branch: axe
@@ -144,7 +137,6 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    hashie (3.4.4)
     httpclient (2.6.0.1)
     httpi (2.4.2)
       rack
@@ -204,12 +196,6 @@ GEM
     notiffany (0.1.0)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    omniauth (1.3.1)
-      hashie (>= 1.2, < 4)
-      rack (>= 1.0, < 3)
-    omniauth-saml (1.6.0)
-      omniauth (~> 1.3)
-      ruby-saml (~> 1.3)
     parallel (1.9.0)
     parser (2.3.1.2)
       ast (~> 2.2)
@@ -295,8 +281,6 @@ GEM
     ruby-oci8 (2.2.2)
     ruby-oci8 (2.2.2-x64-mingw32)
     ruby-progressbar (1.8.1)
-    ruby-saml (1.3.0)
-      nokogiri (>= 1.5.10)
     ruby_dep (1.3.1)
     rubyzip (1.2.0)
     safe_shell (1.0.3)
@@ -386,7 +370,6 @@ DEPENDENCIES
   jshint
   konacha
   moment_timezone-rails
-  omniauth-saml-va!
   parallel
   pdf-forms
   pdfjs_viewer-rails
@@ -413,4 +396,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.13.1
+   1.13.3
