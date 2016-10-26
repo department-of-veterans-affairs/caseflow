@@ -4,7 +4,7 @@ def get_session(req)
 end
 
 # :nocov:
-ip = IPSocket.getaddress(Socket.gethostname)
+ip = Rails.env.production? ? IPSocket.getaddress(Socket.gethostname) : 'localhost'
 logged_in_user = lambda { |req|
   session = get_session(req)
   username = session["user"] ? session["user"]["id"] : session["username"]

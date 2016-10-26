@@ -153,10 +153,10 @@ RSpec.feature "Save Certification" do
   scenario "Saving a certification passes the correct values into the PDF service" do
     Form8.pdf_service = FakePdfService
     Fakes::AppealRepository.records = {
-      "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
+      "12345C" => Fakes::AppealRepository.appeal_ready_to_certify
     }
 
-    visit "certifications/new/1234C"
+    visit "certifications/new/12345C"
 
     fill_in "Name of Appellant", with: "Shane Bobby"
     fill_in "Relationship to Veteran", with: "Brother"
@@ -225,7 +225,7 @@ RSpec.feature "Save Certification" do
       certifying_official_title: "DRO"
     )
 
-    expect(page).to have_current_path(certification_path(id: "1234C"))
+    expect(page).to have_current_path(certification_path(id: "12345C"))
   end
 
   scenario "Saving a certification saves PDF form to correct location" do

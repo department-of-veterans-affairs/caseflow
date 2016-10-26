@@ -196,6 +196,7 @@ GEM
     notiffany (0.1.0)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    parallel (1.9.0)
     parser (2.3.1.2)
       ast (~> 2.2)
     pdf-forms (1.0.0)
@@ -369,6 +370,7 @@ DEPENDENCIES
   jshint
   konacha
   moment_timezone-rails
+  parallel
   pdf-forms
   pdfjs_viewer-rails
   pg
