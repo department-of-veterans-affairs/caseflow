@@ -94,7 +94,8 @@ describe Appeal do
         bfssoc2: 6.days.ago,
         bfha: "6",
         bfhr: "1",
-        bfregoff: "DSUSER"
+        bfregoff: "DSUSER",
+        bfdc: "M"
       )
     end
 
@@ -149,7 +150,8 @@ describe Appeal do
         hearing_type: :video_hearing,
         hearing_requested: true,
         hearing_held: true,
-        regional_office_key: "DSUSER"
+        regional_office_key: "DSUSER",
+        merged: true
       )
     end
 
