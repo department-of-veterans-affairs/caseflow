@@ -133,15 +133,15 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.new(type: :nod, received_at: 3.days.ago)
+    Document.new(type: "NOD", received_at: 3.days.ago)
   end
 
   def self.soc_document
-    Document.new(type: :soc, received_at: Date.new(1987, 9, 6))
+    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6))
   end
 
   def self.form9_document
-    Document.new(type: :form9, received_at: 1.day.ago)
+    Document.new(type: "Form 9", received_at: 1.day.ago)
   end
 
   def self.seed!

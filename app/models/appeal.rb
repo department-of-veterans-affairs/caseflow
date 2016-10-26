@@ -7,11 +7,13 @@ class Appeal
   attr_accessor :appellant_name, :appellant_relationship
   attr_accessor :representative
   attr_accessor :hearing_type
+  attr_accessor :hearing_requested, :hearing_held
   attr_accessor :regional_office_key
   attr_accessor :insurance_loan_number
   attr_accessor :certification_date
   attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   attr_accessor :type
+  attr_accessor :merged
   attr_accessor :file_type
   attr_accessor :case_record
 
@@ -50,6 +52,10 @@ class Appeal
     end
   end
 
+  def hearing_pending?
+    hearing_requested && !hearing_held
+  end
+
   def regional_office
     VACOLS::RegionalOffice::CITIES[regional_office_key] || {}
   end
@@ -59,15 +65,15 @@ class Appeal
   end
 
   def nod_match?
-    nod_date && documents_with_type(:nod).any? { |doc| doc.received_at.to_date == nod_date.to_date }
+    nod_date && documents_with_type("NOD").any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
 
   def soc_match?
-    soc_date && documents_with_type(:soc).any? { |doc| doc.received_at.to_date == soc_date.to_date }
+    soc_date && documents_with_type("SOC").any? { |doc| doc.received_at.to_date == soc_date.to_date }
   end
 
   def form9_match?
-    form9_date && documents_with_type(:form9).any? { |doc| doc.received_at.to_date == form9_date.to_date }
+    form9_date && documents_with_type("Form 9").any? { |doc| doc.received_at.to_date == form9_date.to_date }
   end
 
   def ssoc_all_match?
@@ -79,7 +85,7 @@ class Appeal
   end
 
   def ssoc_match?(date)
-    ssoc_documents = documents_with_type(:ssoc)
+    ssoc_documents = documents_with_type("SSOC")
     ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
   end
 
@@ -165,9 +171,12 @@ class Appeal
         form9_date: normalize_vacols_date(case_record.bfd19),
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
+        hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+        hearing_held: !case_record.bfha.nil?,
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
-        case_record: case_record
+        case_record: case_record,
+        merged: case_record.bfdc == "M"
       )
     end
   end
@@ -175,6 +184,11 @@ class Appeal
   def documents_with_type(type)
     @documents_by_type ||= {}
     @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+  end
+
+  def clear_documents!
+    @documents = []
+    @documents_by_type = {}
   end
 
   def sanitized_vbms_id
