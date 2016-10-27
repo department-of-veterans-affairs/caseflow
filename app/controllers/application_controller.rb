@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :set_timezone,
                 :setup_fakes,
                 :check_whats_new_cookie
-                :set_raven_user
+  before_action :set_raven_user
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
