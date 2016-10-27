@@ -27,3 +27,17 @@
     .bar { fill: $color-secondary; }
   }
 }
+
+// This class will place an element off screen without
+// affecting its placement in tab order, thus making it
+// invisible onscreen but read out by screen readers.
+// Screen reader only content is not generally recommended,
+// so only use this to resolve major technical hurdles.
+.off-screen {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
