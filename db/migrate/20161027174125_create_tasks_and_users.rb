@@ -17,10 +17,11 @@ class CreateTasksAndUsers < ActiveRecord::Migration
     # TODO research if we need any indexes for improving work queue select queries
     add_index(:tasks, [:vacols_id, :name], unique: true)
 
-    create_table :users do |u|
-      u.integer   :station_id
-      u.integer   :css_id
+    create_table :users do |t|
+      t.integer   :station_id, null: false
+      t.integer   :css_id, null: false
     end
+    add_index(:users, [:station_id, :css_id], unique: true)
 
     add_foreign_key :tasks, :users
   end
