@@ -34,10 +34,10 @@
 // Screen reader only content is not generally recommended,
 // so only use this to resolve major technical hurdles.
 .off-screen {
-  position:absolute;
-  left:-10000px;
-  top:auto;
-  width:1px;
-  height:1px;
-  overflow:hidden;
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
