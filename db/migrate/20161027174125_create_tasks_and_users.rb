@@ -1,10 +1,10 @@
-class CreateTasks < ActiveRecord::Migration
+class CreateTasksAndUsers < ActiveRecord::Migration
   def change
     create_table :tasks do |t|
       t.string    :vacols_id, null: false
       t.string    :name, null: false
       # TODO ask shane about this format
-      t.integer   :employee_id
+      t.integer   :user_id
       t.datetime  :assigned_at
       t.datetime  :started_at
       t.datetime  :completed_at
@@ -16,5 +16,12 @@ class CreateTasks < ActiveRecord::Migration
 
     # TODO research if we need any indexes for improving work queue select queries
     add_index(:tasks, [:vacols_id, :name], unique: true)
+
+    create_table :users do |u|
+      u.integer   :station_id
+      u.integer   :css_id
+    end
+
+    add_foreign_key :tasks, :users
   end
 end
