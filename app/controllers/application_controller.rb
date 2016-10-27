@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :set_timezone,
                 :setup_fakes,
                 :check_whats_new_cookie
+                :set_raven_user
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
@@ -34,6 +35,16 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.from_session(session)
   end
   helper_method :current_user
+
+  def set_raven_user
+    if current_user and ENV["SENTRY_DSN"]
+      # Raven sends error info to Sentry.
+      Raven.user_context(
+        email: current_user.username,
+        regional_office: current_user.regional_office
+      )
+    end
+  end
 
   def set_timezone
     Time.zone = current_user.timezone if current_user
