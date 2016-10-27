@@ -39,6 +39,6 @@ RSpec.feature "Confirm Certification" do
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
     expect(page).to have_content("The PDF viewer in your browser may not be accessible.")
-    expect(page).to have_css('.off-screen', :visible => false)
+    expect(page).to have_css(".off-screen", visible: false)
   end
 end
