@@ -33,7 +33,7 @@ RSpec.feature "Confirm Certification" do
     expect(certification.reload.completed_at).to eq(Time.zone.now)
   end
 
-  scenario "Visiting certification page as a sighted user", focus: true do
+  scenario "Visiting certification page as a sighted user" do
     certification = Certification.create!(vacols_id: "5555C")
     visit "certifications/5555C"
     # We want this content to only appear for screen reader users, so
