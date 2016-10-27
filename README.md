@@ -39,7 +39,7 @@ You can access the site at [http://localhost:3000](), which takes you to the hel
 To log in, you can use the following credentials:
 
 Username: "DSUSER"
-Password: "RO13"
+Password: "DSUSER"
 
 To get to the various pages in the workflow we have a set of five URLs of dummy data. 
 
