@@ -34,7 +34,7 @@ RSpec.feature "Confirm Certification" do
   end
 
   scenario "Visiting certification page as a sighted user" do
-    certification = Certification.create!(vacols_id: "5555C")
+    Certification.create!(vacols_id: "5555C")
     visit "certifications/5555C"
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
