@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def set_raven_user
-    if current_user and ENV["SENTRY_DSN"]
+    if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
       Raven.user_context(
         email: current_user.username,
