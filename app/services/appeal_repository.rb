@@ -25,6 +25,18 @@ class AppealRepository
     create_appeal(case_record)
   end
 
+  def self.ready_for_end_product(starttime)
+    remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
+      VACOLS::CASE.remands_for_ep
+    end
+
+    fullgrants = MetricsService.timer "loaded full grants decided after #{starttime} from VACOLS" do
+      VACOLS::CASE.fullgrants_for_ep(starttime)
+    end
+
+    (remands + fullgrants).map { |case_record| create_appeal(case_record) }
+  end
+
   def self.create_appeal(case_record)
     appeal = Appeal.from_records(
       case_record: case_record,

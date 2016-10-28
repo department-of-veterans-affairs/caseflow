@@ -18,6 +18,30 @@ class VACOLS::Case < VACOLS::Record
     "9" => "Clear and Unmistakable Error"
   }.freeze
 
+  DISPOSITIONS = {
+    "1" => "Allowed",
+    "3" => "Remanded",
+    "4" => "Denied",
+    "5" => "Vacated",
+    "6" => "Dismissed, Other",
+    "8" => "Dismissed, Death",
+    "9" => "Withdrawn",
+    "A" => "Advance Allowed in Field",
+    "B" => "Benefits Granted by AOJ",
+    "D" => "Designation of Record",
+    "E" => "Advance Withdrawn Death of Veteran",
+    "F" => "Advance Withdrawn by Appellant/Rep",
+    "G" => "Advance Failure to Respond",
+    "L" => "Manlincon Remand",
+    "M" => "Merged Appeal",
+    "Q" => "Recon Motion Withdrawn",
+    "R" => "Reconsideration by Letter",
+    "V" => "Motion to Vacate Withdrawn",
+    "W" => "Withdrawn from Remand",
+    "X" => "Remand Failure to Respond",
+    nil => nil
+  }.freeze
+
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -60,4 +84,34 @@ class VACOLS::Case < VACOLS::Record
     "2" => :travel_board,
     "6" => :video_hearing
   }.freeze
+
+  def self.remands_for_ep
+    VACOLS::Case.includes(:folder, :correspondent).where("
+
+      BFMPRO = 'REM'
+      -- Remand status.
+
+      and BFCURLOC = '97'
+      -- Currently sitting in loc 97.
+
+    ")
+  end
+
+  def self.fullgrants_for_ep(starttime)
+    VACOLS::Case.joins(:folder, :correspondent).where(%{
+
+      BFDC = 1
+      -- Cases marked with the disposition Allowed - at least one grant, no remands.
+
+      and BFDDEC > to_date('?', 'YYYY-MM-DD HH24:MI')
+      -- As all full grants are in HIST status, we must time bracket our requests.
+
+      and (TIVBMS = 'Y' or TISUBJ2 = 'Y')
+      -- Only VBMS (TIVBMS) or Virtual VA (TISUBJ2) cases, please.
+
+      and BFSO <> 'T'
+      -- Exclude cases with a private attorney.
+
+    }, starttime.strftime("%Y-%m-%d %H:%M"))
+  end
 end
