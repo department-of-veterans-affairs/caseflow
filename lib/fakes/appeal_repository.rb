@@ -118,6 +118,26 @@ class Fakes::AppealRepository
     )
   end
 
+  def self.appeal_to_create_end_product
+    Appeal.new(
+      type: :original,
+      file_type: :vbms,
+      vbms_id: "VBMS-ID",
+      representative: "Military Order of the Purple Heart",
+      nod_date: 3.days.ago,
+      soc_date: Date.new(1987, 9, 6),
+      certification_date: 1.day.ago,
+      form9_date: 1.day.ago,
+      documents: [nod_document, soc_document, form9_document],
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      regional_office_key: "DSUSER"
+    )
+  end
+
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
@@ -153,6 +173,15 @@ class Fakes::AppealRepository
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
+    end
+  end
+
+  def self.seed_tasks!
+    unless Rails.env.test?
+      for i in 0..100
+        a = Fakes::AppealRepository.appeal_to_create_end_product
+        Task.new!
+      end
     end
   end
 end
