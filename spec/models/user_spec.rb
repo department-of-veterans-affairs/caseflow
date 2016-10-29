@@ -1,25 +1,19 @@
 User.authentication_service = Fakes::AuthenticationService
 
 describe User do
-  let(:session) { {} }
-  let(:user) { User.new(session: session) }
+  let(:session) { { "user" => { 'id' => "123", 'station_id' => "456" } } }
+  let(:user) { User.from_session(session) }
 
   context "#regional_office" do
-    context "when station_id is nil" do
-      subject { user.regional_office }
-      before { session[:regional_office] = "RO17" }
-      it { is_expected.to eq("RO17") }
-    end
-
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
-      before { session["user"] = { "station_id" => "405" } }
+      before { session["user"]["station_id"] = "405"  }
       it { is_expected.to be_nil }
     end
 
     context "when RO can be determined using station_id" do
       subject { user.regional_office }
-      before { session["user"] = { "station_id" => "301" } }
+      before { session["user"]["station_id"] = "301" }
       it { is_expected.to eq("RO01") }
     end
   end
@@ -59,17 +53,14 @@ describe User do
     subject { user.can?("Do the thing") }
 
     context "when roles are nil" do
-      let(:session) { { "user" => {} } }
       it { is_expected.to be_falsey }
     end
 
     context "when roles don't contain the thing" do
-      let(:session) { { "user" => { "roles" => ["Do the other thing"] } } }
       it { is_expected.to be_falsey }
     end
 
     context "when roles contains the thing" do
-      let(:session) { { "user" => { "roles" => ["Do the thing"] } } }
       it { is_expected.to be_truthy }
     end
   end
