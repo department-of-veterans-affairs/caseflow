@@ -7,14 +7,14 @@ class CreateTasksUsersAndAppeals < ActiveRecord::Migration
     add_index(:appeals, :vacols_id, unique: true)
 
     create_table :users do |t|
-      t.integer   :station_id, null: false
-      t.integer   :css_id, null: false
+      t.string   :station_id, null: false
+      t.string   :css_id, null: false
     end
     add_index(:users, [:station_id, :css_id], unique: true)
 
 
     create_table :tasks do |t|
-      t.string    :appeal_id, null: false
+      t.integer    :appeal_id, null: false
       t.string    :name, null: false
       # TODO ask shane about this format
       t.integer   :user_id

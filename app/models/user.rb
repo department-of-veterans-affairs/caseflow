@@ -1,19 +1,16 @@
-class User
-  def initialize(args = {})
-    @session = args[:session] || {}
-  end
+class User < ActiveRecord::Base
+
+  # Ephemeral values obtained from CSS on auth. Stored in user's session
+  attr_accessor :roles
+  attr_writer :regional_office
 
   def username
-    @session["user"] && @session["user"]["id"]
+    id
   end
 
   # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
   def regional_office
-    station_offices.is_a?(String) ? station_offices : @session[:regional_office]
-  end
-
-  def roles
-    @session["user"] && @session["user"]["roles"]
+    station_offices.is_a?(String) ? station_offices : @regional_office
   end
 
   def timezone
@@ -44,13 +41,14 @@ class User
   def authenticate(regional_office:, password:)
     return false unless User.authenticate_vacols(regional_office, password)
 
+    # TODO: ask shane about this
     @session[:regional_office] = regional_office.upcase
   end
 
   private
 
   def station_offices
-    VACOLS::RegionalOffice::STATIONS[@session["user"] && @session["user"]["station_id"]]
+    VACOLS::RegionalOffice::STATIONS[station_id]
   end
 
   class << self
@@ -58,11 +56,11 @@ class User
     delegate :authenticate_vacols, to: :authentication_service
 
     def from_session(session)
-      session["user"] ||= authentication_service.default_user_session
+      user = session["user"] ||= authentication_service.default_user_session
 
-      return nil if session["user"].nil?
+      return nil if user.nil?
 
-      new(session: session)
+      find_or_create_by(css_id: user["id"], station_id: user["station_id"])
     end
 
     def authentication_service
