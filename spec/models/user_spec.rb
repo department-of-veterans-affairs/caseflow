@@ -21,13 +21,13 @@ describe User do
   context "#timezone" do
     context "when ro is set" do
       subject { user.timezone }
-      before { session[:regional_office] = "RO26" }
+      before { user.regional_office = "RO26" }
       it { is_expected.to eq("America/Indiana/Indianapolis") }
     end
 
     context "when ro isn't set" do
       subject { user.timezone }
-      before { session[:regional_office] = nil }
+      before { user.regional_office = nil }
       it { is_expected.to eq("America/Chicago") }
     end
   end
@@ -37,14 +37,14 @@ describe User do
 
     context "when username and RO are both set" do
       before do
-        session["user"] = { "id" => "Shaner" }
-        session[:regional_office] = "RO77"
+        session["user"]["id"] = "Shaner"
+        user.regional_office = "RO77"
       end
       it { is_expected.to eq("Shaner (RO77)") }
     end
 
     context "when just username is set" do
-      before { session["user"] = { "id" => "Shaner" } }
+      before { session["user"]["id"] = "Shaner" }
       it { is_expected.to eq("Shaner") }
     end
   end
@@ -53,14 +53,17 @@ describe User do
     subject { user.can?("Do the thing") }
 
     context "when roles are nil" do
+      before { session["user"]["roles"] = nil }
       it { is_expected.to be_falsey }
     end
 
     context "when roles don't contain the thing" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
       it { is_expected.to be_falsey }
     end
 
     context "when roles contains the thing" do
+      before { session["user"]["roles"] = ["Do the thing"] }
       it { is_expected.to be_truthy }
     end
   end
@@ -70,12 +73,12 @@ describe User do
     before { session[:username] = "USER" }
 
     context "when regional_office set" do
-      before { session[:regional_office] = "RO77" }
+      before { user.regional_office = "RO77" }
       it { is_expected.to be_truthy }
     end
 
     context "when regional_office isn't set" do
-      before { session[:regional_office] = nil }
+      before { user.regional_office = nil }
       it { is_expected.to be_falsy }
     end
   end
@@ -92,12 +95,12 @@ describe User do
 
       it "sets regional_office in the session" do
         is_expected.to be_truthy
-        expect(session[:regional_office]).to eq("RO21")
+        expect(user.regional_office).to eq("RO21")
       end
     end
   end
 
-  context "#authenticate" do
+  context "#authenticate"  do
     subject { user.authenticate(regional_office: "RO21", password: password) }
     before do
       Fakes::AuthenticationService.vacols_regional_offices = {
@@ -109,7 +112,7 @@ describe User do
 
       it "sets regional_office in the session" do
         is_expected.to be_truthy
-        expect(session[:regional_office]).to eq("RO21")
+        expect(user.regional_office).to eq("RO21")
       end
     end
 
@@ -118,7 +121,7 @@ describe User do
 
       it "doesn't set regional_office in the session" do
         is_expected.to be_falsey
-        expect(session[:regional_office]).to be_nil
+        expect(user.regional_office).to be_nil
       end
     end
   end

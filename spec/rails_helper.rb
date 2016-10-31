@@ -44,14 +44,12 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
-      self.stub = User.new(
-        session: {
-          regional_office: "DSUSER",
+      self.stub = User.from_session(
           "user" => {
             "id" => "DSUSER",
+            "station_id" => "283",
             "roles" => roles || ["Certify Appeal"]
-          }
-        })
+          })
     end
 
     def unauthenticate!
@@ -68,9 +66,14 @@ module StubbableUser
       prepend ClassMethods
     end
   end
+
+  def find_or_create_by(css_id:, stationd_id:)
+    new(css_id: css_id, station_id: station_id)
+  end
 end
 
 User.prepend(StubbableUser)
+
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository

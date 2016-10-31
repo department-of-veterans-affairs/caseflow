@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   attr_writer :regional_office
 
   def username
-    id
+    css_id
   end
 
   # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
@@ -38,11 +38,12 @@ class User < ActiveRecord::Base
     !regional_office.blank?
   end
 
+  # This method is used for VACOLS authentication
   def authenticate(regional_office:, password:)
     return false unless User.authenticate_vacols(regional_office, password)
 
     # TODO: ask shane about this
-    @session[:regional_office] = regional_office.upcase
+    @regional_office = regional_office.upcase
   end
 
   private
@@ -60,7 +61,9 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      find_or_create_by(css_id: user["id"], station_id: user["station_id"])
+      find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
+        u.roles = user["roles"]
+      end
     end
 
     def authentication_service
