@@ -39,6 +39,10 @@ Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
+    def clear_stub!
+      @stub = nil
+    end
+
     def stub=(user)
       @stub = user
     end
@@ -74,6 +78,11 @@ end
 
 User.prepend(StubbableUser)
 
+
+def reset_application!
+  User.clear_stub!
+  Certification.delete_all!
+end
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
