@@ -63,6 +63,7 @@ class User < ActiveRecord::Base
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.roles = user["roles"]
+        u.regional_office = session[:regional_office]
       end
     end
 
