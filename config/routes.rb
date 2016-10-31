@@ -18,8 +18,6 @@ Rails.application.routes.draw do
   end
   resources :offices, only: :index
 
-  resources :tasks
-
   get "health-check", to: "health_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
