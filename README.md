@@ -10,6 +10,20 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
+## Initial Setup (MacOSX)
+Make sure you have [rbenv](https://github.com/rbenv/rbenv) installed.
+
+Then run the following:
+
+`$ rbenv install 2.2.4`
+`$ gem install bundler`
+
+Install pdftk using the instructions from here:
+[https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg]()
+
+Note this link was found on Stack Overflow and is not the same link that is on the pdftk website.
+The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
+
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
@@ -19,6 +33,21 @@ to skip production gems when installing.
 And by default, Rails will run in the development environment, which will mock out data.
 
 `$ rails s`
+
+You can access the site at [http://localhost:3000](), which takes you to the help page.
+
+To log in, you can use the following credentials:
+
+Username: "DSUSER"
+Password: "DSUSER"
+
+To get to the various pages in the workflow we have a set of five URLs of dummy data. 
+
+[http://localhost:3000/certifications/new/123C]() is an appeal that is ready to certify.
+[http://localhost:3000/certifications/new/456C]() is an appeal with mismatched docs.
+[http://localhost:3000/certifications/new/789C]() is an appeal that is already certified.
+[http://localhost:3000/certifications/new/000ERR]() is an appeal that raises a vbms error.
+[http://localhost:3000/certifications/new/001ERR]() is an appeal that is missing data.
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies follow
@@ -72,3 +101,9 @@ export VACOLS_PASSWORD=secret_password
 
 Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
+
+### Running tests
+
+To run the test suite:
+`$rake`
+
