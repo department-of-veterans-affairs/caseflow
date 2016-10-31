@@ -20,6 +20,26 @@ class Fakes::AppealRepository
     record
   end
 
+  def self.appeal_ready_to_certify
+    Appeal.new(
+      type: "Original",
+      file_type: "VBMS",
+      vbms_id: "VBMS-ID",
+      representative: "Military Order of the Purple Heart",
+      nod_date: 3.days.ago,
+      soc_date: Date.new(1987, 9, 6),
+      form9_date: 1.day.ago,
+      notification_date: 1.day.ago,
+      documents: [nod_document, soc_document, form9_document],
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      regional_office_key: "DSUSER"
+    )
+  end
+
   def self.appeal_mismatched_nod
     Appeal.new(
       type: "Original",
@@ -79,26 +99,6 @@ class Fakes::AppealRepository
   end
 
   def self.appeal_already_certified
-    Appeal.new(
-      type: :original,
-      file_type: :vbms,
-      vbms_id: "VBMS-ID",
-      representative: "Military Order of the Purple Heart",
-      nod_date: 3.days.ago,
-      soc_date: Date.new(1987, 9, 6),
-      certification_date: 1.day.ago,
-      form9_date: 1.day.ago,
-      documents: [nod_document, soc_document, form9_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
-    )
-  end
-
-  def self.appeal_to_create_end_product
     Appeal.new(
       type: :original,
       file_type: :vbms,
