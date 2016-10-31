@@ -85,6 +85,8 @@ class VACOLS::Case < VACOLS::Record
     "6" => :video_hearing
   }.freeze
 
+  # These scopes query VACOLS and cannot be covered by automated tests.
+  # :nocov:
   def self.remands_for_ep
     VACOLS::Case.includes(:folder, :correspondent).where("
 
@@ -114,4 +116,5 @@ class VACOLS::Case < VACOLS::Record
 
     }, starttime.strftime("%Y-%m-%d %H:%M"))
   end
+  # :nocov:
 end
