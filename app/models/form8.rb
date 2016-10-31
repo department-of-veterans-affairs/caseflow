@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Form8
+class Form8 < ActiveRecord::Base
   include ActiveModel::Model
   include ActiveModel::Conversion
   include ActiveModel::Serialization
@@ -105,7 +105,7 @@ class Form8
     rolled_over.map(&:continued).join unless rolled_over.empty?
   end
 
-  def rolled_over_fields
+  def rolled_over_fielfds
     [remarks_rolled, service_connection_for_rolled, increased_rating_for_rolled, other_for_rolled].find_all(&:rollover?)
   end
 
@@ -168,8 +168,15 @@ class Form8
     end
 
     def from_string_params(params)
-      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date, :soc_date]
+      date_fields = [:certification_date,
+                      :_initial_service_connection_notification_date,
+                      :service_connection_notification_date,
+                      :_initial_increased_rating_notification_date,
+                      :increased_rating_notification_date,
+                      :_initial_other_notification_date,
+                      :other_notification_date,
+                      :_initial_soc_date,
+                      :soc_date]
 
       date_fields.each do |f|
         raw_value = params[f]
