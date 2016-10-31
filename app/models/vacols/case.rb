@@ -100,10 +100,10 @@ class VACOLS::Case < VACOLS::Record
   def self.fullgrants_for_ep(starttime)
     VACOLS::Case.joins(:folder, :correspondent).where(%{
 
-      BFDC = 1
+      BFDC = '1'
       -- Cases marked with the disposition Allowed - at least one grant, no remands.
 
-      and BFDDEC > to_date('?', 'YYYY-MM-DD HH24:MI')
+      and BFDDEC > to_date(?, 'YYYY-MM-DD HH24:MI')
       -- As all full grants are in HIST status, we must time bracket our requests.
 
       and (TIVBMS = 'Y' or TISUBJ2 = 'Y')

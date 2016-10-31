@@ -29,7 +29,7 @@ class SeamReport < Report
       appeal.certification_date,
       bool_str(appeal.hearing_pending?),
       appeal.vbms_id,
-      bool_str(appeal.merged)
+      bool_str(appeal.disposition == "Merged Appeal")
     ]
   end
 
