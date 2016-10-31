@@ -42,7 +42,6 @@ class User < ActiveRecord::Base
   def authenticate(regional_office:, password:)
     return false unless User.authenticate_vacols(regional_office, password)
 
-    # TODO: ask shane about this
     @regional_office = regional_office.upcase
   end
 
