@@ -23,6 +23,7 @@ class CertificationsController < ApplicationController
     end
 
     @form8 = @certification.form8(form8_cache_key)
+    # TODO(alex): save certification
   end
 
   def create

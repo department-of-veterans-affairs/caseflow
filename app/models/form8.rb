@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Form8 < ActiveRecord::Base
+class Form8
   include ActiveModel::Model
   include ActiveModel::Conversion
   include ActiveModel::Serialization
