@@ -70,6 +70,27 @@ class AddForm8DataToDb < ActiveRecord::Migration
       t.string :_initial_certifying_official_title
       t.string :certifying_official_title
       t.datetime :certification_date # Not user-modifiable
+
+      # Fields representing record types to be forwarded
+      # to the Board of Veteran's Appeals. These are all integers
+      # mostly for compatibility with code that existed before this
+      # migration.
+      t.integer :record_cf_or_xcf
+      t.integer :record_inactive_cf
+      t.integer :record_dental_f
+      t.integer :record_r_and_e_f
+      t.integer :record_training_sub_f
+      t.integer :record_loan_guar_f
+      t.integer :record_outpatient_f
+      t.integer :record_hospital_cor
+      t.integer :record_clinical_rec
+      t.integer :record_x_rays
+      t.integer :record_slides
+      t.integer :record_tissue_blocks
+      t.integer :record_dep_ed_f
+      t.integer :record_insurance_f
+      t.integer :record_other
+
     end
   end
 end
