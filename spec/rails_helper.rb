@@ -81,7 +81,7 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  Certification.delete_all!
+  Certification.delete_all
 end
 
 # Setup fakes
