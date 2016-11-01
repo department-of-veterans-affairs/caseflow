@@ -125,4 +125,26 @@ describe User do
       end
     end
   end
+
+  context ".from_session" do
+    subject { User.from_session(session) }
+    context "get a user object from a session" do
+
+      before do 
+        session["user"]["roles"] = ["Do the thing"]
+        session[:regional_office] = "283"
+      end
+
+      it do
+        is_expected.to be_an_instance_of(User)
+        expect(subject.roles).to eq(["Do the thing"])
+        expect(subject.regional_office).to eq("283")
+      end
+    end
+
+    context "get a nil return from a nil session" do
+      let(:session) { session = {} }
+      it { is_expected.to be_nil }
+    end
+  end
 end
