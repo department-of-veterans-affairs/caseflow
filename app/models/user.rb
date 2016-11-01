@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :roles
   attr_writer :regional_office

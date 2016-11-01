@@ -49,11 +49,11 @@ module StubbableUser
 
     def authenticate!(roles: nil)
       self.stub = User.from_session(
-          "user" => {
-            "id" => "DSUSER",
-            "station_id" => "283",
-            "roles" => roles || ["Certify Appeal"]
-          })
+        "user" => {
+          "id" => "DSUSER",
+          "station_id" => "283",
+          "roles" => roles || ["Certify Appeal"]
+        })
     end
 
     def unauthenticate!
@@ -71,13 +71,12 @@ module StubbableUser
     end
   end
 
-  def find_or_create_by(css_id:, stationd_id:)
+  def find_or_create_by(css_id:, station_id:)
     new(css_id: css_id, station_id: station_id)
   end
 end
 
 User.prepend(StubbableUser)
-
 
 def reset_application!
   User.clear_stub!

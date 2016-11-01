@@ -1,13 +1,14 @@
 User.authentication_service = Fakes::AuthenticationService
 
 describe User do
-  let(:session) { { "user" => { 'id' => "123", 'station_id' => "456" } } }
+  let(:session) { { "user" => { "id" => "123", "station_id" => "456" } } }
   let(:user) { User.from_session(session) }
+  before { Fakes::AuthenticationService.user_session = nil }
 
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
-      before { session["user"]["station_id"] = "405"  }
+      before { session["user"]["station_id"] = "405" }
       it { is_expected.to be_nil }
     end
 
@@ -100,7 +101,7 @@ describe User do
     end
   end
 
-  context "#authenticate"  do
+  context "#authenticate" do
     subject { user.authenticate(regional_office: "RO21", password: password) }
     before do
       Fakes::AuthenticationService.vacols_regional_offices = {
@@ -129,8 +130,7 @@ describe User do
   context ".from_session" do
     subject { User.from_session(session) }
     context "get a user object from a session" do
-
-      before do 
+      before do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
       end
@@ -143,7 +143,7 @@ describe User do
     end
 
     context "get a nil return from a nil session" do
-      let(:session) { session = {} }
+      before { session["user"] = nil }
       it { is_expected.to be_nil }
     end
   end
