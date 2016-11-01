@@ -1,5 +1,10 @@
 class Appeal < ActiveRecord::Base
+  include AssociatedVacolsModel
 
+  # When these instance variable getters are called, first check if we've
+  # fetched the values from VACOLS. If not, first fetch all values and save them
+  # This allows us to easily call `appeal.veteran_first_name` and dynamically
+  # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship
@@ -99,12 +104,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def set_from_vacols(values)
-    values.each do |key, value|
-      setter = self.method("#{key}=")
-      setter.call(value)
-    end
-  end
 
  class << self
     attr_writer :repository
@@ -122,25 +121,6 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
-    # When these instance variable getters are called, first check if we've
-    # fetched the values from VACOLS. If not, first fetch all values and save them
-    # This allows us to easily call `appeal.veteran_first_name` and dynamically
-    # fetch the data from VACOLS if it does not already exist in memory
-    def vacols_attr_accessor *fields
-      fields.each do |field|
-        define_method field do
-          unless @fetched_vacols_data
-            load_vacols_data!
-            @fetched_vacols_data = true
-          end
-          instance_variable_get("@#{field}".to_sym)
-        end
-
-        define_method "#{field}=" do |value|
-          instance_variable_set("@#{field}".to_sym, value)
-        end
-      end
-    end
   end
 
   def documents_with_type(type)
@@ -164,7 +144,4 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def load_vacols_data!
-    self.class.repository.load_vacols_data(appeal)
-  end
 end

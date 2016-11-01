@@ -27,17 +27,12 @@ class AppealRepository
     appeal
   end
 
-  def set_vacols_values(appeal:, case_record:)
+  def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
 
-    # TODO(jd/mark): Refactor this to persist records to DB
-    # Currently we are keeping them only in-memory to maintain current
-    # certification functionality
-    #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     appeal.set_from_vacols(
-      fetched_vacols_data: true, # set to true to avoid fetching again
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
@@ -63,10 +58,6 @@ class AppealRepository
       case_record: case_record,
       merged: case_record.bfdc == "M"
     )
-
-    appeal.documents = fetch_documents_for(appeal).map do |vbms_document|
-      Document.from_vbms_document(vbms_document)
-    end
 
     appeal
   end
@@ -164,7 +155,13 @@ class AppealRepository
 
     sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::ListDocuments.new(sanitized_id)
-    send_and_log_request(sanitized_id, request)
+    documents = send_and_log_request(sanitized_id, request)
+
+    appeal.documents = documents.map do |vbms_document|
+      Document.from_vbms_document(vbms_document)
+    end
+
+    appeal
   end
 
   def self.vbms_config

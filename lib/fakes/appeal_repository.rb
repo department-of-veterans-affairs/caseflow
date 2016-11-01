@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
+    attr_writer :documents
     attr_writer :records
     attr_accessor :certified_appeal
   end
@@ -18,6 +19,14 @@ class Fakes::AppealRepository
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record.vbms_id
 
     record
+  end
+
+  def self.load_vacols_data(appeal)
+    appeal
+  end
+
+  def self.fetch_documents_for(appeal)
+    @documents || []
   end
 
   def self.appeal_ready_to_certify
