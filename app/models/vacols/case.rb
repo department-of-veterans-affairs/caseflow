@@ -86,7 +86,7 @@ class VACOLS::Case < VACOLS::Record
 
   # These scopes query VACOLS and cannot be covered by automated tests.
   # :nocov:
-  def self.remands_for_ep
+  def self.remands_for_claims_establishment
     VACOLS::Case.includes(:folder, :correspondent).where("
 
       BFMPRO = 'REM'
@@ -98,7 +98,7 @@ class VACOLS::Case < VACOLS::Record
     ")
   end
 
-  def self.fullgrants_for_ep(decided_after)
+  def self.full_grants_for_claims_establishment(decided_after)
     VACOLS::Case.joins(:folder, :correspondent).where(%{
 
       BFDC = '1'

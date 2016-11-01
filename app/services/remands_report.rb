@@ -26,7 +26,7 @@ class RemandsReport < Report
   end
 
   def find_records
-    VACOLS::Case.remands_for_ep
+    VACOLS::Case.remands_for_claims_establishment
   end
 
   def load_record(case_record)

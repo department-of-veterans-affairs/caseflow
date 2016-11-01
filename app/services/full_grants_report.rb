@@ -1,6 +1,6 @@
-class FullgrantsReport < Report
+class FullGrantsReport < Report
   def self.output_filename
-    "fullgrants"
+    "full_grants"
   end
 
   def self.table_columns
@@ -26,7 +26,7 @@ class FullgrantsReport < Report
   end
 
   def find_records
-    VACOLS::Case.fullgrants_for_ep(7.days.ago)
+    VACOLS::Case.full_grants_for_claims_establishment(7.days.ago)
   end
 
   def load_record(case_record)

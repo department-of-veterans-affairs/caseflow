@@ -20,11 +20,11 @@ class Fakes::AppealRepository
     record
   end
 
-  def self.remands_for_end_product
+  def self.remands_for_claims_establishment
     [@records["321C"]]
   end
 
-  def self.fullgrants_for_end_product(decided_after)
+  def self.full_grants_for_claims_establishment(decided_after)
     [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
@@ -139,7 +139,7 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.appeal_fullgrant_decided
+  def self.appeal_full_grant_decided
     Appeal.new(
       type: "Post Remand",
       disposition: "Allowed",
@@ -185,7 +185,7 @@ class Fakes::AppealRepository
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
         "321C" => Fakes::AppealRepository.appeal_remand_decided,
-        "654C" => Fakes::AppealRepository.appeal_fullgrant_decided,
+        "654C" => Fakes::AppealRepository.appeal_full_grant_decided,
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
