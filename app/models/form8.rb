@@ -105,7 +105,7 @@ class Form8
     rolled_over.map(&:continued).join unless rolled_over.empty?
   end
 
-  def rolled_over_fielfds
+  def rolled_over_fields
     [remarks_rolled, service_connection_for_rolled, increased_rating_for_rolled, other_for_rolled].find_all(&:rollover?)
   end
 
