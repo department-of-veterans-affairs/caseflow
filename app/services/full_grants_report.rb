@@ -26,11 +26,11 @@ class FullGrantsReport < Report
   end
 
   def find_records
-    VACOLS::Case.full_grants_for_claims_establishment(7.days.ago)
+    VACOLS::Case.amc_full_grants(decided_after: 7.days.ago)
   end
 
   def load_record(case_record)
-    AppealRepository.create_appeal(case_record)
+    AppealRepository.build_appeal(case_record)
   end
 
   def include_record?(_appeal)

@@ -86,7 +86,7 @@ class VACOLS::Case < VACOLS::Record
 
   # These scopes query VACOLS and cannot be covered by automated tests.
   # :nocov:
-  def self.remands_for_claims_establishment
+  def self.remands_ready_for_claims_establishment
     VACOLS::Case.includes(:folder, :correspondent).where("
 
       BFMPRO = 'REM'
@@ -98,11 +98,11 @@ class VACOLS::Case < VACOLS::Record
     ")
   end
 
-  def self.full_grants_for_claims_establishment(decided_after)
+  def self.amc_full_grants(decided_after:)
     VACOLS::Case.joins(:folder, :correspondent).where(%{
 
       BFDC = '1'
-      -- Cases marked with the disposition Allowed - at least one grant, no remands.
+      -- Cases marked with the disposition Allowed, which have at least one grant.
 
       and BFDDEC > to_date(?, 'YYYY-MM-DD HH24:MI')
       -- As all full grants are in HIST status, we must time bracket our requests.
@@ -112,6 +112,9 @@ class VACOLS::Case < VACOLS::Record
 
       and BFSO <> 'T'
       -- Exclude cases with a private attorney.
+
+      and VACOLS.ISSUE_CNT_REMAND(BFKEY) = 0
+      -- Check that there are no remands on the case. Denials can be included.
 
     }, decided_after.strftime("%Y-%m-%d %H:%M"))
   end

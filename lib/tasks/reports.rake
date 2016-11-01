@@ -14,7 +14,7 @@ namespace :reports do
   desc "Run the full grants report"
   task grants: [:environment] do
     Rails.application.eager_load!
-    FullgrantsReport.new.run!
+    FullGrantsReport.new.run!
   end
 
   desc "Run the remands report"

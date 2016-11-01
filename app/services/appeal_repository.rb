@@ -22,26 +22,26 @@ class AppealRepository
       VACOLS::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
-    create_appeal(case_record)
+    build_appeal(case_record)
   end
 
-  def self.remands_for_claims_establishment
+  def self.remands_ready_for_claims_establishment
     remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
-      VACOLS::CASE.remands_for_claims_establishment
+      VACOLS::CASE.remands_ready_for_claims_establishment
     end
 
-    remands.map { |case_record| create_appeal(case_record) }
+    remands.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.full_grants_for_claims_establishment(decided_after)
-    fullgrants = MetricsService.timer "loaded full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::CASE.full_grants_for_claims_establishment(decided_after)
+  def self.amc_full_grants(decided_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
+      VACOLS::CASE.amc_full_grants(decided_after)
     end
 
-    fullgrants.map { |case_record| create_appeal(case_record) }
+    full_grants.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.create_appeal(case_record)
+  def self.build_appeal(case_record)
     appeal = Appeal.from_records(
       case_record: case_record,
       folder_record: case_record.folder,

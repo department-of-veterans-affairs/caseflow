@@ -80,7 +80,7 @@ class SeamReport < Report
   end
 
   def load_record(case_record)
-    AppealRepository.create_appeal(case_record)
+    AppealRepository.build_appeal(case_record)
   end
 
   def include_record?(appeal)

@@ -26,11 +26,11 @@ class RemandsReport < Report
   end
 
   def find_records
-    VACOLS::Case.remands_for_claims_establishment
+    VACOLS::Case.remands_ready_for_claims_establishment
   end
 
   def load_record(case_record)
-    AppealRepository.create_appeal(case_record)
+    AppealRepository.build_appeal(case_record)
   end
 
   def include_record?(_appeal)

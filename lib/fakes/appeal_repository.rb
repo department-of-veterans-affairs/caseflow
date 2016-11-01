@@ -20,11 +20,11 @@ class Fakes::AppealRepository
     record
   end
 
-  def self.remands_for_claims_establishment
+  def self.remands_ready_for_claims_establishment
     [@records["321C"]]
   end
 
-  def self.full_grants_for_claims_establishment(decided_after)
+  def self.amc_full_grants(decided_after:)
     [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
