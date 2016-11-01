@@ -38,8 +38,7 @@ class VACOLS::Case < VACOLS::Record
     "R" => "Reconsideration by Letter",
     "V" => "Motion to Vacate Withdrawn",
     "W" => "Withdrawn from Remand",
-    "X" => "Remand Failure to Respond",
-    nil => nil
+    "X" => "Remand Failure to Respond"
   }.freeze
 
   REPRESENTATIVES = {
@@ -99,7 +98,7 @@ class VACOLS::Case < VACOLS::Record
     ")
   end
 
-  def self.fullgrants_for_ep(starttime)
+  def self.fullgrants_for_ep(decided_after)
     VACOLS::Case.joins(:folder, :correspondent).where(%{
 
       BFDC = '1'
@@ -114,7 +113,7 @@ class VACOLS::Case < VACOLS::Record
       and BFSO <> 'T'
       -- Exclude cases with a private attorney.
 
-    }, starttime.strftime("%Y-%m-%d %H:%M"))
+    }, decided_after.strftime("%Y-%m-%d %H:%M"))
   end
   # :nocov:
 end

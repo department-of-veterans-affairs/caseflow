@@ -20,14 +20,12 @@ class Fakes::AppealRepository
     record
   end
 
-  def self.ready_for_end_product(starttime)
-    remands = [@records["321C"]]
+  def self.remands_for_end_product
+    [@records["321C"]]
+  end
 
-    fullgrants = [@records["654C"]].select do |appeal|
-      appeal.decision_date > starttime
-    end
-
-    remands + fullgrants
+  def self.fullgrants_for_end_product(decided_after)
+    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
   def self.appeal_ready_to_certify
