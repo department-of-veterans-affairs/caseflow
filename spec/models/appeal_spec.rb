@@ -181,7 +181,7 @@ describe Appeal do
       Appeal.repository = FakeRepo
     end
     after { Appeal.repository = @old_repo }
-    subject { Appeal.find("123C") }
+    subject { Appeal.fetch_vacols_record("123C") }
 
     it "delegates to the repository" do
       expect(subject.representative).to eq("Shane's VSO")

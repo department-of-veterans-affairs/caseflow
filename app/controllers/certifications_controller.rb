@@ -79,7 +79,7 @@ class CertificationsController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find(vacols_id)
+    @appeal ||= Appeal.fetch_vacols_record(vacols_id)
   end
   helper_method :appeal
 end

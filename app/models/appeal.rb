@@ -1,6 +1,17 @@
 class Appeal
   include ActiveModel::Model
 
+  def self.vacols_attr_accessor field
+    define_method field do
+      instance_variable_get("@#{field}".to_sym)
+    end
+
+    define_method "#{field}=" do |value|
+      instance_variable_set("@#{field}".to_sym, value)
+    end
+  end
+
+
   attr_accessor :vacols_id, :vbms_id
   attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
@@ -101,11 +112,11 @@ class Appeal
     Appeal.certify(self)
   end
 
-  class << self
+ class << self
     attr_writer :repository
     delegate :certify, to: :repository
 
-    def find(vacols_id)
+    def fetch_vacols_record(vacols_id)
       unless (appeal = repository.find(vacols_id))
         fail ActiveRecord::RecordNotFound
       end
@@ -200,5 +211,9 @@ class Appeal
     else
       numeric
     end
+  end
+
+  def load_vacols_data!
+    self.class.repository.find(vacols_id)
   end
 end
