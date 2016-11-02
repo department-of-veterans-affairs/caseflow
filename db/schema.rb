@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161031274815) do
+ActiveRecord::Schema.define(version: 20161102170128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,20 @@ ActiveRecord::Schema.define(version: 20161031274815) do
     t.datetime "updated_at",          null: false
   end
 
+  create_table "tasks", force: :cascade do |t|
+    t.integer  "appeal_id",    null: false
+    t.string   "name",         null: false
+    t.integer  "user_id"
+    t.datetime "assigned_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer  "status"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "tasks", ["appeal_id", "name"], name: "index_tasks_on_appeal_id_and_name", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false
     t.string "css_id",     null: false
@@ -45,4 +59,6 @@ ActiveRecord::Schema.define(version: 20161031274815) do
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
 
+  add_foreign_key "tasks", "appeals"
+  add_foreign_key "tasks", "users"
 end
