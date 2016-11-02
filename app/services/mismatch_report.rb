@@ -37,7 +37,7 @@ class MismatchReport < Report
       bool_str(appeal.case_record.bfdcertool),
       bool_str(appeal.hearing_pending?),
       appeal.vbms_id,
-      bool_str(appeal.merged),
+      bool_str(appeal.disposition == "Merged Appeal"),
       nod_date_alternatives(appeal),
       soc_date_alternatives(appeal),
       form9_date_alternatives(appeal),
@@ -158,7 +158,7 @@ class MismatchReport < Report
   end
 
   def load_record(case_record)
-    AppealRepository.create_appeal(case_record)
+    AppealRepository.build_appeal(case_record)
   end
 
   def include_record?(appeal)

@@ -26,7 +26,7 @@ RSpec.feature "Login" do
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
   end
 
-  scenario "login with valid credentials" do
+  scenario "with valid credentials" do
     visit "certifications/new/1234C"
 
     # vacols login
@@ -39,7 +39,7 @@ RSpec.feature "Login" do
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (DSUSER)")
   end
 
-  scenario "login with invalid credentials" do
+  scenario "with invalid credentials" do
     visit "certifications/new/1234C"
 
     # vacols login
