@@ -13,7 +13,8 @@ class Appeal
   attr_accessor :certification_date
   attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   attr_accessor :type
-  attr_accessor :merged
+  attr_accessor :disposition
+  attr_accessor :decision_date
   attr_accessor :file_type
   attr_accessor :case_record
 
@@ -176,7 +177,8 @@ class Appeal
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
         case_record: case_record,
-        merged: case_record.bfdc == "M"
+        disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+        decision_date: normalize_vacols_date(case_record.bfddec)
       )
     end
   end
