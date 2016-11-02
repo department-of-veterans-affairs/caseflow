@@ -1,4 +1,4 @@
-describe Appeal, focus: true do
+describe Appeal do
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
@@ -68,19 +68,19 @@ describe Appeal, focus: true do
   end
 
   context ".find_or_create_by_vacols_id" do
-    before do
-      @old_repo = Appeal.repository
-      Appeal.repository = FakeRepo
-    end
-    after { Appeal.repository = @old_repo }
     subject { Appeal.find_or_create_by_vacols_id("123C") }
-
-    it "delegates to the repository" do
-      expect(subject.representative).to eq("Shane's VSO")
+    before do
+      Appeal.repository.stub(:load_vacols_data) do |appeal|
+        nil
+      end
+      Appeal.any_instance.stub(:save) do |appeal|
+        appeal
+      end
     end
 
     it "sets the vacols_id" do
-      expect(subject.vacols_id).to eq("123C")
+      is_expected.to be_an_instance_of(Appeal)
+      expect(subject.vacols_id).to eq("123C") 
     end
   end
 

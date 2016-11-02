@@ -7,11 +7,12 @@ describe Certification do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal }
     Certification.delete_all
+    Appeal.delete_all
   end
 
   after { Timecop.return }
 
-  context "#start!" do
+  context "#start!", focus: true do
     subject { certification.start! }
 
     context "when appeal has already been certified" do
