@@ -30,16 +30,16 @@ class Form8
     :power_of_attorney_file,
     :agent_accredited,
     :form_646_of_record,
-    :form_646_not_of_record_explanation,
+    :form_646_not_of_record_explaination,
     :hearing_requested,
     :hearing_held,
     :hearing_transcript_on_file,
-    :hearing_requested_explanation,
+    :hearing_requested_explaination,
     :contested_claims_procedures_applicable,
     :contested_claims_requirements_followed,
     :soc_date,
     :ssoc_required,
-    :record_other_explanation,
+    :record_other_explaination,
     :remarks,
     :certifying_office,
     :certifying_username,
@@ -168,15 +168,8 @@ class Form8
     end
 
     def from_string_params(params)
-      date_fields = [:certification_date,
-                      :_initial_service_connection_notification_date,
-                      :service_connection_notification_date,
-                      :_initial_increased_rating_notification_date,
-                      :increased_rating_notification_date,
-                      :_initial_other_notification_date,
-                      :other_notification_date,
-                      :_initial_soc_date,
-                      :soc_date]
+      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
+                     :other_notification_date, :soc_date]
 
       date_fields.each do |f|
         raw_value = params[f]
