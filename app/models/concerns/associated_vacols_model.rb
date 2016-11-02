@@ -10,7 +10,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          #check_and_load_vacols_data!
+          check_and_load_vacols_data!
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
