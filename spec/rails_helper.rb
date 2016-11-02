@@ -39,18 +39,20 @@ Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
+    def clear_stub!
+      @stub = nil
+    end
+
     def stub=(user)
       @stub = user
     end
 
     def authenticate!(roles: nil)
-      self.stub = User.new(
-        session: {
-          regional_office: "DSUSER",
-          "user" => {
-            "id" => "DSUSER",
-            "roles" => roles || ["Certify Appeal"]
-          }
+      self.stub = User.from_session(
+        "user" => {
+          "id" => "DSUSER",
+          "station_id" => "283",
+          "roles" => roles || ["Certify Appeal"]
         })
     end
 
@@ -71,6 +73,12 @@ module StubbableUser
 end
 
 User.prepend(StubbableUser)
+
+def reset_application!
+  User.clear_stub!
+  User.delete_all
+  Certification.delete_all
+end
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository

@@ -16,6 +16,8 @@ class SessionsController < ApplicationController
       return redirect_to login_path
     end
 
+    # The presence of the regional_office field is used to mark a user as logged in.
+    session[:regional_office] = current_user.regional_office
     redirect_to session["return_to"] || root_path
   end
 
