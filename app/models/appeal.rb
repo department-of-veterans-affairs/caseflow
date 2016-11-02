@@ -16,7 +16,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :merged
+  vacols_attr_accessor :disposition, :decision_date
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
 
@@ -110,7 +110,9 @@ class Appeal < ActiveRecord::Base
     delegate :certify, to: :repository
 
     def find_or_create_by_vacols_id(vacols_id)
-      appeal = self.new(vacols_id: vacols_id)
+      appeal = self.find_by(vacols_id: vacols_id) || 
+        self.new(vacols_id: vacols_id)
+        
       repository.load_vacols_data(appeal)
       appeal.save
 

@@ -28,7 +28,7 @@ class AppealRepository
   end
 
   #TODO: consider persisting these records
-  def set.build_appeal(case_record)
+  def self.build_appeal(case_record)
     AppealRepository.set_vacols_values(Appeal.new, case_record)
   end
 

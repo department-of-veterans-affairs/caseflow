@@ -10,19 +10,15 @@ class Fakes::AppealRepository
     @certified_appeal = appeal
   end
 
-  def self.find(id)
+  def self.load_vacols_data(appeal)
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.timer "load appeal #{id}" do
-      @records[id]
+    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+      @records[appeal.vacols_id]
     end
 
-    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record.vbms_id
+    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
-    record
-  end
-
-  def self.load_vacols_data(appeal)
-    appeal
+    appeal.set_from_vacols(record)
   end
 
   def self.fetch_documents_for(appeal)
@@ -40,7 +36,7 @@ class Fakes::AppealRepository
 
   #TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
   def self.appeal_ready_to_certify
-    Appeal.new(
+    {
       type: "Original",
       file_type: "VBMS",
       vbms_id: "VBMS-ID",
@@ -56,11 +52,11 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
+    }
   end
 
   def self.appeal_mismatched_nod
-    Appeal.new(
+    {
       type: "Original",
       file_type: "VBMS",
       vbms_id: "VBMS-ID",
@@ -76,11 +72,11 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
+    }
   end
 
   def self.appeal_mismatched_ssoc
-    Appeal.new(
+    {
       type: "Original",
       file_type: "VBMS",
       representative: "Military Order of the Purple Heart",
@@ -95,11 +91,11 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
+    }
   end
 
   def self.appeal_mismatched_docs
-    Appeal.new(
+    {
       type: "Original",
       file_type: "VBMS",
       representative: "Military Order of the Purple Heart",
@@ -114,11 +110,11 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
+    }
   end
 
   def self.appeal_already_certified
-    Appeal.new(
+    {
       type: :original,
       file_type: :vbms,
       vbms_id: "VBMS-ID",
@@ -134,11 +130,11 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
+    }
   end
 
   def self.appeal_remand_decided
-    Appeal.new(
+    {
       type: "Original",
       disposition: "Remanded",
       decision_date: 7.days.ago,
@@ -147,11 +143,11 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter"
-    )
+    }
   end
 
   def self.appeal_full_grant_decided
-    Appeal.new(
+    {
       type: "Post Remand",
       disposition: "Allowed",
       decision_date: 7.days.ago,
@@ -160,20 +156,20 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter"
-    )
+    }
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
     a = appeal_ready_to_certify
-    a.vbms_id = RAISE_VBMS_ERROR_ID
+    a[:vbms_id] = RAISE_VBMS_ERROR_ID
     a
   end
 
   def self.appeal_missing_data
     a = appeal_ready_to_certify
-    a.form9_date = nil
+    a[:form9_date] = nil
     a
   end
 
