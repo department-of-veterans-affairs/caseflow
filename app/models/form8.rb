@@ -149,12 +149,10 @@ class Form8
   end
 
   def save!
-    # todo move this in a before xx hook
     Form8.pdf_service.save_pdf_for!(self)
   end
 
   def persisted?
-    # todo change to true/remove
     false
   end
 
