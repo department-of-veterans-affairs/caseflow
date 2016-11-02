@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
-class Form8
-  include ActiveModel::Model
+class Form8 < ActiveRecord::Base
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
+  before_save :save_pdf
+
   # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
   # (e.g., changing the type of an attribute from string to date)
+  # This is used to force the creation of a new Form8 model from appeal data for any users who are logged in
+  # during a deploy with a schema change, so those users won't have certification crash on them.
+  # TODO(alex): this should work for the deploy that makes this persisted to the db because we can
+  # force creation of db records for all certification models, but will it continue to work for deploys
+  # that involve later Form8 migrations?
   SERIALIZATION_VERSION = 2
 
   FORM_FIELDS = [
@@ -51,6 +57,15 @@ class Form8
   def initialize(params = {})
     super(params)
     self.version = SERIALIZATION_VERSION unless params.key?(:version)
+    self.populate_initial_data
+  end
+
+  def save_pdf
+    Form8.pdf_service.save_pdf_for!(self)
+  end
+
+  def populate_initial_data
+    puts "population"
   end
 
   def hearing_on_file
@@ -146,14 +161,6 @@ class Form8
   def representative
     type = representative_type == "Other" ? representative_type_specify_other : representative_type
     "#{representative_name} - #{type}"
-  end
-
-  def save!
-    Form8.pdf_service.save_pdf_for!(self)
-  end
-
-  def persisted?
-    false
   end
 
   def pdf_location
