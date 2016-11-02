@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161031155400) do
+ActiveRecord::Schema.define(version: 20161102173436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -97,6 +97,21 @@ ActiveRecord::Schema.define(version: 20161031155400) do
     t.string   "_initial_certifying_official_title"
     t.string   "certifying_official_title"
     t.datetime "certification_date"
+    t.integer  "record_cf_or_xcf"
+    t.integer  "record_inactive_cf"
+    t.integer  "record_dental_f"
+    t.integer  "record_r_and_e_f"
+    t.integer  "record_training_sub_f"
+    t.integer  "record_loan_guar_f"
+    t.integer  "record_outpatient_f"
+    t.integer  "record_hospital_cor"
+    t.integer  "record_clinical_rec"
+    t.integer  "record_x_rays"
+    t.integer  "record_slides"
+    t.integer  "record_tissue_blocks"
+    t.integer  "record_dep_ed_f"
+    t.integer  "record_insurance_f"
+    t.integer  "record_other"
   end
 
   create_table "users", force: :cascade do |t|
