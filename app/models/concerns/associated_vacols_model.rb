@@ -2,6 +2,12 @@ module AssociatedVacolsModel
   extend ActiveSupport::Concern
 
   module ClassMethods
+    # vacols_attr_accessors will lazy load the underlying data from the VACOLS DB upon first call
+    #
+    # For example, appeal = Appeal.find(id) will *not* make any calls to load the data from VACOLS,
+    # but soon as we call appeal.veteran_first_name, it will trigger the VACOLS DB lookup and fill in
+    # all instance variables for the appeal. Further requests will pull the values from memory and not
+    # do subsequent VACOLS DB lookups
     def vacols_attr_accessor *fields
       fields.each do |field|
         define_method field do
