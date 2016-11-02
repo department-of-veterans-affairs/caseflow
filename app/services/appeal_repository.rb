@@ -27,6 +27,11 @@ class AppealRepository
     appeal
   end
 
+  #TODO: consider persisting these records
+  def set.build_appeal(case_record)
+    AppealRepository.set_vacols_values(Appeal.new, case_record)
+  end
+
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
@@ -56,11 +61,29 @@ class AppealRepository
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_record: case_record,
-      merged: case_record.bfdc == "M"
+      disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+      decision_date: normalize_vacols_date(case_record.bfddec)
     )
 
     appeal
   end
+
+  def self.remands_ready_for_claims_establishment
+    remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
+      VACOLS::CASE.remands_ready_for_claims_establishment
+    end
+
+    remands.map { |case_record| build_appeal(case_record) }
+  end
+
+  def self.amc_full_grants(decided_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
+      VACOLS::CASE.amc_full_grants(decided_after)
+    end
+
+    full_grants.map { |case_record| build_appeal(case_record) }
+  end
+
 
   def self.ssoc_dates_from(case_record)
     [

@@ -129,7 +129,7 @@ describe User do
 
   context ".from_session" do
     subject { User.from_session(session) }
-    context "get a user object from a session" do
+    context "gets a user object from a session" do
       before do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
@@ -140,9 +140,13 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
       end
+
+      it "persists user to DB" do
+        expect(User.find(subject.id)).to be_truthy
+      end
     end
 
-    context "get a nil return from a nil session" do
+    context "returns nil when no user in session" do
       before { session["user"] = nil }
       it { is_expected.to be_nil }
     end

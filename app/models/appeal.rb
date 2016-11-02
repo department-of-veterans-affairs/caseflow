@@ -120,7 +120,6 @@ class Appeal < ActiveRecord::Base
     def repository
       @repository ||= AppealRepository
     end
-
   end
 
   def documents_with_type(type)

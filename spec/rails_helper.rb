@@ -70,16 +70,13 @@ module StubbableUser
       prepend ClassMethods
     end
   end
-
-  def find_or_create_by(css_id:, station_id:)
-    new(css_id: css_id, station_id: station_id)
-  end
 end
 
 User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
+  User.delete_all
   Certification.delete_all
 end
 
