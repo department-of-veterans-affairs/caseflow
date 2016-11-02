@@ -22,10 +22,26 @@ class AppealRepository
       VACOLS::Case.includes(:folder, :correspondent).find(vacols_id)
     end
 
-    create_appeal(case_record)
+    build_appeal(case_record)
   end
 
-  def self.create_appeal(case_record)
+  def self.remands_ready_for_claims_establishment
+    remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
+      VACOLS::CASE.remands_ready_for_claims_establishment
+    end
+
+    remands.map { |case_record| build_appeal(case_record) }
+  end
+
+  def self.amc_full_grants(decided_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
+      VACOLS::CASE.amc_full_grants(decided_after)
+    end
+
+    full_grants.map { |case_record| build_appeal(case_record) }
+  end
+
+  def self.build_appeal(case_record)
     appeal = Appeal.from_records(
       case_record: case_record,
       folder_record: case_record.folder,

@@ -10,7 +10,7 @@ class Fakes::AppealRepository
   end
 
   def self.find(id)
-    # timing a hash access is unnecessery but this adds coverage to MetricsService in dev mode
+    # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.timer "load appeal #{id}" do
       @records[id]
     end
@@ -18,6 +18,14 @@ class Fakes::AppealRepository
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record.vbms_id
 
     record
+  end
+
+  def self.remands_ready_for_claims_establishment
+    [@records["321C"]]
+  end
+
+  def self.amc_full_grants(decided_after:)
+    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
   def self.appeal_ready_to_certify
@@ -118,6 +126,32 @@ class Fakes::AppealRepository
     )
   end
 
+  def self.appeal_remand_decided
+    Appeal.new(
+      type: "Original",
+      disposition: "Remanded",
+      decision_date: 7.days.ago,
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter"
+    )
+  end
+
+  def self.appeal_full_grant_decided
+    Appeal.new(
+      type: "Post Remand",
+      disposition: "Allowed",
+      decision_date: 7.days.ago,
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter"
+    )
+  end
+
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
@@ -150,6 +184,8 @@ class Fakes::AppealRepository
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
+        "321C" => Fakes::AppealRepository.appeal_remand_decided,
+        "654C" => Fakes::AppealRepository.appeal_full_grant_decided,
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }

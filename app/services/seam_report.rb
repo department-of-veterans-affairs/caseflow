@@ -29,7 +29,7 @@ class SeamReport < Report
       appeal.certification_date,
       bool_str(appeal.hearing_pending?),
       appeal.vbms_id,
-      bool_str(appeal.merged)
+      bool_str(appeal.disposition == "Merged Appeal")
     ]
   end
 
@@ -80,7 +80,7 @@ class SeamReport < Report
   end
 
   def load_record(case_record)
-    AppealRepository.create_appeal(case_record)
+    AppealRepository.build_appeal(case_record)
   end
 
   def include_record?(appeal)

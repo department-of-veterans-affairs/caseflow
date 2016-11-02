@@ -95,7 +95,8 @@ describe Appeal do
         bfha: "6",
         bfhr: "1",
         bfregoff: "DSUSER",
-        bfdc: "M"
+        bfdc: "9",
+        bfddec: 1.day.ago
       )
     end
 
@@ -151,7 +152,8 @@ describe Appeal do
         hearing_requested: true,
         hearing_held: true,
         regional_office_key: "DSUSER",
-        merged: true
+        disposition: "Withdrawn",
+        decision_date: Appeal.normalize_vacols_date(1.day.ago)
       )
     end
 
