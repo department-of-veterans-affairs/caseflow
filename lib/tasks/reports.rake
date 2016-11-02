@@ -10,4 +10,16 @@ namespace :reports do
     Rails.application.eager_load!
     MismatchReport.new.run!
   end
+
+  desc "Run the full grants report"
+  task grants: [:environment] do
+    Rails.application.eager_load!
+    FullGrantsReport.new.run!
+  end
+
+  desc "Run the remands report"
+  task remands: [:environment] do
+    Rails.application.eager_load!
+    RemandsReport.new.run!
+  end
 end
