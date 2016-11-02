@@ -69,7 +69,7 @@ RSpec.feature "Login" do
     expect(page).to have_current_path("/login")
   end
 
-  scenario "Single Sign On is down" do
+  scenario "Single Sign On is down"do
     Rails.application.config.sso_service_disabled = true
     visit "certifications/new/1234C"
 

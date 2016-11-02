@@ -11,11 +11,14 @@ class Fakes::AppealRepository
   end
 
   def self.load_vacols_data(appeal)
+    return unless @records
+
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
-      @records[appeal.vacols_id]
+      @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
+    # RAISE_VACOLS_NOT_FOUND_ID == record[:vacols_id]
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
     appeal.set_from_vacols(record)

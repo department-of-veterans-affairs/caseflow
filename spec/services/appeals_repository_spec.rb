@@ -1,4 +1,12 @@
 describe AppealRepository do
+  before do
+    @old_repo = Appeal.repository
+    Appeal.repository = AppealRepository
+
+    Appeal.any_instance.stub(:check_and_load_vacols_data!) {}
+  end
+  after { Appeal.repository = @old_repo }
+
   context ".normalize_vacols_date" do
     subject { AppealRepository.normalize_vacols_date(datetime) }
 
@@ -93,7 +101,7 @@ describe AppealRepository do
         hearing_held: true,
         regional_office_key: "DSUSER",
         disposition: "Withdrawn",
-        decision_date: Appeal.normalize_vacols_date(1.day.ago)
+        decision_date: AppealRepository.normalize_vacols_date(1.day.ago)
       )
     end
 

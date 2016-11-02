@@ -16,6 +16,7 @@ describe Appeal do
     before do
       @old_repo = Appeal.repository
       Appeal.repository = Fakes::AppealRepository
+      Fakes::AppealRepository.records = nil
     end
     after { Appeal.repository = @old_repo }
 
