@@ -218,7 +218,7 @@ RSpec.feature "Save Certification" do
       representative_type: "Attorney",
       hearing_requested: "No",
       hearing_transcript_on_file: "Yes",
-      hearing_requested_explaination: nil,
+      hearing_requested_explanation: nil,
       contested_claims_procedures_applicable: "No",
       ssoc_required: "Not required",
       certifying_official_name: "Kavi",
