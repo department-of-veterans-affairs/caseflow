@@ -110,7 +110,6 @@ class Appeal < ActiveRecord::Base
     delegate :certify, to: :repository
 
     def find_or_create_by_vacols_id(vacols_id)
-      binding.pry
       appeal = self.new(vacols_id: vacols_id)
       repository.load_vacols_data(appeal)
       appeal.save

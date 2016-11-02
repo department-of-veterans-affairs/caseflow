@@ -29,6 +29,7 @@ class Fakes::AppealRepository
     @documents || []
   end
 
+  #TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
   def self.appeal_ready_to_certify
     Appeal.new(
       type: "Original",

@@ -8,11 +8,14 @@ describe Certification do
     Fakes::AppealRepository.records = { "4949" => appeal }
     Certification.delete_all
     Appeal.delete_all
+    Appeal.stub(:find_or_create_by_vacols_id) do |vacols_id|
+      appeal
+    end
   end
 
   after { Timecop.return }
 
-  context "#start!", focus: true do
+  context "#start!" do
     subject { certification.start! }
 
     context "when appeal has already been certified" do
