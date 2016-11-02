@@ -11,7 +11,7 @@
 affecting its placement in tab order, thus making it invisible onscreen
 but read out by screen readers. -->
 
-<a class="usa-sr-only" href="<%= pdf_certification_path(id: form8.id, time: Time.now.to_i) %>" download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Form 8 PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
+<a class="usa-sr-only" id="sr-download-link" href="<%= pdf_certification_path(id: form8.id, time: Time.now.to_i) %>" download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Form 8 PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
 <a class="usa-sr-only" href="#certification-buttons"> If you are using a screen reader and have downloaded and verified the Form 8 PDF, click this link to skip past the browser PDF viewer to the certification buttons.</a>
 
 <iframe aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."class="cf-doc-embed cf-app-segment" title="Form8 PDF"
