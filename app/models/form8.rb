@@ -34,7 +34,7 @@ class Form8
     :hearing_requested,
     :hearing_held,
     :hearing_transcript_on_file,
-    :hearing_requested_explaination,
+    :hearing_requested_explanation,
     :contested_claims_procedures_applicable,
     :contested_claims_requirements_followed,
     :soc_date,
