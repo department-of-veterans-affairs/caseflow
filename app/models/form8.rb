@@ -8,7 +8,7 @@ class Form8
 
   # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
   # (e.g., changing the type of an attribute from string to date)
-  SERIALIZATION_VERSION = 1
+  SERIALIZATION_VERSION = 2
 
   FORM_FIELDS = [
     :vacols_id,
