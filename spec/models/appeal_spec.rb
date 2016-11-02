@@ -69,19 +69,27 @@ describe Appeal do
   end
 
   context ".find_or_create_by_vacols_id" do
-    subject { Appeal.find_or_create_by_vacols_id("123C") }
     before do
       Appeal.repository.stub(:load_vacols_data) do |appeal|
         nil
       end
-      Appeal.any_instance.stub(:save) do |appeal|
-        appeal
+    end
+    subject { Appeal.find_or_create_by_vacols_id("123C") }
+    context "sets the vacols_id" do
+      before do
+        Appeal.any_instance.stub(:save) do |appeal|
+          appeal
+        end
+      end
+
+      it do
+        is_expected.to be_an_instance_of(Appeal)
+        expect(subject.vacols_id).to eq("123C") 
       end
     end
 
-    it "sets the vacols_id" do
-      is_expected.to be_an_instance_of(Appeal)
-      expect(subject.vacols_id).to eq("123C") 
+    it "persists in database" do
+      expect(Appeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(Appeal)
     end
   end
 
@@ -124,4 +132,5 @@ describe Appeal do
       expect(subject.sanitized_vbms_id).to eq("123")
     end
   end
+
 end

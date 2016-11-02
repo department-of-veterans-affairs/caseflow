@@ -10,6 +10,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
+          #check_and_load_vacols_data!
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
@@ -26,8 +27,8 @@ module AssociatedVacolsModel
   def check_and_load_vacols_data!
     unless @fetched_vacols_data
       # Fetch data from vacols
-      self.class.repository.load_vacols_data(self)
       @fetched_vacols_data = true
+      self.class.repository.load_vacols_data(self)
     end
   end
 end

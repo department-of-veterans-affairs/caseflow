@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Cancel certification" do
+RSpec.feature "Cancel certification", focus: true do
   scenario "Click cancel link and confirm modal" do
     User.authenticate!
 
