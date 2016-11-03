@@ -157,7 +157,7 @@ describe AppealRepository do
       it { is_expected.to eq("VVA") }
     end
 
-    context "detects VBMS folder" do
+    context "detects paper" do
       let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj: "other_val") }
       it { is_expected.to eq("Paper") }
     end
