@@ -6,6 +6,8 @@ class CertificationsController < ApplicationController
 
   rescue_from VBMSError, with: :on_vbms_error
 
+
+
   def on_vbms_error
     @error_title = "VBMS Failure"
     @error_subtitle = "Unable to communicate with the VBMS system at this time."
@@ -26,6 +28,10 @@ class CertificationsController < ApplicationController
   end
 
   def create
+    # Can't use controller params in model mass assignments without whitelisting. See:
+    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
+    # TODO(alex): is this too permissive?
+    params.permit!
     @form8 = Form8.from_string_params(params[:form8])
     Rails.cache.write(form8_cache_key, @form8.attributes)
     form8.save!
@@ -70,6 +76,10 @@ class CertificationsController < ApplicationController
   end
 
   def form8
+    # Can't use controller params in model mass assignments without whitelisting. See:
+    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
+    # TODO(alex): is this too permissive?
+    params.permit!
     @form8 ||= Form8.new(id: params[:id])
   end
   helper_method :form8

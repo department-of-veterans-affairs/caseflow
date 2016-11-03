@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class Form8 < ActiveRecord::Base
-  include ActiveModel::Serialization
-  extend ActiveModel::Naming
-
   after_initialize :setup
   before_save :save_pdf
 
