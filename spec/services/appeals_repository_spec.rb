@@ -1,4 +1,4 @@
-describe AppealRepository, focus: true do
+describe AppealRepository do
   before do
     @old_repo = Appeal.repository
     Appeal.repository = AppealRepository
