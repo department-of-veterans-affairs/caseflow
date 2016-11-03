@@ -17,7 +17,11 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
-  resources :dispatch, only: [:index, :show]
+  # get 'dispatch', to: "tasks#index"
+  scope "/dispatch", department: :dispatch do
+    get '/', to: "tasks#index"
+    resources :tasks, only: [:index, :show]
+  end
 
   resources :offices, only: :index
 

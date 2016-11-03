@@ -1,6 +1,6 @@
 <h1>Dispatch Index WIP</h1>
 <% @tasks.each do |task| %>
   <p>
-    <%= link_to "Task Type: #{task.type}", dispatch_path(task) %>
+    <%= link_to "Task Type: #{task.type}", task_path(task) %>
   </p>
 <% end %>
