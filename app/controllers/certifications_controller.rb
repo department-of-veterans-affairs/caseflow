@@ -30,8 +30,7 @@ class CertificationsController < ApplicationController
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    # TODO(alex): is this too permissive?
-    params.permit!
+    params.require(:form8).permit!
     @form8 = Form8.from_string_params(params[:form8])
     Rails.cache.write(form8_cache_key, @form8.attributes)
     form8.save!
@@ -78,8 +77,7 @@ class CertificationsController < ApplicationController
   def form8
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    # TODO(alex): is this too permissive?
-    params.permit!
+    params.permit(:id)
     @form8 ||= Form8.new(id: params[:id])
   end
   helper_method :form8
