@@ -3,9 +3,35 @@ describe AppealRepository do
     @old_repo = Appeal.repository
     Appeal.repository = AppealRepository
 
-    Appeal.any_instance.stub(:check_and_load_vacols_data!) {}
+    allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
   end
   after { Appeal.repository = @old_repo }
+
+  let(:case_record) do
+    OpenStruct.new(
+      bfcorlid: "VBMS-ID",
+      bfac: "4",
+      bfso: "Q",
+      bfpdnum: "INSURANCE-LOAN-NUMBER",
+      bfdrodec: 11.days.ago,
+      bfdnod: 10.days.ago,
+      bfdsoc: 9.days.ago,
+      bfd19: 8.days.ago,
+      bfssoc1: 7.days.ago,
+      bfssoc2: 6.days.ago,
+      bfha: "6",
+      bfhr: "1",
+      bfregoff: "DSUSER",
+      bfdc: "9",
+      bfddec: 1.day.ago
+    )
+  end
+
+  let(:folder_record) do
+    OpenStruct.new(
+      tivbms: "Y"
+    )
+  end
 
   context ".normalize_vacols_date" do
     subject { AppealRepository.normalize_vacols_date(datetime) }
@@ -26,25 +52,6 @@ describe AppealRepository do
     before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
     after { Timecop.return }
 
-    let(:case_record) do
-      OpenStruct.new(
-        bfcorlid: "VBMS-ID",
-        bfac: "4",
-        bfso: "Q",
-        bfpdnum: "INSURANCE-LOAN-NUMBER",
-        bfdrodec: 11.days.ago,
-        bfdnod: 10.days.ago,
-        bfdsoc: 9.days.ago,
-        bfd19: 8.days.ago,
-        bfssoc1: 7.days.ago,
-        bfssoc2: 6.days.ago,
-        bfha: "6",
-        bfhr: "1",
-        bfregoff: "DSUSER",
-        bfdc: "9",
-        bfddec: 1.day.ago
-      )
-    end
 
     let(:correspondent_record) do
       OpenStruct.new(
@@ -58,11 +65,6 @@ describe AppealRepository do
       )
     end
 
-    let(:folder_record) do
-      OpenStruct.new(
-        tivbms: "Y"
-      )
-    end
 
     subject do
       appeal = Appeal.new
@@ -117,6 +119,20 @@ describe AppealRepository do
 
       it { is_expected.to have_attributes(appellant_relationship: "") }
     end
+  end
+
+  context ".ssoc_dates_from" do
+    subject { AppealRepository.ssoc_dates_from(case_record) }
+    it do
+      is_expected.to be_an_instance_of(Array)
+      expect(subject.all? { |d| d.class == ActiveSupport::TimeWithZone }).to be_truthy
+    end
+  end
+
+  context ".folder_type_from" do
+    subject { AppealRepository.folder_type_from(folder_record) }
+
+    it { is_expected.to eq("VBMS") }
   end
 end
 
