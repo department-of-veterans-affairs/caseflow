@@ -10,6 +10,10 @@ describe Form8 do
       )
     end
 
+    before do
+      Fakes::AppealRepository.records = nil
+    end
+
     subject { Form8.new(form8.attributes) }
 
     it do
