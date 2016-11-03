@@ -57,7 +57,7 @@ describe AppealRepository do
   end
 
   context ".load_vacols_data" do
-    let(:appeal) { Appeal.new(vacols_id: '123C') }
+    let(:appeal) { Appeal.new(vacols_id: "123C") }
     subject { AppealRepository.load_vacols_data(appeal) }
     it do
       AppealRepository.should_receive(:set_vacols_values).exactly(1).times
@@ -83,8 +83,6 @@ describe AppealRepository do
   context ".set_vacols_values" do
     before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
     after { Timecop.return }
-
-
 
     subject do
       appeal = Appeal.new
@@ -150,20 +148,18 @@ describe AppealRepository do
   context ".folder_type_from" do
     subject { AppealRepository.folder_type_from(folder_record) }
 
-    context 'detects VBMS folder' do
+    context "detects VBMS folder" do
       it { is_expected.to eq("VBMS") }
     end
 
-    context 'detects VVA folder' do
+    context "detects VVA folder" do
       let(:folder_record) { OpenStruct.new(tisubj: "Y") }
       it { is_expected.to eq("VVA") }
     end
 
-    context 'detects VBMS folder' do
-      let(:folder_record) { OpenStruct.new(tivbms: 'other_val', tisubj: 'other_val') }
+    context "detects VBMS folder" do
+      let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj: "other_val") }
       it { is_expected.to eq("Paper") }
     end
-
   end
 end
-

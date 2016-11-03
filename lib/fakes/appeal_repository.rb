@@ -24,10 +24,9 @@ class Fakes::AppealRepository
     appeal.set_from_vacols(record)
   end
 
-  def self.fetch_documents_for(appeal)
+  def self.fetch_documents_for(_appeal)
     @documents || []
   end
-
 
   def self.remands_ready_for_claims_establishment
     [@records["321C"]]
@@ -37,7 +36,7 @@ class Fakes::AppealRepository
     [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
-  #TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
+  # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
   def self.appeal_ready_to_certify
     {
       type: "Original",

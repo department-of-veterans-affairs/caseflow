@@ -29,7 +29,7 @@ class AppealRepository
     appeal
   end
 
-  #TODO: consider persisting these records
+  # TODO: consider persisting these records
   def self.build_appeal(case_record)
     AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
   end
@@ -88,7 +88,6 @@ class AppealRepository
   end
   # :nocov:
 
-
   def self.ssoc_dates_from(case_record)
     [
       case_record.bfssoc1,
@@ -98,7 +97,6 @@ class AppealRepository
       case_record.bfssoc5
     ].map { |datetime| normalize_vacols_date(datetime) }.reject(&:nil?)
   end
-
 
   def self.folder_type_from(folder_record)
     if %w(Y 1 0).include?(folder_record.tivbms)

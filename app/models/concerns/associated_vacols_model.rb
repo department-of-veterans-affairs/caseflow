@@ -8,7 +8,7 @@ module AssociatedVacolsModel
     # but soon as we call appeal.veteran_first_name, it will trigger the VACOLS DB lookup and fill in
     # all instance variables for the appeal. Further requests will pull the values from memory and not
     # do subsequent VACOLS DB lookups
-    def vacols_attr_accessor *fields
+    def vacols_attr_accessor(*fields)
       fields.each do |field|
         define_method field do
           check_and_load_vacols_data!
@@ -25,7 +25,7 @@ module AssociatedVacolsModel
 
   def set_from_vacols(values)
     values.each do |key, value|
-      setter = self.method("#{key}=")
+      setter = method("#{key}=")
       setter.call(value)
     end
   end
