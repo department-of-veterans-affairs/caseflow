@@ -1,4 +1,4 @@
-describe Task, focus: true do
+describe Task do
   before do
     Task.delete_all
     Appeal.delete_all
