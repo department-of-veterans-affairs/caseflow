@@ -104,6 +104,10 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
+  def fetch_documents!
+    self.class.repository.fetch_documents_for(self)
+  end
+
   class << self
      attr_writer :repository
      delegate :certify, to: :repository
