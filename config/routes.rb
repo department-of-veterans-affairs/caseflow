@@ -16,6 +16,9 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
+
+  resources :dispatch, only: [:index, :show]
+
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
