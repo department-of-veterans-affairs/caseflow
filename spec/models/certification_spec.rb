@@ -22,7 +22,7 @@ describe Certification do
     Fakes::AppealRepository.documents = nil
   end
 
-  context "#appeal", focus: true do
+  context "#appeal" do
     subject { certification.appeal }
     before do
       Fakes::AppealRepository.set_vbms_documents!
