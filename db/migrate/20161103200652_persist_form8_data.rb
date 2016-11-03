@@ -90,7 +90,6 @@ class PersistForm8Data < ActiveRecord::Migration
       t.integer :record_dep_ed_f
       t.integer :record_insurance_f
       t.integer :record_other
-
     end
   end
 end
