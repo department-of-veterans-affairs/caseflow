@@ -1,5 +1,6 @@
 require "vbms"
 
+# :nocov:
 class CaseflowLogger
   def log(event, data)
     case event
@@ -13,12 +14,13 @@ class CaseflowLogger
     end
   end
 end
+# :nocov:
 
 class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
   def self.load_vacols_data(appeal)
-    case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
+    case_record = MetricsService.timer "loaded VACOLS case #{appeal.vacols_id}" do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
 
@@ -29,7 +31,7 @@ class AppealRepository
 
   #TODO: consider persisting these records
   def self.build_appeal(case_record)
-    AppealRepository.set_vacols_values(Appeal.new, case_record)
+    AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
   end
 
   def self.set_vacols_values(appeal:, case_record:)
@@ -68,6 +70,7 @@ class AppealRepository
     appeal
   end
 
+  # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
       VACOLS::CASE.remands_ready_for_claims_establishment
@@ -83,6 +86,7 @@ class AppealRepository
 
     full_grants.map { |case_record| build_appeal(case_record) }
   end
+  # :nocov:
 
 
   def self.ssoc_dates_from(case_record)
@@ -122,6 +126,7 @@ class AppealRepository
     Time.utc(value.year, value.month, value.day, 0, 0, 0)
   end
 
+  # :nocov:
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -212,4 +217,5 @@ class AppealRepository
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
+  # :nocov:
 end
