@@ -1,5 +1,6 @@
 require "vbms"
 
+# :nocov:
 class CaseflowLogger
   def log(event, data)
     case event
@@ -13,18 +14,63 @@ class CaseflowLogger
     end
   end
 end
+# :nocov:
 
 class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
-  def self.find(vacols_id, _args = {})
-    case_record = MetricsService.timer "loaded VACOLS case #{vacols_id}" do
-      VACOLS::Case.includes(:folder, :correspondent).find(vacols_id)
+  def self.load_vacols_data(appeal)
+    case_record = MetricsService.timer "loaded VACOLS case #{appeal.vacols_id}" do
+      VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
 
-    build_appeal(case_record)
+    set_vacols_values(appeal: appeal, case_record: case_record)
+
+    appeal
   end
 
+  # TODO: consider persisting these records
+  def self.build_appeal(case_record)
+    AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def self.set_vacols_values(appeal:, case_record:)
+    correspondent_record = case_record.correspondent
+    folder_record = case_record.folder
+
+    appeal.assign_from_vacols(
+      vbms_id: case_record.bfcorlid,
+      type: VACOLS::Case::TYPES[case_record.bfac],
+      file_type: folder_type_from(folder_record),
+      representative: VACOLS::Case::REPRESENTATIVES[case_record.bfso][:full_name],
+      veteran_first_name: correspondent_record.snamef,
+      veteran_middle_initial: correspondent_record.snamemi,
+      veteran_last_name: correspondent_record.snamel,
+      appellant_first_name: correspondent_record.sspare1,
+      appellant_middle_initial: correspondent_record.sspare2,
+      appellant_last_name: correspondent_record.sspare3,
+      appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
+      insurance_loan_number: case_record.bfpdnum,
+      notification_date: normalize_vacols_date(case_record.bfdrodec),
+      nod_date: normalize_vacols_date(case_record.bfdnod),
+      soc_date: normalize_vacols_date(case_record.bfdsoc),
+      form9_date: normalize_vacols_date(case_record.bfd19),
+      ssoc_dates: ssoc_dates_from(case_record),
+      hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
+      hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+      hearing_held: !case_record.bfha.nil?,
+      regional_office_key: case_record.bfregoff,
+      certification_date: case_record.bf41stat,
+      case_record: case_record,
+      disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+      decision_date: normalize_vacols_date(case_record.bfddec)
+    )
+
+    appeal
+  end
+
+  # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
       VACOLS::CASE.remands_ready_for_claims_establishment
@@ -40,25 +86,45 @@ class AppealRepository
 
     full_grants.map { |case_record| build_appeal(case_record) }
   end
+  # :nocov:
 
-  def self.build_appeal(case_record)
-    appeal = Appeal.from_records(
-      case_record: case_record,
-      folder_record: case_record.folder,
-      correspondent_record: case_record.correspondent
-    )
+  def self.ssoc_dates_from(case_record)
+    [
+      case_record.bfssoc1,
+      case_record.bfssoc2,
+      case_record.bfssoc3,
+      case_record.bfssoc4,
+      case_record.bfssoc5
+    ].map { |datetime| normalize_vacols_date(datetime) }.reject(&:nil?)
+  end
 
-    appeal.documents = fetch_documents_for(appeal).map do |vbms_document|
-      Document.from_vbms_document(vbms_document)
+  def self.folder_type_from(folder_record)
+    if %w(Y 1 0).include?(folder_record.tivbms)
+      "VBMS"
+    elsif folder_record.tisubj == "Y"
+      "VVA"
+    else
+      "Paper"
     end
+  end
 
-    appeal
+  # dates in VACOLS are incorrectly recorded as UTC.
+  def self.normalize_vacols_date(datetime)
+    return nil unless datetime
+    utc_datetime = datetime.in_time_zone("UTC")
+
+    Time.zone.local(
+      utc_datetime.year,
+      utc_datetime.month,
+      utc_datetime.day
+    )
   end
 
   def self.dateshift_to_utc(value)
     Time.utc(value.year, value.month, value.day, 0, 0, 0)
   end
 
+  # :nocov:
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -115,7 +181,13 @@ class AppealRepository
 
     sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::ListDocuments.new(sanitized_id)
-    send_and_log_request(sanitized_id, request)
+    documents = send_and_log_request(sanitized_id, request)
+
+    appeal.documents = documents.map do |vbms_document|
+      Document.from_vbms_document(vbms_document)
+    end
+
+    appeal
   end
 
   def self.vbms_config
@@ -143,4 +215,5 @@ class AppealRepository
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
+  # :nocov:
 end
