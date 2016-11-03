@@ -25,6 +25,7 @@ module CaseflowCertification
 
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('services')
+    config.autoload_paths << Rails.root.join('app/models/tasks')
     config.exceptions_app = self.routes
 
     config.cache_store = :memory_store, {expires_in: 24.hours, size: 256.megabytes}
