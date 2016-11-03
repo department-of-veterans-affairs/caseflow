@@ -21,7 +21,7 @@ class Fakes::AppealRepository
     # RAISE_VACOLS_NOT_FOUND_ID == record[:vacols_id]
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
-    appeal.set_from_vacols(record)
+    appeal.assign_from_vacols(record)
   end
 
   def self.fetch_documents_for(_appeal)

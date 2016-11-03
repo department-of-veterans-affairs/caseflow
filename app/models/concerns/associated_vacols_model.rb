@@ -23,18 +23,25 @@ module AssociatedVacolsModel
     end
   end
 
-  def set_from_vacols(values)
+  # Setter method for assigning a hash of values
+  # to their corresponding instance variables
+  def assign_from_vacols(values)
     values.each do |key, value|
       setter = method("#{key}=")
       setter.call(value)
     end
   end
 
+  # TODO(jd): consider adding a more sophisticated caching mechanism.
+  # Right now we are setting the @fetched_vacols_data to true before knowing
+  # if the DB request to VACOLS succeeded. This is required to avoid an infinite
+  # loop within the setters, but will not properly handle the case of VACOLS
+  # returning an error
   def check_and_load_vacols_data!
-    unless @fetched_vacols_data
-      # Fetch data from vacols
-      @fetched_vacols_data = true
-      self.class.repository.load_vacols_data(self)
-    end
+    return if @fetched_vacols_data
+
+    # Fetch and cache values from VACOLS
+    @fetched_vacols_data = true
+    self.class.repository.load_vacols_data(self)
   end
 end

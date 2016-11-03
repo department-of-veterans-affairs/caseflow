@@ -34,12 +34,12 @@ class AppealRepository
     AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    appeal.set_from_vacols(
+    appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
