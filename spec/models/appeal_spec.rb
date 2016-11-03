@@ -70,7 +70,7 @@ describe Appeal do
 
   context ".find_or_create_by_vacols_id" do
     before do
-      Appeal.repository.stub(:load_vacols_data) do |appeal|
+      Appeal.repository.stub(:load_vacols_data) do |_appeal|
         nil
       end
     end
@@ -84,7 +84,7 @@ describe Appeal do
 
       it do
         is_expected.to be_an_instance_of(Appeal)
-        expect(subject.vacols_id).to eq("123C") 
+        expect(subject.vacols_id).to eq("123C")
       end
     end
 
@@ -132,5 +132,4 @@ describe Appeal do
       expect(subject.sanitized_vbms_id).to eq("123")
     end
   end
-
 end

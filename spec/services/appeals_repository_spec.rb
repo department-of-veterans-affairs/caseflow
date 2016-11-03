@@ -3,9 +3,67 @@ describe AppealRepository do
     @old_repo = Appeal.repository
     Appeal.repository = AppealRepository
 
-    Appeal.any_instance.stub(:check_and_load_vacols_data!) {}
+    allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+    allow_any_instance_of(VACOLS::Case::ActiveRecord_Relation).to receive(:find).and_return(nil)
   end
   after { Appeal.repository = @old_repo }
+
+  let(:correspondent_record) do
+    OpenStruct.new(
+      snamef: "Phil",
+      snamemi: "J",
+      snamel: "Johnston",
+      sspare1: "Chris",
+      sspare2: "M",
+      sspare3: "Johnston",
+      susrtyp: "Brother"
+    )
+  end
+
+  let(:folder_record) do
+    OpenStruct.new(
+      tivbms: "Y"
+    )
+  end
+
+  let(:case_record) do
+    OpenStruct.new(
+      bfcorlid: "VBMS-ID",
+      bfac: "4",
+      bfso: "Q",
+      bfpdnum: "INSURANCE-LOAN-NUMBER",
+      bfdrodec: 11.days.ago,
+      bfdnod: 10.days.ago,
+      bfdsoc: 9.days.ago,
+      bfd19: 8.days.ago,
+      bfssoc1: 7.days.ago,
+      bfssoc2: 6.days.ago,
+      bfha: "6",
+      bfhr: "1",
+      bfregoff: "DSUSER",
+      bfdc: "9",
+      bfddec: 1.day.ago,
+      correspondent: correspondent_record,
+      folder: folder_record
+    )
+  end
+
+  context ".build_appeal" do
+    subject { AppealRepository.build_appeal(case_record) }
+
+    it "returns a new appeal" do
+      is_expected.to be_an_instance_of(Appeal)
+    end
+  end
+
+  context ".load_vacols_data" do
+    let(:appeal) { Appeal.new(vacols_id: "123C") }
+    subject { AppealRepository.load_vacols_data(appeal) }
+    it do
+      AppealRepository.should_receive(:set_vacols_values).exactly(1).times
+      is_expected.to eq(appeal)
+    end
+  end
 
   context ".normalize_vacols_date" do
     subject { AppealRepository.normalize_vacols_date(datetime) }
@@ -26,48 +84,8 @@ describe AppealRepository do
     before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
     after { Timecop.return }
 
-    let(:case_record) do
-      OpenStruct.new(
-        bfcorlid: "VBMS-ID",
-        bfac: "4",
-        bfso: "Q",
-        bfpdnum: "INSURANCE-LOAN-NUMBER",
-        bfdrodec: 11.days.ago,
-        bfdnod: 10.days.ago,
-        bfdsoc: 9.days.ago,
-        bfd19: 8.days.ago,
-        bfssoc1: 7.days.ago,
-        bfssoc2: 6.days.ago,
-        bfha: "6",
-        bfhr: "1",
-        bfregoff: "DSUSER",
-        bfdc: "9",
-        bfddec: 1.day.ago
-      )
-    end
-
-    let(:correspondent_record) do
-      OpenStruct.new(
-        snamef: "Phil",
-        snamemi: "J",
-        snamel: "Johnston",
-        sspare1: "Chris",
-        sspare2: "M",
-        sspare3: "Johnston",
-        susrtyp: "Brother"
-      )
-    end
-
-    let(:folder_record) do
-      OpenStruct.new(
-        tivbms: "Y"
-      )
-    end
-
     subject do
       appeal = Appeal.new
-      case_record.correspondent = correspondent_record
-      case_record.folder = folder_record
       AppealRepository.set_vacols_values(
         appeal: appeal,
         case_record: case_record
@@ -118,5 +136,30 @@ describe AppealRepository do
       it { is_expected.to have_attributes(appellant_relationship: "") }
     end
   end
-end
 
+  context ".ssoc_dates_from" do
+    subject { AppealRepository.ssoc_dates_from(case_record) }
+    it do
+      is_expected.to be_an_instance_of(Array)
+      expect(subject.all? { |d| d.class == ActiveSupport::TimeWithZone }).to be_truthy
+    end
+  end
+
+  context ".folder_type_from" do
+    subject { AppealRepository.folder_type_from(folder_record) }
+
+    context "detects VBMS folder" do
+      it { is_expected.to eq("VBMS") }
+    end
+
+    context "detects VVA folder" do
+      let(:folder_record) { OpenStruct.new(tisubj: "Y") }
+      it { is_expected.to eq("VVA") }
+    end
+
+    context "detects paper" do
+      let(:folder_record) { OpenStruct.new(tivbms: "other_val", tisubj: "other_val") }
+      it { is_expected.to eq("Paper") }
+    end
+  end
+end

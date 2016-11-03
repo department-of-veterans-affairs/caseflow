@@ -104,25 +104,24 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
+  class << self
+     attr_writer :repository
+     delegate :certify, to: :repository
 
- class << self
-    attr_writer :repository
-    delegate :certify, to: :repository
+     def find_or_create_by_vacols_id(vacols_id)
+       appeal = find_by(vacols_id: vacols_id) ||
+                new(vacols_id: vacols_id)
 
-    def find_or_create_by_vacols_id(vacols_id)
-      appeal = self.find_by(vacols_id: vacols_id) ||
-        self.new(vacols_id: vacols_id)
+       repository.load_vacols_data(appeal)
+       appeal.save
 
-      repository.load_vacols_data(appeal)
-      appeal.save
+       appeal
+     end
 
-      appeal
-    end
-
-    def repository
-      @repository ||= AppealRepository
-    end
-  end
+     def repository
+       @repository ||= AppealRepository
+     end
+   end
 
   def documents_with_type(type)
     @documents_by_type ||= {}
@@ -144,5 +143,4 @@ class Appeal < ActiveRecord::Base
       numeric
     end
   end
-
 end
