@@ -24,7 +24,7 @@ RSpec.feature "Start Certification" do
   scenario "Starting a certification with missing documents" do
     User.authenticate!(roles: ["Certify Appeal"])
 
-    appeal = Appeal.new(
+    appeal_hash = {
       type: "Original",
       file_type: "VVA",
       representative: "The American Legion",
@@ -36,8 +36,8 @@ RSpec.feature "Start Certification" do
       veteran_first_name: "Davy",
       veteran_last_name: "Crockett",
       regional_office_key: "DSUSER"
-    )
-    Fakes::AppealRepository.records = { "1234C" => appeal }
+    }
+    Fakes::AppealRepository.records = { "1234C" => appeal_hash }
 
     visit "certifications/new/1234C"
 
@@ -79,7 +79,7 @@ RSpec.feature "Start Certification" do
   scenario "Starting a certifications with all documents matching" do
     User.authenticate!
 
-    appeal = Appeal.new(
+    appeal_hash = {
       type: "Original",
       file_type: "VBMS",
       vbms_id: "VBMS-ID",
@@ -99,8 +99,8 @@ RSpec.feature "Start Certification" do
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "DSUSER"
-    )
-    Fakes::AppealRepository.records = { "5678C" => appeal }
+    }
+    Fakes::AppealRepository.records = { "5678C" => appeal_hash }
 
     visit "certifications/new/5678C"
 

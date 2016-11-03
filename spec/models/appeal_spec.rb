@@ -13,6 +13,13 @@ describe Appeal do
       )
     end
 
+    before do
+      @old_repo = Appeal.repository
+      Appeal.repository = Fakes::AppealRepository
+      Fakes::AppealRepository.records = nil
+    end
+    after { Appeal.repository = @old_repo }
+
     subject { appeal.documents_match? }
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
@@ -61,136 +68,28 @@ describe Appeal do
     end
   end
 
-  context ".normalize_vacols_date" do
-    subject { Appeal.normalize_vacols_date(datetime) }
-
-    context "when datetime is nil" do
-      let(:datetime) { nil }
-      it { is_expected.to be_nil }
-    end
-
-    context "when datetime is in a non-UTC timezone" do
-      before { Time.zone = "America/Chicago" }
-      let(:datetime) { Time.new(2013, 9, 5, 16, 0, 0, "-08:00") }
-      it { is_expected.to eq(Time.zone.local(2013, 9, 6)) }
-    end
-  end
-
-  context ".from_records" do
-    before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
-    after { Timecop.return }
-
-    let(:case_record) do
-      OpenStruct.new(
-        bfcorlid: "VBMS-ID",
-        bfac: "4",
-        bfso: "Q",
-        bfpdnum: "INSURANCE-LOAN-NUMBER",
-        bfdrodec: 11.days.ago,
-        bfdnod: 10.days.ago,
-        bfdsoc: 9.days.ago,
-        bfd19: 8.days.ago,
-        bfssoc1: 7.days.ago,
-        bfssoc2: 6.days.ago,
-        bfha: "6",
-        bfhr: "1",
-        bfregoff: "DSUSER",
-        bfdc: "9",
-        bfddec: 1.day.ago
-      )
-    end
-
-    let(:correspondent_record) do
-      OpenStruct.new(
-        snamef: "Phil",
-        snamemi: "J",
-        snamel: "Johnston",
-        sspare1: "Chris",
-        sspare2: "M",
-        sspare3: "Johnston",
-        susrtyp: "Brother"
-      )
-    end
-
-    let(:folder_record) do
-      OpenStruct.new(
-        tivbms: "Y"
-      )
-    end
-
-    subject do
-      Appeal.from_records(
-        case_record: case_record,
-        correspondent_record: correspondent_record,
-        folder_record: folder_record
-      )
-    end
-
-    it do
-      is_expected.to have_attributes(
-        vbms_id: "VBMS-ID",
-        type: "Reconsideration",
-        file_type: "VBMS",
-        representative: "Catholic War Veterans",
-        veteran_first_name: "Phil",
-        veteran_middle_initial: "J",
-        veteran_last_name: "Johnston",
-        appellant_first_name: "Chris",
-        appellant_middle_initial: "M",
-        appellant_last_name: "Johnston",
-        appellant_relationship: "Brother",
-        insurance_loan_number: "INSURANCE-LOAN-NUMBER",
-        notification_date: Appeal.normalize_vacols_date(11.days.ago),
-        nod_date: Appeal.normalize_vacols_date(10.days.ago),
-        soc_date: Appeal.normalize_vacols_date(9.days.ago),
-        form9_date: Appeal.normalize_vacols_date(8.days.ago),
-        ssoc_dates: [
-          Appeal.normalize_vacols_date(7.days.ago),
-          Appeal.normalize_vacols_date(6.days.ago)
-        ],
-        hearing_type: :video_hearing,
-        hearing_requested: true,
-        hearing_held: true,
-        regional_office_key: "DSUSER",
-        disposition: "Withdrawn",
-        decision_date: Appeal.normalize_vacols_date(1.day.ago)
-      )
-    end
-
-    context "No appellant listed" do
-      let(:correspondent_record) do
-        OpenStruct.new(
-          snamef: "Phil",
-          snamemi: "J",
-          snamel: "Johnston",
-          susrtyp: "Brother"
-        )
-      end
-
-      it { is_expected.to have_attributes(appellant_relationship: "") }
-    end
-  end
-
-  context ".find" do
-    class FakeRepo
-      def self.find(_id)
-        Appeal.new(representative: "Shane's VSO")
-      end
-    end
-
+  context ".find_or_create_by_vacols_id" do
     before do
-      @old_repo = Appeal.repository
-      Appeal.repository = FakeRepo
+      Appeal.repository.stub(:load_vacols_data) do |_appeal|
+        nil
+      end
     end
-    after { Appeal.repository = @old_repo }
-    subject { Appeal.find("123C") }
+    subject { Appeal.find_or_create_by_vacols_id("123C") }
+    context "sets the vacols_id" do
+      before do
+        Appeal.any_instance.stub(:save) do |appeal|
+          appeal
+        end
+      end
 
-    it "delegates to the repository" do
-      expect(subject.representative).to eq("Shane's VSO")
+      it do
+        is_expected.to be_an_instance_of(Appeal)
+        expect(subject.vacols_id).to eq("123C")
+      end
     end
 
-    it "sets the vacols_id" do
-      expect(subject.vacols_id).to eq("123C")
+    it "persists in database" do
+      expect(Appeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(Appeal)
     end
   end
 

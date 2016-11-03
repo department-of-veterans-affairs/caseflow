@@ -1,12 +1,20 @@
 describe Certification do
   let(:certification_date) { nil }
   let(:certification) { Certification.new(vacols_id: "4949") }
-  let(:appeal) { Appeal.new(vacols_id: "4949", vbms_id: "VB12", certification_date: certification_date) }
+  let(:appeal_hash) { { vacols_id: "4949", vbms_id: "VB12", certification_date: certification_date } }
+  let(:appeal) do
+    Appeal.new(appeal_hash)
+  end
 
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-    Fakes::AppealRepository.records = { "4949" => appeal }
+    Fakes::AppealRepository.records = { "4949" => appeal_hash }
     Certification.delete_all
+    Appeal.delete_all
+    Appeal.stub(:find_or_create_by_vacols_id) do |_vacols_id|
+      appeal
+    end
+    Appeal.repository.stub(:load_vacols_data) {}
   end
 
   after { Timecop.return }
@@ -15,7 +23,7 @@ describe Certification do
     subject { certification.start! }
 
     context "when appeal has already been certified" do
-      let(:appeal) { Fakes::AppealRepository.appeal_already_certified }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_already_certified }
 
       it "returns already_certified and sets the flag" do
         expect(subject).to eq(:already_certified)
@@ -33,7 +41,7 @@ describe Certification do
     end
 
     context "when a document is mismatched" do
-      let(:appeal) { Fakes::AppealRepository.appeal_mismatched_nod }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_mismatched_nod }
 
       it "returns mismatched_documents and sets the flag" do
         expect(subject).to eq(:mismatched_documents)
@@ -58,7 +66,7 @@ describe Certification do
     end
 
     context "when ssocs are mismatched" do
-      let(:appeal) { Fakes::AppealRepository.appeal_mismatched_ssoc }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_mismatched_ssoc }
 
       it "is included in the relevant stats" do
         subject
@@ -72,7 +80,7 @@ describe Certification do
     end
 
     context "when multiple docs are mismatched" do
-      let(:appeal) { Fakes::AppealRepository.appeal_mismatched_docs }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_mismatched_docs }
 
       it "is included in the relevant stats" do
         subject
@@ -86,7 +94,7 @@ describe Certification do
     end
 
     context "when appeal is ready to start" do
-      let(:appeal) { Fakes::AppealRepository.appeal_ready_to_certify }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_ready_to_certify }
 
       it "returns success and sets timestamps" do
         expect(subject).to eq(:started)
@@ -160,7 +168,7 @@ describe Certification do
     end
 
     context "when appeal has already been certified" do
-      let(:appeal) { Fakes::AppealRepository.appeal_already_certified }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_already_certified }
 
       it "returns nil" do
         expect(subject).to be_nil
@@ -168,7 +176,7 @@ describe Certification do
     end
 
     context "when appeal has yet to be certified" do
-      let(:appeal) { Fakes::AppealRepository.appeal_ready_to_certify }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_ready_to_certify }
 
       it "returns nil" do
         expect(subject).to be_nil
@@ -176,7 +184,7 @@ describe Certification do
     end
 
     context "when appeal has been certified using Caseflow" do
-      let(:appeal) { Fakes::AppealRepository.appeal_ready_to_certify }
+      let(:appeal_hash) { Fakes::AppealRepository.appeal_ready_to_certify }
 
       before do
         Timecop.freeze(Time.utc(2015, 1, 1, 13, 0, 0))

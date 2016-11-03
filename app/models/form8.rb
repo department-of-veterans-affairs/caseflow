@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Form8 < ActiveRecord::Base
-  include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
+  after_initialize :setup
   before_save :save_pdf
 
   # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
@@ -54,10 +54,9 @@ class Form8 < ActiveRecord::Base
     :certification_date
   ].freeze
 
-  def initialize(params = {})
-    super(params)
-    self.version = SERIALIZATION_VERSION unless params.key?(:version)
-    self.populate_initial_data
+  def setup
+    self.version = SERIALIZATION_VERSION unless version
+    populate_initial_data
   end
 
   def save_pdf
