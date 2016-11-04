@@ -144,7 +144,7 @@ RSpec.feature "Save Certification" do
     fill_in "17B Title of certifying official", with: "DRO"
     click_on "Preview Completed Form 8"
 
-    Form8::SERIALIZATION_VERSION = 2
+    Form8::SERIALIZATION_VERSION = Form8::SERIALIZATION_VERSION + 1
 
     visit "certifications/new/5555C"
     expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy")
