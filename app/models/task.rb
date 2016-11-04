@@ -6,8 +6,15 @@ class Task < ActiveRecord::Base
     dispatch: [:CreateEndProduct]
   }.freeze
 
-  def self.find_by_department(department)
+  scope :unassigned,          -> { where(user_id: nil) }
+  scope :newest_first,        -> { order(created_at: :desc) }
+  scope :find_by_department,  ->(department) do
     task_types = TASKS_BY_DEPARTMENT[department]
     where(type: task_types)
+  end
+
+
+  def start_text
+    type.titlecase
   end
 end

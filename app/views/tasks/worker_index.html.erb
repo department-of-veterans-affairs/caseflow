@@ -1,1 +1,9 @@
-<h1>Worker View</h1>
+<div class="cf-app-segment cf-app-segment--alt">
+  <% if next_unassigned_task %>
+    <div class="task-start-cta">
+      <button type="button" class="usa-button-primary">
+        <%= next_unassigned_task.start_text %>
+      </button>
+    </div>
+  <% end %>
+</div>
