@@ -197,9 +197,9 @@ describe Certification do
     end
   end
 
-  context ".from_vacols_id!" do
+  context ".find_or_create_by_vacols_id" do
     let(:vacols_id) { "1122" }
-    subject { Certification.from_vacols_id!(vacols_id) }
+    subject { Certification.find_or_create_by_vacols_id(vacols_id) }
 
     context "when certification exists with that vacols_id" do
       before { @certification = Certification.create(vacols_id: vacols_id) }
