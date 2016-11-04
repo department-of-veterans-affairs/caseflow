@@ -1,3 +1,2 @@
 class CreateEndProduct < Task
-
 end
