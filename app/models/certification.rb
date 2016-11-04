@@ -30,8 +30,6 @@ class Certification < ActiveRecord::Base
   end
 
   def form8(cache_key)
-    puts appeal.inspect
-
     @form8 ||= saved_form8(cache_key) || Form8.from_appeal(appeal)
   end
 

@@ -14,7 +14,6 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    puts "new certification"
     @certification = Certification.from_vacols_id!(vacols_id)
 
     case @certification.start!
@@ -23,24 +22,17 @@ class CertificationsController < ApplicationController
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    puts "form 8 cache key"
-    puts form8_cache_key
-
     @form8 = @certification.form8(form8_cache_key)
   end
 
   def create
-    puts "create certification"
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
-    puts "params form8"
-    puts params[:form8].inspect
     # creates new form8
     @form8 = Form8.from_string_params(params[:form8])
     Rails.cache.write(form8_cache_key, @form8.attributes)
     form8.save_pdf!
-    puts "redirect to certification path"
     redirect_to certification_path(id: form8.id)
   end
 

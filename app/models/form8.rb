@@ -61,7 +61,6 @@ class Form8 < ActiveRecord::Base
   end
 
   def populate_initial_data
-    puts "population"
   end
 
   def hearing_on_file
