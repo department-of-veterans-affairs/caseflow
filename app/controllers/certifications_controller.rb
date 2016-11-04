@@ -82,17 +82,18 @@ class CertificationsController < ApplicationController
     redirect_to "/unauthorized"
   end
 
+  def certification
+    @certification ||= Certification.find_or_create_by_vacols_id(vacols_id)
+  end
+
   def form8
-    puts "form8 certification method"
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     # TODO (alex): is this too permissive
     params.permit!
-    puts "or equals form8"
-    puts @form8.inspect
-    puts "is form8 there^"
     @form8 ||= Form8.new(id: params[:id])
   end
+
   helper_method :form8
 
   def vacols_id
