@@ -2,7 +2,6 @@
 
 class Form8 < ActiveRecord::Base
   after_initialize :setup
-  before_save :save_pdf
 
   # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
   # (e.g., changing the type of an attribute from string to date)

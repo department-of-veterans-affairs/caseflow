@@ -30,9 +30,11 @@ class CertificationsController < ApplicationController
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
     form8.update_from_string_params(params[:form8])
+
     # TODO: alex - remove after we get rid of form 8 caching
     Rails.cache.write(form8_cache_key, form8.attributes)
     form8.save_pdf!
+
     redirect_to certification_path(id: form8.id)
   end
 
