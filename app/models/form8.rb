@@ -198,6 +198,7 @@ class Form8 < ActiveRecord::Base
 
     def from_appeal(appeal)
       new(
+        # todo: add certification id here
         vacols_id: appeal.vacols_id,
         appellant_name: appeal.appellant_name,
         appellant_relationship: appeal.appellant_relationship,

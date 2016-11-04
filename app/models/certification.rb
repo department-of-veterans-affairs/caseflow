@@ -126,7 +126,8 @@ class Certification < ActiveRecord::Base
     end
   end
 
-  # TODO: alex the form8 model should handle this
+  # TODO(alex): since we're persisting the form8 to the db now,
+  # we can remove the form8 caching logic in a later PR.
   def saved_form8(cache_key)
     saved = Rails.cache.read(cache_key)
 

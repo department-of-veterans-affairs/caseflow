@@ -31,7 +31,9 @@ class CertificationsController < ApplicationController
     params.require(:form8).permit!
     # creates new form8
     @form8 = Form8.from_string_params(params[:form8])
+    # saves it to the cache
     Rails.cache.write(form8_cache_key, @form8.attributes)
+    # saves the pdf
     form8.save_pdf!
     redirect_to certification_path(id: form8.id)
   end
