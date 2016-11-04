@@ -31,7 +31,7 @@ class CertificationsController < ApplicationController
     params.require(:form8).permit!
     # creates new form8
     @form8 = Form8.from_string_params(params[:form8])
-    # saves it to the cache
+    # TODO: alex - remove after we get rid of form 8 caching
     Rails.cache.write(form8_cache_key, @form8.attributes)
     # saves the pdf
     form8.save_pdf!
