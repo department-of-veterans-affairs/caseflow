@@ -1,6 +1,8 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
 
+  has_many :tasks
+
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
