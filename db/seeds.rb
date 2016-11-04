@@ -24,11 +24,11 @@ class SeedDB
   end
 
   def create_tasks(number)
-    numAppeals = @appeals.length
-    numUsers = @users.length
+    num_appeals = @appeals.length
+    num_users = @users.length
     @tasks = number.times.map do |i|
-      CreateEndProduct.create(appeal: @appeals[i % numAppeals],
-                              user: @users[i % numUsers])
+      CreateEndProduct.create(appeal: @appeals[i % num_appeals],
+                              user: @users[i % (num_users + 1)])
     end
   end
 
