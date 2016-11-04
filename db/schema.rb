@@ -39,15 +39,15 @@ ActiveRecord::Schema.define(version: 20161102170128) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "appeal_id",    null: false
-    t.string   "type",         null: false
+    t.integer  "appeal_id",         null: false
+    t.string   "type",              null: false
     t.integer  "user_id"
     t.datetime "assigned_at"
     t.datetime "started_at"
     t.datetime "completed_at"
-    t.integer  "status"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "completion_status"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   add_index "tasks", ["appeal_id", "type"], name: "index_tasks_on_appeal_id_and_type", unique: true, using: :btree
