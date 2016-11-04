@@ -95,7 +95,8 @@ class CertificationsController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_or_create_by_vacols_id(vacols_id)
+    @appeal ||= certification.appeal
   end
+
   helper_method :appeal
 end
