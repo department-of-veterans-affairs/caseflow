@@ -133,7 +133,7 @@ class Certification < ActiveRecord::Base
   end
 
   class << self
-    def from_vacols_id!(vacols_id)
+    def find_or_create_by_vacols_id(vacols_id)
       find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
     end
   end

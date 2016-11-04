@@ -14,7 +14,7 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    @certification = Certification.from_vacols_id!(vacols_id)
+    @certification = Certification.find_or_create_by_vacols_id(vacols_id)
 
     case @certification.start!
     when :already_certified    then render "already_certified"
