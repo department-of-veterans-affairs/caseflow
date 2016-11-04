@@ -1,0 +1,33 @@
+<h2><%= title %></h2>
+<table class="usa-table-borderless" summary="List of recent downloads and links to download their contents">
+  <thead>
+    <tr>
+      <th scope="col"><h3>Name</h3></th>
+      <th scope="col"><h3>Veteran ID</h3></th>
+      <th scope="col"><h3>Status</h3></th>
+      <th scope="col"><h3>Worked By</h3></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@tasks.select { |task| task.complete? == complete }).each do |task| %>
+      <tr id="task-<%= task.id %>">
+        <td>
+          <%= task.appeal.veteran_name %>
+        </td>
+        <td>
+          <%= task.appeal.vbms_id %>
+        </td>
+        <td>
+          <%= task.progress_status_string %>
+        </td>
+        <td>
+          <%= 
+            if task.assigned?
+              task.user.css_id 
+            end
+          %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

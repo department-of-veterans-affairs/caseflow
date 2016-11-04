@@ -6,9 +6,21 @@ class Task < ActiveRecord::Base
     dispatch: [:CreateEndProduct]
   }
 
+
+
   def self.find_by_department(department)
     task_types = TASKS_BY_DEPARTMENT[department]
     where(type: task_types)
+  end
+
+  def assign(u)
+    user = u
+    assigned_at = Time.now.utc
+    save
+  end
+
+  def assigned?
+    assigned_at != nil
   end
 
   def progress_status_string
