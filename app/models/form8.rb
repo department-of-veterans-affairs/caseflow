@@ -162,6 +162,22 @@ class Form8 < ActiveRecord::Base
     Form8.pdf_service.output_location_for(self)
   end
 
+  def update_from_string_params(params)
+    date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
+                   :other_notification_date, :soc_date]
+
+    date_fields.each do |f|
+      raw_value = params[f]
+      params[f] = begin
+                    Date.strptime(raw_value, "%m/%d/%Y")
+                  rescue
+                    nil
+                  end if raw_value && raw_value.is_a?(String)
+    end
+
+    update(params)
+  end
+
   class << self
     attr_writer :pdf_service
 
@@ -169,6 +185,7 @@ class Form8 < ActiveRecord::Base
       @pdf_service ||= Form8PdfService
     end
 
+    # TODO: alex - remove after we get rid of form8 caching
     def from_string_params(params)
       date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
                      :other_notification_date, :soc_date]
@@ -185,6 +202,7 @@ class Form8 < ActiveRecord::Base
       Form8.new(params)
     end
 
+    # TODO: alex - remove after we get rid of form8 caching
     def from_session(params)
       return nil if params["version"] != SERIALIZATION_VERSION
 

@@ -29,11 +29,9 @@ class CertificationsController < ApplicationController
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
-    # creates new form8
-    @form8 = Form8.from_string_params(params[:form8])
+    form8.update_from_string_params(params[:form8])
     # TODO: alex - remove after we get rid of form 8 caching
-    Rails.cache.write(form8_cache_key, @form8.attributes)
-    # saves the pdf
+    Rails.cache.write(form8_cache_key, form8.attributes)
     form8.save_pdf!
     redirect_to certification_path(id: form8.id)
   end
