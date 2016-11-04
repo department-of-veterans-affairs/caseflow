@@ -14,15 +14,15 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    @certification = Certification.find_or_create_by_vacols_id(vacols_id)
-
-    case @certification.start!
+    case certification.start!
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    @form8 = @certification.form8(form8_cache_key)
+    # initialize the form 8 on the client with previously cached data
+    # or from an appeal.
+    certification.form8_from_cache_or_appeal(form8_cache_key)
   end
 
   def create
