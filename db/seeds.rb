@@ -35,7 +35,7 @@ class SeedDB
         appeal: @appeals[i % numAppeals]
         )
       if i % 4 > 0
-        endProduct.assign(user: @users[i % numUsers])
+        endProduct.assign(@users[i % numUsers])
       end
       if i % 4 > 1
         endProduct.started_at = 1.day.ago

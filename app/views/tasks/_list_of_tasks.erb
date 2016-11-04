@@ -1,5 +1,19 @@
-<h2><%= title %></h2>
-<table class="usa-table-borderless" summary="List of recent downloads and links to download their contents">
+<h2><%= title %>
+  <span class="cf-right-side">
+    <div class="usa-width-one-half">
+      <form class="usa-search usa-search-small">
+        <div role="search">
+          <label for="search-field-small">Search</label>
+          <input id="search-field-small" type="search" name="search">
+          <button type="submit">
+            <span class="usa-sr-only">Search</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </span>
+</h2>
+<table class="usa-table-borderless" summary="list of tasks">
   <thead>
     <tr>
       <th scope="col"><h3>Name</h3></th>
@@ -9,7 +23,7 @@
     </tr>
   </thead>
   <tbody>
-    <% (@tasks.select { |task| task.complete? == complete }).each do |task| %>
+    <% tasks.each do |task| %>
       <tr id="task-<%= task.id %>">
         <td>
           <%= task.appeal.veteran_name %>
@@ -18,7 +32,7 @@
           <%= task.appeal.vbms_id %>
         </td>
         <td>
-          <%= task.progress_status_string %>
+          <%= task.progress_status %>
         </td>
         <td>
           <%= 
@@ -31,3 +45,4 @@
     <% end %>
   </tbody>
 </table>
+<a class="cf-right-side">Show More</a>

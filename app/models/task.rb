@@ -13,25 +13,26 @@ class Task < ActiveRecord::Base
     where(type: task_types)
   end
 
-  def assign(u)
-    user = u
-    assigned_at = Time.now.utc
-    save
+  def assign(_user)
+    update_attributes!(
+      user: _user,
+      assigned_at: Time.now.utc
+    )
   end
 
   def assigned?
     assigned_at != nil
   end
 
-  def progress_status_string
+  def progress_status
     if !assigned_at
-      return 'Unassigned'
+      'Unassigned'
     elsif !started_at
-      return 'Not Started'
+      'Not Started'
     elsif !completed_at
-      return 'In Progress'
+      'In Progress'
     else
-      return 'Complete'
+      'Complete'
     end
   end
 
@@ -47,6 +48,7 @@ class Task < ActiveRecord::Base
     def to_complete
       Task.where("completed_at IS NULL")
     end
+
   end
 
 end

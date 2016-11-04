@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   def index
-    @tasks = Task.find_by_department(department).order(created_at: :desc).all
+    @completed_count = Task.completed_today.count
+    @to_complete_count = Task.to_complete.count
   end
 
   def show
@@ -16,4 +17,14 @@ class TasksController < ApplicationController
   def task_id
     params[:id]
   end
+
+  def completed_tasks
+    @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
+  end
+
+  def to_complete_tasks
+    @to_complete_tasks ||= Task.where(completed_at: nil).order(created_at: :desc).limit(5)
+  end
+  helper_method :completed_tasks
+  helper_method :to_complete_tasks
 end
