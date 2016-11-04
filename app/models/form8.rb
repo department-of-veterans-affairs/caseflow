@@ -56,7 +56,7 @@ class Form8 < ActiveRecord::Base
     populate_initial_data
   end
 
-  def save_pdf
+  def save_pdf!
     Form8.pdf_service.save_pdf_for!(self)
   end
 

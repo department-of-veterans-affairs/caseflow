@@ -30,6 +30,8 @@ class Certification < ActiveRecord::Base
   end
 
   def form8(cache_key)
+    puts appeal.inspect
+
     @form8 ||= saved_form8(cache_key) || Form8.from_appeal(appeal)
   end
 
@@ -122,6 +124,7 @@ class Certification < ActiveRecord::Base
     end
   end
 
+  # TODO: alex the form8 model should handle this
   def saved_form8(cache_key)
     saved = Rails.cache.read(cache_key)
 

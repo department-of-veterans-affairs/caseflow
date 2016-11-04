@@ -6,8 +6,6 @@ class CertificationsController < ApplicationController
 
   rescue_from VBMSError, with: :on_vbms_error
 
-
-
   def on_vbms_error
     @error_title = "VBMS Failure"
     @error_subtitle = "Unable to communicate with the VBMS system at this time."
@@ -16,6 +14,7 @@ class CertificationsController < ApplicationController
   end
 
   def new
+    puts "new certification"
     @certification = Certification.from_vacols_id!(vacols_id)
 
     case @certification.start!
@@ -24,16 +23,24 @@ class CertificationsController < ApplicationController
     when :mismatched_documents then render "mismatched_documents"
     end
 
+    puts "form 8 cache key"
+    puts form8_cache_key
+
     @form8 = @certification.form8(form8_cache_key)
   end
 
   def create
+    puts "create certification"
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
+    puts "params form8"
+    puts params[:form8].inspect
+    # creates new form8
     @form8 = Form8.from_string_params(params[:form8])
     Rails.cache.write(form8_cache_key, @form8.attributes)
-    form8.save!
+    form8.save_pdf!
+    puts "redirect to certification path"
     redirect_to certification_path(id: form8.id)
   end
 
@@ -61,6 +68,7 @@ class CertificationsController < ApplicationController
 
   private
 
+  # TODO: alex: is this necessary? should it live elsewhere?
   def form8_cache_key
     # force initialization of cache, there's probably a better way to do this
     session["init"] = true
@@ -75,9 +83,14 @@ class CertificationsController < ApplicationController
   end
 
   def form8
+    puts "form8 certification method"
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    params.permit(:id)
+    # TODO (alex): is this too permissive
+    params.permit!
+    puts "or equals form8"
+    puts @form8.inspect
+    puts "is form8 there^"
     @form8 ||= Form8.new(id: params[:id])
   end
   helper_method :form8
