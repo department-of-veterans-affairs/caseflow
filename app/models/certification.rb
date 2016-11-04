@@ -25,8 +25,14 @@ class Certification < ActiveRecord::Base
     update_attributes!(completed_at: Time.zone.now)
   end
 
+  # TODO(jd): Consider lazy loading documents like
+  # VACOLS attributes
   def appeal
-    @appeal ||= Appeal.find_or_create_by_vacols_id(vacols_id)
+    @appeal ||= begin
+      appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+      appeal.fetch_documents!
+      appeal
+    end
   end
 
   def form8(cache_key)
