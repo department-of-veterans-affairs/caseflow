@@ -1,4 +1,6 @@
 class TasksController < ApplicationController
+  before_action :verify_access
+
   def index
     @tasks = Task.find_by_department(department).order(created_at: :desc).all
   end
@@ -15,5 +17,9 @@ class TasksController < ApplicationController
 
   def task_id
     params[:id]
+  end
+
+  def verify_access
+    verify_authorized_roles('Dispatch Tasks')
   end
 end
