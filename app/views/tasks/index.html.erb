@@ -6,6 +6,7 @@
 </h1>
 
 <%= render partial: 'list_of_tasks', locals: {title: 'Current', tasks: to_complete_tasks} %>
+<hr />
 <%= render partial: 'list_of_tasks', locals: {title: 'History', tasks: completed_tasks} %>
 </div>
 
