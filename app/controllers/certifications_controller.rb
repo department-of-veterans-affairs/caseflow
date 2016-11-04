@@ -78,6 +78,12 @@ class CertificationsController < ApplicationController
     @certification ||= Certification.find_or_create_by_vacols_id(vacols_id)
   end
 
+  def appeal
+    @appeal ||= certification.appeal
+  end
+
+  helper_method :appeal
+
   def form8
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
@@ -91,10 +97,4 @@ class CertificationsController < ApplicationController
   def vacols_id
     params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
   end
-
-  def appeal
-    @appeal ||= certification.appeal
-  end
-
-  helper_method :appeal
 end
