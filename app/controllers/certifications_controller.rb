@@ -22,7 +22,7 @@ class CertificationsController < ApplicationController
 
     # initialize the form 8 on the client with previously cached data
     # or from an appeal.
-    certification.form8_from_cache_or_appeal(form8_cache_key)
+    @form8 = certification.form8_from_cache_or_appeal(form8_cache_key)
   end
 
   def create
