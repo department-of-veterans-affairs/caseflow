@@ -31,10 +31,23 @@ class SeedDB
     numAppeals = @appeals.length
     numUsers = @users.length
     @tasks = number.times.map do |i|
-      CreateEndProduct.create(
+      endProduct = CreateEndProduct.create(
         appeal: @appeals[i % numAppeals], 
         user: @users[i % numUsers]
         )
+      if i % 4 > 0
+        endProduct.assigned_at = 2.day.ago
+      end
+      if i % 4 > 1
+        endProduct.started_at = 1.day.ago
+      end
+      if i % 4 > 2
+        endProduct.completed_at = 0.day.ago
+        if i % 3 == 0
+          endProduct.status = 1
+        end
+      end
+      endProduct.save
     end
   end
 

@@ -1,6 +1,11 @@
-<h1>Dispatch Index WIP</h1>
-<% @tasks.each do |task| %>
-  <p>
-    <%= link_to "Task Type: #{task.type}", task_path(task) %>
-  </p>
-<% end %>
+<div class="cf-app-segment cf-app-segment--alt">
+<h1>Work Flow
+<span class="cf-associated-header">
+  <%= Task.completed_today.count %> cases processed today, <%= Task.to_complete.count %> in queue
+</span>
+</h1>
+
+<%= render partial: 'list_of_tasks', locals: {title: 'Current', complete: false} %>
+<%= render partial: 'list_of_tasks', locals: {title: 'History', complete: true} %>
+</div>
+
