@@ -4,7 +4,7 @@ class Task < ActiveRecord::Base
 
   TASKS_BY_DEPARTMENT = {
     dispatch: [:CreateEndProduct]
-  }
+  }.freeze
 
   def self.find_by_department(department)
     task_types = TASKS_BY_DEPARTMENT[department]

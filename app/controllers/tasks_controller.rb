@@ -16,7 +16,7 @@ class TasksController < ApplicationController
   end
 
   def index_template
-    prefix = manager? ? 'manager' : 'worker'
+    prefix = manager? ? "manager" : "worker"
     "#{prefix}_index"
   end
 
