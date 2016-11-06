@@ -66,4 +66,10 @@ class ApplicationController < ActionController::Base
     session["return_to"] = request.original_url
     redirect_to login_path
   end
+
+  def verify_authorized_roles(*roles)
+    return true if current_user && roles.all? { |r| current_user.can?(r) }
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
+  end
 end

@@ -16,6 +16,11 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
+
+  scope "/dispatch", department: :dispatch do
+    get '/', to: "tasks#index"
+  end
+
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
