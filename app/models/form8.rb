@@ -236,9 +236,9 @@ class Form8 < ActiveRecord::Base
       form
     end
 
+
     def from_appeal(appeal)
-      new(
-        # TODO: add certification id here
+      values = {
         vacols_id: appeal.vacols_id,
         appellant_name: appeal.appellant_name,
         appellant_relationship: appeal.appellant_relationship,
@@ -256,7 +256,15 @@ class Form8 < ActiveRecord::Base
         certifying_office: appeal.regional_office_name,
         certifying_username: appeal.regional_office_key,
         certification_date: Time.zone.now
-      )
+      }
+      # populate "_initial_"-prefixed fields with data from the
+      # appeal so we retain them in our records even if the user
+      # changes the form8 values during certification.
+      INITIAL_FORM_FIELDS.each { |initial_field|
+        string_field = initial_field.to_s.sub '_initial_', ''
+        values[initial_field] = values[string_field.to_sym]
+      }
+      new(values)
     end
   end
 end
