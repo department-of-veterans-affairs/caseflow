@@ -78,7 +78,7 @@ class Form8 < ActiveRecord::Base
     Form8.pdf_service.save_pdf_for!(self)
   end
 
-  # todo fix
+  # TODO: fix
   def populate_initial_data
   end
 
@@ -156,13 +156,13 @@ class Form8 < ActiveRecord::Base
     { name: "OTHER", attribute: :record_other }
   ].freeze
 
-  # TODO alex: remove?
+  # TODO: alex: remove?
   FORM_FIELDS.each { |field| attr_accessor field }
   INITIAL_FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   attr_accessor :version
-  # TODO alex: remove?
+  # TODO: alex: remove?
   alias_attribute :id, :vacols_id
 
   private :service_connection_for_rolled, :remarks_rolled
