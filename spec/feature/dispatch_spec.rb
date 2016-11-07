@@ -9,7 +9,6 @@ RSpec.feature "Dispatch" do
     CreateEndProduct.create(appeal: appeal)
   end
 
-
   context "manager" do
     before do
       User.authenticate!(roles: ["dispatch", "manage dispatch"])
@@ -26,7 +25,7 @@ RSpec.feature "Dispatch" do
     before do
       User.authenticate!(roles: ["dispatch"])
     end
-    
+
     scenario "Case Worker" do
       visit "/dispatch"
 
