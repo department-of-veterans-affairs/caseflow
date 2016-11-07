@@ -236,9 +236,19 @@ class Form8 < ActiveRecord::Base
       form
     end
 
+    def populate_initial_values!(values)
+      # populate _initial_-prefixed columns with data from the
+      # appeal so we retain these values for analysis even if the user
+      # changes the form8 values during certification.
+      INITIAL_FORM_FIELDS.each do |initial_field|
+        string_field = initial_field.to_s.sub "_initial_", ""
+        values[initial_field] = values[string_field.to_sym]
+      end
+      values
+    end
 
-    def from_appeal(appeal)
-      values = {
+    def convert_appeal_attrs_to_form8_attrs(appeal)
+      {
         vacols_id: appeal.vacols_id,
         appellant_name: appeal.appellant_name,
         appellant_relationship: appeal.appellant_relationship,
@@ -257,13 +267,11 @@ class Form8 < ActiveRecord::Base
         certifying_username: appeal.regional_office_key,
         certification_date: Time.zone.now
       }
-      # populate "_initial_"-prefixed fields with data from the
-      # appeal so we retain them in our records even if the user
-      # changes the form8 values during certification.
-      INITIAL_FORM_FIELDS.each { |initial_field|
-        string_field = initial_field.to_s.sub '_initial_', ''
-        values[initial_field] = values[string_field.to_sym]
-      }
+    end
+
+    def from_appeal(appeal)
+      form8 = convert_appeal_attrs_to_form8_attrs(appeal)
+      form8 = populate_initial_values!(form8)
       new(values)
     end
   end
