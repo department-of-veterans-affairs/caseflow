@@ -11,4 +11,5 @@
  * file per style scope.
  *
  *= require _main.scss
+ *= require _tasks.scss
  */

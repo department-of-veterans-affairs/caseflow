@@ -56,6 +56,10 @@ module StubbableUser
         })
     end
 
+    def current_user
+      @stub
+    end
+
     def unauthenticate!
       self.stub = nil
     end
@@ -75,9 +79,15 @@ end
 User.prepend(StubbableUser)
 
 def reset_application!
+  Task.delete_all
+  Appeal.delete_all
   User.clear_stub!
   User.delete_all
   Certification.delete_all
+end
+
+def current_user
+  User.current_user
 end
 
 # Setup fakes
