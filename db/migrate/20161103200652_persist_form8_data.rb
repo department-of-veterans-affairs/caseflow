@@ -65,7 +65,7 @@ class PersistForm8Data < ActiveRecord::Migration
       t.integer :record_insurance_f
       t.integer :record_other
 
-      # Initial field
+      # initial field values, stored for data analysis
       t.string :_initial_appellant_name
       t.string :_initial_appellant_relationship
       t.string :_initial_veteran_name
