@@ -21,7 +21,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-
   def start_text
     type.titlecase
   end
