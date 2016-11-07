@@ -162,11 +162,11 @@ class Fakes::AppealRepository
   end
 
   def self.first_names
-    ["George", "John", "Thomas", "James", "Andrew", "Martin"]
+    %w(George John Thomas James Andrew Martin)
   end
 
   def self.last_names
-    ["Washington", "Adams", "Jefferson", "Madison", "Jackson", "VanBuren"]
+    %w(Washington Adams Jefferson Madison Jackson VanBuren)
   end
 
   def self.appeals_for_tasks(index)

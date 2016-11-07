@@ -7,7 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 class SeedDB
-  def createAppeals(number)
+  def create_appeals(number)
     @appeals = number.times.map do |i|
       Appeal.create(
         vacols_id: "vacols_id#{i}",
@@ -16,7 +16,7 @@ class SeedDB
     end
   end
 
-  def createUsers(number, deterministic = true)
+  def create_users(number, deterministic = true)
     @users = number.times.map do |i|
       length = VACOLS::RegionalOffice::STATIONS.length
       station_index = deterministic ? (i % length) : (rand(length))
@@ -27,7 +27,7 @@ class SeedDB
     end
   end
 
-  def createTasks(number)
+  def create_tasks(number)
     numAppeals = @appeals.length
     numUsers = @users.length
     @tasks = number.times.map do |i|
@@ -43,7 +43,7 @@ class SeedDB
       if i % 4 > 2
         endProduct.completed_at = 0.day.ago
         if i % 3 == 0
-          endProduct.status = 1
+          endProduct.completion_status = 1
         end
       end
       endProduct.save

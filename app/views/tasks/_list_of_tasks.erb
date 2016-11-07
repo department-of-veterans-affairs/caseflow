@@ -6,7 +6,8 @@
   <div class="usa-width-one-half">
     <form class="usa-search usa-search-small">
       <div role="search">
-        <input id="search-field-small" type="search" name="search">
+        <label class="usa-sr-only" for="<%= title %>-search-field-small">Search field</label>
+        <input id="<%= title %>-search-field-small" type="search" name="search">
         <button type="submit">
           <span class="usa-sr-only">Search</span>
         </button>

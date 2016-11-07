@@ -25,7 +25,7 @@ class TasksController < ApplicationController
     @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
   end
   helper_method :completed_tasks
-  
+
   def to_complete_tasks
     @to_complete_tasks ||= Task.to_complete.order(created_at: :desc).limit(5)
   end

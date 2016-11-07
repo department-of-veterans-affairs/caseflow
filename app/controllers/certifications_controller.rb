@@ -14,7 +14,6 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    
     @certification = Certification.from_vacols_id!(vacols_id)
 
     case @certification.start!
