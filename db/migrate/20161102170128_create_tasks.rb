@@ -8,8 +8,7 @@ class CreateTasks < ActiveRecord::Migration
       t.datetime   :assigned_at
       t.datetime   :started_at
       t.datetime   :completed_at
-      # status value is only saved when task is complete
-      t.integer    :status
+      t.integer    :completion_status
 
       t.timestamps null: false
     end

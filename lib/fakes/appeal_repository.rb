@@ -23,8 +23,9 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record)
   end
 
-  def self.fetch_documents_for(_appeal)
-    @documents || []
+  def self.fetch_documents_for(appeal)
+    return unless appeal.documents.blank?
+    appeal.documents = @documents || []
   end
 
   def self.remands_ready_for_claims_establishment
@@ -199,6 +200,10 @@ class Fakes::AppealRepository
 
   def self.form9_document
     Document.new(type: "Form 9", received_at: 1.day.ago)
+  end
+
+  def self.set_vbms_documents!
+    @documents = [nod_document, soc_document, form9_document]
   end
 
   def self.seed!

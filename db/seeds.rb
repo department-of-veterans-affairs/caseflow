@@ -47,13 +47,12 @@ class SeedDB
         end
       end
       endProduct.save
-    end
   end
 
   def seed
-    createAppeals(50)
-    createUsers(27)
-    createTasks(50)
+    create_appeals(50)
+    create_users(3)
+    create_tasks(50)
   end
 end
 

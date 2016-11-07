@@ -1,11 +1,11 @@
 describe Task do
-  before do
-    Task.delete_all
-    Appeal.delete_all
-  end
-  it "persists task to DB" do
-    appeal = Appeal.create(vacols_id: "vacols")
-    task = Task.create(type: "ABC", appeal_id: appeal.id)
-    expect(Task.find(task.id)).to be_an_instance_of(Task)
+  context ".find_by_department" do
+    let(:department) { :dispatch }
+    subject { Task.find_by_department(department) }
+
+    it "filters to tasks in the department" do
+      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
+      expect(subject.to_sql).to include("CreateEndProduct")
+    end
   end
 end
