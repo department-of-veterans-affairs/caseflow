@@ -270,9 +270,9 @@ class Form8 < ActiveRecord::Base
     end
 
     def from_appeal(appeal)
-      form8 = convert_appeal_attrs_to_form8_attrs(appeal)
-      form8 = populate_initial_values!(form8)
-      new(values)
+      attributes = convert_appeal_attrs_to_form8_attrs(appeal)
+      attributes = populate_initial_values!(attributes)
+      new(attributes)
     end
   end
 end
