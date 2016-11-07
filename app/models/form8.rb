@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Form8 < ActiveRecord::Base
-  after_initialize :setup
+  after_initialize :set_version
 
   # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
   # (e.g., changing the type of an attribute from string to date)
@@ -50,15 +50,35 @@ class Form8 < ActiveRecord::Base
     :certification_date
   ].freeze
 
-  def setup
+  # initial form fields, stored in the db for analytics purposes
+  # todo alex: commented out fields are commented out because
+  # we don't appear to prepopulate them.
+  INITIAL_FORM_FIELDS = [
+    :_initial_appellant_name,
+    :_initial_appellant_relationship,
+    :_initial_veteran_name,
+    :_initial_insurance_loan_number,
+    :_initial_service_connection_for,
+    :_initial_service_connection_notification_date,
+    :_initial_increased_rating_notification_date,
+    :_initial_other_notification_date,
+    :_initial_representative_name,
+    :_initial_representative_type,
+    :_initial_hearing_requested,
+    :_initial_contested_claims_procedures_applicable,
+    :_initial_contested_claims_requirements_followed,
+    :_initial_soc_date
+  ].freeze
+
+  def set_version
     self.version = SERIALIZATION_VERSION unless version
-    populate_initial_data
   end
 
   def save_pdf!
     Form8.pdf_service.save_pdf_for!(self)
   end
 
+  # todo fix
   def populate_initial_data
   end
 
@@ -136,10 +156,13 @@ class Form8 < ActiveRecord::Base
     { name: "OTHER", attribute: :record_other }
   ].freeze
 
+  # TODO alex: remove?
   FORM_FIELDS.each { |field| attr_accessor field }
+  INITIAL_FORM_FIELDS.each { |field| attr_accessor field }
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   attr_accessor :version
+  # TODO alex: remove?
   alias_attribute :id, :vacols_id
 
   private :service_connection_for_rolled, :remarks_rolled
