@@ -13,6 +13,15 @@ class TasksController < ApplicationController
 
   private
 
+  def next_unassigned_task
+    @next_unassigned_task ||= scoped_tasks.unassigned.first
+  end
+  helper_method :next_unassigned_task
+
+  def scoped_tasks
+    Task.find_by_department(department).newest_first
+  end
+
   def department
     params[:department]
   end

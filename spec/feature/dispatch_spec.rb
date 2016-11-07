@@ -9,6 +9,7 @@ RSpec.feature "Dispatch" do
     CreateEndProduct.create(appeal: appeal)
   end
 
+
   context "manager" do
     before do
       User.authenticate!(roles: ["dispatch", "manage dispatch"])
@@ -18,6 +19,18 @@ RSpec.feature "Dispatch" do
       visit "/dispatch"
 
       expect(page).to have_content("Work Flow")
+    end
+  end
+
+  context "employee" do
+    before do
+      User.authenticate!(roles: ["dispatch"])
+    end
+    
+    scenario "Case Worker" do
+      visit "/dispatch"
+
+      expect(page).to have_content("Create End Product")
     end
   end
 end

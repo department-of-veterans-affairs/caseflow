@@ -56,6 +56,10 @@ module StubbableUser
         })
     end
 
+    def current_user
+      @stub
+    end
+
     def unauthenticate!
       self.stub = nil
     end
@@ -80,6 +84,10 @@ def reset_application!
   User.clear_stub!
   User.delete_all
   Certification.delete_all
+end
+
+def current_user
+  User.current_user
 end
 
 # Setup fakes

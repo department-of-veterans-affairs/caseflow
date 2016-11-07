@@ -28,8 +28,8 @@ class SeedDB
   end
 
   def create_tasks(number)
-    numAppeals = @appeals.length
-    numUsers = @users.length
+    num_appeals = @appeals.length
+    num_users = @users.length
     @tasks = number.times.map do |i|
       endProduct = CreateEndProduct.create(
         appeal: @appeals[i % numAppeals]
@@ -47,6 +47,7 @@ class SeedDB
         end
       end
       endProduct.save
+    end
   end
 
   def seed
