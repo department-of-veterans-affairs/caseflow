@@ -21,7 +21,7 @@ class Task < ActiveRecord::Base
   end
 
   def assigned?
-    assigned_at != nil
+    !!assigned_at
   end
 
   def progress_status
@@ -37,16 +37,16 @@ class Task < ActiveRecord::Base
   end
 
   def complete?
-    completed_at != nil
+    !!completed_at
   end
 
   class << self
     def completed_today
-      Task.where("completed_at BETWEEN ? AND ?", DateTime.now.beginning_of_day, DateTime.now.end_of_day).all
+      where(completed_at: DateTime.now.beginning_of_day..DateTime.now.end_of_day)
     end
 
     def to_complete
-      Task.where("completed_at IS NULL")
+      where(completed_at: nil)
     end
 
   end
