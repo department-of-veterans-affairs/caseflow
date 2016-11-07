@@ -22,21 +22,21 @@ class PersistForm8Data < ActiveRecord::Migration
       t.text :other_for
       t.datetime :other_notification_date
       t.string :representative_name
-      t.integer :representative_type # enum ["Attorney" "Agent" "Organization" "Other"]
+      t.string :representative_type # TODO make this an enum ["Attorney" "Agent" "Organization" "Other"]
       t.string :representative_type_specify_other
-      t.string :power_of_attorney # Enum: certification that valid POA is in another VA file
+      t.string :power_of_attorney # TODO make this an enum certification that valid POA is in another VA file
       t.string :power_of_attorney_file
       t.string :agent_accredited
       t.boolean :form_646_of_record
       t.string :form_646_not_of_record_explanation
-      t.boolean :hearing_requested
+      t.string :hearing_requested # TODO make this an enum
       t.boolean :hearing_held
       t.boolean :hearing_transcript_on_file
       t.string :hearing_requested_explanation
       t.boolean :contested_claims_procedures_applicable
       t.boolean :contested_claims_requirements_followed
       t.datetime :soc_date
-      t.integer :ssoc_required # enum  "Required and furnished"/"Not required"
+      t.string :ssoc_required # TODO make this an enum  "Required and furnished"/"Not required"
       t.text :record_other_explanation, array: true # One or more from a list of records to send to Veteran's Appeals
       t.text :remarks
       t.string :certifying_office # Not user-modifiable
