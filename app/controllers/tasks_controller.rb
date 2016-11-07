@@ -13,6 +13,11 @@ class TasksController < ApplicationController
 
   private
 
+  def current_user_historical_tasks
+    current_user.tasks.newest_first.limit(10)
+  end
+  helper_method :current_user_historical_tasks
+
   def next_unassigned_task
     @next_unassigned_task ||= scoped_tasks.unassigned.first
   end
