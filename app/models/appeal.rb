@@ -110,10 +110,6 @@ class Appeal < ActiveRecord::Base
     self.class.repository.fetch_documents_for(self)
   end
 
-  def decided?
-    %w(Allow Remanded Denied).include?(disposition)
-  end
-
   def partial_grant?
     status == "Remand" && disposition == "Allowed"
   end

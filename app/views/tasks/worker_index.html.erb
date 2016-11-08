@@ -35,7 +35,7 @@
                 <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
               </td>
               <td>
-                <%= task.completed_at.strftime('%m/%d/%Y') %>
+                <%= task.completed_at.localtime.strftime('%m/%d/%Y') %>
               </td>
               <td>
                 <%= task.appeal.decision_type %>
