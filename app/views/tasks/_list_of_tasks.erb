@@ -1,0 +1,54 @@
+
+<div class="usa-grid-full">
+  <div class="usa-width-one-half">
+    <h2><%= title %></h2>
+  </div>
+  <div class="usa-width-one-half">
+    <form class="usa-search usa-search-small">
+      <div role="search">
+        <label class="usa-sr-only" for="<%= title %>-search-field-small">Search field</label>
+        <input id="<%= title %>-search-field-small" type="search" name="search">
+        <button type="submit">
+          <span class="usa-sr-only">Search</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="usa-grid-full">
+  <table class="usa-table-borderless" summary="list of tasks">
+    <thead>
+      <tr>
+        <th scope="col"><h3>Name</h3></th>
+        <th scope="col"><h3>Veteran ID</h3></th>
+        <th scope="col"><h3>Status</h3></th>
+        <th scope="col"><h3>Worked By</h3></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% tasks.each do |task| %>
+        <tr id="task-<%= task.id %>">
+          <td>
+            <%= task.appeal.veteran_name %>
+          </td>
+          <td>
+            <%= task.appeal.vbms_id %>
+          </td>
+          <td>
+            <%= task.progress_status %>
+          </td>
+          <td>
+            <%= 
+              if task.assigned?
+                task.user.css_id 
+              end
+            %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="usa-grid-full">
+  <a class="cf-right-side">Show More</a>
+</div>

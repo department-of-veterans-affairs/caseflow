@@ -27,3 +27,19 @@
     .bar { fill: $color-secondary; }
   }
 }
+
+.cf-associated-header {
+  color: $color-primary;
+  font-size: 20px;
+  margin-left: 20px;
+}
+
+.cf-right-side {
+  text-align: right;
+  float: right;
+}
+
+.cf-section-break {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
