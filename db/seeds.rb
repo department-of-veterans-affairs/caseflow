@@ -32,10 +32,10 @@ class SeedDB
     num_users = @users.length
     @tasks = number.times.map do |i|
       establish_claim = EstablishClaim.create(
-        appeal: @appeals[i % numAppeals]
+        appeal: @appeals[i % num_appeals]
         )
       if i % 4 > 0
-        establish_claim.assign(@users[i % numUsers])
+        establish_claim.assign(@users[i % num_users])
       end
       if i % 4 > 1
         establish_claim.started_at = 1.day.ago

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
-  scope "/dispatch/establishclaim" do
+  scope "/dispatch/establishclaim", task_type: :EstablishClaim do
     get '/', to: "tasks#index"
   end
 

@@ -11,7 +11,7 @@ class Fakes::Initializer
       "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
       "station_id" => "283"
     }
-    
+
     Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
   end

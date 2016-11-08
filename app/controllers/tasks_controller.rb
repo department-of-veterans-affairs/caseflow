@@ -19,11 +19,11 @@ class TasksController < ApplicationController
   helper_method :next_unassigned_task
 
   def scoped_tasks
-    Task.find_by_url(request.fullpath).newest_first
+    Task.where(type: type).newest_first
   end
 
-  def department
-    params[:department]
+  def type
+    params[:task_type]
   end
 
   def task_id
@@ -47,11 +47,11 @@ class TasksController < ApplicationController
 
   def manager?
     # TODO(jd): Determine real CSS role to be used
-    current_user.can?(User::ROLES[request.fullpath][:manager])
+    current_user.can?(User::TASK_TYPE_TO_ROLES[type][:manager])
   end
 
   def verify_access
     # TODO(jd): Determine real CSS role to be used
-    verify_authorized_roles(User::ROLES[request.fullpath][:employee])
+    verify_authorized_roles(User::TASK_TYPE_TO_ROLES[type][:employee])
   end
 end

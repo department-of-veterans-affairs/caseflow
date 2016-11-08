@@ -11,11 +11,11 @@ RSpec.feature "Dispatch" do
 
   context "manager" do
     before do
-      User.authenticate!(roles: ["dispatch", "manage dispatch"])
+      User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
     end
     context "task to complete" do
       scenario "Case Worker" do
-        visit "/dispatch"
+        visit "/dispatch/establishclaim"
 
         expect(page).to have_content(@vbms_id)
         expect(page).to have_content("Unassigned")
@@ -30,7 +30,7 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Case Worker" do
-        visit "/dispatch"
+        visit "/dispatch/establishclaim"
 
         expect(page).to have_content(@vbms_id)
         expect(page).to have_content("Complete")
@@ -41,13 +41,13 @@ RSpec.feature "Dispatch" do
   context "employee" do
     context "task to complete" do
       before do
-        User.authenticate!(roles: ["dispatch"])
+        User.authenticate!(roles: ["Establish Claim"])
       end
 
       scenario "Case Worker" do
-        visit "/dispatch"
+        visit "/dispatch/establishclaim"
 
-        expect(page).to have_content("Create End Product")
+        expect(page).to have_content("Establish Claim")
       end
     end
   end

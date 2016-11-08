@@ -12,21 +12,6 @@ describe Task do
     @task2 = EstablishClaim.create(appeal: @appeal2)
   end
 
-  context ".find_by_department" do
-    before do
-      appeal = Appeal.create(vacols_id: "fake")
-      FakeTask.create(appeal: appeal)
-    end
-    let(:department) { :dispatch }
-    subject { Task.find_by_department(department) }
-
-    it "filters to tasks in the department" do
-      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
-      expect(Task.count).to eq(3)
-      expect(subject.count).to eq(2)
-    end
-  end
-
   context ".newest_first" do
     subject { Task.newest_first }
     before do
