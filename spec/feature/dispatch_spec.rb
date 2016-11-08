@@ -45,18 +45,18 @@ RSpec.feature "Dispatch" do
 
         # completed by user task
         appeal = Appeal.create(vacols_id: "456D")
-        @completed = CreateEndProduct.create(appeal: appeal,
-                                             user: current_user,
-                                             assigned_at: 1.day.ago,
-                                             started_at: 1.day.ago,
-                                             completed_at: Time.now)
+        @completed_task = CreateEndProduct.create(appeal: appeal,
+                                                  user: current_user,
+                                                  assigned_at: 1.day.ago,
+                                                  started_at: 1.day.ago,
+                                                  completed_at: Time.now.utc)
       end
 
       scenario "Case Worker" do
         visit "/dispatch"
 
         expect(page).to have_content("Create End Product")
-        expect(page).to have_css("tr#task-#{task.id}")
+        expect(page).to have_css("tr#task-#{@completed_task.id}")
       end
     end
   end

@@ -18,7 +18,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date
+  vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
 
@@ -108,6 +108,27 @@ class Appeal < ActiveRecord::Base
 
   def fetch_documents!
     self.class.repository.fetch_documents_for(self)
+  end
+
+  def decided?
+    %w(Allow Remanded Denied).include?(disposition)
+  end
+
+  def partial_grant?
+    status == "Remand" && disposition == "Allowed"
+  end
+
+  def full_grant?
+    status == "Complete"
+  end
+
+  def full_remand?
+    status == "Remand" && disposition == "Remanded"
+  end
+
+  def decision_type
+    return "Full Grant" if full_grant?
+    return "Partial Grant" if partial_grant?
   end
 
   class << self

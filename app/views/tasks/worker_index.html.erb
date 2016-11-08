@@ -32,16 +32,16 @@
           <% current_user_historical_tasks.each do |task| %>
             <tr id="task-<%= task.id %>">
               <td>
-                <%= "#{task.appeal.veteran_name} (#{tasks.appeal.vacols_id})" %>
+                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
               </td>
               <td>
-                <%= task.completed_at %>
+                <%= task.completed_at.strftime('%m/%d/%Y') %>
               </td>
               <td>
                 <%= task.appeal.decision_type %>
               </td>
               <td>
-                <%= task.completed_status_text %>
+                <%= task.completion_status_text %>
               </td>
             </tr>
           <% end %>

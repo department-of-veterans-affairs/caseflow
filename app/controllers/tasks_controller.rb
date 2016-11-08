@@ -14,7 +14,7 @@ class TasksController < ApplicationController
   private
 
   def current_user_historical_tasks
-    current_user.tasks.newest_first.limit(10)
+    current_user.tasks.completed.newest_first.limit(10)
   end
   helper_method :current_user_historical_tasks
 
