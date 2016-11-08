@@ -89,37 +89,37 @@ class Form8 < ActiveRecord::Base
   end
 
   def increased_rating_for_initial
-    increased_rating_for_rolled.initial unless increased_rating_for_rolled.empty?
+    increased_rating_for_rolled.initial unless increased_rating_for_rolled.blank?
   end
 
   def increased_rating_for_rolled
-    RolledOverText.new(@increased_rating_for, 2, continued_prepend: "Increased Rating For Continued:")
+    RolledOverText.new(increased_rating_for, 2, continued_prepend: "Increased Rating For Continued:")
   end
   private :increased_rating_for_rolled
 
   def other_for_initial
-    other_for_rolled.initial unless other_for_rolled.empty?
+    other_for_rolled.initial unless other_for_rolled.blank?
   end
 
   def other_for_rolled
-    RolledOverText.new(@other_for, 2, continued_prepend: "Other Continued:")
+    RolledOverText.new(other_for, 2, continued_prepend: "Other Continued:")
   end
   private :other_for_rolled
 
   def service_connection_for_rolled
     @service_connection_for_rolled = nil if @service_connection_for_rolled &&
                                             @service_connection_for_rolled.raw != @service_connection_for
-    @service_connection_for_rolled ||= RolledOverText.new(@service_connection_for, 2,
+    @service_connection_for_rolled ||= RolledOverText.new(service_connection_for, 2,
                                                           continued_prepend: "Service Connection For Continued:")
   end
 
   def service_connection_for_initial
-    service_connection_for_rolled.initial unless service_connection_for_rolled.empty?
+    service_connection_for_rolled.initial unless service_connection_for_rolled.blank?
   end
 
   def remarks_rolled
     @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
-    @remarks_rolled ||= RolledOverText.new(@remarks, 6)
+    @remarks_rolled ||= RolledOverText.new(remarks, 6)
   end
 
   def remarks_rollover?
@@ -127,13 +127,13 @@ class Form8 < ActiveRecord::Base
   end
 
   def remarks_initial
-    remarks_rolled.initial unless remarks_rolled.empty?
+    remarks_rolled.initial unless remarks_rolled.blank?
   end
 
   def remarks_continued
     rolled_over = rolled_over_fields
 
-    rolled_over.map(&:continued).join unless rolled_over.empty?
+    rolled_over.map(&:continued).join unless rolled_over.blank?
   end
 
   def rolled_over_fields
