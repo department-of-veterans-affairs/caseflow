@@ -54,6 +54,8 @@ And by default, Rails will run in the development environment, which will mock o
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
+## Certification (Dev Mode)
+
 To log in, you can use the following credentials:
 
 Username: "DSUSER"
@@ -66,6 +68,11 @@ To get to the various pages in the workflow we have a set of five URLs of dummy 
 [http://localhost:3000/certifications/new/789C](http://localhost:3000/certifications/new/789C) is an appeal that is already certified.
 [http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
 [http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
+
+## Dispatch (Dev Mode)
+
+The database is seeded with a number of tasks, users, and appeals. You can see a list of these tasks at:
+[http://localhost:3000/dispatch].
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies follow
