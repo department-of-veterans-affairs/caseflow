@@ -136,12 +136,12 @@ describe Appeal do
   context "#partial_grant?" do
     subject { appeal.partial_grant? }
     context "is false" do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Complete', disposition: 'Allowed') }
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete", disposition: "Allowed") }
       it { is_expected.to be_falsey }
     end
 
     context "is true" do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Remand', disposition: 'Allowed') }
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Allowed") }
       it { is_expected.to be_truthy }
     end
   end
@@ -149,26 +149,26 @@ describe Appeal do
   context "#full_grant?" do
     subject { appeal.full_grant? }
     context "is false" do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Remand') }
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand") }
       it { is_expected.to be_falsey }
     end
 
     context "is false" do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Complete') }
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
       it { is_expected.to be_truthy }
     end
   end
 
   context "#decision_type" do
     subject { appeal.decision_type }
-    context "is a full grant"  do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Remand', disposition: 'Allowed') }
-      it { is_expected.to eq('Partial Grant') }
+    context "is a full grant" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Allowed") }
+      it { is_expected.to eq("Partial Grant") }
     end
 
-    context "is a partial grant"  do
-      let(:appeal) { Appeal.new(vacols_id: '123', status: 'Complete') }
-      it { is_expected.to eq('Full Grant') }
+    context "is a partial grant" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
+      it { is_expected.to eq("Full Grant") }
     end
   end
 end
