@@ -12,7 +12,6 @@ class Fakes::AppealRepository
 
   def self.load_vacols_data(appeal)
     return unless @records
-
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
@@ -24,8 +23,9 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record)
   end
 
-  def self.fetch_documents_for(_appeal)
-    @documents || []
+  def self.fetch_documents_for(appeal)
+    return unless appeal.documents.blank?
+    appeal.documents = @documents || []
   end
 
   def self.remands_ready_for_claims_establishment
@@ -138,6 +138,7 @@ class Fakes::AppealRepository
   def self.appeal_remand_decided
     {
       type: "Original",
+      status: "Remand",
       disposition: "Remanded",
       decision_date: 7.days.ago,
       veteran_first_name: "Davy",
@@ -151,6 +152,7 @@ class Fakes::AppealRepository
   def self.appeal_full_grant_decided
     {
       type: "Post Remand",
+      status: "Complete",
       disposition: "Allowed",
       decision_date: 7.days.ago,
       veteran_first_name: "Davy",
@@ -159,6 +161,21 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter"
     }
+  end
+
+  def self.first_names
+    %w(George John Thomas James Andrew Martin)
+  end
+
+  def self.last_names
+    %w(Washington Adams Jefferson Madison Jackson VanBuren)
+  end
+
+  def self.appeals_for_tasks(index)
+    appeal_full_grant_decided.merge(
+      veteran_last_name: last_names[index % last_names.length],
+      veteran_first_name: first_names[index % first_names.length]
+    )
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
@@ -187,8 +204,13 @@ class Fakes::AppealRepository
     Document.new(type: "Form 9", received_at: 1.day.ago)
   end
 
+  def self.set_vbms_documents!
+    @documents = [nod_document, soc_document, form9_document]
+  end
+
   def self.seed!
     unless Rails.env.test?
+
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
@@ -198,6 +220,9 @@ class Fakes::AppealRepository
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
+      50.times.each do |i|
+        @records["vacols_id#{i}"] = appeals_for_tasks(i)
+      end
     end
   end
 end

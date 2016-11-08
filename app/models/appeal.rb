@@ -1,6 +1,8 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
 
+  has_many :tasks
+
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
@@ -16,7 +18,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date
+  vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
 
@@ -102,6 +104,27 @@ class Appeal < ActiveRecord::Base
 
   def certify!
     Appeal.certify(self)
+  end
+
+  def fetch_documents!
+    self.class.repository.fetch_documents_for(self)
+  end
+
+  def partial_grant?
+    status == "Remand" && disposition == "Allowed"
+  end
+
+  def full_grant?
+    status == "Complete"
+  end
+
+  def full_remand?
+    status == "Remand" && disposition == "Remanded"
+  end
+
+  def decision_type
+    return "Full Grant" if full_grant?
+    return "Partial Grant" if partial_grant?
   end
 
   class << self

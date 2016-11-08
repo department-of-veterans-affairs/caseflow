@@ -64,7 +64,8 @@ class AppealRepository
       certification_date: case_record.bf41stat,
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
-      decision_date: normalize_vacols_date(case_record.bfddec)
+      decision_date: normalize_vacols_date(case_record.bfddec),
+      status: VACOLS::Case::STATUS[case_record.bfmpro]
     )
 
     appeal

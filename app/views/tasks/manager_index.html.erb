@@ -1,0 +1,11 @@
+<div class="cf-app-segment cf-app-segment--alt">
+<h1>Work Flow
+<span class="cf-associated-header">
+  <%= @completed_count %> cases processed today, <%= @to_complete_count %> in queue
+</span>
+</h1>
+
+<%= render partial: 'list_of_tasks', locals: {title: 'Current', tasks: to_complete_tasks} %>
+<hr class="cf-section-break" />
+<%= render partial: 'list_of_tasks', locals: {title: 'History', tasks: completed_tasks} %>
+</div>

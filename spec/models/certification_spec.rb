@@ -10,6 +10,7 @@ describe Certification do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal_hash }
     Certification.delete_all
+    Task.delete_all
     Appeal.delete_all
     Appeal.stub(:find_or_create_by_vacols_id) do |_vacols_id|
       appeal
@@ -17,7 +18,25 @@ describe Certification do
     Appeal.repository.stub(:load_vacols_data) {}
   end
 
-  after { Timecop.return }
+  after do
+    Timecop.return
+    Fakes::AppealRepository.documents = nil
+  end
+
+  context "#appeal" do
+    subject { certification.appeal }
+    before do
+      Fakes::AppealRepository.set_vbms_documents!
+    end
+
+    it "includes documents" do
+      expect(subject.documents).to_not be_empty
+
+      expect_any_instance_of(Appeal).to_not receive(:fetch_documents!).at_least(1).times
+      # test it doesn't fetch documents a 2nd time
+      subject
+    end
+  end
 
   context "#start!" do
     subject { certification.start! }

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
+
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
@@ -18,6 +19,10 @@ Rails.application.routes.draw do
   end
 
   patch "certifications" => "certifications#create"
+
+  scope "/dispatch", department: :dispatch do
+    get '/', to: "tasks#index"
+  end
 
   resources :offices, only: :index
 
