@@ -115,8 +115,8 @@ describe AppealRepository do
           AppealRepository.normalize_vacols_date(6.days.ago)
         ],
         hearing_type: :video_hearing,
-        hearing_requested: true,
-        hearing_held: true,
+        hearing_requested: "Yes",
+        hearing_held: "Yes",
         regional_office_key: "DSUSER",
         disposition: "Withdrawn",
         decision_date: AppealRepository.normalize_vacols_date(1.day.ago)

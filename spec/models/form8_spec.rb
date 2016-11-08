@@ -156,17 +156,17 @@ describe Form8 do
   end
 
   context "#service_connection_for_rolled" do
-    let(:appeal) { Form8.new(service_connection_for: "one\ntwo\nthree") }
+    let(:form8) { Form8.new(service_connection_for: "one\ntwo\nthree") }
 
     it "rolls over properly" do
-      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n \nService Connection For Continued:\nthree")
+      expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(form8.remarks_continued).to eq("\n \nService Connection For Continued:\nthree")
     end
 
     it "rolls over and combines with remarks rollover" do
-      appeal.remarks = "one\ntwo\n\three\nfour\nfive\nsix\nseven"
-      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n \nContinued:\nseven" \
+      form8.remarks = "one\ntwo\n\three\nfour\nfive\nsix\nseven"
+      expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(form8.remarks_continued).to eq("\n \nContinued:\nseven" \
                                                  "\n \nService Connection For Continued:\nthree")
     end
   end
@@ -197,7 +197,8 @@ describe Form8 do
     end
 
     it "creates new form8 with values copied over correctly" do
-      form8 = Form8.from_appeal(appeal)
+      form8 = Form8.new
+      form8.update_from_appeal(appeal)
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
