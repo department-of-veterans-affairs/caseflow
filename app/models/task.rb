@@ -2,12 +2,6 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
-<<<<<<< HEAD
-=======
-  TASKS_BY_DEPARTMENT = {
-    dispatch: [:CreateEndProduct]
-  }.freeze
-
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
     1 => "Cancelled",
