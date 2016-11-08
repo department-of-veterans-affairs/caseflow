@@ -9,8 +9,10 @@
 class SeedDB
   def create_appeals(number)
     @appeals = number.times.map do |i|
-      Appeal.create(vacols_id: "vacols_id#{i}",
-                    vbms_id: "vbms_id#{i}")
+      Appeal.create(
+        vacols_id: "vacols_id#{i}",
+        vbms_id: "vbms_id#{i}"
+        )
     end
   end
 
@@ -18,8 +20,10 @@ class SeedDB
     @users = number.times.map do |i|
       length = VACOLS::RegionalOffice::STATIONS.length
       station_index = deterministic ? (i % length) : (rand(length))
-      User.create(station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
-                  css_id: "css_#{i}")
+      User.create(
+        station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
+        css_id: "css_#{i}"
+        )
     end
   end
 
@@ -27,8 +31,22 @@ class SeedDB
     num_appeals = @appeals.length
     num_users = @users.length
     @tasks = number.times.map do |i|
-      CreateEndProduct.create(appeal: @appeals[i % num_appeals],
-                              user: @users[i % (num_users + 1)])
+      endProduct = CreateEndProduct.create(
+        appeal: @appeals[i % numAppeals]
+        )
+      if i % 4 > 0
+        endProduct.assign(@users[i % numUsers])
+      end
+      if i % 4 > 1
+        endProduct.started_at = 1.day.ago
+      end
+      if i % 4 > 2
+        endProduct.completed_at = 0.day.ago
+        if i % 3 == 0
+          endProduct.completion_status = 1
+        end
+      end
+      endProduct.save
     end
   end
 
