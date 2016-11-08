@@ -129,7 +129,7 @@ describe Certification do
   end
 
   context "#form8" do
-    subject { certification.form8_from_cache_or_appeal("TEST_form8") }
+    subject { certification.form8("TEST_form8") }
 
     context "when a form8 exists in the cache for the passed key" do
       before do

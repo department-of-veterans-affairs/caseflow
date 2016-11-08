@@ -230,7 +230,7 @@ RSpec.feature "Save Certification" do
 
   scenario "Saving a certification saves PDF form to correct location" do
     appeal = Fakes::AppealRepository.appeal_ready_to_certify
-    expected_form8 = Form8.new(id: "2222C")
+    expected_form8 = Form8.new(vacols_id: "2222C")
     form8_location = Form8PdfService.output_location_for(expected_form8)
 
     Fakes::AppealRepository.records = { "2222C" => appeal }

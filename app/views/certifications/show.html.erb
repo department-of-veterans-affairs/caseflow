@@ -8,7 +8,7 @@
 </div>
 
 <iframe class="cf-doc-embed cf-app-segment" title="Form8 PDF"
-  src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.id, time: Time.now.to_i)) %>"></iframe>
+  src="<%= pdfjs.full_path(file: pdf_certification_path(id: form8.vacols_id, time: Time.now.to_i)) %>"></iframe>
 
 <div class="cf-form cf-app-segment">
   <%= loading_indicator %>
@@ -18,7 +18,7 @@
   </button>
 
   <%= link_to "Upload and certify",
-    confirm_certification_path(id: form8.id),
+    confirm_certification_path(id: form8.vacols_id),
     method: :post,
     class: "usa-button usa-button-blue cf-push-right cf-submit" %>
 </div>

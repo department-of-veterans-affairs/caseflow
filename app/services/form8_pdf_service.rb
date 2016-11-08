@@ -136,11 +136,11 @@ class Form8PdfService
   end
 
   def self.output_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.pdf")
+    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.pdf")
   end
 
   def self.tmp_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.tmp")
+    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.tmp")
   end
 
   def self.empty_pdf_location
