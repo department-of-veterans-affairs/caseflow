@@ -79,9 +79,36 @@ class Form8 < ActiveRecord::Base
   end
 
   def update_from_appeal(appeal)
-    a = Form8.convert_appeal_attrs_to_form8_attrs(appeal)
-    a = Form8.populate_initial_values!(a)
-    update_attributes!(a)
+    update_attributes!(
+      vacols_id: appeal.vacols_id,
+      appellant_name: appeal.appellant_name,
+      appellant_relationship: appeal.appellant_relationship,
+      file_number: appeal.vbms_id,
+      veteran_name: appeal.veteran_name,
+      insurance_loan_number: appeal.insurance_loan_number,
+      service_connection_notification_date: appeal.notification_date,
+      increased_rating_notification_date: appeal.notification_date,
+      other_notification_date: appeal.notification_date,
+      soc_date: appeal.soc_date,
+      representative_name: appeal.representative_name,
+      representative_type: appeal.representative_type,
+      hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
+      certifying_office: appeal.regional_office_name,
+      certifying_username: appeal.regional_office_key,
+      certification_date: Time.zone.now,
+      _initial_appellant_name: appeal.appellant_name,
+      _initial_appellant_relationship: appeal.appellant_relationship,
+      _initial_veteran_name: appeal.veteran_name,
+      _initial_insurance_loan_number: appeal.insurance_loan_number,
+      _initial_service_connection_notification_date: appeal.notification_date,
+      _initial_increased_rating_notification_date: appeal.notification_date,
+      _initial_other_notification_date: appeal.notification_date,
+      _initial_representative_name: appeal.representative_name,
+      _initial_representative_type: appeal.representative_type,
+      _initial_hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      _initial_ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished"
+    )
   end
 
   def hearing_on_file
