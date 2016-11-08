@@ -1,4 +1,4 @@
-<div class="cf-app-segment cf-app-segment--alt">
+<div class="cf-app-segment cf-app-segment--alt usa-grid">
   <div class="usa-width-one-whole task-start-wrapper">
     <% if next_unassigned_task %>
       <div class="task-start-cta">
@@ -9,13 +9,11 @@
     <% end %>
   </div>
 
-<div class="usa-grid-full">
-  <div class="usa-width-one-half">
+  <div class="usa-width-one-whole">
     <h2>History</h2>
   </div>
-</div>
 
-  <div class="usa-grid-full">
+  <div class="usa-width-one-whole">
     <% if current_user_historical_tasks.empty? %>
       <p>No previous tasks</p>
     <% else %>
