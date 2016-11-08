@@ -6,6 +6,14 @@ class Task < ActiveRecord::Base
     dispatch: [:CreateEndProduct]
   }.freeze
 
+  COMPLETION_STATUS_MAPPING = {
+    0 => "Completed",
+    1 => "Cancelled",
+
+    # Establish Claim completion codes
+    2 => "Routed to RO"
+  }.freeze
+
   class << self
     def unassigned
       where(user_id: nil)
@@ -18,6 +26,18 @@ class Task < ActiveRecord::Base
     def find_by_department(department)
       task_types = TASKS_BY_DEPARTMENT[department]
       where(type: task_types)
+    end
+
+    def completed_today
+      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
+    end
+
+    def to_complete
+      where(completed_at: nil)
+    end
+
+    def completed
+      where.not(completed_at: nil)
     end
   end
 
@@ -60,13 +80,7 @@ class Task < ActiveRecord::Base
     )
   end
 
-  class << self
-    def completed_today
-      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
-    end
-
-    def to_complete
-      where(completed_at: nil)
-    end
+  def completion_status_text
+    COMPLETION_STATUS_MAPPING[completion_status]
   end
 end

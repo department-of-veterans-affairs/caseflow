@@ -1,4 +1,4 @@
-<div class="cf-app-segment cf-app-segment--alt">
+<div class="cf-app-segment cf-app-segment--alt usa-grid">
   <div class="usa-width-one-whole task-start-wrapper">
     <% if next_unassigned_task %>
       <div class="task-start-cta">
@@ -8,4 +8,44 @@
       </div>
     <% end %>
   </div>
+
+  <div class="usa-width-one-whole">
+    <h2>History</h2>
+  </div>
+
+  <div class="usa-width-one-whole">
+    <% if current_user_historical_tasks.empty? %>
+      <p>No previous tasks</p>
+    <% else %>
+      <table class="usa-table-borderless" summary="list of tasks">
+        <thead>
+          <tr>
+            <th scope="col"><h3>Veteran</h3></th>
+            <th scope="col"><h3>Date</h3></th>
+            <th scope="col"><h3>Decision Type</h3></th>
+            <th scope="col"><h3>Result</h3></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% current_user_historical_tasks.each do |task| %>
+            <tr id="task-<%= task.id %>">
+              <td>
+                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
+              </td>
+              <td>
+                <%= task.completed_at.localtime.strftime('%m/%d/%Y') %>
+              </td>
+              <td>
+                <%= task.appeal.decision_type %>
+              </td>
+              <td>
+                <%= task.completion_status_text %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
 </div>
+

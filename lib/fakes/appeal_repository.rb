@@ -138,6 +138,7 @@ class Fakes::AppealRepository
   def self.appeal_remand_decided
     {
       type: "Original",
+      status: "Remand",
       disposition: "Remanded",
       decision_date: 7.days.ago,
       veteran_first_name: "Davy",
@@ -151,6 +152,7 @@ class Fakes::AppealRepository
   def self.appeal_full_grant_decided
     {
       type: "Post Remand",
+      status: "Complete",
       disposition: "Allowed",
       decision_date: 7.days.ago,
       veteran_first_name: "Davy",
@@ -170,10 +172,10 @@ class Fakes::AppealRepository
   end
 
   def self.appeals_for_tasks(index)
-    {
+    appeal_full_grant_decided.merge(
       veteran_last_name: last_names[index % last_names.length],
       veteran_first_name: first_names[index % first_names.length]
-    }
+    )
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
