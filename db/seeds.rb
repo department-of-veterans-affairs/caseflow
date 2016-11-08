@@ -27,8 +27,8 @@ class SeedDB
     num_appeals = @appeals.length
     num_users = @users.length
     @tasks = number.times.map do |i|
-      CreateEndProduct.create(appeal: @appeals[i % num_appeals],
-                              user: @users[i % (num_users + 1)])
+      EstablishClaim.create(appeal: @appeals[i % num_appeals],
+                            user: @users[i % (num_users + 1)])
     end
   end
 

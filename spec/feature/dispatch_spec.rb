@@ -7,7 +7,7 @@ RSpec.feature "Dispatch" do
     }
 
     appeal = Appeal.create(vacols_id: "123C")
-    CreateEndProduct.create(appeal: appeal)
+    EstablishClaim.create(appeal: appeal)
   end
 
   scenario "Case Worker" do

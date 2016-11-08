@@ -7,8 +7,8 @@ describe Task do
 
     appeal = Appeal.create(vacols_id: "123C")
     appeal2 = Appeal.create(vacols_id: "456D")
-    @task1 = CreateEndProduct.create(appeal: appeal)
-    @task2 = CreateEndProduct.create(appeal: appeal2)
+    @task1 = EstablishClaim.create(appeal: appeal)
+    @task2 = EstablishClaim.create(appeal: appeal2)
   end
 
   context ".find_by_department" do

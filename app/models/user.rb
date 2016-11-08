@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
   attr_accessor :roles
   attr_writer :regional_office
 
+  ROLES = {
+    "/dispatch/establishclaim" => { :employee => "Establish Claim" , :manager => "Manage Claim Establishment" }
+  }.freeze
+
   def username
     css_id
   end
@@ -58,7 +62,7 @@ class User < ActiveRecord::Base
 
     def from_session(session)
       user = session["user"] ||= authentication_service.default_user_session
-
+      
       return nil if user.nil?
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
