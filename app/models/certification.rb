@@ -16,7 +16,7 @@ class Certification < ActiveRecord::Base
       ssocs_matching_at:   calculcate_ssocs_matching_at,
       form8_started_at:    (certification_status == :started) ? now : nil
     )
-
+    form8.update_from_appeal(appeal)
     certification_status
   end
 
