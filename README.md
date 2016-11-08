@@ -72,7 +72,7 @@ To get to the various pages in the workflow we have a set of five URLs of dummy 
 ## Dispatch (Dev Mode)
 
 The database is seeded with a number of tasks, users, and appeals. You can see a list of these tasks at:
-[http://localhost:3000/dispatch].
+[http://localhost:3000/dispatch](http://localhost:3000/dispatch).
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies follow
