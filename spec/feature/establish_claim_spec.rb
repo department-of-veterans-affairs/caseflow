@@ -45,11 +45,11 @@ RSpec.feature "Dispatch" do
 
         # completed by user task
         appeal = Appeal.create(vacols_id: "456D")
-        @completed_task = CreateEndProduct.create(appeal: appeal,
-                                                  user: current_user,
-                                                  assigned_at: 1.day.ago,
-                                                  started_at: 1.day.ago,
-                                                  completed_at: Time.now.utc)
+        @completed_task = EstablishClaim.create(appeal: appeal,
+                                                user: current_user,
+                                                assigned_at: 1.day.ago,
+                                                started_at: 1.day.ago,
+                                                completed_at: Time.now.utc)
       end
 
       scenario "Case Worker" do

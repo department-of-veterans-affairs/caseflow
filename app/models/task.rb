@@ -19,11 +19,6 @@ class Task < ActiveRecord::Base
       order(created_at: :desc)
     end
 
-    def find_by_department(department)
-      task_types = TASKS_BY_DEPARTMENT[department]
-      where(type: task_types)
-    end
-
     def completed_today
       where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
     end
