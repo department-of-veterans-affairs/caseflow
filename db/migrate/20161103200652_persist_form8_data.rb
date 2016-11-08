@@ -27,14 +27,14 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :power_of_attorney # TODO make this an enum certification that valid POA is in another VA file
       t.string :power_of_attorney_file
       t.string :agent_accredited
-      t.boolean :form_646_of_record
+      t.string :form_646_of_record # TODO cast to boolean
       t.string :form_646_not_of_record_explanation
       t.string :hearing_requested # TODO make this an enum
-      t.boolean :hearing_held
-      t.boolean :hearing_transcript_on_file
+      t.string :hearing_held # TODO cast to boolean
+      t.string :hearing_transcript_on_file # TODO cast to boolean
       t.string :hearing_requested_explanation
-      t.boolean :contested_claims_procedures_applicable
-      t.boolean :contested_claims_requirements_followed
+      t.string :contested_claims_procedures_applicable # TODO cast to boolean
+      t.string :contested_claims_requirements_followed # TODO cast to boolean
       t.datetime :soc_date
       t.string :ssoc_required # TODO make this an enum  "Required and furnished"/"Not required"
       t.text :record_other_explanation, array: true # One or more from a list of records to send to Veteran's Appeals
@@ -49,21 +49,21 @@ class PersistForm8Data < ActiveRecord::Migration
       # to the Board of Veteran's Appeals. These are all integers
       # mostly for compatibility with code that existed before this
       # migration.
-      t.integer :record_cf_or_xcf
-      t.integer :record_inactive_cf
-      t.integer :record_dental_f
-      t.integer :record_r_and_e_f
-      t.integer :record_training_sub_f
-      t.integer :record_loan_guar_f
-      t.integer :record_outpatient_f
-      t.integer :record_hospital_cor
-      t.integer :record_clinical_rec
-      t.integer :record_x_rays
-      t.integer :record_slides
-      t.integer :record_tissue_blocks
-      t.integer :record_dep_ed_f
-      t.integer :record_insurance_f
-      t.integer :record_other
+      t.string :record_cf_or_xcf
+      t.string :record_inactive_cf
+      t.string :record_dental_f
+      t.string :record_r_and_e_f
+      t.string :record_training_sub_f
+      t.string :record_loan_guar_f
+      t.string :record_outpatient_f
+      t.string :record_hospital_cor
+      t.string :record_clinical_rec
+      t.string :record_x_rays
+      t.string :record_slides
+      t.string :record_tissue_blocks
+      t.string :record_dep_ed_f
+      t.string :record_insurance_f
+      t.string :record_other
 
       # initial field values, stored for data analysis
       t.string :_initial_appellant_name
@@ -76,7 +76,7 @@ class PersistForm8Data < ActiveRecord::Migration
       t.datetime :_initial_soc_date
       t.string :_initial_representative_name
       t.string :_initial_representative_type
-      t.boolean :_initial_hearing_requested
+      t.string :_initial_hearing_requested
       t.string :_initial_ssoc_required
     end
   end
