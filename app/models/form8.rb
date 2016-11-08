@@ -78,8 +78,10 @@ class Form8 < ActiveRecord::Base
     Form8.pdf_service.save_pdf_for!(self)
   end
 
-  # TODO: fix
-  def populate_initial_data
+  def update_from_appeal(appeal)
+    a = Form8.convert_appeal_attrs_to_form8_attrs(appeal)
+    a = Form8.populate_initial_values!(a)
+    update_attributes!(a)
   end
 
   def hearing_on_file
@@ -162,8 +164,6 @@ class Form8 < ActiveRecord::Base
   RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   attr_accessor :version
-  # TODO: alex: remove?
-  alias_attribute :id, :vacols_id
 
   private :service_connection_for_rolled, :remarks_rolled
 

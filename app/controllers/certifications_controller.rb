@@ -14,28 +14,34 @@ class CertificationsController < ApplicationController
   end
 
   def new
+    # NOTE: this isn't rails-restful. certification.start! saves
+    # the certification instance.
     case certification.start!
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    # initialize the form 8 on the client with previously cached data
-    # or from an appeal.
-    @form8 = certification.form8_from_cache_or_appeal(form8_cache_key)
+    # VACOLS data will be fetched fresh every time.
+    # However, visiting "/certifications/new/123C" will
+    # bring the user to the certification with VACOLS id "123C"
+    # if it already exists.
+    #
+    # Update the form8 that belongs to this certification
+    # with the newest data.
+    certification.form8.update_from_appeal(appeal)
+    @form8 = certification.form8
   end
 
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
-    form8.update_from_string_params(params[:form8])
-
-    # TODO: alex - remove after we get rid of form 8 caching
+    certification.form8.update!(params[:form8])
+    certification.form8.save_pdf!
     Rails.cache.write(form8_cache_key, form8.attributes)
-    form8.save_pdf!
 
-    redirect_to certification_path(id: form8.id)
+    redirect_to certification_path(id: certification.form8.vacols_id)
   end
 
   def show
@@ -91,7 +97,7 @@ class CertificationsController < ApplicationController
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     # TODO (alex): is this too permissive
     params.permit!
-    @form8 ||= Form8.new(id: params[:id])
+    @form8 ||= certification.form8
   end
 
   helper_method :form8

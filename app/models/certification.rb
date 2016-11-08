@@ -29,12 +29,8 @@ class Certification < ActiveRecord::Base
     @appeal ||= Appeal.find_or_create_by_vacols_id(vacols_id)
   end
 
-  def form8_from_cache_or_appeal(cache_key)
-    @form8 ||= saved_form8(cache_key) || Form8.from_appeal(appeal)
-  end
-
   def form8
-    @form8 || form8_from_cache_or_appeal
+    @form8 ||= Form8.find_or_create_by(certification_id: id)
   end
 
   def time_to_certify
