@@ -158,10 +158,10 @@ class Form8 < ActiveRecord::Base
     { name: "OTHER", attribute: :record_other }
   ].freeze
 
-  # TODO: alex: remove?
-  FORM_FIELDS.each { |field| attr_accessor field }
-  INITIAL_FORM_FIELDS.each { |field| attr_accessor field }
-  RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
+  # # TODO: alex: remove?
+  # FORM_FIELDS.each { |field| attr_accessor field }
+  # INITIAL_FORM_FIELDS.each { |field| attr_accessor field }
+  # RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
 
   attr_accessor :version
 
@@ -236,43 +236,16 @@ class Form8 < ActiveRecord::Base
       form
     end
 
-    def populate_initial_values!(values)
-      # populate _initial_-prefixed columns with data from the
-      # appeal so we retain these values for analysis even if the user
-      # changes the form8 values during certification.
-      INITIAL_FORM_FIELDS.each do |initial_field|
-        string_field = initial_field.to_s.sub "_initial_", ""
-        values[initial_field] = values[string_field.to_sym]
-      end
-      values
-    end
-
-    def convert_appeal_attrs_to_form8_attrs(appeal)
-      {
-        vacols_id: appeal.vacols_id,
-        appellant_name: appeal.appellant_name,
-        appellant_relationship: appeal.appellant_relationship,
-        file_number: appeal.vbms_id,
-        veteran_name: appeal.veteran_name,
-        insurance_loan_number: appeal.insurance_loan_number,
-        service_connection_notification_date: appeal.notification_date,
-        increased_rating_notification_date: appeal.notification_date,
-        other_notification_date: appeal.notification_date,
-        soc_date: appeal.soc_date,
-        representative_name: appeal.representative_name,
-        representative_type: appeal.representative_type,
-        hearing_requested: appeal.hearing_type ? "Yes" : "No",
-        ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
-        certifying_office: appeal.regional_office_name,
-        certifying_username: appeal.regional_office_key,
-        certification_date: Time.zone.now
-      }
-    end
-
-    def from_appeal(appeal)
-      attributes = convert_appeal_attrs_to_form8_attrs(appeal)
-      attributes = populate_initial_values!(attributes)
-      new(attributes)
-    end
+    # def populate_initial_values!(values)
+    #   # potpulate _initial_-prefixed columns with data from the
+    #   # appeal so we retain these values for analysis even if the user
+    #   # changes the form8 values during certification.
+    #   INITIAL_FORM_FIELDS.each do |initial_field|
+    #     string_field = initial_field.to_s.sub "_initial_", ""
+    #     values[initial_field] = values[string_field.to_sym]
+    #   end
+    #   values
+    #   binding.pry
+    # end
   end
 end
