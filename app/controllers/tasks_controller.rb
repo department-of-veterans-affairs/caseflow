@@ -1,6 +1,8 @@
 class TasksController < ApplicationController
   before_action :verify_access
 
+  class TaskTypeMissingError < StandardError; end
+
   def index
     @completed_count = Task.completed_today.count
     @to_complete_count = Task.to_complete.count
@@ -45,13 +47,17 @@ class TasksController < ApplicationController
     "#{prefix}_index"
   end
 
+  def task_roles
+    User::TASK_TYPE_TO_ROLES[type] || fail(TaskTypeMissingError)
+  end
+
   def manager?
     # TODO(jd): Determine real CSS role to be used
-    current_user.can?(User::TASK_TYPE_TO_ROLES[type][:manager])
+    current_user.can?(task_roles[:manager])
   end
 
   def verify_access
     # TODO(jd): Determine real CSS role to be used
-    verify_authorized_roles(User::TASK_TYPE_TO_ROLES[type][:employee])
+    verify_authorized_roles(task_roles[:employee])
   end
 end
