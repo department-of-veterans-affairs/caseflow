@@ -79,19 +79,37 @@ describe Task do
   end
 
   context ".progress_status" do
-    subject { @task }
+    subject { @task.progress_status }
 
     # We start with a blank task and move it task through the various states
 
-    it "Walk through different task states" do
-      expect(subject.progress_status).to eq("Unassigned")
-      @task.assign(@user)
-      expect(subject.progress_status).to eq("Not Started")
-      # TODO(Mark): When we have a way to start a task, this should be updated
-      @task.started_at = Time.now.utc
-      expect(subject.progress_status).to eq("In Progress")
-      @task.completed_at = Time.now.utc
-      expect(subject.progress_status).to eq("Complete")
+    context "starts as unassigned" do
+      it { is_expected.to eq("Unassigned") }
+    end
+
+    context "task is assigned" do
+      before do
+        @task.assign(@user)
+      end
+
+      it { is_expected.to eq("Not Started") }
+    end
+
+    context "task is started" do
+      before do
+        # TODO(Mark): When we have a method to start a task, this should be updated
+        @task.started_at = Time.now.utc
+      end
+      it { is_expected.to eq("In Progress") }
+    end
+
+    context "task is completed" do
+      before do
+        # TODO(Mark): When we have a method to complete a task, this should be updated
+        @task.completed_at = Time.now.utc
+      end
+
+      it { is_expected.to eq("Complete") }
     end
   end
 

@@ -37,16 +37,14 @@ class Task < ActiveRecord::Base
   end
 
   def progress_status
-    if !assigned_at
-      "Unassigned"
-    elsif !started_at
-      "Not Started"
-    elsif !completed_at
-      "In Progress"
-    elsif completed_at
+    if completed_at
       "Complete"
+    elsif started_at
+      "In Progress"
+    elsif assigned_at
+      "Not Started"
     else
-      "Unknown"
+      "Unassigned"
     end
   end
 
