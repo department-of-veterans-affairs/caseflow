@@ -97,10 +97,6 @@ class CertificationsController < ApplicationController
   helper_method :appeal
 
   def form8
-    # Can't use controller params in model mass assignments without whitelisting. See:
-    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    # TODO (alex): is this too permissive
-    params.permit!
     @form8 ||= certification.form8
   end
 
