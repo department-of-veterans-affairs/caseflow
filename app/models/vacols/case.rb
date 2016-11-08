@@ -41,6 +41,14 @@ class VACOLS::Case < VACOLS::Record
     "X" => "Remand Failure to Respond"
   }.freeze
 
+  STATUS = {
+    "ACT" => "Active", # Case currently at BVA
+    "ADV" => "Advance", # NOD Filed. Case currently at RO
+    "REM" => "Remand", # Case has been Remanded to RO or AMC
+    "HIS" => "Complete", # BVA action is complete
+    "MOT" => "Motion" # appellant has filed a motion for reconsideration
+  }.freeze
+
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
