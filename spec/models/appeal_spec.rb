@@ -153,7 +153,7 @@ describe Appeal do
       it { is_expected.to be_falsey }
     end
 
-    context "is false" do
+    context "is true" do
       let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
       it { is_expected.to be_truthy }
     end
