@@ -210,46 +210,5 @@ class Form8 < ActiveRecord::Base
     def pdf_service
       @pdf_service ||= Form8PdfService
     end
-
-    # TODO: alex - remove after we get rid of form8 caching
-    def from_string_params(params)
-      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date, :soc_date]
-
-      date_fields.each do |f|
-        raw_value = params[f]
-        params[f] = begin
-                      Date.strptime(raw_value, "%m/%d/%Y")
-                    rescue
-                      nil
-                    end if raw_value && raw_value.is_a?(String)
-      end
-
-      Form8.new(params)
-    end
-
-    # TODO: alex - remove after we get rid of form8 caching
-    def from_session(params)
-      return nil if params["version"] != SERIALIZATION_VERSION
-
-      # pass through type-conversion for backwards compatability with improperly serialized forms
-      form = from_string_params(params.symbolize_keys)
-
-      # reset
-      form.certification_date = Time.zone.now
-      form
-    end
-
-    # def populate_initial_values!(values)
-    #   # potpulate _initial_-prefixed columns with data from the
-    #   # appeal so we retain these values for analysis even if the user
-    #   # changes the form8 values during certification.
-    #   INITIAL_FORM_FIELDS.each do |initial_field|
-    #     string_field = initial_field.to_s.sub "_initial_", ""
-    #     values[initial_field] = values[string_field.to_sym]
-    #   end
-    #   values
-    #   binding.pry
-    # end
   end
 end
