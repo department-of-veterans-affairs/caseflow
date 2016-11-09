@@ -91,13 +91,11 @@ class CertificationsController < ApplicationController
   def appeal
     @appeal ||= certification.appeal
   end
-
   helper_method :appeal
 
   def form8
     @form8 ||= certification.form8
   end
-
   helper_method :form8
 
   def vacols_id
