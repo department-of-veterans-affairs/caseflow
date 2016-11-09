@@ -16,7 +16,7 @@ RSpec.feature "Dispatch" do
     end
     context "task to complete" do
       scenario "Case Worker" do
-        visit "/dispatch/establishclaim"
+        visit "/dispatch/establish-claim"
 
         expect(page).to have_content(@vbms_id)
         expect(page).to have_content("Unassigned")
@@ -30,7 +30,7 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Case Worker" do
-        visit "/dispatch/establishclaim"
+        visit "/dispatch/establish-claim"
 
         expect(page).to have_content(@vbms_id)
         expect(page).to have_content("Complete")
@@ -53,7 +53,7 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Case Worker" do
-        visit "/dispatch/establishclaim"
+        visit "/dispatch/establish-claim"
 
         expect(page).to have_content("Establish Claim")
         expect(page).to have_css("tr#task-#{@completed_task.id}")
