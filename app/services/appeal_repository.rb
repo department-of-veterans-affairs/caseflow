@@ -75,7 +75,7 @@ class AppealRepository
   # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
-      VACOLS::CASE.remands_ready_for_claims_establishment
+      VACOLS::Case.remands_ready_for_claims_establishment
     end
 
     remands.map { |case_record| build_appeal(case_record) }
@@ -83,7 +83,7 @@ class AppealRepository
 
   def self.amc_full_grants(decided_after:)
     full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::CASE.amc_full_grants(decided_after)
+      VACOLS::Case.amc_full_grants(decided_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
