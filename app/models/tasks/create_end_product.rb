@@ -1,2 +1,0 @@
-class CreateEndProduct < Task
-end
