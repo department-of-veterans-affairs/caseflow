@@ -189,9 +189,9 @@ describe Form8 do
         appellant_relationship: "Brother",
         veteran_first_name: "Shane",
         veteran_last_name: "Bobby",
-        notification_date: 4.days.ago,
-        soc_date: 2.days.ago,
-        form9_date: 1.day.ago,
+        notification_date: Date.today - 4,
+        soc_date: Date.today - 4,
+        form9_date: Date.today - 4,
         insurance_loan_number: "1337"
       )
     end
@@ -207,11 +207,11 @@ describe Form8 do
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane",
         insurance_loan_number: "1337",
-        service_connection_notification_date: 4.days.ago,
-        increased_rating_notification_date: 4.days.ago,
-        other_notification_date: 4.days.ago,
-        soc_date: 2.days.ago,
-        certification_date: Time.zone.now
+        service_connection_notification_date: Date.today - 4,
+        increased_rating_notification_date: Date.today - 4,
+        other_notification_date: Date.today - 4,
+        soc_date: Date.today - 4,
+        certification_date: Date.today
       )
     end
   end
