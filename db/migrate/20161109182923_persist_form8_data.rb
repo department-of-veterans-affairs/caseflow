@@ -16,11 +16,11 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :veteran_name # FirstName LastName
       t.string :insurance_loan_number
       t.text :service_connection_for # How the claim is connected to service record
-      t.datetime :service_connection_notification_date
+      t.date :service_connection_notification_date
       t.text :increased_rating_for
-      t.datetime :increased_rating_notification_date
+      t.date :increased_rating_notification_date
       t.text :other_for
-      t.datetime :other_notification_date
+      t.date :other_notification_date
       t.string :representative_name
       t.string :representative_type # TODO make this an enum ["Attorney" "Agent" "Organization" "Other"]
       t.string :representative_type_specify_other
@@ -35,7 +35,7 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :hearing_requested_explanation
       t.string :contested_claims_procedures_applicable # TODO cast to boolean
       t.string :contested_claims_requirements_followed # TODO cast to boolean
-      t.datetime :soc_date
+      t.date :soc_date
       t.string :ssoc_required # TODO make this an enum  "Required and furnished"/"Not required"
       t.text :record_other_explanation, array: true # One or more from a list of records to send to Veteran's Appeals
       t.text :remarks
@@ -43,7 +43,7 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :certifying_username # Not user-modifiable
       t.string :certifying_official_name
       t.string :certifying_official_title
-      t.datetime :certification_date # Not user-modifiable
+      t.date :certification_date # Not user-modifiable
 
       # Fields representing record types to be forwarded
       # to the Board of Veteran's Appeals. These are all integers
@@ -70,10 +70,10 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :_initial_appellant_relationship
       t.string :_initial_veteran_name
       t.string :_initial_insurance_loan_number
-      t.datetime :_initial_service_connection_notification_date
-      t.datetime :_initial_increased_rating_notification_date
-      t.datetime :_initial_other_notification_date
-      t.datetime :_initial_soc_date
+      t.date :_initial_service_connection_notification_date
+      t.date :_initial_increased_rating_notification_date
+      t.date :_initial_other_notification_date
+      t.date :_initial_soc_date
       t.string :_initial_representative_name
       t.string :_initial_representative_type
       t.string :_initial_hearing_requested
