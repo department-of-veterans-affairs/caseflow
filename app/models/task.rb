@@ -2,10 +2,6 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
-  TASKS_BY_DEPARTMENT = {
-    dispatch: [:CreateEndProduct]
-  }.freeze
-
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
     1 => "Cancelled",
@@ -21,11 +17,6 @@ class Task < ActiveRecord::Base
 
     def newest_first
       order(created_at: :desc)
-    end
-
-    def find_by_department(department)
-      task_types = TASKS_BY_DEPARTMENT[department]
-      where(type: task_types)
     end
 
     def completed_today

@@ -37,25 +37,26 @@ class SeedDB
   def create_tasks(number)
     num_appeals = @appeals.length
     num_users = @users.length
+
     tasks = number.times.map do |i|
-      end_product = CreateEndProduct.create(
+      establish_claim = EstablishClaim.create(
         appeal: @appeals[i % num_appeals]
         )
       if i % 4 > 0
-        end_product.assign(@users[i % num_users])
+        establish_claim.assign(@users[i % num_users])
       end
 
       if i % 4 > 1
-        end_product.started_at = 1.day.ago
+        establish_claim.started_at = 1.day.ago
       end
 
       if i % 4 > 2
-        end_product.completed_at = 0.day.ago
+        establish_claim.completed_at = 0.day.ago
         if i % 3 == 0
-          end_product.completion_status = 0
+          establish_claim.completion_status = 1
         end
       end
-      end_product.save
+      establish_claim.save
     end
 
     @tasks.push(*tasks)
