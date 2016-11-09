@@ -40,8 +40,6 @@ class Form8 < ActiveRecord::Base
   ].freeze
 
   # initial form fields, stored in the db for analytics purposes
-  # todo alex: commented out fields are commented out because
-  # we don't appear to prepopulate them.
   INITIAL_FORM_FIELDS = [
     :_initial_appellant_name,
     :_initial_appellant_relationship,
@@ -170,13 +168,6 @@ class Form8 < ActiveRecord::Base
     { name: "INSURANCE F", attribute: :record_insurance_f },
     { name: "OTHER", attribute: :record_other }
   ].freeze
-
-  # # TODO: alex: remove?
-  # FORM_FIELDS.each { |field| attr_accessor field }
-  # INITIAL_FORM_FIELDS.each { |field| attr_accessor field }
-  # RECORD_TYPE_FIELDS.each { |record_type| attr_accessor record_type[:attribute] }
-
-  attr_accessor :version
 
   private :service_connection_for_rolled, :remarks_rolled
 
