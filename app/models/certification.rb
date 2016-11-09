@@ -128,17 +128,6 @@ class Certification < ActiveRecord::Base
     end
   end
 
-  # TODO(alex): since we're persisting the form8 to the db now,
-  # we can remove the form8 caching logic in a later PR.
-  def saved_form8(cache_key)
-    saved = Rails.cache.read(cache_key)
-
-    return nil unless saved && saved["vacols_id"] == vacols_id
-    @saved_form8 ||= Form8.from_session(saved)
-  rescue
-    return nil
-  end
-
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
