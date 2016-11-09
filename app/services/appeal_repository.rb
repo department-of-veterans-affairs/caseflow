@@ -31,7 +31,8 @@ class AppealRepository
 
   # TODO: consider persisting these records
   def self.build_appeal(case_record)
-    AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
+    appeal = Appeal.find_or_create_by(vacols_id: case_record.bfkey)
+    set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
