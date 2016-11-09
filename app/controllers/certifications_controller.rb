@@ -40,11 +40,6 @@ class CertificationsController < ApplicationController
     form8.update!(params[:form8])
     form8.save_pdf!
 
-    # TODO alex: this writes to the rails cache before we redirect
-    # to the PDF preview page. it seems safe to remove but
-    # doublecheck.
-    # Rails.cache.write(form8_cache_key, form8.attributes)
-
     redirect_to certification_path(id: certification.form8.vacols_id)
   end
 
