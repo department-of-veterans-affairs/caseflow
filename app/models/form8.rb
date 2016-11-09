@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 class Form8 < ActiveRecord::Base
-  after_initialize :set_version
-
-  # increment whenever a change is made to this class that isn't backwards-compatible with past serialized forms
-  # (e.g., changing the type of an attribute from string to date)
-  # This is used to force the creation of a new Form8 model from appeal data for any users who are logged in
-  # during a deploy with a schema change, so those users won't have certification crash on them.
-  # TODO(alex): this should work for the deploy that makes this persisted to the db because we can
-  # force creation of db records for all certification models, but will it continue to work for deploys
-  # that involve later Form8 migrations?
-  SERIALIZATION_VERSION = 2
-
   FORM_FIELDS = [
     :vacols_id,
     :appellant_name,
@@ -69,10 +58,6 @@ class Form8 < ActiveRecord::Base
     :_initial_contested_claims_requirements_followed,
     :_initial_soc_date
   ].freeze
-
-  def set_version
-    self.version = SERIALIZATION_VERSION unless version
-  end
 
   def save_pdf!
     Form8.pdf_service.save_pdf_for!(self)
