@@ -14,21 +14,9 @@ describe CreateEstablishClaimTasksJob do
 
   context ".perform" do
     it "creates tasks" do
-      expect(Task.count).to eq(0)
+      expect(EstablishClaim.count).to eq(0)
       CreateEstablishClaimTasksJob.perform_now
-      expect(Task.count).to eq(2)
-    end
-
-    context "full grants beyond 3 days" do
-      before do
-        @full_grant.update(decision_date: 10.days.ago)
-      end
-
-      it "filters them out" do
-        expect(Task.count).to eq(0)
-        CreateEstablishClaimTasksJob.perform_now
-        expect(Task.count).to eq(2)
-      end
+      expect(EstablishClaim.count).to eq(2)
     end
   end
 
