@@ -39,24 +39,6 @@ class Form8 < ActiveRecord::Base
     :certification_date
   ].freeze
 
-  # initial form fields, stored in the db for analytics purposes
-  INITIAL_FORM_FIELDS = [
-    :_initial_appellant_name,
-    :_initial_appellant_relationship,
-    :_initial_veteran_name,
-    :_initial_insurance_loan_number,
-    :_initial_service_connection_for,
-    :_initial_service_connection_notification_date,
-    :_initial_increased_rating_notification_date,
-    :_initial_other_notification_date,
-    :_initial_representative_name,
-    :_initial_representative_type,
-    :_initial_hearing_requested,
-    :_initial_contested_claims_procedures_applicable,
-    :_initial_contested_claims_requirements_followed,
-    :_initial_soc_date
-  ].freeze
-
   def save_pdf!
     Form8.pdf_service.save_pdf_for!(self)
   end
