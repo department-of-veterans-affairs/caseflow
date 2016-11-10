@@ -30,5 +30,8 @@ module CaseflowCertification
 
     config.cache_store = :memory_store, {expires_in: 24.hours, size: 256.megabytes}
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
+
+    # default to no analytics (production only)
+    config.google_analytics_account = nil
   end
 end
