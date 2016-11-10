@@ -78,6 +78,8 @@ class PersistForm8Data < ActiveRecord::Migration
       t.string :_initial_representative_type
       t.string :_initial_hearing_requested
       t.string :_initial_ssoc_required
+
+      t.timestamps null: false
     end
   end
 end
