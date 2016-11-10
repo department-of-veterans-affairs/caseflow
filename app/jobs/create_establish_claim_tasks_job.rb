@@ -1,4 +1,6 @@
 class CreateEstablishClaimTasksJob < ActiveJob::Base
+  queue_as :default
+
   def perform
     # fetch all partial grants
     AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
