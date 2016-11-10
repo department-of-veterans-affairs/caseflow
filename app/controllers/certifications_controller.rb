@@ -22,14 +22,6 @@ class CertificationsController < ApplicationController
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    # VACOLS data will be fetched fresh every time.
-    # However, visiting "/certifications/new/123C" will
-    # bring the user to the certification with VACOLS id "123C"
-    # if it already exists.
-    #
-    # Update the form8 that belongs to this certification
-    # with the newest data.
-    certification.form8.update_from_appeal(appeal)
     @form8 = certification.form8
   end
 
