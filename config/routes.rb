@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  scope "/dispatch", department: :dispatch do
+  scope "/dispatch/establish-claim", task_type: :EstablishClaim do
     get '/', to: "tasks#index"
   end
 
