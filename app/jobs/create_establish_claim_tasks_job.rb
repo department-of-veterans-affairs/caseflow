@@ -13,11 +13,12 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
 
   # Grab all historical full grants within the last 3 days
   def full_grant_decided_after
-    time = Time.now.utc
-    Time.utc(
-      time.year,
-      time.month,
-      time.day - 2
+    Time.zone = "Eastern Time (US & Canada)"
+    current_time = Time.zone.now
+    Time.zone.local(
+      current_time.year,
+      current_time.month,
+      current_time.day - 3
     )
   end
 end
