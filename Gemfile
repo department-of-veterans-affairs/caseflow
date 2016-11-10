@@ -1,6 +1,8 @@
 if ENV["GEM_SERVER_URL"] == nil
+  puts "using gemserver ruby"
   source 'https://rubygems.org'
-elseb
+else
+  puts "using gemserver #{ENV["GEM_SERVER_URL"]}"
   source ENV["GEM_SERVER_URL"]
 
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
