@@ -17,7 +17,7 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
     Time.utc(
       time.year,
       time.month,
-      (time.day - 3)
+      time.day - 2
     )
   end
 end
