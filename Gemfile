@@ -1,8 +1,6 @@
 if ENV['GEM_SERVER_URL'] == nil
-  puts "using gemserver ruby"
   source 'https://rubygems.org'
 else
-  puts "using gemserver #{ENV['GEM_SERVER_URL']}"
   source ENV['GEM_SERVER_URL']
 end
 
