@@ -39,21 +39,28 @@ class Fakes::AppealRepository
   # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
   def self.appeal_ready_to_certify
     {
-      type: "Original",
-      file_type: "VBMS",
       vbms_id: "VBMS-ID",
-      representative: "Military Order of the Purple Heart",
+      type: VACOLS::Case::TYPES["1"], #Original
+      file_type: "VBMS",
+      representative: VACOLS::Case::REPRESENTATIVES["F"][:full_name], #Military Order of the Purple Heart
+      veteran_first_name: "Davy",
+      veteran_middle_initial: "Q",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_middle_initial: "X",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      insurance_loan_number: "1234", # Check that this doesn't actually come through as a number type
+      notification_date: 1.day.ago,
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
       notification_date: 1.day.ago,
+      hearing_type: VACOLS::Case::HEARING_TYPES["1"], # Central office
+      regional_office_key: "DSUSER",
       documents: [nod_document, soc_document, form9_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
+      disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
+      status: VACOLS::Case::STATUS["ADV"] # Advance
     }
   end
 
