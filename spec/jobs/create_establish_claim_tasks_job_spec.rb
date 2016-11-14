@@ -2,8 +2,8 @@ describe CreateEstablishClaimTasksJob do
   before do
     reset_application!
 
-    @partial_grant = Fakes::AppealRepository.create("123C", :appeal_remand_decided)
-    @full_grant = Fakes::AppealRepository.create("456D", :appeal_full_grant_decided, decision_date: 1.day.ago)
+    @partial_grant = Fakes::AppealRepository.new("123C", :appeal_remand_decided)
+    @full_grant = Fakes::AppealRepository.new("456D", :appeal_full_grant_decided, decision_date: 1.day.ago)
 
     allow(AppealRepository).to receive(:remands_ready_for_claims_establishment).and_return([@partial_grant])
     allow(AppealRepository).to receive(:amc_full_grants).and_return([@full_grant])

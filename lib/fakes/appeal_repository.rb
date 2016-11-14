@@ -6,10 +6,10 @@ class Fakes::AppealRepository
     attr_accessor :certified_appeal
   end
 
-  def self.create(vacols_id, default_attrs_method_name, overrides = {})
+  def self.new(vacols_id, default_attrs_method_name, overrides = {})
     # Dynamically call the specified class method name to obtain
     # the hash of defualt values eg:
-    #   AppealRepository.create("123C", :appeal_ready_to_certify)
+    #   AppealRepository.new("123C", :appeal_ready_to_certify)
     default_attrs = send(default_attrs_method_name)
     attrs = default_attrs.merge(overrides) # merge in overrides
 
