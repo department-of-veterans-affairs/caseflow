@@ -114,41 +114,9 @@ RSpec.feature "Save Certification" do
     click_on "Preview Completed Form 8"
 
     visit "certifications/new/6666C"
-    expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy")
+    expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy, Q")
   end
 
-  # scenario "Does not repopulate saved form for past serialization versions" do
-  #   User.authenticate!
-
-  #   Form8.pdf_service = FakePdfService
-  #   Fakes::AppealRepository.records = {
-  #     "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
-  #   }
-
-  #   visit "certifications/new/5555C"
-  #   fill_in "Full Veteran Name", with: "Joe Patriot"
-  #   fill_in "8A Representative Name", with: "Jane Patriot"
-  #   within_fieldset("8A Representative Type") do
-  #     find("label", text: "Attorney").click
-  #   end
-  #   within_fieldset("10A Was BVA hearing requested?") do
-  #     find("label", text: "No").click
-  #   end
-  #   within_fieldset("11A Are contested claims procedures applicable in this case?") do
-  #     find("label", text: "No").click
-  #   end
-  #   within_fieldset("12B Supplemental statement of the case") do
-  #     find("label", text: "Not required").click
-  #   end
-  #   fill_in "17A Name of certifying official", with: "Gieuseppe"
-  #   fill_in "17B Title of certifying official", with: "DRO"
-  #   click_on "Preview Completed Form 8"
-
-  #   Form8::SERIALIZATION_VERSION = Form8::SERIALIZATION_VERSION + 1
-
-  #   visit "certifications/new/5555C"
-  #   expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy")
-  # end
 
   scenario "Saving a certification passes the correct values into the PDF service" do
     Form8.pdf_service = FakePdfService
