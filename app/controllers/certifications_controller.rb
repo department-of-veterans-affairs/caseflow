@@ -29,7 +29,7 @@ class CertificationsController < ApplicationController
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
     params.require(:form8).permit!
-    form8.update!(params[:form8])
+    form8.update_from_string_params(params[:form8])
     form8.save_pdf!
 
     redirect_to certification_path(id: certification.form8.vacols_id)

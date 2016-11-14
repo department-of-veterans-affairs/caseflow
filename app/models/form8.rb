@@ -62,7 +62,7 @@ class Form8 < ActiveRecord::Base
       ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
-      certification_date: Time.zone.now,
+      certification_date: Date.today,
       _initial_appellant_name: appeal.appellant_name,
       _initial_appellant_relationship: appeal.appellant_relationship,
       _initial_veteran_name: appeal.veteran_name,

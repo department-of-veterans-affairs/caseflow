@@ -85,6 +85,9 @@ RSpec.feature "Save Certification" do
     end
     expect(find_field("17A Name of certifying official").value).to eq("Gieuseppe")
     expect(find_field("17B Title of certifying official").value).to eq("DRO")
+
+    click_on "Preview Completed Form 8"
+    expect(page).to have_current_path(certification_path(id: "5555C"))
   end
 
   scenario "Does not repopulate saved form for another appeal" do
