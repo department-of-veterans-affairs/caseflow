@@ -1,5 +1,5 @@
 #Caseflow Development Process
-These columns in the caseflow waffle board describe the states and life cycle of a story.
+These columns in the caseflow waffle board describe the states and life cycle of a story. This is a work in progress and will continue to evolve to fit the needs of the team. We will use **Retrospectives** at the end of each sprint to facilitate this.
 
 ##Backlog
 Landing place for new bugs or technical stories. This is also a catch all for any old issues, or issues that aren't well formed enough to be considered ready for development.
