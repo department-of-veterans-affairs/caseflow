@@ -1,5 +1,17 @@
 require_relative "../rails_helper"
 describe Form8 do
+  initial_fields = [ :_initial_appellant_name,
+  :_initial_appellant_relationship,
+  :_initial_veteran_name,
+  :_initial_insurance_loan_number,
+  :_initial_service_connection_notification_date,
+  :_initial_increased_rating_notification_date,
+  :_initial_other_notification_date,
+  :_initial_representative_name,
+  :_initial_representative_type,
+  :_initial_hearing_requested,
+  :_initial_ssoc_required ]
+
   context "#attributes" do
     let(:form8) do
       Form8.new(
@@ -21,6 +33,35 @@ describe Form8 do
                                      appellant_relationship: "Fancy man",
                                      file_number: "1234QWERTY",
                                      veteran_name: "Joe Patriot")
+    end
+  end
+
+  context "#update_from_appeal" do
+    let(:form8) { Form8.new }
+    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+
+    it "populates _initial_ fields with the same values as their counterparts" do
+      form8.update_from_appeal(appeal)
+
+      initial_fields.each do |initial_field|
+        f = initial_field.to_s.sub "_initial_", ""
+        field = f.to_sym
+        expect(form8[field]).to eq(form8[initial_field])
+      end
+    end
+  end
+
+  context "#attributes" do
+    let(:form8) { Form8.new }
+    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+
+    it "does not return initial attributes" do
+      form8.update_from_appeal(appeal)
+      attributes = form8.attributes
+
+      initial_fields.each do |initial_field|
+        expect(attributes[initial_field]).to eq(nil)
+      end
     end
   end
 

@@ -144,24 +144,66 @@ describe Certification do
           expect(certification.ssocs_matching_at).to eq(Time.zone.now)
         end
       end
+
+      context "when fetching form8 data for a new certification" do
+        it "populates a form8 with appeal data when form8 data is not present" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double()
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).once
+        end
+      end
+
+      context "when resuming a certification" do
+        it "does not update a form8's appeal data if form8 has been updated less than 48 hours ago" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double()
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:updated_at).and_return(Time.now)
+
+          cert.start!
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).once
+          expect(form).to have_received(:update_from_appeal).at_most(:once)
+        end
+
+        it "updates a form8's appeal data if form8 has been updated more than 48 hours ago" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double()
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:updated_at).and_return(49.hours.ago)
+
+          cert.start!
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).twice
+        end
+      end
     end
   end
 
   context "#form8" do
     # TODO alex: certification.form8 no longer takes an argument. rewrite this block.
-    # subject { certification.form8("TEST_form8") }
+    subject { certification.form8 }
 
     # TODO alex: rewrite these tests to use db instead of cache?
-    # context "when a form8 exists in the cache for the passed key" do
+    context "when a form8 exists in the db for that certification" do
     #   before do
     #     Rails.cache.write("TEST_form8", Form8.new(vacols_id: "4949", file_number: "SAVED88").attributes)
-    #   end
+      # end
 
-    #   it "returns the cached form8" do
+    #   it "returns the saved form8" do
     #     expect(subject.file_number).to eq("SAVED88")
     #   end
-    # end
-    # context "when no cached form8 exists" do
+    end
+    # context "when no saved form8 exists" do
     #   before do
     #     Rails.cache.write("TEST_form8", nil)
     #   end
