@@ -1,0 +1,2 @@
+class EstablishClaim < Task
+end

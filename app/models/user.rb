@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
   attr_accessor :roles
   attr_writer :regional_office
 
+  TASK_TYPE_TO_ROLES = {
+    EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
+  }.freeze
+
   def username
     css_id
   end
