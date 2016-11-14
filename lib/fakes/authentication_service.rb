@@ -11,10 +11,7 @@ class Fakes::AuthenticationService
     roles = ["Certify Appeal", "Establish Claim"]
     # ANNE MERICA is a manager, everyone else doesn't
     # have that role.
-    if user.css_id == "ANNE MERICA"
-       roles.push("Manage Claim Establishment")
-    end
-
+    roles.push("Manage Claim Establishment") if user.css_id == "ANNE MERICA"
     {
       "id" => user.css_id,
       "roles" => roles,
