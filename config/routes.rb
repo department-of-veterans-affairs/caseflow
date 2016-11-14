@@ -20,9 +20,10 @@ Rails.application.routes.draw do
 
   scope "/dispatch/establish-claim", task_type: :EstablishClaim do
     get '/', to: "tasks#index"
+    get '/:task_id', to: "tasks#show"
   end
 
-  resources :tasks, only: [:show] do
+  resources :tasks, only: [] do
     patch 'assign', on: :member
   end
 

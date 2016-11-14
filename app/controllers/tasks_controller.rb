@@ -14,7 +14,7 @@ class TasksController < ApplicationController
 
   def assign
     task.assign!(current_user)
-    redirect_to task_path(task)
+    redirect_to task.show_path
   end
 
   private

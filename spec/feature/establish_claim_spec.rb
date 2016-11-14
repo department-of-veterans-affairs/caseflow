@@ -1,4 +1,4 @@
-RSpec.feature "Dispatch" do
+RSpec.feature "Dispatch", focus: true do
   before do
     reset_application!
     Fakes::AppealRepository.records = {
@@ -7,7 +7,7 @@ RSpec.feature "Dispatch" do
     }
     @vbms_id = "VBMS_ID1"
     appeal = Appeal.create(vacols_id: "123C", vbms_id: @vbms_id)
-    @end_product = EstablishClaim.create(appeal: appeal)
+    @task = EstablishClaim.create(appeal: appeal)
   end
 
   context "manager" do
@@ -25,8 +25,8 @@ RSpec.feature "Dispatch" do
 
     context "task completed" do
       before do
-        @end_product.assign(User.create(station_id: "123", css_id: "ABC"))
-        @end_product.update(started_at: Time.now.utc, completed_at: Time.now.utc)
+        @task.assign!(User.create(station_id: "123", css_id: "ABC"))
+        @task.update(started_at: Time.now.utc, completed_at: Time.now.utc)
       end
 
       scenario "Case Worker" do
@@ -57,6 +57,9 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_content("Establish Claim")
         expect(page).to have_css("tr#task-#{@completed_task.id}")
+
+        click_on "Establish Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       end
     end
   end

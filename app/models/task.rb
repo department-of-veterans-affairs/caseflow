@@ -2,6 +2,10 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  DEPARTMENT_MAPPING = {
+    EstablishClaim: :dispatch
+  }
+
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
     1 => "Cancelled",
@@ -34,6 +38,11 @@ class Task < ActiveRecord::Base
 
   def start_text
     type.titlecase
+  end
+
+  def show_path
+    department = DEPARTMENT_MAPPING(task.type.to_sym)
+    "#{department}/#{type.underscore.dasherize}/#{task.id}"
   end
 
   def assign!(user)
