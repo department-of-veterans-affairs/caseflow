@@ -191,7 +191,6 @@ describe Certification do
 
   context "#form8" do
     context "when a form8 exists in the db for that certification" do
-
       it "returns the saved form8" do
         cert = Certification.create!
         form8 = Form8.create(vacols_id: "9999", certification_id: cert.id)
@@ -200,7 +199,6 @@ describe Certification do
       end
     end
     context "when no saved form8 exists" do
-
       it "returns a new form8" do
         cert = Certification.create!
         expect(Form8.exists?(certification_id: cert.id)).to eq(false)
