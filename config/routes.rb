@@ -22,9 +22,11 @@ Rails.application.routes.draw do
     get '/', to: "tasks#index"
   end
 
-  scope "/dev" do
-    get '/users', to: "users#index"
-    get '/set-user/:id', to: "dev#set_user", as: 'set_user'
+  if Rails.env.development?
+    scope "/dev" do
+      get '/users', to: "users#index"
+      get '/set-user/:id', to: "dev#set_user", as: 'set_user'
+    end
   end
 
   resources :offices, only: :index
