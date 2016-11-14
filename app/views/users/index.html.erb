@@ -1,3 +1,8 @@
+<div class="cf-app-segment cf-app-segment--alt">
+<h1>Switch User</h1>
+
 <% @users.each do |user| %>
-	<p><%= user.css_id %></p>
+	<p><%= link_to user.css_id, set_user_path(user) %></p>
 <% end %>
+
+</div>
