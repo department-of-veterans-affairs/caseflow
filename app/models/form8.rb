@@ -44,6 +44,7 @@ class Form8 < ActiveRecord::Base
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def update_from_appeal(appeal)
     update_attributes!(
       vacols_id: appeal.vacols_id,
@@ -62,7 +63,7 @@ class Form8 < ActiveRecord::Base
       ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
-      certification_date: Date.today,
+      certification_date: Time.zone.now.to_date,
       _initial_appellant_name: appeal.appellant_name,
       _initial_appellant_relationship: appeal.appellant_relationship,
       _initial_veteran_name: appeal.veteran_name,

@@ -37,6 +37,7 @@ class Fakes::AppealRepository
   end
 
   # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
+  # rubocop:disable Metrics/MethodLength
   def self.appeal_ready_to_certify
     {
       vbms_id: "VBMS-ID",
