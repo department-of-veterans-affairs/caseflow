@@ -71,22 +71,6 @@ class User < ActiveRecord::Base
       end
     end
 
-    def get_user_session(user_id)
-      user = find(user_id)
-      roles = ["Certify Appeal", "Establish Claim"]
-      # ANNE MERICA is a manager, everyone else doesn't
-      # have that role.
-      if user.css_id == "ANNE MERICA"
-         roles.push("Manage Claim Establishment")
-      end
-
-      {
-        "id" => user.css_id,
-        "roles" => roles,
-        "station_id" => user.station_id
-      }
-    end
-
     def authentication_service
       @authentication_service ||= AuthenticationService
     end

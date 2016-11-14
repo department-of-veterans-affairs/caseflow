@@ -6,6 +6,22 @@ class Fakes::AuthenticationService
     user_session
   end
 
+  def self.get_user_session(user_id)
+    user = User.find(user_id)
+    roles = ["Certify Appeal", "Establish Claim"]
+    # ANNE MERICA is a manager, everyone else doesn't
+    # have that role.
+    if user.css_id == "ANNE MERICA"
+       roles.push("Manage Claim Establishment")
+    end
+
+    {
+      "id" => user.css_id,
+      "roles" => roles,
+      "station_id" => user.station_id
+    }
+  end
+
   def self.authenticate_vacols(regional_office, password)
     normalized_ro = find_ro(regional_office)
     actual_password = vacols_regional_offices[normalized_ro]

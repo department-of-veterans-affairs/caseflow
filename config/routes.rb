@@ -24,8 +24,8 @@ Rails.application.routes.draw do
 
   if Rails.env.development?
     scope "/dev" do
-      get '/users', to: "users#index"
-      get '/set-user/:id', to: "dev#set_user", as: 'set_user'
+      get '/users', to: "dev_users#index"
+      post '/set-user/:id', to: "dev#set_user", as: 'set_user'
     end
   end
 

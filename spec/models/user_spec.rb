@@ -151,4 +151,5 @@ describe User do
       it { is_expected.to be_nil }
     end
   end
+
 end

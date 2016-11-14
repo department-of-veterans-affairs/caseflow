@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class DevUsersController < ApplicationController
   def index
     @users = User.all
     render "index"
