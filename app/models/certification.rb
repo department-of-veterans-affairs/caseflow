@@ -23,12 +23,7 @@ class Certification < ActiveRecord::Base
       ssocs_matching_at:   calculcate_ssocs_matching_at,
       form8_started_at:    (certification_status == :started) ? now : nil
     )
-    # if we haven't yet set the vacols id on the form8
-    # or if we last updated it earlier than 48 hours ago,
-    # refresh it with new data.
-    if form8.vacols_id.nil? || form8.updated_at < 48.hours.ago
-      form8.update_from_appeal(appeal)
-    end
+
     certification_status
   end
 
