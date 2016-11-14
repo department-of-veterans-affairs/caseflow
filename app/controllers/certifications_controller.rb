@@ -59,14 +59,6 @@ class CertificationsController < ApplicationController
 
   private
 
-  # TODO: alex: is this necessary? should it live elsewhere?
-  def form8_cache_key
-    # force initialization of cache, there's probably a better way to do this
-    session["init"] = true
-
-    "#{session.id}_form8"
-  end
-
   def verify_access
     verify_authorized_roles("Certify Appeal")
   end
