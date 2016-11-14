@@ -67,6 +67,10 @@ class User < ActiveRecord::Base
       end
     end
 
+    def set_user_session(user)
+      session["user"] = user
+    end
+
     def authentication_service
       @authentication_service ||= AuthenticationService
     end
