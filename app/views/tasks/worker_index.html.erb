@@ -2,9 +2,8 @@
   <div class="usa-width-one-whole task-start-wrapper">
     <% if next_unassigned_task %>
       <div class="task-start-cta">
-        <button type="button" class="usa-button-primary">
-          <%= next_unassigned_task.start_text %>
-        </button>
+        <%= link_to(next_unassigned_task.start_text, assign_task_path(next_unassigned_task),
+          class: "usa-button-primary", method: 'patch') %>
       </div>
     <% end %>
   </div>

@@ -36,7 +36,7 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def assign(user)
+  def assign!(user)
     update_attributes!(
       user: user,
       assigned_at: Time.now.utc

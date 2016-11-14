@@ -22,6 +22,10 @@ Rails.application.routes.draw do
     get '/', to: "tasks#index"
   end
 
+  resources :tasks, only: [:show] do
+    patch 'assign', on: :member
+  end
+
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"

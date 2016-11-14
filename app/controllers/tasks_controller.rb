@@ -10,7 +10,11 @@ class TasksController < ApplicationController
   end
 
   def show
-    @task = Task.find(task_id)
+  end
+
+  def assign
+    task.assign!(current_user)
+    redirect_to task_path(task)
   end
 
   private
@@ -30,12 +34,17 @@ class TasksController < ApplicationController
   end
 
   def type
-    params[:task_type]
+    params[:task_type] || (task && task.type.to_sym)
   end
 
   def task_id
     params[:id]
   end
+
+  def task
+    @task ||= Task.find(task_id)
+  end
+  helper_method :task
 
   def completed_tasks
     @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
