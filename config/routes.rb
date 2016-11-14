@@ -22,6 +22,10 @@ Rails.application.routes.draw do
     get '/', to: "tasks#index"
   end
 
+  scope "/users" do
+    get '/', to: "users#index"
+  end
+
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
