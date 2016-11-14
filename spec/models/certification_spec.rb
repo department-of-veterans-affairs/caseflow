@@ -148,7 +148,7 @@ describe Certification do
       context "when fetching form8 data for a new certification" do
         it "populates a form8 with appeal data when form8 data is not present" do
           cert = Certification.new(vacols_id: "4949")
-          form = double()
+          form = double
           allow(cert).to receive(:form8).and_return(form)
           allow(form).to receive(:update_from_appeal)
 
@@ -161,7 +161,7 @@ describe Certification do
       context "when resuming a certification" do
         it "does not update a form8's appeal data if form8 has been updated less than 48 hours ago" do
           cert = Certification.new(vacols_id: "4949")
-          form = double()
+          form = double
           allow(cert).to receive(:form8).and_return(form)
           allow(form).to receive(:update_from_appeal)
           allow(form).to receive(:updated_at).and_return(Time.now)
@@ -175,7 +175,7 @@ describe Certification do
 
         it "updates a form8's appeal data if form8 has been updated more than 48 hours ago" do
           cert = Certification.new(vacols_id: "4949")
-          form = double()
+          form = double
           allow(cert).to receive(:form8).and_return(form)
           allow(form).to receive(:update_from_appeal)
           allow(form).to receive(:updated_at).and_return(49.hours.ago)
@@ -190,18 +190,18 @@ describe Certification do
   end
 
   context "#form8" do
-    # TODO alex: certification.form8 no longer takes an argument. rewrite this block.
+    # TODO: alex: certification.form8 no longer takes an argument. rewrite this block.
     subject { certification.form8 }
 
-    # TODO alex: rewrite these tests to use db instead of cache?
+    # TODO: alex: rewrite these tests to use db instead of cache?
     context "when a form8 exists in the db for that certification" do
-    #   before do
-    #     Rails.cache.write("TEST_form8", Form8.new(vacols_id: "4949", file_number: "SAVED88").attributes)
+      #   before do
+      #     Rails.cache.write("TEST_form8", Form8.new(vacols_id: "4949", file_number: "SAVED88").attributes)
       # end
 
-    #   it "returns the saved form8" do
-    #     expect(subject.file_number).to eq("SAVED88")
-    #   end
+      #   it "returns the saved form8" do
+      #     expect(subject.file_number).to eq("SAVED88")
+      #   end
     end
     # context "when no saved form8 exists" do
     #   before do

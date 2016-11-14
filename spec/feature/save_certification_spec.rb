@@ -120,7 +120,6 @@ RSpec.feature "Save Certification" do
     expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy, Q")
   end
 
-
   scenario "Saving a certification passes the correct values into the PDF service" do
     Form8.pdf_service = FakePdfService
     Fakes::AppealRepository.records = {
@@ -181,11 +180,11 @@ RSpec.feature "Save Certification" do
       veteran_name: "Micah Bobby",
       insurance_loan_number: "INSURANCE-NO",
       service_connection_for: "service connection stuff",
-      service_connection_notification_date: Date.parse("02/01/2016"),
+      service_connection_notification_date: Date.strptime("02/01/2016", "%m/%d/%Y"),
       increased_rating_for: "increased rating stuff",
-      increased_rating_notification_date: Date.parse("08/08/2008"),
+      increased_rating_notification_date: Date.strptime("08/08/2008", "%m/%d/%Y"),
       other_for: "other stuff",
-      other_notification_date: Date.parse("09/09/2009"),
+      other_notification_date: Date.strptime("09/09/2009", "%m/%d/%Y"),
       representative_type: "Attorney",
       hearing_requested: "No",
       hearing_transcript_on_file: "Yes",

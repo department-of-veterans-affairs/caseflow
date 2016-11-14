@@ -40,9 +40,9 @@ class Fakes::AppealRepository
   def self.appeal_ready_to_certify
     {
       vbms_id: "VBMS-ID",
-      type: VACOLS::Case::TYPES["1"], #Original
+      type: VACOLS::Case::TYPES["1"], # Original
       file_type: "VBMS",
-      representative: VACOLS::Case::REPRESENTATIVES["F"][:full_name], #Military Order of the Purple Heart
+      representative: VACOLS::Case::REPRESENTATIVES["F"][:full_name], # Military Order of the Purple Heart
       veteran_first_name: "Davy",
       veteran_middle_initial: "Q",
       veteran_last_name: "Crockett",
@@ -55,7 +55,6 @@ class Fakes::AppealRepository
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
-      notification_date: 1.day.ago,
       hearing_type: VACOLS::Case::HEARING_TYPES["1"], # Central office
       regional_office_key: "DSUSER",
       documents: [nod_document, soc_document, form9_document],

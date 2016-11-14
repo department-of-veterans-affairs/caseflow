@@ -43,7 +43,7 @@ class Form8 < ActiveRecord::Base
     Form8.pdf_service.save_pdf_for!(self)
   end
 
-# rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   def update_from_appeal(appeal)
     update_attributes!(
       vacols_id: appeal.vacols_id,

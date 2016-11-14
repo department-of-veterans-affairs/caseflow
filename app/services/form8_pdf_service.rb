@@ -91,7 +91,6 @@ class Form8PdfService
     FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
 
-
       if value.is_a?(Date) || value.is_a?(Time)
         value = value.to_formatted_s(:short_date)
       end

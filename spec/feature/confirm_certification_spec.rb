@@ -20,7 +20,6 @@ RSpec.feature "Confirm Certification" do
   after { Timecop.return }
 
   scenario "Screen reader user visits pdf link" do
-
     visit "certifications/5555C"
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
@@ -39,7 +38,6 @@ RSpec.feature "Confirm Certification" do
   end
 
   scenario "Successful confirmation" do
-
     visit "certifications/5555C"
     expect(page).to have_content("Review Form 8")
     click_on "Upload and certify"
