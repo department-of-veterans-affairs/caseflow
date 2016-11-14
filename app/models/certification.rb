@@ -6,6 +6,13 @@
 #
 class Certification < ActiveRecord::Base
   def start!
+    # if we haven't yet started the form8
+    # or if we last updated it earlier than 48 hours ago,
+    # refresh it with new data.
+    if form8_started_at.nil? || form8.updated_at < 48.hours.ago
+      form8.update_from_appeal(appeal)
+    end
+
     update_attributes!(
       already_certified:   calculate_already_certified,
       vacols_data_missing: calculate_vacols_data_missing,
