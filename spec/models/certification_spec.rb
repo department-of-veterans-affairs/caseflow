@@ -190,28 +190,23 @@ describe Certification do
   end
 
   context "#form8" do
-    # TODO: alex: certification.form8 no longer takes an argument. rewrite this block.
-    subject { certification.form8 }
-
-    # TODO: alex: rewrite these tests to use db instead of cache?
     context "when a form8 exists in the db for that certification" do
-      #   before do
-      #     Rails.cache.write("TEST_form8", Form8.new(vacols_id: "4949", file_number: "SAVED88").attributes)
-      # end
 
-      #   it "returns the saved form8" do
-      #     expect(subject.file_number).to eq("SAVED88")
-      #   end
+      it "returns the saved form8" do
+        cert = Certification.create!
+        form8 = Form8.create(vacols_id: "9999", certification_id: cert.id)
+        expect(cert.form8.id).to eq(form8.id)
+        expect(cert.form8.vacols_id).to eq("9999")
+      end
     end
-    # context "when no saved form8 exists" do
-    #   before do
-    #     Rails.cache.write("TEST_form8", nil)
-    #   end
+    context "when no saved form8 exists" do
 
-    #   it "returns a new form8" do
-    #     expect(subject.file_number).to eq("VB12")
-    #   end
-    # end
+      it "returns a new form8" do
+        cert = Certification.create!
+        expect(Form8.exists?(certification_id: cert.id)).to eq(false)
+        expect(cert.form8.class).to eq(Form8)
+      end
+    end
   end
 
   context "#appeal" do
