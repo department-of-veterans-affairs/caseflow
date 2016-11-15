@@ -28,7 +28,7 @@ module CaseflowCertification
     config.autoload_paths += Dir[Rails.root.join('app', 'models', '{**}')]
     config.exceptions_app = self.routes
 
-    config.cache_store = :redis_store, Rails.application.secrets.redis_url+'/0/cache/', { expires_in: 24.hours }
+    config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
   end
 end

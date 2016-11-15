@@ -109,6 +109,7 @@ GEM
     coderay (1.1.1)
     colorize (0.7.7)
     concurrent-ruby (1.0.2)
+    connection_pool (2.2.1)
     d3-rails (4.2.6)
       railties (>= 3.1)
     debug_inspector (0.0.2)
@@ -218,6 +219,8 @@ GEM
       slop (~> 3.4)
     puma (2.16.0)
     rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.7.1)
@@ -321,6 +324,11 @@ GEM
     sentry-raven (1.2.3)
       faraday (>= 0.7.6, < 0.10.x)
     shellany (0.0.1)
+    sidekiq (4.2.6)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (~> 3.2, >= 3.2.1)
     simplecov (0.11.2)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -404,6 +412,7 @@ DEPENDENCIES
   scss_lint
   sdoc (~> 0.4.0)
   sentry-raven
+  sidekiq
   simplecov
   sniffybara!
   sqlite3

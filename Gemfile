@@ -54,6 +54,8 @@ gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/conn
 
 gem 'redis-rails'
 
+gem 'sidekiq'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
