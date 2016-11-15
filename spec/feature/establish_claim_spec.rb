@@ -52,7 +52,7 @@ RSpec.feature "Dispatch" do
                                                 completed_at: Time.now.utc)
       end
 
-      scenario "Case Worker" do
+      scenario "Case Worker", focus: true do
         visit "/dispatch/establish-claim"
 
         expect(page).to have_content("Establish Claim")
