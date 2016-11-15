@@ -9,7 +9,7 @@ class Fakes::AuthenticationService
   def self.get_user_session(user_id)
     user = User.find(user_id)
     # Take the roles from the User's css_id
-    roles = user.css_id.split(",").map { |s| s.strip }
+    roles = user.css_id.split(",").map(&:strip)
     {
       "id" => user.css_id,
       "roles" => roles,
