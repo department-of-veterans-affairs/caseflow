@@ -2,22 +2,21 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  COMPLETION_STATUS_MAPPING = {
+    0 => "Completed",
+    1 => "Cancelled by User",
+    2 => "Cancelled by System",
+    3 => "Routed to RO"
+  }.freeze
+
   class << self
-
-    COMPLETION_STATUS_MAPPING = {
-      0 => "Completed",
-      1 => "Cancelled by User",
-      2 => "Cancelled by System",
-      3 => "Routed to RO"
-    }.freeze
-
     def unassigned
       where(user_id: nil)
     end
 
     def assigned_not_completed
       to_complete.where.not(assigned_at: nil)
-    end 
+    end
 
     def newest_first
       order(created_at: :desc)
@@ -56,7 +55,7 @@ class Task < ActiveRecord::Base
     update_attributes!(
       user: nil,
       assigned_at: nil,
-      started_at: nil,
+      started_at: nil
     )
   end
 
