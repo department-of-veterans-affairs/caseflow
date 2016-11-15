@@ -4,16 +4,21 @@ class Task < ActiveRecord::Base
 
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
-    1 => "Cancelled",
+    1 => "Cancelled by User",
+    2 => "Cancelled by System",
 
     # Establish Claim completion codes
-    2 => "Routed to RO"
+    3 => "Routed to RO"
   }.freeze
 
   class << self
     def unassigned
       where(user_id: nil)
     end
+
+    def assigned_not_completed
+      to_complete.where.not(assigned_at: nil)
+    end 
 
     def newest_first
       order(created_at: :desc)
@@ -37,10 +42,25 @@ class Task < ActiveRecord::Base
   end
 
   def assign(user)
-    update_attributes!(
+    assign_attributes(
       user: user,
       assigned_at: Time.now.utc
     )
+    save
+    self
+  end
+
+  def unassign!
+    update(
+      user: nil,
+      assigned_at: nil,
+      started_at: nil,
+    )
+  end
+
+  def duplicate_and_mark_complete!
+    EstablishClaim.create!(appeal_id: appeal_id)
+    completed!(2)
   end
 
   def assigned?
@@ -60,15 +80,17 @@ class Task < ActiveRecord::Base
   end
 
   def complete?
+    binding.pry
     completed_at
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def completed(status)
-    update_attributes!(
+  def completed!(status)
+    assign_attributes(
       completed_at: Time.now.utc,
       completion_status: status
     )
+    save
   end
 
   def completion_status_text
