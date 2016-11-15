@@ -28,6 +28,7 @@ describe AppealRepository do
 
   let(:case_record) do
     OpenStruct.new(
+      bfkey: "123C",
       bfcorlid: "VBMS-ID",
       bfac: "4",
       bfso: "Q",

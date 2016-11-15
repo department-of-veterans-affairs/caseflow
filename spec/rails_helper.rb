@@ -84,6 +84,7 @@ def reset_application!
   User.clear_stub!
   User.delete_all
   Certification.delete_all
+  Fakes::AppealRepository.records = nil
 end
 
 def current_user
