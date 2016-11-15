@@ -2,16 +2,15 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
-  COMPLETION_STATUS_MAPPING = {
-    0 => "Completed",
-    1 => "Cancelled by User",
-    2 => "Cancelled by System",
-
-    # Establish Claim completion codes
-    3 => "Routed to RO"
-  }.freeze
-
   class << self
+
+    COMPLETION_STATUS_MAPPING = {
+      0 => "Completed",
+      1 => "Cancelled by User",
+      2 => "Cancelled by System",
+      3 => "Routed to RO"
+    }.freeze
+
     def unassigned
       where(user_id: nil)
     end
@@ -35,23 +34,26 @@ class Task < ActiveRecord::Base
     def completed
       where.not(completed_at: nil)
     end
+
+    def completion_status_code(code)
+      COMPLETION_STATUS_MAPPING.key(code)
+    end
   end
 
   def start_text
     type.titlecase
   end
 
-  def assign(user)
-    assign_attributes(
+  def assign!(user)
+    update_attributes!(
       user: user,
       assigned_at: Time.now.utc
     )
-    save
     self
   end
 
   def unassign!
-    update(
+    update_attributes!(
       user: nil,
       assigned_at: nil,
       started_at: nil,
@@ -60,7 +62,7 @@ class Task < ActiveRecord::Base
 
   def duplicate_and_mark_complete!
     EstablishClaim.create!(appeal_id: appeal_id)
-    completed!(2)
+    completed!(self.class.completion_status_code("Cancelled by System"))
   end
 
   def assigned?
@@ -80,17 +82,15 @@ class Task < ActiveRecord::Base
   end
 
   def complete?
-    binding.pry
     completed_at
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def completed!(status)
-    assign_attributes(
+    update_attributes!(
       completed_at: Time.now.utc,
       completion_status: status
     )
-    save
   end
 
   def completion_status_text
