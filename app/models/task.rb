@@ -2,6 +2,8 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  class AlreadyAssignedError < StandardError; end
+
   DEPARTMENT_MAPPING = {
     EstablishClaim: :dispatch
   }.freeze
@@ -46,6 +48,8 @@ class Task < ActiveRecord::Base
   end
 
   def assign!(user)
+    return AlreadyAssignedError if self.user
+
     update_attributes!(
       user: user,
       assigned_at: Time.now.utc
