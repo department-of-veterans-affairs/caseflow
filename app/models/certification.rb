@@ -6,6 +6,13 @@
 #
 class Certification < ActiveRecord::Base
   def start!
+    # if we haven't yet started the form8
+    # or if we last updated it earlier than 48 hours ago,
+    # refresh it with new data.
+    if form8_started_at.nil? || form8.updated_at < 48.hours.ago
+      form8.update_from_appeal(appeal)
+    end
+
     update_attributes!(
       already_certified:   calculate_already_certified,
       vacols_data_missing: calculate_vacols_data_missing,
@@ -35,8 +42,8 @@ class Certification < ActiveRecord::Base
     end
   end
 
-  def form8(cache_key)
-    @form8 ||= saved_form8(cache_key) || Form8.from_appeal(appeal)
+  def form8
+    @form8 ||= Form8.find_or_create_by(certification_id: id)
   end
 
   def time_to_certify
@@ -128,17 +135,8 @@ class Certification < ActiveRecord::Base
     end
   end
 
-  def saved_form8(cache_key)
-    saved = Rails.cache.read(cache_key)
-
-    return nil unless saved && saved["vacols_id"] == vacols_id
-    @saved_form8 ||= Form8.from_session(saved)
-  rescue
-    return nil
-  end
-
   class << self
-    def from_vacols_id!(vacols_id)
+    def find_or_create_by_vacols_id(vacols_id)
       find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
     end
   end

@@ -10,13 +10,15 @@ Rails.application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
-  
+
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
+
+  patch "certifications" => "certifications#create"
 
   scope "/dispatch/establish-claim", task_type: :EstablishClaim do
     get '/', to: "tasks#index"
