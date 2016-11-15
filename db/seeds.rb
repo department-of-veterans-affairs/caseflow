@@ -62,12 +62,15 @@ class SeedDB
     @tasks.push(*tasks)
   end
 
-  def create_default_user
+  def create_default_users
     @users.push(User.create(css_id: "ANNE MERICA", station_id: "283"))
+    @users.push(User.create(css_id: "Establish Claim", station_id: "283"))
+    @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283"))
+    @users.push(User.create(css_id: "Certify Appeal", station_id: "283"))
   end
 
   def seed
-    create_default_user
+    create_default_users
     create_appeals(50)
     create_users(2)
     create_tasks(50)
