@@ -1,4 +1,4 @@
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch" do
   before do
     reset_application!
     Fakes::AppealRepository.records = {

@@ -114,4 +114,9 @@ describe Task do
   context "#to_complete" do
     it { expect { Task.to_complete.find(@task.id) }.not_to raise_error }
   end
+
+  context "#url_path" do
+    subject { @task.url_path }
+    it { is_expected.to eq("/dispatch/establish-claim/#{@task.id}") }
+  end
 end

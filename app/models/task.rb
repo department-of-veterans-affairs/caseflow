@@ -40,9 +40,9 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def show_path
-    department = DEPARTMENT_MAPPING(task.type.to_sym)
-    "#{department}/#{type.underscore.dasherize}/#{task.id}"
+  def url_path
+    department = DEPARTMENT_MAPPING[type.to_sym]
+    "/#{department}/#{type.underscore.dasherize}/#{id}"
   end
 
   def assign!(user)
