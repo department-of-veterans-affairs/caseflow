@@ -37,7 +37,7 @@ RSpec.feature "Confirm Certification" do
     expect(content_header.include?("form8-TEST.pdf")).to be true
   end
 
-  scenario "Successful confirmation", focus: true do
+  scenario "Successful confirmation" do
     visit "certifications/5555C"
     expect(page).to have_content("Review Form 8")
     click_on "Upload and certify"
