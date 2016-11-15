@@ -102,12 +102,12 @@ describe Appeal do
       before { @form8 = Form8.create(vacols_id: "765") }
 
       it "certifies the appeal using AppealRepository" do
-        expect{ subject }.to_not raise_error
+        expect { subject }.to_not raise_error
         expect(Fakes::AppealRepository.certified_appeal).to eq(appeal)
       end
 
       it "uploads the correct form 8 using AppealRepository" do
-        expect{ subject }.to_not raise_error
+        expect { subject }.to_not raise_error
         expect(Fakes::AppealRepository.uploaded_form8.id).to eq(@form8.id)
         expect(Fakes::AppealRepository.uploaded_form8_appeal).to eq(appeal)
       end
@@ -115,7 +115,7 @@ describe Appeal do
 
     context "when form8 doesn't exist in the DB for appeal" do
       it "throws an error" do
-        expect{ subject }.to raise_error("No Form 8 found for appeal being certified")
+        expect { subject }.to raise_error("No Form 8 found for appeal being certified")
       end
     end
   end

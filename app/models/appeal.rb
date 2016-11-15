@@ -143,9 +143,9 @@ class Appeal < ActiveRecord::Base
     end
 
     def certify(appeal)
-      form8 = Form8.where(vacols_id: appeal.vacols_id).first
+      form8 = Form8.find_by(vacols_id: appeal.vacols_id)
 
-      raise "No Form 8 found for appeal being certified" unless form8
+      fail "No Form 8 found for appeal being certified" unless form8
 
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
