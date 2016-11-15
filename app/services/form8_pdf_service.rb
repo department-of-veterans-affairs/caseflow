@@ -37,7 +37,7 @@ class Form8PdfService
       "Yes" => "CheckBox23[2]",
       "No" => "CheckBox23[3]"
     },
-    form_646_not_of_record_explaination: "TextField1[13]",
+    form_646_not_of_record_explanation: "TextField1[13]",
     hearing_requested: {
       "Yes" => "CheckBox23[4]",
       "No" => "CheckBox23[5]"
@@ -46,7 +46,7 @@ class Form8PdfService
       "Yes" => "CheckBox23[6]",
       "No" => "CheckBox23[7]"
     },
-    hearing_requested_explaination: "TextField1[14]",
+    hearing_requested_explanation: "TextField1[14]",
     contested_claims_procedures_applicable: {
       "Yes" => "CheckBox23[8]",
       "No" => "CheckBox23[9]"
@@ -75,7 +75,7 @@ class Form8PdfService
     record_dep_ed_f: "CheckBox23[24]",
     record_insurance_f: "CheckBox23[21]",
     record_other: "CheckBox23[28]",
-    record_other_explaination: "TextField1[16]",
+    record_other_explanation: "TextField1[16]",
     remarks_initial: "TextField1[17]",
     remarks_continued: "TextField1[26]",
     certifying_office: "TextField1[18]",
@@ -91,7 +91,9 @@ class Form8PdfService
     FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
 
-      value = value.to_formatted_s(:short_date) if value.is_a?(Date)
+      if value.is_a?(Date) || value.is_a?(Time)
+        value = value.to_formatted_s(:short_date)
+      end
 
       if location.is_a?(Hash)
         location = location[value]
@@ -136,11 +138,11 @@ class Form8PdfService
   end
 
   def self.output_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.pdf")
+    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.pdf")
   end
 
   def self.tmp_location_for(form8)
-    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.id}.tmp")
+    File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.tmp")
   end
 
   def self.empty_pdf_location

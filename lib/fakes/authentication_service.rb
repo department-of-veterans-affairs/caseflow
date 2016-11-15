@@ -6,6 +6,17 @@ class Fakes::AuthenticationService
     user_session
   end
 
+  def self.get_user_session(user_id)
+    user = User.find(user_id)
+    # Take the roles from the User's css_id
+    roles = user.css_id.split(",").map(&:strip)
+    {
+      "id" => user.css_id,
+      "roles" => roles,
+      "station_id" => user.station_id
+    }
+  end
+
   def self.authenticate_vacols(regional_office, password)
     normalized_ro = find_ro(regional_office)
     actual_password = vacols_regional_offices[normalized_ro]
