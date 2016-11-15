@@ -33,6 +33,9 @@ class TasksController < ApplicationController
     Task.where(type: type).newest_first
   end
 
+  # If a task_type is explicitly passed via the router, use that.
+  # Otherwise look up the task type from the task itself
+  # Ex:  PATCH /tasks/:id/assign will look up the task type from the task
   def type
     params[:task_type] || (task && task.type.to_sym)
   end

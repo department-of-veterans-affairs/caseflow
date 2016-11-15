@@ -4,7 +4,7 @@ class Task < ActiveRecord::Base
 
   DEPARTMENT_MAPPING = {
     EstablishClaim: :dispatch
-  }
+  }.freeze
 
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
