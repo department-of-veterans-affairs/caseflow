@@ -8,10 +8,8 @@ class Fakes::AuthenticationService
 
   def self.get_user_session(user_id)
     user = User.find(user_id)
-    roles = ["Certify Appeal", "Establish Claim"]
-    # ANNE MERICA is a manager, everyone else doesn't
-    # have that role.
-    roles.push("Manage Claim Establishment") if user.css_id == "ANNE MERICA"
+    # Take the roles from the User's css_id
+    roles = user.css_id.split(",").map { |s| s.strip }
     {
       "id" => user.css_id,
       "roles" => roles,
