@@ -25,12 +25,9 @@ Rails.application.routes.draw do
 
     scope "/establish-claim", task_type: :EstablishClaim do
       get "/", to: "tasks#index"
+      patch "/assign", to: "tasks#assign"
       get "/:id", to: "tasks#show"
     end
-  end
-
-  resources :tasks, only: [] do
-    patch 'assign', on: :member
   end
 
   patch "certifications" => "certifications#create"

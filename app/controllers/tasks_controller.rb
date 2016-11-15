@@ -13,8 +13,8 @@ class TasksController < ApplicationController
   end
 
   def assign
-    task.assign!(current_user)
-    redirect_to task.url_path
+    next_unassigned_task.assign!(current_user)
+    redirect_to next_unassigned_task.url_path
   end
 
   private
@@ -37,7 +37,7 @@ class TasksController < ApplicationController
   # Otherwise look up the task type from the task itself
   # Ex:  PATCH /tasks/:id/assign will look up the task type from the task
   def type
-    params[:task_type] || (task && task.type.to_sym)
+    params[:task_type]
   end
 
   def task_id
