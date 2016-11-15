@@ -81,6 +81,7 @@ group :development, :test do
   gem 'simplecov'
   gem 'timecop'
   gem 'konacha'
+  gem 'database_cleaner'
 end
 
 group :development do

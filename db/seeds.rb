@@ -6,6 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+require 'database_cleaner'
+
 class SeedDB
   def initialize
     @appeals, @tasks, @users = [], [], []
@@ -66,7 +68,12 @@ class SeedDB
     @users.push(User.create(css_id: "ANNE MERICA", station_id: "283"))
   end
 
+  def clean_db
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   def seed
+    clean_db
     create_default_user
     create_appeals(50)
     create_users(2)
