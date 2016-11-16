@@ -30,6 +30,10 @@ class Task < ActiveRecord::Base
     def completed
       where.not(completed_at: nil)
     end
+
+    def does_user_have_task(user)
+      where(user: user).where(completed_at: nil)
+    end
   end
 
   def start_text
