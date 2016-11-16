@@ -3,7 +3,7 @@
 ##Development
 Code is developed on feature branches and merged into master via pull requests (PR's). It is encouraged that pull requests be focused, small, and merged into master frequently. 
 
-Pull requests do not need to complete an issue or feature. If a feature is incomplete, [Feature Toggles](http://martinfowler.com/bliki/FeatureToggle.html) should be used if necessary to prevent users from accessing the incomplete feature. One easy (but crude) way to implement a feature flag is to gate the feature only to users with the "System Admin" function in CSS.
+Pull requests do not need to complete an issue or feature. If a feature is incomplete, [Feature Toggles](http://martinfowler.com/bliki/FeatureToggle.html) should be used if necessary to prevent users from accessing the incomplete feature. One easy (but crude) way to implement a feature toggle is to gate the feature only to users with the "System Admin" function in CSS.
 
 Additionally, PR's should be linked to their associated issues by adding the issue number in the PR description (like this: "#123"). Don't write "fixes #123", because that will automatically close the issue before it has been validated.
 
