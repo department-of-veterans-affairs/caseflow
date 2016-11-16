@@ -4,7 +4,7 @@ describe ReassignOldTasksJob do
     @appeal = Appeal.create(vacols_id: "1")
     @user = User.create(station_id: "123", css_id: "abc")
     @unfinished_task = EstablishClaim.create(appeal_id: @appeal.id).assign(@user)
-    status_code = Task.completion_status_code("Cancelled by System")
+    status_code = Task.completion_status_code("Expired")
     @finished_task = EstablishClaim.create(appeal_id: @appeal.id).completed!(status_code)
   end
 

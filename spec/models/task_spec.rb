@@ -8,6 +8,8 @@ describe Task do
     @user = User.create(station_id: "ABC", css_id: "123")
     @appeal = Appeal.create(vacols_id: "123C")
     @appeal2 = Appeal.create(vacols_id: "456D")
+    @appeal3 = Appeal.create(vacols_id: "789E")
+    @appeal4 = Appeal.create(vacols_id: "123F")
     @task = EstablishClaim.create(appeal: @appeal)
     @task2 = EstablishClaim.create(appeal: @appeal2)
   end
@@ -113,5 +115,27 @@ describe Task do
 
   context "#to_complete" do
     it { expect { Task.to_complete.find(@task.id) }.not_to raise_error }
+  end
+
+  context "duplicate and mark complete" do
+    before do
+      @task3 = EstablishClaim.create(appeal: @appeal3)
+      @task4 = EstablishClaim.create(appeal: @appeal4)
+    end
+    it "closes unfinished tasks" do
+      initial_sum = EstablishClaim.count
+      @task4.duplicate_and_mark_complete!
+      expect(EstablishClaim.count).to eq(initial_sum + 1)
+      expect(@task4.reload.complete?).to be_truthy
+    end
+  end
+
+  context "assigned not completed" do
+    before do
+      @task3 = EstablishClaim.create(appeal: @appeal3)
+      @task4 = EstablishClaim.create(appeal: @appeal4)
+      @task3.assign(@user)
+    end
+    it { expect { Task.assigned_not_completed.find(@task3.id) }.not_to raise_error }
   end
 end

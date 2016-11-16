@@ -3,10 +3,10 @@ class Task < ActiveRecord::Base
   belongs_to :appeal
 
   COMPLETION_STATUS_MAPPING = {
-    0 => "Completed",
-    1 => "Cancelled by User",
-    2 => "Cancelled by System",
-    3 => "Routed to RO"
+    completed: 0,
+    cancelled_by_user: 1,
+    expired: 2,
+    routed_to_ro: 3
   }.freeze
 
   class << self
@@ -52,8 +52,10 @@ class Task < ActiveRecord::Base
   end
 
   def duplicate_and_mark_complete!
-    EstablishClaim.create!(appeal_id: appeal_id)
-    completed!(self.class.completion_status_code("Cancelled by System"))
+    transaction do
+      EstablishClaim.create!(appeal_id: appeal_id)
+      completed!(self.class.completion_status_code("Expired"))
+    end
   end
 
   def assigned?
@@ -85,6 +87,6 @@ class Task < ActiveRecord::Base
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING[completion_status]
+    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
   end
 end
