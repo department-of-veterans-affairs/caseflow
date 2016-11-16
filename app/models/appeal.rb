@@ -128,22 +128,28 @@ class Appeal < ActiveRecord::Base
   end
 
   class << self
-     attr_writer :repository
-     delegate :certify, to: :repository
+    attr_writer :repository
 
-     def find_or_create_by_vacols_id(vacols_id)
-       appeal = find_by(vacols_id: vacols_id) ||
-                new(vacols_id: vacols_id)
+    def find_or_create_by_vacols_id(vacols_id)
+      appeal = find_or_initialize_by(vacols_id: vacols_id)
+      repository.load_vacols_data(appeal)
+      appeal.save
 
-       repository.load_vacols_data(appeal)
-       appeal.save
+      appeal
+    end
 
-       appeal
-     end
+    def repository
+      @repository ||= AppealRepository
+    end
 
-     def repository
-       @repository ||= AppealRepository
-     end
+    def certify(appeal)
+      form8 = Form8.find_by(vacols_id: appeal.vacols_id)
+
+      fail "No Form 8 found for appeal being certified" unless form8
+
+      repository.certify(appeal)
+      repository.upload_form8(appeal, form8)
+    end
    end
 
   def documents_with_type(type)

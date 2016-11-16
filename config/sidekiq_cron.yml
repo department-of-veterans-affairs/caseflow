@@ -1,0 +1,6 @@
+# Create establish claim tasks every night at midnight
+create_establish_claim_tasks_job:
+ cron: "1 0 * * * America/New_York"
+ class: "CreateEstablishClaimTasksJob"
+ queue: default
+ active_job: false

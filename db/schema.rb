@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161102170128) do
+ActiveRecord::Schema.define(version: 20161109182923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,76 @@ ActiveRecord::Schema.define(version: 20161102170128) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
+
+  create_table "form8s", force: :cascade do |t|
+    t.integer  "certification_id"
+    t.string   "vacols_id"
+    t.string   "appellant_name"
+    t.string   "appellant_relationship"
+    t.string   "file_number"
+    t.string   "veteran_name"
+    t.string   "insurance_loan_number"
+    t.text     "service_connection_for"
+    t.date     "service_connection_notification_date"
+    t.text     "increased_rating_for"
+    t.date     "increased_rating_notification_date"
+    t.text     "other_for"
+    t.date     "other_notification_date"
+    t.string   "representative_name"
+    t.string   "representative_type"
+    t.string   "representative_type_specify_other"
+    t.string   "power_of_attorney"
+    t.string   "power_of_attorney_file"
+    t.string   "agent_accredited"
+    t.string   "form_646_of_record"
+    t.string   "form_646_not_of_record_explanation"
+    t.string   "hearing_requested"
+    t.string   "hearing_held"
+    t.string   "hearing_transcript_on_file"
+    t.string   "hearing_requested_explanation"
+    t.string   "contested_claims_procedures_applicable"
+    t.string   "contested_claims_requirements_followed"
+    t.date     "soc_date"
+    t.string   "ssoc_required"
+    t.text     "record_other_explanation",                                   array: true
+    t.text     "remarks"
+    t.string   "certifying_office"
+    t.string   "certifying_username"
+    t.string   "certifying_official_name"
+    t.string   "certifying_official_title"
+    t.date     "certification_date"
+    t.string   "record_cf_or_xcf"
+    t.string   "record_inactive_cf"
+    t.string   "record_dental_f"
+    t.string   "record_r_and_e_f"
+    t.string   "record_training_sub_f"
+    t.string   "record_loan_guar_f"
+    t.string   "record_outpatient_f"
+    t.string   "record_hospital_cor"
+    t.string   "record_clinical_rec"
+    t.string   "record_x_rays"
+    t.string   "record_slides"
+    t.string   "record_tissue_blocks"
+    t.string   "record_dep_ed_f"
+    t.string   "record_insurance_f"
+    t.string   "record_other"
+    t.string   "_initial_appellant_name"
+    t.string   "_initial_appellant_relationship"
+    t.string   "_initial_veteran_name"
+    t.string   "_initial_insurance_loan_number"
+    t.date     "_initial_service_connection_notification_date"
+    t.date     "_initial_increased_rating_notification_date"
+    t.date     "_initial_other_notification_date"
+    t.date     "_initial_soc_date"
+    t.string   "_initial_representative_name"
+    t.string   "_initial_representative_type"
+    t.string   "_initial_hearing_requested"
+    t.string   "_initial_ssoc_required"
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+  end
+
+  add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",         null: false

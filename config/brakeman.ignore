@@ -1,0 +1,25 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 70,
+      "fingerprint": "ca492b9eafbbad210a76d7639eaf51a9fa8c68f20d8e73ac98cc93f1f239350b",
+      "message": "Parameters should be whitelisted for mass assignment",
+      "file": "app/controllers/certifications_controller.rb",
+      "line": 31,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:form8).permit!",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "CertificationsController",
+        "method": "create"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": "Permitting update for all form8 values from form"
+    }
+  ],
+  "updated": "2016-11-14 11:33:42 -0500",
+  "brakeman_version": "3.3.1"
+}
