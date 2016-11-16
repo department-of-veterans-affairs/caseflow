@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   before_action :verify_access
+  before_action :verify_assigned_to_current_user, only: [:show]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -10,7 +11,11 @@ class TasksController < ApplicationController
   end
 
   def show
-    @task = Task.find(task_id)
+  end
+
+  def assign
+    next_unassigned_task.assign!(current_user)
+    redirect_to url_for(next_unassigned_task)
   end
 
   private
@@ -37,6 +42,11 @@ class TasksController < ApplicationController
     params[:id]
   end
 
+  def task
+    @task ||= Task.find(task_id)
+  end
+  helper_method :task
+
   def completed_tasks
     @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
   end
@@ -57,12 +67,14 @@ class TasksController < ApplicationController
   end
 
   def manager?
-    # TODO(jd): Determine real CSS role to be used
     current_user.can?(task_roles[:manager])
   end
 
   def verify_access
-    # TODO(jd): Determine real CSS role to be used
     verify_authorized_roles(task_roles[:employee])
+  end
+
+  def verify_assigned_to_current_user
+    verify_user(task.user)
   end
 end

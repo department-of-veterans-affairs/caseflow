@@ -2,6 +2,8 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  class AlreadyAssignedError < StandardError; end
+
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
     1 => "Cancelled",
@@ -36,7 +38,9 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def assign(user)
+  def assign!(user)
+    return AlreadyAssignedError if self.user
+
     update_attributes!(
       user: user,
       assigned_at: Time.now.utc
