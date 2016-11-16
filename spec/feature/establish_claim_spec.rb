@@ -55,7 +55,7 @@ RSpec.feature "Dispatch" do
       scenario "Case Worker" do
         visit "/dispatch/establish-claim"
 
-        expect(page).to have_content("Establish Claim")
+        expect(page).to have_content("Establish Next Claim")
         expect(page).to have_css("tr#task-#{@completed_task.id}")
       end
     end
