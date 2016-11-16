@@ -10,26 +10,25 @@ RSpec.feature "Dispatch" do
     @task = EstablishClaim.create(appeal: appeal)
   end
 
-  context "manager" do
+  context "As a manager" do
     before do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
     end
-    context "task to complete" do
-      scenario "Case Worker" do
-        visit "/dispatch/establish-claim"
 
-        expect(page).to have_content(@vbms_id)
-        expect(page).to have_content("Unassigned")
-      end
+    scenario "View unassigned tasks" do
+      visit "/dispatch/establish-claim"
+
+      expect(page).to have_content(@vbms_id)
+      expect(page).to have_content("Unassigned")
     end
 
-    context "task completed" do
+    context "View completed tasks" do
       before do
         @task.assign!(User.create(station_id: "123", css_id: "ABC"))
         @task.update(started_at: Time.now.utc, completed_at: Time.now.utc)
       end
 
-      scenario "Case Worker" do
+      it do
         visit "/dispatch/establish-claim"
 
         expect(page).to have_content(@vbms_id)
@@ -38,30 +37,41 @@ RSpec.feature "Dispatch" do
     end
   end
 
-  context "employee" do
-    context "task to complete" do
-      before do
-        User.authenticate!(roles: ["Establish Claim"])
+  context "As a caseworker" do
+    before do
+      User.authenticate!(roles: ["Establish Claim"])
 
-        # completed by user task
-        appeal = Appeal.create(vacols_id: "456D")
-        @completed_task = EstablishClaim.create(appeal: appeal,
-                                                user: current_user,
-                                                assigned_at: 1.day.ago,
-                                                started_at: 1.day.ago,
-                                                completed_at: Time.now.utc)
-      end
+      # completed by user task
+      appeal = Appeal.create(vacols_id: "456D")
+      @completed_task = EstablishClaim.create(appeal: appeal,
+                                              user: current_user,
+                                              assigned_at: 1.day.ago,
+                                              started_at: 1.day.ago,
+                                              completed_at: Time.now.utc)
 
-      scenario "Case Worker" do
-        visit "/dispatch/establish-claim"
+      other_user = User.create(css_id: "some", station_id: "stuff")
+      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),
+                                          user: other_user,
+                                          assigned_at: 1.day.ago)
+    end
 
-        expect(page).to have_content("Establish Claim")
-        expect(page).to have_css("tr#task-#{@completed_task.id}")
+    scenario "View my history of completed tasks" do
+      visit "/dispatch/establish-claim"
 
-        click_on "Establish Claim"
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(@task.user).to eq(current_user)
-      end
+      expect(page).to have_content("Establish Claim")
+      expect(page).to have_css("tr#task-#{@completed_task.id}")
+    end
+
+    scenario "Assign the next task to me" do
+      visit "/dispatch/establish-claim"
+      click_on "Establish Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(@task.reload.user).to eq(current_user)
+    end
+
+    scenario "Visit an Establish Claim task that is assigned to another user" do
+      visit "/dispatch/establish-claim/#{@other_task.id}"
+      expect(page).to have_current_path("/unauthorized")
     end
   end
 end
