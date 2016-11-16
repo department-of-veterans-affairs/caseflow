@@ -20,7 +20,7 @@ When ever a pull request is created, it will automatically create a build on Tra
 ##Code Review
 All PR's must be reviewed by at least one other team member. If two team members paired on the code, then its fine for one of those two to act as the reviewer. It's also encouraged to get extra eyes on code that you feel a little more uncomfortable about.
 
-**Things to check for in a code review:**
+**Some things to check for in a code review:**
 - Are we duplicating any logic that could be reused instead? This includes hand writing features that we could be using rails for.
 - Every logic path of every added method should have a unit test.
 - Are feature tests modified or added to account for the new functionality?
