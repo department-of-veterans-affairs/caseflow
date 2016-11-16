@@ -34,8 +34,8 @@ class Task < ActiveRecord::Base
       where.not(completed_at: nil)
     end
 
-    def completion_status_code(code)
-      COMPLETION_STATUS_MAPPING.key(code)
+    def completion_status_code(text)
+      COMPLETION_STATUS_MAPPING.key(text)
     end
   end
 
@@ -49,14 +49,6 @@ class Task < ActiveRecord::Base
       assigned_at: Time.now.utc
     )
     self
-  end
-
-  def unassign!
-    update_attributes!(
-      user: nil,
-      assigned_at: nil,
-      started_at: nil
-    )
   end
 
   def duplicate_and_mark_complete!
