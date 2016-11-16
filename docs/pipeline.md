@@ -29,7 +29,7 @@ All PR's must be reviewed by at least one other team member. If two team members
 ##Integration Testing and Deployment
 Whenever a PR is merged into master, an automated Jenkins job will deploy to all non-production environments.
 
-Before stories can be launched (their feature flag is removed). A QA or designer must validate the story's completion in a non-production environment. See our [Story Column descriptions](/docs/process.md) for more details. 
+Before stories can be launched (Note: features can be deployed with out being launched, if hiding behind a feature toggle). A QA or designer must validate the story's completion in a non-production environment. See our [Story Column descriptions](/docs/process.md) for more details. 
 
 Before any deployment to production, a "happy path" smoke test must be performed for each major feature to make sure the integrations with our dependencies are functioning correctly. Currently, this smoke test will be performed manually, however, we will be working on automating it. Manual & automated smoke tests will be recorded in the [appeals-qa](https://github.com/department-of-veterans-affairs/appeals-qa) repository.
 
