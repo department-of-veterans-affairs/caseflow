@@ -8,7 +8,7 @@ describe ReassignOldTasksJob do
     @finished_task = EstablishClaim.create(appeal_id: @appeal.id).completed!(status_code)
   end
 
-  context ".perform" do
+  context ".perform", focus: true do
     it "closes unfinished tasks" do
       expect(EstablishClaim.count).to eq(2)
       ReassignOldTasksJob.perform_now
