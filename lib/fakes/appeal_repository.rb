@@ -3,7 +3,7 @@ class Fakes::AppealRepository
   class << self
     attr_writer :documents
     attr_writer :records
-    attr_accessor :certified_appeal
+    attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
   end
 
   def self.new(vacols_id, default_attrs_method_name, overrides = {})
@@ -20,6 +20,11 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
+  end
+
+  def self.upload_form8(appeal, form8)
+    @uploaded_form8 = form8
+    @uploaded_form8_appeal = appeal
   end
 
   def self.load_vacols_data(appeal)
