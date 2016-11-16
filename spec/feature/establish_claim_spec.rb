@@ -60,6 +60,7 @@ RSpec.feature "Dispatch" do
 
         click_on "Establish Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(@task.user).to eq(current_user)
       end
     end
   end
