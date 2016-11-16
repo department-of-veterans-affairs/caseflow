@@ -4,10 +4,6 @@ class Task < ActiveRecord::Base
 
   class AlreadyAssignedError < StandardError; end
 
-  DEPARTMENT_MAPPING = {
-    EstablishClaim: :dispatch
-  }.freeze
-
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
     1 => "Cancelled",
@@ -40,11 +36,6 @@ class Task < ActiveRecord::Base
 
   def start_text
     type.titlecase
-  end
-
-  def url_path
-    department = DEPARTMENT_MAPPING[type.to_sym]
-    "/#{department}/#{type.underscore.dasherize}/#{id}"
   end
 
   def assign!(user)

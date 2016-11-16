@@ -18,15 +18,17 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
-  scope "/dispatch" do
+  scope path: "/dispatch" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
 
-    scope "/establish-claim", task_type: :EstablishClaim do
-      get "/", to: "tasks#index"
-      patch "/assign", to: "tasks#assign"
-      get "/:id", to: "tasks#show"
+    resources :establish_claims,
+              path: "/establish-claim",
+              controller: "tasks",
+              task_type: :EstablishClaim,
+              only: [:show, :index] do
+      patch 'assign', on: :collection
     end
   end
 

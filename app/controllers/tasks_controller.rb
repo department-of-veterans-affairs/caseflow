@@ -14,7 +14,7 @@ class TasksController < ApplicationController
 
   def assign
     next_unassigned_task.assign!(current_user)
-    redirect_to next_unassigned_task.url_path
+    redirect_to url_for(next_unassigned_task)
   end
 
   private
