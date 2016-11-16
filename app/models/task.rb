@@ -9,7 +9,7 @@ class Task < ActiveRecord::Base
     routed_to_ro: 3
   }.freeze
 
-  REASSIGN_OLD_TASKS = [:EstablishClaim]
+  REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
     def unassigned
