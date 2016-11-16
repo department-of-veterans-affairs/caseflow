@@ -17,7 +17,7 @@ There are two major types of tests written by developers as a part of committing
 ##Continuous Integration in Travis CI
 When ever a pull request is created, it will automatically create a build on Travis CI. That build will run the `bundle exec rake` command, which runs all linters, security scans, unit tests, and feature tests for the project. All code must have a successful build in Travis CI before it can be merged into master.
 
-#Code Review
+##Code Review
 All PR's must be reviewed by at least one other team member. If two team members paired on the code, then its fine for one of those two to act as the reviewer. It's also encouraged to get extra eyes on code that you feel a little more uncomfortable about.
 
 **Things to check for in a code review:**
