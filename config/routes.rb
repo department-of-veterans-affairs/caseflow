@@ -18,11 +18,21 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
-  patch "certifications" => "certifications#create"
+  scope path: "/dispatch" do
+    # TODO(jd): Make this its own controller action that looks at the user's roles
+    # and redirects accordingly
+    get "/", to: redirect("/dispatch/establish-claim")
 
-  scope "/dispatch/establish-claim", task_type: :EstablishClaim do
-    get '/', to: "tasks#index"
+    resources :establish_claims,
+              path: "/establish-claim",
+              controller: "tasks",
+              task_type: :EstablishClaim,
+              only: [:show, :index] do
+      patch 'assign', on: :collection
+    end
   end
+
+  patch "certifications" => "certifications#create"
 
   # :nocov:
   if Rails.env.development? || Rails.env.test?

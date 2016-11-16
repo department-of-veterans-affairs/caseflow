@@ -42,8 +42,8 @@ describe Task do
   context "Assigning user methods" do
     subject { @task }
 
-    context ".assign" do
-      before { @task.assign(@user) }
+    context ".assign!" do
+      before { @task.assign!(@user) }
 
       it "correctly assigns a task to a user" do
         expect(subject.user.id).to eq(@user.id)
@@ -57,7 +57,7 @@ describe Task do
       end
 
       it "assigned is true after assignment" do
-        @task.assign(@user)
+        @task.assign!(@user)
         expect(subject.assigned?).to be_truthy
       end
     end
@@ -74,7 +74,7 @@ describe Task do
 
     context "task is assigned" do
       before do
-        @task.assign(@user)
+        @task.assign!(@user)
       end
 
       it { is_expected.to eq("Not Started") }

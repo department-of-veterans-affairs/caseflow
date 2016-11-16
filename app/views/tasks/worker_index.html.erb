@@ -2,9 +2,8 @@
   <div class="usa-width-one-whole task-start-wrapper">
     <% if next_unassigned_task %>
       <div class="task-start-cta">
-        <button type="button" class="usa-button-primary">
-          <%= next_unassigned_task.start_text %>
-        </button>
+        <%= link_to("Establish Claim", assign_establish_claims_path,
+          class: "usa-button-primary", method: 'patch') %>
       </div>
     <% end %>
   </div>
