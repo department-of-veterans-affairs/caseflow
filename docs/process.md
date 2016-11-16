@@ -4,6 +4,9 @@ These columns in the caseflow waffle board describe the states and life cycle of
 ##Backlog
 Landing place for new bugs or technical stories. This is also a catch all for any old issues, or issues that aren't well formed enough to be considered ready for development.
 
+##Triage
+Place for stories that are prioritized to be added to "Ready for Dev" but don't quite have enough definition. This column was added because "Backlog" can become very unwieldy.
+
 ##Ready for Development
 Any story in this column should be well formed enough to be picked up and worked on by a developer.
 They will also always be in priority order (by-project).
