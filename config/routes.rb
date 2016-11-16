@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
-  
+
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
@@ -18,9 +18,20 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
+  patch "certifications" => "certifications#create"
+
   scope "/dispatch/establish-claim", task_type: :EstablishClaim do
     get '/', to: "tasks#index"
   end
+
+  # :nocov:
+  if Rails.env.development? || Rails.env.test?
+    scope "/dev" do
+      get '/users', to: "dev_users#index"
+      post '/set-user/:id', to: "dev#set_user", as: 'set_user'
+    end
+  end
+  # :nocov:
 
   resources :offices, only: :index
 

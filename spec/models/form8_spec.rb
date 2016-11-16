@@ -1,5 +1,17 @@
 require_relative "../rails_helper"
 describe Form8 do
+  initial_fields = [:_initial_appellant_name,
+                    :_initial_appellant_relationship,
+                    :_initial_veteran_name,
+                    :_initial_insurance_loan_number,
+                    :_initial_service_connection_notification_date,
+                    :_initial_increased_rating_notification_date,
+                    :_initial_other_notification_date,
+                    :_initial_representative_name,
+                    :_initial_representative_type,
+                    :_initial_hearing_requested,
+                    :_initial_ssoc_required]
+
   context "#attributes" do
     let(:form8) do
       Form8.new(
@@ -21,6 +33,54 @@ describe Form8 do
                                      appellant_relationship: "Fancy man",
                                      file_number: "1234QWERTY",
                                      veteran_name: "Joe Patriot")
+    end
+  end
+
+  context "#update_from_appeal" do
+    let(:form8) { Form8.new }
+    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+
+    it "populates _initial_ fields with the same values as their counterparts" do
+      form8.update_from_appeal(appeal)
+
+      initial_fields.each do |initial_field|
+        f = initial_field.to_s.sub "_initial_", ""
+        field = f.to_sym
+        expect(form8[field]).to eq(form8[initial_field])
+      end
+    end
+  end
+
+  context "#attributes" do
+    let(:form8) { Form8.new }
+    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+
+    it "does not return initial attributes" do
+      form8.update_from_appeal(appeal)
+      attributes = form8.attributes
+
+      initial_fields.each do |initial_field|
+        expect(attributes[initial_field]).to eq(nil)
+      end
+    end
+  end
+
+  context "#update_from_string_params" do
+    let(:form8) { Form8.new }
+    it "takes string dates passed by the client and turns them into Date objects for persistence" do
+      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
+                     :other_notification_date, :soc_date]
+
+      params = {}
+      date_fields.each do |date_field|
+        params[date_field] = "02/01/2005"
+      end
+
+      form8.update_from_string_params(params)
+
+      date_fields.each do |date_field|
+        expect(form8[date_field].class).to eq(Date)
+      end
     end
   end
 
@@ -156,17 +216,17 @@ describe Form8 do
   end
 
   context "#service_connection_for_rolled" do
-    let(:appeal) { Form8.new(service_connection_for: "one\ntwo\nthree") }
+    let(:form8) { Form8.new(service_connection_for: "one\ntwo\nthree") }
 
     it "rolls over properly" do
-      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n \nService Connection For Continued:\nthree")
+      expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(form8.remarks_continued).to eq("\n \nService Connection For Continued:\nthree")
     end
 
     it "rolls over and combines with remarks rollover" do
-      appeal.remarks = "one\ntwo\n\three\nfour\nfive\nsix\nseven"
-      expect(appeal.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
-      expect(appeal.remarks_continued).to eq("\n \nContinued:\nseven" \
+      form8.remarks = "one\ntwo\n\three\nfour\nfive\nsix\nseven"
+      expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
+      expect(form8.remarks_continued).to eq("\n \nContinued:\nseven" \
                                                  "\n \nService Connection For Continued:\nthree")
     end
   end
@@ -189,15 +249,16 @@ describe Form8 do
         appellant_relationship: "Brother",
         veteran_first_name: "Shane",
         veteran_last_name: "Bobby",
-        notification_date: 4.days.ago,
-        soc_date: 2.days.ago,
-        form9_date: 1.day.ago,
+        notification_date: (Time.zone.now - 4.days).to_date,
+        soc_date: (Time.zone.now - 4.days).to_date,
+        form9_date: (Time.zone.now - 4.days).to_date,
         insurance_loan_number: "1337"
       )
     end
 
     it "creates new form8 with values copied over correctly" do
-      form8 = Form8.from_appeal(appeal)
+      form8 = Form8.new
+      form8.update_from_appeal(appeal)
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
@@ -206,11 +267,11 @@ describe Form8 do
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane",
         insurance_loan_number: "1337",
-        service_connection_notification_date: 4.days.ago,
-        increased_rating_notification_date: 4.days.ago,
-        other_notification_date: 4.days.ago,
-        soc_date: 2.days.ago,
-        certification_date: Time.zone.now
+        service_connection_notification_date: (Time.zone.now - 4.days).to_date,
+        increased_rating_notification_date: (Time.zone.now - 4.days).to_date,
+        other_notification_date: (Time.zone.now - 4.days).to_date,
+        soc_date: (Time.zone.now - 4.days).to_date,
+        certification_date: Time.zone.now.to_date
       )
     end
   end

@@ -138,14 +138,11 @@ class AppealRepository
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
     end
-
-    upload_form8_for(appeal)
   end
 
-  def self.upload_form8_for(appeal)
+  def self.upload_form8(appeal, form8)
     @vbms_client ||= init_vbms_client
 
-    form8 = Form8.from_appeal(appeal)
     request = upload_documents_request(appeal, form8)
 
     send_and_log_request(appeal.vbms_id, request)
