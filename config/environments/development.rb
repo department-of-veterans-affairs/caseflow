@@ -43,7 +43,13 @@ Rails.application.configure do
   silence_warnings do
     begin
       require 'pry'
-      IRB = Pry
+      config.console = Pry
+      unless defined? Pry::ExtendCommandBundle
+        Pry::ExtendCommandBundle = Module.new
+      end
+      require "rails/console/app"
+      require "rails/console/helpers"
+      TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
     rescue LoadError
     end
   end

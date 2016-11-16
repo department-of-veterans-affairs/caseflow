@@ -44,12 +44,9 @@ RSpec.feature "Confirm Certification" do
 
     expect(Fakes::AppealRepository.certified_appeal).to_not be_nil
     expect(Fakes::AppealRepository.certified_appeal.vacols_id).to eq("5555C")
+    expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
+    expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
     expect(page).to have_content("Congratulations! The case has been certified.")
-  end
-
-  scenario "Successful confirmation with certification record" do
-    visit "certifications/5555C"
-    click_on "Upload and certify"
 
     certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
