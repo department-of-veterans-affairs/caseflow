@@ -57,7 +57,7 @@ class Task < ActiveRecord::Base
     self
   end
 
-  def duplicate_and_mark_complete!
+  def expire!
     transaction do
       EstablishClaim.create!(appeal_id: appeal_id)
       completed!(self.class.completion_status_code("Expired"))

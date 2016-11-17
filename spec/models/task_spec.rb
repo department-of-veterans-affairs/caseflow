@@ -117,25 +117,25 @@ describe Task do
     it { expect { Task.to_complete.find(@task.id) }.not_to raise_error }
   end
 
-  context "duplicate and mark complete" do
-    before do
-      @task3 = EstablishClaim.create(appeal: @appeal3)
-      @task4 = EstablishClaim.create(appeal: @appeal4)
-    end
+  context "#expire!" do
+    let!(:task3) { EstablishClaim.create(appeal: @appeal3) }
+    let!(:task4) { EstablishClaim.create(appeal: @appeal4) }
+
     it "closes unfinished tasks" do
       initial_sum = EstablishClaim.count
-      @task4.duplicate_and_mark_complete!
+      task4.expire!
       expect(EstablishClaim.count).to eq(initial_sum + 1)
-      expect(@task4.reload.complete?).to be_truthy
+      expect(task4.reload.complete?).to be_truthy
+      expect(task4.reload.completion_status).to eq(Task.completion_status_code("expired"))
     end
   end
 
-  context "assigned not completed" do
+  context "#assigned_not_completed" do
+    let!(:task3) { EstablishClaim.create(appeal: @appeal3) }
+    let!(:task4) { EstablishClaim.create(appeal: @appeal4) }
     before do
-      @task3 = EstablishClaim.create(appeal: @appeal3)
-      @task4 = EstablishClaim.create(appeal: @appeal4)
-      @task3.assign(@user)
+      task3.assign!(@user)
     end
-    it { expect { Task.assigned_not_completed.find(@task3.id) }.not_to raise_error }
+    it { expect { Task.assigned_not_completed.find(task3.id) }.not_to raise_error }
   end
 end
