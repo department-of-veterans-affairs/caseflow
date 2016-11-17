@@ -76,7 +76,6 @@ RSpec.feature "Dispatch" do
     scenario "Visit an Establish Claim task that is assigned to another user" do
       visit "/dispatch/establish-claim/#{@other_task.id}"
       expect(page).to have_current_path("/unauthorized")
->>>>>>> master
     end
   end
 end
