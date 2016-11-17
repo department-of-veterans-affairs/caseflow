@@ -6,6 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+require 'database_cleaner'
+
 class SeedDB
   def initialize
     @appeals, @tasks, @users = [], [], []
@@ -43,7 +45,7 @@ class SeedDB
         appeal: @appeals[i % num_appeals]
         )
       if i % 4 > 0
-        establish_claim.assign(@users[i % num_users])
+        establish_claim.assign!(@users[i % num_users])
       end
 
       if i % 4 > 1
@@ -69,7 +71,12 @@ class SeedDB
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283"))
   end
 
+  def clean_db
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   def seed
+    clean_db
     create_default_users
     create_appeals(50)
     create_users(2)
