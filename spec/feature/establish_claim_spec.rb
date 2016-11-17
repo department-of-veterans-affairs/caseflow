@@ -37,7 +37,7 @@ RSpec.feature "Dispatch" do
     end
   end
 
-  context "As a caseworker", focus: true do
+  context "As a caseworker" do
     before do
       User.authenticate!(roles: ["Establish Claim"])
 
@@ -58,13 +58,13 @@ RSpec.feature "Dispatch" do
     scenario "View my history of completed tasks" do
       visit "/dispatch/establish-claim"
 
-      expect(page).to have_content(EstablishClaim.start_text)
+      expect(page).to have_content(@completed_task.start_text)
       expect(page).to have_css("tr#task-#{@completed_task.id}")
     end
 
     scenario "Assign the next task to me" do
       visit "/dispatch/establish-claim"
-      click_on EstablishClaim.start_text
+      click_on @completed_task.start_text
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(@task.reload.user).to eq(current_user)
     end
