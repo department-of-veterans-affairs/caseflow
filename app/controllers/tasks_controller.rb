@@ -14,8 +14,8 @@ class TasksController < ApplicationController
   end
 
   def assign
-    if Task.return_user_current_task(current_user).count > 0
-      task = Task.return_user_current_task(current_user).first
+    if Task.user_current_task(current_user).count > 0
+      task = Task.user_current_task(current_user).first
     else
       task = next_unassigned_task
       task.assign!(current_user)

@@ -114,4 +114,12 @@ describe Task do
   context "#to_complete" do
     it { expect { Task.to_complete.find(@task.id) }.not_to raise_error }
   end
+
+  context "#user_current_task", focus: true do
+    let(:task) { EstablishClaim.create(appeal: @appeal) }
+    before do
+      task.assign!(@user)
+    end
+    it { expect { Task.user_current_task(@user).find(task.id) }.not_to raise_error }
+  end
 end
