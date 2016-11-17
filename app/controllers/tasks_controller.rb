@@ -15,12 +15,12 @@ class TasksController < ApplicationController
 
   def assign
     if Task.user_current_task(current_user).count > 0
-      task = Task.user_current_task(current_user).first
+      user_task = Task.user_current_task(current_user).first
     else
-      task = next_unassigned_task
-      task.assign!(current_user)
+      user_task = next_unassigned_task
+      user_task.assign!(current_user)
     end
-    redirect_to url_for(task)
+    redirect_to url_for(user_task)
   end
 
   private

@@ -115,11 +115,16 @@ describe Task do
     it { expect { Task.to_complete.find(@task.id) }.not_to raise_error }
   end
 
-  context "#user_current_task", focus: true do
+  context "#user_current_task" do
     let(:task) { EstablishClaim.create(appeal: @appeal) }
-    before do
+    it "returns a user's uncompleted task" do
       task.assign!(@user)
+      expect { Task.user_current_task(@user).find(task.id) }.not_to raise_error
     end
-    it { expect { Task.user_current_task(@user).find(task.id) }.not_to raise_error }
+
+    it "does not return a user's completed task" do
+      task.completed(0)
+      expect(Task.user_current_task(@user).count).to eq(0)
+    end
   end
 end
