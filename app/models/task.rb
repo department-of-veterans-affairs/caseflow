@@ -33,7 +33,7 @@ class Task < ActiveRecord::Base
       where.not(completed_at: nil)
     end
 
-    def does_user_have_task(user)
+    def return_user_current_task(user)
       where(user: user).where(completed_at: nil)
     end
   end
