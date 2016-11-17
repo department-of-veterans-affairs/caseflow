@@ -78,4 +78,12 @@ class Task < ActiveRecord::Base
   def completion_status_text
     COMPLETION_STATUS_MAPPING[completion_status]
   end
+
+  def attributes
+    super.merge(type: type)
+  end
+
+  def to_hash
+    serializable_hash(include: [:user, :appeal])
+  end
 end
