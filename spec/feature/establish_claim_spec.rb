@@ -49,10 +49,6 @@ RSpec.feature "Dispatch" do
                                               started_at: 1.day.ago,
                                               completed_at: Time.now.utc)
 
-        expect(page).to have_content(EstablishClaim.start_text)
-        expect(page).to have_css("tr#task-#{@completed_task.id}")
-      end
-
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),
                                           user: other_user,
