@@ -40,7 +40,7 @@ class Task < ActiveRecord::Base
   end
 
   def assign!(user)
-    return AlreadyAssignedError if self.user
+    fail(AlreadyAssignedError) if self.user
 
     update!(
       user: user,
@@ -49,7 +49,7 @@ class Task < ActiveRecord::Base
   end
 
   def start!
-    return NotAssignedError unless assigned?
+    fail(NotAssignedError) unless assigned?
     return if started?
 
     update!(started_at: Time.now.utc)

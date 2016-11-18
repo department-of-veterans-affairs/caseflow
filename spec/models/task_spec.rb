@@ -51,6 +51,10 @@ describe Task do
         expect(subject.user.id).to eq(@user.id)
         expect(subject.assigned_at).not_to be_nil
       end
+
+      it "raises erorr if already assigned" do
+        expect { @task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
+      end
     end
 
     context ".assigned?" do
@@ -100,14 +104,14 @@ describe Task do
     end
   end
 
-  context ".start!", focus: true do
+  context ".start!" do
     it "errors if no one is assigned" do
-      expect(@task.user).to be_falsey
-      @task.start!
-      expect { @task.start! }.to raise_error
+      expect(@task.user).to be_nil
+      expect { @task.start! }.to raise_error(Task::NotAssignedError)
     end
 
     it "sets started_at value to current timestamp" do
+      @task.assign!(@user)
       expect(@task.started_at).to be_falsey
       @task.start!
       expect(@task.started_at).to eq(Time.now.utc)
