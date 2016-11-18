@@ -8,23 +8,8 @@ describe Task do
     @user = User.create(station_id: "ABC", css_id: "123")
     @appeal = Appeal.create(vacols_id: "123C")
     @appeal2 = Appeal.create(vacols_id: "456D")
-    @task = CreateEndProduct.create(appeal: @appeal)
-    @task2 = CreateEndProduct.create(appeal: @appeal2)
-  end
-
-  context ".find_by_department" do
-    before do
-      appeal = Appeal.create(vacols_id: "fake")
-      FakeTask.create(appeal: appeal)
-    end
-    let(:department) { :dispatch }
-    subject { Task.find_by_department(department) }
-
-    it "filters to tasks in the department" do
-      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
-      expect(Task.count).to eq(3)
-      expect(subject.count).to eq(2)
-    end
+    @task = EstablishClaim.create(appeal: @appeal)
+    @task2 = EstablishClaim.create(appeal: @appeal2)
   end
 
   context ".newest_first" do
@@ -57,8 +42,8 @@ describe Task do
   context "Assigning user methods" do
     subject { @task }
 
-    context ".assign" do
-      before { @task.assign(@user) }
+    context ".assign!" do
+      before { @task.assign!(@user) }
 
       it "correctly assigns a task to a user" do
         expect(subject.user.id).to eq(@user.id)
@@ -72,7 +57,7 @@ describe Task do
       end
 
       it "assigned is true after assignment" do
-        @task.assign(@user)
+        @task.assign!(@user)
         expect(subject.assigned?).to be_truthy
       end
     end
@@ -89,7 +74,7 @@ describe Task do
 
     context "task is assigned" do
       before do
-        @task.assign(@user)
+        @task.assign!(@user)
       end
 
       it { is_expected.to eq("Not Started") }

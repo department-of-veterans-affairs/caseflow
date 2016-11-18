@@ -2,8 +2,14 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
-  TASKS_BY_DEPARTMENT = {
-    dispatch: [:CreateEndProduct]
+  class AlreadyAssignedError < StandardError; end
+
+  COMPLETION_STATUS_MAPPING = {
+    0 => "Completed",
+    1 => "Cancelled",
+
+    # Establish Claim completion codes
+    2 => "Routed to RO"
   }.freeze
 
   class << self
@@ -15,9 +21,16 @@ class Task < ActiveRecord::Base
       order(created_at: :desc)
     end
 
-    def find_by_department(department)
-      task_types = TASKS_BY_DEPARTMENT[department]
-      where(type: task_types)
+    def completed_today
+      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
+    end
+
+    def to_complete
+      where(completed_at: nil)
+    end
+
+    def completed
+      where.not(completed_at: nil)
     end
   end
 
@@ -25,7 +38,9 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def assign(user)
+  def assign!(user)
+    return AlreadyAssignedError if self.user
+
     update_attributes!(
       user: user,
       assigned_at: Time.now.utc
@@ -60,13 +75,7 @@ class Task < ActiveRecord::Base
     )
   end
 
-  class << self
-    def completed_today
-      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
-    end
-
-    def to_complete
-      where(completed_at: nil)
-    end
+  def completion_status_text
+    COMPLETION_STATUS_MAPPING[completion_status]
   end
 end

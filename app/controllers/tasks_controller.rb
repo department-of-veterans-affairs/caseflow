@@ -1,5 +1,8 @@
 class TasksController < ApplicationController
   before_action :verify_access
+  before_action :verify_assigned_to_current_user, only: [:show]
+
+  class TaskTypeMissingError < StandardError; end
 
   def index
     @completed_count = Task.completed_today.count
@@ -8,10 +11,19 @@ class TasksController < ApplicationController
   end
 
   def show
-    @task = Task.find(task_id)
+  end
+
+  def assign
+    next_unassigned_task.assign!(current_user)
+    redirect_to url_for(next_unassigned_task)
   end
 
   private
+
+  def current_user_historical_tasks
+    current_user.tasks.completed.newest_first.limit(10)
+  end
+  helper_method :current_user_historical_tasks
 
   def next_unassigned_task
     @next_unassigned_task ||= scoped_tasks.unassigned.first
@@ -19,16 +31,21 @@ class TasksController < ApplicationController
   helper_method :next_unassigned_task
 
   def scoped_tasks
-    Task.find_by_department(department).newest_first
+    Task.where(type: type).newest_first
   end
 
-  def department
-    params[:department]
+  def type
+    params[:task_type]
   end
 
   def task_id
     params[:id]
   end
+
+  def task
+    @task ||= Task.find(task_id)
+  end
+  helper_method :task
 
   def completed_tasks
     @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
@@ -45,13 +62,19 @@ class TasksController < ApplicationController
     "#{prefix}_index"
   end
 
+  def task_roles
+    User::TASK_TYPE_TO_ROLES[type] || fail(TaskTypeMissingError)
+  end
+
   def manager?
-    # TODO(jd): Determine real CSS role to be used
-    current_user.can?("manage #{department}")
+    current_user.can?(task_roles[:manager])
   end
 
   def verify_access
-    # TODO(jd): Determine real CSS role to be used
-    verify_authorized_roles(department.to_s)
+    verify_authorized_roles(task_roles[:employee])
+  end
+
+  def verify_assigned_to_current_user
+    verify_user(task.user)
   end
 end

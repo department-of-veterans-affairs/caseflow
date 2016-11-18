@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
 gem "moment_timezone-rails"
@@ -52,6 +52,10 @@ gem 'pg', platforms: :ruby
 
 gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "d71251eb3d066748b395d58633af5bd5863ef928"
 
+gem 'redis-rails'
+
+gem 'sidekiq'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -81,6 +85,7 @@ group :development, :test do
   gem 'simplecov'
   gem 'timecop'
   gem 'konacha'
+  gem 'database_cleaner'
 end
 
 group :development do

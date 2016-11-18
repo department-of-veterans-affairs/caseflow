@@ -6,18 +6,25 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+require 'database_cleaner'
+
 class SeedDB
+  def initialize
+    @appeals, @tasks, @users = [], [], []
+  end
+
   def create_appeals(number)
-    @appeals = number.times.map do |i|
+    appeals = number.times.map do |i|
       Appeal.create(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}"
         )
     end
+    @appeals.push(*appeals)
   end
 
   def create_users(number, deterministic = true)
-    @users = number.times.map do |i|
+    users = number.times.map do |i|
       length = VACOLS::RegionalOffice::STATIONS.length
       station_index = deterministic ? (i % length) : (rand(length))
       User.create(
@@ -25,34 +32,54 @@ class SeedDB
         css_id: "css_#{i}"
         )
     end
+
+    @users.push(*users)
   end
 
   def create_tasks(number)
     num_appeals = @appeals.length
     num_users = @users.length
-    @tasks = number.times.map do |i|
-      endProduct = CreateEndProduct.create(
-        appeal: @appeals[i % numAppeals]
+
+    tasks = number.times.map do |i|
+      establish_claim = EstablishClaim.create(
+        appeal: @appeals[i % num_appeals]
         )
       if i % 4 > 0
-        endProduct.assign(@users[i % numUsers])
+        establish_claim.assign!(@users[i % num_users])
       end
+
       if i % 4 > 1
-        endProduct.started_at = 1.day.ago
+        establish_claim.started_at = 1.day.ago
       end
+
       if i % 4 > 2
-        endProduct.completed_at = 0.day.ago
+        establish_claim.completed_at = 0.day.ago
         if i % 3 == 0
-          endProduct.completion_status = 1
+          establish_claim.completion_status = 1
         end
       end
-      endProduct.save
+      establish_claim.save
     end
+
+    @tasks.push(*tasks)
+  end
+
+  def create_default_users
+    @users.push(User.create(css_id: "ANNE MERICA", station_id: "283"))
+    @users.push(User.create(css_id: "Establish Claim", station_id: "283"))
+    @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283"))
+    @users.push(User.create(css_id: "Certify Appeal", station_id: "283"))
+  end
+
+  def clean_db
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   def seed
+    clean_db
+    create_default_users
     create_appeals(50)
-    create_users(3)
+    create_users(2)
     create_tasks(50)
   end
 end

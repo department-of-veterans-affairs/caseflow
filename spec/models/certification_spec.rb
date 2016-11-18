@@ -144,29 +144,65 @@ describe Certification do
           expect(certification.ssocs_matching_at).to eq(Time.zone.now)
         end
       end
+
+      context "when fetching form8 data for a new certification" do
+        it "populates a form8 with appeal data when form8 data is not present" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).once
+        end
+      end
+
+      context "when resuming a certification" do
+        it "does not update a form8's appeal data if form8 has been updated less than 48 hours ago" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:updated_at).and_return(Time.zone.now)
+
+          cert.start!
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).once
+          expect(form).to have_received(:update_from_appeal).at_most(:once)
+        end
+
+        it "updates a form8's appeal data if form8 has been updated more than 48 hours ago" do
+          cert = Certification.new(vacols_id: "4949")
+          form = double
+          allow(cert).to receive(:form8).and_return(form)
+          allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:updated_at).and_return(49.hours.ago)
+
+          cert.start!
+          cert.start!
+
+          expect(form).to have_received(:update_from_appeal).twice
+        end
+      end
     end
   end
 
   context "#form8" do
-    subject { certification.form8("TEST_form8") }
-
-    context "when a form8 exists in the cache for the passed key" do
-      before do
-        Rails.cache.write("TEST_form8", Form8.new(vacols_id: "4949", file_number: "SAVED88").attributes)
-      end
-
-      it "returns the cached form8" do
-        expect(subject.file_number).to eq("SAVED88")
+    context "when a form8 exists in the db for that certification" do
+      it "returns the saved form8" do
+        cert = Certification.create!
+        form8 = Form8.create(vacols_id: "9999", certification_id: cert.id)
+        expect(cert.form8.id).to eq(form8.id)
+        expect(cert.form8.vacols_id).to eq("9999")
       end
     end
-
-    context "when no cached form8 exists" do
-      before do
-        Rails.cache.write("TEST_form8", nil)
-      end
-
+    context "when no saved form8 exists" do
       it "returns a new form8" do
-        expect(subject.file_number).to eq("VB12")
+        cert = Certification.create!
+        expect(Form8.exists?(certification_id: cert.id)).to eq(false)
+        expect(cert.form8.class).to eq(Form8)
       end
     end
   end
@@ -216,9 +252,9 @@ describe Certification do
     end
   end
 
-  context ".from_vacols_id!" do
+  context ".find_or_create_by_vacols_id" do
     let(:vacols_id) { "1122" }
-    subject { Certification.from_vacols_id!(vacols_id) }
+    subject { Certification.find_or_create_by_vacols_id(vacols_id) }
 
     context "when certification exists with that vacols_id" do
       before { @certification = Certification.create(vacols_id: vacols_id) }

@@ -31,7 +31,8 @@ class AppealRepository
 
   # TODO: consider persisting these records
   def self.build_appeal(case_record)
-    AppealRepository.set_vacols_values(appeal: Appeal.new, case_record: case_record)
+    appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+    set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -64,7 +65,8 @@ class AppealRepository
       certification_date: case_record.bf41stat,
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
-      decision_date: normalize_vacols_date(case_record.bfddec)
+      decision_date: normalize_vacols_date(case_record.bfddec),
+      status: VACOLS::Case::STATUS[case_record.bfmpro]
     )
 
     appeal
@@ -73,7 +75,7 @@ class AppealRepository
   # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
-      VACOLS::CASE.remands_ready_for_claims_establishment
+      VACOLS::Case.remands_ready_for_claims_establishment
     end
 
     remands.map { |case_record| build_appeal(case_record) }
@@ -81,7 +83,7 @@ class AppealRepository
 
   def self.amc_full_grants(decided_after:)
     full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::CASE.amc_full_grants(decided_after)
+      VACOLS::Case.amc_full_grants(decided_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
@@ -136,14 +138,19 @@ class AppealRepository
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
     end
-
-    upload_form8_for(appeal)
   end
 
-  def self.upload_form8_for(appeal)
+  # Reverses the certification of an appeal.
+  # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
+  def self.uncertify(appeal)
+    appeal.case_record.bfdcertool = nil
+    appeal.case_record.bf41stat = nil
+    appeal.case_record.save!
+  end
+
+  def self.upload_form8(appeal, form8)
     @vbms_client ||= init_vbms_client
 
-    form8 = Form8.from_appeal(appeal)
     request = upload_documents_request(appeal, form8)
 
     send_and_log_request(appeal.vbms_id, request)

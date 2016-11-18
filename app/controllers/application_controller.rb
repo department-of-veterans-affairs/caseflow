@@ -72,4 +72,12 @@ class ApplicationController < ActionController::Base
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
+
+  # Verifies the passed user matches the current user
+  def verify_user(user)
+    return true if current_user == user
+
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
+  end
 end

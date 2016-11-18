@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
-  
+
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
@@ -18,9 +18,30 @@ Rails.application.routes.draw do
     get 'cancel', on: :member
   end
 
-  scope "/dispatch", department: :dispatch do
-    get '/', to: "tasks#index"
+  scope path: "/dispatch" do
+    # TODO(jd): Make this its own controller action that looks at the user's roles
+    # and redirects accordingly
+    get "/", to: redirect("/dispatch/establish-claim")
+
+    resources :establish_claims,
+              path: "/establish-claim",
+              controller: "tasks",
+              task_type: :EstablishClaim,
+              only: [:show, :index] do
+      patch 'assign', on: :collection
+    end
   end
+
+  patch "certifications" => "certifications#create"
+
+  # :nocov:
+  if Rails.env.development? || Rails.env.test?
+    scope "/dev" do
+      get '/users', to: "dev_users#index"
+      post '/set-user/:id', to: "dev#set_user", as: 'set_user'
+    end
+  end
+  # :nocov:
 
   resources :offices, only: :index
 

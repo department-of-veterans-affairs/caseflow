@@ -11,12 +11,15 @@ RSpec.feature "Confirm Certification" do
     Fakes::AppealRepository.records = {
       "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
     }
+
+    certification = Certification.create!(vacols_id: "5555C")
+    certification.form8.update_from_appeal(certification.appeal)
+    certification.form8.save_pdf!
   end
 
   after { Timecop.return }
 
   scenario "Screen reader user visits pdf link" do
-    Certification.create!(vacols_id: "5555C")
     visit "certifications/5555C"
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
@@ -41,14 +44,11 @@ RSpec.feature "Confirm Certification" do
 
     expect(Fakes::AppealRepository.certified_appeal).to_not be_nil
     expect(Fakes::AppealRepository.certified_appeal.vacols_id).to eq("5555C")
+    expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
+    expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
     expect(page).to have_content("Congratulations! The case has been certified.")
-  end
 
-  scenario "Successful confirmation with certification record" do
-    certification = Certification.create!(vacols_id: "5555C")
-    visit "certifications/5555C"
-    click_on "Upload and certify"
-
+    certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
   end
 end

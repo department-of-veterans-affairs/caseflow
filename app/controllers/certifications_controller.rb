@@ -14,22 +14,25 @@ class CertificationsController < ApplicationController
   end
 
   def new
-    @certification = Certification.from_vacols_id!(vacols_id)
-
-    case @certification.start!
+    # NOTE: this isn't rails-restful. certification.start! saves
+    # the certification instance.
+    case certification.start!
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    @form8 = @certification.form8(form8_cache_key)
+    @form8 = certification.form8
   end
 
   def create
-    @form8 = Form8.from_string_params(params[:form8])
-    Rails.cache.write(form8_cache_key, @form8.attributes)
-    form8.save!
-    redirect_to certification_path(id: form8.id)
+    # Can't use controller params in model mass assignments without whitelisting. See:
+    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
+    params.require(:form8).permit!
+    form8.update_from_string_params(params[:form8])
+    form8.save_pdf!
+
+    redirect_to certification_path(id: certification.form8.vacols_id)
   end
 
   def show
@@ -56,28 +59,25 @@ class CertificationsController < ApplicationController
 
   private
 
-  def form8_cache_key
-    # force initialization of cache, there's probably a better way to do this
-    session["init"] = true
-
-    "#{session.id}_form8"
-  end
-
   def verify_access
     verify_authorized_roles("Certify Appeal")
   end
 
+  def certification
+    @certification ||= Certification.find_or_create_by_vacols_id(vacols_id)
+  end
+
+  def appeal
+    @appeal ||= certification.appeal
+  end
+  helper_method :appeal
+
   def form8
-    @form8 ||= Form8.new(id: params[:id])
+    @form8 ||= certification.form8
   end
   helper_method :form8
 
   def vacols_id
     params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
   end
-
-  def appeal
-    @appeal ||= Appeal.find_or_create_by_vacols_id(vacols_id)
-  end
-  helper_method :appeal
 end

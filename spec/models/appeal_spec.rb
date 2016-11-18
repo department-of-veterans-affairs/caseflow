@@ -93,6 +93,33 @@ describe Appeal do
     end
   end
 
+  context "#certify!" do
+    before { Form8.delete_all }
+    let(:appeal) { Appeal.new(vacols_id: "765") }
+    subject { appeal.certify! }
+
+    context "when form8 for appeal exists in the DB" do
+      before { @form8 = Form8.create(vacols_id: "765") }
+
+      it "certifies the appeal using AppealRepository" do
+        expect { subject }.to_not raise_error
+        expect(Fakes::AppealRepository.certified_appeal).to eq(appeal)
+      end
+
+      it "uploads the correct form 8 using AppealRepository" do
+        expect { subject }.to_not raise_error
+        expect(Fakes::AppealRepository.uploaded_form8.id).to eq(@form8.id)
+        expect(Fakes::AppealRepository.uploaded_form8_appeal).to eq(appeal)
+      end
+    end
+
+    context "when form8 doesn't exist in the DB for appeal" do
+      it "throws an error" do
+        expect { subject }.to raise_error("No Form 8 found for appeal being certified")
+      end
+    end
+  end
+
   context "#certified?" do
     subject { Appeal.new(certification_date: 2.days.ago) }
 
@@ -130,6 +157,45 @@ describe Appeal do
     it "doesn't left-pad social security ids" do
       subject.vbms_id = "123S"
       expect(subject.sanitized_vbms_id).to eq("123")
+    end
+  end
+
+  context "#partial_grant?" do
+    subject { appeal.partial_grant? }
+    context "is false" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete", disposition: "Allowed") }
+      it { is_expected.to be_falsey }
+    end
+
+    context "is true" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Allowed") }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#full_grant?" do
+    subject { appeal.full_grant? }
+    context "is false" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand") }
+      it { is_expected.to be_falsey }
+    end
+
+    context "is true" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#decision_type" do
+    subject { appeal.decision_type }
+    context "is a full grant" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Allowed") }
+      it { is_expected.to eq("Partial Grant") }
+    end
+
+    context "is a partial grant" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
+      it { is_expected.to eq("Full Grant") }
     end
   end
 end

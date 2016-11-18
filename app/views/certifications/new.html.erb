@@ -88,7 +88,7 @@
     <%= f.yes_no_field :form_646_of_record,
           question_number: "9A", label: "Is VA Form 646, or equivalent, of record?" %>
 
-    <%= f.text_field :form_646_not_of_record_explaination,
+    <%= f.text_field :form_646_not_of_record_explanation,
           question_number: "9B", label: "Why is the Form 646 not of record?" %>
 
     <%= f.yes_no_field :hearing_requested,
@@ -100,7 +100,7 @@
     <%= f.yes_no_field :hearing_transcript_on_file,
           question_number: "10B", part: "2", label: "Is the hearing transcript on file?", secondary: true %>
 
-    <%= f.text_field :hearing_requested_explaination,
+    <%= f.text_field :hearing_requested_explanation,
           question_number: "10C", label: "If requested, but not held, explain:", maxlength: 60 %>
 
     <%= f.yes_no_field :contested_claims_procedures_applicable,
@@ -119,7 +119,7 @@
     <%= f.check_box_group record_type_check_boxes,
           question_number: "13", label: "Records to be forwarded to Board of Veterans' Appeals:" %>
 
-    <%= f.text_field :record_other_explaination,
+    <%= f.text_field :record_other_explanation,
           question_number: "13", part: "2", label: "Specify other:", secondary: true %>
 
     <%= f.text_area :remarks,
