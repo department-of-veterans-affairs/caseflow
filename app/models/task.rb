@@ -32,10 +32,6 @@ class Task < ActiveRecord::Base
     def completed
       where.not(completed_at: nil)
     end
-
-    def user_current_task(user)
-      where(user: user).where(completed_at: nil)
-    end
   end
 
   def start_text
