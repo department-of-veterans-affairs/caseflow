@@ -126,7 +126,7 @@ describe Task do
       task4.expire!
       expect(EstablishClaim.count).to eq(initial_sum + 1)
       expect(task4.reload.complete?).to be_truthy
-      expect(task4.reload.completion_status).to eq(Task.completion_status_code("expired"))
+      expect(task4.reload.completion_status).to eq(Task.completion_status_code(:expired))
     end
   end
 

@@ -5,7 +5,7 @@ describe ReassignOldTasksJob do
   let!(:appeal) { Appeal.create(vacols_id: "1") }
   let!(:user)   { User.create(station_id: "123", css_id: "abc") }
   let!(:unfinished_task) { EstablishClaim.create(appeal_id: appeal.id).assign!(user) }
-  let!(:status_code) { Task.completion_status_code("Expired") }
+  let!(:status_code) { Task.completion_status_code(:expired) }
   let!(:finished_task) do
     EstablishClaim.create(appeal_id:
     appeal.id).completed!(status_code)

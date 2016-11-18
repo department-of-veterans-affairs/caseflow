@@ -39,7 +39,7 @@ class Task < ActiveRecord::Base
     end
 
     def completion_status_code(text)
-      COMPLETION_STATUS_MAPPING.key(text)
+      COMPLETION_STATUS_MAPPING[text]
     end
   end
 
@@ -59,8 +59,8 @@ class Task < ActiveRecord::Base
 
   def expire!
     transaction do
-      EstablishClaim.create!(appeal_id: appeal_id)
-      completed!(self.class.completion_status_code("Expired"))
+      self.class.create!(appeal_id: appeal_id, type: type)
+      completed!(self.class.completion_status_code(:expired))
     end
   end
 
