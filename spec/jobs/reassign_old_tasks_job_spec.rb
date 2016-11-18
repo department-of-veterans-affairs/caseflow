@@ -8,7 +8,7 @@ describe ReassignOldTasksJob do
   let!(:status_code) { Task.completion_status_code(:expired) }
   let!(:finished_task) do
     EstablishClaim.create(appeal_id:
-    appeal.id).completed!(status_code)
+    appeal.id).complete!(status_code)
   end
 
   context ".perform" do

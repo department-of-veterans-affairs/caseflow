@@ -2,6 +2,8 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  validates :appeal, uniqueness: { scope: :}
+
   class AlreadyAssignedError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
@@ -60,7 +62,7 @@ class Task < ActiveRecord::Base
   def expire!
     transaction do
       self.class.create!(appeal_id: appeal_id, type: type)
-      completed!(self.class.completion_status_code(:expired))
+      complete!(self.class.completion_status_code(:expired))
     end
   end
 
@@ -85,7 +87,7 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def completed!(status)
+  def complete!(status)
     update_attributes!(
       completed_at: Time.now.utc,
       completion_status: status
