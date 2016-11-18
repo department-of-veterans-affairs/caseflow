@@ -5,6 +5,8 @@ describe Task do
   # Clear the task from the DB before every test
   before do
     reset_application!
+    Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
+
     @user = User.create(station_id: "ABC", css_id: "123")
     @appeal = Appeal.create(vacols_id: "123C")
     @appeal2 = Appeal.create(vacols_id: "456D")
@@ -95,6 +97,34 @@ describe Task do
       end
 
       it { is_expected.to eq("Complete") }
+    end
+  end
+
+  context ".start!", focus: true do
+    it "errors if no one is assigned" do
+      expect(@task.user).to be_falsey
+      @task.start!
+      expect { @task.start! }.to raise_error
+    end
+
+    it "sets started_at value to current timestamp" do
+      expect(@task.started_at).to be_falsey
+      @task.start!
+      expect(@task.started_at).to eq(Time.now.utc)
+    end
+  end
+
+  context ".started?" do
+    subject { @task.started? }
+    before { @task.assign!(@user) }
+
+    context "not started" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "was started" do
+      before { @task.start! }
+      it { is_expected.to be_truthy }
     end
   end
 
