@@ -257,6 +257,13 @@ GEM
       ffi (>= 0.5.0)
     rdoc (4.2.2)
       json (~> 1.4)
+    react_on_rails (6.1.2)
+      addressable
+      connection_pool
+      execjs (~> 2.5)
+      foreman
+      rails (>= 3.2)
+      rainbow (~> 2.1)
     redis (3.3.1)
     redis-actionpack (5.0.1)
       actionpack (>= 4.0, < 6)
@@ -274,13 +281,6 @@ GEM
       redis-store (~> 1.2.0)
     redis-store (1.2.0)
       redis (>= 2.2)
-    react_on_rails (6.1.2)
-      addressable
-      connection_pool
-      execjs (~> 2.5)
-      foreman
-      rails (>= 3.2)
-      rainbow (~> 2.1)
     ref (2.0.0)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
@@ -414,8 +414,8 @@ DEPENDENCIES
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
   rainbow
-  redis-rails
   react_on_rails (~> 6)
+  redis-rails
   rspec
   rspec-rails
   rubocop (~> 0.36.0)
