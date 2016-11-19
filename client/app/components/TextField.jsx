@@ -15,6 +15,7 @@ export default class TextField extends React.Component {
       <input
         className="cf-form-textinput"
         name={name}
+        id={name}
         onChange={onChange}
         type={type}
         value={value}

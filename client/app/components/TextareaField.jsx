@@ -15,6 +15,7 @@ export default class TextareaField extends React.Component {
       <textarea
         className="cf-form-textarea"
         name={name}
+        id={name}
         onChange={onChange}
         type={type}
         value={value}
