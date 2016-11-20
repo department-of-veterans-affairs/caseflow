@@ -1,4 +1,4 @@
-require 'open3'
+require "open3"
 
 class ShellCommand
   # runs shell command and prints output
