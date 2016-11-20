@@ -2,7 +2,7 @@
 
 ## About
 
-Caseflow's frontend is built using React & Webpack. React is the framework we use to organize our frontend code into redusable, extensible components. Rails still handles all web routing, and determines when react components should be rendered.
+Caseflow's frontend is built using React & Webpack. React is the framework we use to organize our frontend code into reusable, extensible components. Rails still handles all web routing, and determines when react components should be rendered.
 
 ## Asset Compilation Process
 
