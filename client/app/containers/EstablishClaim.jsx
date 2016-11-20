@@ -5,27 +5,32 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 
 const CONTESTED_CLAIMS = {
-  Yes: true,
-  No: false
-}
-const EMAIL_REGEX = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
+  No: false,
+  Yes: true
+};
+
+const EMAIL_REGEX = new RegExp([
+  '^[-a-z0-9~!$%^&*_=+}{\'?]+(.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_]',
+  '[-a-z0-9_]*(.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}.[0-9]{1,3}.[0-9]',
+  '{1,3}.[0-9]{1,3}))(:[0-9]{1,5})?$'
+].join(''));
 
 export default class EstablishClaim extends React.Component {
-   constructor(props) {
-     super(props);
+  constructor(props) {
+    super(props);
 
-     // Set initial state on page render
-     this.state = {
-       emailAddress: '',
-       contestedClaims: null,
-       remarks: ''
-     }
+    // Set initial state on page render
+    this.state = {
+      contestedClaims: null,
+      emailAddress: '',
+      remarks: ''
+    };
 
-     this.emailAddressValidationError = this.emailAddressValidationError.bind(this);
-     this.handleEmailAddressChange = this.handleEmailAddressChange.bind(this);
-     this.handleContestedClaimsChange = this.handleContestedClaimsChange.bind(this);
-     this.handleRemarksChange = this.handleRemarksChange.bind(this);
-   }
+    this.emailAddressValidationError = this.emailAddressValidationError.bind(this);
+    this.handleEmailAddressChange = this.handleEmailAddressChange.bind(this);
+    this.handleContestedClaimsChange = this.handleContestedClaimsChange.bind(this);
+    this.handleRemarksChange = this.handleRemarksChange.bind(this);
+  }
 
   emailAddressValidationError() {
     let { emailAddress } = this.state;
@@ -35,25 +40,25 @@ export default class EstablishClaim extends React.Component {
     }
 
     if (!EMAIL_REGEX.test(emailAddress)) {
-      return 'Not a valid email.'
+      return 'Not a valid email.';
     }
   }
 
-  handleEmailAddressChange(e) {
+  handleEmailAddressChange(event) {
     this.setState({
-      emailAddress: e.target.value
+      emailAddress: event.target.value
     });
   }
 
-  handleContestedClaimsChange(e) {
+  handleContestedClaimsChange(event) {
     this.setState({
-      contestedClaims: CONTESTED_CLAIMS[e.target.value]
+      contestedClaims: CONTESTED_CLAIMS[event.target.value]
     });
   }
 
-  handleRemarksChange(e) {
+  handleRemarksChange(event) {
     this.setState({
-      remarks: e.target.value
+      remarks: event.target.value
     });
   }
 
@@ -92,7 +97,7 @@ export default class EstablishClaim extends React.Component {
            />}
            <input type="submit"/>
          </form>
-         <h3 style={{marginTop: '25px'}}>Current Values</h3>
+         <h3 style={{ 'marginTop': '25px' }}>Current Values</h3>
          <p>Email Address: {emailAddress}</p>
          <p>Contested Claims: {`${contestedClaims}`}</p>
          <p>Remarks: {remarks}</p>
@@ -100,3 +105,7 @@ export default class EstablishClaim extends React.Component {
     );
   }
 }
+
+EstablishClaim.propTypes = {
+  task: PropTypes.object.isRequired
+};

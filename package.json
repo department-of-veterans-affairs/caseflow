@@ -8,7 +8,8 @@
   "scripts": {
     "postinstall": "cd client && npm install",
     "dev": "rm app/assets/webpack/* || true && cd client && npm run build:development",
-    "test": "cd client && npm test"
+    "test": "cd client && npm test",
+    "lint": "cd client && npm run lint"
   },
   "devDependencies": {
   }

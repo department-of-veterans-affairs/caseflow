@@ -5,15 +5,13 @@ export default class RadioField extends React.Component {
       label,
       name,
       onChange,
-      options,
-      type,
-      value
+      options
     } = this.props;
 
-    return (<fieldset className="cf-form-radio-inline cf-form-showhide-radio">
+    return <fieldset className="cf-form-radio-inline cf-form-showhide-radio">
       <legend className="question-label">{label || name}</legend>
       <div className="cf-form-radio-options">
-        {options.map(option => (
+        {options.map((option) =>
           <div className="cf-form-radio-option" key={option}>
             <input
               name={name}
@@ -24,12 +22,15 @@ export default class RadioField extends React.Component {
             />
             <label htmlFor={`${name}_${option}`}>{option}</label>
           </div>
-        ))}
+        )}
       </div>
-    </fieldset>);
+    </fieldset>;
   }
 }
 
-RadioField.defaultProps = {
-}
+RadioField.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  option: PropTypes.array
+};
 
