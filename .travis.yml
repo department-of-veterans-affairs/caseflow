@@ -34,3 +34,6 @@ cache:
 
 notifications:
   email: false
+
+services:
+  - redis-server
