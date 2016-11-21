@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-export default class TextField extends React.Component {
+export default class DateSelector extends React.Component {
   render() {
     let {
       label,
@@ -28,7 +28,7 @@ export default class TextField extends React.Component {
   }
 }
 
-TextField.defaultProps = {
+DateSelector.defaultProps = {
   type: 'text'
 }
 
