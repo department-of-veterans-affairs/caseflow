@@ -41,6 +41,10 @@ class Task < ActiveRecord::Base
   def assign!(user)
     return AlreadyAssignedError if self.user
 
+    if user.tasks.to_complete.count > 0
+      return
+    end
+
     update_attributes!(
       user: user,
       assigned_at: Time.now.utc

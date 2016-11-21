@@ -14,13 +14,9 @@ class TasksController < ApplicationController
   end
 
   def assign
-    if current_user.tasks.to_complete.count > 0
-      user_task = current_user.tasks.to_complete.first
-    else
-      user_task = next_unassigned_task
-      user_task.assign!(current_user)
-    end
-    redirect_to url_for(user_task)
+    # Doesn't assign if user has a task of the same type already assigned.
+    next_unassigned_task.assign!(current_user) 
+    redirect_to url_for(current_user.tasks.to_complete.first)
   end
 
   private
