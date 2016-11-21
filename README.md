@@ -127,6 +127,13 @@ export VACOLS_PASSWORD=secret_password
 Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
 
+### Changing between test users
+Navigate to [http://localhost:3000/dev/users](http://localhost:3000/dev/users). You can use
+this page to switch to any user that is currently in the database. The users' names specify
+what roles they have and therefore what pages they can access. To add new users with new
+roles, you should seed them in the database via the seeds.rb file. The css_id of the user
+should be a comma separated list of roles you want that user to have.
+
 ### Running tests
 
 To run the test suite:
