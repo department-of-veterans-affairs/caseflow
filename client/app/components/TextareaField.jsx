@@ -15,6 +15,7 @@ export default class TextareaField extends React.Component {
       <textarea
         className="cf-form-textarea"
         name={name}
+        id={name}
         onChange={onChange}
         type={type}
         value={value}
@@ -24,6 +25,12 @@ export default class TextareaField extends React.Component {
   }
 }
 
-TextareaField.defaultProps = {
-}
+TextareaField.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  type: PropTypes.string,
+  validationError: PropTypes.string,
+  value: PropTypes.string
+};
 

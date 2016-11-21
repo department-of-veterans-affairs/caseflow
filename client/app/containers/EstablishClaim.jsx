@@ -31,8 +31,8 @@ const SEGMENTED_LANE_OPTIONS = [
 ];
 
 export default class EstablishClaim extends React.Component {
-   constructor(props) {
-     super(props);
+  constructor(props) {
+    super(props);
 
      // Set initial state on page render
      this.state = {
@@ -85,81 +85,82 @@ export default class EstablishClaim extends React.Component {
     let { user, appeal } = task;
     let { poa, poaCode, claimLabel, modifier } = this.state;
 
-    return (<form className="cf-form" noValidate>
+    return (
+      <form className="cf-form" noValidate>
       <div className="cf-app-segment cf-app-segment--alt">
-         <h1>Create End Product</h1>
-           <TextField
-             label="Benefit Type"
-             name="BenefitType"
-             value="C&P Live"
-             readOnly={true}
-           />
-           <TextField
-             label="Payee"
-             name="Payee"
-             value="00 - Veteran"
-             readOnly={true}
-           />
-           <DropDown
-             label="Claim Label"
-             name="ClaimLabel"
-             options={CLAIM_LABEL_OPTIONS}
-             onChange={this.handleClaimLabelChange}
-             selected={claimLabel}
-           />
-           <TextField
-             label="Claim Type"
-             name="ClaimType"
-             value="Claim"
-             invisible={true}
-             readOnly={true}
-           />
-           <DropDown
-             label="Modifier"
-             name="Modifier"
-             options={MODIFIER_OPTIONS}
-             selected={modifier}
-             readOnly={true}
-           />
-           <DropDown
-             label="Segmented Lane"
-             name="SegmentedLane"
-             options={SEGMENTED_LANE_OPTIONS}
-           />
-           <TextField
-             label="Station"
-             name="Station"
-             value="499 - National Work Queue"
-             readOnly={true}
-           />
-           <RadioField
-             label="POA"
-             name="POA"
-             checked={poa}
-             options={POA}
-             onChange={this.handlePoaChange}
-           />
-           {this.hasPoa() && <div><TextField
-             label="POA Code"
-             name="POACode"
-             value={poaCode}
-             onChange={this.handlePoaCodeChange}
-           />
-           <Checkbox
-             label="Allow POA Access to Documents" 
-             name="AllowPOA"
-             isChecked={false}
-           /></div>}
-           <Checkbox
-             label="Gulf War Registry Permit" 
-             name="GulfWar"
-             isChecked={false}
-           />
-           <Checkbox
-             label="Suppress Acknowledgement Letter" 
-             name="SuppressAcknowledgement"
-             isChecked={false}
-           />
+        <h1>Create End Product</h1>
+          <TextField
+           label="Benefit Type"
+           name="BenefitType"
+           value="C&P Live"
+           readOnly={true}
+          />
+          <TextField
+           label="Payee"
+           name="Payee"
+           value="00 - Veteran"
+           readOnly={true}
+          />
+          <DropDown
+           label="Claim Label"
+           name="ClaimLabel"
+           options={CLAIM_LABEL_OPTIONS}
+           onChange={this.handleClaimLabelChange}
+           selected={claimLabel}
+          />
+          <TextField
+           label="Claim Type"
+           name="ClaimType"
+           value="Claim"
+           invisible={true}
+           readOnly={true}
+          />
+          <DropDown
+           label="Modifier"
+           name="Modifier"
+           options={MODIFIER_OPTIONS}
+           selected={modifier}
+           readOnly={true}
+          />
+          <DropDown
+           label="Segmented Lane"
+           name="SegmentedLane"
+           options={SEGMENTED_LANE_OPTIONS}
+          />
+          <TextField
+           label="Station"
+           name="Station"
+           value="499 - National Work Queue"
+           readOnly={true}
+          />
+          <RadioField
+           label="POA"
+           name="POA"
+           checked={poa}
+           options={POA}
+           onChange={this.handlePoaChange}
+          />
+          {this.hasPoa() && <div><TextField
+           label="POA Code"
+           name="POACode"
+           value={poaCode}
+           onChange={this.handlePoaCodeChange}
+          />
+          <Checkbox
+           label="Allow POA Access to Documents" 
+           name="AllowPOA"
+           isChecked={false}
+          /></div>}
+          <Checkbox
+           label="Gulf War Registry Permit" 
+           name="GulfWar"
+           isChecked={false}
+          />
+          <Checkbox
+           label="Suppress Acknowledgement Letter" 
+           name="SuppressAcknowledgement"
+           isChecked={false}
+          />
         </div>
         <div className="cf-app-segment">
           <a href="#back" className="cf-btn-link">{'\u00AB'}Back to preview</a>
@@ -172,3 +173,7 @@ export default class EstablishClaim extends React.Component {
     );
   }
 }
+
+EstablishClaim.propTypes = {
+  task: PropTypes.object.isRequired
+};
