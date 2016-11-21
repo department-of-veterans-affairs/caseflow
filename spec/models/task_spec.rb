@@ -45,15 +45,22 @@ describe Task do
     subject { @task }
 
     context ".assign!" do
-      before { @task.assign!(@user) }
-
       it "correctly assigns a task to a user" do
+        @task.assign!(@user)
         expect(subject.user.id).to eq(@user.id)
         expect(subject.assigned_at).not_to be_nil
       end
 
-      it "raises erorr if already assigned" do
+      it "raises error if already assigned" do
+        @task.assign!(@user)
         expect { @task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
+      end
+
+      it "raises error if object stale" do
+        expect(@task).to receive(:before_assign) do
+          Task.find(@task.id).update!(started_at: Time.now.utc)
+        end
+        expect { @task.assign!(@user) }.to raise_error(ActiveRecord::StaleObjectError)
       end
     end
 

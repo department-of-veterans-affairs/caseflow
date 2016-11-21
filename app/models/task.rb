@@ -39,7 +39,12 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
+  def before_assign
+    # Test hook for testing race conditions
+  end
+
   def assign!(user)
+    before_assign
     fail(AlreadyAssignedError) if self.user
 
     update!(
