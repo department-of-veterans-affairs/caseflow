@@ -52,6 +52,10 @@ gem 'pg', platforms: :ruby
 
 gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "d71251eb3d066748b395d58633af5bd5863ef928"
 
+gem 'redis-rails'
+
+gem 'sidekiq'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -81,6 +85,7 @@ group :development, :test do
   gem 'simplecov'
   gem 'timecop'
   gem 'konacha'
+  gem 'database_cleaner'
 end
 
 group :development do
