@@ -2,7 +2,7 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
-  validates :appeal, uniqueness: { scope: :}
+  validate :no_open_tasks_for_appeal, on: :create
 
   class AlreadyAssignedError < StandardError; end
 
@@ -40,6 +40,10 @@ class Task < ActiveRecord::Base
       where.not(completed_at: nil)
     end
 
+    def uncompleted_task_for_appeal(appeal)
+      where(completed_at: nil, appeal: appeal)
+    end
+
     def completion_status_code(text)
       COMPLETION_STATUS_MAPPING[text]
     end
@@ -61,8 +65,8 @@ class Task < ActiveRecord::Base
 
   def expire!
     transaction do
-      self.class.create!(appeal_id: appeal_id, type: type)
       complete!(self.class.completion_status_code(:expired))
+      self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
 
@@ -96,5 +100,11 @@ class Task < ActiveRecord::Base
 
   def completion_status_text
     COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+  end
+
+  def no_open_tasks_for_appeal
+    if self.class.uncompleted_task_for_appeal(appeal).count > 0
+      errors.add(:appeal, "Uncompleted task already exists for this appeal")
+    end
   end
 end
