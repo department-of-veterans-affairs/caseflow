@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
   end
 
   def setup_fakes
-    Fakes::Initializer.development! if Rails.env.development?
+    Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
   end
 
   def check_whats_new_cookie
