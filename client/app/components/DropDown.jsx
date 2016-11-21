@@ -21,6 +21,11 @@ export default class DropDown extends React.Component {
   }
 }
 
-DropDown.defaultProps = {
-}
-
+DropDown.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  options: PropTypes.array,
+  onChange: PropTypes.func,
+  selected: PropTypes.string,
+  readOnly: PropTypes.bool
+};

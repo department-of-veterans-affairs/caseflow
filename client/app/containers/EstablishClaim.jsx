@@ -61,15 +61,16 @@ export default class EstablishClaim extends React.Component {
 
   handleClaimLabelChange(e) {
     this.setState({
-      claimLabel: e.target.value,
-      modifier: this.getModifier(e.target.value)
+      claimLabel: e.target.value
     });
   }
 
   hasPoa() {
     return this.state.poa == 'VSO' || this.state.poa == 'Private';
   }
-
+  
+  // TODO (mdbenjam): This is not being used right now, remove if
+  // we decide this is not how we want the modifier to work.
   getModifier(claim) {
     var modifier = MODIFIER_OPTIONS[0];
     MODIFIER_OPTIONS.forEach(option => {
@@ -119,8 +120,6 @@ export default class EstablishClaim extends React.Component {
            label="Modifier"
            name="Modifier"
            options={MODIFIER_OPTIONS}
-           selected={modifier}
-           readOnly={true}
           />
           <DropDown
            label="Segmented Lane"

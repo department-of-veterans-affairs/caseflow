@@ -6,8 +6,6 @@ export default class RadioField extends React.Component {
       name,
       onChange,
       options,
-      type,
-      value,
       checked
     } = this.props;
 
@@ -28,12 +26,14 @@ export default class RadioField extends React.Component {
           </div>
         )}
       </div>
-    </fieldset>;
+    </fieldset>);
   }
 }
 
 RadioField.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
-  option: PropTypes.array
+  options: PropTypes.array,
+  checked: PropTypes.string,
+  onChange: PropTypes.func
 };

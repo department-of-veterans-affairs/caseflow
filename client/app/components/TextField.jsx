@@ -37,8 +37,16 @@ TextField.defaultProps = {
 TextField.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  onChange: function(props) {
+    if (!props.readOnly) {
+      if (typeof props.onChange !== 'function') {
+        return new Error('If TextField is not ReadOnly, then onChange must be defined');
+      }
+    }
+  },
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.string,
+  readOnly: PropTypes.bool,
+  invisible: PropTypes.bool
 };

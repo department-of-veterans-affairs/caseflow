@@ -20,9 +20,7 @@ export default class Checkbox extends React.Component {
     let {
       label,
       name,
-      onChange,
-      type,
-      value
+      onChange
     } = this.props;
 
     return (<div className="cf-form-checkboxes">
@@ -41,6 +39,9 @@ export default class Checkbox extends React.Component {
   }
 }
 
-Checkbox.defaultProps = {
-}
-
+Checkbox.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  isChecked: PropTypes.bool,
+  onChange: PropTypes.func
+};
