@@ -8,10 +8,11 @@ export default class TextField extends React.Component {
       readOnly,
       type,
       value,
-      validationError
+      validationError,
+      invisible
     } = this.props;
 
-    return (<div className="cf-form-textinput">
+    return (<div className={"cf-form-textinput" + (invisible ? " cf-invisible" : "")}>
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <input
         className="cf-form-textinput"
@@ -21,9 +22,9 @@ export default class TextField extends React.Component {
         value={value}
         readOnly={readOnly}
       />
-      <div className="cf-validation">
+      {validationError && <div className="cf-validation">
         <span>{validationError}</span>
-      </div>
+      </div>}
     </div>);
   }
 }

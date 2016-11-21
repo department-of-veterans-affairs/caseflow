@@ -7,7 +7,8 @@ export default class RadioField extends React.Component {
       onChange,
       options,
       type,
-      value
+      value,
+      checked
     } = this.props;
 
     return (<fieldset className="cf-form-radio-inline cf-form-showhide-radio">
@@ -21,6 +22,7 @@ export default class RadioField extends React.Component {
               type="radio"
               id={`${name}_${option}`}
               value={option}
+              checked={checked==option}
             />
             <label htmlFor={`${name}_${option}`}>{option}</label>
           </div>

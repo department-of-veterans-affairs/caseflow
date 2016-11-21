@@ -48,3 +48,12 @@
   min-height: 12px;
   color: $color-secondary;
 }
+
+.cf-invisible {
+  display: none;
+}
+
+* + .cf-form-dropdown {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}

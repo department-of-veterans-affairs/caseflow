@@ -5,14 +5,16 @@ export default class DropDown extends React.Component {
       label,
       name,
       onChange,
-      options
+      options,
+      selected,
+      readOnly
     } = this.props;
 
     return (<div className="cf-form-dropdown">
       <label className="question-label">{label || name}</label>
-      <select>
+      <select value={selected} onChange={onChange} readOnly={readOnly}>
         {options.map((option, index) => (
-          <option key={index}>{option}</option>
+          <option value={option} key={index}>{option}</option>
         ))}
       </select>
     </div>);
