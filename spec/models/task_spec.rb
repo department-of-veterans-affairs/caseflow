@@ -5,6 +5,8 @@ describe Task do
   # Clear the task from the DB before every test
   before do
     reset_application!
+    Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
+
     @user = User.create(station_id: "ABC", css_id: "123")
     @appeal = Appeal.create(vacols_id: "123C")
     @appeal2 = Appeal.create(vacols_id: "456D")
@@ -43,11 +45,22 @@ describe Task do
     subject { @task }
 
     context ".assign!" do
-      before { @task.assign!(@user) }
-
       it "correctly assigns a task to a user" do
+        @task.assign!(@user)
         expect(subject.user.id).to eq(@user.id)
         expect(subject.assigned_at).not_to be_nil
+      end
+
+      it "raises error if already assigned" do
+        @task.assign!(@user)
+        expect { @task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
+      end
+
+      it "raises error if object stale" do
+        expect(@task).to receive(:before_assign) do
+          Task.find(@task.id).update!(started_at: Time.now.utc)
+        end
+        expect { @task.assign!(@user) }.to raise_error(ActiveRecord::StaleObjectError)
       end
     end
 
@@ -95,6 +108,34 @@ describe Task do
       end
 
       it { is_expected.to eq("Complete") }
+    end
+  end
+
+  context ".start!" do
+    it "errors if no one is assigned" do
+      expect(@task.user).to be_nil
+      expect { @task.start! }.to raise_error(Task::NotAssignedError)
+    end
+
+    it "sets started_at value to current timestamp" do
+      @task.assign!(@user)
+      expect(@task.started_at).to be_falsey
+      @task.start!
+      expect(@task.started_at).to eq(Time.now.utc)
+    end
+  end
+
+  context ".started?" do
+    subject { @task.started? }
+    before { @task.assign!(@user) }
+
+    context "not started" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "was started" do
+      before { @task.start! }
+      it { is_expected.to be_truthy }
     end
   end
 

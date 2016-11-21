@@ -3,6 +3,7 @@ class Task < ActiveRecord::Base
   belongs_to :appeal
 
   class AlreadyAssignedError < StandardError; end
+  class NotAssignedError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     0 => "Completed",
@@ -38,13 +39,29 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def assign!(user)
-    return AlreadyAssignedError if self.user
+  def before_assign
+    # Test hook for testing race conditions
+  end
 
-    update_attributes!(
+  def assign!(user)
+    before_assign
+    fail(AlreadyAssignedError) if self.user
+
+    update!(
       user: user,
       assigned_at: Time.now.utc
     )
+  end
+
+  def start!
+    fail(NotAssignedError) unless assigned?
+    return if started?
+
+    update!(started_at: Time.now.utc)
+  end
+
+  def started?
+    started_at
   end
 
   def assigned?
@@ -69,7 +86,7 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def completed(status)
-    update_attributes!(
+    update!(
       completed_at: Time.now.utc,
       completion_status: status
     )
