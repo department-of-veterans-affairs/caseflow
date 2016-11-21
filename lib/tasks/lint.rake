@@ -18,8 +18,11 @@ task :lint do
     jshint_result = ShellCommand.run("rake jshint")
   end
 
+  puts "\nrunning eslint..."
+  eslint_result = ShellCommand.run("npm run lint", chdir: "./client")
+
   puts "\n"
-  if scss_result && rubocop_result && jshint_result
+  if scss_result && rubocop_result && jshint_result && eslint_result
     puts Rainbow("Passed. Everything looks stylish!").green
   else
     puts Rainbow("Failed. Linting issues were found.").red

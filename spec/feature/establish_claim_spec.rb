@@ -58,15 +58,16 @@ RSpec.feature "Dispatch" do
     scenario "View my history of completed tasks" do
       visit "/dispatch/establish-claim"
 
-      expect(page).to have_content("Establish Claim")
+      expect(page).to have_content(@completed_task.start_text)
       expect(page).to have_css("tr#task-#{@completed_task.id}")
     end
 
     scenario "Assign the next task to me" do
       visit "/dispatch/establish-claim"
-      click_on "Establish Claim"
+      click_on @task.start_text
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(@task.reload.user).to eq(current_user)
+      expect(page).to have_content("Text rendered by React")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
