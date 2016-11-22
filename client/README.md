@@ -31,4 +31,4 @@ CSS styling continues to be handled by Rails and the asset pipeline. To add new 
 
 ## Testing
 
-Frontend unit tests are run using [Mocha](https://mochajs.org/). When possible, testing of frontend code should be accomplished through Capybara feature spec tests. That is, container components (e.g. pages) should _not_ be tested via mocha tests. Only true components should be unit tested via mocha. See example component tests in [/test](test).
+Frontend unit tests are run using [Mocha](https://mochajs.org/). All [reusable components](components) should have mocha unit tests. [Containers](containers) (e.g. page top-level components) should limit mocha tests to only verifying interactivity. Beyond that, feature-level tests should continue to be added using Capybara. For more information on mocha tests, see example component tests in [/test](test).
