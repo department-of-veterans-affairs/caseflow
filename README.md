@@ -39,6 +39,7 @@ Note this link was found on Stack Overflow and is not the same link that is on t
 The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
 
 For the frontend, you'll need to install Node and the relevant npm modules
+
 > $ nvm install node v7.1.0
 
 > $ nvm use && npm install
@@ -53,9 +54,15 @@ Setup and seed the DB
 
 > $ rake db:setup
 
-And by default, Rails will run in the development environment, which will mock out data.
+And by default, Rails will run in the development environment, which will mock out data. To start the application servers:
+
+`$ foreman start -f Procfile.dev`
+
+Or to run the rails server and frontend webpack server separately:
 
 `$ rails s`
+
+`$ nvm use && npm run dev`
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
@@ -132,8 +139,15 @@ export VACOLS_PASSWORD=secret_password
 Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
 
+### Changing between test users
+Navigate to [http://localhost:3000/dev/users](http://localhost:3000/dev/users). You can use
+this page to switch to any user that is currently in the database. The users' names specify
+what roles they have and therefore what pages they can access. To add new users with new
+roles, you should seed them in the database via the seeds.rb file. The css_id of the user
+should be a comma separated list of roles you want that user to have.
+
 ### Running tests
 
 To run the test suite:
-`$rake`
+`$ rake`
 

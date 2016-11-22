@@ -9,7 +9,7 @@ export default class RadioField extends React.Component {
       checked
     } = this.props;
 
-    return (<fieldset className="cf-form-radio-inline cf-form-showhide-radio">
+    return <fieldset className="cf-form-radio-inline cf-form-showhide-radio">
       <legend className="question-label">{label || name}</legend>
       <div className="cf-form-radio-options">
         {options.map((option) =>
@@ -26,7 +26,7 @@ export default class RadioField extends React.Component {
           </div>
         )}
       </div>
-    </fieldset>);
+    </fieldset>;
   }
 }
 

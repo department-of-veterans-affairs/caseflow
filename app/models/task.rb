@@ -2,19 +2,27 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  validate :no_open_tasks_for_appeal, on: :create
+
   class AlreadyAssignedError < StandardError; end
+  class NotAssignedError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
-    0 => "Completed",
-    1 => "Cancelled",
-
-    # Establish Claim completion codes
-    2 => "Routed to RO"
+    completed: 0,
+    cancelled_by_user: 1,
+    expired: 2,
+    routed_to_ro: 3
   }.freeze
+
+  REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
     def unassigned
       where(user_id: nil)
+    end
+
+    def assigned_not_completed
+      to_complete.where.not(assigned_at: nil)
     end
 
     def newest_first
@@ -32,19 +40,51 @@ class Task < ActiveRecord::Base
     def completed
       where.not(completed_at: nil)
     end
+
+    def to_complete_task_for_appeal(appeal)
+      where(completed_at: nil, appeal: appeal)
+    end
+
+    def completion_status_code(text)
+      COMPLETION_STATUS_MAPPING[text]
+    end
   end
 
   def start_text
     type.titlecase
   end
 
-  def assign!(user)
-    return AlreadyAssignedError if self.user
+  def before_assign
+    # Test hook for testing race conditions
+  end
 
-    update_attributes!(
+  def assign!(user)
+    before_assign
+    fail(AlreadyAssignedError) if self.user
+
+    update!(
       user: user,
       assigned_at: Time.now.utc
     )
+    self
+  end
+
+  def expire!
+    transaction do
+      complete!(self.class.completion_status_code(:expired))
+      self.class.create!(appeal_id: appeal_id, type: type)
+    end
+  end
+
+  def start!
+    fail(NotAssignedError) unless assigned?
+    return if started?
+
+    update!(started_at: Time.now.utc)
+  end
+
+  def started?
+    started_at
   end
 
   def assigned?
@@ -68,15 +108,29 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def completed(status)
-    update_attributes!(
+  def complete!(status)
+    update!(
       completed_at: Time.now.utc,
       completion_status: status
     )
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING[completion_status]
+    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+  end
+
+  def no_open_tasks_for_appeal
+    if self.class.to_complete_task_for_appeal(appeal).count > 0
+      errors.add(:appeal, "Uncompleted task already exists for this appeal")
+    end
+  end
+
+  def attributes
+    super.merge(type: type)
+  end
+
+  def to_hash
+    serializable_hash(include: [:user, :appeal])
   end
 
   def attributes

@@ -7,10 +7,6 @@ import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
 
-const CONTESTED_CLAIMS = {
-  Yes: true,
-  No: false
-};
 const POA = [
   'None',
   'VSO',

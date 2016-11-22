@@ -5,12 +5,11 @@ export default class TextareaField extends React.Component {
       label,
       name,
       onChange,
-      rows,
       type,
       value
     } = this.props;
 
-    return (<div className="cf-form-textarea">
+    return <div className="cf-form-textarea">
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <textarea
         className="cf-form-textarea"
@@ -21,7 +20,7 @@ export default class TextareaField extends React.Component {
         value={value}
       />
       <p>Character Count: {value.length}</p>
-    </div>);
+    </div>;
   }
 }
 

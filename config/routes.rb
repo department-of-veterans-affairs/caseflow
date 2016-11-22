@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   patch "certifications" => "certifications#create"
 
   # :nocov:
-  if Rails.env.development? || Rails.env.test?
+  if Rails.env.development? || Rails.env.test? || Rails.env.demo?
     scope "/dev" do
       get '/users', to: "dev_users#index"
       post '/set-user/:id', to: "dev#set_user", as: 'set_user'

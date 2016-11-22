@@ -11,6 +11,9 @@ class TasksController < ApplicationController
   end
 
   def show
+    # Future safeguard for when we give managers a show view
+    # for a given task
+    task.start! if current_user == task.user
   end
 
   def assign

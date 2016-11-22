@@ -1,17 +1,15 @@
 {
-  "name": "react-webpack-rails-tutorial",
+  "name": "Caseflow",
+  "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "version": "0.0.1",
   "engines": {
-    "node": "5.10.0",
-    "npm": "3.5.0"
+    "node": "7.1.0",
+    "npm": "3.6.0"
   },
   "scripts": {
-    "postinstall": "cd client && npm install",
+    "postinstall": "cd client && npm install --no-optional",
     "dev": "rm app/assets/webpack/* || true && cd client && npm run build:development",
-    "test": "rake"
     "test": "cd client && npm test",
     "lint": "cd client && npm run lint"
-  },
-  "devDependencies": {
   }
 }

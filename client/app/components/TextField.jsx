@@ -13,7 +13,7 @@ export default class TextField extends React.Component {
       placeholder
     } = this.props;
 
-    return (<div className={"cf-form-textinput" + (invisible ? " cf-invisible" : "")}>
+    return <div className="cf-form-textinput">
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <input
         className="cf-form-textinput"
@@ -25,10 +25,10 @@ export default class TextField extends React.Component {
         readOnly={readOnly}
         placeholder={placeholder}
       />
-      {validationError && <div className="cf-validation">
+      <div className="cf-validation">
         <span>{validationError}</span>
-      </div>}
-    </div>);
+      </div>
+    </div>;
   }
 }
 

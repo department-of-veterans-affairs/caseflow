@@ -4,3 +4,9 @@ create_establish_claim_tasks_job:
  class: "CreateEstablishClaimTasksJob"
  queue: default
  active_job: false
+
+reassign_old_tasks:
+ cron: "1 0 * * * America/New_York"
+ class: "ReassignOldTasksJob"
+ queue: default
+ active_job: false
