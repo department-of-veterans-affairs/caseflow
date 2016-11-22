@@ -1,5 +1,7 @@
 {
   "name": "CaseflowFrontend",
+  "repository": "https://github.com/department-of-veterans-affairs/caseflow",
+  "license": "",
   "version": "0.0.1",
   "engines": {
     "node": "7.1.0",
