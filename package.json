@@ -1,5 +1,6 @@
 {
   "name": "Caseflow",
+  "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "version": "0.0.1",
   "engines": {
     "node": "7.1.0",
@@ -10,7 +11,5 @@
     "dev": "rm app/assets/webpack/* || true && cd client && npm run build:development",
     "test": "cd client && npm test",
     "lint": "cd client && npm run lint"
-  },
-  "devDependencies": {
   }
 }
