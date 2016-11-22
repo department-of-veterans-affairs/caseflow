@@ -121,8 +121,6 @@ ActiveRecord::Schema.define(version: 20161121140139) do
     t.integer  "lock_version"
   end
 
-  add_index "tasks", ["appeal_id", "type"], name: "index_tasks_on_appeal_id_and_type", unique: true, using: :btree
-
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false
     t.string "css_id",     null: false
