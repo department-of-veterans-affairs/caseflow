@@ -8,6 +8,8 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
     "lint": "eslint --fix --ext .jsx --ext .js app",
+    "postinstall": "npm-shrinkwrap sync",
+    "shrinkwrap:sync": "npm-shrinkwrap sync",
     "build:test": "webpack --config webpack.config.js",
     "build:production": "NODE_ENV=production webpack --config webpack.config.js",
     "build:development": "webpack -w --config webpack.config.js"
@@ -21,11 +23,11 @@
     "babel-cli": "^6.6.5",
     "babel-core": "^6.7.4",
     "babel-loader": "^6.2.4",
-    "babel-runtime": "^6.6.1",
     "babel-polyfill": "^6.7.4",
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "babel-runtime": "^6.6.1",
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.1",
     "imports-loader": "^0.6.5",
@@ -40,6 +42,7 @@
     "eslint": "^3.10.2",
     "eslint-plugin-react": "^6.7.1",
     "mocha": "^3.1.2",
+    "npm-shrinkwrap": "^6.0.2",
     "react-addons-test-utils": "^15.4.0"
   }
 }
