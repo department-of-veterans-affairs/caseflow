@@ -1,9 +1,9 @@
 {
-  "name": "react-webpack-rails-tutorial",
+  "name": "Caseflow Frontend",
   "version": "0.0.1",
   "engines": {
-    "node": "5.10.0",
-    "npm": "3.5.0"
+    "node": "7.1.0",
+    "npm": "3.6.0"
   },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",

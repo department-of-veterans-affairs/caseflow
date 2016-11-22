@@ -39,6 +39,7 @@ Note this link was found on Stack Overflow and is not the same link that is on t
 The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
 
 For the frontend, you'll need to install Node and the relevant npm modules
+
 > $ nvm install node v7.1.0
 
 > $ nvm use && npm install
@@ -53,9 +54,15 @@ Setup and seed the DB
 
 > $ rake db:setup
 
-And by default, Rails will run in the development environment, which will mock out data.
+And by default, Rails will run in the development environment, which will mock out data. To start the application servers:
+
+`$ foreman start -f Procfile.dev`
+
+Or to run the rails server and frontend webpack server separately:
 
 `$ rails s`
+
+`$ nvm use && npm run dev`
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
@@ -135,5 +142,5 @@ Finally, just run Rails in the staging environment!
 ### Running tests
 
 To run the test suite:
-`$rake`
+`$ rake`
 
