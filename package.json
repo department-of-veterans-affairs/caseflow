@@ -7,7 +7,7 @@
     "npm": "3.6.0"
   },
   "scripts": {
-    "postinstall": "cd client && npm install",
+    "postinstall": "cd client && npm install --no-optional",
     "dev": "rm app/assets/webpack/* || true && cd client && npm run build:development",
     "test": "cd client && npm test",
     "lint": "cd client && npm run lint"
