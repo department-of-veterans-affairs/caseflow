@@ -84,6 +84,6 @@ class Task < ActiveRecord::Base
   end
 
   def to_hash
-    serializable_hash(include: [:user, :appeal])
+    as_json(include: [:user, appeal: { methods: [:decision_date] }])
   end
 end

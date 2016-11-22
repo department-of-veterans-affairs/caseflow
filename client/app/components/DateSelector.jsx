@@ -7,8 +7,14 @@ const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 export default class DateSelector extends React.Component {
   constructor(props) {
     super(props);
+    let value = '';
+    // TODO (mdbenjam): Add a date formatting package?
+    if (props.value) {
+      let date = new Date(props.value);  
+      value = (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear();
+    }
     this.state = {
-      value: (props.value ? props.value : '')
+      value: value
     };
     this.dateFill = this.dateFill.bind(this);
   }

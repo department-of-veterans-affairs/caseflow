@@ -67,7 +67,6 @@ export default class EstablishClaim extends React.Component {
   }
 
   hasPoa() {
-    console.log('this sets state', this.state.poa);
     return this.state.poa == 'VSO' || this.state.poa == 'Private';
   }
   
@@ -127,7 +126,7 @@ export default class EstablishClaim extends React.Component {
            label="Decision Date"
            name="DecisionDate"
            readOnly={true}
-           value="12/19/1991"
+           value={appeal.decision_date}
           />
           <DropDown
            label="Segmented Lane"
