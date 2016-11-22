@@ -13,7 +13,7 @@ export default class TextField extends React.Component {
       placeholder
     } = this.props;
 
-    return <div className="cf-form-textinput">
+    return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <input
         className="cf-form-textinput"
@@ -37,19 +37,19 @@ TextField.defaultProps = {
 };
 
 TextField.propTypes = {
+  invisible: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
-  onChange: function(props) {
+  onChange(props) {
     if (!props.readOnly) {
       if (typeof props.onChange !== 'function') {
         return new Error('If TextField is not ReadOnly, then onChange must be defined');
       }
     }
   },
+  placeholder: PropTypes.string,
+  readOnly: PropTypes.bool,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.string,
-  readOnly: PropTypes.bool,
-  invisible: PropTypes.bool,
-  placeholder: PropTypes.string
+  value: PropTypes.string
 };

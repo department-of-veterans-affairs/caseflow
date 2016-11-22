@@ -10,9 +10,9 @@ describe('EstablishClaim', () => {
       const task = {user: 'a', appeal: 'b'};
       wrapper = mount(<EstablishClaim task={task}/>);
     });
-    
+
     context('when POA is None', () => {
-      before(() => {
+      beforeEach(() => {
         wrapper.find('#POA_None').simulate('change');
       });
       
@@ -25,7 +25,7 @@ describe('EstablishClaim', () => {
     });
 
     context('when POA is VSO', () => {
-      before(() => {
+      beforeEach(() => {
         wrapper.find('#POA_VSO').simulate('change');
       });
       
@@ -38,7 +38,7 @@ describe('EstablishClaim', () => {
     });
     
     context('when POA is Private', () => {
-      before(() => {
+      beforeEach(() => {
         wrapper.find('#POA_Private').simulate('change');
       });
 

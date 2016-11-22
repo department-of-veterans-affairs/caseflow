@@ -130,14 +130,6 @@ class Task < ActiveRecord::Base
   end
 
   def to_hash
-    serializable_hash(include: [:user, :appeal])
-  end
-
-  def attributes
-    super.merge(type: type)
-  end
-
-  def to_hash
-    as_json(include: [:user, appeal: { methods: [:decision_date] }])
+    serializable_hash(include: [:user, appeal: { methods: [:decision_date] }])
   end
 end
