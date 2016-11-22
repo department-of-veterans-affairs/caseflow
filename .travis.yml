@@ -22,7 +22,7 @@ before_install:
 before_script:
   - node -v
   - npm -v
-  - npm install
+  - npm install --no-optional
   - (cd client && npm run build:production)
   - sudo apt-get install pdftk
   - RAILS_ENV=test bundle exec rake db:create

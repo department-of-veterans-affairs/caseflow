@@ -45,5 +45,8 @@
     "mocha": "^3.1.2",
     "npm-shrinkwrap": "^6.0.2",
     "react-addons-test-utils": "^15.4.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "*"
   }
 }
