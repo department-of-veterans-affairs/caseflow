@@ -1,5 +1,35 @@
 import React, { PropTypes } from 'react';
+import TextField from '../components/TextField';
+
+const DEFAULT_TEXT = 'mm/dd/yyyy';
+const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
+
 export default class DateSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: (props.value ? props.value : '')
+    };
+    this.dateFill = this.dateFill.bind(this);
+  }
+
+
+  dateFill(e) {
+    let value = e.target.value;
+    if (e.target.value.length > this.state.value.length) {
+      value = value + '/'
+    } else {
+      if (value.charAt(value.length - 1) === '/')
+        value = value.substr(0, value.length - 1);
+    }
+
+    let match = DATE_REGEX.exec(value);
+    
+    this.setState({
+      value: (match ? match[0] : '')
+    });
+  }
+
   render() {
     let {
       label,
@@ -7,28 +37,29 @@ export default class DateSelector extends React.Component {
       onChange,
       readOnly,
       type,
-      value,
       validationError
     } = this.props;
 
-    return (<div className="cf-form-textinput">
-      <label className="question-label" htmlFor={name}>{label || name}</label>
-      <input
-        className="cf-form-textinput"
-        name={name}
-        onChange={onChange}
-        type={type}
-        value={value}
-        readOnly={readOnly}
-      />
-      <div className="cf-validation">
-        <span>{validationError}</span>
-      </div>
-    </div>);
+    return (<TextField 
+      label={label}
+      name={name}
+      readOnly={readOnly}
+      type={type}
+      value={this.state.value}
+      validationError={validationError}
+      onChange={this.dateFill}
+      placeholder={DEFAULT_TEXT}
+      />);
   }
 }
 
-DateSelector.defaultProps = {
-  type: 'text'
-}
-
+TextField.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  type: PropTypes.string,
+  validationError: PropTypes.string,
+  value: PropTypes.string,
+  readOnly: PropTypes.bool,
+  invisible: PropTypes.bool
+};

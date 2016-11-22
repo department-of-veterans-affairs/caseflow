@@ -5,6 +5,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
+import DateSelector from '../components/DateSelector';
 
 const CONTESTED_CLAIMS = {
   Yes: true,
@@ -121,6 +122,12 @@ export default class EstablishClaim extends React.Component {
            label="Modifier"
            name="Modifier"
            options={MODIFIER_OPTIONS}
+          />
+          <DateSelector
+           label="Decision Date"
+           name="DecisionDate"
+           readOnly={true}
+           value="12/19/1991"
           />
           <DropDown
            label="Segmented Lane"

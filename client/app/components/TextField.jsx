@@ -9,7 +9,8 @@ export default class TextField extends React.Component {
       type,
       value,
       validationError,
-      invisible
+      invisible,
+      placeholder
     } = this.props;
 
     return (<div className={"cf-form-textinput" + (invisible ? " cf-invisible" : "")}>
@@ -22,6 +23,7 @@ export default class TextField extends React.Component {
         type={type}
         value={value}
         readOnly={readOnly}
+        placeholder={placeholder}
       />
       {validationError && <div className="cf-validation">
         <span>{validationError}</span>
@@ -48,5 +50,6 @@ TextField.propTypes = {
   validationError: PropTypes.string,
   value: PropTypes.string,
   readOnly: PropTypes.bool,
-  invisible: PropTypes.bool
+  invisible: PropTypes.bool,
+  placeholder: PropTypes.string
 };
