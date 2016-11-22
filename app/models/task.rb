@@ -2,20 +2,27 @@ class Task < ActiveRecord::Base
   belongs_to :user
   belongs_to :appeal
 
+  validate :no_open_tasks_for_appeal, on: :create
+
   class AlreadyAssignedError < StandardError; end
   class NotAssignedError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
-    0 => "Completed",
-    1 => "Cancelled",
-
-    # Establish Claim completion codes
-    2 => "Routed to RO"
+    completed: 0,
+    cancelled_by_user: 1,
+    expired: 2,
+    routed_to_ro: 3
   }.freeze
+
+  REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
     def unassigned
       where(user_id: nil)
+    end
+
+    def assigned_not_completed
+      to_complete.where.not(assigned_at: nil)
     end
 
     def newest_first
@@ -32,6 +39,14 @@ class Task < ActiveRecord::Base
 
     def completed
       where.not(completed_at: nil)
+    end
+
+    def to_complete_task_for_appeal(appeal)
+      where(completed_at: nil, appeal: appeal)
+    end
+
+    def completion_status_code(text)
+      COMPLETION_STATUS_MAPPING[text]
     end
   end
 
@@ -51,6 +66,14 @@ class Task < ActiveRecord::Base
       user: user,
       assigned_at: Time.now.utc
     )
+    self
+  end
+
+  def expire!
+    transaction do
+      complete!(self.class.completion_status_code(:expired))
+      self.class.create!(appeal_id: appeal_id, type: type)
+    end
   end
 
   def start!
@@ -85,7 +108,7 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def completed(status)
+  def complete!(status)
     update!(
       completed_at: Time.now.utc,
       completion_status: status
@@ -93,6 +116,12 @@ class Task < ActiveRecord::Base
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING[completion_status]
+    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+  end
+
+  def no_open_tasks_for_appeal
+    if self.class.to_complete_task_for_appeal(appeal).count > 0
+      errors.add(:appeal, "Uncompleted task already exists for this appeal")
+    end
   end
 end
