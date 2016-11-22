@@ -11,7 +11,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
 ## Initial Setup (MacOSX)
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) installed.
+Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
 Then run the following:
 
@@ -38,6 +38,12 @@ Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server
 Note this link was found on Stack Overflow and is not the same link that is on the pdftk website.
 The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
 
+For the frontend, you'll need to install Node and the relevant npm modules
+
+> $ nvm install node v7.1.0
+
+> $ nvm use && npm install
+
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
@@ -48,9 +54,15 @@ Setup and seed the DB
 
 > $ rake db:setup
 
-And by default, Rails will run in the development environment, which will mock out data.
+And by default, Rails will run in the development environment, which will mock out data. To start the application servers:
+
+`$ foreman start -f Procfile.dev`
+
+Or to run the rails server and frontend webpack server separately:
 
 `$ rails s`
+
+`$ nvm use && npm run dev`
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
@@ -137,5 +149,5 @@ should be a comma separated list of roles you want that user to have.
 ### Running tests
 
 To run the test suite:
-`$rake`
+`$ rake`
 

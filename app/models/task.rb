@@ -124,4 +124,12 @@ class Task < ActiveRecord::Base
       errors.add(:appeal, "Uncompleted task already exists for this appeal")
     end
   end
+
+  def attributes
+    super.merge(type: type)
+  end
+
+  def to_hash
+    serializable_hash(include: [:user, :appeal])
+  end
 end
