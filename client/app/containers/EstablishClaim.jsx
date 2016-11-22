@@ -44,21 +44,21 @@ export default class EstablishClaim extends React.Component {
      this.handleClaimLabelChange = this.handleClaimLabelChange.bind(this);
    }
 
-  handlePoaChange(e) {
+  handlePoaChange(event) {
     this.setState({
-      poa: e.target.value
+      poa: event.target.value
     });
   }
 
-  handlePoaCodeChange(e) {
+  handlePoaCodeChange(event) {
     this.setState({
-      poaCode: e.target.value
+      poaCode: event.target.value
     });
   }
 
-  handleClaimLabelChange(e) {
+  handleClaimLabelChange(event) {
     this.setState({
-      claimLabel: e.target.value
+      claimLabel: event.target.value
     });
   }
 
@@ -85,8 +85,8 @@ export default class EstablishClaim extends React.Component {
 
     return (
       <form className="cf-form" noValidate>
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h1>Create End Product</h1>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h1>Create End Product</h1>
           <TextField
            label="Benefit Type"
            name="BenefitType"

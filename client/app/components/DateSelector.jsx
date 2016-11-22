@@ -19,10 +19,9 @@ export default class DateSelector extends React.Component {
     this.dateFill = this.dateFill.bind(this);
   }
 
-
-  dateFill(e) {
-    let value = e.target.value;
-    if (e.target.value.length > this.state.value.length) {
+  dateFill(event) {
+    let value = event.target.value;
+    if (event.target.value.length > this.state.value.length) {
       value = value + '/'
     } else {
       if (value.charAt(value.length - 1) === '/')
@@ -46,7 +45,7 @@ export default class DateSelector extends React.Component {
       validationError
     } = this.props;
 
-    return (<TextField 
+    return <TextField 
       label={label}
       name={name}
       readOnly={readOnly}
@@ -55,7 +54,8 @@ export default class DateSelector extends React.Component {
       validationError={validationError}
       onChange={this.dateFill}
       placeholder={DEFAULT_TEXT}
-      />);
+    />;
+    
   }
 }
 

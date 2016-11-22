@@ -10,7 +10,7 @@ export default class DropDown extends React.Component {
       readOnly
     } = this.props;
 
-    return (<div className="cf-form-dropdown">
+    return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <select value={selected} onChange={onChange} id={name} readOnly={readOnly}>
         {options.map((option, index) => (
@@ -21,7 +21,7 @@ export default class DropDown extends React.Component {
           </option>
         ))}
       </select>
-    </div>);
+    </div>;
   }
 }
 

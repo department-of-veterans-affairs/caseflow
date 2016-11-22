@@ -10,7 +10,7 @@ export default class Checkbox extends React.Component {
   }
 
 
-  defaultHandler(e) {
+  defaultHandler(event) {
     this.setState({
       isChecked: !this.state.isChecked
     });
@@ -23,19 +23,19 @@ export default class Checkbox extends React.Component {
       onChange
     } = this.props;
 
-    return (<div className="cf-form-checkboxes">
-        <div className="cf-form-checkbox">
+    return <div className="cf-form-checkboxes">
+      <div className="cf-form-checkbox">
 
-        <input
-          name={name}
-          onChange={this.defaultHandler}
-          type="checkbox"
-          id={name}
-          checked={this.state.isChecked}
-        />
-        <label className="question-label" htmlFor={name}>{label || name}</label>
-        </div>
-      </div>);
+      <input
+        name={name}
+        onChange={this.defaultHandler}
+        type="checkbox"
+        id={name}
+        checked={this.state.isChecked}
+      />
+      <label className="question-label" htmlFor={name}>{label || name}</label>
+      </div>
+    </div>;
   }
 }
 
