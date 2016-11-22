@@ -5,6 +5,7 @@ class Task < ActiveRecord::Base
   validate :no_open_tasks_for_appeal, on: :create
 
   class AlreadyAssignedError < StandardError; end
+  class NotAssignedError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -53,10 +54,15 @@ class Task < ActiveRecord::Base
     type.titlecase
   end
 
-  def assign!(user)
-    return AlreadyAssignedError if self.user
+  def before_assign
+    # Test hook for testing race conditions
+  end
 
-    update_attributes!(
+  def assign!(user)
+    before_assign
+    fail(AlreadyAssignedError) if self.user
+
+    update!(
       user: user,
       assigned_at: Time.now.utc
     )
@@ -68,6 +74,17 @@ class Task < ActiveRecord::Base
       complete!(self.class.completion_status_code(:expired))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
+  end
+
+  def start!
+    fail(NotAssignedError) unless assigned?
+    return if started?
+
+    update!(started_at: Time.now.utc)
+  end
+
+  def started?
+    started_at
   end
 
   def assigned?
@@ -92,7 +109,7 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status)
-    update_attributes!(
+    update!(
       completed_at: Time.now.utc,
       completion_status: status
     )
