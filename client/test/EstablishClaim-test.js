@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import EstablishClaim from '../app/containers/EstablishClaim';
 
-describe.only('EstablishClaim', () => {
+describe('EstablishClaim', () => {
   context('.render', () => {
     let wrapper;
     beforeEach(() => {

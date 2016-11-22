@@ -57,3 +57,9 @@
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+
+.cf-form-textinput[readonly] {
+  background: $color-gray-lightest !important;
+  color: $color-gray-dark;
+  opacity: 1 !important;
+}

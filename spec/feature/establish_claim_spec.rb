@@ -67,7 +67,7 @@ RSpec.feature "Dispatch" do
       click_on @task.start_text
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(@task.reload.user).to eq(current_user)
-      expect(page).to have_content("Text rendered by React")
+      expect(page).to have_content("Create End Product")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
