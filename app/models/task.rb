@@ -40,7 +40,7 @@ class Task < ActiveRecord::Base
       where.not(completed_at: nil)
     end
 
-    def uncompleted_task_for_appeal(appeal)
+    def to_complete_task_for_appeal(appeal)
       where(completed_at: nil, appeal: appeal)
     end
 
@@ -103,7 +103,7 @@ class Task < ActiveRecord::Base
   end
 
   def no_open_tasks_for_appeal
-    if self.class.uncompleted_task_for_appeal(appeal).count > 0
+    if self.class.to_complete_task_for_appeal(appeal).count > 0
       errors.add(:appeal, "Uncompleted task already exists for this appeal")
     end
   end
