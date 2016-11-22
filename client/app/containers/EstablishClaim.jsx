@@ -48,6 +48,7 @@ export default class EstablishClaim extends React.Component {
    }
 
   handlePoaChange(e) {
+    console.log('Inside POAChange');
     this.setState({
       poa: e.target.value
     });
@@ -66,6 +67,7 @@ export default class EstablishClaim extends React.Component {
   }
 
   hasPoa() {
+    console.log('this sets state', this.state.poa);
     return this.state.poa == 'VSO' || this.state.poa == 'Private';
   }
   
