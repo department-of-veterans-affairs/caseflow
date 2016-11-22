@@ -21,6 +21,17 @@ development_vacols:
   timeout: 5000
   database: db/development-vacols.sqlite3
 
+demo:
+  <<: *default
+  username: <%= `whoami` %>
+  database: caseflow_certification_demo
+
+demo_vacols:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/demo-vacols.sqlite3
+
 staging:
   <<: *default
   username: <%= `whoami` %>
