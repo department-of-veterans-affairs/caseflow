@@ -1,15 +1,13 @@
 {
-  "name": "Caseflow Frontend",
+  "name": "CaseflowFrontend",
   "version": "0.0.1",
   "engines": {
     "node": "7.1.0",
-    "npm": "3.6.0"
+    "npm": "3.10.9"
   },
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
     "lint": "eslint --fix --ext .jsx --ext .js app",
-    "postinstall": "npm-shrinkwrap sync",
-    "shrinkwrap:sync": "npm-shrinkwrap sync",
     "build:test": "webpack --config webpack.config.js",
     "build:production": "NODE_ENV=production webpack --config webpack.config.js",
     "build:development": "webpack -w --config webpack.config.js"
