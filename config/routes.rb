@@ -30,6 +30,7 @@ Rails.application.routes.draw do
               only: [:show, :index] do
       patch 'assign', on: :collection
       get 'pdf', on: :member
+      get 'review', on: :member
     end
   end
 

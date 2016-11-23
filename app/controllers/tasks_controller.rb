@@ -30,6 +30,10 @@ class TasksController < ApplicationController
     send_file(decision.default_path, type: "application/pdf", disposition: "inline")
   end
 
+  def review
+    render "review_decision"
+  end
+
   private
 
   def current_user_historical_tasks
