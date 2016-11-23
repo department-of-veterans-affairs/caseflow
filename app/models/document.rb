@@ -11,7 +11,9 @@ class Document
     "475" => "Third Party Correspondence",
     "713" => "NOD",
     "856" => "NOD",
-    "857" => "Form 9"
+    "857" => "Form 9",
+    "27"  => "BVA Decision"
+
   }.freeze
 
   ALT_TYPES = {
@@ -33,5 +35,14 @@ class Document
       alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
       received_at: vbms_document.received_at
     )
+  end
+
+  def save!(id)
+    f = File.new(default_path(id))
+    f.write(content)
+  end
+
+  def default_path(id)
+    File.join(Rails.root, "tmp", "pdfs", "#{type.dasherize}-#{id}.pdf")
   end
 end

@@ -21,6 +21,17 @@ class TasksController < ApplicationController
     redirect_to url_for(next_unassigned_task)
   end
 
+  def pdf
+    save_decision!
+    send_file(appeal.decision.default_path(appeal.vacols_id), type: "application/pdf", disposition: "inline")
+  end
+
+  def save_decision!
+    fetch_documents!
+    decision = appeal.decision!
+    decision.save!(task.appeal.vacols_id)
+  end
+
   private
 
   def current_user_historical_tasks

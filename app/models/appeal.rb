@@ -21,6 +21,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :documents
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -102,6 +103,10 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
+  def decision
+    documents_with_type("BVA Decision")
+  end
+
   def certify!
     Appeal.certify(self)
   end
@@ -125,6 +130,10 @@ class Appeal < ActiveRecord::Base
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
+  end
+
+  def decision_location
+    appeal.decision.default_path(vacols_id)
   end
 
   class << self

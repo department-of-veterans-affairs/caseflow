@@ -42,7 +42,17 @@ class Fakes::AppealRepository
 
   def self.fetch_documents_for(appeal)
     return unless appeal.documents.blank?
+    vbms_record = @records[appeal.vbms_id]
+    if vbms_record
+      appeal.documents = vbms_record[:documents]
+      return
+    end
     appeal.documents = @documents || []
+  end
+
+  def self.fetch_document_file(document)
+    path = File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+    IO.binread(path)
   end
 
   def self.remands_ready_for_claims_establishment
@@ -228,8 +238,12 @@ class Fakes::AppealRepository
     Document.new(type: "Form 9", received_at: 1.day.ago)
   end
 
+  def self.decision_document
+    Document.new(type: "BVA Decision", received_at: 1.day.ago)
+  end
+
   def self.set_vbms_documents!
-    @documents = [nod_document, soc_document, form9_document]
+    @documents = [nod_document, soc_document, form9_document, decision_document]
   end
 
   def self.seed!
@@ -246,6 +260,7 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
+        @records["vbms_id#{i}"] = {documents: [nod_document, soc_document, form9_document, decision_document]}
       end
     end
   end
