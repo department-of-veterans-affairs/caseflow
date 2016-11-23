@@ -2,106 +2,179 @@ import React, { PropTypes } from 'react';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
-import TextareaField from '../components/TextareaField';
+import DropDown from '../components/DropDown';
+import Checkbox from '../components/Checkbox';
+import DateSelector from '../components/DateSelector';
 
-const CONTESTED_CLAIMS = {
-  No: false,
-  Yes: true
-};
-
-const EMAIL_REGEX = new RegExp([
-  '^[-a-z0-9~!$%^&*_=+}{\'?]+(.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_]',
-  '[-a-z0-9_]*(.[-a-z0-9_]+[a-z][a-z])|([0-9]{1,3}.[0-9]{1,3}.[0-9]',
-  '{1,3}.[0-9]{1,3}))(:[0-9]{1,5})?$'
-].join(''));
+const POA = [
+  'None',
+  'VSO',
+  'Private'
+];
+const CLAIM_LABEL_OPTIONS = [
+  ' ',
+  '172BVAG - BVA Grant',
+  '170PGAMC - AMC-Partial Grant',
+  '170RMDAMC - AMC-Remand'
+];
+const MODIFIER_OPTIONS = [
+  '170',
+  '172'
+];
+const SEGMENTED_LANE_OPTIONS = [
+  'Core (National)',
+  'Spec Ops (National)'
+];
 
 export default class EstablishClaim extends React.Component {
   constructor(props) {
     super(props);
 
-    // Set initial state on page render
+     // Set initial state on page render
     this.state = {
-      contestedClaims: null,
-      emailAddress: '',
-      remarks: ''
+      claimLabel: CLAIM_LABEL_OPTIONS[0],
+      modifier: MODIFIER_OPTIONS[0],
+      poa: POA[0],
+      poaCode: ''
     };
 
-    this.emailAddressValidationError = this.emailAddressValidationError.bind(this);
-    this.handleEmailAddressChange = this.handleEmailAddressChange.bind(this);
-    this.handleContestedClaimsChange = this.handleContestedClaimsChange.bind(this);
-    this.handleRemarksChange = this.handleRemarksChange.bind(this);
+    this.handlePoaChange = this.handlePoaChange.bind(this);
+    this.handlePoaCodeChange = this.handlePoaCodeChange.bind(this);
+    this.handleClaimLabelChange = this.handleClaimLabelChange.bind(this);
   }
 
-  emailAddressValidationError() {
-    let { emailAddress } = this.state;
-
-    if (!emailAddress.length) {
-      return null;
-    }
-
-    if (!EMAIL_REGEX.test(emailAddress)) {
-      return 'Not a valid email.';
-    }
-  }
-
-  handleEmailAddressChange(event) {
+  handlePoaChange(event) {
     this.setState({
-      emailAddress: event.target.value
+      poa: event.target.value
     });
   }
 
-  handleContestedClaimsChange(event) {
+  handlePoaCodeChange(event) {
     this.setState({
-      contestedClaims: CONTESTED_CLAIMS[event.target.value]
+      poaCode: event.target.value
     });
   }
 
-  handleRemarksChange(event) {
+  handleClaimLabelChange(event) {
     this.setState({
-      remarks: event.target.value
+      claimLabel: event.target.value
     });
+  }
+
+  hasPoa() {
+    return this.state.poa === 'VSO' || this.state.poa === 'Private';
+  }
+
+  // TODO (mdbenjam): This is not being used right now, remove if
+  // we decide this is not how we want the modifier to work.
+  static getModifier(claim) {
+    let modifier = MODIFIER_OPTIONS[0];
+
+    MODIFIER_OPTIONS.forEach((option) => {
+      if (claim.startsWith(option)) {
+        modifier = option;
+      }
+    });
+
+    return modifier;
   }
 
   render() {
     let { task } = this.props;
-    let { user, appeal } = task;
-    let { emailAddress, contestedClaims, remarks } = this.state;
+    let { appeal } = task;
+    let { poa, poaCode, claimLabel } = this.state;
 
     return (
-      <div className="cf-app-segment">
-         <h1>Dispatch Show WIP</h1>
-         <p>Text rendered by React</p>
-         <p>Type: {task.type}</p>
-         <p>user: {user.display_name}</p>
-         <p>vacols_id: {appeal.vacols_id}</p>
-         <form className="cf-form" noValidate>
-           <TextField
-             label="Email Address"
-             name="emailAddress"
-             validationError={this.emailAddressValidationError()}
-             value={emailAddress}
-             onChange={this.handleEmailAddressChange}
-           />
-           <RadioField
-             label="Are contested claims procedures applicable in this case?"
-             name="ContestedClaims"
-             value={emailAddress}
-             onChange={this.handleContestedClaimsChange}
-             options={Object.keys(CONTESTED_CLAIMS)}
-           />
-           {contestedClaims && <TextareaField
-             name="Remarks"
-             value={remarks}
-             onChange={this.handleRemarksChange}
-             counter={true}
-           />}
-           <input type="submit"/>
-         </form>
-         <h3 style={{ 'marginTop': '25px' }}>Current Values</h3>
-         <p>Email Address: {emailAddress}</p>
-         <p>Contested Claims: {`${contestedClaims}`}</p>
-         <p>Remarks: {remarks}</p>
-      </div>
+      <form className="cf-form" noValidate>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h1>Create End Product</h1>
+          <TextField
+           label="Benefit Type"
+           name="BenefitType"
+           value="C&P Live"
+           readOnly={true}
+          />
+          <TextField
+           label="Payee"
+           name="Payee"
+           value="00 - Veteran"
+           readOnly={true}
+          />
+          <DropDown
+           label="Claim Label"
+           name="ClaimLabel"
+           options={CLAIM_LABEL_OPTIONS}
+           onChange={this.handleClaimLabelChange}
+           selected={claimLabel}
+          />
+          <TextField
+           label="Claim Type"
+           name="ClaimType"
+           value="Claim"
+           invisible={true}
+           readOnly={true}
+          />
+          <DropDown
+           label="Modifier"
+           name="Modifier"
+           options={MODIFIER_OPTIONS}
+          />
+          <DateSelector
+           label="Decision Date"
+           name="DecisionDate"
+           readOnly={true}
+           value={appeal.decision_date}
+          />
+          <DropDown
+           label="Segmented Lane"
+           name="SegmentedLane"
+           options={SEGMENTED_LANE_OPTIONS}
+          />
+          <TextField
+           label="Station"
+           name="Station"
+           value="499 - National Work Queue"
+           readOnly={true}
+          />
+          <RadioField
+           label="POA"
+           name="POA"
+           selected={poa}
+           options={POA}
+           onChange={this.handlePoaChange}
+          />
+          {this.hasPoa() && <div><TextField
+           label="POA Code"
+           name="POACode"
+           value={poaCode}
+           onChange={this.handlePoaCodeChange}
+          />
+          <Checkbox
+           label="Allow POA Access to Documents"
+           name="AllowPOA"
+           checked={false}
+          /></div>}
+          <Checkbox
+           label="Gulf War Registry Permit"
+           name="GulfWar"
+           checked={false}
+          />
+          <Checkbox
+           label="Suppress Acknowledgement Letter"
+           name="SuppressAcknowledgement"
+           checked={false}
+          />
+        </div>
+        <div className="cf-app-segment">
+          <a href="#back" className="cf-btn-link">{'\u00AB'}Back to preview</a>
+          <button type="submit" className="cf-push-right cf-submit">
+            Create End Product
+          </button>
+        </div>
+        <div className="cf-app-segment">
+          <a href="#cancel" className="cf-btn-link">Cancel</a>
+        </div>
+      </form>
     );
   }
 }

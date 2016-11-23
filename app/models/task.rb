@@ -130,6 +130,6 @@ class Task < ActiveRecord::Base
   end
 
   def to_hash
-    serializable_hash(include: [:user, :appeal])
+    serializable_hash(include: [:user, appeal: { methods: [:decision_date] }])
   end
 end
