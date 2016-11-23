@@ -18,7 +18,7 @@ class TasksController < ApplicationController
 
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
-    next_unassigned_task.assign!(current_user) 
+    next_unassigned_task.assign!(current_user)
     redirect_to url_for(current_user.tasks.to_complete.first)
   end
 

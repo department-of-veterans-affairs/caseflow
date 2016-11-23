@@ -1,7 +1,7 @@
 class FakeTask < Task
 end
 
-describe Task, focus: true do
+describe Task do
   # Clear the task from the DB before every test
   before do
     reset_application!

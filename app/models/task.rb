@@ -62,9 +62,7 @@ class Task < ActiveRecord::Base
     before_assign
     fail(AlreadyAssignedError) if self.user
 
-    if user.tasks.to_complete.count > 0
-      return
-    end
+    return if user.tasks.to_complete.count > 0
 
     update!(
       user: user,
