@@ -243,8 +243,7 @@ describe Certification do
 
       before do
         Timecop.freeze(Time.utc(2015, 1, 1, 13, 0, 0))
-        user_id = 12
-        certification.complete!(user_id)
+        certification.complete!
       end
 
       it "returns the time since certification started" do
@@ -254,16 +253,16 @@ describe Certification do
   end
 
   context ".complete!" do
+    user = User.find_or_create_by(station_id: 456, css_id: 124)
     subject { certification.user_id }
 
     before do
-      user_id = "14"
       certification.start!
-      certification.complete!(user_id)
+      certification.complete!(user.id)
     end
 
     it "should set the user id" do
-      expect(subject).to eq(14)
+      expect(subject).to eq(user.id)
     end
   end
 
