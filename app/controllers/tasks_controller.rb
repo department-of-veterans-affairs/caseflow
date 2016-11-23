@@ -22,14 +22,12 @@ class TasksController < ApplicationController
   end
 
   def pdf
-    save_decision!
-    send_file(appeal.decision.default_path(appeal.vacols_id), type: "application/pdf", disposition: "inline")
-  end
-
-  def save_decision!
-    fetch_documents!
-    decision = appeal.decision!
-    decision.save!(task.appeal.vacols_id)
+    decision = task.appeal.decision
+    if decision == nil
+      return redirect_to "/404"
+    end
+    decision.save!
+    send_file(decision.default_path, type: "application/pdf", disposition: "inline")
   end
 
   private

@@ -23,7 +23,7 @@ class Document
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at
+  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :document_id
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -33,16 +33,20 @@ class Document
     new(
       type: TYPES[vbms_document.doc_type] || :other,
       alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
-      received_at: vbms_document.received_at
+      received_at: vbms_document.received_at,
+      document_id: vbms_document.document_id
     )
   end
 
-  def save!(id)
-    f = File.new(default_path(id))
-    f.write(content)
+  def content
+    @content ||= Appeal.repository.fetch_document_file(self)
   end
 
-  def default_path(id)
-    File.join(Rails.root, "tmp", "pdfs", "#{type.dasherize}-#{id}.pdf")
+  def save!
+    IO.binwrite(default_path, content)
+  end
+
+  def default_path
+    File.join(Rails.root, "tmp", "pdfs", "#{type.gsub(" ", "-").downcase}-#{document_id}.pdf")
   end
 end

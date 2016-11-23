@@ -41,7 +41,6 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    return unless appeal.documents.blank?
     vbms_record = @records[appeal.vbms_id]
     if vbms_record
       appeal.documents = vbms_record[:documents]
@@ -227,19 +226,19 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.new(type: "NOD", received_at: 3.days.ago)
+    Document.new(type: "NOD", received_at: 3.days.ago, document_id: "1")
   end
 
   def self.soc_document
-    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6))
+    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6), document_id: "2")
   end
 
   def self.form9_document
-    Document.new(type: "Form 9", received_at: 1.day.ago)
+    Document.new(type: "Form 9", received_at: 1.day.ago, document_id: "3")
   end
 
   def self.decision_document
-    Document.new(type: "BVA Decision", received_at: 1.day.ago)
+    Document.new(type: "BVA Decision", received_at: 1.day.ago, document_id: "4")
   end
 
   def self.set_vbms_documents!

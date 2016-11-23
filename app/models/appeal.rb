@@ -30,7 +30,8 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= []
+    fetch_documents!
+    @documents
   end
 
   def veteran_name
@@ -103,8 +104,13 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
+  #TODO (mdbenjam): Can there be multiple decisions?
   def decision
-    documents_with_type("BVA Decision")
+    decisions = documents_with_type("BVA Decision")
+    if (decisions.size > 1)
+      fail "Multiple decisions"
+    end
+    decisions[0]
   end
 
   def certify!
@@ -112,7 +118,12 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!
+    return unless @documents == nil
     self.class.repository.fetch_documents_for(self)
+  end
+
+  def fetch_document_content(document)
+    self.class.repository.fetch_document_file(document)
   end
 
   def partial_grant?
