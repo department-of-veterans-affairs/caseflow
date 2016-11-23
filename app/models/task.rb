@@ -10,7 +10,7 @@ class Task < ActiveRecord::Base
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
-    cancel: 1,
+    cancelled: 1,
     expired: 2,
     routed_to_ro: 3
   }.freeze
@@ -72,11 +72,11 @@ class Task < ActiveRecord::Base
 
   def cancel!
     fail(AlreadyCompleteError) if complete?
-    complete_and_recreate!(:cancel)
+    complete_and_recreate!(:cancelled)
   end
 
   def expire!
-    complete_and_recreate!(:expire)
+    complete_and_recreate!(:expired)
   end
 
   def complete_and_recreate!(status_code)

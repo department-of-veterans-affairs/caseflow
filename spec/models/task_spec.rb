@@ -181,11 +181,22 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
     it "closes unfinished tasks" do
-      initial_sum = EstablishClaim.count
       task.expire!
-      expect(EstablishClaim.count).to eq(initial_sum + 1)
       expect(task.reload.complete?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+    end
+  end
+
+  context "#cancel!" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    it "closes cancelled tasks" do
+      task.cancel!
+      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
     end
   end
 
