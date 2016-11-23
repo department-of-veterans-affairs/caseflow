@@ -4,8 +4,8 @@
   "license": "",
   "version": "0.0.1",
   "engines": {
-    "node": "7.1.0",
-    "npm": "3.10.9"
+    "node": "4.1.2",
+    "npm": "2.14.4"
   },
   "scripts": {
     "test": "mocha test/setup.js test/* --compilers js:babel-core/register",
@@ -35,6 +35,8 @@
     "react": "^0.14.8",
     "react-dom": "^0.14.8",
     "react-on-rails": "6.1.2",
+    "superagent": "^3.0.0",
+    "superagent-no-cache": "^0.1.0",
     "webpack": "^1.12.14"
   },
   "devDependencies": {
