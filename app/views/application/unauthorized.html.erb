@@ -6,7 +6,7 @@
   <p class="cf-msg-screen-text">Please see your manager or ISO about gaining access.</p>
 
 
-  <% if Rails.env.development? || Rails.env.test? || Rails.env.demo? %>
+  <% if ApplicationController.dependencies_faked? %>
     <p class="cf-msg-screen-text">
       <a href="<%= url_for controller: 'dev_users', action: 'index'%>">
         Switch users to access this page.

@@ -80,4 +80,11 @@ class ApplicationController < ActionController::Base
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
+  
+  class << self
+    def dependencies_faked?
+      return Rails.env.development? || Rails.env.test? || Rails.env.demo?
+    end
+  end
+
 end
