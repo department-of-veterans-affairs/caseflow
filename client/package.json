@@ -32,8 +32,8 @@
     "expose-loader": "^0.7.1",
     "imports-loader": "^0.6.5",
     "jsdom": "^9.8.3",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
+    "react": "^0.14.8",
+    "react-dom": "^0.14.8",
     "react-on-rails": "6.1.2",
     "webpack": "^1.12.14"
   },
@@ -44,7 +44,7 @@
     "eslint-plugin-react": "^6.7.1",
     "mocha": "^3.1.2",
     "npm-shrinkwrap": "^6.0.2",
-    "react-addons-test-utils": "^15.4.0"
+    "react-addons-test-utils": "^0.14.8"
   },
   "optionalDependencies": {
     "fsevents": "*"
