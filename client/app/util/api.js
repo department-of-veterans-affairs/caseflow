@@ -14,15 +14,17 @@ const ApiUtil = {
       },
       ReactOnRails.authenticityHeaders(),
       options);
+
+
     return headers;
   },
 
   patch(url, options = {}) {
-    return request
-      .post(url)
-      .set(this.headers({ 'X-HTTP-METHOD-OVERRIDE': 'patch' }))
-      .send(options.data)
-      .use(nocache);
+    return request.
+      post(url).
+      set(this.headers({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
+      send(options.data).
+      use(nocache);
   }
 };
 

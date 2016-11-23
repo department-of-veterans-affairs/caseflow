@@ -43,9 +43,13 @@ export default class EstablishClaim extends React.Component {
 
   handleCancelTask = () => {
     let { id } = this.props.task;
+
+
     return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
       window.location.href = '/dispatch/establish-claim';
     }, () => {
+      // TODO(jd): Add support for a proper React modal, then render that
+      // instead. Native alerts are limited
       alert('Error. Please try again later');
     });
   }
@@ -179,7 +183,9 @@ export default class EstablishClaim extends React.Component {
           </button>
         </div>
         <div className="cf-app-segment">
-          <button type="button" className="cf-btn-link" onClick={this.handleCancelTask}>Cancel</button>
+          <button type="button" className="cf-btn-link" onClick={this.handleCancelTask}>
+            Cancel
+          </button>
         </div>
       </form>
     );
