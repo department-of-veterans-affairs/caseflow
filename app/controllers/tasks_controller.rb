@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:show]
+  before_action :verify_assigned_to_current_user, only: [:show, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -21,6 +21,11 @@ class TasksController < ApplicationController
     redirect_to url_for(next_unassigned_task)
   end
 
+  def cancel
+    task.cancel!
+    render json: {}
+  end
+
   private
 
   def current_user_historical_tasks
@@ -38,7 +43,7 @@ class TasksController < ApplicationController
   end
 
   def type
-    params[:task_type]
+    params[:task_type] || (task && task.type.to_sym)
   end
 
   def task_id

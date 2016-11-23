@@ -6,10 +6,11 @@ class Task < ActiveRecord::Base
 
   class AlreadyAssignedError < StandardError; end
   class NotAssignedError < StandardError; end
+  class AlreadyCompleteError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
-    cancelled_by_user: 1,
+    cancel: 1,
     expired: 2,
     routed_to_ro: 3
   }.freeze
@@ -69,9 +70,18 @@ class Task < ActiveRecord::Base
     self
   end
 
+  def cancel!
+    fail(AlreadyCompleteError) if complete?
+    complete_and_recreate!(:cancel)
+  end
+
   def expire!
+    complete_and_recreate!(:expire)
+  end
+
+  def complete_and_recreate!(status_code)
     transaction do
-      complete!(self.class.completion_status_code(:expired))
+      complete!(self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
