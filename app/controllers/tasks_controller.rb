@@ -10,7 +10,7 @@ class TasksController < ApplicationController
     render index_template
   end
 
-  def show
+  def new
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user
@@ -18,7 +18,7 @@ class TasksController < ApplicationController
 
   def assign
     next_unassigned_task.assign!(current_user)
-    redirect_to url_for(next_unassigned_task)
+    redirect_to url_for(controller: 'tasks', action: 'review', id: next_unassigned_task.id)
   end
 
   def pdf

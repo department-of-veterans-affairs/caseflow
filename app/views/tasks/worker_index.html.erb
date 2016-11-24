@@ -2,6 +2,7 @@
   <div class="usa-width-one-whole task-start-wrapper">
     <% if next_unassigned_task %>
       <div class="task-start-cta">
+        <!-- TODO: (mdbenjam) fix button to be grayed out when there is no next task -->
         <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
           class: "usa-button-primary", method: 'patch') %>
       </div>
