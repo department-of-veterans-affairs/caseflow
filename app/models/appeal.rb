@@ -21,7 +21,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
-  vacols_attr_accessor :documents
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -122,10 +121,6 @@ class Appeal < ActiveRecord::Base
     self.class.repository.fetch_documents_for(self)
   end
 
-  def fetch_document_content(document)
-    self.class.repository.fetch_document_file(document)
-  end
-
   def partial_grant?
     status == "Remand" && disposition == "Allowed"
   end
@@ -141,10 +136,6 @@ class Appeal < ActiveRecord::Base
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
-  end
-
-  def decision_location
-    appeal.decision.default_path(vacols_id)
   end
 
   class << self
