@@ -2,11 +2,17 @@
 @import 'caseflow_main';
 
 .cf-logo-image-default {
-  @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
+  background-image: url(asset-path("caseflow-certification-logo.svg"));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
 }
 
 .cf-logo-image-certification {
-  @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
+  background-image: url(asset-path("caseflow-certification-logo.svg"));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
 }
 
 .cf-logo-image-dispatch {
