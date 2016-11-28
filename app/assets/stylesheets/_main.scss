@@ -2,21 +2,21 @@
 @import 'caseflow_main';
 
 .cf-logo-image-default {
-  background-image: url(asset-path("caseflow-certification-logo.svg"));
+  background-image: url(asset-path('caseflow-certification-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-certification {
-  background-image: url(asset-path("caseflow-certification-logo.svg"));
+  background-image: url(asset-path('caseflow-certification-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-dispatch {
-  background-image: url(asset-path("caseflow-dispatch-logo.svg"));
+  background-image: url(asset-path('caseflow-dispatch-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
