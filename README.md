@@ -81,10 +81,20 @@ To get to the various pages in the workflow we have a set of five URLs of dummy 
 [http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
 [http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
 
-## Dispatch (Dev Mode)
+## Roles
 
-The database is seeded with a number of tasks, users, and appeals. You can see a list of these tasks at:
-[http://localhost:3000/dispatch](http://localhost:3000/dispatch).
+When a VA employee logs in through the VA's unified login system (CSS) a session begins with the user.
+Within this session the user gets a set of roles. These roles determine what pages a user has access to.
+In dev mode, we don't log in with CSS and instead take on the [identity of a user in the database](#changing-between-test-users).
+
+## Dispatch (Dev Mode)
+To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
+
+To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
+The database is seeded with a number of tasks, users, and appeals. 
+
+To see the worker view, you need the following role: [Establish Claim].
+From this view you can start a new task and go through the flow of establishing a claim.
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies follow
@@ -140,11 +150,15 @@ Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
 
 ### Changing between test users
-Navigate to [http://localhost:3000/dev/users](http://localhost:3000/dev/users). You can use
+Select 'Switch User' from the dropdown or navigate to 
+[http://localhost:3000/dev/users](http://localhost:3000/dev/users). You can use
 this page to switch to any user that is currently in the database. The users' names specify
 what roles they have and therefore what pages they can access. To add new users with new
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
+
+This page also contains links to different parts of the site to make dev-ing faster. Please
+add more links and users as needed.
 
 ### Running tests
 
