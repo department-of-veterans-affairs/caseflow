@@ -73,7 +73,6 @@ class Task < ActiveRecord::Base
   end
 
   def cancel!
-    fail(AlreadyCompleteError) if complete?
     complete_and_recreate!(:cancelled)
   end
 
@@ -82,6 +81,8 @@ class Task < ActiveRecord::Base
   end
 
   def complete_and_recreate!(status_code)
+    fail(AlreadyCompleteError) if complete?
+
     transaction do
       complete!(self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
@@ -121,6 +122,8 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status)
+    fail(AlreadyCompleteError) if complete?
+
     update!(
       completed_at: Time.now.utc,
       completion_status: status
