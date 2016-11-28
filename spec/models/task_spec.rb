@@ -48,6 +48,8 @@ describe Task do
   context "Assigning user methods" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:appeal_same_user) { Appeal.create(vacols_id: "456D") }
+    let!(:task_same_user) { EstablishClaim.create(appeal: appeal_same_user) }
     subject { task }
 
     context ".assign!" do
@@ -60,6 +62,12 @@ describe Task do
       it "raises error if already assigned" do
         task.assign!(@user)
         expect { task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
+      end
+
+      it "does nothing if user has another task" do
+        task.assign!(@user)
+        task_same_user.assign!(@user)
+        expect(task_same_user.assigned?).to be_falsey
       end
 
       it "raises error if object stale" do
