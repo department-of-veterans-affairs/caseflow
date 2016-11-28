@@ -20,6 +20,10 @@ before_install:
   - phantomjs -v
 
 before_script:
+  - node -v
+  - npm -v
+  - npm install --no-optional
+  - (cd client && npm run build:production)
   - sudo apt-get install pdftk
   - RAILS_ENV=test bundle exec rake db:create
   - RAILS_ENV=test bundle exec rake db:schema:load

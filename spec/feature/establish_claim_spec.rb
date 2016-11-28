@@ -64,7 +64,7 @@ RSpec.feature "Dispatch" do
 
     scenario "Assign the next task to me and starts it" do
       visit "/dispatch/establish-claim"
-      click_on @completed_task.start_text
+      click_on @task.start_text
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
