@@ -22,7 +22,8 @@ const config = {
     alias: {
       react: path.resolve('./node_modules/react'),
       'react-dom': path.resolve('./node_modules/react-dom'),
-    },
+      'ie': 'component-ie'
+    }
   },
   plugins: [
     new webpack.DefinePlugin({
