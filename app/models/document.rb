@@ -43,7 +43,7 @@ class Document
   end
 
   def save!
-    IO.binwrite(default_path, content)
+    File.binwrite(default_path, content)
   end
 
   def default_path
