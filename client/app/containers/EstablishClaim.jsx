@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ApiUtil from '../util/api';
+import ApiUtil from '../util/ApiUtil';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
