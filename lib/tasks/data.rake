@@ -6,7 +6,7 @@ namespace :data do
   staging_only_error = "This command only works in the staging environment. Please run with RAILS_ENV='staging'."
 
   desc "Prepare test data needed to run a smoke test"
-  task :prepare => [ :environment ] do
+  task prepare: [:environment] do
     fail staging_only_error unless Rails.env.staging?
 
     test_appeal_vacols_id = "2765748"
