@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 
 import BaseContainer from '../../app/containers/BaseContainer';
 
-describe.only('BaseContainer', () => {
+describe('BaseContainer', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(<BaseContainer page="TestPage" otherProp="foo"/>);

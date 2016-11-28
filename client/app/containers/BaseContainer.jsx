@@ -12,6 +12,14 @@ const Pages = {
   TestPage
 };
 
+// This is the "base page" that wraps all pages rendered directly
+// in a Rails view. This component manages interactivity that exists
+// across *all* React page. For now that includes:
+//   - alerts
+//
+// The `page` property dictates which page is rendered within this
+// component. e.g.  <BaseContainer page="EstablishClaim" />
+
 export default class BaseContainer extends React.Component {
   constructor(props) {
     super(props);
