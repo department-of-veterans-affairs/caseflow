@@ -62,6 +62,8 @@ class Task < ActiveRecord::Base
     before_assign
     fail(AlreadyAssignedError) if self.user
 
+    return if user.tasks.to_complete.where(type: type).count > 0
+
     update!(
       user: user,
       assigned_at: Time.now.utc
