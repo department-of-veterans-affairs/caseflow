@@ -1,4 +1,4 @@
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch review" do
   before do
     reset_application!
 
@@ -14,11 +14,10 @@ RSpec.feature "Dispatch", focus: true do
     @task.assign!(current_user)
   end
 
-  scenario "Assign the next task to me and starts it", js: true do
+  scenario "clicking \"Create End Product\" moves to the form page" do
     visit "/dispatch/establish-claim/#{@task.id}/review"
     click_on "Create End Product"
     expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
     expect(page).to have_content("Create End Product")
   end
-
 end

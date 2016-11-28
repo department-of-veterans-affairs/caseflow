@@ -9,6 +9,7 @@ require "spec_helper"
 require "rspec/rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
+require "react_on_rails"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -98,7 +99,9 @@ User.authentication_service = Fakes::AuthenticationService
 RSpec.configure do |config|
   # Ensure that if we are running js tests, we are using latest webpack assets
   # This will use the defaults of :js and :server_rendering meta tags
-  ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
+  if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
+    ReactOnRails::TestHelper.ensure_assets_compiled
+  end
 
   config.before(:all) { User.unauthenticate! }
 
