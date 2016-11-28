@@ -5,6 +5,7 @@ module.exports = {
     "es6": true
   },
   "extends": "eslint:recommended",
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
@@ -77,7 +78,9 @@ module.exports = {
     "newline-after-var": "error",
     "newline-before-return": "error",
     "newline-per-chained-call": "error",
-    "no-alert": "error",
+    // TODO(jd): Consider re-adding this once we have a native
+    // react modal
+    // "no-alert": "error",
     "no-array-constructor": "error",
     "no-bitwise": "error",
     "no-caller": "error",
@@ -99,7 +102,6 @@ module.exports = {
     "no-implicit-globals": "error",
     "no-implied-eval": "error",
     "no-inline-comments": "error",
-    "no-invalid-this": "error",
     "no-iterator": "error",
     "no-label-var": "error",
     "no-labels": "error",

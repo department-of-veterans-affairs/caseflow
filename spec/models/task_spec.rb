@@ -178,6 +178,45 @@ describe Task do
     it { expect { Task.completed_today.find(task.id) }.not_to raise_error }
   end
 
+  context "#complete_and_recreate!" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    before { task.complete_and_recreate!(3) }
+    it "completes and creates a new task" do
+      new_task = appeal.tasks.where(type: task.type).to_complete.first
+      expect(task.complete?).to be_truthy
+      expect(task.id).not_to eq(new_task.id)
+    end
+
+    it "fails on already completed tasks" do
+      expect(task.reload.complete?).to be_truthy
+      expect { task.cancel! }.to raise_error(Task::AlreadyCompleteError)
+    end
+  end
+
+  context "#complete!" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    it "completes the task" do
+      task.complete!(3)
+      expect(task.reload.completed_at).to be_truthy
+      expect(task.completion_status).to eq(3)
+    end
+
+    it "errors if already complete" do
+      time = Time.now.utc - 1.year
+      status = 10
+      task.update!(completed_at: time, completion_status: status)
+
+      expect { task.complete!(2) }.to raise_error(Task::AlreadyCompleteError)
+
+      # Confirm complete values are still the original
+      expect(task.reload.completed_at).to eq(time)
+      expect(task.completion_status).to eq(status)
+    end
+  end
+
   context "#to_complete" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -189,11 +228,22 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
     it "closes unfinished tasks" do
-      initial_sum = EstablishClaim.count
       task.expire!
-      expect(EstablishClaim.count).to eq(initial_sum + 1)
       expect(task.reload.complete?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+    end
+  end
+
+  context "#cancel!" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    it "closes cancelled tasks" do
+      task.cancel!
+      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
     end
   end
 
