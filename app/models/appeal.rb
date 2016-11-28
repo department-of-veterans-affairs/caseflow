@@ -103,12 +103,10 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
-  #TODO (mdbenjam): Can there be multiple decisions?
+  # TODO: (mdbenjam): Can there be multiple decisions?
   def decision
     decisions = documents_with_type("BVA Decision")
-    if (decisions.size > 1)
-      fail "Multiple decisions"
-    end
+    fail "Multiple decisions" if decisions.size > 1
     decisions[0]
   end
 
@@ -117,7 +115,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!
-    return unless @documents == nil
+    return unless @documents.nil?
     self.class.repository.fetch_documents_for(self)
   end
 

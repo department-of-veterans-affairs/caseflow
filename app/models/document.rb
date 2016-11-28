@@ -47,6 +47,6 @@ class Document
   end
 
   def default_path
-    File.join(Rails.root, "tmp", "pdfs", "#{type.gsub(" ", "-").downcase}-#{document_id}.pdf")
+    File.join(Rails.root, "tmp", "pdfs", "#{type.tr(' ', '-').downcase}-#{document_id}.pdf")
   end
 end

@@ -67,9 +67,7 @@ describe Document do
     let(:file) { document.default_path }
 
     before do
-      if File.exist?(file)
-        File.delete(file)
-      end
+      File.delete(file) if File.exist?(file)
     end
 
     it "writes document" do
@@ -86,5 +84,4 @@ describe Document do
       expect(document.default_path).to match(/.*nod-123.pdf/)
     end
   end
-
 end

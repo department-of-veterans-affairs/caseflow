@@ -49,7 +49,7 @@ class Fakes::AppealRepository
     appeal.documents = @documents || []
   end
 
-  def self.fetch_document_file(document)
+  def self.fetch_document_file(_document)
     path = File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
     IO.binread(path)
   end
@@ -259,7 +259,7 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = {documents: [nod_document, soc_document, form9_document, decision_document]}
+        @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document] }
       end
     end
   end

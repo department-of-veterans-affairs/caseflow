@@ -10,17 +10,14 @@ class TasksController < ApplicationController
     render index_template
   end
 
-
   def assign
     next_unassigned_task.assign!(current_user)
-    redirect_to url_for(controller: 'tasks', action: 'review', id: next_unassigned_task.id)
+    redirect_to url_for(controller: "tasks", action: "review", id: next_unassigned_task.id)
   end
 
   def pdf
     decision = task.appeal.decision
-    if decision == nil
-      return redirect_to "/404"
-    end
+    return redirect_to "/404" if decision.nil?
     decision.save!
     send_file(decision.default_path, type: "application/pdf", disposition: "inline")
   end
