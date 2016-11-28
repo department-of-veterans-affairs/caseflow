@@ -75,5 +75,16 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@other_task.id}/review"
       expect(page).to have_current_path("/unauthorized")
     end
+
+    scenario "Cancel an Establish Claim task returns me to landing page" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      expect(page).to have_content("Create End Product") # React works
+
+      click_on "Cancel"
+      expect(page).to have_current_path("/dispatch/establish-claim")
+      expect(@task.reload.complete?).to be_truthy
+      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+    end
   end
 end

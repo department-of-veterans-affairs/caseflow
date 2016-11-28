@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:new, :review, :pdf]
+  before_action :verify_assigned_to_current_user, only: [:new, :review, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -8,11 +8,6 @@ class TasksController < ApplicationController
     @completed_count = Task.completed_today.count
     @to_complete_count = Task.to_complete.count
     render index_template
-  end
-
-  def assign
-    next_unassigned_task.assign!(current_user)
-    redirect_to url_for(controller: "tasks", action: "review", id: next_unassigned_task.id)
   end
 
   def pdf
@@ -27,6 +22,17 @@ class TasksController < ApplicationController
     # for a given task
     task.start! if current_user == task.user
     render "review_decision"
+  end
+
+  def assign
+    # Doesn't assign if user has a task of the same type already assigned.
+    next_unassigned_task.assign!(current_user)
+    redirect_to url_for(current_user.tasks.to_complete.where(type: next_unassigned_task.type).first)
+  end
+
+  def cancel
+    task.cancel!
+    render json: {}
   end
 
   private
@@ -46,7 +52,7 @@ class TasksController < ApplicationController
   end
 
   def type
-    params[:task_type]
+    params[:task_type] || (task && task.type.to_sym)
   end
 
   def task_id

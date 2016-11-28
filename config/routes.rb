@@ -35,6 +35,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :tasks, only: [] do
+    patch 'cancel', on: :member
+  end
+
   patch "certifications" => "certifications#create"
 
   # :nocov:

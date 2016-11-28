@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161121140139) do
+ActiveRecord::Schema.define(version: 20161122221255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,7 +36,10 @@ ActiveRecord::Schema.define(version: 20161121140139) do
     t.datetime "completed_at"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
+    t.integer  "user_id"
   end
+
+  add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
@@ -128,4 +131,5 @@ ActiveRecord::Schema.define(version: 20161121140139) do
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
 
+  add_foreign_key "certifications", "users"
 end

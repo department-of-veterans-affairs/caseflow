@@ -7,6 +7,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "spec_helper"
 require "rspec/rails"
+require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require "react_on_rails"
@@ -97,8 +98,10 @@ Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
 
 RSpec.configure do |config|
-  # Ensure that if we are running js tests, we are using latest webpack assets
-  # This will use the defaults of :js and :server_rendering meta tags
+  # This checks whether compiled webpack assets already exist
+  # If it does, it will not execute ReactOnRails, since that slows down tests
+  # Thus this will only run once (to initially compile assets) and not on
+  # subsequent test runs
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
