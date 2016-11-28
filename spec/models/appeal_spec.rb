@@ -211,7 +211,7 @@ describe Appeal do
     subject { appeal.task_header }
 
     it "returns the correct string" do
-      expect(subject).to eq("Crockett, Davy (123)")
+      expect(subject).to eq("Crockett, Davy, Q (123)")
     end
   end
 end
