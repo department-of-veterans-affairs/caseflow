@@ -81,8 +81,6 @@ class Task < ActiveRecord::Base
   end
 
   def complete_and_recreate!(status_code)
-    fail(AlreadyCompleteError) if complete?
-
     transaction do
       complete!(self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
