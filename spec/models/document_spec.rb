@@ -42,4 +42,49 @@ describe Document do
       it { is_expected.to have_attributes(type: "Form 9", received_at: "TEST") }
     end
   end
+
+  context "#content" do
+    let(:document) { Document.new(type: "NOD") }
+
+    it "lazy loads document content" do
+      expect(Fakes::AppealRepository).to receive(:fetch_document_file)
+
+      document.content
+    end
+
+    context "doesn't load document content if it's already loaded" do
+      before { document.content }
+
+      it do
+        expect(Fakes::AppealRepository).not_to receive(:fetch_document_file)
+        document.content
+      end
+    end
+  end
+
+  context "#save!" do
+    let(:document) { Document.new(type: "NOD") }
+    let(:file) { document.default_path }
+
+    before do
+      if File.exist?(file)
+        File.delete(file)
+      end
+    end
+
+    it "writes document" do
+      expect(File.exist?(file)).to be_falsey
+      document.save!
+      expect(File.exist?(file)).to be_truthy
+    end
+  end
+
+  context "#default_path" do
+    let(:document) { Document.new(type: "NOD", document_id: "123") }
+
+    it "returns correct path" do
+      expect(document.default_path).to match(/.*nod-123.pdf/)
+    end
+  end
+
 end

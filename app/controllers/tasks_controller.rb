@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:show]
+  before_action :verify_assigned_to_current_user, only: [:new, :review, :pdf]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -10,11 +10,6 @@ class TasksController < ApplicationController
     render index_template
   end
 
-  def new
-    # Future safeguard for when we give managers a show view
-    # for a given task
-    task.start! if current_user == task.user
-  end
 
   def assign
     next_unassigned_task.assign!(current_user)
@@ -31,6 +26,9 @@ class TasksController < ApplicationController
   end
 
   def review
+    # Future safeguard for when we give managers a show view
+    # for a given task
+    task.start! if current_user == task.user
     render "review_decision"
   end
 
