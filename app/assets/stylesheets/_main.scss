@@ -1,8 +1,15 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
 
-.cf-logo-image {
+.cf-certification-logo-image {
   @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
+}
+
+.cf-dispatch-logo-image {
+  background-image: url(asset-path("caseflow-dispatch-logo.svg"));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
 }
 
 .cf-stats {

@@ -36,6 +36,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def logo_class
+    "cf-certification-logo-image"
+  end
+  helper_method :logo_class
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
