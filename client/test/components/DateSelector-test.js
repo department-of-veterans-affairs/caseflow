@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
-import DateSelector from '../app/components/DateSelector';
+import DateSelector from '../../app/components/DateSelector';
 
 describe('DateSelector', () => {
   context('.dateFill', () => {
