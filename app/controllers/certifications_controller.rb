@@ -80,6 +80,6 @@ class CertificationsController < ApplicationController
   end
 
   def logo_class
-    "cf-certification-logo-image"
+    "cf-logo-image-certification"
   end
 end

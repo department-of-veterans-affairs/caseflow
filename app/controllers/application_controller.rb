@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def logo_class
-    "cf-certification-logo-image"
+    "cf-logo-image-default"
   end
   helper_method :logo_class
 

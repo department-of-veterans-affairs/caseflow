@@ -83,6 +83,6 @@ class TasksController < ApplicationController
   end
 
   def logo_class
-    "cf-dispatch-logo-image"
+    "cf-logo-image-dispatch"
   end
 end
