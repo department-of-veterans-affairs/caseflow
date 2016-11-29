@@ -10,7 +10,6 @@ require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
-require "react_on_rails"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
