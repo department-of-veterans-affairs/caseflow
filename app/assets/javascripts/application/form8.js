@@ -139,7 +139,12 @@
       }
 
       var poaInAnotherFile = state.question8B1.value === "Certification that valid POA is in another VA file";
-      var hasRepresentative = state.question8A2.value && (state.question8A2.value !== "None");
+      var hasRepresentative;
+      if (state.question8A2.value && state.question8A2.value !== "None") {
+        hasRepresentative = true;
+      } else {
+        hasRepresentative = false;
+      }
 
       state.question8B2.show = poaInAnotherFile && hasRepresentative;
       state.question10B1.show = state.question10C.show = (state.question10A.value === "Yes");

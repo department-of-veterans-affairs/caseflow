@@ -216,15 +216,16 @@ describe("Form8", function() {
 
     context("when question 8B1", function(){
       context("is 'Certification that valid POA is in another VA file'", function() {
-        it("shows 8B2", function() {
-          Form8.state.question8B1.value =  "Certification that valid POA is in another VA file";
+        it("shows 8B2 if 'Representative type'(8A1) is not 'None'", function() {
+          Form8.state.question8A2.value = "Attorney";
+          Form8.state.question8B1.value = "Certification that valid POA is in another VA file";
           Form8.processState();
           expect(Form8.state.question8B2.show).to.be.true;
         });
       });
 
       context("is 'POA'", function() {
-        it("shows 8B2", function() {
+        it("hides 8B2", function() {
           Form8.state.question8B1.value =  "POA";
           Form8.processState();
           expect(Form8.state.question8B2.show).to.be.false;
