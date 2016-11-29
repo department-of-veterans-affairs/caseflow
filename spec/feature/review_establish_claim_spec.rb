@@ -20,4 +20,11 @@ RSpec.feature "Dispatch review" do
     expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
     expect(page).to have_content("Create End Product")
   end
+
+  scenario "clicking \"Cancel\" returns to the assign" do
+    visit "/dispatch/establish-claim/#{@task.id}/review"
+    click_on "Cancel"
+    expect(page).to have_current_path("/dispatch/establish-claim")
+    expect(@task.reload.completed_at).not_to be_nil
+  end
 end

@@ -238,7 +238,7 @@ class Fakes::AppealRepository
   end
 
   def self.decision_document
-    Document.new(type: "BVA Decision", received_at: 1.day.ago, document_id: "4")
+    Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4")
   end
 
   def self.set_vbms_documents!

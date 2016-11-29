@@ -33,7 +33,10 @@ class TasksController < ApplicationController
 
   def cancel
     task.cancel!
-    render json: {}
+    respond_to do |format|
+      format.html { redirect_to(establish_claims_url) }
+      format.json { render json: {} }
+    end
   end
 
   private

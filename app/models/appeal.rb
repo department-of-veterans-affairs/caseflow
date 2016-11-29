@@ -108,12 +108,11 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
-  # TODO: (mdbenjam): Can there be multiple decisions?
   def decision
     decisions = documents_with_type("BVA Decision").select do |decision|
       (decision.received_at - decision_date).abs <= 1.day
     end
-    raise MultipleDecisionError if decisions.size > 1
+    fail(MultipleDecisionError) if decisions.size > 1
     decisions.first
   end
 

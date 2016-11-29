@@ -207,7 +207,7 @@ describe Appeal do
     end
   end
 
-  context "#decision", focus: true do
+  context "#decision" do
     let(:decision) do
       Document.new(
         received_at: Time.now,
@@ -254,13 +254,13 @@ describe Appeal do
       it { is_expected.to be_nil }
     end
 
-    context "fails when multiple decisions match" do
+    context "raises error when multiple decisions" do
       before do
-        appeal.documents = [decision, decision.clone]
+        appeal.documents = [decision, decision.clone()]
         appeal.decision_date = Time.now
       end
 
-      it { expect(Appeal::MultipleDecisionError).to raise_error(Appeal::MultipleDecisionError) }
+      it { expect{ appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
     end
   end
 end
