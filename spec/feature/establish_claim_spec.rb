@@ -78,7 +78,7 @@ RSpec.feature "Dispatch" do
 
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
+      visit "/dispatch/establish-claim/#{@task.id}/new"
       expect(page).to have_content("Create End Product") # React works
 
       click_on "Cancel"

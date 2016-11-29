@@ -200,6 +200,15 @@ describe Appeal do
   end
 
   context "#task_header" do
+    let(:appeal) do
+      Appeal.new(
+        veteran_first_name: "Davy",
+        veteran_middle_initial: "Q",
+        veteran_last_name: "Crockett",
+        vbms_id: "123"
+      )
+    end
+
     subject { appeal.task_header }
 
     it "returns the correct string" do
@@ -210,13 +219,13 @@ describe Appeal do
   context "#decision" do
     let(:decision) do
       Document.new(
-        received_at: Time.now,
+        received_at: Time.current,
         type: "BVA Decision"
       )
     end
     let(:old_decision) do
       Document.new(
-        received_at: Time.now - 2.days,
+        received_at: Time.current - 2.days,
         type: "BVA Decision"
       )
     end
@@ -230,7 +239,7 @@ describe Appeal do
     context "returns single decision when only one decision" do
       before do
         appeal.documents = [decision]
-        appeal.decision_date = Time.now
+        appeal.decision_date = Time.current
       end
 
       it { is_expected.to eq(decision) }
@@ -239,7 +248,7 @@ describe Appeal do
     context "returns single decision when only one valid" do
       before do
         appeal.documents = [decision, old_decision]
-        appeal.decision_date = Time.now
+        appeal.decision_date = Time.current
       end
 
       it { is_expected.to eq(decision) }
@@ -248,7 +257,7 @@ describe Appeal do
     context "returns nil when no valid decision" do
       before do
         appeal.documents = [old_decision]
-        appeal.decision_date = Time.now
+        appeal.decision_date = Time.current
       end
 
       it { is_expected.to be_nil }
@@ -256,11 +265,11 @@ describe Appeal do
 
     context "raises error when multiple decisions" do
       before do
-        appeal.documents = [decision, decision.clone()]
-        appeal.decision_date = Time.now
+        appeal.documents = [decision, decision.clone]
+        appeal.decision_date = Time.current
       end
 
-      it { expect{ appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
+      it { expect { appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
     end
   end
 end
