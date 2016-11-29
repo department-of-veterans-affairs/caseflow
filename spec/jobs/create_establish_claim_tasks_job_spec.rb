@@ -23,7 +23,6 @@ describe CreateEstablishClaimTasksJob do
       CreateEstablishClaimTasksJob.perform_now
       expect(EstablishClaim.count).to eq(2)
     end
-
   end
 
   context ".full_grant_decided_after" do
