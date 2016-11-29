@@ -1,8 +1,5 @@
 import React, { PropTypes } from 'react';
 
-
-// TODO(jd): Consider adding auto-hide functionality
-// e.g. After X seconds the alert automatically disappears
 export default class Alert extends React.Component {
   componentDidMount() {
     // Scroll to top so alert is visible
@@ -14,7 +11,7 @@ export default class Alert extends React.Component {
   // determine if role should be added to main wrapper div
   // in order to be 508 accessible
   getRole() {
-    let attrs = {}
+    let attrs = {};
 
     if (this.props.type === 'error') {
       attrs.role = 'alert';
