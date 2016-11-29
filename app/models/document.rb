@@ -46,6 +46,10 @@ class Document
     File.binwrite(default_path, content)
   end
 
+  def save_unless_exists!
+    save! unless File.exist?(default_path)
+  end
+
   def default_path
     File.join(Rails.root, "tmp", "pdfs", "#{type.tr(' ', '-').downcase}-#{document_id}.pdf")
   end

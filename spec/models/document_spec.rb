@@ -43,21 +43,21 @@ describe Document do
     end
   end
 
-  context "#content" do
+  context "#content", focus: true do
     let(:document) { Document.new(type: "NOD") }
 
     it "lazy loads document content" do
-      expect(Fakes::AppealRepository).to receive(:fetch_document_file)
+      expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
 
-      document.content
+      expect(document.content).to eq("content!")
     end
 
     context "doesn't load document content if it's already loaded" do
-      before { document.content }
-
       it do
-        expect(Fakes::AppealRepository).not_to receive(:fetch_document_file)
+        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        # Have it fetch data
         document.content
+        expect(document.content).to eq("content!")
       end
     end
   end

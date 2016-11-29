@@ -29,8 +29,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    fetch_documents!
-    @documents
+    @documents || fetch_documents!
   end
 
   def veteran_name
@@ -111,7 +110,7 @@ class Appeal < ActiveRecord::Base
   def decision
     decisions = documents_with_type("BVA Decision")
     fail "Multiple decisions" if decisions.size > 1
-    decisions[0]
+    decisions.first
   end
 
   def certify!
@@ -119,8 +118,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!
-    return unless @documents.nil?
     self.class.repository.fetch_documents_for(self)
+    @documents
   end
 
   def partial_grant?

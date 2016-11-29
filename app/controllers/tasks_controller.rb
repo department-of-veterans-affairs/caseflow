@@ -13,7 +13,7 @@ class TasksController < ApplicationController
   def pdf
     decision = task.appeal.decision
     return redirect_to "/404" if decision.nil?
-    decision.save!
+    decision.save_unless_exists!
     send_file(decision.default_path, type: "application/pdf", disposition: "inline")
   end
 
@@ -21,7 +21,7 @@ class TasksController < ApplicationController
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user
-    render "review_decision"
+    render "review"
   end
 
   def assign
