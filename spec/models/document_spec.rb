@@ -43,7 +43,7 @@ describe Document do
     end
   end
 
-  context "#content", focus: true do
+  context "#content" do
     let(:document) { Document.new(type: "NOD") }
 
     it "lazy loads document content" do

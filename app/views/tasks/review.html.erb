@@ -1,0 +1,28 @@
+<% content_for :page_title do task.appeal.task_header end %>
+<div class="cf-app-segment cf-app-segment--alt">
+  <h2>Review Decision</h2>
+  Review the final decision from VBMS below to determine the next step.
+</div>
+
+<!-- This link is here for 508 compliance, and shouldn't be visible to sighted users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat is the accessibility standard and is used across gov't, so we'll recommend it for now. The usa-sr-only class will place an element off screen without
+affecting its placement in tab order, thus making it invisible onscreen
+but read out by screen readers. -->
+
+<a class="usa-sr-only" id="sr-download-link" href="<%= pdf_establish_claim_path(id: task.id, time: Time.now.to_i) %>" download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Decision PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
+<a class="usa-sr-only" href="#establish-claim-buttons"> If you are using a screen reader and have downloaded and verified the Decision PDF, click this link to skip past the browser PDF viewer to the establish-claim buttons.</a>
+
+<iframe aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."class="cf-doc-embed cf-app-segment" title="Form8 PDF"
+  src="<%= pdfjs.full_path(file: pdf_establish_claim_path(id: task.id, time: Time.now.to_i)) %>"></iframe>
+
+<div class="cf-form cf-app-segment" id="establish-claim-buttons">
+  <%= loading_indicator %>
+
+  <a href="#cancel" class="cf-btn-link cf-push-left">Cancel</a>
+  
+  <span class="cf-push-right">
+    <a href="#send_to_ro" class="cf-btn-link cf-adjacent-buttons">Send to RO</a>
+
+    <%= link_to("Create End Product", establish_claim_path,
+          class: "usa-button usa-button-blue cf-submit cf-adjacent-buttons", method: 'get') %>
+  </span>
+</div>

@@ -3,6 +3,8 @@ class Appeal < ActiveRecord::Base
 
   has_many :tasks
 
+  class MultipleDecisionError < StandardError; end
+
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
@@ -108,8 +110,10 @@ class Appeal < ActiveRecord::Base
 
   # TODO: (mdbenjam): Can there be multiple decisions?
   def decision
-    decisions = documents_with_type("BVA Decision")
-    fail "Multiple decisions" if decisions.size > 1
+    decisions = documents_with_type("BVA Decision").select do |decision|
+      (decision.received_at - decision_date).abs <= 1.day
+    end
+    raise MultipleDecisionError if decisions.size > 1
     decisions.first
   end
 
