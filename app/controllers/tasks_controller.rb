@@ -10,10 +10,6 @@ class TasksController < ApplicationController
     render index_template
   end
 
-  def complete
-    render "complete"
-  end
-
   def show
     # Future safeguard for when we give managers a show view
     # for a given task
