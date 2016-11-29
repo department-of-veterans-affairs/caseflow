@@ -194,7 +194,6 @@ describe Certification do
           cert.start!
           expect(cert.form8.certification_date).to eq(Time.zone.now.to_date)
         end
-
       end
     end
   end
