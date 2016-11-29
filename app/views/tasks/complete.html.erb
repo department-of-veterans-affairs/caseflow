@@ -1,0 +1,17 @@
+<div id="certifications-generate" class="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
+  <h1 class="cf-success cf-msg-screen-heading">Congratulations!</h1>
+  <h2 class="cf-msg-screen-deck"><%= task.appeal.veteran_first_name%> <%=task.appeal.veteran_last_name%>'s End Product has been created.</h2>
+
+  <ul class="cf-list-checklist">
+      <li><span class="cf-icon-success--bg"></span> Reviewed decision</li>
+      <li><span class="cf-icon-success--bg cf-success"></span> EP established</li>
+  </ul>
+
+  <div class="cf-centered-buttons">
+  <%= link_to('View History', establish_claims_path) %>
+  <% if next_unassigned_task %>
+    <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
+	      class: "usa-button-primary cf-push-right", method: 'patch') %>
+  <% end %>
+  </div>
+</div>
