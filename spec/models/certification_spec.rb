@@ -163,8 +163,10 @@ describe Certification do
         it "does not update a form8's appeal data if form8 has been updated less than 48 hours ago" do
           cert = Certification.new(vacols_id: "4949")
           form = double
+          # TODO(alex): these tests are too mocked out. refactor them to be more realistic!
           allow(cert).to receive(:form8).and_return(form)
           allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:update_certification_date)
           allow(form).to receive(:updated_at).and_return(Time.zone.now)
 
           cert.start!
@@ -185,6 +187,13 @@ describe Certification do
           cert.start!
 
           expect(form).to have_received(:update_from_appeal).twice
+        end
+
+        it "updates the certification_date on the form8 to the current day" do
+          cert = Certification.create!
+          Form8.create!(vacols_id: "9999", certification_id: cert.id, certification_date: 1.day.ago.to_date)
+          cert.start!
+          expect(cert.form8.certification_date).to eq(Time.zone.now.to_date)
         end
       end
     end
