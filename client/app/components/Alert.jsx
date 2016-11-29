@@ -11,6 +11,18 @@ export default class Alert extends React.Component {
     }
   }
 
+  // determine if role should be added to main wrapper div
+  // in order to be 508 accessible
+  getRole() {
+    let attrs = {}
+
+    if (this.props.type === 'error') {
+      attrs.role = 'alert';
+    }
+
+    return attrs;
+  }
+
   render() {
     let {
       message,
@@ -20,7 +32,7 @@ export default class Alert extends React.Component {
 
     let typeClass = `usa-alert-${type}`;
 
-    return <div className={`cf-app-segment usa-alert ${typeClass}`}>
+    return <div className={`cf-app-segment usa-alert ${typeClass}`} {...this.getRole()}>
       <div className="usa-alert-body">
         <h3 className="usa-alert-heading">{title}</h3>
         <p className="usa-alert-text">{message}</p>

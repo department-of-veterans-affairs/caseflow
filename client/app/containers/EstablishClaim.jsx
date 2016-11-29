@@ -50,9 +50,11 @@ export default class EstablishClaim extends React.Component {
     return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
       window.location.href = '/dispatch/establish-claim';
     }, () => {
-      handleAlert('error',
+      handleAlert(
+        'error',
         'Error',
-        'There was an error while cancelling the current claim. Please try again later');
+        'There was an error while cancelling the current claim. Please try again later'
+      );
     });
   }
 
