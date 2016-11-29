@@ -164,6 +164,7 @@ describe Certification do
           form = double
           allow(cert).to receive(:form8).and_return(form)
           allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:update_certification_date)
           allow(form).to receive(:updated_at).and_return(Time.zone.now)
 
           cert.start!
