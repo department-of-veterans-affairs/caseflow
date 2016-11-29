@@ -46,9 +46,7 @@ class CertificationsController < ApplicationController
   def confirm
     @certification = Certification.find_by(vacols_id: vacols_id)
 
-    # Account for appeals that don't have a certification record
-    # We'll eventually take this split out.
-    @certification ? @certification.complete! : appeal.certify!
+    @certification.complete!(current_user.id)
 
     redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
@@ -79,5 +77,9 @@ class CertificationsController < ApplicationController
 
   def vacols_id
     params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
+  end
+
+  def logo_class
+    "cf-logo-image-certification"
   end
 end

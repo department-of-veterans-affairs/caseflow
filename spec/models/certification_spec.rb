@@ -5,6 +5,7 @@ describe Certification do
   let(:appeal) do
     Appeal.new(appeal_hash)
   end
+  let(:user) { User.find_or_create_by(station_id: 456, css_id: 124) }
 
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -251,12 +252,25 @@ describe Certification do
 
       before do
         Timecop.freeze(Time.utc(2015, 1, 1, 13, 0, 0))
-        certification.complete!
+        certification.complete!(user.id)
       end
 
       it "returns the time since certification started" do
         expect(subject).to eq(1.hour)
       end
+    end
+  end
+
+  context ".complete!" do
+    subject { certification.user_id }
+
+    before do
+      certification.start!
+      certification.complete!(user.id)
+    end
+
+    it "should set the user id" do
+      expect(subject).to eq(user.id)
     end
   end
 

@@ -29,9 +29,9 @@ class Certification < ActiveRecord::Base
     certification_status
   end
 
-  def complete!
+  def complete!(user_id)
     appeal.certify!
-    update_attributes!(completed_at: Time.zone.now)
+    update_attributes!(completed_at: Time.zone.now, user_id: user_id)
   end
 
   # TODO(jd): Consider lazy loading documents like

@@ -36,6 +36,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def logo_class
+    "cf-logo-image-default"
+  end
+  helper_method :logo_class
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
@@ -79,5 +84,11 @@ class ApplicationController < ActionController::Base
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  class << self
+    def dependencies_faked?
+      Rails.env.development? || Rails.env.test? || Rails.env.demo?
+    end
   end
 end

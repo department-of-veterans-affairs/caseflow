@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ApiUtil from '../util/ApiUtil';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
@@ -38,24 +39,34 @@ export default class EstablishClaim extends React.Component {
       poaCode: ''
     };
 
-    this.handlePoaChange = this.handlePoaChange.bind(this);
-    this.handlePoaCodeChange = this.handlePoaCodeChange.bind(this);
-    this.handleClaimLabelChange = this.handleClaimLabelChange.bind(this);
   }
 
-  handlePoaChange(event) {
+  handleCancelTask = () => {
+    let { id } = this.props.task;
+
+
+    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
+      window.location.href = '/dispatch/establish-claim';
+    }, () => {
+      // TODO(jd): Add support for a proper React modal, then render that
+      // instead. Native alerts are limited
+      alert('Error. Please try again later');
+    });
+  }
+
+  handlePoaChange = (event) => {
     this.setState({
       poa: event.target.value
     });
   }
 
-  handlePoaCodeChange(event) {
+  handlePoaCodeChange = (event) => {
     this.setState({
       poaCode: event.target.value
     });
   }
 
-  handleClaimLabelChange(event) {
+  handleClaimLabelChange = (event) => {
     this.setState({
       claimLabel: event.target.value
     });
@@ -172,7 +183,9 @@ export default class EstablishClaim extends React.Component {
           </button>
         </div>
         <div className="cf-app-segment">
-          <a href="#cancel" className="cf-btn-link">Cancel</a>
+          <button type="button" className="cf-btn-link" onClick={this.handleCancelTask}>
+            Cancel
+          </button>
         </div>
       </form>
     );
