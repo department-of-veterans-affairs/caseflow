@@ -94,4 +94,8 @@ class TasksController < ApplicationController
   def verify_assigned_to_current_user
     verify_user(task.user)
   end
+
+  def logo_class
+    "cf-logo-image-dispatch"
+  end
 end
