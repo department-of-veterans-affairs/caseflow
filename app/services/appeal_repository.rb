@@ -197,7 +197,6 @@ class AppealRepository
     appeal
   end
 
-  # TODO: (mdbenjam): This is copied from efolder, any way to unify them?
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
