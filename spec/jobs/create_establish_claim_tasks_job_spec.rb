@@ -13,8 +13,13 @@ describe CreateEstablishClaimTasksJob do
   after { Timecop.return }
 
   context ".perform" do
-    it "creates tasks" do
+    it "finds or creates tasks" do
       expect(EstablishClaim.count).to eq(0)
+      CreateEstablishClaimTasksJob.perform_now
+      expect(EstablishClaim.count).to eq(2)
+
+      # on re-run, the same 2 appeals should be found
+      # so no new tasks are created
       CreateEstablishClaimTasksJob.perform_now
       expect(EstablishClaim.count).to eq(2)
     end
