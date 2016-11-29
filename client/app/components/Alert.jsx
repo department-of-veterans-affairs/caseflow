@@ -36,6 +36,6 @@ Alert.defaultProps = {
 Alert.propTypes = {
   message: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired
+  type: PropTypes.oneOf(['success', 'error', 'warning', 'info'])
 };
 
