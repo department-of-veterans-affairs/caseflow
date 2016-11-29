@@ -190,7 +190,7 @@ describe Certification do
 
         it "updates the certification_date on the form8 to the current day" do
           cert = Certification.create!
-          form8 = Form8.create(vacols_id: "9999", certification_id: cert.id, certification_date: 1.day.ago.to_date)
+          Form8.create!(vacols_id: "9999", certification_id: cert.id, certification_date: 1.day.ago.to_date)
           cert.start!
           expect(cert.form8.certification_date).to eq(Time.zone.now.to_date)
         end
