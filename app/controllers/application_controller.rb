@@ -86,6 +86,24 @@ class ApplicationController < ActionController::Base
     redirect_to "/unauthorized"
   end
 
+  def feedback_url
+    if !ENV["ENABLE_CASEFLOW_FEEDBACK"] || !ENV["CASEFLOW_FEEDBACK_DOMAIN"]
+      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
+    end
+
+    if request.original_fullpath.include? "dispatch"
+      subject = "Caseflow Dispatch"
+    elsif request.original_fullpath.include? "certifications"
+      subject = "Caseflow Certification"
+    else
+      subject = "Caseflow"
+    end
+
+    param_object = {redirect: request.original_url, subject: subject}
+
+    ENV["CASEFLOW_FEEDBACK_DOMAIN"] + '?' + param_object.to_param
+  end
+
   class << self
     def dependencies_faked?
       Rails.env.development? || Rails.env.test? || Rails.env.demo?
