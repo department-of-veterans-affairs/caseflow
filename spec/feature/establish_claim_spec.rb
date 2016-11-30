@@ -86,5 +86,14 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
     end
+
+    scenario "Return to decision on an Establish Claim task returns me decision review" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}/new"
+      expect(page).to have_content("Create End Product") # React works
+
+      click_on "\u00ABBack to review"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+    end
   end
 end
