@@ -78,6 +78,10 @@ class Form8 < ActiveRecord::Base
     )
   end
 
+  def update_certification_date
+    update_attributes!(certification_date: Time.zone.now.to_date)
+  end
+
   def hearing_on_file
     (hearing_held == "Yes" && hearing_transcript_on_file)
   end
