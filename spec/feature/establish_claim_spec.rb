@@ -37,7 +37,7 @@ RSpec.feature "Dispatch" do
     end
   end
 
-  context "As a caseworker" do
+  context "As a caseworker", focus: true do
     before do
       User.authenticate!(roles: ["Establish Claim"])
 
