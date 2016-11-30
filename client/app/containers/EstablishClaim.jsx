@@ -70,14 +70,18 @@ export default class EstablishClaim extends React.Component {
 
   handleCancelTask = () => {
     let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
 
+    handleAlertClear();
 
     return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
       window.location.href = '/dispatch/establish-claim';
     }, () => {
-      // TODO(jd): Add support for a proper React modal, then render that
-      // instead. Native alerts are limited
-      alert('Error. Please try again later');
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while cancelling the current claim. Please try again later'
+      );
     });
   }
 
@@ -204,7 +208,11 @@ export default class EstablishClaim extends React.Component {
           />
         </div>
         <div className="cf-app-segment">
-          <a href="#back" className="cf-btn-link">{'\u00AB'}Back to preview</a>
+          <a
+           href={`/dispatch/establish-claim/${this.props.task.id}/review`}
+           className="cf-btn-link">
+            {'\u00AB'}Back to review
+          </a>
           <button type="submit" className="cf-push-right cf-submit">
             Create End Product
           </button>

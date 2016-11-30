@@ -65,25 +65,35 @@ RSpec.feature "Dispatch" do
     scenario "Assign the next task to me and starts it" do
       visit "/dispatch/establish-claim"
       click_on @task.start_text
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
-      visit "/dispatch/establish-claim/#{@other_task.id}"
+      visit "/dispatch/establish-claim/#{@other_task.id}/review"
       expect(page).to have_current_path("/unauthorized")
     end
 
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
+      visit "/dispatch/establish-claim/#{@task.id}/new"
       expect(page).to have_content("Create End Product") # React works
 
       click_on "Cancel"
       expect(page).to have_current_path("/dispatch/establish-claim")
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+    end
+
+    scenario "Return to decision on an Establish Claim task returns me decision review" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}/new"
+      expect(page).to have_content("Create End Product") # React works
+
+      click_on "\u00ABBack to review"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
     end
   end
 end

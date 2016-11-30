@@ -197,6 +197,17 @@ class AppealRepository
     appeal
   end
 
+  def self.fetch_document_file(document)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::FetchDocumentById.new(document.document_id)
+    result = @client.send_request(request)
+    result && result.content
+  rescue => e
+    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+    raise VBMS::ClientError
+  end
+
   def self.vbms_config
     config = Rails.application.secrets.vbms.clone
 

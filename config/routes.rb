@@ -27,9 +27,14 @@ Rails.application.routes.draw do
               path: "/establish-claim",
               controller: "establish_claims",
               task_type: :EstablishClaim,
-              only: [:show, :index] do
+              only: [:index] do
       patch 'assign', on: :collection
+
       post 'create', on: :member
+      get 'complete', on: :member
+      get 'pdf', on: :member
+      get 'review', on: :member
+      get 'new', on: :member
     end
   end
 

@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:show, :cancel]
+  before_action :verify_complete, only: [:complete]
+  before_action :verify_assigned_to_current_user, only: [:show, :new, :review, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -10,21 +11,33 @@ class TasksController < ApplicationController
     render index_template
   end
 
-  def show
+  def pdf
+    decision = task.appeal.decision
+    return redirect_to "/404" if decision.nil?
+    decision.save_unless_exists!
+    send_file(decision.default_path, type: "application/pdf", disposition: "inline")
+  end
+
+  def review
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user
+    render "review"
   end
 
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
     next_unassigned_task.assign!(current_user)
-    redirect_to url_for(current_user.tasks.to_complete.where(type: next_unassigned_task.type).first)
+    assigned_task = current_user.tasks.to_complete.where(type: next_unassigned_task.type).first
+    redirect_to url_for(controller: "tasks", action: "review", id: assigned_task.id)
   end
 
   def cancel
     task.cancel!
-    render json: {}
+    respond_to do |format|
+      format.html { redirect_to(establish_claims_url) }
+      format.json { render json: {} }
+    end
   end
 
   private
@@ -85,6 +98,12 @@ class TasksController < ApplicationController
 
   def verify_assigned_to_current_user
     verify_user(task.user)
+  end
+
+  def verify_complete
+    return true if task.complete?
+
+    redirect_to url_for(controller: "tasks", action: "review", id: task.id)
   end
 
   def logo_class
