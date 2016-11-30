@@ -1,5 +1,9 @@
 import React, { PropTypes } from 'react';
 export default class DropDown extends React.Component {
+  onChange = (event) => {
+    this.props.onChange(this.props.name, event.target.value)
+  }
+
   render() {
     let {
       label,
@@ -12,7 +16,7 @@ export default class DropDown extends React.Component {
 
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>{label || name}</label>
-      <select value={selected} onChange={onChange} id={name} readOnly={readOnly}>
+      <select value={selected} onChange={this.onChange} id={name} readOnly={readOnly}>
         {options.map((option, index) =>
           <option
             value={option}

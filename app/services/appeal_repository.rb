@@ -127,8 +127,14 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.establish_claim(claim)
+  def self.establish_claim(claim:, appeal:)
     # VBMS.api_call_go!(claim)
+    # VACOLS.api_call_update_location_status
+    appeal.case_record.bfcurloc = '98'
+
+    MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+      appeal.case_record.save!
+    end
   end
 
   def self.certify(appeal)

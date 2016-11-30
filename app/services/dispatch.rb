@@ -7,10 +7,14 @@ class Dispatch
 
     def establish_claim!(claim:, task:)
       validate_claim(claim)
-
       Appeal.repository.establish_claim(claim)
       task.complete!(0)
     end
+
+    def default_values()
+      { claim_type: 'Claim'}
+    end
+
 
   end
 end

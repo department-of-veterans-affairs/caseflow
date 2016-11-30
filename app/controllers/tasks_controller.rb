@@ -2,6 +2,7 @@ class TasksController < ApplicationController
   before_action :verify_access
   before_action :verify_complete, only: [:complete]
   before_action :verify_assigned_to_current_user, only: [:show, :new, :pdf, :cancel]
+  before_action :verify_not_complete, only: [:new]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -98,6 +99,12 @@ class TasksController < ApplicationController
     return true if task.complete?
 
     redirect_to url_for(action: task.initial_action, id: task.id)
+  end
+
+  def verify_not_complete
+    return true unless task.complete?
+
+    redirect_to complete_establish_claim_path(task)
   end
 
   def logo_class

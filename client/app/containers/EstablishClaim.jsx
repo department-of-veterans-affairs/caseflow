@@ -36,9 +36,12 @@ export default class EstablishClaim extends React.Component {
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
-      poaCode: ''
+      poaCode: '',
+      segmentedLane: SEGMENTED_LANE_OPTIONS[0],
+      allowPoa: false,
+      gulfWar: false,
+      suppressAcknowledgement: false
     };
-
   }
 
   handleSubmit = (event) => {
@@ -80,6 +83,12 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
+  handleChange = (key, value) => {
+    let output = {}
+    output[key] = value
+    this.setState(output);
+  }
+
   handlePoaChange = (event) => {
     this.setState({
       poa: event.target.value
@@ -89,12 +98,6 @@ export default class EstablishClaim extends React.Component {
   handlePoaCodeChange = (event) => {
     this.setState({
       poaCode: event.target.value
-    });
-  }
-
-  handleClaimLabelChange = (event) => {
-    this.setState({
-      claimLabel: event.target.value
     });
   }
 
@@ -119,7 +122,15 @@ export default class EstablishClaim extends React.Component {
   render() {
     let { task } = this.props;
     let { appeal } = task;
-    let { poa, poaCode, claimLabel } = this.state;
+    let { 
+      poa, 
+      poaCode, 
+      claimLabel, 
+      segmentedLane, 
+      allowPoa, 
+      gulfWar, 
+      suppressAcknowledgement 
+    } = this.state;
 
     return (
       <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
@@ -141,20 +152,13 @@ export default class EstablishClaim extends React.Component {
            label="Claim Label"
            name="ClaimLabel"
            options={CLAIM_LABEL_OPTIONS}
-           onChange={this.handleClaimLabelChange}
-           selected={claimLabel}
-          />
-          <TextField
-           label="Claim Type"
-           name="ClaimType"
-           value="Claim"
-           invisible={true}
-           readOnly={true}
+           onChange={this.handleChange}
           />
           <DropDown
            label="Modifier"
            name="Modifier"
            options={MODIFIER_OPTIONS}
+           onChange={this.handleChange}
           />
           <DateSelector
            label="Decision Date"
@@ -164,8 +168,9 @@ export default class EstablishClaim extends React.Component {
           />
           <DropDown
            label="Segmented Lane"
-           name="SegmentedLane"
+           name="segmentedLane"
            options={SEGMENTED_LANE_OPTIONS}
+           onChange={this.handleChange}
           />
           <TextField
            label="Station"
@@ -188,18 +193,18 @@ export default class EstablishClaim extends React.Component {
           />
           <Checkbox
            label="Allow POA Access to Documents"
-           name="AllowPOA"
-           checked={false}
+           name="allowPoa"
+           checked={allowPoa}
           /></div>}
           <Checkbox
            label="Gulf War Registry Permit"
-           name="GulfWar"
-           checked={false}
+           name="gulfWar"
+           checked={gulfWar}
           />
           <Checkbox
            label="Suppress Acknowledgement Letter"
-           name="SuppressAcknowledgement"
-           checked={false}
+           name="suppressAcknowledgement"
+           checked={suppressAcknowledgement}
           />
         </div>
         <div className="cf-app-segment">
