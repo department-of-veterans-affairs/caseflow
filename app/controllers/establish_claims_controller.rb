@@ -1,14 +1,23 @@
 class EstablishClaimsController < TasksController
+  before_action :verify_assigned_to_current_user, only: [:review]
+
   def create
-    transaction do
-      Dispatch.establish_claim!(establish_claim_params)
-      task.complete!(0)
-    end
+    Dispatch.establish_claim!(claim: establish_claim_params, task: task)
 
     render json: {}
+  # rescue => VBMSConnectionError
+    # render json: {}, status: 500
+  end
+
+  def review
+    # Future safeguard for when we give managers a show view
+    # for a given task
+    task.start! if current_user == task.user
+    render "review"
   end
 
   private
+
   def establish_claim_params
     params.require(:claim).permit(:modifier, :poa, :claim_label, :poa_code)
   end

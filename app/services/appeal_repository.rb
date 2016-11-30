@@ -127,6 +127,10 @@ class AppealRepository
   end
 
   # :nocov:
+  def self.establish_claim(claim)
+    # VBMS.api_call_go!(claim)
+  end
+
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 

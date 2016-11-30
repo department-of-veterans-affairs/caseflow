@@ -53,12 +53,7 @@ export default class EstablishClaim extends React.Component {
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/create`, { data }).then(() => {
-      handleAlert(
-        'success',
-        'Success',
-        'Hooray!'
-      );
-
+      window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
       handleAlert(
         'error',
@@ -213,7 +208,7 @@ export default class EstablishClaim extends React.Component {
            className="cf-btn-link">
             {'\u00AB'}Back to review
           </a>
-          <button type="submit" className="cf-push-right cf-submit">
+          <button type="submit" className="cf-push-right">
             Create End Product
           </button>
         </div>

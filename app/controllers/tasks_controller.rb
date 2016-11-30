@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_access
   before_action :verify_complete, only: [:complete]
-  before_action :verify_assigned_to_current_user, only: [:show, :new, :review, :pdf, :cancel]
+  before_action :verify_assigned_to_current_user, only: [:show, :new, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -18,18 +18,12 @@ class TasksController < ApplicationController
     send_file(decision.default_path, type: "application/pdf", disposition: "inline")
   end
 
-  def review
-    # Future safeguard for when we give managers a show view
-    # for a given task
-    task.start! if current_user == task.user
-    render "review"
-  end
-
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
     next_unassigned_task.assign!(current_user)
     assigned_task = current_user.tasks.to_complete.where(type: next_unassigned_task.type).first
-    redirect_to url_for(controller: "tasks", action: "review", id: assigned_task.id)
+
+    redirect_to url_for(action: assigned_task.initial_action, id: assigned_task.id)
   end
 
   def cancel
@@ -103,7 +97,7 @@ class TasksController < ApplicationController
   def verify_complete
     return true if task.complete?
 
-    redirect_to url_for(controller: "tasks", action: "review", id: task.id)
+    redirect_to url_for(action: task.initial_action, id: task.id)
   end
 
   def logo_class
