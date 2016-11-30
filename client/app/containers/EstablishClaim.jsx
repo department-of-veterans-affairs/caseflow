@@ -181,7 +181,11 @@ export default class EstablishClaim extends React.Component {
           />
         </div>
         <div className="cf-app-segment">
-          <a href={`/dispatch/establish-claim/${this.props.task.id}/review`} className="cf-btn-link">{'\u00AB'}Back to review</a>
+          <a
+           href={`/dispatch/establish-claim/${this.props.task.id}/review`}
+           className="cf-btn-link">
+            {'\u00AB'}Back to review
+          </a>
           <button type="submit" className="cf-push-right cf-submit">
             Create End Product
           </button>
