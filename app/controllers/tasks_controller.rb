@@ -1,8 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:show, :cancel]
   before_action :verify_complete, only: [:complete]
-  before_action :verify_assigned_to_current_user, only: [:new, :review, :pdf, :cancel]
+  before_action :verify_assigned_to_current_user, only: [:show, :new, :review, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -104,9 +103,9 @@ class TasksController < ApplicationController
   def verify_complete
     return true if task.complete?
 
-    redirect_to url_for(current_user.tasks.to_complete.where(type: next_unassigned_task.type).first)
+    redirect_to url_for(controller: "tasks", action: "review", id: task.id)
   end
-  
+
   def logo_class
     "cf-logo-image-dispatch"
   end
