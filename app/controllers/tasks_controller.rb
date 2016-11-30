@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :cancel]
+  before_action :verify_complete, only: [:complete]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -85,5 +86,11 @@ class TasksController < ApplicationController
 
   def verify_assigned_to_current_user
     verify_user(task.user)
+  end
+
+  def verify_complete
+    return true if task.complete?
+
+    redirect_to url_for(current_user.tasks.to_complete.where(type: next_unassigned_task.type).first)
   end
 end
