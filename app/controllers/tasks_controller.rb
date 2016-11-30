@@ -93,4 +93,8 @@ class TasksController < ApplicationController
 
     redirect_to url_for(current_user.tasks.to_complete.where(type: next_unassigned_task.type).first)
   end
+  
+  def logo_class
+    "cf-logo-image-dispatch"
+  end
 end

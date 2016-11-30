@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
-import EstablishClaim from '../app/containers/EstablishClaim';
+import EstablishClaim from '../../app/containers/EstablishClaim';
 
 describe('EstablishClaim', () => {
   context('.render', () => {
@@ -15,7 +15,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.find('#POA_None').simulate('change');
       });
-      
+
       it('hides POA code textfield', () => {
         expect(wrapper.find('#POACode')).to.have.length(0);
       });
@@ -28,7 +28,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.find('#POA_VSO').simulate('change');
       });
-      
+
       it('show POA code textfield', () => {
         expect(wrapper.find('#POACode')).to.have.length(1);
       });
@@ -36,7 +36,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('#AllowPOA')).to.have.length(1);
       });
     });
-    
+
     context('when POA is Private', () => {
       beforeEach(() => {
         wrapper.find('#POA_Private').simulate('change');
