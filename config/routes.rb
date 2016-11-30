@@ -29,6 +29,7 @@ Rails.application.routes.draw do
               task_type: :EstablishClaim,
               only: [:index] do
       patch 'assign', on: :collection
+      get 'complete', on: :member
       get 'pdf', on: :member
       get 'review', on: :member
       get 'new', on: :member
