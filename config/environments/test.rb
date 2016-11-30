@@ -16,6 +16,11 @@ Rails.application.configure do
   config.serve_static_files   = true
   config.static_cache_control = 'public, max-age=3600'
 
+  # This is a different asset path. This forces the tests to *ignore*
+  # compiled assets in /public/assets and always defer to non-compiled version.
+  # This helps avoid issues if stale compiled assets exist locally
+  config.assets.prefix = "/assets_test"
+
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
