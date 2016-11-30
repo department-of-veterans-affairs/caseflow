@@ -92,7 +92,7 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@task.id}/new"
       expect(page).to have_content("Create End Product") # React works
 
-      click_on "\u00ABBack to preview"
+      click_on "\u00ABBack to review"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
     end
   end
