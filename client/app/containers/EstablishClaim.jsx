@@ -6,7 +6,7 @@ import TextField from '../components/TextField';
 import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
-import Button from '../components/Button'; 
+import Button from '../components/Button';
 
 const POA = [
   'None',
@@ -37,7 +37,8 @@ export default class EstablishClaim extends React.Component {
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
-      poaCode: ''
+      poaCode: '',
+      loading: false
     };
 
   }
@@ -56,6 +57,12 @@ export default class EstablishClaim extends React.Component {
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
       );
+    });
+  }
+
+  submitOnClick = (event) => {
+    this.setState({
+      loading: true
     });
   }
 
@@ -98,7 +105,7 @@ export default class EstablishClaim extends React.Component {
   render() {
     let { task } = this.props;
     let { appeal } = task;
-    let { poa, poaCode, claimLabel } = this.state;
+    let { poa, poaCode, claimLabel, loading } = this.state;
 
     return (
       <form className="cf-form" noValidate>
@@ -187,9 +194,10 @@ export default class EstablishClaim extends React.Component {
            className="cf-btn-link">
             {'\u00AB'}Back to review
           </a>
-          <Button 
+          <Button
             name="Create End Product"
-            loading={true}
+            loading={loading}
+            onClick={this.submitOnClick}
           />
         </div>
         <div className="cf-app-segment">
