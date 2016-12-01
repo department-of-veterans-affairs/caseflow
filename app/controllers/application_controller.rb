@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
   end
 
   def feedback_url
-    if !ENV["ENABLE_CASEFLOW_FEEDBACK"] || !ENV["CASEFLOW_FEEDBACK_DOMAIN"]
+    if !ENV["CASEFLOW_FEEDBACK_URL"]
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
 
@@ -101,8 +101,9 @@ class ApplicationController < ActionController::Base
 
     param_object = {redirect: request.original_url, subject: subject}
 
-    ENV["CASEFLOW_FEEDBACK_DOMAIN"] + '?' + param_object.to_param
+    ENV["CASEFLOW_FEEDBACK_URL"] + '?' + param_object.to_param
   end
+  helper_method :feedback_url
 
   class << self
     def dependencies_faked?
