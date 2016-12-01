@@ -6,6 +6,7 @@ import TextField from '../components/TextField';
 import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
+import Button from '../components/Button'; 
 
 const POA = [
   'None',
@@ -100,7 +101,7 @@ export default class EstablishClaim extends React.Component {
     let { poa, poaCode, claimLabel } = this.state;
 
     return (
-      <form className="cf-form" noValidate>
+      <form className="cf-form cf-is-loading" noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -186,9 +187,9 @@ export default class EstablishClaim extends React.Component {
            className="cf-btn-link">
             {'\u00AB'}Back to review
           </a>
-          <button type="submit" className="cf-push-right cf-submit">
-            Create End Product
-          </button>
+          <Button 
+            name="Create End Product"
+          />
         </div>
         <div className="cf-app-segment">
           <button type="button" className="cf-btn-link" onClick={this.handleCancelTask}>
