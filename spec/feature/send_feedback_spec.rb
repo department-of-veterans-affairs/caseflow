@@ -9,14 +9,14 @@ RSpec.feature "Send feedback" do
   after { Timecop.return }
 
   scenario "Sending feedback about Caseflow Certification" do
-      User.authenticate!
-      visit "certifications/new/ABCD"
+    User.authenticate!
+    visit "certifications/new/ABCD"
 
-      expect(page).to have_link("Send feedback")
+    expect(page).to have_link("Send feedback")
 
-      href = find_link("Send feedback")["href"]
-      expect(find_link("Send feedback")["href"].include? ENV["CASEFLOW_FEEDBACK_URL"]).to be true
-      expect(find_link("Send feedback")["href"].include? "subject=Caseflow+Certification").to be true
-      expect(find_link("Send feedback")["href"].include? "redirect=").to be true
+    href = find_link("Send feedback")["href"]
+    expect(href.include?(ENV["CASEFLOW_FEEDBACK_URL"])).to be true
+    expect(href.include?("subject=Caseflow+Certification")).to be true
+    expect(href.include?("redirect=")).to be true
   end
 end
