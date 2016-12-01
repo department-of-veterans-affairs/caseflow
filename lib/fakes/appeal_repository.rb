@@ -22,8 +22,11 @@ class Fakes::AppealRepository
     @certified_appeal = appeal
   end
 
-  def self.establish_claim(claim)
-    fail(VBMSError) if claim && claim[:poa_code] == RAISE_VBMS_ERROR_ID
+  def self.establish_claim!(claim)
+    p "Submitting claim to VBMS:", claim
+
+    # set poa_code to RAISE_VBMS_ERROR_ID to force an error while testing
+    fail(VBMSError) if claim && claim["poa_code"] == RAISE_VBMS_ERROR_ID
   end
 
   def self.upload_form8(appeal, form8)

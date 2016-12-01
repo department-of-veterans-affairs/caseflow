@@ -122,14 +122,14 @@ export default class EstablishClaim extends React.Component {
   render() {
     let { task } = this.props;
     let { appeal } = task;
-    let { 
-      poa, 
-      poaCode, 
-      claimLabel, 
-      segmentedLane, 
-      allowPoa, 
-      gulfWar, 
-      suppressAcknowledgement 
+    let {
+      poa,
+      poaCode,
+      claimLabel,
+      segmentedLane,
+      allowPoa,
+      gulfWar,
+      suppressAcknowledgement
     } = this.state;
 
     return (
@@ -194,17 +194,20 @@ export default class EstablishClaim extends React.Component {
           <Checkbox
            label="Allow POA Access to Documents"
            name="allowPoa"
-           checked={allowPoa}
+           value={allowPoa}
+           onChange={this.handleChange}
           /></div>}
           <Checkbox
            label="Gulf War Registry Permit"
            name="gulfWar"
-           checked={gulfWar}
+           value={gulfWar}
+           onChange={this.handleChange}
           />
           <Checkbox
            label="Suppress Acknowledgement Letter"
            name="suppressAcknowledgement"
-           checked={suppressAcknowledgement}
+           value={suppressAcknowledgement}
+           onChange={this.handleChange}
           />
         </div>
         <div className="cf-app-segment">

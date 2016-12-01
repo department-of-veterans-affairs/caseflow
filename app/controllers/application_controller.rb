@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
   before_action :set_raven_user
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from VBMSError, with: :on_vbms_error
 
   def unauthorized
     render status: 403
@@ -84,6 +85,21 @@ class ApplicationController < ActionController::Base
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def on_vbms_error
+    respond_to do |format|
+      format.html do
+        @error_title = "VBMS Failure"
+        @error_subtitle = "Unable to communicate with the VBMS system at this time."
+        @error_retry_external_service = "VBMS"
+        render "errors/500", layout: "application", status: 500
+      end
+
+      format.json do
+        render json: { errors: [:vbms_error] }, status: 500
+      end
+    end
   end
 
   class << self

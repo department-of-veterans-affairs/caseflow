@@ -127,11 +127,13 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.establish_claim(claim:, appeal:)
+  def self.establish_claim!(claim:, appeal:)
+    # TODO(jd): Add VBMS integration here
     # VBMS.api_call_go!(claim)
-    # VACOLS.api_call_update_location_status
-    appeal.case_record.bfcurloc = '98'
 
+
+    # Update VACOLS location
+    appeal.case_record.bfcurloc = '98'
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
     end

@@ -4,10 +4,7 @@ class EstablishClaimsController < TasksController
 
   def create
     Dispatch.establish_claim!(claim: establish_claim_params, task: task)
-
     render json: {}
-  # rescue => VBMSConnectionError
-    # render json: {}, status: 500
   end
 
   def review
@@ -20,7 +17,8 @@ class EstablishClaimsController < TasksController
   private
 
   def establish_claim_params
-    params.require(:claim).permit(:modifier, :poa, :claim_label, :poa_code)
+    params.require(:claim).permit(:modifier, :poa, :claim_label, :poa_code,
+                                 :gulf_war, :allow_poa, :suppress_acknowledgement)
   end
 
 end
