@@ -91,11 +91,14 @@ class ApplicationController < ActionController::Base
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
 
+    # TODO: when we want to segment feedback subjects further,
+    # add more conditions here.
     if request.original_fullpath.include? "dispatch"
       subject = "Caseflow Dispatch"
     elsif request.original_fullpath.include? "certifications"
       subject = "Caseflow Certification"
     else
+      # default to just plain Caseflow.
       subject = "Caseflow"
     end
 
