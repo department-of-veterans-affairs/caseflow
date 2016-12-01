@@ -101,7 +101,7 @@ export default class EstablishClaim extends React.Component {
     let { poa, poaCode, claimLabel } = this.state;
 
     return (
-      <form className="cf-form cf-is-loading" noValidate>
+      <form className="cf-form" noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -189,6 +189,7 @@ export default class EstablishClaim extends React.Component {
           </a>
           <Button 
             name="Create End Product"
+            loading={true}
           />
         </div>
         <div className="cf-app-segment">

@@ -8,7 +8,7 @@ export default class Button extends React.Component {
       onClick
     } = this.props;
 
-    return <div className="cf-form cf-app-segment cf-is-loading">
+    return <div className={"cf-app-segment" +  (loading ? " cf-is-loading" : "")}>
     <div className="cf-loading-indicator cf-push-right">
     <svg
       width="30"
