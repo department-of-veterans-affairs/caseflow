@@ -1,5 +1,10 @@
 require "simplecov"
 
+
+
+ENV["CASEFLOW_FEEDBACK_DOMAIN"] = "test.feedback.com"
+ENV["ENABLE_CASEFLOW_FEEDBACK"] = "true"
+
 unless ENV["SAUCE_SPECS"]
   SimpleCov.start do
     add_filter "lib/fakes"
