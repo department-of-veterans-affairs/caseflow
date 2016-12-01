@@ -12,7 +12,7 @@ class Dispatch
       full_claim = default_claim_values.merge(claim)
 
       raise InvalidClaimError unless validate_claim(full_claim)
-      Appeal.repository.establish_claim!(full_claim)
+      Appeal.repository.establish_claim!(claim: full_claim, appeal: task.appeal)
       task.complete!(0)
     end
 

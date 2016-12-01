@@ -133,10 +133,10 @@ class AppealRepository
 
 
     # Update VACOLS location
-    appeal.case_record.bfcurloc = '98'
-    MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-      appeal.case_record.save!
-    end
+    # appeal.case_record.bfcurloc = '98'
+    # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+      # appeal.case_record.save!
+    # end
   end
 
   def self.certify(appeal)

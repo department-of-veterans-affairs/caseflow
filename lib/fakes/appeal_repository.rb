@@ -22,7 +22,7 @@ class Fakes::AppealRepository
     @certified_appeal = appeal
   end
 
-  def self.establish_claim!(claim)
+  def self.establish_claim!(claim:, appeal:)
     p "Submitting claim to VBMS:", claim
 
     # set poa_code to RAISE_VBMS_ERROR_ID to force an error while testing
