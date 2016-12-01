@@ -76,9 +76,7 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
       expect(find('.cf-app-segment > h1')).to have_content("Create End Product")
-
       click_on "Create End Product"
-
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/complete")
       expect(Appeal.repository).to have_received(:establish_claim!)
