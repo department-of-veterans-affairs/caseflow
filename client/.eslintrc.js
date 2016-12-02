@@ -178,7 +178,6 @@ module.exports = {
     "operator-linebreak": "error",
     "prefer-arrow-callback": "error",
     "prefer-numeric-literals": "error",
-    "prefer-reflect": "error",
     "prefer-rest-params": "error",
     "prefer-spread": "error",
     "prefer-template": "error",

@@ -4,6 +4,24 @@ import ReactOnRails from 'react-on-rails';
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
+
+  // Converts snakeCase to camel_case
+  convertToSnakeCase(data = {}) {
+    let result = {};
+
+    for (let key in data) {
+      if ({}.hasOwnProperty.call(data, key)) {
+        // convert key from camelCase to snake_case
+        let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+
+        // assign value to new object
+        result[snakeKey] = data[key];
+      }
+    }
+
+    return result;
+  },
+
   // Default headers needed to talk with rails server.
   // Including rail's authenticity token
   headers(options = {}) {
@@ -19,14 +37,6 @@ const ApiUtil = {
     return headers;
   },
 
-  post(url, options = {}) {
-    return request.
-      post(url).
-      set(this.headers(options.headers)).
-      send(options.data).
-      use(nocache);
-  },
-
   patch(url, options = {}) {
     return request.
       post(url).
@@ -35,21 +45,12 @@ const ApiUtil = {
       use(nocache);
   },
 
-  // Converts snakeCase to camel_case
-  convertToSnakeCase(data = {}) {
-    let result = {};
-
-    for (let key in data) {
-      if (data.hasOwnProperty(key)) {
-        // convert key from camelCase to snake_case
-        let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
-
-        // assign value to new object
-        result[snakeKey] = data[key];
-      }
-    }
-
-    return result;
+  post(url, options = {}) {
+    return request.
+      post(url).
+      set(this.headers(options.headers)).
+      send(options.data).
+      use(nocache);
   }
 };
 

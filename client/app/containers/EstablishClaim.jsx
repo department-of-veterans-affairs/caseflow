@@ -33,13 +33,13 @@ export default class EstablishClaim extends React.Component {
 
      // Set initial state on page render
     this.state = {
+      allowPoa: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
-      modifier: MODIFIER_OPTIONS[0],
+      gulfWar: false,
+      modifier: MODIFIER_OPTIONS[1],
       poa: POA[0],
       poaCode: '',
       segmentedLane: SEGMENTED_LANE_OPTIONS[0],
-      allowPoa: false,
-      gulfWar: false,
       suppressAcknowledgement: false
     };
   }
@@ -124,12 +124,13 @@ export default class EstablishClaim extends React.Component {
     let { task } = this.props;
     let { appeal } = task;
     let {
+      allowPoa,
+      claimLabel,
+      gulfWar,
+      modifier,
       poa,
       poaCode,
-      claimLabel,
       segmentedLane,
-      allowPoa,
-      gulfWar,
       suppressAcknowledgement
     } = this.state;
 
@@ -151,19 +152,21 @@ export default class EstablishClaim extends React.Component {
           />
           <DropDown
            label="Claim Label"
-           name="ClaimLabel"
+           name="claimLabel"
            options={CLAIM_LABEL_OPTIONS}
            onChange={this.handleChange}
+           value={claimLabel}
           />
           <DropDown
            label="Modifier"
-           name="Modifier"
+           name="modifier"
            options={MODIFIER_OPTIONS}
            onChange={this.handleChange}
+           value={modifier}
           />
           <DateSelector
            label="Decision Date"
-           name="DecisionDate"
+           name="decisionDate"
            readOnly={true}
            value={appeal.decision_date}
           />
@@ -172,6 +175,7 @@ export default class EstablishClaim extends React.Component {
            name="segmentedLane"
            options={SEGMENTED_LANE_OPTIONS}
            onChange={this.handleChange}
+           value={segmentedLane}
           />
           <TextField
            label="Station"
