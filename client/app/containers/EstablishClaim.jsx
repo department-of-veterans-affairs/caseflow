@@ -40,7 +40,7 @@ export default class EstablishClaim extends React.Component {
       modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
       poaCode: '',
-      loading: false
+      loading: false,
       segmentedLane: SEGMENTED_LANE_OPTIONS[0],
       suppressAcknowledgement: false
     };
@@ -89,6 +89,7 @@ export default class EstablishClaim extends React.Component {
     this.setState({
       loading: true
     });
+  }
 
   handleChange = (key, value) => {
     let output = {};
