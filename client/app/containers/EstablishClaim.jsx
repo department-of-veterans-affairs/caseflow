@@ -55,7 +55,7 @@ export default class EstablishClaim extends React.Component {
       claim: ApiUtil.convertToSnakeCase(this.state)
     };
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/create`, { data }).then(() => {
+    return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
       window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
       handleAlert(

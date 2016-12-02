@@ -23,7 +23,8 @@ class Fakes::AppealRepository
   end
 
   def self.establish_claim!(claim:, appeal:)
-    p "Submitting claim to VBMS:", claim
+    p "Submitting claim to VBMS for appeal: #{appeal.id}"
+    p "Claim data:\n", claim
 
     # set poa_code to RAISE_VBMS_ERROR_ID to force an error while testing
     fail(VBMSError) if claim && claim["poa_code"] == RAISE_VBMS_ERROR_ID
