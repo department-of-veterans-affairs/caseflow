@@ -14,7 +14,8 @@ module.exports = {
     "sourceType": "module"
   },
   "plugins": [
-    "react"
+    "react",
+    "mocha"
   ],
   "rules": {
     "accessor-pairs": "error",
@@ -73,6 +74,7 @@ module.exports = {
     "max-params": "error",
     "max-statements": "error",
     "max-statements-per-line": "error",
+    "mocha/no-exclusive-tests": "error",
     "new-cap": "error",
     "new-parens": "error",
     "newline-after-var": "error",
