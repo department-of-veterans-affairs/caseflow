@@ -1,29 +1,14 @@
 import React, { PropTypes } from 'react';
 export default class Checkbox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      checked: props.checked
-    };
-
-    this.defaultHandler = this.defaultHandler.bind(this);
-  }
-
-
-  defaultHandler(event) {
-    this.setState({
-      checked: !this.state.checked
-    });
-
-    if (this.props.onChange) {
-      this.props.onChange(event);
-    }
+  onChange = (event) => {
+    this.props.onChange(this.props.name, event.target.checked);
   }
 
   render() {
     let {
       label,
-      name
+      name,
+      value
     } = this.props;
 
     return <div className="cf-form-checkboxes">
@@ -31,10 +16,10 @@ export default class Checkbox extends React.Component {
 
       <input
         name={name}
-        onChange={this.defaultHandler}
+        onChange={this.onChange}
         type="checkbox"
         id={name}
-        checked={this.state.checked}
+        checked={value}
       />
       <label className="question-label" htmlFor={name}>{label || name}</label>
       </div>
@@ -43,8 +28,8 @@ export default class Checkbox extends React.Component {
 }
 
 Checkbox.propTypes = {
-  checked: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  value: PropTypes.bool
 };

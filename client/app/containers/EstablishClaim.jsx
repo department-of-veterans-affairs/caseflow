@@ -33,12 +33,37 @@ export default class EstablishClaim extends React.Component {
 
      // Set initial state on page render
     this.state = {
+      allowPoa: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
+      gulfWar: false,
       modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
-      poaCode: ''
+      poaCode: '',
+      segmentedLane: SEGMENTED_LANE_OPTIONS[0],
+      suppressAcknowledgement: false
+    };
+  }
+
+  handleSubmit = (event) => {
+    let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
+
+    event.preventDefault();
+    handleAlertClear();
+
+    let data = {
+      claim: ApiUtil.convertToSnakeCase(this.state)
     };
 
+    return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
+      window.location.href = `/dispatch/establish-claim/${id}/complete`;
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while submitting the current claim. Please try again later'
+      );
+    });
   }
 
   handleCancelTask = () => {
@@ -58,6 +83,13 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
+  handleChange = (key, value) => {
+    let output = {};
+
+    output[key] = value;
+    this.setState(output);
+  }
+
   handlePoaChange = (event) => {
     this.setState({
       poa: event.target.value
@@ -67,12 +99,6 @@ export default class EstablishClaim extends React.Component {
   handlePoaCodeChange = (event) => {
     this.setState({
       poaCode: event.target.value
-    });
-  }
-
-  handleClaimLabelChange = (event) => {
-    this.setState({
-      claimLabel: event.target.value
     });
   }
 
@@ -97,10 +123,19 @@ export default class EstablishClaim extends React.Component {
   render() {
     let { task } = this.props;
     let { appeal } = task;
-    let { poa, poaCode, claimLabel } = this.state;
+    let {
+      allowPoa,
+      claimLabel,
+      gulfWar,
+      modifier,
+      poa,
+      poaCode,
+      segmentedLane,
+      suppressAcknowledgement
+    } = this.state;
 
     return (
-      <form className="cf-form" noValidate>
+      <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -117,33 +152,30 @@ export default class EstablishClaim extends React.Component {
           />
           <DropDown
            label="Claim Label"
-           name="ClaimLabel"
+           name="claimLabel"
            options={CLAIM_LABEL_OPTIONS}
-           onChange={this.handleClaimLabelChange}
-           selected={claimLabel}
-          />
-          <TextField
-           label="Claim Type"
-           name="ClaimType"
-           value="Claim"
-           invisible={true}
-           readOnly={true}
+           onChange={this.handleChange}
+           value={claimLabel}
           />
           <DropDown
            label="Modifier"
-           name="Modifier"
+           name="modifier"
            options={MODIFIER_OPTIONS}
+           onChange={this.handleChange}
+           value={modifier}
           />
           <DateSelector
            label="Decision Date"
-           name="DecisionDate"
+           name="decisionDate"
            readOnly={true}
            value={appeal.decision_date}
           />
           <DropDown
            label="Segmented Lane"
-           name="SegmentedLane"
+           name="segmentedLane"
            options={SEGMENTED_LANE_OPTIONS}
+           onChange={this.handleChange}
+           value={segmentedLane}
           />
           <TextField
            label="Station"
@@ -166,18 +198,21 @@ export default class EstablishClaim extends React.Component {
           />
           <Checkbox
            label="Allow POA Access to Documents"
-           name="AllowPOA"
-           checked={false}
+           name="allowPoa"
+           value={allowPoa}
+           onChange={this.handleChange}
           /></div>}
           <Checkbox
            label="Gulf War Registry Permit"
-           name="GulfWar"
-           checked={false}
+           name="gulfWar"
+           value={gulfWar}
+           onChange={this.handleChange}
           />
           <Checkbox
            label="Suppress Acknowledgement Letter"
-           name="SuppressAcknowledgement"
-           checked={false}
+           name="suppressAcknowledgement"
+           value={suppressAcknowledgement}
+           onChange={this.handleChange}
           />
         </div>
         <div className="cf-app-segment">
@@ -186,7 +221,7 @@ export default class EstablishClaim extends React.Component {
            className="cf-btn-link">
             {'\u00AB'}Back to review
           </a>
-          <button type="submit" className="cf-push-right cf-submit">
+          <button type="submit" className="cf-push-right">
             Create End Product
           </button>
         </div>

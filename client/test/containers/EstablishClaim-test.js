@@ -33,7 +33,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('#POACode')).to.have.length(1);
       });
       it('show Allow POA access checkbox', () => {
-        expect(wrapper.find('#AllowPOA')).to.have.length(1);
+        expect(wrapper.find('#allowPoa')).to.have.length(1);
       });
     });
 
@@ -46,7 +46,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('#POACode')).to.have.length(1);
       });
       it('show Allow POA access checkbox', () => {
-        expect(wrapper.find('#AllowPOA')).to.have.length(1);
+        expect(wrapper.find('#allowPoa')).to.have.length(1);
       });
     });
   });

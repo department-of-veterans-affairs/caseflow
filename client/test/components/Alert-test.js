@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 
 import Alert from '../../app/components/Alert';
 
-describe.only('Alert', () => {
+describe('Alert', () => {
   let title;
   let message;
   let wrapper;
