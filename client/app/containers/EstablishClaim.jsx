@@ -36,7 +36,7 @@ export default class EstablishClaim extends React.Component {
       allowPoa: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
-      modifier: MODIFIER_OPTIONS[1],
+      modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
       poaCode: '',
       segmentedLane: SEGMENTED_LANE_OPTIONS[0],
