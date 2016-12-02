@@ -29,7 +29,7 @@ Rails.application.routes.draw do
               only: [:index] do
       patch 'assign', on: :collection
 
-      post 'create', on: :member
+      post 'perform', on: :member
       get 'complete', on: :member
       get 'pdf', on: :member
       get 'review', on: :member
