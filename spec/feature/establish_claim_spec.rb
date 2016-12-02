@@ -75,11 +75,23 @@ RSpec.feature "Dispatch" do
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
-      expect(find('.cf-app-segment > h1')).to have_content("Create End Product")
+      expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/complete")
-      expect(Appeal.repository).to have_received(:establish_claim!)
+      expect(Appeal.repository).to have_received(:establish_claim!).with(
+        claim: {
+          "claim_type" => "Claim",
+          "modifier" => "170",
+          "poa" => "None",
+          "claim_label" => " ",
+          "poa_code" => "",
+          "gulf_war" => false,
+          "allow_poa" => false,
+          "suppress_acknowledgement" => false
+        },
+        appeal: @task.appeal
+      )
       expect(@task.reload.complete?).to be_truthy
       expect(@task.completion_status).to eq(0)
     end

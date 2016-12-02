@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 export default class DropDown extends React.Component {
   onChange = (event) => {
-    this.props.onChange(this.props.name, event.target.value)
+    this.props.onChange(this.props.name, event.target.value);
   }
 
   render() {

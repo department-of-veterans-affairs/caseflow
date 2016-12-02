@@ -51,7 +51,7 @@ export default class EstablishClaim extends React.Component {
     event.preventDefault();
     handleAlertClear();
 
-    var data = {
+    let data = {
       claim: ApiUtil.convertToSnakeCase(this.state)
     };
 
@@ -84,8 +84,9 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleChange = (key, value) => {
-    let output = {}
-    output[key] = value
+    let output = {};
+
+    output[key] = value;
     this.setState(output);
   }
 

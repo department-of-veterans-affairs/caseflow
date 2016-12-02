@@ -42,12 +42,13 @@ const ApiUtil = {
     for (let key in data) {
       if (data.hasOwnProperty(key)) {
         // convert key from camelCase to snake_case
-        let snakeKey = key.replace(/([A-Z])/g, function($1){return "_"+$1.toLowerCase();});
+        let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
 
         // assign value to new object
         result[snakeKey] = data[key];
       }
     }
+
     return result;
   }
 };

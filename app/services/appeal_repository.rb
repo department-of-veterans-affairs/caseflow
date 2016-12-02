@@ -131,11 +131,10 @@ class AppealRepository
     # TODO(jd): Add VBMS integration here
     # VBMS.api_call_go!(claim)
 
-
     # Update VACOLS location
     # appeal.case_record.bfcurloc = '98'
     # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-      # appeal.case_record.save!
+    # appeal.case_record.save!
     # end
   end
 

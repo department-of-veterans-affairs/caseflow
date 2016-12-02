@@ -25,7 +25,6 @@ Rails.application.routes.draw do
 
     resources :establish_claims,
               path: "/establish-claim",
-              controller: "establish_claims",
               task_type: :EstablishClaim,
               only: [:index] do
       patch 'assign', on: :collection

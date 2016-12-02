@@ -18,7 +18,6 @@ class EstablishClaimsController < TasksController
 
   def establish_claim_params
     params.require(:claim).permit(:modifier, :poa, :claim_label, :poa_code,
-                                 :gulf_war, :allow_poa, :suppress_acknowledgement)
+                                  :gulf_war, :allow_poa, :suppress_acknowledgement)
   end
-
 end
