@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ApiUtil from '../../app/util/ApiUtil';
 
-describe.only('ApiUtil', () => {
+describe('ApiUtil', () => {
   context('.headers', () => {
     it('returns default headers', () => {
       let headers = ApiUtil.headers();
