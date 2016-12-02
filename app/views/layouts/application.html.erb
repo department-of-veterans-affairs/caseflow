@@ -81,9 +81,9 @@
 
             <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
               <li><a href="/help" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
-              <li><a href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
+              <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
               <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
-              
+
               <% if ApplicationController.dependencies_faked? %>
                 <li>
                   <a href="<%= url_for controller: 'dev_users', action: 'index'%>">Switch User</a>
@@ -113,7 +113,7 @@
       <a href="http://www.va.gov/ds/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>.
     </div>
     <div class="cf-push-right">
-      <a target="_blank" href="https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx">
+      <a target="_blank" href="<%= feedback_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">
         Send feedback
       </a>
     </div>

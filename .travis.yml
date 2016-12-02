@@ -8,7 +8,7 @@ branches:
       - master
 
 addons:
-  sauce_connect: true
+  sauce_connect: false
 
 # Install PhantomJS 2.0 from source binary, remove once TravisCI environment has PhantomJS 2.0 installed
 # see https://github.com/travis-ci/travis-ci/issues/3225 for more details

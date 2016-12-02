@@ -125,8 +125,22 @@ class AppealRepository
   def self.dateshift_to_utc(value)
     Time.utc(value.year, value.month, value.day, 0, 0, 0)
   end
-
   # :nocov:
+
+  # TODO(jd): Remove this rubocop exception when we
+  # start using the arguments
+  # rubocop:disable UnusedMethodArgument
+  def self.establish_claim!(claim:, appeal:)
+    # TODO(jd): Add VBMS integration here
+    # VBMS.api_call_go!(claim)
+
+    # Update VACOLS location
+    # appeal.case_record.bfcurloc = '98'
+    # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+    # appeal.case_record.save!
+    # end
+  end
+
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 

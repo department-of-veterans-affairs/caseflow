@@ -9,6 +9,9 @@ begin
       t.pattern = "spec/feature/**/*_spec.rb"
     end
   end
+
+  Rake::Task[:spec].enhance ["assets:clobber"]
+
   # rubocop:disable Lint/HandleExceptions
 rescue LoadError, NameError
 end
