@@ -37,9 +37,15 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def logo_class
-    "cf-logo-image-default"
+    return "cf-logo-image-default" unless !logo_name.nil?
+    "cf-logo-image-#{logo_name.downcase.gsub(" ", "-")}"
   end
   helper_method :logo_class
+
+  def logo_name
+    nil
+  end
+  helper_method :logo_name
 
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]

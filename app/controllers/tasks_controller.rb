@@ -99,7 +99,7 @@ class TasksController < ApplicationController
     verify_user(task.user)
   end
 
-  def logo_class
-    "cf-logo-image-dispatch"
+  def logo_name
+    "Dispatch"
   end
 end
