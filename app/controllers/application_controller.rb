@@ -102,6 +102,28 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def feedback_url
+    unless ENV["CASEFLOW_FEEDBACK_URL"]
+      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
+    end
+
+    # TODO: when we want to segment feedback subjects further,
+    # add more conditions here.
+    subject = if request.original_fullpath.include? "dispatch"
+                "Caseflow Dispatch"
+              elsif request.original_fullpath.include? "certifications"
+                "Caseflow Certification"
+              else
+                # default to just plain Caseflow.
+                "Caseflow"
+              end
+
+    param_object = { redirect: request.original_url, subject: subject }
+
+    ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
+  end
+  helper_method :feedback_url
+
   class << self
     def dependencies_faked?
       Rails.env.development? || Rails.env.test? || Rails.env.demo?
