@@ -57,6 +57,10 @@ export default class EstablishClaim extends React.Component {
       claim: ApiUtil.convertToSnakeCase(this.state)
     };
 
+    this.setState({
+      loading: true
+    });
+
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
       window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
@@ -82,12 +86,6 @@ export default class EstablishClaim extends React.Component {
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
       );
-    });
-  }
-
-  submitOnClick = (event) => {
-    this.setState({
-      loading: true
     });
   }
 
@@ -144,7 +142,7 @@ export default class EstablishClaim extends React.Component {
     } = this.state;
 
     return (
-      <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
+      <form className="cf-form" noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -233,7 +231,7 @@ export default class EstablishClaim extends React.Component {
           <Button
             name="Create End Product"
             loading={loading}
-            onClick={this.submitOnClick}
+            onClick={this.handleSubmit}
           />
         </div>
         <div className="cf-app-segment">
