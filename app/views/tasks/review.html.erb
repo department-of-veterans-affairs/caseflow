@@ -23,7 +23,7 @@ but read out by screen readers. -->
   <span class="cf-push-right">
     <a href="#send_to_ro" class="cf-btn-link cf-adjacent-buttons">Send to RO</a>
 
-    <%= link_to("Create End Product", establish_claim_path,
-          class: "usa-button usa-button-blue cf-submit cf-adjacent-buttons", method: 'get') %>
+    <%= link_to("Create End Product", { id: task.id, action: 'new' },
+          class: "usa-button usa-button-blue cf-submit cf-adjacent-buttons") %>
   </span>
 </div>

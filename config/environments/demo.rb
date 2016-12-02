@@ -76,4 +76,8 @@ Rails.application.configure do
 
   # TODO(jd): Get GA account for demo environment
   # config.google_analytics_account = "UA-74789258-1"
+  #
+  # TODO(alex): we'll set urls for feedback in UAT and prod in Jenkins.
+  # Should we also set this there?
+  ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
 end

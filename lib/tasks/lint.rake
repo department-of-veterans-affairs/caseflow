@@ -19,7 +19,7 @@ task :lint do
   end
 
   puts "\nrunning eslint..."
-  eslint_result = ShellCommand.run("npm run lint", chdir: "./client")
+  eslint_result = ShellCommand.run("npm run lint")
 
   puts "\n"
   if scss_result && rubocop_result && jshint_result && eslint_result
