@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+
+/* eslint-disable max-len */
 export default class Button extends React.Component {
   render() {
     let {
@@ -9,16 +11,15 @@ export default class Button extends React.Component {
     } = this.props;
 
     return <div className={'cf-app-segment'}>
-    {loading && 
+    {loading &&
       <div className="cf-push-right">
-        Loading 
+        Loading
         <svg
           width="30"
           height="30"
           version="1.1" xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 500 500"
           className="icon-loading-front">
-
           <path
             opacity="1"
             fill="#d6d7d9"
@@ -45,7 +46,6 @@ export default class Button extends React.Component {
           version="1.1" xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 500 500"
           className="icon-loading-back">
-
           <path
             opacity="1"
             fill="#459FD7"
@@ -68,7 +68,7 @@ export default class Button extends React.Component {
         </svg>
       </div>
     }
-    {!loading && 
+    {!loading &&
       <button type="submit" className="cf-push-right cf-submit" disabled={disabled} onClick={onClick}>
             {name}
       </button>
@@ -77,9 +77,11 @@ export default class Button extends React.Component {
   }
 }
 
+/* eslint-enable max-len */
+
 Button.propTypes = {
-  name: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
+  name: PropTypes.string.isRequired,
   onClick: PropTypes.func
 };
