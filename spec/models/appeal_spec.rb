@@ -208,10 +208,68 @@ describe Appeal do
         vbms_id: "123"
       )
     end
+
     subject { appeal.task_header }
 
     it "returns the correct string" do
       expect(subject).to eq("Crockett, Davy, Q (123)")
+    end
+  end
+
+  context "#decision" do
+    let(:decision) do
+      Document.new(
+        received_at: Time.current,
+        type: "BVA Decision"
+      )
+    end
+    let(:old_decision) do
+      Document.new(
+        received_at: Time.current - 2.days,
+        type: "BVA Decision"
+      )
+    end
+    let(:appeal) do
+      Appeal.new(
+        vbms_id: "123"
+      )
+    end
+
+    subject { appeal.decision }
+    context "returns single decision when only one decision" do
+      before do
+        appeal.documents = [decision]
+        appeal.decision_date = Time.current
+      end
+
+      it { is_expected.to eq(decision) }
+    end
+
+    context "returns single decision when only one valid" do
+      before do
+        appeal.documents = [decision, old_decision]
+        appeal.decision_date = Time.current
+      end
+
+      it { is_expected.to eq(decision) }
+    end
+
+    context "returns nil when no valid decision" do
+      before do
+        appeal.documents = [old_decision]
+        appeal.decision_date = Time.current
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "raises error when multiple decisions" do
+      before do
+        appeal.documents = [decision, decision.clone]
+        appeal.decision_date = Time.current
+      end
+
+      it { expect { appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
     end
   end
 end

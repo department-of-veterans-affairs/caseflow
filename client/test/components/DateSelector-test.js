@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
-import DateSelector from '../app/components/DateSelector';
+import { mount } from 'enzyme';
+import DateSelector from '../../app/components/DateSelector';
 
 describe('DateSelector', () => {
   context('.dateFill', () => {
@@ -10,18 +10,23 @@ describe('DateSelector', () => {
     let backspace;
 
     beforeEach(() => {
-      wrapper = mount(<DateSelector name='test'/>);
+      wrapper = mount(<DateSelector name="test"/>);
       let input = wrapper.find('input');
-      type = function(str) {
+
+      type = (str) => {
         for (let i = 0; i < str.length; i++) {
           let value = wrapper.state().value;
-          input.simulate('change', {target: {value: (value + str.charAt(i))}});
+
+          input.simulate('change', { target: { value: value + str.charAt(i) } });
         }
-      }
-      backspace = function() {
+      };
+      backspace = () => {
         let value = wrapper.state().value;
-        input.simulate('change', {target: {value: value.substr(0, value.length - 1)}});
-      }
+
+        input.simulate('change', {
+          target: { value: value.substr(0, value.length - 1) }
+        });
+      };
     });
     context('month', () => {
       it('valid', () => {
@@ -45,7 +50,7 @@ describe('DateSelector', () => {
         backspace();
         expect(wrapper.state().value).to.be.eq('0');
       });
-    })
+    });
     context('date', () => {
       it('valid', () => {
         type('12/11');
@@ -68,7 +73,7 @@ describe('DateSelector', () => {
         backspace();
         expect(wrapper.state().value).to.be.eq('09/1');
       });
-    })
+    });
     context('year', () => {
       it('valid', () => {
         type('12/11/1994');
@@ -78,6 +83,6 @@ describe('DateSelector', () => {
         type('12/01/a1b9c9d1');
         expect(wrapper.state().value).to.be.eq('12/01/1991');
       });
-    })
+    });
   });
 });
