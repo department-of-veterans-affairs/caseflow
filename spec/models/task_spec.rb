@@ -28,6 +28,24 @@ describe Task do
     end
   end
 
+  context ".oldest_first" do
+    let!(:appeal1) { Appeal.create(vacols_id: "123C") }
+    let!(:task1) { EstablishClaim.create(appeal: appeal1) }
+    let!(:appeal2) { Appeal.create(vacols_id: "456D") }
+    let!(:task2) { EstablishClaim.create(appeal: appeal2) }
+    subject { Task.oldest_first }
+    before do
+      task1.update(created_at: 10.days.ago)
+      task2.update(created_at: 1.day.ago)
+    end
+
+    it "orders correctly" do
+      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
+      expect(subject.first).to eq(task1)
+      expect(subject.last).to eq(task2)
+    end
+  end
+
   context ".unassigned" do
     let!(:appeal1) { Appeal.create(vacols_id: "123C") }
     let!(:task1) { EstablishClaim.create(appeal: appeal1) }
