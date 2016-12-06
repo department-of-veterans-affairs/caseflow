@@ -27,7 +27,7 @@ describe('Alert', () => {
       wrapper = shallow(
         <Alert type="success" title={title} message={message}/>
       );
-      expect(wrapper.find('.usa-alert').prop('role')).to.eq(undefined);
+      expect(wrapper.find('.usa-alert').prop('role')).to.not.eq('alert');
     });
   });
 });
