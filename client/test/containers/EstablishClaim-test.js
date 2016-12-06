@@ -1,13 +1,18 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import EstablishClaim from '../../app/containers/EstablishClaim';
 
 describe('EstablishClaim', () => {
   context('.render', () => {
     let wrapper;
+
     beforeEach(() => {
-      const task = {user: 'a', appeal: 'b'};
+      const task = {
+        appeal: 'b',
+        user: 'a'
+      };
+
       wrapper = mount(<EstablishClaim task={task}/>);
     });
 
