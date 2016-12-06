@@ -69,6 +69,9 @@ export default class EstablishClaim extends React.Component {
         'Error',
         'There was an error while submitting the current claim. Please try again later'
       );
+      this.setState({
+        loading: false
+      });
     });
   }
 

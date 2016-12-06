@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import {loading_symbol_html} from './RenderFunctions.jsx';
+import { loadingSymbolHtml } from './RenderFunctions.jsx';
 
 export default class Button extends React.Component {
   render() {
@@ -11,10 +11,14 @@ export default class Button extends React.Component {
     } = this.props;
 
     return <div className={'cf-app-segment'}>
-    {loading && loading_symbol_html()}
+    {loading && loadingSymbolHtml()}
     {!loading &&
-      <button type="submit" className="cf-push-right cf-submit" disabled={disabled} onClick={onClick}>
-            {name}
+      <button
+        type="submit"
+        className="cf-push-right cf-submit"
+        disabled={disabled}
+        onClick={onClick}>
+          {name}
       </button>
     }
     </div>;

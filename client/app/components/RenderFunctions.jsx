@@ -1,6 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
-export function loading_symbol_html() {
+/* eslint-disable max-len */
+
+/**
+ * @returns {string} The HTML for the loading symbol.
+ */
+export let loadingSymbolHtml = function() {
   return (
       <div className="cf-push-right">
         Loading
@@ -55,5 +60,7 @@ export function loading_symbol_html() {
           </path>
         </svg>
       </div>
-      );
-}
+  );
+};
+
+/* eslint-enable max-len */
