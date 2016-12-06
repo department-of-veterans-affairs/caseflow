@@ -95,6 +95,10 @@ class TasksController < ApplicationController
     verify_user(task.user)
   end
 
+  def logo_name
+    "Dispatch"
+  end
+
   def verify_complete
     return true if task.complete?
 
@@ -105,9 +109,5 @@ class TasksController < ApplicationController
     return true unless task.complete?
 
     redirect_to complete_establish_claim_path(task)
-  end
-
-  def logo_class
-    "cf-logo-image-dispatch"
   end
 end

@@ -70,7 +70,7 @@ class CertificationsController < ApplicationController
     params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
   end
 
-  def logo_class
-    "cf-logo-image-certification"
+  def logo_name
+    "Certification"
   end
 end

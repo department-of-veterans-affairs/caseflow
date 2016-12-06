@@ -9,12 +9,12 @@ const config = {
     'es5-shim/es5-shim',
     'es5-shim/es5-sham',
     'babel-polyfill',
-    './app/index',
+    './app/index'
   ],
 
   output: {
     filename: 'webpack-bundle.js',
-    path: '../app/assets/webpack',
+    path: '../app/assets/webpack'
   },
 
   resolve: {
@@ -28,23 +28,23 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify(nodeEnv),
-      },
-    }),
+        NODE_ENV: JSON.stringify(nodeEnv)
+      }
+    })
   ],
   module: {
     loaders: [
       {
         test: require.resolve('react'),
-        loader: 'imports?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham',
+        loader: 'imports?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
       },
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
+        exclude: /node_modules/
+      }
+    ]
+  }
 };
 
 module.exports = config;
