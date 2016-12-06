@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/department-of-veterans-affairs/caseflow.png?label=ready&title=Ready)](https://waffle.io/department-of-veterans-affairs/caseflow)
 # Caseflow Certification
 
 [![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification)
