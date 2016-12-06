@@ -6,10 +6,21 @@ class TasksController < ApplicationController
 
   class TaskTypeMissingError < StandardError; end
 
+  TASKS_PER_PAGE = 10
+
   def index
-    @completed_count = Task.completed_today.count
-    @to_complete_count = Task.to_complete.count
-    render index_template
+    respond_to do |format|
+      format.html do
+        @completed_count_total = Task.completed.count
+        @completed_count_today = Task.completed_today.count
+        @to_complete_count = Task.to_complete.count
+        render index_template
+      end
+
+      format.json do
+        render json: { completedTasks: completed_tasks.map(&:to_hash) }
+      end
+    end
   end
 
   def pdf
@@ -51,6 +62,14 @@ class TasksController < ApplicationController
     Task.where(type: type).newest_first
   end
 
+  def page
+    params[:page].to_i
+  end
+
+  def offset
+    offset = TASKS_PER_PAGE * page
+  end
+
   def type
     params[:task_type] || (task && task.type.to_sym)
   end
@@ -65,14 +84,14 @@ class TasksController < ApplicationController
   helper_method :task
 
   def completed_tasks
-    @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
+    @completed_tasks ||= Task.completed.newest_first.offset(offset).limit(TASKS_PER_PAGE)
   end
   helper_method :completed_tasks
 
-  def to_complete_tasks
-    @to_complete_tasks ||= Task.to_complete.order(created_at: :desc).limit(5)
+  def current_tasks
+    @current_tasks ||= Task.assigned_not_completed.newest_first
   end
-  helper_method :to_complete_tasks
+  helper_method :current_tasks
 
   def index_template
     prefix = manager? ? "manager" : "worker"
