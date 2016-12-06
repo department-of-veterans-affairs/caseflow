@@ -5,6 +5,13 @@
         <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
           class: "usa-button-primary", method: 'patch') %>
       </div>
+    <% else %>
+      <div class="usa-alert usa-alert-success">
+        <div class="usa-alert-body">
+          <h3 class="usa-alert-heading">Tasks complete</h3>
+          <p class="usa-alert-text">There are currently no remaining tasks. Check back later.</p>
+        </div>
+      </div>
     <% end %>
   </div>
 

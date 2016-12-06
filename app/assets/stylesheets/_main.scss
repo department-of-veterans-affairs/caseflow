@@ -45,6 +45,11 @@
   }
 }
 
+.cf-centered-buttons {
+  width: 50%;
+  margin: auto;
+}
+
 .cf-associated-header {
   color: $color-primary;
   font-size: 20px;
@@ -68,6 +73,11 @@
 
 .cf-invisible {
   display: none;
+}
+
+.cf-adjacent-buttons {
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 * + .cf-form-dropdown {

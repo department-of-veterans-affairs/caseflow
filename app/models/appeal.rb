@@ -3,6 +3,8 @@ class Appeal < ActiveRecord::Base
 
   has_many :tasks
 
+  class MultipleDecisionError < StandardError; end
+
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
@@ -29,7 +31,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= []
+    @documents || fetch_documents!
   end
 
   def veteran_name
@@ -106,12 +108,21 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
+  def decision
+    decisions = documents_with_type("BVA Decision").select do |decision|
+      (decision.received_at - decision_date).abs <= 1.day
+    end
+    fail(MultipleDecisionError) if decisions.size > 1
+    decisions.first
+  end
+
   def certify!
     Appeal.certify(self)
   end
 
   def fetch_documents!
     self.class.repository.fetch_documents_for(self)
+    @documents
   end
 
   def partial_grant?
