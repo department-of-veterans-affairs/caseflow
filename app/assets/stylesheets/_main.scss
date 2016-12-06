@@ -1,8 +1,25 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
 
-.cf-logo-image {
-  @include retina-image("caseflow-logo", 32px 32px, $asset-pipeline: true)
+.cf-logo-image-default {
+  background-image: url(asset-path('caseflow-certification-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-certification {
+  background-image: url(asset-path('caseflow-certification-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-dispatch {
+  background-image: url(asset-path('caseflow-dispatch-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
 }
 
 .cf-stats {
@@ -28,6 +45,11 @@
   }
 }
 
+.cf-centered-buttons {
+  width: 50%;
+  margin: auto;
+}
+
 .cf-associated-header {
   color: $color-primary;
   font-size: 20px;
@@ -51,6 +73,11 @@
 
 .cf-invisible {
   display: none;
+}
+
+.cf-adjacent-buttons {
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 * + .cf-form-dropdown {

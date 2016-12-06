@@ -11,6 +11,8 @@ class Certification < ActiveRecord::Base
     # refresh it with new data.
     if form8_started_at.nil? || form8.updated_at < 48.hours.ago
       form8.update_from_appeal(appeal)
+    else
+      form8.update_certification_date
     end
 
     update_attributes!(
@@ -32,12 +34,10 @@ class Certification < ActiveRecord::Base
     update_attributes!(completed_at: Time.zone.now, user_id: user_id)
   end
 
-  # TODO(jd): Consider lazy loading documents like
   # VACOLS attributes
   def appeal
     @appeal ||= begin
       appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
-      appeal.fetch_documents!
       appeal
     end
   end

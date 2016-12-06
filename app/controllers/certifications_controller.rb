@@ -4,15 +4,6 @@ class CertificationsController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
 
-  rescue_from VBMSError, with: :on_vbms_error
-
-  def on_vbms_error
-    @error_title = "VBMS Failure"
-    @error_subtitle = "Unable to communicate with the VBMS system at this time."
-    @error_retry_external_service = "VBMS"
-    render "errors/500", layout: "application", status: 500
-  end
-
   def new
     # NOTE: this isn't rails-restful. certification.start! saves
     # the certification instance.
@@ -77,5 +68,9 @@ class CertificationsController < ApplicationController
 
   def vacols_id
     params[:id] || params[:vacols_id] || params[:form8][:vacols_id]
+  end
+
+  def logo_name
+    "Certification"
   end
 end

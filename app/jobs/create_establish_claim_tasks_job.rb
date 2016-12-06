@@ -18,10 +18,14 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
   def full_grant_decided_after
     Time.zone = "Eastern Time (US & Canada)"
     current_time = Time.zone.now
-    Time.zone.local(
+
+    # Round off hours, minutes, and seconds
+    rounded_current_time = Time.zone.local(
       current_time.year,
       current_time.month,
-      current_time.day - 3
+      current_time.day
     )
+
+    rounded_current_time - 3.days
   end
 end

@@ -1,9 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import TextField from '../app/components/TextField';
+import TextField from '../../app/components/TextField';
 
-describe('test', () => {
+describe('TextField', () => {
   it('renders', () => {
     let onChange = () => {};
     const wrapper = shallow(<TextField name="foo" onChange={onChange} />);

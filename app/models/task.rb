@@ -7,6 +7,7 @@ class Task < ActiveRecord::Base
   class AlreadyAssignedError < StandardError; end
   class NotAssignedError < StandardError; end
   class AlreadyCompleteError < StandardError; end
+  class MustImplementInSubclassError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -57,6 +58,10 @@ class Task < ActiveRecord::Base
 
   def start_text
     type.titlecase
+  end
+
+  def initial_action
+    fail MustImplementInSubclassError
   end
 
   def before_assign
