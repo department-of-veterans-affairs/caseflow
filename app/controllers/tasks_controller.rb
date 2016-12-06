@@ -15,8 +15,7 @@ class TasksController < ApplicationController
   def pdf
     decision = task.appeal.decision
     return redirect_to "/404" if decision.nil?
-    decision.save_unless_exists!
-    send_file(decision.default_path, type: "application/pdf", disposition: "inline")
+    send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 
   def assign

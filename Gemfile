@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
+gem "caseflow", :path => "~/Nava/code/caseflow-commons" #git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

@@ -1,5 +1,8 @@
 
 describe Document do
+  let(:document) { Document.new(type: "NOD", document_id: "123") }
+  let(:file) { document.default_path }
+
   context "#type?" do
     subject { document.type?("NOD") }
 
@@ -44,7 +47,9 @@ describe Document do
   end
 
   context "#content" do
-    let(:document) { Document.new(type: "NOD") }
+    before do
+      S3Service.files = {}
+    end
 
     it "lazy loads document content" do
       expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
@@ -60,28 +65,39 @@ describe Document do
         expect(document.content).to eq("content!")
       end
     end
+
+    context "doesn't load document from VBMS if it's already in S3" do
+      before do
+        S3Service.files = { "123" => "content!" }
+      end
+
+      it do
+        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(0).times
+        expect(document.content).to eq("content!")
+      end
+    end
   end
 
-  context "#save!" do
-    let(:document) { Document.new(type: "NOD") }
-    let(:file) { document.default_path }
-
+  context "#serve!" do
     before do
       File.delete(file) if File.exist?(file)
+      S3Service.files = {}
     end
 
-    it "writes document" do
-      expect(File.exist?(file)).to be_falsey
-      document.save!
-      expect(File.exist?(file)).to be_truthy
+    it "writes content to document" do
+      expect(File.exist?(document.serve)).to be_truthy
+    end
+  end
+
+  context "#file_name" do
+    it "returns correct path" do
+      expect(document.file_name).to match(/123/)
     end
   end
 
   context "#default_path" do
-    let(:document) { Document.new(type: "NOD", document_id: "123") }
-
     it "returns correct path" do
-      expect(document.default_path).to match(/.*nod-123.pdf/)
+      expect(document.default_path).to match(/.*123/)
     end
   end
 end

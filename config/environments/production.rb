@@ -74,5 +74,10 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # Setup S3
+  config.s3_enabled = true
+  config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
+
+
   config.google_analytics_account = "UA-74789258-1"
 end

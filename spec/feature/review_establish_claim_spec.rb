@@ -4,11 +4,17 @@ RSpec.feature "Dispatch review" do
 
     User.authenticate!(roles: ["Establish Claim"])
 
+    @vbms_id = "VBMS_ID1"
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
-      "456D" => Fakes::AppealRepository.appeal_remand_decided
+      "456D" => Fakes::AppealRepository.appeal_remand_decided,
+      @vbms_id => { documents: [Document.new(
+        received_at: Time.current - 7.days, type: "BVA Decision",
+        document_id: "123"
+      )]
+      }
     }
-    @vbms_id = "VBMS_ID1"
+
     appeal = Appeal.create(vacols_id: "123C", vbms_id: @vbms_id)
     @task = EstablishClaim.create(appeal: appeal)
     @task.assign!(current_user)
