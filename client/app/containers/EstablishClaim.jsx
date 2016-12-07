@@ -47,6 +47,10 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleSubmit = (event) => {
+    this.setState({
+      loading: true
+    });
+
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
@@ -57,21 +61,17 @@ export default class EstablishClaim extends React.Component {
       claim: ApiUtil.convertToSnakeCase(this.state)
     };
 
-    this.setState({
-      loading: true
-    });
-
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
       window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
+      this.setState({
+        loading: false
+      });
       handleAlert(
         'error',
         'Error',
         'There was an error while submitting the current claim. Please try again later'
       );
-      this.setState({
-        loading: false
-      });
     });
   }
 
@@ -145,7 +145,7 @@ export default class EstablishClaim extends React.Component {
     } = this.state;
 
     return (
-      <form className="cf-form" noValidate>
+      <form noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
