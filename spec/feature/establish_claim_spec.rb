@@ -13,27 +13,33 @@ RSpec.feature "Dispatch" do
   context "As a manager" do
     before do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
+      @task.assign!(User.create(station_id: "123", css_id: "ABC"))
+
+      11.times do |i|
+        vacols_id = "123C-#{i}"
+        appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
+        Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
+
+        user = User.create(station_id: "123", css_id: "ABC-#{i}")
+        task = EstablishClaim.create(appeal: appeal)
+
+        task.assign!(user)
+        task.start!
+        task.complete!(0)
+      end
     end
 
-    scenario "View unassigned tasks" do
+    scenario "View landing page" do
       visit "/dispatch/establish-claim"
 
       expect(page).to have_content(@vbms_id)
-      expect(page).to have_content("Unassigned")
-    end
+      expect(page).to have_content("ABC-9")
+      expect(page).to have_content("Complete")
 
-    context "View completed tasks" do
-      before do
-        @task.assign!(User.create(station_id: "123", css_id: "ABC"))
-        @task.update(started_at: Time.now.utc, completed_at: Time.now.utc)
-      end
-
-      it do
-        visit "/dispatch/establish-claim"
-
-        expect(page).to have_content(@vbms_id)
-        expect(page).to have_content("Complete")
-      end
+      expect(page).to_not have_content("ABC-0")
+      click_on "Show More"
+      expect(page).to_not have_content("Show More")
+      expect(page).to have_content("ABC-0")
     end
   end
 

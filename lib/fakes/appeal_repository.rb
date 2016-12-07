@@ -2,7 +2,7 @@
 class Fakes::AppealRepository
   class << self
     attr_writer :documents
-    attr_writer :records
+    attr_accessor :records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
   end
 
