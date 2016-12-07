@@ -69,6 +69,7 @@ class Task < ActiveRecord::Base
   end
 
   def assign!(user)
+    print user
     before_assign
     fail(AlreadyAssignedError) if self.user
     fail(AlreadyStartedError) if started?
