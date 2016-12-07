@@ -71,6 +71,8 @@ class Task < ActiveRecord::Base
   def assign!(user)
     before_assign
     fail(AlreadyAssignedError) if self.user
+    fail(AlreadyStartedError) if started?
+    fail(AlreadyCompleteError) if complete?
 
     return if user.tasks.to_complete.where(type: type).count > 0
 
@@ -98,6 +100,8 @@ class Task < ActiveRecord::Base
 
   def start!
     fail(NotAssignedError) unless assigned?
+    fail(AlreadyStartedError) if started?
+    fail(AlreadyCompleteError) if complete?
     return if started?
 
     update!(started_at: Time.now.utc)
