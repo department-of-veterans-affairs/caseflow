@@ -1,2 +1,7 @@
 <% content_for :page_title do task.appeal.task_header end %>
-<%= react_component("BaseContainer", props: { task: task.to_hash, page: "EstablishClaim" }) %>
+<%= react_component("BaseContainer", props: { 
+  task: task.to_hash, 
+  pdf_link: pdf_establish_claim_path(id: task.id, time: Time.now.to_i), 
+  pdfjs_link: pdfjs.full_path(file: pdf_establish_claim_path(id: task.id, time: Time.now.to_i)),
+  page: "EstablishClaim" 
+}) %>

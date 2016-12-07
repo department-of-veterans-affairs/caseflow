@@ -32,7 +32,6 @@ Rails.application.routes.draw do
       post 'perform', on: :member
       get 'complete', on: :member
       get 'pdf', on: :member
-      get 'review', on: :member
       get 'new', on: :member
     end
   end
