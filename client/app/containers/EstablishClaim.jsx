@@ -71,12 +71,17 @@ export default class EstablishClaim extends React.Component {
             pdf_link={this.props.pdfjs_link} 
             pdfjs_link={this.props.pdfjs_link}
             handleCancelTask={this.handleCancelTask}
-            handlePageChange={this.handlePageChange} /> }
+            handlePageChange={this.handlePageChange}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear} /> }
+
         { this.state.page == FORM_PAGE && 
           <EstablishClaimForm 
             task={this.props.task} 
             handleCancelTask={this.handleCancelTask}
-            handlePageChange={this.handlePageChange} /> }
+            handlePageChange={this.handlePageChange}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear} /> }
       </div>
     );
   }
@@ -317,7 +322,6 @@ class EstablishClaimForm extends React.Component {
           </button>
         </div>
       </form>
-
     );   
   }
 }
