@@ -27,7 +27,28 @@ const SEGMENTED_LANE_OPTIONS = [
   'Spec Ops (National)'
 ];
 
-export default class EstablishClaim extends React.Component {
+
+class ReviewDecision extends React.Component {
+  render() {
+    return (
+      <div class="cf-app-segment cf-app-segment--alt">
+        <h2>Review Decision</h2>
+        Review the final decision from VBMS below to determine the next step.
+      </div>
+
+      // This link is here for 508 compliance, and shouldn't be visible to sighted users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat is the accessibility standard and is used across gov't, so we'll recommend it for now. The usa-sr-only class will place an element off screen without
+      // affecting its placement in tab order, thus making it invisible onscreen
+      // but read out by screen readers.
+      <a class="usa-sr-only" id="sr-download-link" href="<%= pdf_establish_claim_path(id: task.id, time: Time.now.to_i) %>" download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Decision PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
+      <a class="usa-sr-only" href="#establish-claim-buttons"> If you are using a screen reader and have downloaded and verified the Decision PDF, click this link to skip past the browser PDF viewer to the establish-claim buttons.</a>
+
+      <iframe aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."class="cf-doc-embed cf-app-segment" title="Form8 PDF"
+        src="<%= pdfjs.full_path(file: pdf_establish_claim_path(id: task.id, time: Time.now.to_i)) %>"></iframe>
+    );
+  }
+}
+
+class EstablishClaimForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -62,23 +83,6 @@ export default class EstablishClaim extends React.Component {
         'error',
         'Error',
         'There was an error while submitting the current claim. Please try again later'
-      );
-    });
-  }
-
-  handleCancelTask = () => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
-
-    handleAlertClear();
-
-    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
-      window.location.href = '/dispatch/establish-claim';
-    }, () => {
-      handleAlert(
-        'error',
-        'Error',
-        'There was an error while cancelling the current claim. Please try again later'
       );
     });
   }
@@ -133,6 +137,7 @@ export default class EstablishClaim extends React.Component {
       segmentedLane,
       suppressAcknowledgement
     } = this.state;
+
 
     return (
       <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
@@ -215,6 +220,32 @@ export default class EstablishClaim extends React.Component {
            onChange={this.handleChange}
           />
         </div>
+      </form>
+    );   
+  }
+}
+
+export default class EstablishClaim extends React.Component {
+  handleCancelTask = () => {
+    let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
+
+    handleAlertClear();
+
+    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
+      window.location.href = '/dispatch/establish-claim';
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while cancelling the current claim. Please try again later'
+      );
+    });
+  }
+
+  render() {
+    return (
+        <EstablishClaimForm />
         <div className="cf-app-segment">
           <a
            href={`/dispatch/establish-claim/${this.props.task.id}/review`}
@@ -230,7 +261,6 @@ export default class EstablishClaim extends React.Component {
             Cancel
           </button>
         </div>
-      </form>
     );
   }
 }
