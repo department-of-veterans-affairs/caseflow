@@ -7,6 +7,8 @@
 // (Partially modified because the script as written scrolled
 // undesirably)
 //
+// TODO(alex): refactor this out into caseflow-commons if & when
+// we decide we want to use it elsewhere.
 (function(){
   window.autoresize = {
     init: function() {
