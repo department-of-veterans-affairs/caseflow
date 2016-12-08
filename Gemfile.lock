@@ -1,9 +1,10 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: b743c64156efa7298ae81d945833c9f1db93a8cb
-  ref: b743c64
+  revision: 3b830af5e01894c709fdd96c62163cfa5c6d4428
+  ref: 3b830af
   specs:
     caseflow (0.1.5)
+      aws-sdk (~> 2)
       bourbon
       d3-rails
       jquery-rails
@@ -85,6 +86,14 @@ GEM
     addressable (2.4.0)
     arel (6.0.3)
     ast (2.3.0)
+    aws-sdk (2.6.34)
+      aws-sdk-resources (= 2.6.34)
+    aws-sdk-core (2.6.34)
+      aws-sigv4 (~> 1.0)
+      jmespath (~> 1.0)
+    aws-sdk-resources (2.6.34)
+      aws-sdk-core (= 2.6.34)
+    aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bourbon (4.2.7)
@@ -149,6 +158,7 @@ GEM
     jbuilder (2.5.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
+    jmespath (1.3.1)
     jquery-rails (4.1.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)

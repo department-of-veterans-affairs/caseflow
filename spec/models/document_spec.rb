@@ -1,5 +1,4 @@
-
-describe Document, focus: true do
+describe Document do
   let(:document) { Document.new(type: "NOD", document_id: "123") }
   let(:file) { document.default_path }
 
@@ -47,14 +46,9 @@ describe Document, focus: true do
   end
 
   context "content tests" do
-    before do
-      expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
-    end
-
     context "#fetch_and_cache_document_from_vbms" do
       it "loads document content" do
-        
-
+        expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
         expect(document.fetch_and_cache_document_from_vbms).to eq("content!")
       end
     end
@@ -65,12 +59,11 @@ describe Document, focus: true do
       end
 
       it "lazy fetches document content" do
-        expect(document).to receive(:fetch_and_cache_document_from_vbms).exactly(1).times
-        document.content
-        expect(document.content).to eq("content!")
+        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        document.fetch_content
+        expect(document.fetch_content).to eq("content!")
       end
     end
-
 
     context "#content" do
       before do
@@ -78,7 +71,8 @@ describe Document, focus: true do
       end
 
       it "lazy loads document content" do
-        expect(document).to receive(:fetch_content).exactly(1).times
+        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        document.content
         expect(document.content).to eq("content!")
       end
     end
