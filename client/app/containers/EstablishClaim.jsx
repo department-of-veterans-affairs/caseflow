@@ -273,7 +273,7 @@ export default class EstablishClaim extends React.Component {
         { this.state.page == FORM_PAGE && this.form() }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
-          <span className="cf-push-right">
+          <div className="cf-push-right">
             <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">Send to RO</a>
             <button 
               type="submit"
@@ -281,19 +281,19 @@ export default class EstablishClaim extends React.Component {
               onClick={this.handleCreateEndProduct}>
               Create End Product
             </button>
-          </span>
+          </div>
           { this.state.page == FORM_PAGE && 
             <div className="task-link-row">
-              <a
+              <button
                 onClick={() => {this.handlePageChange(REVIEW_PAGE)} }
                 className="cf-btn-link">
                 {'\u00AB'}Back to review
-              </a>
+              </button>
             </div>
           }
-          <a className="cf-btn-link" onClick={this.handleCancelTask}>
+          <button className="cf-btn-link" onClick={this.handleCancelTask}>
             Cancel
-          </a>
+          </button>
         </div>
       </div>
     );

@@ -1,4 +1,4 @@
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch" do
   before do
     reset_application!
     Fakes::AppealRepository.records = {
@@ -101,11 +101,11 @@ RSpec.feature "Dispatch", focus: true do
       expect(page).to have_current_path("/unauthorized")
     end
 
+    # The cancel button is the same on both the review and form pages, so one test
+    # can adequetly test both of them.
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}/new"
-      click_on "Create End Product"
-      expect(page).to have_content("Create End Product") # React works
 
       click_on "Cancel"
       expect(page).to have_current_path("/dispatch/establish-claim")
