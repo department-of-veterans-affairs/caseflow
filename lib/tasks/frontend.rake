@@ -2,7 +2,6 @@ require "rainbow"
 
 desc "Runs the frontend React mocha tests"
 task :mocha do
-  puts(ShellCommand.run("pwd"))
   mocha_result = ShellCommand.run("npm test")
 
   if mocha_result
