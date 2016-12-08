@@ -1,4 +1,4 @@
-RSpec.feature "Dispatch review" do
+RSpec.feature "Dispatch review", focus: true do
   before do
     reset_application!
 
@@ -15,14 +15,14 @@ RSpec.feature "Dispatch review" do
   end
 
   scenario "clicking \"Create End Product\" moves to the form page" do
-    visit "/dispatch/establish-claim/#{@task.id}/review"
+    visit "/dispatch/establish-claim/#{@task.id}/new"
     click_on "Create End Product"
     expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
-    expect(page).to have_content("Create End Product")
+    expect(page).to have_content("Benefit Type")
   end
 
   scenario "clicking \"Cancel\" returns to the assign" do
-    visit "/dispatch/establish-claim/#{@task.id}/review"
+    visit "/dispatch/establish-claim/#{@task.id}/new"
     click_on "Cancel"
     expect(page).to have_current_path("/dispatch/establish-claim")
     expect(@task.reload.completed_at).not_to be_nil

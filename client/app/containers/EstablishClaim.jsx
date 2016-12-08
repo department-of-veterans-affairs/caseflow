@@ -130,7 +130,7 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
-    form() {
+  form() {
     let { task } = this.props;
     let { appeal } = task;
     let {
