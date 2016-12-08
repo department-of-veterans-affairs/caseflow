@@ -56,6 +56,6 @@ describe('ApiUtil', () => {
 
     expect(req.url).to.eq('/foo');
     expect(req.qs.bar).to.eq('baz');
-    expect(req.header['Cache-Control']).to.include('no-cache')
+    expect(req.header['Cache-Control']).to.include('no-cache');
   });
 });

@@ -2,14 +2,13 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import TasksManagerIndex from '../../app/containers/TasksManagerIndex';
+import { createTask } from '../factory';
 
 
-
-describe.only('TasksManagerIndex', () => {
+describe('TasksManagerIndex', () => {
   context('.render', () => {
     let wrapper;
     let tasks;
-    let completedTasks;
     let completedCountTotal;
 
     let renderPage = () => {
@@ -22,12 +21,10 @@ describe.only('TasksManagerIndex', () => {
           toCompleteTasks={[]}
         />
       );
-    }
+    };
 
     beforeEach(() => {
-      tasks = [1,2,3,4,5].map(i => (
-        { user: 'a', appeal: 'b' }
-      ));
+      tasks = createTask(5);
     });
 
     context('See more link', () => {

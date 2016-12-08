@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
 import Table from '../../app/components/Table';
+import { createTask } from '../factory';
 
 describe('Table', () => {
   let buildRowValues;
@@ -11,13 +12,9 @@ describe('Table', () => {
   let wrapper;
 
   beforeEach(() => {
-    buildRowValues = (obj) => ['fizz', 'buzz', obj.val];
+    buildRowValues = (task) => ['fizz', 'buzz', task.type];
     headers = ['First', 'Second', 'Third'];
-    values = [
-      { id: 1, val: 'foo' },
-      { id: 2, val: 'bar' },
-      { id: 3, val: 'baz' }
-    ];
+    values = createTask(3);
   });
 
   context('renders', () => {
@@ -25,11 +22,20 @@ describe('Table', () => {
       wrapper = shallow(
         <Table headers={headers} values={values} buildRowValues={buildRowValues}/>
       );
+      let headerCount = 3;
+      let rowCount = 4;
+      let cellCount = 9;
+
       expect(wrapper.find('table')).to.have.length(1);
-      expect(wrapper.find('th')).to.have.length(3);
-      expect(wrapper.find('tr')).to.have.length(4);
-      expect(wrapper.find('td')).to.have.length(9);
-      expect(wrapper.find('td').last().text()).to.eq('baz');
+      expect(wrapper.find('th')).to.have.length(headerCount);
+      expect(wrapper.find('tr')).to.have.length(rowCount);
+      expect(wrapper.find('td')).to.have.length(cellCount);
+      expect(
+        wrapper.
+        find('td').
+        last().
+        text()
+      ).to.eq('EstablishClaim');
     });
   });
 });
