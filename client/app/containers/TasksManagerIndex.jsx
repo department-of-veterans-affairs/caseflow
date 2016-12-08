@@ -126,7 +126,7 @@ export default class TasksManagerIndex extends React.Component {
 TasksManagerIndex.propTypes = {
   completedCountToday: PropTypes.number.isRequired,
   completedCountTotal: PropTypes.number.isRequired,
-  currentTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   completedTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  currentTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   toCompleteCount: PropTypes.number.isRequired
 };

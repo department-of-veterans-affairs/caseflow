@@ -62,12 +62,10 @@ class TasksController < ApplicationController
     Task.where(type: type).newest_first
   end
 
-  def page
-    params[:page].to_i
-  end
-
   def offset
-    offset = TASKS_PER_PAGE * page
+    # When no page param exists, it will cast the nil page to zero
+    # effectively providing no offset on page initial load
+    TASKS_PER_PAGE * params[:page].to_i
   end
 
   def type
