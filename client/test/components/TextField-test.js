@@ -5,8 +5,9 @@ import TextField from '../../app/components/TextField';
 
 describe('TextField', () => {
   it('renders', () => {
-    let onChange = () => {};
+    let onChange = () => true;
     const wrapper = shallow(<TextField name="foo" onChange={onChange} />);
+
     expect(wrapper.find('input')).to.have.length(1);
   });
 });
