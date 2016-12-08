@@ -31,111 +31,7 @@ const REVIEW_PAGE = 0;
 const FORM_PAGE = 1;
 
 export default class EstablishClaim extends React.Component {
-  constructor(props) {
-    super(props);
-
-     // Set initial state on page render
-    this.state = {
-      page: REVIEW_PAGE
-    };
-  }
-
-  handlePageChange = (page) => {
-    this.setState({
-      page: page
-    });
-  }
-
-  handleCancelTask = () => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
-
-    handleAlertClear();
-
-    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
-      window.location.href = '/dispatch/establish-claim';
-    }, () => {
-      handleAlert(
-        'error',
-        'Error',
-        'There was an error while cancelling the current claim. Please try again later'
-      );
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        { this.state.page == REVIEW_PAGE && 
-          <ReviewDecision 
-            pdf_link={this.props.pdfjs_link} 
-            pdfjs_link={this.props.pdfjs_link}
-            handleCancelTask={this.handleCancelTask}
-            handlePageChange={this.handlePageChange}
-            handleAlert={this.props.handleAlert}
-            handleAlertClear={this.props.handleAlertClear} /> }
-
-        { this.state.page == FORM_PAGE && 
-          <EstablishClaimForm 
-            task={this.props.task} 
-            handleCancelTask={this.handleCancelTask}
-            handlePageChange={this.handlePageChange}
-            handleAlert={this.props.handleAlert}
-            handleAlertClear={this.props.handleAlertClear} /> }
-      </div>
-    );
-  }
-}
-
-EstablishClaim.propTypes = {
-  task: PropTypes.object.isRequired
-};
-
-
-
-class ReviewDecision extends React.Component {
-  render() {
-    return (
-      <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Review Decision</h2>
-          Review the final decision from VBMS below to determine the next step.
-        </div>
-
-        {/* This link is here for 508 compliance, and shouldn't be visible to sighted users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat is the accessibility standard and is used across gov't, so we'll recommend it for now. The usa-sr-only class will place an element off screen without
-         affecting its placement in tab order, thus making it invisible onscreen
-         but read out by screen readers. */} 
-        <a className="usa-sr-only" id="sr-download-link" href={this.props.pdf_link} download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Decision PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
-        <a className="usa-sr-only" href="#establish-claim-buttons"> If you are using a screen reader and have downloaded and verified the Decision PDF, click this link to skip past the browser PDF viewer to the establish-claim buttons.</a>
-
-        <iframe 
-          aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."
-          className="cf-doc-embed cf-app-segment"
-          title="Form8 PDF"
-          src={this.props.pdfjs_link}>
-        </iframe>
-      
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          <button type="button" className="cf-btn-link" onClick={this.props.handleCancelTask}>
-              Cancel
-            </button>
-          <span className="cf-push-right">
-            <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">Send to RO</a>
-            <button 
-              type="submit"
-              className="usa-button usa-button-blue cf-submit cf-adjacent-buttons"
-              onClick={() => {this.props.handlePageChange(FORM_PAGE)} }>
-              Create End Product
-            </button>
-          </span>
-        </div>
-      </div>
-    );
-  }
-}
-
-class EstablishClaimForm extends React.Component {
-  constructor(props) {
+    constructor(props) {
     super(props);
 
      // Set initial state on page render
@@ -147,7 +43,8 @@ class EstablishClaimForm extends React.Component {
       poa: POA[0],
       poaCode: '',
       segmentedLane: SEGMENTED_LANE_OPTIONS[0],
-      suppressAcknowledgement: false
+      suppressAcknowledgement: false,
+      page: REVIEW_PAGE
     };
   }
 
@@ -210,7 +107,30 @@ class EstablishClaimForm extends React.Component {
     return modifier;
   }
 
-  render() {
+  handlePageChange = (page) => {
+    this.setState({
+      page: page
+    });
+  }
+
+  handleCancelTask = () => {
+    let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
+
+    handleAlertClear();
+
+    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
+      window.location.href = '/dispatch/establish-claim';
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while cancelling the current claim. Please try again later'
+      );
+    });
+  }
+
+    form() {
     let { task } = this.props;
     let { appeal } = task;
     let {
@@ -226,7 +146,7 @@ class EstablishClaimForm extends React.Component {
 
 
     return (
-      <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
+      <form className="cf-form" noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -306,22 +226,80 @@ class EstablishClaimForm extends React.Component {
            onChange={this.handleChange}
           />
         </div>
-        <div className="cf-app-segment">
-          <a
-           onClick={() => {this.props.handlePageChange(REVIEW_PAGE)} }
-           className="cf-btn-link">
-            {'\u00AB'}Back to review
-          </a>
-          <button type="submit" className="cf-push-right">
-            Create End Product
-          </button>
-        </div>
-        <div className="cf-app-segment">
-          <button type="button" className="cf-btn-link" onClick={this.props.handleCancelTask}>
-            Cancel
-          </button>
-        </div>
+
       </form>
     );   
   }
+
+  review() {
+    let { pdf_link, pdfjs_link } = this.props;
+    return (
+      <div>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Review Decision</h2>
+          Review the final decision from VBMS below to determine the next step.
+        </div>
+
+        {/* This link is here for 508 compliance, and shouldn't be visible to sighted users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat is the accessibility standard and is used across gov't, so we'll recommend it for now. The usa-sr-only class will place an element off screen without
+         affecting its placement in tab order, thus making it invisible onscreen
+         but read out by screen readers. */} 
+        <a className="usa-sr-only" id="sr-download-link" href={pdf_link} download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Decision PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
+        <a className="usa-sr-only" href="#establish-claim-buttons"> If you are using a screen reader and have downloaded and verified the Decision PDF, click this link to skip past the browser PDF viewer to the establish-claim buttons.</a>
+
+        <iframe 
+          aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."
+          className="cf-doc-embed cf-app-segment"
+          title="Form8 PDF"
+          src={pdfjs_link}>
+        </iframe>
+      </div>
+    );
+  }
+
+  handleCreateEndProduct = (event) => {
+    if (this.state.page == REVIEW_PAGE) {
+      this.handlePageChange(FORM_PAGE);
+    } else if (this.state.page == FORM_PAGE) {
+      this.handleSubmit(event);
+    } else {
+      throw "Invalid page state";
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        { this.state.page == REVIEW_PAGE && this.review() }
+        { this.state.page == FORM_PAGE && this.form() }
+
+        <div className="cf-app-segment" id="establish-claim-buttons">
+          <span className="cf-push-right">
+            <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">Send to RO</a>
+            <button 
+              type="submit"
+              className="usa-button usa-button-blue cf-submit cf-adjacent-buttons"
+              onClick={this.handleCreateEndProduct}>
+              Create End Product
+            </button>
+          </span>
+          { this.state.page == FORM_PAGE && 
+            <div className="task-link-row">
+              <a
+                onClick={() => {this.handlePageChange(REVIEW_PAGE)} }
+                className="cf-btn-link">
+                {'\u00AB'}Back to review
+              </a>
+            </div>
+          }
+          <a className="cf-btn-link" onClick={this.handleCancelTask}>
+            Cancel
+          </a>
+        </div>
+      </div>
+    );
+  }
 }
+
+EstablishClaim.propTypes = {
+  task: PropTypes.object.isRequired
+};
