@@ -4,7 +4,7 @@
 // TODO alex: refactor out into caseflow-commons
 // if we decide we need this elsewhere.
 
-textarea[autoresize] {
+[autoresize] {
   display: block;
   overflow: hidden;
   resize: none;
