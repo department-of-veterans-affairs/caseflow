@@ -43,6 +43,16 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
+  def dropdown(attribute, options = {})
+    options_tags = @template.options_for_select(options[:options_for_select])
+
+    select_tag = @template.select_tag(attribute, options_tags, class: "cf-dropdown")
+
+    @template.content_tag :div, id: question_id(options) do
+      question_label(attribute, options) + error_container + select_tag
+    end
+  end
+
   private
 
   def question_id(options)
@@ -115,5 +125,9 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
   def error_container
     @template.content_tag(:span, class: "usa-input-error-message") {}
+  end
+
+  def dropdown_option(value)
+    @template.content_tag(:option, value: value, name: value)
   end
 end
