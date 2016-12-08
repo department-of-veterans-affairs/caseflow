@@ -91,6 +91,13 @@ class Form8PdfService
     FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
 
+      if attribute == :certifying_official_title && value == "Other"
+        # If the user selected "Other" instead of one of the
+        # values in the dropdown, fill the pdf field with the
+        # user-entered value.
+        value = form8[:custom_certifying_official_title]
+      end
+
       if value.is_a?(Date) || value.is_a?(Time)
         value = value.to_formatted_s(:short_date)
       end
