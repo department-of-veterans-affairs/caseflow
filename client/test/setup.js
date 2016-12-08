@@ -1,4 +1,4 @@
-var jsdom = require('jsdom').jsdom;
+let jsdom = require('jsdom').jsdom;
 
 global.document = jsdom('');
 global.window = document.defaultView;

@@ -31,6 +31,10 @@ class Task < ActiveRecord::Base
       order(created_at: :desc)
     end
 
+    def oldest_first
+      order(created_at: :asc)
+    end
+
     def completed_today
       where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
     end

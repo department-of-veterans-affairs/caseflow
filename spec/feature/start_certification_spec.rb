@@ -144,4 +144,14 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/ABCD"
     expect(page).to have_content("Appeal is not ready for certification.")
   end
+
+  scenario "Appeal is already certified" do
+    User.authenticate!
+    appeal = Fakes::AppealRepository.appeal_already_certified
+    Fakes::AppealRepository.records = { "1234" => appeal }
+
+    visit "certifications/new/1234"
+    expect(find("#page-title")).to have_content "Certification"
+    expect(page).to have_content "Appeal has already been Certified"
+  end
 end

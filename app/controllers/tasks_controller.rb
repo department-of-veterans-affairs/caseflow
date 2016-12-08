@@ -59,7 +59,7 @@ class TasksController < ApplicationController
   helper_method :next_unassigned_task
 
   def scoped_tasks
-    Task.where(type: type).newest_first
+    Task.where(type: type).oldest_first
   end
 
   def offset

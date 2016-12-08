@@ -2,7 +2,8 @@ module.exports = {
   "env": {
     "browser": true,
     "commonjs": true,
-    "es6": true
+    "es6": true,
+    "mocha": true
   },
   "extends": "eslint:recommended",
   "parser": "babel-eslint",
@@ -14,7 +15,8 @@ module.exports = {
     "sourceType": "module"
   },
   "plugins": [
-    "react"
+    "react",
+    "mocha"
   ],
   "rules": {
     "accessor-pairs": "error",
@@ -53,7 +55,6 @@ module.exports = {
     "id-length": ["error", { "exceptions": ["i", "j", "k"] }],
     "id-match": "error",
     "indent": ["error", 2],
-    "init-declarations": "error",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "jsx-quotes": "error",
@@ -73,6 +74,7 @@ module.exports = {
     "max-params": "error",
     "max-statements": "error",
     "max-statements-per-line": "error",
+    "mocha/no-exclusive-tests": "error",
     "new-cap": "error",
     "new-parens": "error",
     "newline-after-var": "error",
@@ -126,7 +128,7 @@ module.exports = {
     "no-octal-escape": "error",
     "no-param-reassign": "error",
     "no-path-concat": "error",
-    "no-plusplus": "error",
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "no-process-env": "error",
     "no-process-exit": "error",
     "no-proto": "error",
