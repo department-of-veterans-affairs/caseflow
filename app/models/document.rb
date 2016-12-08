@@ -41,15 +41,17 @@ class Document
   # Currently three levels of caching. Try to serve content
   # from memory, then look to S3 if it's not in memory, and
   # if it's not in S3 grab it from VBMS
-  def content
-    return @content unless @content.nil?
-
-    @content = S3Service.fetch_content(file_name)
-    return @content unless @content.nil?
-
+  def fetch_and_cache_document_from_vbms()
     @content = Appeal.repository.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
-    @content
+  end
+
+  def fetch_content()
+    S3Service.fetch_content(file_name) || fetch_and_cache_document_from_vbms(filename)
+  end
+
+  def content
+    @content ||= fetch_content(file_name)
   end
 
   def serve

@@ -1,5 +1,5 @@
 
-describe Document do
+describe Document, focus: true do
   let(:document) { Document.new(type: "NOD", document_id: "123") }
   let(:file) { document.default_path }
 
@@ -46,33 +46,39 @@ describe Document do
     end
   end
 
-  context "#content" do
+  context "content tests" do
     before do
-      S3Service.files = {}
-    end
-
-    it "lazy loads document content" do
       expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
-
-      expect(document.content).to eq("content!")
     end
 
-    context "doesn't load document content if it's already loaded" do
-      it do
-        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
-        # Have it fetch data
+    context "#fetch_and_cache_document_from_vbms" do
+      it "loads document content" do
+        
+
+        expect(document.fetch_and_cache_document_from_vbms).to eq("content!")
+      end
+    end
+
+    context "#fetch_content" do
+      before do
+        S3Service.files = {}
+      end
+
+      it "lazy fetches document content" do
+        expect(document).to receive(:fetch_and_cache_document_from_vbms).exactly(1).times
         document.content
         expect(document.content).to eq("content!")
       end
     end
 
-    context "doesn't load document from VBMS if it's already in S3" do
+
+    context "#content" do
       before do
-        S3Service.files = { "123" => "content!" }
+        S3Service.files = {}
       end
 
-      it do
-        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(0).times
+      it "lazy loads document content" do
+        expect(document).to receive(:fetch_content).exactly(1).times
         expect(document.content).to eq("content!")
       end
     end
@@ -97,7 +103,7 @@ describe Document do
 
   context "#default_path" do
     it "returns correct path" do
-      expect(document.default_path).to match(/.*123/)
+      expect(document.default_path).to match(/.*\/tmp\/pdfs\/.*123/)
     end
   end
 end
