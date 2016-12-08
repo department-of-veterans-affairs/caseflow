@@ -21,7 +21,8 @@
       "9A", "9B",
       "10A", "10B1", "10B2", "10C",
       "11A", "11B",
-      "132"
+      "132",
+      "17B2"
     ],
 
     requiredQuestions: {
@@ -46,7 +47,8 @@
       "15":  { message: "" },
       "16":  { message: "" },
       "17A": { message: "Please enter the name of the Certifying Official (usually your name)." },
-      "17B": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
+      "17B1": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
+      "17B2": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." }
       "17C": { message: "" }
     },
 

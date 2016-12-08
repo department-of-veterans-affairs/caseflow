@@ -134,8 +134,17 @@
     <%= f.text_field :certifying_official_name,
           question_number: "17A", label: "Name of certifying official:" %>
 
-    <%= f.text_field :certifying_official_title,
+    <%= f.dropdown :certifying_official_title,
+          options_for_select: [
+            ["Decision Review Officer", "Decision Review Officer"],
+            ["Rating Specialist","Rating Specialist"],
+            ["Veterans Service Representative", "Veterans Service Representative"],
+            ["Claims Assistant", "Claims Assistant"],
+            ["Other", "Other"]
+          ],
           question_number: "17B", label: "Title of certifying official:" %>
+
+    <%= f.text_field :custom_certifying_official_title, label: "Enter a custom title:" %>
 
     <%= f.date_field :certification_date,
           question_number: "17C", label: "Date:", readonly: true %>
