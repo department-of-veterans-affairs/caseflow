@@ -6,6 +6,7 @@ import TextField from '../components/TextField';
 import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
+import Modal from '../components/Modal';
 
 const POA = [
   'None',
@@ -230,7 +231,9 @@ export default class EstablishClaim extends React.Component {
             Cancel
           </button>
         </div>
+        <Modal />
       </form>
+
     );
   }
 }
