@@ -10,7 +10,7 @@ class EstablishClaimsController < TasksController
   def review
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user
+    task.start! if current_user == task.user && !task.started?
     render "review"
   end
 
