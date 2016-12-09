@@ -8,6 +8,7 @@ class Task < ActiveRecord::Base
   class NotAssignedError < StandardError; end
   class AlreadyCompleteError < StandardError; end
   class MustImplementInSubclassError < StandardError; end
+  class UserAlreadyHasTaskError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -56,10 +57,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def start_text
-    type.titlecase
-  end
-
   def initial_action
     fail MustImplementInSubclassError
   end
@@ -74,7 +71,8 @@ class Task < ActiveRecord::Base
     fail(AlreadyStartedError) if started?
     fail(AlreadyCompleteError) if complete?
 
-    return if user.tasks.to_complete.where(type: type).count > 0
+    # Should this be a constraint in our system?
+    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
 
     update!(
       user: user,
