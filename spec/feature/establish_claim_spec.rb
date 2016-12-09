@@ -113,15 +113,22 @@ RSpec.feature "Dispatch" do
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
     end
 
-    scenario "Return to decision on an Establish Claim task returns me decision review" do
+    scenario "Establish Claim form saves state when toggling decision" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}/new"
       click_on "Create End Product"
-      expect(page).to have_content("Create End Product") # React works
+      expect(page).to have_content("Benefit Type") # React works
+      expect(page).to_not have_content("POA Code")
+
+      select("172", from: "Modifier")
 
       click_on "\u00ABBack to review"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
       expect(page).to have_content("Review Decision")
+
+      click_on "Create End Product"
+
+      expect(find_field("Modifier").value).to eq("172")
     end
   end
 end

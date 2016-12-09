@@ -31,7 +31,7 @@ const REVIEW_PAGE = 0;
 const FORM_PAGE = 1;
 
 export default class EstablishClaim extends React.Component {
-    constructor(props) {
+  constructor(props) {
     super(props);
 
      // Set initial state on page render
@@ -40,11 +40,11 @@ export default class EstablishClaim extends React.Component {
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
       modifier: MODIFIER_OPTIONS[0],
+      page: REVIEW_PAGE,
       poa: POA[0],
       poaCode: '',
       segmentedLane: SEGMENTED_LANE_OPTIONS[0],
-      suppressAcknowledgement: false,
-      page: REVIEW_PAGE
+      suppressAcknowledgement: false
     };
   }
 
@@ -109,7 +109,7 @@ export default class EstablishClaim extends React.Component {
 
   handlePageChange = (page) => {
     this.setState({
-      page: page
+      page
     });
   }
 
@@ -228,11 +228,13 @@ export default class EstablishClaim extends React.Component {
         </div>
 
       </form>
-    );   
+    );
   }
 
   review() {
-    let { pdf_link, pdfjs_link } = this.props;
+    let { pdfLink, pdfjsLink } = this.props;
+
+
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -240,52 +242,77 @@ export default class EstablishClaim extends React.Component {
           Review the final decision from VBMS below to determine the next step.
         </div>
 
-        {/* This link is here for 508 compliance, and shouldn't be visible to sighted users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat is the accessibility standard and is used across gov't, so we'll recommend it for now. The usa-sr-only class will place an element off screen without
-         affecting its placement in tab order, thus making it invisible onscreen
-         but read out by screen readers. */} 
-        <a className="usa-sr-only" id="sr-download-link" href={pdf_link} download target="_blank">"The PDF viewer in your browser may not be accessible. Click to download the Decision PDF so you can preview it in a reader with accessibility features such as Adobe Acrobat.</a>
-        <a className="usa-sr-only" href="#establish-claim-buttons"> If you are using a screen reader and have downloaded and verified the Decision PDF, click this link to skip past the browser PDF viewer to the establish-claim buttons.</a>
+        {
 
-        <iframe 
-          aria-label="The PDF embedded here is not accessible. Please use the above link to download the PDF and view it in a PDF reader. Then use the buttons below to go back and make edits or upload and certify the document."
+        /* This link is here for 508 compliance, and shouldn't be visible to sighted
+         users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
+         is the accessibility standard and is used across gov't, so we'll recommend it
+         for now. The usa-sr-only class will place an element off screen without
+         affecting its placement in tab order, thus making it invisible onscreen
+         but read out by screen readers. */
+        }
+        <a
+          className="usa-sr-only"
+          id="sr-download-link"
+          href={pdfLink}
+          download
+          target="_blank">
+          "The PDF viewer in your browser may not be accessible. Click to download
+          the Decision PDF so you can preview it in a reader with accessibility features
+          such as Adobe Acrobat.
+        </a>
+        <a className="usa-sr-only" href="#establish-claim-buttons">
+          If you are using a screen reader and have downloaded and verified the Decision
+          PDF, click this link to skip past the browser PDF viewer to the
+          establish-claim buttons.
+        </a>
+
+        <iframe
+          aria-label="The PDF embedded here is not accessible. Please use the above
+            link to download the PDF and view it in a PDF reader. Then use the buttons
+            below to go back and make edits or upload and certify the document."
           className="cf-doc-embed cf-app-segment"
           title="Form8 PDF"
-          src={pdfjs_link}>
+          src={pdfjsLink}>
         </iframe>
       </div>
     );
   }
 
   handleCreateEndProduct = (event) => {
-    if (this.state.page == REVIEW_PAGE) {
+    if (this.state.page === REVIEW_PAGE) {
       this.handlePageChange(FORM_PAGE);
-    } else if (this.state.page == FORM_PAGE) {
+    } else if (this.state.page === FORM_PAGE) {
       this.handleSubmit(event);
     } else {
-      throw "Invalid page state";
+      throw new RangeError("Invalid page value");
     }
   }
 
   render() {
     return (
       <div>
-        { this.state.page == REVIEW_PAGE && this.review() }
-        { this.state.page == FORM_PAGE && this.form() }
+        { this.state.page === REVIEW_PAGE && this.review() }
+        { this.state.page === FORM_PAGE && this.form() }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
-            <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">Send to RO</a>
-            <button 
+            <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">
+              Send to RO
+            </a>
+            <button
               type="submit"
               className="usa-button usa-button-blue cf-submit cf-adjacent-buttons"
               onClick={this.handleCreateEndProduct}>
               Create End Product
             </button>
           </div>
-          { this.state.page == FORM_PAGE && 
+          { this.state.page === FORM_PAGE &&
             <div className="task-link-row">
               <button
-                onClick={() => {this.handlePageChange(REVIEW_PAGE)} }
+                onClick={() => {
+                  this.handlePageChange(REVIEW_PAGE);
+                } }
                 className="cf-btn-link">
                 {'\u00AB'}Back to review
               </button>
