@@ -296,10 +296,11 @@ export default class EstablishClaim extends React.Component {
   }
 
   render() {
+    let { loading, page } = this.state;
     return (
       <div>
-        { this.state.page === REVIEW_PAGE && this.review() }
-        { this.state.page === FORM_PAGE && this.form() }
+        { page === REVIEW_PAGE && this.review() }
+        { page === FORM_PAGE && this.form() }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
@@ -314,18 +315,20 @@ export default class EstablishClaim extends React.Component {
           </div>
           { this.state.page === FORM_PAGE &&
             <div className="task-link-row">
-              <button
+              <Button
+                name={"\u00ABBack to review"}
                 onClick={() => {
                   this.handlePageChange(REVIEW_PAGE);
                 } }
-                className="cf-btn-link">
-                {'\u00AB'}Back to review
-              </button>
+                linkStyle={true}
+              />
             </div>
           }
-          <button className="cf-btn-link" onClick={this.handleCancelTask}>
-            Cancel
-          </button>
+          <Button
+            name="Cancel"
+            onClick={this.handleCancelTask}
+            linkStyle={true}
+          />
         </div>
       </div>
     );
