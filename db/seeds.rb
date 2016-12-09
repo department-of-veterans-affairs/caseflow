@@ -44,22 +44,17 @@ class SeedDB
       establish_claim = EstablishClaim.create(
         appeal: @appeals[i % num_appeals]
         )
-      if i % 4 > 0
-        establish_claim.assign!(@users[i % num_users])
-      end
-
-      if i % 4 > 1
-        establish_claim.started_at = 1.day.ago
-      end
-
-      if i % 4 > 2
-        establish_claim.completed_at = 0.day.ago
-        if i % 3 == 0
-          establish_claim.completion_status = 1
-        end
-      end
-      establish_claim.save
     end
+
+    # Give each user a task in a different state
+    tasks[0].assign!(@users[0])
+
+    tasks[1].assign!(@users[1])
+    tasks[1].start!
+    
+    tasks[2].assign!(@users[2])
+    tasks[2].start!
+    tasks[2].complete!(0)
 
     @tasks.push(*tasks)
   end
@@ -79,7 +74,7 @@ class SeedDB
     clean_db
     create_default_users
     create_appeals(50)
-    create_users(2)
+    create_users(3)
     create_tasks(50)
   end
 end
