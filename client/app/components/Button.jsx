@@ -10,12 +10,12 @@ export default class Button extends React.Component {
       onClick
     } = this.props;
 
-    return <div className={'cf-app-segment'}>
+    return <div className={'cf-app-segment cf-push-right'}>
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
         type="submit"
-        className="cf-push-right cf-submit"
+        className="cf-submit"
         disabled={disabled}
         onClick={onClick}>
           {name}

@@ -90,3 +90,14 @@
   color: $color-gray-dark;
   opacity: 1 !important;
 }
+
+.cf-loading-button-text {
+  display:inline-block;
+  margin-right:10px;
+  line-height:0px;
+  position:relative; top:-9px;
+} 
+
+.cf-loading-button-symbol {
+  display:inline-block;
+} 
