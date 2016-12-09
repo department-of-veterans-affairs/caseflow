@@ -82,10 +82,9 @@ describe Task do
         expect { task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
       end
 
-      it "does nothing if user has another task" do
+      it "throws error if user has another task" do
         task.assign!(@user)
-        task_same_user.assign!(@user)
-        expect(task_same_user.assigned?).to be_falsey
+        expect { task_same_user.assign!(@user) }.to raise_error(Task::UserAlreadyHasTaskError)
       end
 
       it "raises error if object stale" do

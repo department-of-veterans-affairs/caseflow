@@ -23,11 +23,8 @@ class TasksController < ApplicationController
     # Doesn't assign if user has a task of the same type already assigned.
     next_task = current_user_next_task
     return redirect_to "/404" if next_task.nil?
-    
-    if next_task.user.nil?
-      next_task.assign!(current_user)
-    end
 
+    next_task.assign!(current_user) if next_task.user.nil?
     redirect_to url_for(action: next_task.initial_action, id: next_task.id)
   end
 
