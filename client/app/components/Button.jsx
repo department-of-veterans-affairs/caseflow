@@ -6,10 +6,10 @@ export default class Button extends React.Component {
     let {
       name,
       disabled,
+      linkStyle,
       loading,
       onClick,
-      type,
-      linkStyle
+      type
     } = this.props;
 
     return <span>
@@ -17,7 +17,7 @@ export default class Button extends React.Component {
     {!loading &&
       <button
         type={type}
-        className={"cf-submit" + (linkStyle ? " cf-btn-link" : "")}
+        className={`cf-submit${linkStyle ? " cf-btn-link" : ""}`}
         disabled={disabled}
         onClick={onClick}>
           {name}
@@ -28,15 +28,15 @@ export default class Button extends React.Component {
 }
 
 Button.defaultProps = {
-  type: 'button',
-  linkStyle: false
+  linkStyle: false,
+  type: 'button'
 };
 
 Button.propTypes = {
   disabled: PropTypes.bool,
+  linkStyle: PropTypes.bool,
   loading: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onClick: PropTypes.func,
-  type: PropTypes.string,
-  linkStyle: PropTypes.bool
+  type: PropTypes.string
 };

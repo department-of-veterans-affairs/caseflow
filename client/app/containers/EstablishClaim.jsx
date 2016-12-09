@@ -150,8 +150,7 @@ export default class EstablishClaim extends React.Component {
       poa,
       poaCode,
       segmentedLane,
-      suppressAcknowledgement,
-      loading
+      suppressAcknowledgement
     } = this.state;
 
 
@@ -250,6 +249,7 @@ export default class EstablishClaim extends React.Component {
           Review the final decision from VBMS below to determine the next step.
         </div>
         {
+
         /* This link is here for 508 compliance, and shouldn't be visible to sighted
          users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
          is the accessibility standard and is used across gov't, so we'll recommend it
@@ -297,6 +297,8 @@ export default class EstablishClaim extends React.Component {
 
   render() {
     let { loading, page } = this.state;
+
+
     return (
       <div>
         { page === REVIEW_PAGE && this.review() }
