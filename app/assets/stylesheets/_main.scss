@@ -92,15 +92,16 @@
 }
 
 .cf-loading-button-text {
-  display:inline-block;
-  margin-right:10px;
-  line-height:0px;
-  position:relative; top:-9px;
-} 
+  display: inline-block;
+  margin-right: 10px;
+  line-height: 0;
+  position: relative;
+  top: -9px;
+}
 
 .cf-loading-button-symbol {
-  display:inline-block;
-} 
+  display: inline-block;
+}
 
 .cf-button-associated-text {
   color: $color-gray;
