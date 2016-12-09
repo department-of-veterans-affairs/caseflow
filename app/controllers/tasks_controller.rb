@@ -16,7 +16,6 @@ class TasksController < ApplicationController
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user
-    render "new"
   end
 
   def pdf
