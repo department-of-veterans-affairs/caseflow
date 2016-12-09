@@ -50,7 +50,7 @@ class TasksController < ApplicationController
   helper_method :current_user_historical_tasks
 
   def next_unassigned_task
-    @next_unassigned_task ||= scoped_tasks.unassigned.first
+    @next_unassigned_task ||= scoped_tasks.unassigned.to_complete.first
   end
   helper_method :next_unassigned_task
 

@@ -9,10 +9,14 @@
   </ul>
 
   <div class="cf-centered-buttons">
-  <%= link_to('View History', establish_claims_path) %>
-  <% if next_unassigned_task %>
-    <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
-	      class: "usa-button-primary cf-push-right", method: 'patch') %>
-  <% end %>
+    <%= link_to('View History', establish_claims_path) %>
+    <% if next_unassigned_task %>
+      <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
+  	      class: "usa-button-primary cf-push-right", method: 'patch') %>
+    <% else %>
+      <button class="usa-button-disabled cf-push-right" disabled>
+        <%= next_unassigned_task.start_text %>
+      </button>
+    <% end %>
   </div>
 </div>

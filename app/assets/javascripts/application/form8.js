@@ -119,6 +119,8 @@
         state["question" + questionNumber].show = false;
       });
 
+      state.question8B1.show = true;
+
       switch (state.question8A2.value) {
       case "Agent":
         state.question8C.show = true;
@@ -129,9 +131,22 @@
         break;
       case "Other":
         state.question8A3.show = true;
+        break;
+      case "None":
+        state.question8B1.show = false;
+        state.question8B2.show = false;
+        break;
       }
 
-      state.question8B2.show = (state.question8B1.value === "Certification that valid POA is in another VA file");
+      var poaInAnotherFile = state.question8B1.value === "Certification that valid POA is in another VA file";
+      var hasRepresentative;
+      if (state.question8A2.value && state.question8A2.value !== "None") {
+        hasRepresentative = true;
+      } else {
+        hasRepresentative = false;
+      }
+
+      state.question8B2.show = poaInAnotherFile && hasRepresentative;
       state.question10B1.show = state.question10C.show = (state.question10A.value === "Yes");
       state.question10B2.show = (state.question10B1.value === "Yes");
       state.question11B.show = (state.question11A.value === "Yes");
