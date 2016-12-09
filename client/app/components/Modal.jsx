@@ -5,7 +5,7 @@ export default class Modal extends React.Component {
     return <section className="cf-modal active" id="modal_id" role="alertdialog" aria-labelledby="modal_id-title" aria-describedby="modal_id-desc">
       <div className="cf-modal-body">
         <button type="button" className="cf-modal-close cf-action-closemodal">
-          Test
+          X
         </button>
         <h1 className="cf-modal-title" id="modal_id-title">{title}</h1>
         <p className="cf-modal-text" id="text_id">

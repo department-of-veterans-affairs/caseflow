@@ -231,7 +231,10 @@ export default class EstablishClaim extends React.Component {
             Cancel
           </button>
         </div>
-        <Modal />
+        <Modal
+          title="My test modal"
+          content="This is a test modal, soon it will have real content"
+          />
       </form>
 
     );
