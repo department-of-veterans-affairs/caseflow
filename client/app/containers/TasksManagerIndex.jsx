@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import _uniqBy from 'lodash/uniqBy'
+import _uniqBy from 'lodash/uniqBy';
 
 import ApiUtil from '../util/ApiUtil';
 
@@ -12,8 +12,8 @@ export default class TasksManagerIndex extends React.Component {
     super(props);
 
     this.state = {
-      completedTasks: props.completedTasks,
       completedCountTotal: props.completedCountTotal,
+      completedTasks: props.completedTasks,
       // zero-based indexing for pages
       completedTasksPage: 0,
       isLoadingTasks: false
@@ -37,13 +37,15 @@ export default class TasksManagerIndex extends React.Component {
   // ones, checking for duplicates and removing them
   mergeCompletedTasks = (newCompletedTasks) => {
     let tasks = this.state.completedTasks.concat(newCompletedTasks);
-    return _uniqBy(tasks, (t) => t.id);
+
+
+    return _uniqBy(tasks, (task) => task.id);
   }
 
 
   fetchCompletedTasks = (event) => {
     let { handleAlert, handleAlertClear } = this.props;
-    let { completedTasks, completedCountTotal, completedTasksPage } = this.state;
+    let { completedCountTotal, completedTasksPage } = this.state;
 
     event.preventDefault();
     handleAlertClear();
@@ -59,8 +61,8 @@ export default class TasksManagerIndex extends React.Component {
     }).then((response) => {
       this.setState({
         completedTasks: this.mergeCompletedTasks(response.body.completedTasks),
-        completedTasksTotal: response.body.completedCountTotal,
         completedTasksPage: incrementedTaskPage,
+        completedTasksTotal: response.body.completedCountTotal,
         isLoadingTasks: false
       });
     }, () => {
