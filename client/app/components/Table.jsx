@@ -3,8 +3,8 @@ import React, { PropTypes } from 'react';
 /**
  * This component can be used to easily build tables.
  * There required props are:
-// - @headers {array[string]} array of strings placed in <th/> tags
-// as the table header
+ * - @headers {array[string]} array of strings placed in <th/> tags
+ * as the table header
  * - @values {array[object]} array of objects used to build the <tr/> rows
  * @buildRowValues {function} function that takes one of the `values` objects
  * and returns a new array of strings. These string values are inserted into <td/>

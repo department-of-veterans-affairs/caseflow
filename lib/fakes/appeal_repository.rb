@@ -19,7 +19,6 @@ class Fakes::AppealRepository
   end
 
   def self.certify(appeal)
-    p "certify called"
     @certified_appeal = appeal
   end
 

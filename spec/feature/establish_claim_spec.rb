@@ -39,6 +39,7 @@ RSpec.feature "Dispatch" do
       expect(page).to_not have_content("ABC-0")
       click_on "Show More"
       expect(page).to_not have_content("Show More")
+      expect(page).to have_content("ABC-9")
       expect(page).to have_content("ABC-0")
     end
   end

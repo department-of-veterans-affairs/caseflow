@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import _uniqBy from 'lodash/uniqBy'
 
 import ApiUtil from '../util/ApiUtil';
 
@@ -12,6 +13,7 @@ export default class TasksManagerIndex extends React.Component {
 
     this.state = {
       completedTasks: props.completedTasks,
+      completedCountTotal: props.completedCountTotal,
       // zero-based indexing for pages
       completedTasksPage: 0,
       isLoadingTasks: false
@@ -26,33 +28,48 @@ export default class TasksManagerIndex extends React.Component {
   ]
 
   isRemainingTasksToDownload = () => {
-    let { completedTasks } = this.state;
-    let { completedCountTotal } = this.props;
+    let { completedTasks, completedCountTotal } = this.state;
 
     return completedTasks.length < completedCountTotal;
   }
 
+  // This method takes the existing completed tasks and appends the new
+  // ones, checking for duplicates and removing them
+  mergeCompletedTasks = (newCompletedTasks) => {
+    let tasks = this.state.completedTasks.concat(newCompletedTasks);
+    return _uniqBy(tasks, (t) => t.id);
+  }
+
 
   fetchCompletedTasks = (event) => {
-    let {
-      completedTasks,
-      completedTasksPage
-    } = this.state;
+    let { handleAlert, handleAlertClear } = this.props;
+    let { completedTasks, completedCountTotal, completedTasksPage } = this.state;
 
     event.preventDefault();
+    handleAlertClear();
     this.setState({ isLoadingTasks: true });
+
     let incrementedTaskPage = completedTasksPage + 1;
 
     ApiUtil.get(`/dispatch/establish-claim`, {
-      query: { page: incrementedTaskPage }
+      query: {
+        expectedCompletedTotal: completedCountTotal,
+        page: incrementedTaskPage
+      }
     }).then((response) => {
       this.setState({
-        completedTasks: completedTasks.concat(response.body.completedTasks),
+        completedTasks: this.mergeCompletedTasks(response.body.completedTasks),
+        completedTasksTotal: response.body.completedCountTotal,
         completedTasksPage: incrementedTaskPage,
         isLoadingTasks: false
       });
     }, () => {
       this.setState({ isLoadingTasks: false });
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while loading work history. Please try again later'
+      );
     });
   }
 

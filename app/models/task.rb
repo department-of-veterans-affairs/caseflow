@@ -27,8 +27,8 @@ class Task < ActiveRecord::Base
       to_complete.where.not(assigned_at: nil)
     end
 
-    def newest_first
-      order(created_at: :desc)
+    def newest_first(column = :created_at)
+      order(column => :desc)
     end
 
     def oldest_first

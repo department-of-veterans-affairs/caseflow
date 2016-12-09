@@ -11,14 +11,16 @@ class TasksController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        @completed_count_total = Task.completed.count
         @completed_count_today = Task.completed_today.count
         @to_complete_count = Task.to_complete.count
         render index_template
       end
 
       format.json do
-        render json: { completedTasks: completed_tasks.map(&:to_hash) }
+        render json: {
+          completedTasks: completed_tasks.map(&:to_hash),
+          completedCountTotal: completed_count_total
+        }
       end
     end
   end
@@ -68,6 +70,18 @@ class TasksController < ApplicationController
     TASKS_PER_PAGE * params[:page].to_i
   end
 
+  # This is to account for tasks that have been completed since initial
+  # page load. By calculating the difference between the total completed on initial
+  # page load and at the time of clicking "Show More", we can figure out
+  # the proper offset to use to achieve the "next" 10
+  def completed_tasks_offset_diff
+    expected_total = params[:expectedCompletedTotal].to_i
+    # Return if we don't have a true expected total to diff against
+    return 0 if expected_total.zero?
+
+    completed_count_total - expected_total.to_i
+  end
+
   def type
     params[:task_type] || (task && task.type.to_sym)
   end
@@ -81,8 +95,20 @@ class TasksController < ApplicationController
   end
   helper_method :task
 
+  def completed_count_total
+    @completed_count_total ||= Task.completed.count
+  end
+  helper_method :completed_count_total
+
   def completed_tasks
-    @completed_tasks ||= Task.completed.newest_first.offset(offset).limit(TASKS_PER_PAGE)
+    @completed_tasks ||= begin
+      computed_offset = completed_tasks_offset_diff + offset
+
+      Task.completed
+          .newest_first(:completed_at)
+          .offset(computed_offset)
+          .limit(TASKS_PER_PAGE)
+    end
   end
   helper_method :completed_tasks
 
