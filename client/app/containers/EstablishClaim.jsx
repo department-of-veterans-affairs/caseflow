@@ -7,6 +7,7 @@ import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
 import Modal from '../components/Modal';
+import Button from '../components/Button';
 
 const POA = [
   'None',
@@ -37,6 +38,7 @@ export default class EstablishClaim extends React.Component {
       allowPoa: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
+      loading: false,
       modifier: MODIFIER_OPTIONS[0],
       poa: POA[0],
       poaCode: '',
@@ -46,6 +48,10 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleSubmit = (event) => {
+    this.setState({
+      loading: true
+    });
+
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
@@ -59,6 +65,9 @@ export default class EstablishClaim extends React.Component {
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
       window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
+      this.setState({
+        loading: false
+      });
       handleAlert(
         'error',
         'Error',
@@ -132,11 +141,12 @@ export default class EstablishClaim extends React.Component {
       poa,
       poaCode,
       segmentedLane,
-      suppressAcknowledgement
+      suppressAcknowledgement,
+      loading
     } = this.state;
 
     return (
-      <form className="cf-form" noValidate onSubmit={this.handleSubmit}>
+      <form noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -222,9 +232,11 @@ export default class EstablishClaim extends React.Component {
            className="cf-btn-link">
             {'\u00AB'}Back to review
           </a>
-          <button type="submit" className="cf-push-right">
-            Create End Product
-          </button>
+          <Button
+            name="Create End Product"
+            loading={loading}
+            onClick={this.handleSubmit}
+          />
         </div>
         <div className="cf-app-segment">
           <button type="button" className="cf-btn-link" onClick={this.handleCancelTask}>
