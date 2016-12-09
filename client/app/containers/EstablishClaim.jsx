@@ -36,6 +36,7 @@ export default class EstablishClaim extends React.Component {
      // Set initial state on page render
     this.state = {
       allowPoa: false,
+      cancelModal: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
       loading: false,
@@ -76,7 +77,7 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
-  handleCancelTask = () => {
+  oldHandleCancelTask = () => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
@@ -90,6 +91,18 @@ export default class EstablishClaim extends React.Component {
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
       );
+    });
+  }
+
+  handleModalClose = () => {
+    this.setState({
+      cancelModal: false
+    });
+  }
+
+  handleCancelTask = () => {
+    this.setState({
+      cancelModal: true
     });
   }
 
@@ -135,6 +148,7 @@ export default class EstablishClaim extends React.Component {
     let { appeal } = task;
     let {
       allowPoa,
+      cancelModal,
       claimLabel,
       gulfWar,
       modifier,
@@ -244,6 +258,12 @@ export default class EstablishClaim extends React.Component {
           </button>
         </div>
         <Modal
+          buttons={[
+            {name: 'Back', onClick: this.handleModalClose.bind(this)},
+            {name: 'Confirm', onClick: this.handleModalClose.bind(this)}
+            ]}
+          visible={cancelModal}
+          closeHandler={this.handleModalClose}
           title="My test modal"
           content="This is a test modal, soon it will have real content"
           />

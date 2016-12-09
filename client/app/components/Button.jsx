@@ -4,24 +4,25 @@ import { loadingSymbolHtml } from './RenderFunctions.jsx';
 export default class Button extends React.Component {
   render() {
     let {
+      classNames,
       name,
       disabled,
       loading,
       onClick
     } = this.props;
 
-    return <div className={'cf-app-segment cf-push-right'}>
+    return <span>
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
         type="submit"
-        className="cf-submit"
+        className={classNames ? classNames.join(' ') : "cf-submit"}
         disabled={disabled}
         onClick={onClick}>
           {name}
       </button>
     }
-    </div>;
+    </span>;
   }
 }
 
