@@ -6,6 +6,7 @@ import TextField from '../components/TextField';
 import DropDown from '../components/DropDown';
 import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
+import Button from '../components/Button';
 
 const POA = [
   'None',
@@ -39,6 +40,7 @@ export default class EstablishClaim extends React.Component {
       allowPoa: false,
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
+      loading: false,
       modifier: MODIFIER_OPTIONS[0],
       page: REVIEW_PAGE,
       poa: POA[0],
@@ -49,6 +51,10 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleSubmit = (event) => {
+    this.setState({
+      loading: true
+    });
+
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
@@ -62,6 +68,9 @@ export default class EstablishClaim extends React.Component {
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
       window.location.href = `/dispatch/establish-claim/${id}/complete`;
     }, () => {
+      this.setState({
+        loading: false
+      });
       handleAlert(
         'error',
         'Error',
@@ -141,12 +150,13 @@ export default class EstablishClaim extends React.Component {
       poa,
       poaCode,
       segmentedLane,
-      suppressAcknowledgement
+      suppressAcknowledgement,
+      loading
     } = this.state;
 
 
     return (
-      <form className="cf-form" noValidate>
+      <form noValidate>
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
           <TextField
@@ -226,7 +236,6 @@ export default class EstablishClaim extends React.Component {
            onChange={this.handleChange}
           />
         </div>
-
       </form>
     );
   }
@@ -234,16 +243,13 @@ export default class EstablishClaim extends React.Component {
   review() {
     let { pdfLink, pdfjsLink } = this.props;
 
-
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Review Decision</h2>
           Review the final decision from VBMS below to determine the next step.
         </div>
-
         {
-
         /* This link is here for 508 compliance, and shouldn't be visible to sighted
          users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
          is the accessibility standard and is used across gov't, so we'll recommend it
@@ -300,12 +306,11 @@ export default class EstablishClaim extends React.Component {
             <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">
               Send to RO
             </a>
-            <button
-              type="submit"
-              className="usa-button usa-button-blue cf-submit cf-adjacent-buttons"
-              onClick={this.handleCreateEndProduct}>
-              Create End Product
-            </button>
+            <Button
+              name="Create End Product"
+              loading={loading}
+              onClick={this.handleCreateEndProduct}
+            />
           </div>
           { this.state.page === FORM_PAGE &&
             <div className="task-link-row">
