@@ -97,12 +97,12 @@ Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
 
 def create_tasks(count, opts = {})
-  count.times.map do |i|
-    vacols_id = "#{opts[:id_prefix] || "ABC"}-#{i}"
+  Array.new(count) do |i|
+    vacols_id = "#{opts[:id_prefix] || 'ABC'}-#{i}"
     appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
     Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
 
-    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || "ABC"}-#{i}")
+    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}")
     task = EstablishClaim.create(appeal: appeal)
     task.assign!(user)
 
