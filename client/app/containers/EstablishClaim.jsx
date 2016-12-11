@@ -285,32 +285,33 @@ export default class EstablishClaim extends React.Component {
     );
   }
 
+
+  isReviewPage() {
+    return this.state.page === REVIEW_PAGE;
+  }
+
+  isFormPage() {
+    return this.state.page === FORM_PAGE;
+  }
+
   handleCreateEndProduct = (event) => {
-    if (isReviewPage()) {
+    if (this.isReviewPage()) {
       this.handlePageChange(FORM_PAGE);
-    } else if (isFormPage()) {
+    } else if (this.isFormPage()) {
       this.handleSubmit(event);
     } else {
       throw new RangeError("Invalid page value");
     }
   }
 
-  isReviewPage = () => {
-    return this.state.page === REVIEW_PAGE;
-  }
-
-  isFormPage = () => {
-    return this.state.page === FORM_PAGE;
-  }
-
   render() {
-    let { loading, page } = this.state;
+    let { loading } = this.state;
 
 
     return (
       <div>
-        { isReviewPage() && this.review() }
-        { isFormPage() && this.form() }
+        { this.isReviewPage() && this.review() }
+        { this.isFormPage() && this.form() }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
@@ -323,7 +324,7 @@ export default class EstablishClaim extends React.Component {
               onClick={this.handleCreateEndProduct}
             />
           </div>
-          { isFormPage() &&
+          { this.isFormPage() &&
             <div className="task-link-row">
               <Button
                 name={"\u00ABBack to review"}
