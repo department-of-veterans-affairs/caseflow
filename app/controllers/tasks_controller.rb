@@ -34,10 +34,11 @@ class TasksController < ApplicationController
 
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
-    next_unassigned_task.assign!(current_user)
-    assigned_task = current_user.tasks.to_complete.where(type: next_unassigned_task.type).first
+    next_task = current_user_next_task
+    return not_found unless next_task
 
-    redirect_to url_for(action: assigned_task.initial_action, id: assigned_task.id)
+    next_task.assign!(current_user) unless next_task.assigned?
+    redirect_to url_for(action: next_task.initial_action, id: next_task.id)
   end
 
   def cancel
@@ -59,6 +60,14 @@ class TasksController < ApplicationController
     @next_unassigned_task ||= scoped_tasks.unassigned.to_complete.first
   end
   helper_method :next_unassigned_task
+
+  # This method returns the next task this user should work on. Either,
+  # a previously assigned task that was never completed, or a new
+  # unassigned task.
+  def current_user_next_task
+    current_user.tasks.to_complete.where(type: type).first || next_unassigned_task
+  end
+  helper_method :current_user_next_task
 
   def scoped_tasks
     Task.where(type: type).oldest_first
@@ -85,6 +94,11 @@ class TasksController < ApplicationController
   def type
     params[:task_type] || (task && task.type.to_sym)
   end
+
+  def start_text
+    type.to_s.titlecase
+  end
+  helper_method :start_text
 
   def task_id
     params[:id]

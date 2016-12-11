@@ -63,13 +63,13 @@ RSpec.feature "Dispatch" do
     scenario "View my history of completed tasks" do
       visit "/dispatch/establish-claim"
 
-      expect(page).to have_content(@completed_task.start_text)
+      expect(page).to have_content("Establish Next Claim")
       expect(page).to have_css("tr#task-#{@completed_task.id}")
     end
 
     scenario "Establish a new claim" do
       visit "/dispatch/establish-claim"
-      click_on @task.start_text
+      click_on "Establish Next Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
       expect(page).to have_content("Review Decision")
@@ -122,6 +122,23 @@ RSpec.feature "Dispatch" do
 
       click_on "\u00ABBack to review"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+    end
+
+    scenario "Establish a new claim before finishing the first" do
+      visit "/dispatch/establish-claim"
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+
+      visit "/dispatch/establish-claim"
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+    end
+
+    scenario "No claims left to establish disables button" do
+      @task.complete!(0)
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("No claims to establish right now")
+      expect(page).to have_css(".usa-button-disabled")
     end
   end
 end
