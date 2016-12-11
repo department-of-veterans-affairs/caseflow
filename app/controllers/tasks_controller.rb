@@ -24,7 +24,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign!(current_user) unless next_task.assgined?
+    next_task.assign!(current_user) unless next_task.assigned?
     redirect_to url_for(action: next_task.initial_action, id: next_task.id)
   end
 
@@ -49,7 +49,7 @@ class TasksController < ApplicationController
   helper_method :next_unassigned_task
 
   # This method returns the next task this user should work on. Either,
-  # a previously assigned task that was never completed, or a new 
+  # a previously assigned task that was never completed, or a new
   # unassigned task.
   def current_user_next_task
     current_user.tasks.to_complete.where(type: type).first || next_unassigned_task
