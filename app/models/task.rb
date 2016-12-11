@@ -28,8 +28,8 @@ class Task < ActiveRecord::Base
       to_complete.where.not(assigned_at: nil)
     end
 
-    def newest_first
-      order(created_at: :desc)
+    def newest_first(column = :created_at)
+      order(column => :desc)
     end
 
     def oldest_first
@@ -154,6 +154,9 @@ class Task < ActiveRecord::Base
   end
 
   def to_hash
-    serializable_hash(include: [:user, appeal: { methods: [:decision_date] }])
+    serializable_hash(
+      include: [:user, appeal: { methods: [:decision_date, :veteran_name] }],
+      methods: [:progress_status]
+    )
   end
 end

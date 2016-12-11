@@ -50,4 +50,12 @@ describe('ApiUtil', () => {
       expect(result.second_key).to.eq('val2');
     });
   });
+
+  context('.get', () => {
+    let req = ApiUtil.get('/foo', { query: { bar: 'baz' } });
+
+    expect(req.url).to.eq('/foo');
+    expect(req.qs.bar).to.eq('baz');
+    expect(req.header['Cache-Control']).to.include('no-cache');
+  });
 });
