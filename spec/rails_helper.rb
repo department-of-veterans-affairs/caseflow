@@ -96,6 +96,21 @@ end
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
 
+def create_tasks(count, opts = {})
+  Array.new(count) do |i|
+    vacols_id = "#{opts[:id_prefix] || 'ABC'}-#{i}"
+    appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
+    Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
+
+    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}")
+    task = EstablishClaim.create(appeal: appeal)
+    task.assign!(user)
+
+    task.start! if %i(started completed).include?(opts[:initial_state])
+    task.complete!(0) if %i(completed).include?(opts[:initial_state])
+  end
+end
+
 RSpec.configure do |config|
   # This checks whether compiled webpack assets already exist
   # If it does, it will not execute ReactOnRails, since that slows down tests

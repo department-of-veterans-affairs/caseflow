@@ -22,27 +22,30 @@ RSpec.feature "Dispatch" do
   context "As a manager" do
     before do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
+      @task.assign!(User.create(station_id: "123", css_id: "ABC"))
+
+      create_tasks(20, initial_state: :completed)
     end
 
-    scenario "View unassigned tasks" do
+    scenario "View landing page" do
       visit "/dispatch/establish-claim"
 
+      # Complete another task while the page is loaded. Verify we do not have it
+      # added on "Show More" click
+      create_tasks(1, initial_stae: :completed, id_prefix: "ZZZ")
+
       expect(page).to have_content(@vbms_id)
-      expect(page).to have_content("Unassigned")
-    end
+      expect(page).to have_content("ABC-19")
+      expect(page).to have_content("Complete")
+      expect(page).to_not have_content("ABC-9")
+      click_on "Show More"
 
-    context "View completed tasks" do
-      before do
-        @task.assign!(User.create(station_id: "123", css_id: "ABC"))
-        @task.update(started_at: Time.now.utc, completed_at: Time.now.utc)
-      end
+      expect(page).to_not have_content("Show More")
+      expect(page).to have_content("ABC-9")
 
-      it do
-        visit "/dispatch/establish-claim"
-
-        expect(page).to have_content(@vbms_id)
-        expect(page).to have_content("Complete")
-      end
+      # Verify we got a whole 10 more completed tasks
+      expect(page).to have_content("ABC-0")
+      expect(page).to_not have_content("ZZZ-0")
     end
   end
 
@@ -69,13 +72,13 @@ RSpec.feature "Dispatch" do
     scenario "View my history of completed tasks" do
       visit "/dispatch/establish-claim"
 
-      expect(page).to have_content(@completed_task.start_text)
+      expect(page).to have_content("Establish Next Claim")
       expect(page).to have_css("tr#task-#{@completed_task.id}")
     end
 
     scenario "Establish a new claim" do
       visit "/dispatch/establish-claim"
-      click_on @task.start_text
+      click_on "Establish Next Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
       expect(page).to have_content("Review Decision")
@@ -128,6 +131,23 @@ RSpec.feature "Dispatch" do
 
       click_on "\u00ABBack to review"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+    end
+
+    scenario "Establish a new claim before finishing the first" do
+      visit "/dispatch/establish-claim"
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+
+      visit "/dispatch/establish-claim"
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+    end
+
+    scenario "No claims left to establish disables button" do
+      @task.complete!(0)
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("No claims to establish right now")
+      expect(page).to have_css(".usa-button-disabled")
     end
   end
 end
