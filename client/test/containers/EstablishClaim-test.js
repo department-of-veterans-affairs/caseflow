@@ -14,6 +14,9 @@ describe('EstablishClaim', () => {
       };
 
       wrapper = mount(<EstablishClaim task={task}/>);
+
+      // Force component to Form page
+      wrapper.setState({ page: 1 });
     });
 
     context('when POA is None', () => {
