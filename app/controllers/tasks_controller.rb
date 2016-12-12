@@ -6,10 +6,29 @@ class TasksController < ApplicationController
 
   class TaskTypeMissingError < StandardError; end
 
+  TASKS_PER_PAGE = 10
+
   def index
-    @completed_count = Task.completed_today.count
-    @to_complete_count = Task.to_complete.count
-    render index_template
+    respond_to do |format|
+      format.html do
+        @completed_count_today = Task.completed_today.count
+        @to_complete_count = Task.to_complete.count
+        render index_template
+      end
+
+      format.json do
+        render json: {
+          completedTasks: completed_tasks.map(&:to_hash),
+          completedCountTotal: completed_count_total
+        }
+      end
+    end
+  end
+
+  def new
+    # Future safeguard for when we give managers a show view
+    # for a given task
+    task.start! if current_user == task.user && !task.started?
   end
 
   def pdf
@@ -21,10 +40,11 @@ class TasksController < ApplicationController
 
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
-    next_unassigned_task.assign!(current_user)
-    assigned_task = current_user.tasks.to_complete.where(type: next_unassigned_task.type).first
+    next_task = current_user_next_task
+    return not_found unless next_task
 
-    redirect_to url_for(action: assigned_task.initial_action, id: assigned_task.id)
+    next_task.assign!(current_user) unless next_task.assigned?
+    redirect_to url_for(action: next_task.initial_action, id: next_task.id)
   end
 
   def cancel
@@ -44,13 +64,44 @@ class TasksController < ApplicationController
   end
   helper_method :next_unassigned_task
 
+  # This method returns the next task this user should work on. Either,
+  # a previously assigned task that was never completed, or a new
+  # unassigned task.
+  def current_user_next_task
+    current_user.tasks.to_complete.where(type: type).first || next_unassigned_task
+  end
+  helper_method :current_user_next_task
+
   def scoped_tasks
     Task.where(type: type).oldest_first
+  end
+
+  def offset
+    # When no page param exists, it will cast the nil page to zero
+    # effectively providing no offset on page initial load
+    TASKS_PER_PAGE * params[:page].to_i
+  end
+
+  # This is to account for tasks that have been completed since initial
+  # page load. By calculating the difference between the total completed on initial
+  # page load and at the time of clicking "Show More", we can figure out
+  # the proper offset to use to achieve the "next" 10
+  def completed_tasks_offset_diff
+    expected_total = params[:expectedCompletedTotal].to_i
+    # Return if we don't have a true expected total to diff against
+    return 0 if expected_total.zero?
+
+    completed_count_total - expected_total.to_i
   end
 
   def type
     params[:task_type] || (task && task.type.to_sym)
   end
+
+  def start_text
+    type.to_s.titlecase
+  end
+  helper_method :start_text
 
   def task_id
     params[:id]
@@ -61,15 +112,27 @@ class TasksController < ApplicationController
   end
   helper_method :task
 
+  def completed_count_total
+    @completed_count_total ||= Task.completed.count
+  end
+  helper_method :completed_count_total
+
   def completed_tasks
-    @completed_tasks ||= Task.where.not(completed_at: nil).order(created_at: :desc).limit(5)
+    @completed_tasks ||= begin
+      computed_offset = completed_tasks_offset_diff + offset
+
+      Task.completed
+          .newest_first(:completed_at)
+          .offset(computed_offset)
+          .limit(TASKS_PER_PAGE)
+    end
   end
   helper_method :completed_tasks
 
-  def to_complete_tasks
-    @to_complete_tasks ||= Task.to_complete.order(created_at: :desc).limit(5)
+  def current_tasks
+    @current_tasks ||= Task.assigned_not_completed.newest_first
   end
-  helper_method :to_complete_tasks
+  helper_method :current_tasks
 
   def index_template
     prefix = manager? ? "manager" : "worker"

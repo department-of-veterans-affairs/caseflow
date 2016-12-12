@@ -1,14 +1,14 @@
 <div class="cf-app-segment cf-app-segment--alt usa-grid">
   <div class="usa-width-one-whole task-start-wrapper">
-    <% if next_unassigned_task %>
-      <%= link_to(next_unassigned_task.start_text, assign_establish_claims_path,
+    <% if current_user_next_task %>
+      <%= link_to(start_text, assign_establish_claims_path,
         class: "usa-button-primary", method: 'patch') %>
       <span class="cf-button-associated-text">
         <%= @to_complete_count %> claims left
       </span>
     <% else %>
       <button class="usa-button-disabled" disabled>
-        <%= next_unassigned_task.start_text %>
+        <%= start_text %>
       </button>
       <span class="cf-button-associated-text">
         No claims to establish right now

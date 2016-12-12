@@ -5,10 +5,12 @@ import Alert from '../components/Alert';
 
 // container components
 import EstablishClaim from './EstablishClaim';
+import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 
 const Pages = {
   EstablishClaim,
+  TasksManagerIndex,
   TestPage
 };
 

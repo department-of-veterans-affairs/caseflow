@@ -7,7 +7,7 @@ import React from 'react';
  */
 export let loadingSymbolHtml = function() {
   return (
-      <div>
+      <span>
         <div className="cf-loading-button-text">
           Loading
         </div>
@@ -63,7 +63,7 @@ export let loadingSymbolHtml = function() {
             </path>
           </svg>
         </div>
-      </div>
+      </span>
   );
 };
 
