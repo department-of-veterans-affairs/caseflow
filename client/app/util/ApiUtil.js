@@ -22,6 +22,14 @@ const ApiUtil = {
     return result;
   },
 
+  get(url, options = {}) {
+    return request.
+      get(url).
+      set(this.headers(options.headers)).
+      query(options.query).
+      use(nocache);
+  },
+
   // Default headers needed to talk with rails server.
   // Including rail's authenticity token
   headers(options = {}) {

@@ -7,6 +7,10 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def start_text
+    "Establish Next Claim"
+  end
+
   private
 
   def establish_claim_params
