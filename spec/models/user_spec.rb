@@ -133,12 +133,14 @@ describe User do
       before do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
+        session["user"]["name"] = "Anne Merica"
       end
 
       it do
         is_expected.to be_an_instance_of(User)
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
+        expect(subject.full_name).to eq("Anne Merica")
       end
 
       it "persists user to DB" do
