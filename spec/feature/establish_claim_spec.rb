@@ -137,11 +137,11 @@ RSpec.feature "Dispatch" do
     scenario "Establish a new claim before finishing the first" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
 
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
     end
 
     scenario "No claims left to establish disables button" do
