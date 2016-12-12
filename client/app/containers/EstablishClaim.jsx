@@ -271,12 +271,12 @@ export default class EstablishClaim extends React.Component {
             Cancel
           </button>
         </div>
-        <Modal
+        {cancelModal && <Modal
           buttons={[
             {name: '\u00AB Go Back', onClick: this.handleModalClose, classNames: ["cf-btn-link"]},
             {name: 'Cancel EP Establishment', onClick: this.handleFinishCancelTask, classNames: ["usa-button", "usa-button-secondary"]}
             ]}
-          visible={cancelModal}
+          visible={true}
           closeHandler={this.handleModalClose}
           title="Cancel EP Establishment">
             <p>
@@ -292,7 +292,7 @@ export default class EstablishClaim extends React.Component {
               onChange={this.handleCancelFeedbackChange}
               value={cancelFeedback}
             />
-          </Modal>
+          </Modal>}
       </form>
 
     );

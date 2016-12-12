@@ -117,3 +117,8 @@
   width: 100%;
   max-width: 100%;
 }
+
+.cf-modal-body {
+  max-height: 100%;
+  overflow-y: auto;
+}
