@@ -81,11 +81,9 @@ end
 User.prepend(StubbableUser)
 
 def reset_application!
-  Task.delete_all
-  Appeal.delete_all
   User.clear_stub!
+  # database cleaner is set up to ignore users table so clean users here
   User.delete_all
-  Certification.delete_all
   Fakes::AppealRepository.records = nil
 end
 

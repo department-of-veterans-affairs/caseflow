@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.feature "Confirm Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-
-    Certification.delete_all
     User.authenticate!
     Form8.pdf_service = FakePdfService
 
@@ -39,13 +37,13 @@ RSpec.feature "Confirm Certification" do
 
   scenario "Successful confirmation" do
     visit "certifications/5555C"
-    expect(page).to have_content("Review Form 8")
     click_on "Upload and certify"
 
     expect(Fakes::AppealRepository.certified_appeal).to_not be_nil
     expect(Fakes::AppealRepository.certified_appeal.vacols_id).to eq("5555C")
     expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
     expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
+
     expect(page).to have_content("Congratulations! The case has been certified.")
 
     certification = Certification.find_or_create_by_vacols_id("5555C")
