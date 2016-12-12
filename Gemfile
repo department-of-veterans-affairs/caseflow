@@ -60,6 +60,9 @@ gem 'redis-rails'
 gem 'sidekiq'
 gem "sidekiq-cron", "~> 0.4.0"
 
+# remove when upgrading to rails 5
+gem 'where-or'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -90,6 +93,8 @@ group :development, :test do
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
+  # to save and open specific page in capybara tests
+  gem 'launchy'
 end
 
 group :development do
