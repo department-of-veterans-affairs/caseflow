@@ -102,7 +102,7 @@ def create_tasks(count, opts = {})
     appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
     Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
 
-    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}")
+    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}", full_name: "Jane Smith")
     task = EstablishClaim.create(appeal: appeal)
     task.assign!(user)
 
