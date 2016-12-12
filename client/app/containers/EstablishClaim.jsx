@@ -259,8 +259,8 @@ export default class EstablishClaim extends React.Component {
         </div>
         <Modal
           buttons={[
-            {name: 'Back', onClick: this.handleModalClose.bind(this)},
-            {name: 'Confirm', onClick: this.handleModalClose.bind(this)}
+            {name: 'Back', onClick: this.handleModalClose},
+            {name: 'Confirm', onClick: this.handleModalClose}
             ]}
           visible={cancelModal}
           closeHandler={this.handleModalClose}

@@ -15,7 +15,7 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
-        type="submit"
+        type="button"
         className={classNames ? classNames.join(' ') : "cf-submit"}
         disabled={disabled}
         onClick={onClick}>

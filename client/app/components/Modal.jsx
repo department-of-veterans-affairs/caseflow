@@ -22,14 +22,27 @@ export default class Modal extends React.Component {
           {content}
         </p>
         <div className="cf-push-row cf-modal-controls">
-          {buttons.map((object, i) =>
-            <Button
-              name={object.name}
-              onClick={object.onClick}
-              classNames={object.classNames}
-              key={i}
-            />
-          )}
+          <table>
+            <tbody>
+              <tr>
+                {buttons.map((object, i) => {
+                  let classNames = ["cf-button-array-buttons"];
+                  if (object.classNames !== undefined) {
+                    classNames = [...object.classNames, ...classNames];
+                  }
+                  
+                  return (<td className="cf-button-array-table-cell" key={i}>
+                    <Button
+                      name={object.name}
+                      onClick={object.onClick}
+                      classNames={["cf-button-array-buttons"]}
+                      key={i}
+                    />
+                  </td>)
+                })}
+              </tr>
+            </tbody>
+          </table>
           {
           // <button type="button" className="usa-button-outline cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">Go back</button>
           // <a href="#" className="cf-push-right usa-button usa-button-secondary">Yes, I'm sure</a>
