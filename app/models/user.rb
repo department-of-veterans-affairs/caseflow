@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
         u.full_name = user["name"]
         u.roles = user["roles"]
         u.regional_office = session[:regional_office]
+        u.save
       end
     end
 
