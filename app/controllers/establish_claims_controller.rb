@@ -11,6 +11,14 @@ class EstablishClaimsController < TasksController
     "Establish Next Claim"
   end
 
+  def logo_name
+    "Dispatch"
+  end
+
+  def logo_path
+    establish_claims_path
+  end
+
   private
 
   def establish_claim_params

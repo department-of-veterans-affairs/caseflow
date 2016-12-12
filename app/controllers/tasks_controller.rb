@@ -25,10 +25,12 @@ class TasksController < ApplicationController
     end
   end
 
-  def new
+  def show
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user && !task.started?
+
+    render "complete" if task.complete?
   end
 
   def pdf
