@@ -107,7 +107,13 @@
   color: $color-gray;
 }
 
-.cf-button-array-table-cell{
-  border: 0px none black;
-  text-align: center;
+.cf-modal-normal-text {
+  margin: auto;
+  width: 70%;
+  text-align: left;
+}
+
+.cf-form-textarea--full-width {
+  width: 100%;
+  max-width: 100%;
 }

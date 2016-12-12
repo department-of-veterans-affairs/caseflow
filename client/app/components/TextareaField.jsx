@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 export default class TextareaField extends React.Component {
   render() {
     let {
+      characterCount,
+      className,
       label,
       name,
       onChange,
@@ -9,7 +11,7 @@ export default class TextareaField extends React.Component {
       value
     } = this.props;
 
-    return <div className="cf-form-textarea">
+    return <div className="cf-form-textarea cf-form-textarea--full-width">
       <label className="question-label" htmlFor={name}>{label || name}</label>
       <textarea
         className="cf-form-textarea"
@@ -19,12 +21,15 @@ export default class TextareaField extends React.Component {
         type={type}
         value={value}
       />
-      <p>Character Count: {value.length}</p>
+      {characterCount &&
+        <p>Character Count: {value.length}</p>
+      }
     </div>;
   }
 }
 
 TextareaField.propTypes = {
+  characterCount: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,

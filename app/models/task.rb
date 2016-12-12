@@ -83,8 +83,11 @@ class Task < ActiveRecord::Base
     self
   end
 
-  def cancel!
-    complete_and_recreate!(:cancelled)
+  def cancel!(feedback = nil)
+    transaction do
+      update!(cancel_reason: feedback)
+      complete_and_recreate!(:cancelled)
+    end
   end
 
   def expire!

@@ -8,7 +8,7 @@ import Checkbox from '../components/Checkbox';
 import DateSelector from '../components/DateSelector';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
-
+import TextareaField from '../components/TextareaField'
 const POA = [
   'None',
   'VSO',
@@ -37,6 +37,7 @@ export default class EstablishClaim extends React.Component {
     this.state = {
       allowPoa: false,
       cancelModal: false,
+      cancelFeedback: '',
       claimLabel: CLAIM_LABEL_OPTIONS[0],
       gulfWar: false,
       loading: false,
@@ -77,13 +78,15 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
-  oldHandleCancelTask = () => {
+  handleFinishCancelTask = () => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
-
+    let data = { 
+      feedback: this.state.cancelFeedback
+    };
     handleAlertClear();
 
-    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
+    return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
       window.location.href = '/dispatch/establish-claim';
     }, () => {
       handleAlert(
@@ -91,6 +94,9 @@ export default class EstablishClaim extends React.Component {
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
       );
+      this.setState({
+        cancelModal: false
+      });
     });
   }
 
@@ -129,6 +135,13 @@ export default class EstablishClaim extends React.Component {
     return this.state.poa === 'VSO' || this.state.poa === 'Private';
   }
 
+  handleCancelFeedbackChange = (event) => {
+    console.log(event);
+    this.setState({
+      cancelFeedback: event.target.value
+    });
+  }
+
   // TODO (mdbenjam): This is not being used right now, remove if
   // we decide this is not how we want the modifier to work.
   static getModifier(claim) {
@@ -149,6 +162,7 @@ export default class EstablishClaim extends React.Component {
     let {
       allowPoa,
       cancelModal,
+      cancelFeedback,
       claimLabel,
       gulfWar,
       modifier,
@@ -259,14 +273,26 @@ export default class EstablishClaim extends React.Component {
         </div>
         <Modal
           buttons={[
-            {name: 'Back', onClick: this.handleModalClose},
-            {name: 'Confirm', onClick: this.handleModalClose}
+            {name: '\u00AB Go Back', onClick: this.handleModalClose, classNames: ["cf-btn-link"]},
+            {name: 'Cancel EP Establishment', onClick: this.handleFinishCancelTask, classNames: ["usa-button", "usa-button-secondary"]}
             ]}
           visible={cancelModal}
           closeHandler={this.handleModalClose}
-          title="My test modal"
-          content="This is a test modal, soon it will have real content"
-          />
+          title="Cancel EP Establishment">
+            <p>
+              If you click the <b>Cancel EP Establishment</b> button below your work will not be
+              saved and the EP for this claim will not be established.
+            </p>
+            <p>
+              Please tell why you are canceling this claim.
+            </p>
+            <TextareaField
+              label="Cancel Explanation"
+              name="Explanation"
+              onChange={this.handleCancelFeedbackChange}
+              value={cancelFeedback}
+            />
+          </Modal>
       </form>
 
     );

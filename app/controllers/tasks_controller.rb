@@ -28,11 +28,8 @@ class TasksController < ApplicationController
   end
 
   def cancel
-    task.cancel!
-    respond_to do |format|
-      format.html { redirect_to(establish_claims_url) }
-      format.json { render json: {} }
-    end
+    task.cancel!(cancel_feedback)
+    render json: {}
   end
 
   private
@@ -109,5 +106,9 @@ class TasksController < ApplicationController
     return true unless task.complete?
 
     redirect_to complete_establish_claim_path(task)
+  end
+
+  def cancel_feedback
+    params.require(:feedback)
   end
 end

@@ -3,6 +3,23 @@ import { closeSymbolHtml } from './RenderFunctions.jsx';
 import Button from './Button.jsx';
 
 export default class Modal extends React.Component {
+
+  escapeKeyHandler(event) {
+    console.log('here2');
+    if (event.key === "Escape"){
+      closeHandler();
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keyDown", this.escapeKeyHandler);
+  }
+
+  componentDidMount() {
+    console.log('here');
+    window.addEventListener("keyDown", this.escapeKeyHandler);
+  }
+
   render() {
     let {
       buttons,
@@ -14,15 +31,40 @@ export default class Modal extends React.Component {
 
     return <section className={"cf-modal" + (visible ? " active" : " ")} id="modal_id" role="alertdialog" aria-labelledby="modal_id-title" aria-describedby="modal_id-desc">
       <div className="cf-modal-body">
+      <div className="scrollable">
         <button type="button" className="cf-modal-close" onClick={closeHandler}>
           {closeSymbolHtml()}
         </button>
         <h1 className="cf-modal-title" id="modal_id-title">{title}</h1>
-        <p className="cf-modal-text" id="text_id">
-          {content}
-        </p>
+        <div className="cf-modal-normal-text">
+          {this.props.children}
+        </div>
         <div className="cf-push-row cf-modal-controls">
-          <table>
+            {buttons.map((object, i) => {
+              let classNames = ["cf-push-right"];
+              if (i == 0 && buttons.length > 1) {
+                classNames = ["cf-push-left"];
+              }
+              
+              if (object.classNames !== undefined) {
+                classNames = [...object.classNames, ...classNames];
+              }
+              
+              return <Button
+                  name={object.name}
+                  onClick={object.onClick}
+                  classNames={classNames}
+                  key={i}
+                />;
+            })}
+        </div>
+        </div>
+      </div>
+    </section>;
+  }
+}
+
+/*          <table>
             <tbody>
               <tr>
                 {buttons.map((object, i) => {
@@ -43,16 +85,7 @@ export default class Modal extends React.Component {
               </tr>
             </tbody>
           </table>
-          {
-          // <button type="button" className="usa-button-outline cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">Go back</button>
-          // <a href="#" className="cf-push-right usa-button usa-button-secondary">Yes, I'm sure</a>
-          }
-        </div>
-      </div>
-    </section>;
-  }
-}
-
+*/
 Modal.propTypes = {
   butons: PropTypes.arrayOf(PropTypes.object),
   content: PropTypes.string,
