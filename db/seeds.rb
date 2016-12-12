@@ -60,10 +60,10 @@ class SeedDB
   end
 
   def create_default_users
-    @users.push(User.create(css_id: "ANNE MERICA", station_id: "283"))
-    @users.push(User.create(css_id: "Establish Claim", station_id: "283"))
-    @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283"))
-    @users.push(User.create(css_id: "Certify Appeal", station_id: "283"))
+    @users.push(User.create(css_id: "ANNE MERICA", station_id: "283", full_name: "Joe Smith"))
+    @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
+    @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
+    @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "Jane Doe"))
   end
 
   def clean_db
