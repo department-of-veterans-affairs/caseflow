@@ -54,6 +54,7 @@ export default class Modal extends React.Component {
                   name={object.name}
                   onClick={object.onClick}
                   classNames={classNames}
+                  loading={object.loading}
                   key={i}
                 />;
             })}

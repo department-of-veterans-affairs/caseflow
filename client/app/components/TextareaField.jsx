@@ -4,15 +4,21 @@ export default class TextareaField extends React.Component {
     let {
       characterCount,
       className,
+      errorMessage,
       label,
       name,
       onChange,
+      required,
       type,
       value
     } = this.props;
 
-    return <div className="cf-form-textarea cf-form-textarea--full-width">
-      <label className="question-label" htmlFor={name}>{label || name}</label>
+    return <div className={"cf-form-textarea cf-form-textarea--full-width" + (errorMessage ? " usa-input-error" : "")}>
+      
+      <label className="question-label" htmlFor={name}>
+        {label || name} {required && <span className="cf-required">(Required)</span>}
+      </label>
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <textarea
         className="cf-form-textarea"
         name={name}

@@ -25,6 +25,7 @@ const Pages = {
 export default class BaseContainer extends React.Component {
   constructor(props) {
     super(props);
+    window.jquery_on = false;
 
     this.state = { alert: null };
   }

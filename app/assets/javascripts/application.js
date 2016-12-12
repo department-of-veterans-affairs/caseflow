@@ -18,12 +18,23 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree ./application
+window.onload = function () {
+  if (window.jquery_on === undefined || window.jquery_on) {
+    $(function() {
+      window.Dropdown.bind();
+      window.Modal.bind();
+      window.LoadingIndicator.bind();
+    });
 
-$(function() {
-  window.Dropdown.bind();
-  window.Modal.bind();
-  window.LoadingIndicator.bind();
-});
+    /* Reusable 'refresh' pattern */
+    $(function() {
+      $('.cf-action-refresh').on('click', function() {
+        location.reload(); return false;
+      });
+    });
+  }
+}
+
 
 /* Copies appeals ID to clipboard */
 $(function () {
@@ -31,9 +42,4 @@ $(function () {
   new Clipboard('[data-clipboard-text]');
 });
 
-/* Reusable 'refresh' pattern */
-$(function() {
-  $('.cf-action-refresh').on('click', function() {
-    location.reload(); return false;
-  });
-});
+

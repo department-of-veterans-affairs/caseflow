@@ -29,6 +29,10 @@ const SEGMENTED_LANE_OPTIONS = [
   'Spec Ops (National)'
 ];
 
+let MODAL_REQUIRED = {
+  cancelFeedback: {display: false, message: 'Please enter an Explanation.'}
+};
+
 export const REVIEW_PAGE = 0;
 export const FORM_PAGE = 1;
 
@@ -45,6 +49,7 @@ export default class EstablishClaim extends React.Component {
       gulfWar: false,
       loading: false,
       modifier: MODIFIER_OPTIONS[0],
+      modalSubmitLoading: false,
       page: REVIEW_PAGE,
       poa: POA[0],
       poaCode: '',
@@ -82,6 +87,15 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
+  validateRequiredFields = (required) => {
+    let validationPassed = true;
+    Object.keys(required).forEach((key) => {
+      required[key].display = this.state[key].length == 0;
+      validationPassed = validationPassed && !required[key].display;
+    });
+    return validationPassed;
+  }
+
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
@@ -89,6 +103,14 @@ export default class EstablishClaim extends React.Component {
       feedback: this.state.cancelFeedback
     };
     handleAlertClear();
+
+    if (!this.validateRequiredFields(MODAL_REQUIRED)) {
+      return;
+    }
+
+    this.setState({
+      modalSubmitLoading: true
+    })
 
     return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
       window.location.href = '/dispatch/establish-claim';
@@ -101,6 +123,9 @@ export default class EstablishClaim extends React.Component {
       this.setState({
         cancelModal: false
       });
+      this.setState({
+        modalSubmitLoading: false
+      })
     });
   }
 
@@ -140,7 +165,6 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleCancelFeedbackChange = (event) => {
-    console.log(event);
     this.setState({
       cancelFeedback: event.target.value
     });
@@ -276,7 +300,6 @@ export default class EstablishClaim extends React.Component {
           Review the final decision from VBMS below to determine the next step.
         </div>
         {
-
         /* This link is here for 508 compliance, and shouldn't be visible to sighted
          users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
          is the accessibility standard and is used across gov't, so we'll recommend it
@@ -335,9 +358,10 @@ export default class EstablishClaim extends React.Component {
     let { 
       loading,
       cancelFeedback,
-      cancelModal
+      cancelModal,
+      modalSubmitLoading
     } = this.state;
-
+    console.log(MODAL_REQUIRED);
 
     return (
       <div>
@@ -375,7 +399,7 @@ export default class EstablishClaim extends React.Component {
         {cancelModal && <Modal
         buttons={[
           {name: '\u00AB Go Back', onClick: this.handleModalClose, classNames: ["cf-btn-link"]},
-          {name: 'Cancel EP Establishment', onClick: this.handleFinishCancelTask, classNames: ["usa-button", "usa-button-secondary"]}
+          {name: 'Cancel EP Establishment', onClick: this.handleFinishCancelTask, classNames: ["usa-button", "usa-button-secondary"], loading: modalSubmitLoading}
           ]}
         visible={true}
         closeHandler={this.handleModalClose}
@@ -388,9 +412,11 @@ export default class EstablishClaim extends React.Component {
             Please tell why you are canceling this claim.
           </p>
           <TextareaField
+            errorMessage={MODAL_REQUIRED.cancelFeedback.display ? MODAL_REQUIRED.cancelFeedback.message : null}
             label="Cancel Explanation"
             name="Explanation"
             onChange={this.handleCancelFeedbackChange}
+            required={true}
             value={cancelFeedback}
           />
         </Modal>}
