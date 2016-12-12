@@ -1,6 +1,6 @@
 class EstablishClaimsController < TasksController
-  before_action :verify_assigned_to_current_user, only: [:show, :new, :pdf, :cancel, :perform]
-  before_action :verify_not_complete, only: [:new, :perform]
+  before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
+  before_action :verify_not_complete, only: [:perform]
 
   def perform
     Dispatch.establish_claim!(claim: establish_claim_params, task: task)
