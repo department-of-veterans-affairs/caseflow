@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim from '../../app/containers/EstablishClaim';
+import EstablishClaim, { FORM_PAGE } from '../../app/containers/EstablishClaim';
 
 describe('EstablishClaim', () => {
   context('.render', () => {
@@ -16,7 +16,7 @@ describe('EstablishClaim', () => {
       wrapper = mount(<EstablishClaim task={task}/>);
 
       // Force component to Form page
-      wrapper.setState({ page: 1 });
+      wrapper.setState({ page: FORM_PAGE });
     });
 
     context('when POA is None', () => {
