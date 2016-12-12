@@ -26,17 +26,14 @@ RSpec.feature "Dispatch" do
       create_tasks(1, initial_stae: :completed, id_prefix: "ZZZ")
 
       expect(page).to have_content(@vbms_id)
-      expect(page).to have_content("ABC-19")
+      expect(page).to have_content("Jane Smith", count: 10)
       expect(page).to have_content("Complete")
-      expect(page).to_not have_content("ABC-9")
       click_on "Show More"
 
       expect(page).to_not have_content("Show More")
-      expect(page).to have_content("ABC-9")
 
       # Verify we got a whole 10 more completed tasks
-      expect(page).to have_content("ABC-0")
-      expect(page).to_not have_content("ZZZ-0")
+      expect(page).to have_content("Jane Smith", count: 20)
     end
   end
 
