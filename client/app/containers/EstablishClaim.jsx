@@ -28,8 +28,8 @@ const SEGMENTED_LANE_OPTIONS = [
   'Spec Ops (National)'
 ];
 
-const REVIEW_PAGE = 0;
-const FORM_PAGE = 1;
+export const REVIEW_PAGE = 0;
+export const FORM_PAGE = 1;
 
 export default class EstablishClaim extends React.Component {
   constructor(props) {
