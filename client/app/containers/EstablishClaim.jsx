@@ -166,30 +166,11 @@ export default class EstablishClaim extends React.Component {
     });
   }
 
-  handleCancelTask = () => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
-
-    handleAlertClear();
-
-    return ApiUtil.patch(`/tasks/${id}/cancel`).then(() => {
-      window.location.href = '/dispatch/establish-claim';
-    }, () => {
-      handleAlert(
-        'error',
-        'Error',
-        'There was an error while cancelling the current claim. Please try again later'
-      );
-    });
-  }
-
   form() {
     let { task } = this.props;
     let { appeal } = task;
     let {
       allowPoa,
-      cancelModal,
-      cancelFeedback,
       claimLabel,
       gulfWar,
       modifier,
@@ -351,7 +332,11 @@ export default class EstablishClaim extends React.Component {
   }
 
   render() {
-    let { loading } = this.state;
+    let { 
+      loading,
+      cancelFeedback,
+      cancelModal
+    } = this.state;
 
 
     return (
@@ -377,14 +362,14 @@ export default class EstablishClaim extends React.Component {
                 onClick={() => {
                   this.handlePageChange(REVIEW_PAGE);
                 } }
-                classNames: ["cf-btn-link"]
+                classNames={["cf-btn-link"]}
               />
             </div>
           }
           <Button
             name="Cancel"
             onClick={this.handleCancelTask}
-            classNames: ["cf-btn-link"]
+            classNames={["cf-btn-link"]}
           />
         </div>
         {cancelModal && <Modal
