@@ -98,6 +98,9 @@ RSpec.feature "Dispatch" do
       )
       expect(@task.reload.complete?).to be_truthy
       expect(@task.completion_status).to eq(0)
+
+      click_on "Caseflow Dispatch"
+      expect(page).to have_current_path("/dispatch/establish-claim")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
