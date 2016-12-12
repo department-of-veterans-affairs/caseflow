@@ -71,7 +71,7 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
 
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
@@ -100,14 +100,15 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
-      visit "/dispatch/establish-claim/#{@other_task.id}/review"
+      visit "/dispatch/establish-claim/#{@other_task.id}/new"
       expect(page).to have_current_path("/unauthorized")
     end
 
+    # The cancel button is the same on both the review and form pages, so one test
+    # can adequetly test both of them.
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}/new"
-      expect(page).to have_content("Create End Product") # React works
 
       click_on "Cancel"
       expect(page).to have_current_path("/dispatch/establish-claim")
@@ -115,23 +116,32 @@ RSpec.feature "Dispatch" do
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
     end
 
-    scenario "Return to decision on an Establish Claim task returns me decision review" do
+    scenario "Establish Claim form saves state when toggling decision" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}/new"
-      expect(page).to have_content("Create End Product") # React works
+      click_on "Create End Product"
+      expect(page).to have_content("Benefit Type") # React works
+      expect(page).to_not have_content("POA Code")
+
+      select("172", from: "Modifier")
 
       click_on "\u00ABBack to review"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_content("Review Decision")
+
+      click_on "Create End Product"
+
+      expect(find_field("Modifier").value).to eq("172")
     end
 
     scenario "Establish a new claim before finishing the first" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
 
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/review")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
     end
 
     scenario "No claims left to establish disables button" do
