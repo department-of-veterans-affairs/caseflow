@@ -19,7 +19,7 @@
 //= require jquery_ujs
 //= require_tree ./application
 window.onload = function () {
-  if (window.jquery_on === undefined || window.jquery_on) {
+  if (typeof window.jqueryOn === 'undefined' || window.jqueryOn) {
     $(function() {
       window.Dropdown.bind();
       window.Modal.bind();
