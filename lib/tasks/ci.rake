@@ -1,18 +1,15 @@
 require "rainbow"
+require "rspec"
 
-desc "Runs the continuous integration scripts"
-task ci: [:lint, :security, :spec, :sauceci, "konacha:run", :mocha]
+task default: "ci:all"
 
-task default: :ci
+namespace :ci do
+  desc "Runs all the continuous integration scripts"
+  task all: [:lint, :security, :spec, :sauceci, "konacha:run", :mocha]
 
-namespace :test do
   desc "run ruby rspec tests"
-  task :rspec do
-    Rake::Task[:spec].invoke
-  end
+  task rspec: [:spec]
 
-  desc "run mocha tests"
-  task :mocha do
-    Rake::Task[:mocha].invoke
-  end
+  desc "run remaining non-rspec continuous integration scripts"
+  task "all-other" => [:lint, :security, :sauceci, "konacha:run", :mocha]
 end
