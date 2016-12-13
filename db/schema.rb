@@ -107,7 +107,6 @@ ActiveRecord::Schema.define(version: 20161213140745) do
     t.string   "_initial_ssoc_required"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
-    t.string   "custom_certifying_official_title"
     t.string   "certifying_official_title_specify_other"
   end
 
