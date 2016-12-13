@@ -62,8 +62,6 @@ class Certification < ActiveRecord::Base
   end
 
   def self.was_missing_nod
-    # Find certifications where 'nod_matching_at' is not set OR where NOD document was
-    # matched after the appeal was created in Caseflow.
     # Allow 1 second lag just in case 'nod_matching_at' timestamp is a few milliseconds
     # greater than 'created_at' timestamp
     where(nod_matching_at: nil).or(where("nod_matching_at > created_at + INTERVAL '1 second'"))
