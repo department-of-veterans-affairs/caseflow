@@ -92,10 +92,13 @@ class Form8PdfService
       next pdf_values unless (value = form8.send(attribute))
 
       if attribute == :certifying_official_title && value == "Other"
-        # If the user selected "Other" instead of one of the
-        # values in the dropdown, fill the pdf field with the
+        # Most instances of "#{field_name}_other" come straight from
+        # the form8, but we added the radio buttons for question 17B
+        # to Caseflow even though the Form 8 has no corresponding
+        # buttons. So the user selected "Other" instead of one of the
+        # radio button values, fill the pdf field with the
         # user-entered value.
-        value = form8[:custom_certifying_official_title]
+        value = form8[:certifying_official_title_specify_other]
       end
 
       if value.is_a?(Date) || value.is_a?(Time)
