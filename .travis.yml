@@ -27,7 +27,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
 
 script:
-  - "bundle exec rake CI:$CI_SUITE"
+  - "bundle exec rake ci:$CI_SUITE"
 
 bundler_args: "--without development staging production"
 cache:
