@@ -245,6 +245,7 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
+    rails_stdout_logging (0.0.5)
     railties (4.2.7.1)
       actionpack (= 4.2.7.1)
       activesupport (= 4.2.7.1)
@@ -420,6 +421,7 @@ DEPENDENCIES
   pry
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
+  rails_stdout_logging
   rainbow
   react_on_rails (~> 6)
   redis-rails
