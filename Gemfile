@@ -17,7 +17,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 # Logging
-gem 'rails_12factor', group: :production
+gem 'rails_stdout_logging'
 
 # React
 gem "react_on_rails", "~> 6"
