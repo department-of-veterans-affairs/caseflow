@@ -28,7 +28,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
 
 script:
-  - bundle exec rake
+  - "bundle exec test:$TEST_SUITE"
 
 bundler_args: "--without development staging production"
 cache:
@@ -40,3 +40,9 @@ notifications:
 
 services:
   - redis-server
+
+# Parallelize tests by splitting them
+# up into separate test suites
+env:
+  - TEST_SUITE=mocha
+  - TEST_SUITE=rspec
