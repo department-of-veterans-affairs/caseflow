@@ -82,8 +82,6 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  # database cleaner is set up to ignore users table so clean users here
-  User.delete_all
   Fakes::AppealRepository.records = nil
 end
 
@@ -118,7 +116,6 @@ RSpec.configure do |config|
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
-
   config.before(:all) { User.unauthenticate! }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

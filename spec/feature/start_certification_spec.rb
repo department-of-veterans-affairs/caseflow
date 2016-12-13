@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.feature "Start Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-    reset_application!
   end
   after { Timecop.return }
 

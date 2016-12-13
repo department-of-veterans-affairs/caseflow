@@ -1,7 +1,6 @@
-require 'capybara/rspec'
+require "capybara/rspec"
 
 RSpec.configure do |config|
-
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
@@ -33,9 +32,7 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-
-      # do not truncate users table
-      DatabaseCleaner.strategy = :truncation, { except: %w(users) }
+      DatabaseCleaner.strategy = :truncation
     end
   end
 
@@ -45,6 +42,6 @@ RSpec.configure do |config|
 
   config.append_after(:each) do
     DatabaseCleaner.clean
+    reset_application!
   end
-
 end

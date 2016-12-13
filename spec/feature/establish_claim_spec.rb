@@ -1,6 +1,5 @@
 RSpec.feature "Dispatch" do
   before do
-    reset_application!
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided

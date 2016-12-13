@@ -81,7 +81,6 @@ RSpec.feature "Stats Dashboard" do
   end
 
   scenario "Check missing documents" do
-
     Certification.create(
       nod_matching_at:     45.minutes.ago,
       form9_matching_at:   45.minutes.ago,
