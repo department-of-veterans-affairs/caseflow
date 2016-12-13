@@ -64,7 +64,7 @@ production_vacols:
 test:
   <<: *default
   username: <%= `whoami` %>
-  database: caseflow_certification_test
+  database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:
   adapter: sqlite3

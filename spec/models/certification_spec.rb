@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe Certification do
   let(:certification_date) { nil }
   let(:certification) { Certification.new(vacols_id: "4949") }

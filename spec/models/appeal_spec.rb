@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe Appeal do
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }

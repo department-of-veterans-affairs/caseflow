@@ -82,9 +82,9 @@ User.prepend(StubbableUser)
 def reset_application!
   Task.delete_all
   Appeal.delete_all
+  Certification.delete_all
   User.clear_stub!
   User.delete_all
-  Certification.delete_all
   Fakes::AppealRepository.records = nil
 end
 

@@ -93,6 +93,7 @@ group :development, :test do
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
+  gem 'parallel_tests'
 end
 
 group :development do

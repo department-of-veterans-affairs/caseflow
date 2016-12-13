@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe ReassignOldTasksJob do
   before do
     reset_application!
