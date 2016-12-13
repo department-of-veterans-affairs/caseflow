@@ -16,6 +16,9 @@ gem 'uglifier', '>= 1.3.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+# Logging
+gem 'rails_12factor', group: :production
+
 # React
 gem "react_on_rails", "~> 6"
 
