@@ -48,7 +48,7 @@
       "16":  { message: "" },
       "17A": { message: "Please enter the name of the Certifying Official (usually your name)." },
       "17B1": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
-      "17B2": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." }
+      "17B2": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
       "17C": { message: "" }
     },
 
@@ -153,6 +153,7 @@
       state.question10B2.show = (state.question10B1.value === "Yes");
       state.question11B.show = (state.question11A.value === "Yes");
       state.question132.show = state.question13other;
+      state.question17B2.show = (state.question17B1.value === "Other");
 
 
       this.getRequiredQuestions().forEach(function(questionNumber) {

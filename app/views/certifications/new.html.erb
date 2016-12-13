@@ -136,10 +136,10 @@
 
     <%= f.radio_buttons_field :certifying_official_title,
           values: ["Decision Review Officer", "Rating Specialist", "Veterans Service Representative", "Claims Assistant", "Other"],
-          question_number: "17B", part: "2", label: "Title of certifying official:" %>
+          question_number: "17B", part: "1", label: "Title of certifying official:" %>
 
     <%= f.text_field :certifying_official_title_specify_other,
-          question_number: "17B", part: "3", label: "Specify other title of certifying official:", secondary: true %>
+          question_number: "17B", part: "2", label: "Specify other title of certifying official:", secondary: true %>
 
     <%= f.date_field :certification_date,
           question_number: "17C", label: "Date:", readonly: true %>
