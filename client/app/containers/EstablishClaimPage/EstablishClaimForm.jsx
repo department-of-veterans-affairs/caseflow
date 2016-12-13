@@ -1,26 +1,34 @@
-import RadioField from '../components/RadioField';
-import TextField from '../components/TextField';
-import DropDown from '../components/DropDown';
-import Checkbox from '../components/Checkbox';
-import DateSelector from '../components/DateSelector';
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
+import React from 'react';
 
-export form = function() {
+import RadioField from '../../components/RadioField';
+import TextField from '../../components/TextField';
+import DropDown from '../../components/DropDown';
+import Checkbox from '../../components/Checkbox';
+import DateSelector from '../../components/DateSelector';
+
+export const POA = [
+  'None',
+  'VSO',
+  'Private'
+];
+export const CLAIM_LABEL_OPTIONS = [
+  ' ',
+  '172BVAG - BVA Grant',
+  '170PGAMC - AMC-Partial Grant',
+  '170RMDAMC - AMC-Remand'
+];
+export const MODIFIER_OPTIONS = [
+  '170',
+  '172'
+];
+export const SEGMENTED_LANE_OPTIONS = [
+  'Core (National)',
+  'Spec Ops (National)'
+];
+
+export const render = function() {
   let { task } = this.props;
   let { appeal } = task;
-  let {
-    allowPoa,
-    claimLabel,
-    gulfWar,
-    modifier,
-    poa,
-    poaCode,
-    segmentedLane,
-    suppressAcknowledgement
-  } = this.state;
-
 
   return (
     <form noValidate>
@@ -105,4 +113,4 @@ export form = function() {
       </div>
     </form>
   );
-}
+};

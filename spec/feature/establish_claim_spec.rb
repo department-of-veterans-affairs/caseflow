@@ -108,6 +108,11 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@task.id}/new"
 
       click_on "Cancel"
+      expect(page).to have_css(".cf-modal")
+
+      page.fill_in "Cancel Explanation", with: "Test"
+      click_on "Cancel EP Establishment"
+
       expect(page).to have_current_path("/dispatch/establish-claim")
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)

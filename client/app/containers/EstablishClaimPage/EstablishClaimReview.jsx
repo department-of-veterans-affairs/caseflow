@@ -1,4 +1,6 @@
-export review = function() {
+import React from 'react';
+
+export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
 
   return (
@@ -42,4 +44,4 @@ export review = function() {
       </iframe>
     </div>
   );
-}
+};

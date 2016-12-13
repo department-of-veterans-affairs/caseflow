@@ -5,10 +5,20 @@ export class FormField {
   }
 }
 
-export const handleFieldChange = (component) => (form, field) => (event) => {
-  let stateObject = {};
+export const handleFieldChange = function (form, field) {
+  return (event) => {
+    let stateObject = {};
 
-  stateObject[form] = { ...component.state[form] };
-  stateObject[form][field].value = event.target.value;
-  component.setState(stateObject);
+    stateObject[form] = { ...this.state[form] };
+    stateObject[form][field].value = event.target.value;
+    this.setState(stateObject);
+  };
+};
+
+export const getFormValues = function(form) {
+  return Object.keys(form).reduce((obj, key) => {
+    obj[key] = form[key].value;
+
+    return obj;
+  }, {});
 };

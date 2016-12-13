@@ -1,7 +1,8 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { FORM_PAGE } from '../../app/containers/EstablishClaim';
+import EstablishClaim, { FORM_PAGE } from
+  '../../app/containers/EstablishClaimPage/EstablishClaim';
 
 describe('EstablishClaim', () => {
   context('.render', () => {
@@ -55,6 +56,21 @@ describe('EstablishClaim', () => {
       });
       it('show Allow POA access checkbox', () => {
         expect(wrapper.find('#allowPoa')).to.have.length(1);
+      });
+    });
+
+    context('when task is cancelled', () => {
+      beforeEach(() => {
+        wrapper.find('#button_Cancel').simulate('click');
+      });
+
+      it('modal is shown', () => {
+        expect(wrapper.find('.cf-modal')).to.have.length(1);
+      });
+
+      it('modal can be closed', () => {
+        wrapper.find('#button_\u00AB_Go_Back').simulate('click');
+        expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });
   });

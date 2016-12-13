@@ -4,7 +4,7 @@ import React, { PropTypes } from 'react';
 import Alert from '../components/Alert';
 
 // container components
-import EstablishClaim from './EstablishClaim';
+import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 

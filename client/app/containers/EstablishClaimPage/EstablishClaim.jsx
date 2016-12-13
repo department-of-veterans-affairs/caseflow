@@ -1,75 +1,44 @@
 import React, { PropTypes } from 'react';
-import ApiUtil from '../util/ApiUtil';
+import ApiUtil from '../../util/ApiUtil';
 
-import RadioField from '../components/RadioField';
-import TextField from '../components/TextField';
-import DropDown from '../components/DropDown';
-import Checkbox from '../components/Checkbox';
-import DateSelector from '../components/DateSelector';
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
-import { FormField, handleFieldChange } from '../util/FormField';
-import requiredValidator from '../util/validators/RequiredValidator';
-import review from './EstablishClaimReview';
-import form from './EstablishClaimForm';
-
-const POA = [
-  'None',
-  'VSO',
-  'Private'
-];
-const CLAIM_LABEL_OPTIONS = [
-  ' ',
-  '172BVAG - BVA Grant',
-  '170PGAMC - AMC-Partial Grant',
-  '170RMDAMC - AMC-Remand'
-];
-const MODIFIER_OPTIONS = [
-  '170',
-  '172'
-];
-const SEGMENTED_LANE_OPTIONS = [
-  'Core (National)',
-  'Spec Ops (National)'
-];
-
-let MODAL_REQUIRED = {
-  cancelFeedback: { display: false, message: 'Please enter an Explanation.' }
-};
+import Modal from '../../components/Modal';
+import Button from '../../components/Button';
+import TextareaField from '../../components/TextareaField';
+import { FormField, handleFieldChange, getFormValues } from '../../util/FormField';
+import requiredValidator from '../../util/validators/RequiredValidator';
+import * as Review from './EstablishClaimReview';
+import * as Form from './EstablishClaimForm';
 
 export const REVIEW_PAGE = 0;
 export const FORM_PAGE = 1;
-
 
 export default class EstablishClaim extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleFieldChange = handleFieldChange(this);
+    this.handleFieldChange = handleFieldChange.bind(this);
 
     // Set initial state on page render
     this.state = {
+      cancelModal: false,
       form: {
         allowPoa: new FormField(false),
-        claimLabel: new FormField(CLAIM_LABEL_OPTIONS[0]),
+        claimLabel: new FormField(Form.CLAIM_LABEL_OPTIONS[0]),
         gulfWar: new FormField(false),
-        modifier: new FormField(MODIFIER_OPTIONS[0]),
-        poa: new FormField(POA[0]),
+        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
-        segmentedLane: new FormField(SEGMENTED_LANE_OPTIONS[0]),
+        segmentedLane: new FormField(Form.SEGMENTED_LANE_OPTIONS[0]),
         suppressAcknowledgement: new FormField(false)
       },
-      modal: {
-        cancelFeedback: new FormField('', requiredValidator('Please enter an Explanation.'))
-      },
-      cancelModal: false,
       loading: false,
+      modal: {
+        cancelFeedback: new FormField('',
+          requiredValidator('Please enter an Explanation.'))
+      },
       modalSubmitLoading: false,
       page: REVIEW_PAGE
     };
-    console.log("this one");
-    console.log(...this.state.form);
   }
 
   handleSubmit = (event) => {
@@ -84,7 +53,7 @@ export default class EstablishClaim extends React.Component {
     handleAlertClear();
 
     let data = {
-      claim: ApiUtil.convertToSnakeCase(this.state)
+      claim: ApiUtil.convertToSnakeCase(getFormValues(this.state.form))
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
@@ -167,128 +136,11 @@ export default class EstablishClaim extends React.Component {
     return this.state.form.poa.value === 'VSO' || this.state.form.poa.value === 'Private';
   }
 
-  // TODO (mdbenjam): This is not being used right now, remove if
-  // we decide this is not how we want the modifier to work.
-  static getModifier(claim) {
-    let modifier = MODIFIER_OPTIONS[0];
-
-    MODIFIER_OPTIONS.forEach((option) => {
-      if (claim.startsWith(option)) {
-        modifier = option;
-      }
-    });
-
-    return modifier;
-  }
-
   handlePageChange = (page) => {
     this.setState({
       page
     });
   }
-
-  form() {
-    let { task } = this.props;
-    let { appeal } = task;
-    let {
-      allowPoa,
-      claimLabel,
-      gulfWar,
-      modifier,
-      poa,
-      poaCode,
-      segmentedLane,
-      suppressAcknowledgement
-    } = this.state;
-
-
-    return (
-      <form noValidate>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Create End Product</h1>
-          <TextField
-           label="Benefit Type"
-           name="BenefitType"
-           value="C&P Live"
-           readOnly={true}
-          />
-          <TextField
-           label="Payee"
-           name="Payee"
-           value="00 - Veteran"
-           readOnly={true}
-          />
-          <DropDown
-           label="Claim Label"
-           name="claimLabel"
-           options={CLAIM_LABEL_OPTIONS}
-           onChange={this.handleFieldChange('form', 'claimLabel')}
-           {...this.state.form.claimLabel}
-          />
-          <DropDown
-           label="Modifier"
-           name="modifier"
-           options={MODIFIER_OPTIONS}
-           onChange={this.handleFieldChange('form', 'modifier')}
-           {...this.state.form.modifier}
-          />
-          <DateSelector
-           label="Decision Date"
-           name="decisionDate"
-           readOnly={true}
-           value={appeal.decision_date}
-          />
-          <DropDown
-           label="Segmented Lane"
-           name="segmentedLane"
-           options={SEGMENTED_LANE_OPTIONS}
-           onChange={this.handleFieldChange('form', 'segmentedLane')}
-           {...this.state.form.segmentedLane}
-          />
-          <TextField
-           label="Station"
-           name="Station"
-           value="499 - National Work Queue"
-           readOnly={true}
-          />
-          <RadioField
-           label="POA"
-           name="POA"
-           options={POA}
-           onChange={this.handleFieldChange('form', 'poa')}
-           {...this.state.form.poa}
-          />
-          {this.hasPoa() && <div><TextField
-           label="POA Code"
-           name="POACode"
-           {...this.state.form.poaCode}
-           onChange={this.handleFieldChange('form', 'poaCode')}
-          />
-          <Checkbox
-           label="Allow POA Access to Documents"
-           name="allowPoa"
-           {...this.state.form.allowPoa}
-           onChange={this.handleFieldChange('form', 'allowPoa')}
-          /></div>}
-          <Checkbox
-           label="Gulf War Registry Permit"
-           name="gulfWar"
-           {...this.state.form.gulfWar}
-           onChange={this.handleFieldChange('form', 'gulfWar')}
-          />
-          <Checkbox
-           label="Suppress Acknowledgement Letter"
-           name="suppressAcknowledgement"
-           {...this.state.form.suppressAcknowledgement}
-           onChange={this.handleFieldChange('form', 'suppressAcknowledgement')}
-          />
-        </div>
-      </form>
-    );
-  }
-
-
-
 
   isReviewPage() {
     return this.state.page === REVIEW_PAGE;
@@ -311,15 +163,14 @@ export default class EstablishClaim extends React.Component {
   render() {
     let {
       loading,
-      cancelFeedback,
       cancelModal,
       modalSubmitLoading
     } = this.state;
 
     return (
       <div>
-        { this.isReviewPage() && this.review() }
-        { this.isFormPage() && this.form() }
+        { this.isReviewPage() && Review.render.call(this) }
+        { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
@@ -351,14 +202,22 @@ export default class EstablishClaim extends React.Component {
         </div>
         {cancelModal && <Modal
         buttons={[
-          { name: '\u00AB Go Back', onClick: this.handleModalClose, classNames: ["cf-btn-link"] },
-          { name: 'Cancel EP Establishment', onClick: this.handleFinishCancelTask, classNames: ["usa-button", "usa-button-secondary"], loading: modalSubmitLoading }
+          { classNames: ["cf-btn-link"],
+            name: '\u00AB Go Back',
+            onClick: this.handleModalClose
+          },
+          { classNames: ["usa-button", "usa-button-secondary"],
+            loading: modalSubmitLoading,
+            name: 'Cancel EP Establishment',
+            onClick: this.handleFinishCancelTask
+          }
         ]}
         visible={true}
         closeHandler={this.handleModalClose}
         title="Cancel EP Establishment">
           <p>
-            If you click the <b>Cancel EP Establishment</b> button below your work will not be
+            If you click the <b>Cancel EP Establishment</b>
+            button below your work will not be
             saved and the EP for this claim will not be established.
           </p>
           <p>
