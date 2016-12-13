@@ -177,8 +177,9 @@ RSpec.feature "Save Certification" do
 
     fill_in "17A Name of certifying official", with: "Kavi"
     within_fieldset("17B Title of certifying official") do
-      find("label", text: "Decision Review Officer").click
+      find("label", text: "Other").click
     end
+    fill_in "Specify other title of certifying official", with: "Ray Romano"
 
     click_on "Preview Completed Form 8"
 
@@ -201,7 +202,8 @@ RSpec.feature "Save Certification" do
       contested_claims_procedures_applicable: "No",
       ssoc_required: "Not required",
       certifying_official_name: "Kavi",
-      certifying_official_title: "Decision Review Officer"
+      certifying_official_title: "Other",
+      certifying_official_title_specify_other: "Ray Romano"
     )
 
     expect(page).to have_current_path(certification_path(id: "12345C"))
