@@ -68,17 +68,18 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
 
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
       click_on "Create End Product"
 
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
       click_on "Create End Product"
 
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/complete")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_content("Congratulations!")
       expect(Appeal.repository).to have_received(:establish_claim!).with(
         claim: {
           "claim_type" => "Claim",
@@ -94,10 +95,13 @@ RSpec.feature "Dispatch" do
       )
       expect(@task.reload.complete?).to be_truthy
       expect(@task.completion_status).to eq(0)
+
+      click_on "Caseflow Dispatch"
+      expect(page).to have_current_path("/dispatch/establish-claim")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
-      visit "/dispatch/establish-claim/#{@other_task.id}/new"
+      visit "/dispatch/establish-claim/#{@other_task.id}"
       expect(page).to have_current_path("/unauthorized")
     end
 
@@ -105,7 +109,7 @@ RSpec.feature "Dispatch" do
     # can adequetly test both of them.
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
-      visit "/dispatch/establish-claim/#{@task.id}/new"
+      visit "/dispatch/establish-claim/#{@task.id}"
 
       click_on "Cancel"
       expect(page).to have_current_path("/dispatch/establish-claim")
@@ -115,7 +119,7 @@ RSpec.feature "Dispatch" do
 
     scenario "Establish Claim form saves state when toggling decision" do
       @task.assign!(current_user)
-      visit "/dispatch/establish-claim/#{@task.id}/new"
+      visit "/dispatch/establish-claim/#{@task.id}"
       click_on "Create End Product"
       expect(page).to have_content("Benefit Type") # React works
       expect(page).to_not have_content("POA Code")
@@ -123,7 +127,7 @@ RSpec.feature "Dispatch" do
       select("172", from: "Modifier")
 
       click_on "\u00ABBack to review"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Review Decision")
 
       click_on "Create End Product"
@@ -134,11 +138,11 @@ RSpec.feature "Dispatch" do
     scenario "Establish a new claim before finishing the first" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}/new")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
     end
 
     scenario "No claims left to establish disables button" do
