@@ -44,6 +44,7 @@ class Document
   def fetch_and_cache_document_from_vbms
     @content = Appeal.repository.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
+    @content
   end
 
   def fetch_content
