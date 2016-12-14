@@ -1,6 +1,5 @@
 RSpec.feature "Dispatch" do
   before do
-    reset_application!
     @vbms_id = "VBMS_ID1"
 
     Fakes::AppealRepository.records = {
