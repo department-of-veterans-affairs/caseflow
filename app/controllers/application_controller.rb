@@ -48,6 +48,12 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_name
 
+  # Link used when clicking logo
+  def logo_path
+    root_path
+  end
+  helper_method :logo_path
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.

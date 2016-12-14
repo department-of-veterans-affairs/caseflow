@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(version: 20161213140745) do
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false
     t.string "css_id",     null: false
+    t.string "full_name"
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
