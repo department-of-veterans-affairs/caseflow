@@ -24,7 +24,7 @@ export default class TasksManagerIndex extends React.Component {
     task.appeal.veteran_name,
     task.appeal.vbms_id,
     task.progress_status,
-    task.user && task.user.css_id
+    task.user && task.user.full_name
   ]
 
   isRemainingTasksToDownload = () => {

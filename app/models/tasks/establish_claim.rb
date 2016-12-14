@@ -1,5 +1,5 @@
 class EstablishClaim < Task
   def initial_action
-    "review"
+    "show"
   end
 end
