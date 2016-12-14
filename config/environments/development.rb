@@ -36,6 +36,10 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
 
+  # Setup S3
+  config.s3_enabled = !ENV['AWS_ACCESS_KEY_ID'].nil?
+  config.s3_bucket_name = "caseflow-cache"
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
