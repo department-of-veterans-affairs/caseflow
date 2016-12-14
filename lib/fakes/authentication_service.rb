@@ -13,7 +13,8 @@ class Fakes::AuthenticationService
     {
       "id" => user.css_id,
       "roles" => roles,
-      "station_id" => user.station_id
+      "station_id" => user.station_id,
+      "name" => user.full_name
     }
   end
 
