@@ -252,7 +252,7 @@ describe Task do
     end
   end
 
-  context "#cancel!" do
+  context "#cancel!", focus: true do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
@@ -261,6 +261,11 @@ describe Task do
       expect(task.reload.complete?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+    end
+
+    it "saves feedback" do
+      task.cancel!("Feedback")
+      expect(task.reload.cancel_reason).to eq("Feedback")
     end
   end
 
