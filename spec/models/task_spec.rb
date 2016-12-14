@@ -252,7 +252,7 @@ describe Task do
     end
   end
 
-  context "#cancel!", focus: true do
+  context "#cancel!" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
@@ -265,7 +265,7 @@ describe Task do
 
     it "saves feedback" do
       task.cancel!("Feedback")
-      expect(task.reload.cancel_reason).to eq("Feedback")
+      expect(task.reload.comment).to eq("Feedback")
     end
   end
 

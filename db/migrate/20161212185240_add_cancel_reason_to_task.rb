@@ -1,5 +1,5 @@
 class AddCancelReasonToTask < ActiveRecord::Migration
   def change
-    add_column :tasks, :cancel_reason, :string
+    add_column :tasks, :comment, :string
   end
 end

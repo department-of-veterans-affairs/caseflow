@@ -116,7 +116,7 @@ RSpec.feature "Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim")
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
-      expect(@task.cancel_reason).to eq("Test")
+      expect(@task.comment).to eq("Test")
     end
 
     scenario "Establish Claim form saves state when toggling decision" do

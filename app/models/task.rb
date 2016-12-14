@@ -83,7 +83,7 @@ class Task < ActiveRecord::Base
 
   def cancel!(feedback = nil)
     transaction do
-      update!(cancel_reason: feedback)
+      update!(comment: feedback)
       complete_and_recreate!(:cancelled)
     end
   end
