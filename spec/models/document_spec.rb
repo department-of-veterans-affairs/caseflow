@@ -97,7 +97,7 @@ describe Document do
 
   context "#default_path" do
     it "returns correct path" do
-      expect(document.default_path).to match(/.*\/tmp\/pdfs\/.*123/)
+      expect(document.default_path).to match(%r{.*\/tmp\/pdfs\/.*123})
     end
   end
 end
