@@ -8,5 +8,6 @@ task :mocha do
     puts Rainbow("Passed. All frontend react tests look good").green
   else
     puts Rainbow("Failed. Please check the mocha tests in client/test").red
+    exit(1)
   end
 end

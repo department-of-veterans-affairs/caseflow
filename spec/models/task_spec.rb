@@ -4,7 +4,6 @@ end
 describe Task do
   # Clear the task from the DB before every test
   before do
-    reset_application!
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
     @user = User.create(station_id: "ABC", css_id: "123")
@@ -82,10 +81,9 @@ describe Task do
         expect { task.assign!(@user) }.to raise_error(Task::AlreadyAssignedError)
       end
 
-      it "does nothing if user has another task" do
+      it "throws error if user has another task" do
         task.assign!(@user)
-        task_same_user.assign!(@user)
-        expect(task_same_user.assigned?).to be_falsey
+        expect { task_same_user.assign!(@user) }.to raise_error(Task::UserAlreadyHasTaskError)
       end
 
       it "raises error if object stale" do

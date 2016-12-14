@@ -10,6 +10,7 @@ require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
+require_relative "support/database_cleaner"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -80,11 +81,7 @@ end
 User.prepend(StubbableUser)
 
 def reset_application!
-  Task.delete_all
-  Appeal.delete_all
   User.clear_stub!
-  User.delete_all
-  Certification.delete_all
   Fakes::AppealRepository.records = nil
 end
 
@@ -96,6 +93,21 @@ end
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
 
+def create_tasks(count, opts = {})
+  Array.new(count) do |i|
+    vacols_id = "#{opts[:id_prefix] || 'ABC'}-#{i}"
+    appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
+    Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
+
+    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}", full_name: "Jane Smith")
+    task = EstablishClaim.create(appeal: appeal)
+    task.assign!(user)
+
+    task.start! if %i(started completed).include?(opts[:initial_state])
+    task.complete!(0) if %i(completed).include?(opts[:initial_state])
+  end
+end
+
 RSpec.configure do |config|
   # This checks whether compiled webpack assets already exist
   # If it does, it will not execute ReactOnRails, since that slows down tests
@@ -104,7 +116,6 @@ RSpec.configure do |config|
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
-
   config.before(:all) { User.unauthenticate! }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
