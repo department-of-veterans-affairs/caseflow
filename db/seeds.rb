@@ -29,7 +29,8 @@ class SeedDB
       station_index = deterministic ? (i % length) : (rand(length))
       User.create(
         station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
-        css_id: "css_#{i}"
+        css_id: "css_#{i}",
+        full_name: "name_#{i}"
         )
     end
 
