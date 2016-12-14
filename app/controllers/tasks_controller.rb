@@ -1,8 +1,6 @@
 class TasksController < ApplicationController
   before_action :verify_access
-  before_action :verify_complete, only: [:complete]
-  before_action :verify_assigned_to_current_user, only: [:show, :new, :pdf, :cancel]
-  before_action :verify_not_complete, only: [:new]
+  before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -25,17 +23,18 @@ class TasksController < ApplicationController
     end
   end
 
-  def new
+  def show
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user && !task.started?
+
+    render "complete" if task.complete?
   end
 
   def pdf
     decision = task.appeal.decision
     return redirect_to "/404" if decision.nil?
-    decision.save_unless_exists!
-    send_file(decision.default_path, type: "application/pdf", disposition: "inline")
+    send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 
   def assign
@@ -157,12 +156,6 @@ class TasksController < ApplicationController
 
   def logo_name
     "Dispatch"
-  end
-
-  def verify_complete
-    return true if task.complete?
-
-    redirect_to url_for(action: task.initial_action, id: task.id)
   end
 
   def verify_not_complete

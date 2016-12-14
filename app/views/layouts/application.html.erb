@@ -68,7 +68,7 @@
   <header>
     <nav class="cf-nav">
       <div class="usa-grid-full">
-        <a href="/">
+        <a href="<%= logo_path %>" id="cf-logo-link">
           <h1 class="cf-logo"><%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>Caseflow <%= logo_name %></h1>
         </a>
         <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>

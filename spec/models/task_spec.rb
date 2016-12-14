@@ -4,7 +4,6 @@ end
 describe Task do
   # Clear the task from the DB before every test
   before do
-    reset_application!
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
     @user = User.create(station_id: "ABC", css_id: "123")

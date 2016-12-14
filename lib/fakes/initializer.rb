@@ -10,7 +10,7 @@ class Fakes::Initializer
       "id" => "ANNE MERICA",
       "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
       "station_id" => "283",
-      "full_name" => "Anne Merica"
+      "name" => "Anne Merica"
     }
 
     Appeal.repository = Fakes::AppealRepository

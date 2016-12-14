@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3b830af"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -15,6 +15,9 @@ gem 'uglifier', '>= 1.3.0'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+
+# Logging
+gem 'rails_stdout_logging'
 
 # React
 gem "react_on_rails", "~> 6"
@@ -60,6 +63,9 @@ gem 'redis-rails'
 gem 'sidekiq'
 gem "sidekiq-cron", "~> 0.4.0"
 
+# remove when upgrading to rails 5
+gem 'where-or'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -90,6 +96,8 @@ group :development, :test do
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
+  # to save and open specific page in capybara tests
+  gem 'launchy'
 end
 
 group :development do
