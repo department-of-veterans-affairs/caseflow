@@ -89,7 +89,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "axe"
-  gem 'simplecov'
+  gem 'simplecov', require: false
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'

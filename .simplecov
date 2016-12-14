@@ -1,3 +1,4 @@
+p "EXECUTED .SIMPLECOV"
 SimpleCov.start do
   add_filter "lib/fakes"
   add_filter "spec/support"

@@ -24,8 +24,7 @@ before_script:
   - npm -v
   - npm install --no-optional
   - sudo apt-get install pdftk
-  - RAILS_ENV=test bundle exec rake db:create
-  - RAILS_ENV=test bundle exec rake db:schema:load
+  - bundle exec rake parallel:create parallel:prepare
 
 script:
   - bundle exec parallel_test spec/ -n 6 --only-group $TEST_GROUP --group-by filesize --type rspec

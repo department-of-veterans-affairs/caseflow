@@ -1,7 +1,4 @@
 require "simplecov"
-p "RAILS HELPER: #{$$} #{ENV['TEST_ENV_NUMBER']}"
-
-SimpleCov.command_name "features #{$$} #{ENV['TEST_ENV_NUMBER']} Ran"
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
@@ -126,6 +123,9 @@ RSpec.configure do |config|
   end
 
   config.before(:all) { User.unauthenticate! }
+  # config.before(:each) do
+  # SimpleCov.command_name "Feature #{Random.rand(100_000)}"
+  # end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
