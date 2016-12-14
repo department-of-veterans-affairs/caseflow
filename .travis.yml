@@ -28,7 +28,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
 
 script:
-  - bundle exec rake
+  - bundle exec parallel_test spec/ -n 6 --only-group $TEST_GROUP --group-by filesize --type rspec
 
 bundler_args: "--without development staging production"
 cache:
@@ -40,3 +40,9 @@ notifications:
 
 services:
   - redis-server
+
+env:
+  - "TEST_GROUP=1"
+  - "TEST_GROUP=2"
+  - "TEST_GROUP=3"
+  - "TEST_GROUP=4"

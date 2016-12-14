@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.feature "Dispatch" do
   before do
     reset_application!

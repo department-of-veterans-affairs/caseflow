@@ -1,3 +1,4 @@
+require "rails_helper"
 
 describe Document do
   context "#type?" do

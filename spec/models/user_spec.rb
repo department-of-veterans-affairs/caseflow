@@ -1,3 +1,5 @@
+require "rails_helper"
+
 User.authentication_service = Fakes::AuthenticationService
 
 describe User do
