@@ -17,7 +17,7 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
-        id={id || `${type}_${name.replace(/\s/g, '_')}`}
+        id={id || `${type}-${name.replace(/\s/g, '-')}`}
         className={classNames ? classNames.join(' ') : "cf-submit"}
         type={type}
         disabled={disabled}

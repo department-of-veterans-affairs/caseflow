@@ -1,4 +1,4 @@
-export default class FormField {
+export class FormField {
   constructor(initialValue, validator = null) {
     this.value = initialValue;
     this.validator = validator;
