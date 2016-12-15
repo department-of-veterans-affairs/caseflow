@@ -115,7 +115,7 @@ RSpec.feature "Dispatch" do
 
     # The cancel button is the same on both the review and form pages, so one test
     # can adequetly test both of them.
-    scenario "Cancel an Establish Claim task returns me to landing page", focus: true do
+    scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
