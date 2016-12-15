@@ -57,7 +57,7 @@ export default class EstablishClaim extends React.Component {
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
-      window.location.href = `/dispatch/establish-claim/${id}/complete`;
+      window.location.reload();
     }, () => {
       this.setState({
         loading: false
