@@ -115,13 +115,29 @@ RSpec.feature "Dispatch" do
 
     # The cancel button is the same on both the review and form pages, so one test
     # can adequetly test both of them.
-    scenario "Cancel an Establish Claim task returns me to landing page" do
+    scenario "Cancel an Establish Claim task returns me to landing page", focus: true do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
+      # Open modal
       click_on "Cancel"
       expect(page).to have_css(".cf-modal")
 
+      # Try to cancel without explanation
+      click_on "Cancel EP Establishment"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_css(".cf-modal")
+      expect(page).to have_content("Please enter an explanation")
+
+      # Close modal
+      click_on "\u00AB Go Back"
+      expect(page).to_not have_css(".cf-modal")
+
+      # Open modal
+      click_on "Cancel"
+      expect(page).to have_css(".cf-modal")
+
+      # Fill in explanation and cancel
       page.fill_in "Cancel Explanation", with: "Test"
       click_on "Cancel EP Establishment"
 

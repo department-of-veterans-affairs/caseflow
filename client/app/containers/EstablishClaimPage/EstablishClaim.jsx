@@ -17,6 +17,7 @@ export default class EstablishClaim extends React.Component {
     super(props);
 
     this.handleFieldChange = handleFieldChange.bind(this);
+    this.validateFormAndSetErrors = validateFormAndSetErrors.bind(this);
 
     // Set initial state on page render
     this.state = {
@@ -34,7 +35,7 @@ export default class EstablishClaim extends React.Component {
       loading: false,
       modal: {
         cancelFeedback: new FormField('',
-          requiredValidator('Please enter an Explanation.'))
+          requiredValidator('Please enter an explanation.'))
       },
       modalSubmitLoading: false,
       page: REVIEW_PAGE
@@ -79,7 +80,7 @@ export default class EstablishClaim extends React.Component {
 
     handleAlertClear();
 
-    if (!validateFormAndSetErrors(this.state.modal)) {
+    if (!this.validateFormAndSetErrors(this.state.modal)) {
       return;
     }
 

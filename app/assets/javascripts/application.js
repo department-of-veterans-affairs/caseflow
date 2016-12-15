@@ -19,6 +19,8 @@
 //= require jquery_ujs
 //= require_tree ./application
 window.onload = function () {
+  // We want to be able to turn jQuery off on react pages since it
+  // interferes with our logic. We set jqueryOn to be false in BaseContainer.jsx
   if (typeof window.jqueryOn === 'undefined' || window.jqueryOn) {
     $(function() {
       window.Dropdown.bind();
