@@ -16,9 +16,6 @@ gem 'uglifier', '>= 1.3.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
-# Logging
-gem 'rails_stdout_logging'
-
 # React
 gem "react_on_rails", "~> 6"
 
@@ -70,6 +67,10 @@ group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
   gem 'ruby-oci8'
+end
+
+group :development, :production, :staging do
+  gem 'rails_stdout_logging'
 end
 
 group :development, :test do
