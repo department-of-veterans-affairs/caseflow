@@ -1,4 +1,4 @@
-export class FormField {
+export default class FormField {
   constructor(initialValue, validator = null) {
     this.value = initialValue;
     this.validator = validator;
@@ -25,6 +25,7 @@ export const getFormValues = function(form) {
 
 export const validateFormAndSetErrors = function(form) {
   let allValid = true;
+
   Object.keys(form).forEach((key) => {
     let errorMessage = form[key].validator(form[key].value);
     let formCopy = { ...form };
@@ -39,4 +40,4 @@ export const validateFormAndSetErrors = function(form) {
   });
 
   return allValid;
-}
+};

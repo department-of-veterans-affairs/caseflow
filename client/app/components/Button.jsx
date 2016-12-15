@@ -36,9 +36,9 @@ Button.defaultProps = {
 Button.propTypes = {
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
+  id: PropTypes.string,
   linkStyle: PropTypes.bool,
   loading: PropTypes.bool,
-  id: PropTypes.string,
   name: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   type: PropTypes.string

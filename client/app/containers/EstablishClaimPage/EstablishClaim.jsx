@@ -4,7 +4,12 @@ import ApiUtil from '../../util/ApiUtil';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import { FormField, handleFieldChange, getFormValues, validateFormAndSetErrors } from '../../util/FormField';
+import {
+          FormField,
+          handleFieldChange,
+          getFormValues,
+          validateFormAndSetErrors
+       } from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';

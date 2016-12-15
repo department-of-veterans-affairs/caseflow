@@ -8,27 +8,29 @@ export default class Modal extends React.Component {
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
 
+  handleTab = (event) => {
+    let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
+    let firstButton = document.getElementById(`${this.props.title}-close-id`);
+    let lastButton = document.getElementById(lastButtonId);
+
+    if (event.shiftKey) {
+      if (firstButton === document.activeElement) {
+        event.preventDefault();
+        lastButton.focus();
+      }
+    } else if (lastButton === document.activeElement) {
+      event.preventDefault();
+      firstButton.focus();
+    }
+  }
+
   keyHandler = (event) => {
     if (event.key === "Escape") {
       this.props.closeHandler();
     }
 
     if (event.key === "Tab") {
-      let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length-1);
-      let firstButton = document.getElementById(`${this.props.title}-close-id`);
-      let lastButton = document.getElementById(lastButtonId);
-      
-      if (event.shiftKey) {
-        if (firstButton === document.activeElement) {
-          event.preventDefault();
-          lastButton.focus();
-        }
-      } else {
-        if (lastButton === document.activeElement) {
-          event.preventDefault();
-          firstButton.focus();
-        }
-      }
+      this.handleTab();
     }
   }
 
@@ -41,7 +43,7 @@ export default class Modal extends React.Component {
   }
 
   generateButtons() {
-    return (this.props.buttons.map((object, i) => {
+    return this.props.buttons.map((object, i) => {
       // If we have more than two buttons, push the
       // first left, and the rest right.
       // If we have just one button, push it right.
@@ -61,14 +63,14 @@ export default class Modal extends React.Component {
           classNames={classNames}
           loading={object.loading}
           key={i}
-          id={this.buttonIdPrefix+i}
+          id={this.buttonIdPrefix + i}
         />;
-    }));
+    });
   }
 
   render() {
     let {
-      buttons,
+      children,
       closeHandler,
       title
     } = this.props;
@@ -81,7 +83,7 @@ export default class Modal extends React.Component {
             aria-describedby="modal_id-desc"
           >
       <div className="cf-modal-body">
-        <button 
+        <button
           type="button"
           id={`${title}-close-id`}
           className="cf-modal-close"
@@ -91,7 +93,7 @@ export default class Modal extends React.Component {
         </button>
         <h1 className="cf-modal-title" id="modal_id-title">{title}</h1>
         <div className="cf-modal-normal-text">
-          {this.props.children}
+          {children}
         </div>
         <div className="cf-push-row cf-modal-controls">
           {this.generateButtons()}
