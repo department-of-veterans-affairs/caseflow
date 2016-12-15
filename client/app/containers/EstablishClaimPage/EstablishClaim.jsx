@@ -4,7 +4,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import { FormField, handleFieldChange, getFormValues } from '../../util/FormField';
+import { FormField, handleFieldChange, getFormValues, validateFormAndSetErrors } from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
@@ -79,25 +79,9 @@ export default class EstablishClaim extends React.Component {
 
     handleAlertClear();
 
-    let allValid = true;
-
-    Object.keys(this.state.modal).forEach((key) => {
-      let errorMessage = this.state.modal[key].validator(this.state.modal[key].value);
-      let modal = { ...this.state.modal };
-
-      modal[key].errorMessage = errorMessage;
-
-      this.setState({
-        modal
-      });
-
-      allValid = allValid && errorMessage === null;
-    });
-
-    if (!allValid) {
+    if (!validateFormAndSetErrors(this.state.modal)) {
       return;
     }
-
 
     this.setState({
       modalSubmitLoading: true
@@ -112,9 +96,7 @@ export default class EstablishClaim extends React.Component {
         'There was an error while cancelling the current claim. Please try again later'
       );
       this.setState({
-        cancelModal: false
-      });
-      this.setState({
+        cancelModal: false,
         modalSubmitLoading: false
       });
     });

@@ -69,7 +69,7 @@ describe('EstablishClaim', () => {
       });
 
       it('modal can be closed', () => {
-        wrapper.find('#button_\u00AB_Go_Back').simulate('click');
+        wrapper.find('Cancel-EP-Establishment-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });

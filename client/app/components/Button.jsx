@@ -5,6 +5,7 @@ export default class Button extends React.Component {
   render() {
     let {
       classNames,
+      id,
       name,
       disabled,
       loading,
@@ -16,7 +17,7 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
-        id={`${type}_${name.replace(/\s/g, '_')}`}
+        id={id || `${type}_${name.replace(/\s/g, '_')}`}
         className={classNames ? classNames.join(' ') : "cf-submit"}
         type={type}
         disabled={disabled}
@@ -33,9 +34,11 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
   linkStyle: PropTypes.bool,
   loading: PropTypes.bool,
+  id: PropTypes.string,
   name: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   type: PropTypes.string
