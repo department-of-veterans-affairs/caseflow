@@ -94,7 +94,6 @@ describe Appeal do
   end
 
   context "#certify!" do
-    before { Form8.delete_all }
     let(:appeal) { Appeal.new(vacols_id: "765") }
     subject { appeal.certify! }
 

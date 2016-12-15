@@ -23,20 +23,24 @@ RSpec.feature "Save Certification" do
     expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
 
     expect(find("#question3 .usa-input-error-message")).to(
-      have_content("Please enter the veteran's full name."))
+      have_content("Please enter the veteran's full name.")
+    )
 
     fill_in "Full Veteran Name", with: "Paul Joe"
     expect(find("#question3 .usa-input-error-message")).to_not(
-      have_content("Please enter the veteran's full name."))
+      have_content("Please enter the veteran's full name.")
+    )
 
     expect(find("#question11A .usa-input-error-message")).to(
-      have_content("Oops! Looks like you missed one!"))
+      have_content("Oops! Looks like you missed one!")
+    )
 
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
       find("label", text: "No").click
     end
     expect(find("#question10A .usa-input-error-message")).to_not(
-      have_content("Oops! Looks like you missed one!"))
+      have_content("Oops! Looks like you missed one!")
+    )
 
     expect(page).to have_css("#question8A3.usa-input-error")
   end
