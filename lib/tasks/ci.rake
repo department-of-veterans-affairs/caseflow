@@ -6,7 +6,7 @@ task default: "ci:all"
 
 namespace :ci do
   desc "Runs all the continuous integration scripts"
-  task all: %w(parallel:spec[3] ci:other)
+  task all: %w(parallel:spec ci:other)
 
   desc "Run all non-spec CI scripts"
   task other: %w(ci:verify_code_coverage lint security konacha:run mocha)

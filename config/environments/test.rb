@@ -9,11 +9,6 @@ Rails.application.configure do
 
   config.cache_store = :file_store, Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
 
-  if ENV['TEST_ENV_NUMBER']
-    assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
-    config.assets.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
-  end
-
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
