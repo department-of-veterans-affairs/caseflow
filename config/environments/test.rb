@@ -40,9 +40,6 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
-  # Log only errors
-  config.log_level = :ERROR
-
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
