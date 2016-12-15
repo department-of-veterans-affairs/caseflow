@@ -8,7 +8,7 @@ namespace :ci do
   desc "Runs all the continuous integration scripts"
   task all: [:lint, :security, :spec, :sauceci, "konacha:run", :mocha]
 
-  desc "Verify code coverge"
+  desc "Verify code coverge via simplecov, after tests have been run in parallel"
   task :verify_code_coverage do
     require 'simplecov'
     resultset = SimpleCov::ResultMerger.resultset
