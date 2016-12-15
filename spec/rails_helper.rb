@@ -38,8 +38,9 @@ require_relative "support/database_cleaner"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
+# Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 
+Capybara.default_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
   options = {
     port: 51674 + ENV['TEST_ENV_NUMBER'].to_i
