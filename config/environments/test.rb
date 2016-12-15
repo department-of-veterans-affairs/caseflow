@@ -11,7 +11,7 @@ Rails.application.configure do
 
   if ENV['TEST_ENV_NUMBER']
     assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
-    Rails.application.assets.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
+    config.assets.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
   end
 
   # Do not eager load code on boot. This avoids loading your whole application
