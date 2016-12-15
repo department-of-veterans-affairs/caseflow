@@ -24,7 +24,7 @@ before_script:
   - npm -v
   - npm install --no-optional
   - sudo apt-get install pdftk
-  - bundle exec rake parallel:create parallel:prepare
+  - bundle exec rake parallel:setup
 
 script:
   - bundle exec parallel_test spec/ -n 3 --only-group $TEST_GROUP --group-by filesize --type rspec
