@@ -37,7 +37,8 @@ Rails.application.configure do
   config.assets.raise_runtime_errors = true
 
   # Setup S3
-  config.s3_enabled = false
+  config.s3_enabled = ENV["AWS_ACCESS_KEY_ID"].present?
+  config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
