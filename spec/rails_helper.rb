@@ -43,7 +43,7 @@ Capybara.default_driver = driver
 
 Capybara.register_driver(driver) do |app|
   options = {
-    port: 51674 + ENV["TEST_ENV_NUMBER"].to_i
+    port: 51_674 + ENV["TEST_ENV_NUMBER"].to_i
   }
   Capybara::Poltergeist::Driver.new(app, options)
 end
