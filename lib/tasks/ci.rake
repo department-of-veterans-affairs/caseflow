@@ -8,6 +8,9 @@ namespace :ci do
   desc "Runs all the continuous integration scripts"
   task all: [:lint, :security, :spec, :sauceci, "konacha:run", :mocha]
 
+  desc "Run all non-spec CI scripts"
+  task "all-other" => %w(ci:verify_code_coverage lint security konacha:run mocha)
+
   desc "Verify code coverge via simplecov, after tests have been run in parallel"
   task :verify_code_coverage do
     require 'simplecov'
