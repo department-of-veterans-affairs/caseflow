@@ -12,9 +12,6 @@ describe Certification do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal_hash }
-    Certification.delete_all
-    Task.delete_all
-    Appeal.delete_all
     Appeal.stub(:find_or_create_by_vacols_id) do |_vacols_id|
       appeal
     end

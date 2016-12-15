@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.feature "Switch User" do
   before do
-    reset_application!
     User.create(station_id: "283", css_id: "123")
     User.create(station_id: "ABC", css_id: "456")
     User.create(station_id: "283", css_id: "ANNE MERICA")

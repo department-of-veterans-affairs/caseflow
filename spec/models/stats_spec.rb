@@ -3,7 +3,6 @@ require "rails_helper"
 describe Stats do
   before do
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
-    Certification.delete_all
     Rails.cache.clear
   end
 

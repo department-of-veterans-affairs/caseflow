@@ -12,6 +12,7 @@ require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
+require_relative "support/database_cleaner"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -82,11 +83,7 @@ end
 User.prepend(StubbableUser)
 
 def reset_application!
-  Task.delete_all
-  Appeal.delete_all
-  Certification.delete_all
   User.clear_stub!
-  User.delete_all
   Fakes::AppealRepository.records = nil
 end
 
@@ -121,11 +118,7 @@ RSpec.configure do |config|
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
-
   config.before(:all) { User.unauthenticate! }
-  # config.before(:each) do
-  # SimpleCov.command_name "Feature #{Random.rand(100_000)}"
-  # end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

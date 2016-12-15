@@ -38,19 +38,33 @@ class Document
     )
   end
 
+  # Currently three levels of caching. Try to serve content
+  # from memory, then look to S3 if it's not in memory, and
+  # if it's not in S3 grab it from VBMS
+  def fetch_and_cache_document_from_vbms
+    @content = Appeal.repository.fetch_document_file(self)
+    S3Service.store_file(file_name, @content)
+    @content
+  end
+
+  def fetch_content
+    S3Service.fetch_content(file_name) || fetch_and_cache_document_from_vbms
+  end
+
   def content
-    @content ||= Appeal.repository.fetch_document_file(self)
+    @content ||= fetch_content
   end
 
-  def save!
-    File.binwrite(default_path, content)
+  def serve
+    File.binwrite(default_path, content) unless File.exist?(default_path)
+    default_path
   end
 
-  def save_unless_exists!
-    save! unless File.exist?(default_path)
+  def file_name
+    document_id.to_s
   end
 
   def default_path
-    File.join(Rails.root, "tmp", "pdfs", "#{type.tr(' ', '-').downcase}-#{document_id}.pdf")
+    File.join(Rails.root, "tmp", "pdfs", file_name)
   end
 end
