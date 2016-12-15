@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b743c64"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3b830af"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -15,9 +15,6 @@ gem 'uglifier', '>= 1.3.0'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-
-# Logging
-gem 'rails_stdout_logging'
 
 # React
 gem "react_on_rails", "~> 6"
@@ -70,6 +67,10 @@ group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
   gem 'ruby-oci8'
+end
+
+group :development, :production, :staging do
+  gem 'rails_stdout_logging'
 end
 
 group :development, :test do
