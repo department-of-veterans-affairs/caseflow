@@ -40,6 +40,13 @@ Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-conf
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
 
+Capybara.register_driver :poltergeist do |app|
+  options = {
+    port: 51674 + ENV['TEST_ENV_NUMBER'].to_i
+  }
+  Capybara::Poltergeist::Driver.new(app, options)
+end
+
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods

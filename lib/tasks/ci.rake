@@ -2,11 +2,14 @@ require "rainbow"
 
 CODE_COVERAGE_THRESHOLD = 90
 
-task default: "ci:all"
-
 namespace :ci do
   desc "Runs all the continuous integration scripts"
-  task all: %w(parallel:spec ci:other)
+  task :all do
+    Rake::Task["parallel:spec"].invoke(3) # 3 processes
+    Rake::Task["ci:other"].invoke
+  end
+
+  task default: :all
 
   desc "Run all non-spec CI scripts"
   task other: %w(ci:verify_code_coverage lint security konacha:run mocha)
@@ -27,7 +30,8 @@ namespace :ci do
     result = SimpleCov::Result.new(merged)
 
     if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
-      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min}% covered. This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%.").red
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min}% covered.\
+                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%.").red
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met").green
