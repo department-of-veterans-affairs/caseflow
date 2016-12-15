@@ -1,9 +1,13 @@
-p "EXECUTED .SIMPLECOV"
-SimpleCov.start do
-  add_filter "lib/fakes"
-  add_filter "spec/support"
-  add_filter "config/initializers"
-  add_filter "lib/tasks"
+if ENV["RAILS_ENV"] == "test"
+  SimpleCov.start do
+    add_filter "lib/fakes"
+    add_filter "spec/support"
+    add_filter "config/initializers"
+    add_filter "lib/tasks"
 
-  SimpleCov.minimum_coverage_by_file 90
+    merge_timeout 200
+  end
+
+  SimpleCov.command_name "Test Run" + (ENV["TEST_ENV_NUMBER"] || "")
 end
+

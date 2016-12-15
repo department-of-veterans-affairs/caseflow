@@ -27,7 +27,7 @@ before_script:
   - bundle exec rake parallel:create parallel:prepare
 
 script:
-  - bundle exec parallel_test spec/ -n 6 --only-group $TEST_GROUP --group-by filesize --type rspec
+  - bundle exec parallel_test spec/ -n 3 --only-group $TEST_GROUP --group-by filesize --type rspec
 
 bundler_args: "--without development staging production"
 cache:
