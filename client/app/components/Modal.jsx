@@ -10,7 +10,7 @@ export default class Modal extends React.Component {
 
   handleTab = (event) => {
     let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
-    let firstButton = document.getElementById(`${this.props.title}-close-id`);
+    let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
     let lastButton = document.getElementById(lastButtonId);
 
     if (event.shiftKey) {
