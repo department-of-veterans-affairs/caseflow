@@ -25,7 +25,6 @@ export default class Modal extends React.Component {
   }
 
   keyHandler = (event) => {
-    console.log('here' + event);
     if (event.key === "Escape") {
       this.props.closeHandler();
     }
