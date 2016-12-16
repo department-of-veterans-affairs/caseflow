@@ -42,10 +42,3 @@ notifications:
 
 services:
   - redis-server
-
-env:
-  - FOO=1
-  - FOO=1
-  - FOO=1
-  - FOO=1
-  - FOO=1
