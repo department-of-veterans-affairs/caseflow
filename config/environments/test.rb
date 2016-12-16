@@ -8,7 +8,7 @@ Rails.application.configure do
   config.cache_classes = true
 
   cache_dir = Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
-  Dir.mkdir_p(cache_dir) unless File.exists?(cache_dir)
+  Dir.mkdir(cache_dir) unless File.exists?(cache_dir)
   config.cache_store = :file_store, cache_dir
 
   # Do not eager load code on boot. This avoids loading your whole application
