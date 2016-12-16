@@ -62,7 +62,7 @@ class Certification < ActiveRecord::Base
   end
 
   def self.was_missing_nod
-    # allow 20 second lag just in case 'nod_matching_at' timestamp is a few seconds
+    # allow 30 second lag just in case 'nod_matching_at' timestamp is a few seconds
     # greater than 'created_at' timestamp
     where(nod_matching_at: nil).or(where("nod_matching_at > " + created_at_interval))
   end
