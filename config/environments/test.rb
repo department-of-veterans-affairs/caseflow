@@ -42,6 +42,13 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
+  if ENV['TEST_ENV_NUMBER']
+    assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
+    config.assets.configure do |env|
+      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
+    end
+  end
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
