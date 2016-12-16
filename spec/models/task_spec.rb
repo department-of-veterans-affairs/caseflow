@@ -263,6 +263,11 @@ describe Task do
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
     end
+
+    it "saves feedback" do
+      task.cancel!("Feedback")
+      expect(task.reload.comment).to eq("Feedback")
+    end
   end
 
   context "#assigned_not_completed" do

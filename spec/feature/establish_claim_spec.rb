@@ -121,10 +121,32 @@ RSpec.feature "Dispatch" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
+      # Open modal
       click_on "Cancel"
+      expect(page).to have_css(".cf-modal")
+
+      # Try to cancel without explanation
+      click_on "Cancel EP Establishment"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_css(".cf-modal")
+      expect(page).to have_content("Please enter an explanation")
+
+      # Close modal
+      click_on "\u00AB Go Back"
+      expect(page).to_not have_css(".cf-modal")
+
+      # Open modal
+      click_on "Cancel"
+      expect(page).to have_css(".cf-modal")
+
+      # Fill in explanation and cancel
+      page.fill_in "Cancel Explanation", with: "Test"
+      click_on "Cancel EP Establishment"
+
       expect(page).to have_current_path("/dispatch/establish-claim")
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+      expect(@task.comment).to eq("Test")
     end
 
     scenario "Establish Claim form saves state when toggling decision" do
