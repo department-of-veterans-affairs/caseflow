@@ -62,21 +62,21 @@ class Certification < ActiveRecord::Base
   end
 
   def self.was_missing_nod
-    # Allow 1 second lag just in case 'nod_matching_at' timestamp is a few milliseconds
+    # allow 20 second lag just in case 'nod_matching_at' timestamp is a few seconds
     # greater than 'created_at' timestamp
-    where(nod_matching_at: nil).or(where("nod_matching_at > created_at + INTERVAL '1 second'"))
+    where(nod_matching_at: nil).or(where("nod_matching_at > " + created_at_interval))
   end
 
   def self.was_missing_soc
-    where(soc_matching_at: nil).or(where("soc_matching_at > created_at + INTERVAL '1 second'"))
+    where(soc_matching_at: nil).or(where("soc_matching_at > " + created_at_interval))
   end
 
   def self.was_missing_ssoc
-    ssoc_required.where(ssocs_matching_at: nil).or(where("ssocs_matching_at > created_at + INTERVAL '1 second'"))
+    ssoc_required.where(ssocs_matching_at: nil).or(where("ssocs_matching_at > " + created_at_interval))
   end
 
   def self.was_missing_form9
-    where(form9_matching_at: nil).or(where("form9_matching_at > created_at + INTERVAL '1 second'"))
+    where(form9_matching_at: nil).or(where("form9_matching_at > " + created_at_interval))
   end
 
   def self.ssoc_required
@@ -132,6 +132,10 @@ class Certification < ActiveRecord::Base
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
+    end
+
+    def created_at_interval
+      "created_at + INTERVAL '30 seconds'"
     end
   end
 end
