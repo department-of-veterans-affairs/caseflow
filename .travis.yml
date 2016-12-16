@@ -27,7 +27,7 @@ before_script:
 
 script:
   # Note(jd) Should any issues arise with parallel tests, this command can be swapped for its
-  # serial version: `rake spec ci:serial`
+  # serial version: `bundle exec rake spec`
   - bundle exec rake parallel:spec[3]
   - bundle exec rake ci:other
 
@@ -42,3 +42,10 @@ notifications:
 
 services:
   - redis-server
+
+env:
+  - FOO=1
+  - FOO=1
+  - FOO=1
+  - FOO=1
+  - FOO=1
