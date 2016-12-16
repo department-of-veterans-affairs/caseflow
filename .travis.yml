@@ -26,7 +26,10 @@ before_script:
   - bundle exec rake parallel:setup[3]
 
 script:
-  - bundle exec rake parallel:spec[3]
+  # Note(jd) Should any issues arise with parallel tests, this command can be swapped for its
+  # serial version: `rake spec`
+  - bundle exec rake spec
+  # - bundle exec rake parallel:spec[3]
   - bundle exec rake ci:other
 
 
