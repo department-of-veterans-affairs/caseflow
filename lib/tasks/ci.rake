@@ -14,13 +14,18 @@ namespace :ci do
   desc "Run all non-spec CI scripts"
   task other: %w(ci:verify_code_coverage lint security konacha:run mocha)
 
-  desc "Verify code coverge via simplecov, after tests have been run in parallel"
+  desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
+    puts "Verifying code coverage"
     require "simplecov"
+
+    # consider results within the last 5 minutes valid
+    SimpleCov.merge_timeout(60 * 50)
+    # result = SimpleCov::ResultMerger.merged_result
+
     resultset = SimpleCov::ResultMerger.resultset
-    results = []
-    resultset.each do |command_name, data|
-      results << SimpleCov::Result.from_hash(command_name => data)
+    results = resultset.map do |command_name, data|
+      SimpleCov::Result.from_hash(command_name => data)
     end
 
     merged = {}
@@ -29,8 +34,16 @@ namespace :ci do
     end
     result = SimpleCov::Result.new(merged)
 
+    if result.covered_percentages.empty?
+      puts Rainbow("No valid coverage results were found").red
+      exit!(1)
+    end
+
+    # Rebuild HTML file with correct merged results
+    result.format!
+
     if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
-      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min}% covered.\
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
                    This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%.").red
       exit!(1)
     else

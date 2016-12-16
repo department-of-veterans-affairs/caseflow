@@ -26,8 +26,7 @@ before_script:
   - bundle exec rake parallel:setup[3]
 
 script:
-  - bundle exec rake parallel:spec[3]
-  - bundle exec rake ci:other
+  - bundle exec rake ci:all
 
 
 bundler_args: "--without development staging production"
