@@ -16,7 +16,7 @@ namespace :ci do
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
-    puts "Verifying code coverage"
+    puts "\nVerifying code coverage"
     require "simplecov"
 
     resultset = SimpleCov::ResultMerger.resultset
@@ -40,10 +40,10 @@ namespace :ci do
 
     if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
       puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
-                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%.").red
+                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
       exit!(1)
     else
-      puts Rainbow("Code coverage threshold met").green
+      puts Rainbow("Code coverage threshold met\n").green
     end
   end
 end
