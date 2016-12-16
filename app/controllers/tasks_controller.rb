@@ -27,7 +27,10 @@ class TasksController < ApplicationController
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user && !task.started?
-
+    if task.canceled?
+      render "canceled"
+      return
+    end
     render "complete" if task.complete?
   end
 

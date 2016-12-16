@@ -132,6 +132,10 @@ class Task < ActiveRecord::Base
     completed_at
   end
 
+  def canceled?
+    completion_status === self.class.completion_status_code(:cancelled)
+  end
+
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status)
     fail(AlreadyCompleteError) if complete?
