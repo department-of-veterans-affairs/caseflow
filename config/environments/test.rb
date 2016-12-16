@@ -7,7 +7,9 @@ Rails.application.configure do
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
 
-  config.cache_store = :file_store, Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
+  cache_dir = Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
+  Dir.mkdir_p(cache_dir) unless File.exists?(cache_dir)
+  config.cache_store = :file_store, cache_dir
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
@@ -54,4 +56,3 @@ Rails.application.configure do
   #
   ENV["CASEFLOW_FEEDBACK_URL"] = "test.feedback.url"
 end
-
