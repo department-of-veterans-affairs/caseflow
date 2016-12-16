@@ -19,10 +19,6 @@ namespace :ci do
     puts "Verifying code coverage"
     require "simplecov"
 
-    # consider results within the last 5 minutes valid
-    SimpleCov.merge_timeout(60 * 50)
-    # result = SimpleCov::ResultMerger.merged_result
-
     resultset = SimpleCov::ResultMerger.resultset
     results = resultset.map do |command_name, data|
       SimpleCov::Result.from_hash(command_name => data)
