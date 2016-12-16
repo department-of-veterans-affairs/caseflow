@@ -25,12 +25,13 @@ export default class Modal extends React.Component {
   }
 
   keyHandler = (event) => {
+    console.log('here' + event);
     if (event.key === "Escape") {
       this.props.closeHandler();
     }
 
     if (event.key === "Tab") {
-      this.handleTab();
+      this.handleTab(event);
     }
   }
 
@@ -85,7 +86,7 @@ export default class Modal extends React.Component {
       <div className="cf-modal-body">
         <button
           type="button"
-          id={`${title}-close-id`}
+          id={`${this.buttonIdPrefix}close`}
           className="cf-modal-close"
           onClick={closeHandler}
         >
