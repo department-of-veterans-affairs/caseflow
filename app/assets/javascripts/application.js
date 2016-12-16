@@ -35,7 +35,7 @@ window.onload = function () {
       });
     });
   }
-}
+};
 
 
 /* Copies appeals ID to clipboard */
