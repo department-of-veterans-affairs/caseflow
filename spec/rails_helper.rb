@@ -40,7 +40,7 @@ Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-conf
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
-    port: 51_674 + ENV["TEST_ENV_NUMBER"].to_i,
+    port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
     phantomjs_options: ["--disk-cache=true"]
   }
 
