@@ -23,10 +23,10 @@ before_script:
   - npm -v
   - npm install --no-optional
   - sudo apt-get install pdftk
-  - bundle exec rake parallel:setup[4]
+  - bundle exec rake parallel:setup[3]
 
 script:
-  - bundle exec rake parallel:spec[4]
+  - bundle exec rake parallel:spec[3]
   - bundle exec rake ci:other
 
 
