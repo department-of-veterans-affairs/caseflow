@@ -47,7 +47,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
-Capybara.default_driver = :parallel_sniffybara
+Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 
 # Convenience methods for stubbing current user
 module StubbableUser
