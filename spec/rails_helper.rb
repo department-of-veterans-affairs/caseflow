@@ -38,15 +38,16 @@ require_relative "support/database_cleaner"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
-Capybara.default_driver = driver
-
-Capybara.register_driver(driver) do |app|
+Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
-    port: 51_674 + ENV["TEST_ENV_NUMBER"].to_i
+    port: 51_674 + ENV["TEST_ENV_NUMBER"].to_i,
+    phantomjs_options: ["--disk-cache=true"]
   }
-  Capybara::Poltergeist::Driver.new(app, options)
+
+  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
+
+Capybara.default_driver = :parallel_sniffybara
 
 # Convenience methods for stubbing current user
 module StubbableUser
