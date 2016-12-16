@@ -268,17 +268,6 @@ describe Task do
     end
   end
 
-  context "#cancel_permanently!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-
-    it "permanently closes the task" do
-      task.cancel_permanently!
-      expect(task.reload.complete?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
-    end
-  end
-
   context "#assigned_not_completed" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }

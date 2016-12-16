@@ -84,12 +84,8 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete_and_recreate!(:cancelled)
+      complete!(self.class.completion_status_code(:cancelled))
     end
-  end
-
-  def cancel_permanently!
-    complete!(self.class.completion_status_code(:cancelled))
   end
 
   def expire!
