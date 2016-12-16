@@ -23,12 +23,14 @@ before_script:
   - npm -v
   - npm install --no-optional
   - sudo apt-get install pdftk
-  - bundle exec rake parallel:setup[3]
+  - RAILS_ENV=test bundle exec rake db:create
+  - RAILS_ENV=test bundle exec rake db:schema:load
 
+# TODO(jd): Enable parallel tests on travis when we are ready
+# This involves adding `bundle exec rake parallel:setup[3]` in the before_script block
+# and `bundle exec rake parallel:rspec[3]` in the script block
 script:
-  # Note(jd) Should any issues arise with parallel tests, this command can be swapped for its
-  # serial version: `bundle exec rake spec`
-  - bundle exec rake parallel:spec[3]
+  - bundle exec rake spec
   - bundle exec rake ci:other
 
 
