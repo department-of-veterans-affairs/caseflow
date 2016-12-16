@@ -88,6 +88,10 @@ class Task < ActiveRecord::Base
     end
   end
 
+  def cancel_permanently!
+    complete!(self.class.completion_status_code(:cancelled))
+  end
+
   def expire!
     complete_and_recreate!(:expired)
   end
