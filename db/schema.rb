@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212154649) do
+ActiveRecord::Schema.define(version: 20161213140745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 20161212154649) do
     t.string   "_initial_ssoc_required"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.string   "certifying_official_title_specify_other"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
