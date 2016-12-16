@@ -61,7 +61,7 @@ describe('EstablishClaim', () => {
 
     context('when task is cancelled', () => {
       beforeEach(() => {
-        wrapper.find('#button_Cancel').simulate('click');
+        wrapper.find('#button-Cancel').simulate('click');
       });
 
       it('modal is shown', () => {
@@ -69,7 +69,7 @@ describe('EstablishClaim', () => {
       });
 
       it('modal can be closed', () => {
-        wrapper.find('Cancel-EP-Establishment-button-id-0').simulate('click');
+        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });

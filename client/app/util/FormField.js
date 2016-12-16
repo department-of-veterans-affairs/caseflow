@@ -24,6 +24,9 @@ export const getFormValues = function(form) {
 };
 
 export const validateFormAndSetErrors = function(form) {
+  // This variable stays true until a validator fails
+  // in which case we return false. Otherwise all fields
+  // are vavlid, and we retrun true.
   let allValid = true;
 
   Object.keys(form).forEach((key) => {
