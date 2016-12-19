@@ -258,6 +258,7 @@ describe Task do
     it "closes cancelled tasks" do
       task.cancel!
       expect(task.reload.complete?).to be_truthy
+      expect(task.reload.canceled?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
     end
@@ -265,6 +266,20 @@ describe Task do
     it "saves feedback" do
       task.cancel!("Feedback")
       expect(task.reload.comment).to eq("Feedback")
+    end
+  end
+
+  context ".canceled?" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    it "returns false for task not canceled" do
+      expect(task.canceled?).to be_falsey
+    end
+
+    it "returns true for cancelled task" do
+      task.cancel!
+      expect(task.canceled?).to be_truthy
     end
   end
 
