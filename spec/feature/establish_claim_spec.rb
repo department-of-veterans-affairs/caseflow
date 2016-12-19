@@ -142,7 +142,7 @@ RSpec.feature "Dispatch" do
       click_on "Cancel EP Establishment"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      sleep(2)
+      expect(page).to have_content("EP Establishment Canceled")
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
