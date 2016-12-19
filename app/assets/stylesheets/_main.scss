@@ -106,3 +106,19 @@
 .cf-button-associated-text {
   color: $color-gray;
 }
+
+.cf-modal-normal-text {
+  margin: auto;
+  width: 70%;
+  text-align: left;
+}
+
+.cf-form-textarea--full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+.cf-modal-body {
+  max-height: 100%;
+  overflow-y: auto;
+}
