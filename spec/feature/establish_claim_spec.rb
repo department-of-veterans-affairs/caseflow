@@ -115,7 +115,7 @@ RSpec.feature "Dispatch" do
 
     # The cancel button is the same on both the review and form pages, so one test
     # can adequetly test both of them.
-    scenario "Cancel an Establish Claim task returns me to landing page", focus: true do
+    scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
@@ -142,8 +142,9 @@ RSpec.feature "Dispatch" do
       click_on "Cancel EP Establishment"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      sleep(2)
       expect(@task.reload.complete?).to be_truthy
-      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
     end
 

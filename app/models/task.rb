@@ -117,7 +117,9 @@ class Task < ActiveRecord::Base
   end
 
   def progress_status
-    if completed_at
+    if canceled?
+      "Canceled"
+    elsif completed_at
       "Complete"
     elsif started_at
       "In Progress"
@@ -133,7 +135,7 @@ class Task < ActiveRecord::Base
   end
 
   def canceled?
-    completion_status === self.class.completion_status_code(:cancelled)
+    completion_status == self.class.completion_status_code(:cancelled)
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case

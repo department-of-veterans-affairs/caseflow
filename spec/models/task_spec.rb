@@ -259,7 +259,7 @@ describe Task do
       task.cancel!
       expect(task.reload.complete?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
-      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
     end
 
     it "saves feedback" do
