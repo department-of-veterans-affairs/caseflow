@@ -27,9 +27,6 @@ export const SEGMENTED_LANE_OPTIONS = [
 ];
 
 export const render = function() {
-  let { task } = this.props;
-  let { appeal } = task;
-
   return (
     <form noValidate>
       <div className="cf-app-segment cf-app-segment--alt">

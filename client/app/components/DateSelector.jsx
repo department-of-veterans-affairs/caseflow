@@ -8,7 +8,7 @@ const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
 
 export default class DateSelector extends React.Component {
-  
+
   dateFill = (event) => {
     let value = event.target.value;
 
@@ -28,7 +28,7 @@ export default class DateSelector extends React.Component {
     // removing any non-date characters
     let match = DATE_REGEX.exec(value);
 
-    event.target.value = match ? match[0] : ''
+    event.target.value = match ? match[0] : '';
 
     if (typeof this.props.onChange === 'function') {
       this.props.onChange(event);

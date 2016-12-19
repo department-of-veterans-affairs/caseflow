@@ -36,6 +36,6 @@ DropDown.propTypes = {
   onChange: PropTypes.func,
   options: PropTypes.array,
   readOnly: PropTypes.bool,
-  required: PropTypes.required,
+  required: PropTypes.bool,
   value: PropTypes.string
 };

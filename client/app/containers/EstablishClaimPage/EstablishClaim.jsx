@@ -27,6 +27,8 @@ export default class EstablishClaim extends React.Component {
     this.handleFieldChange = handleFieldChange.bind(this);
     this.validateFormAndSetErrors = validateFormAndSetErrors.bind(this);
 
+    this.setErrors = false;
+
     // Set initial state on page render
     this.state = {
       cancelModal: false,
@@ -73,6 +75,8 @@ export default class EstablishClaim extends React.Component {
     handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.form)) {
+      this.setErrors = true;
+
       return;
     }
 
@@ -174,7 +178,10 @@ export default class EstablishClaim extends React.Component {
   }
 
   componentDidUpdate() {
-    scrollToAndFocusFirstError();
+    if (this.setErrors) {
+      scrollToAndFocusFirstError();
+    }
+    this.setErrors = false;
   }
 
   render() {
