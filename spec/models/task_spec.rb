@@ -139,7 +139,7 @@ describe Task do
       before do
         task.assign!(@user)
         task.start!
-        task.complete!("Completd")
+        task.complete!("Completed")
       end
 
       it { is_expected.to eq("Completed") }
