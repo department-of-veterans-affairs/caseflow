@@ -23,7 +23,6 @@ window.onload = function () {
   // interferes with our logic. We set jqueryOn to be false in BaseContainer.jsx
   if (typeof window.jqueryOn === 'undefined' || window.jqueryOn) {
     $(function() {
-      window.Dropdown.bind();
       window.Modal.bind();
       window.LoadingIndicator.bind();
     });
@@ -35,6 +34,10 @@ window.onload = function () {
       });
     });
   }
+
+  $(function() {
+    window.Dropdown.bind();
+  });
 };
 
 
