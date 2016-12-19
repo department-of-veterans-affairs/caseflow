@@ -117,10 +117,8 @@ class Task < ActiveRecord::Base
   end
 
   def progress_status
-    if canceled?
-      "Canceled"
-    elsif completed_at
-      "Complete"
+    if completed_at
+      completion_status_text
     elsif started_at
       "In Progress"
     elsif assigned_at

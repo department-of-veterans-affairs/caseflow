@@ -129,19 +129,20 @@ describe Task do
       let!(:appeal) { Appeal.create(vacols_id: "123C") }
       let!(:task) { EstablishClaim.create(appeal: appeal) }
       before do
-        # TODO(Mark): When we have a method to start a task, this should be updated
-        task.started_at = Time.now.utc
+        task.assign!(@user)
+        task.start!
       end
       it { is_expected.to eq("In Progress") }
     end
 
     context "task is completed" do
       before do
-        # TODO(Mark): When we have a method to complete a task, this should be updated
-        task.completed_at = Time.now.utc
+        task.assign!(@user)
+        task.start!
+        task.complete!("Completd")
       end
 
-      it { is_expected.to eq("Complete") }
+      it { is_expected.to eq("Completed") }
     end
   end
 
