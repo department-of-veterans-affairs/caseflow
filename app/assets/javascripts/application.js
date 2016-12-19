@@ -35,6 +35,8 @@ window.onload = function () {
     });
   }
 
+  // Leave the Dropdown jQuery on React pages since the header
+  // is rendered from erb files.
   $(function() {
     window.Dropdown.bind();
   });
