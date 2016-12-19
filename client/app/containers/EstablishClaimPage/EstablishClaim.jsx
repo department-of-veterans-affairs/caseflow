@@ -8,9 +8,12 @@ import {
           FormField,
           handleFieldChange,
           getFormValues,
-          validateFormAndSetErrors
+          validateFormAndSetErrors,
+          scrollToAndFocusFirstError
        } from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
+import dateValidator from '../../util/validators/DateValidator';
+import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
 
@@ -29,18 +32,36 @@ export default class EstablishClaim extends React.Component {
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
-        claimLabel: new FormField(Form.CLAIM_LABEL_OPTIONS[0]),
+        claimLabel: new FormField(
+          Form.CLAIM_LABEL_OPTIONS[0],
+          requiredValidator('Please enter the EP & Claim Label.')
+          ),
+        decisionDate: new FormField(
+          formatDate(this.props.task.appeal.decision_date),
+          [
+            requiredValidator('Please enter the Decision Date.'),
+            dateValidator()
+          ]
+          ),
         gulfWar: new FormField(false),
-        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        modifier: new FormField(
+          Form.MODIFIER_OPTIONS[0],
+          requiredValidator('Please selected a modifier.')
+          ),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
-        segmentedLane: new FormField(Form.SEGMENTED_LANE_OPTIONS[0]),
+        segmentedLane: new FormField(
+          Form.SEGMENTED_LANE_OPTIONS[0],
+          requiredValidator('Please enter a Segmented Lane.')
+          ),
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
       modal: {
-        cancelFeedback: new FormField('',
-          requiredValidator('Please enter an explanation.'))
+        cancelFeedback: new FormField(
+          '',
+          requiredValidator('Please enter an explanation.')
+          )
       },
       modalSubmitLoading: false,
       page: REVIEW_PAGE
@@ -48,15 +69,19 @@ export default class EstablishClaim extends React.Component {
   }
 
   handleSubmit = (event) => {
-    this.setState({
-      loading: true
-    });
-
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
     event.preventDefault();
     handleAlertClear();
+
+    if (!this.validateFormAndSetErrors(this.state.form)) {
+      return;
+    }
+
+    this.setState({
+      loading: true
+    });
 
     let data = {
       claim: ApiUtil.convertToSnakeCase(getFormValues(this.state.form))
@@ -146,6 +171,10 @@ export default class EstablishClaim extends React.Component {
     } else {
       throw new RangeError("Invalid page value");
     }
+  }
+
+  componentDidUpdate() {
+    scrollToAndFocusFirstError();
   }
 
   render() {

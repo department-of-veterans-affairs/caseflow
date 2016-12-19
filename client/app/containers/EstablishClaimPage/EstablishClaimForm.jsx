@@ -12,7 +12,7 @@ export const POA = [
   'Private'
 ];
 export const CLAIM_LABEL_OPTIONS = [
-  ' ',
+  '',
   '172BVAG - BVA Grant',
   '170PGAMC - AMC-Partial Grant',
   '170RMDAMC - AMC-Remand'
@@ -63,8 +63,8 @@ export const render = function() {
         <DateSelector
          label="Decision Date"
          name="decisionDate"
-         readOnly={false}
-         value={appeal.decision_date}
+         onChange={this.handleFieldChange('form', 'decisionDate')}
+         {...this.state.form.decisionDate}
         />
         <DropDown
          label="Segmented Lane"

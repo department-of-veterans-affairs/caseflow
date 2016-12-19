@@ -1,7 +1,16 @@
 export class FormField {
   constructor(initialValue, validator = null) {
     this.value = initialValue;
-    this.validator = validator;
+    // Always make validator an array of all the validators.
+    if (validator !== null) {
+      if (Array.isArray(validator)) {
+        this.validator = validator;  
+      } else {
+        this.validator = [validator];
+      }
+    } else {
+      this.validator = null;
+    }
   }
 }
 
@@ -29,18 +38,41 @@ export const validateFormAndSetErrors = function(form) {
   // are vavlid, and we retrun true.
   let allValid = true;
 
-  Object.keys(form).forEach((key) => {
-    let errorMessage = form[key].validator(form[key].value);
-    let formCopy = { ...form };
+  Object.keys(form)
+    .filter((key) => form[key].validator !== null)
+    .forEach((key) => {
+      form[key].validator.reduce((errorMessage, validator) => {
+        if (errorMessage) {
+          return errorMessage;
+        }
 
-    formCopy[key].errorMessage = errorMessage;
+        errorMessage = validator(form[key].value);
+        let formCopy = { ...form };
 
-    this.setState(
-      formCopy
-    );
+        formCopy[key].errorMessage = errorMessage;
 
-    allValid = allValid && errorMessage === null;
-  });
+        this.setState(
+          formCopy
+        );
+
+        allValid = allValid && errorMessage === null;
+        return errorMessage;
+      }, null);
+    });
 
   return allValid;
+};
+
+export const scrollToAndFocusFirstError = function() {
+  let errors = document.getElementsByClassName("usa-input-error-message");
+  if (errors.length > 0)
+  {
+    window.scrollBy(0, errors[0].parentElement.getBoundingClientRect().top);
+    errors[0].parentElement.childNodes.forEach((node) => {
+      if (node.nodeName === 'INPUT' ||
+          node.nodeName === 'SELECT') {
+        node.focus();
+      }
+    });
+  }
 };

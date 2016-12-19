@@ -5,31 +5,11 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 // A regex that will match as much of a mm/dd/yyyy date as possible.
 // TODO (mdbenjam): modify this to not accept months like 13 or days like 34
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
-const ZERO_INDEX_MONTH_OFFSET = 1;
+
 
 export default class DateSelector extends React.Component {
-  constructor(props) {
-    super(props);
-    let value = '';
-
-    // Regardless of the date format provided, we turn it into mm/dd/yyyy
-    // TODO (mdbenjam): Add a date formatting package?
-    if (props.value) {
-      let date = new Date(props.value);
-
-      value = `${date.getMonth() + ZERO_INDEX_MONTH_OFFSET}` +
-        `/${date.getDate()}/${date.getFullYear()}`;
-    }
-
-    this.state = {
-      value
-    };
-
-    this.dateFill = this.dateFill.bind(this);
-  }
-
-  dateFill(event) {
-
+  
+  dateFill = (event) => {
     let value = event.target.value;
 
     // If the user added characters we append a '/' before putting
@@ -37,42 +17,42 @@ export default class DateSelector extends React.Component {
     // the regex test will strip it. Otherwise, the user doesn't have
     // to type a '/'. If the user removed characters we check if the
     // last character is a '/' and remove it for them.
-    if (event.target.value.length > this.state.value.length) {
+    if (event.target.value.length > this.props.value.length) {
       value = `${value}/`;
-    } else if (this.state.value.charAt(this.state.value.length - 1) === '/') {
+    } else if (this.props.value.charAt(this.props.value.length - 1) === '/') {
       value = value.substr(0, value.length - 1);
     }
-
 
     // Test the input agains the date regex above. The regex matches
     // as much of an allowed date as possible. Therefore this will just
     // removing any non-date characters
     let match = DATE_REGEX.exec(value);
 
-    this.setState({
-      value: match ? match[0] : ''
-    });
+    event.target.value = match ? match[0] : ''
 
-    if (this.onChange) {
-      this.onChange(event);
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange(event);
     }
   }
 
   render() {
     let {
+      errorMessage,
       label,
       name,
       readOnly,
       type,
-      validationError
+      validationError,
+      value
     } = this.props;
 
     return <TextField
+      errorMessage={errorMessage}
       label={label}
       name={name}
       readOnly={readOnly}
       type={type}
-      value={this.state.value}
+      value={value}
       validationError={validationError}
       onChange={this.dateFill}
       placeholder={DEFAULT_TEXT}
@@ -82,6 +62,7 @@ export default class DateSelector extends React.Component {
 }
 
 TextField.propTypes = {
+  errorMessage: PropTypes.string,
   invisible: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,

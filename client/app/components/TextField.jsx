@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 export default class TextField extends React.Component {
   render() {
     let {
+      errorMessage,
       label,
       name,
       onChange,
@@ -15,6 +16,7 @@ export default class TextField extends React.Component {
 
     return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
       <label className="question-label" htmlFor={name}>{label || name}</label>
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <input
         className="cf-form-textinput"
         name={name}
@@ -37,6 +39,7 @@ TextField.defaultProps = {
 };
 
 TextField.propTypes = {
+  errorMessage: PropTypes.string,
   invisible: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
