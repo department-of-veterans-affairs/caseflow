@@ -57,7 +57,7 @@
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
         ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto');
-        ga('send', 'pageview');
+        ga('send', 'pageview', '<%= current_ga_path %>');
       </script>
 
   <link rel="icon" type="image/png" sizes="32x32"   href="/favicon-32x32.png">
