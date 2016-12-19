@@ -255,11 +255,10 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
-    it "closes cancelled tasks" do
+    it "closes canceled tasks" do
       task.cancel!
       expect(task.reload.complete?).to be_truthy
-      expect(task.reload.canceled?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:canceled))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
     end
 
@@ -277,7 +276,7 @@ describe Task do
       expect(task.canceled?).to be_falsey
     end
 
-    it "returns true for cancelled task" do
+    it "returns true for canceled task" do
       task.cancel!
       expect(task.canceled?).to be_truthy
     end
