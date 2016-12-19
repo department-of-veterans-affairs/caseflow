@@ -44,10 +44,7 @@ export default class EstablishClaim extends React.Component {
           ]
           ),
         gulfWar: new FormField(false),
-        modifier: new FormField(
-          Form.MODIFIER_OPTIONS[0],
-          requiredValidator('Please selected a modifier.')
-          ),
+        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(

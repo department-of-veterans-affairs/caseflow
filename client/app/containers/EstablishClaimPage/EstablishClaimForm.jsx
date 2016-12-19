@@ -51,6 +51,7 @@ export const render = function() {
          name="claimLabel"
          options={CLAIM_LABEL_OPTIONS}
          onChange={this.handleFieldChange('form', 'claimLabel')}
+         required={true}
          {...this.state.form.claimLabel}
         />
         <DropDown
@@ -64,6 +65,7 @@ export const render = function() {
          label="Decision Date"
          name="decisionDate"
          onChange={this.handleFieldChange('form', 'decisionDate')}
+         required={true}
          {...this.state.form.decisionDate}
         />
         <DropDown

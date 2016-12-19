@@ -41,6 +41,7 @@ export default class DateSelector extends React.Component {
       label,
       name,
       readOnly,
+      required,
       type,
       validationError,
       value
@@ -56,6 +57,7 @@ export default class DateSelector extends React.Component {
       validationError={validationError}
       onChange={this.dateFill}
       placeholder={DEFAULT_TEXT}
+      required={required}
     />;
 
   }
@@ -68,6 +70,7 @@ TextField.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
+  required: PropTypes.bool,
   type: PropTypes.string,
   validationError: PropTypes.string,
   value: PropTypes.string
