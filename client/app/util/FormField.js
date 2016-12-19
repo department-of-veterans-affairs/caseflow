@@ -68,7 +68,7 @@ export const scrollToAndFocusFirstError = function() {
   if (errors.length > 0)
   {
     window.scrollBy(0, errors[0].parentElement.getBoundingClientRect().top);
-    errors[0].parentElement.childNodes.forEach((node) => {
+    Array.from(errors[0].parentElement.childNodes).forEach((node) => {
       if (node.nodeName === 'INPUT' ||
           node.nodeName === 'SELECT') {
         node.focus();

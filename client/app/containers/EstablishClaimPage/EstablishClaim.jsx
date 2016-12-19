@@ -153,6 +153,9 @@ export default class EstablishClaim extends React.Component {
     this.setState({
       page
     });
+
+    // Scroll to the top of the page on a page change
+    window.scrollTo(0, 0);
   }
 
   isReviewPage() {
