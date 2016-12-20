@@ -228,11 +228,14 @@ GEM
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
     powerpack (0.1.1)
+    prometheus-client (0.6.0)
+      quantile (~> 0.2.0)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
     puma (2.16.0)
+    quantile (0.2.0)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -432,6 +435,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails
   pg
+  prometheus-client
   pry
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
