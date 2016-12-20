@@ -47,7 +47,7 @@ export const render = function() {
          readOnly={true}
         />
         <DropDown
-         label="Claim Label"
+         label="EP & Claim Label"
          name="claimLabel"
          options={CLAIM_LABEL_OPTIONS}
          onChange={this.handleFieldChange('form', 'claimLabel')}
@@ -63,7 +63,7 @@ export const render = function() {
         <DateSelector
          label="Decision Date"
          name="decisionDate"
-         readOnly={true}
+         readOnly={false}
          value={appeal.decision_date}
         />
         <DropDown
