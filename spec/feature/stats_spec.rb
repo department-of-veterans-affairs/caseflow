@@ -145,10 +145,17 @@ RSpec.feature "Stats Dashboard" do
   end
 
   scenario "Unauthorized user access" do
-    # This will log in user from rails_helper that has no System Admin role
+    # Unauthenticated access
     User.unauthenticate!
-    User.authenticate!
+    visit "/stats"
+    expect(page).not_to have_content("Activity for")
+    expect(page).not_to have_content("Certification Rate")
+    expect(page).not_to have_content("Time to Certify")
+    expect(page).not_to have_content("Missing Documents")
 
+
+    # Authenticated access without System Admin role
+    User.authenticate!
     visit "/stats"
     expect(page).not_to have_content("Activity for")
     expect(page).not_to have_content("Certification Rate")
