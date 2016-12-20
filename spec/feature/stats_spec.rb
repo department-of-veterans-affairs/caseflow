@@ -49,7 +49,8 @@ RSpec.feature "Stats Dashboard" do
     )
     Stats.calculate_all!
 
-    User.authenticate!
+    # Necessary role to view stats page
+    User.authenticate!(roles: ["System Admin"])
   end
 
   after { Timecop.return }
@@ -141,5 +142,20 @@ RSpec.feature "Stats Dashboard" do
     end
 
     expect(page).to have_content("Activity for January 2014")
+  end
+
+  scenario "Unauthorized user access" do
+    # This will log in user from rails_helper that has no System Admin role
+    User.unauthenticate!
+    User.authenticate!
+
+    visit "/stats"
+    expect(page).not_to have_content("Activity for")
+    expect(page).not_to have_content("Certification Rate")
+    expect(page).not_to have_content("Time to Certify")
+    expect(page).not_to have_content("Missing Documents")
+
+    expect(page).to have_content("You aren't authorized to use this part of Caseflow yet.")
+    expect(page).to have_content("Unauthorized")
   end
 end
