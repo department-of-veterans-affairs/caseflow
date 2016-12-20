@@ -17,5 +17,3 @@ use Prometheus::Client::Rack::Collector
 use Prometheus::Client::Rack::Exporter
 
 run Rails.application
-
-
