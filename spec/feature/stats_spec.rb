@@ -153,7 +153,6 @@ RSpec.feature "Stats Dashboard" do
     expect(page).not_to have_content("Time to Certify")
     expect(page).not_to have_content("Missing Documents")
 
-
     # Authenticated access without System Admin role
     User.authenticate!
     visit "/stats"
