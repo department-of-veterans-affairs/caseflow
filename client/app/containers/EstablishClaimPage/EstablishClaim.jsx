@@ -94,7 +94,7 @@ export default class EstablishClaim extends React.Component {
     });
 
     return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
-      window.location.href = '/dispatch/establish-claim';
+      window.location.reload();
     }, () => {
       handleAlert(
         'error',
