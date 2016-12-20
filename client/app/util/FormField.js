@@ -1,5 +1,5 @@
 export class FormField {
-  constructor(initialValue, validator = null) {
+  constructor(initialValue, validator = []) {
     this.value = initialValue;
     // Always make validator an array of all the validators.
     this.validator = [].concat(validator);
@@ -29,29 +29,21 @@ export const validateFormAndSetErrors = function(form) {
   // in which case we return false. Otherwise all fields
   // are vavlid, and we retrun true.
   let allValid = true;
+  let formCopy = { ...form };
 
-  Object.keys(form).
-    filter((key) => form[key].validator !== null).
-    forEach((key) => {
-      form[key].validator.reduce((errorMessage, validator) => {
-        if (errorMessage) {
-          return errorMessage;
-        }
+  Object.keys(form).forEach((key) => {
+    let errorMessage = form[key].validator.reduce((errorMessage, validator) => {
+      return errorMessage || validator(form[key].value);
+    }, null);
 
-        let message = validator(form[key].value);
-        let formCopy = { ...form };
+    allValid = allValid && errorMessage;
+    
+    formCopy[key].errorMessage = errorMessage;
+  });
 
-        formCopy[key].message = message;
-
-        this.setState(
-          formCopy
-        );
-
-        allValid = allValid && message === null;
-
-        return message;
-      }, null);
-    });
+  this.setState(
+    formCopy
+  );
 
   return allValid;
 };
