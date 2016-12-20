@@ -30,7 +30,7 @@ export default class DateSelector extends React.Component {
 
     event.target.value = match ? match[0] : '';
 
-    if (this.props.onChange !== null) {
+    if (this.props.onChange) {
       this.props.onChange(event);
     }
   }

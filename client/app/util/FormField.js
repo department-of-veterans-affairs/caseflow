@@ -32,12 +32,11 @@ export const validateFormAndSetErrors = function(form) {
   let formCopy = { ...form };
 
   Object.keys(form).forEach((key) => {
-    let errorMessage = form[key].validator.reduce((errorMessage, validator) => {
-      return errorMessage || validator(form[key].value);
-    }, null);
+    let errorMessage = form[key].validator.reduce(
+      (message, validator) => message || validator(form[key].value), null);
 
-    allValid = allValid && errorMessage;
-    
+    allValid = allValid && !errorMessage;
+
     formCopy[key].errorMessage = errorMessage;
   });
 
