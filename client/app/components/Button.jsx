@@ -4,9 +4,10 @@ import { loadingSymbolHtml } from './RenderFunctions.jsx';
 export default class Button extends React.Component {
   render() {
     let {
+      classNames,
+      id,
       name,
       disabled,
-      linkStyle,
       loading,
       onClick,
       type
@@ -16,8 +17,9 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
+        id={id || `${type}-${name.replace(/\s/g, '-')}`}
+        className={classNames ? classNames.join(' ') : "cf-submit"}
         type={type}
-        className={`cf-submit${linkStyle ? " cf-btn-link" : ""}`}
         disabled={disabled}
         onClick={onClick}>
           {name}
@@ -28,12 +30,13 @@ export default class Button extends React.Component {
 }
 
 Button.defaultProps = {
-  linkStyle: false,
   type: 'button'
 };
 
 Button.propTypes = {
+  classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
+  id: PropTypes.string,
   linkStyle: PropTypes.bool,
   loading: PropTypes.bool,
   name: PropTypes.string.isRequired,

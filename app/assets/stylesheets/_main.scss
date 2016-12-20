@@ -2,7 +2,7 @@
 @import 'caseflow_main';
 
 .cf-logo-image-default {
-  background-image: url(asset-path('caseflow-certification-logo.svg'));
+  background-image: url(asset-path('caseflow-default-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
@@ -105,4 +105,20 @@
 
 .cf-button-associated-text {
   color: $color-gray;
+}
+
+.cf-modal-normal-text {
+  margin: auto;
+  width: 70%;
+  text-align: left;
+}
+
+.cf-form-textarea--full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+.cf-modal-body {
+  max-height: 100%;
+  overflow-y: auto;
 }
