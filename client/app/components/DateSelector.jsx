@@ -30,7 +30,7 @@ export default class DateSelector extends React.Component {
 
     event.target.value = match ? match[0] : '';
 
-    if (typeof this.props.onChange === 'function') {
+    if (this.props.onChange !== null) {
       this.props.onChange(event);
     }
   }
@@ -63,7 +63,7 @@ export default class DateSelector extends React.Component {
   }
 }
 
-TextField.propTypes = {
+DateSelector.propTypes = {
   errorMessage: PropTypes.string,
   invisible: PropTypes.bool,
   label: PropTypes.string,

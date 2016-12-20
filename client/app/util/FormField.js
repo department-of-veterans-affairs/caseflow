@@ -2,13 +2,7 @@ export class FormField {
   constructor(initialValue, validator = null) {
     this.value = initialValue;
     // Always make validator an array of all the validators.
-    if (validator === null) {
-      this.validator = null;
-    } else if (Array.isArray(validator)) {
-      this.validator = validator;
-    } else {
-      this.validator = [validator];
-    }
+    this.validator = [].concat(validator);
   }
 }
 
