@@ -65,18 +65,21 @@ RSpec.feature "Dispatch" do
       allow(Appeal.repository).to receive(:establish_claim!)
     end
 
-    scenario "View my history of completed tasks" do
+    scenario "Establish a new claim page and process" do
       visit "/dispatch/establish-claim"
 
+      # View history
       expect(page).to have_content("Establish Next Claim")
       expect(page).to have_css("tr#task-#{@completed_task.id}")
-    end
 
-    scenario "Establish a new claim" do
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+      # Can't start new task til current task is complete
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
@@ -114,6 +117,10 @@ RSpec.feature "Dispatch" do
 
       click_on "Caseflow Dispatch"
       expect(page).to have_current_path("/dispatch/establish-claim")
+
+      # No tasks left
+      expect(page).to have_content("No claims to establish right now")
+      expect(page).to have_css(".usa-button-disabled")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -172,23 +179,6 @@ RSpec.feature "Dispatch" do
       click_on "Create End Product"
 
       expect(find_field("Modifier").value).to eq("172")
-    end
-
-    scenario "Establish a new claim before finishing the first" do
-      visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-
-      visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-    end
-
-    scenario "No claims left to establish disables button" do
-      @task.complete!(0)
-      visit "/dispatch/establish-claim"
-      expect(page).to have_content("No claims to establish right now")
-      expect(page).to have_css(".usa-button-disabled")
     end
   end
 end
