@@ -7,8 +7,10 @@ import Alert from '../components/Alert';
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
+import DecisionBuilder from './DecisionBuilder';
 
 const Pages = {
+  DecisionBuilder,
   EstablishClaim,
   TasksManagerIndex,
   TestPage

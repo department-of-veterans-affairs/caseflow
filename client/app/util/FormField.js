@@ -5,13 +5,17 @@ export class FormField {
   }
 }
 
-export const handleFieldChange = function (form, field) {
+export const handleFieldChange = function (form, field, func = null) {
   return (event) => {
     let stateObject = {};
 
     stateObject[form] = { ...this.state[form] };
     stateObject[form][field].value = event.target.value;
     this.setState(stateObject);
+
+    if (func) {
+      func(event);
+    }
   };
 };
 

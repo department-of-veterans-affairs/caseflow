@@ -34,6 +34,16 @@ Rails.application.routes.draw do
     end
   end
 
+  scope path: "/decision" do
+    # TODO(jd): Make this its own controller action that looks at the user's roles
+    # and redirects accordingly
+    get "/", to: redirect("/decision/build")
+
+    resources :decisions,
+              path: "/build",
+              only: [:index]
+  end
+
   resources :tasks, only: [] do
     patch 'cancel', on: :member
   end
