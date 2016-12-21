@@ -64,6 +64,7 @@
     init: function(){
       var self = this;
       window.DateField.init();
+      window.autoresize.init();
 
       this.initState();
       this.reevalulate();
