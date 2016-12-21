@@ -84,6 +84,14 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
+      page.fill_in "Decision Date", with: "1"
+      click_on "Create End Product"
+
+      expect(page).to have_content("Please enter the EP & Claim Label.")
+      expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+
+      page.fill_in "Decision Date", with: "01/01/2017"
+      page.select "172BVAG - BVA Grant", from: "claimLabel"
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -93,7 +101,7 @@ RSpec.feature "Dispatch" do
           "claim_type" => "Claim",
           "modifier" => "170",
           "poa" => "None",
-          "claim_label" => " ",
+          "claim_label" => "172BVAG - BVA Grant",
           "poa_code" => "",
           "gulf_war" => false,
           "allow_poa" => false,
@@ -141,9 +149,10 @@ RSpec.feature "Dispatch" do
       page.fill_in "Cancel Explanation", with: "Test"
       click_on "Cancel EP Establishment"
 
-      expect(page).to have_current_path("/dispatch/establish-claim")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_content("EP Establishment Canceled")
       expect(@task.reload.complete?).to be_truthy
-      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
     end
 
