@@ -59,7 +59,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('when task is cancelled', () => {
+    context('when task is canceled', () => {
       beforeEach(() => {
         wrapper.find('#button-Cancel').simulate('click');
       });

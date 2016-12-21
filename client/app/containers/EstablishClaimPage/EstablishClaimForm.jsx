@@ -3,6 +3,7 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
+import SearchableDropDown from '../../components/SearchableDropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
@@ -12,14 +13,21 @@ export const POA = [
   'Private'
 ];
 export const CLAIM_LABEL_OPTIONS = [
-  ' ',
+  '',
   '172BVAG - BVA Grant',
   '170PGAMC - AMC-Partial Grant',
   '170RMDAMC - AMC-Remand'
 ];
 export const MODIFIER_OPTIONS = [
   '170',
-  '172'
+  '172',
+  '165',
+  '40',
+  '25',
+  '-1',
+  'abc',
+  'def',
+  'ghi'
 ];
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
@@ -27,9 +35,6 @@ export const SEGMENTED_LANE_OPTIONS = [
 ];
 
 export const render = function() {
-  let { task } = this.props;
-  let { appeal } = task;
-
   return (
     <form noValidate>
       <div className="cf-app-segment cf-app-segment--alt">
@@ -51,9 +56,10 @@ export const render = function() {
          name="claimLabel"
          options={CLAIM_LABEL_OPTIONS}
          onChange={this.handleFieldChange('form', 'claimLabel')}
+         required={true}
          {...this.state.form.claimLabel}
         />
-        <DropDown
+        <SearchableDropDown
          label="Modifier"
          name="modifier"
          options={MODIFIER_OPTIONS}
@@ -63,8 +69,9 @@ export const render = function() {
         <DateSelector
          label="Decision Date"
          name="decisionDate"
-         readOnly={false}
-         value={appeal.decision_date}
+         onChange={this.handleFieldChange('form', 'decisionDate')}
+         required={true}
+         {...this.state.form.decisionDate}
         />
         <DropDown
          label="Segmented Lane"
