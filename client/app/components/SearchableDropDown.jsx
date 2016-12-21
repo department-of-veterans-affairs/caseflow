@@ -13,6 +13,14 @@ export default class SearchableDropDown extends React.Component {
     };
   }
 
+  select(value) {
+    this.setState({
+      selected: value,
+      searching: value,
+      showDropDown: false
+    });
+  }
+
   onInputClick = (event) => {
     this.setState({
       filteredOptions: this.props.options,
@@ -36,12 +44,9 @@ export default class SearchableDropDown extends React.Component {
     }
   }
 
-  onClick = (value) => {
+  onMouseDown = (value) => {
     return (event) => {
-      this.setState({
-        selected: value,
-        searching: value
-      });
+      this.select(value);
     }
   }
 
@@ -57,11 +62,7 @@ export default class SearchableDropDown extends React.Component {
 
   onKeyUp = (event) => {
     if (event.keyCode === 13) {
-      this.setState({
-        selected: this.state.filteredOptions[this.state.hovered],
-        searching: this.state.filteredOptions[this.state.hovered],
-        showDropDown: false
-      });
+      this.select(this.state.filteredOptions[this.state.hovered]);
     }
     if (event.keyCode === 38) {
       this.setState({
@@ -92,7 +93,8 @@ export default class SearchableDropDown extends React.Component {
         {label || name} {required && <span className="cf-required">(Required)</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <input 
+      <input
+        className="cf-dropdown-input"
         type="text"
         onClick={this.onInputClick}
         onBlur={this.onBlur}
@@ -103,16 +105,21 @@ export default class SearchableDropDown extends React.Component {
       {this.state.showDropDown &&
         <div className="dropdown">
           <div className="dropdown-content">
-            {this.state.filteredOptions.map((option, index) =>
+            { this.state.filteredOptions.map((option, index) =>
               <div
                 onMouseOver={this.onMouseOver(index)}
-                onClick={this.onClick(option)}
+                onMouseDown={this.onMouseDown(option)}
                 className={"cf-dropdown-item" + (this.state.hovered === index ? " cf-dropdown-item-hover" : "")}
                 value={option}
                 id={`${name}_${option}`}
                 key={index}>{option}
               </div>
             )}
+            { this.state.filteredOptions.length === 0 &&
+              <div className="cf-dropdown-item">
+                No results found
+              </div>
+            }
           </div>
         </div>
       }

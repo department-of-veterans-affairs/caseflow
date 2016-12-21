@@ -154,3 +154,10 @@
 .cf-dropdown-item-hover {
   background-color: $color-primary;
 }
+
+.cf-dropdown-input {
+  background-image: image-url('arrow-down.svg');
+  background-position: right 1.3rem center;
+  background-repeat: no-repeat;
+  background-size: 1.3rem;
+}
