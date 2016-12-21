@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-import DropDown from '../components/DropDown';
+import SearchableDropDown from '../components/SearchableDropDown';
 import {
           FormField,
           handleFieldChange,
@@ -37,7 +37,7 @@ export default class DecisionBuilder extends React.Component {
     return <div className="cf-app-segment cf-app-segment--alt">
         <h1>Specify Issue</h1>
         { this.state.step >= DEFINE_ISSUE_TYPE &&
-          <DropDown
+          <SearchableDropDown
            label="Select the type of issue"
            name="issueType"
            options={ISSUE_TYPES}
@@ -46,7 +46,7 @@ export default class DecisionBuilder extends React.Component {
           />
         }
         { this.state.step >= DEFINE_ISSUE_SUBTYPE &&
-          <DropDown
+          <SearchableDropDown
            label="Select the sub-type of issue"
            name="issueSubType"
            options={ISSUE_TYPES}
