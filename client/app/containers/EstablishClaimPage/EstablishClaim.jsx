@@ -61,7 +61,7 @@ export default class EstablishClaim extends React.Component {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: FORM_PAGE
     };
   }
 

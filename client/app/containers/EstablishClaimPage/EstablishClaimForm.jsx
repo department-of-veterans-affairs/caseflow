@@ -3,6 +3,7 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
+import SearchableDropDown from '../../components/SearchableDropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
@@ -19,7 +20,14 @@ export const CLAIM_LABEL_OPTIONS = [
 ];
 export const MODIFIER_OPTIONS = [
   '170',
-  '172'
+  '172',
+  '165',
+  '40',
+  '25',
+  '-1',
+  'abc',
+  'def',
+  'ghi'
 ];
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
@@ -51,7 +59,7 @@ export const render = function() {
          required={true}
          {...this.state.form.claimLabel}
         />
-        <DropDown
+        <SearchableDropDown
          label="Modifier"
          name="modifier"
          options={MODIFIER_OPTIONS}
