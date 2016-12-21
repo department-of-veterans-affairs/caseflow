@@ -19,6 +19,10 @@ export default class SearchableDropDown extends React.Component {
       searching: value,
       showDropDown: false
     });
+
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
   }
 
   onInputClick = (event) => {
