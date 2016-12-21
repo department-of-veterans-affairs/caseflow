@@ -41,7 +41,10 @@ Rails.application.routes.draw do
 
     resources :decisions,
               path: "/build",
-              only: [:index]
+              only: [:index] do
+      post 'docx', on: :collection
+      get 'download', on: :collection
+    end
   end
 
   resources :tasks, only: [] do

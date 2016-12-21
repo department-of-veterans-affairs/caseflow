@@ -150,6 +150,10 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    htmltoword (0.5.1)
+      actionpack
+      nokogiri
+      rubyzip (>= 1.0)
     httpclient (2.6.0.1)
     httpi (2.4.2)
       rack
@@ -422,6 +426,7 @@ DEPENDENCIES
   connect_vbms!
   database_cleaner
   guard-rspec
+  htmltoword
   jbuilder (~> 2.0)
   jquery-rails
   jshint

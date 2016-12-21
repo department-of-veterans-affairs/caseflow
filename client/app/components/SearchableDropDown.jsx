@@ -21,7 +21,7 @@ export default class SearchableDropDown extends React.Component {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(value);
+      this.props.onChange({target: {value: value}});
     }
   }
 
@@ -34,10 +34,7 @@ export default class SearchableDropDown extends React.Component {
   }
 
   onBlur = (event) => {
-    this.setState({
-      showDropDown: false,
-      searching: this.state.selected
-    });
+    this.select(this.state.selected);
   }
 
   onMouseOver = (id) => {
@@ -56,7 +53,7 @@ export default class SearchableDropDown extends React.Component {
 
   onChange = (event) => {
     this.setState({
-      filteredOptions: this.props.options.filter((option) => {return (new RegExp(event.target.value, 'g')).test(option)}),
+      filteredOptions: this.props.options.filter((option) => {return (new RegExp(event.target.value, 'gi')).test(option)}),
       selected: null,
       searching: event.target.value,
       showDropDown: true,
