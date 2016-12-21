@@ -59,6 +59,12 @@ RSpec.feature "Save Certification" do
       find("label", text: "Attorney").click
     end
     within_fieldset("10A Was BVA hearing requested?") do
+      find("label", text: "Yes").click
+    end
+    within_fieldset("10B Was the hearing held?") do
+      find("label", text: "Yes").click
+    end
+    within_fieldset("Is the hearing transcript on file?") do
       find("label", text: "No").click
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
@@ -79,7 +85,10 @@ RSpec.feature "Save Certification" do
       expect(find_field("Attorney", visible: false)).to be_checked
     end
     within_fieldset("10A Was BVA hearing requested?") do
-      expect(find_field("No", visible: false)).to be_checked
+      expect(find_field("Yes", visible: false)).to be_checked
+    end
+    within_fieldset("10B Was the hearing held?") do
+      expect(find_field("Yes", visible: false)).to be_checked
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
       expect(find_field("No", visible: false)).to be_checked
