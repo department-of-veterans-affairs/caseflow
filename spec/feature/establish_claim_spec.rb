@@ -121,7 +121,6 @@ RSpec.feature "Dispatch" do
       # No tasks left
       expect(page).to have_content("No claims to establish right now")
       expect(page).to have_css(".usa-button-disabled")
-
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -181,6 +180,5 @@ RSpec.feature "Dispatch" do
 
       expect(find_field("Modifier").value).to eq("172")
     end
-
   end
 end
