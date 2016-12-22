@@ -12,4 +12,5 @@
  *
  *= require _main.scss
  *= require _tasks.scss
+ *= require _autoresize.scss
  */

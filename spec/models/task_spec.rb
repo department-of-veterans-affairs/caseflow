@@ -4,7 +4,6 @@ end
 describe Task do
   # Clear the task from the DB before every test
   before do
-    reset_application!
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
     @user = User.create(station_id: "ABC", css_id: "123")
@@ -130,19 +129,20 @@ describe Task do
       let!(:appeal) { Appeal.create(vacols_id: "123C") }
       let!(:task) { EstablishClaim.create(appeal: appeal) }
       before do
-        # TODO(Mark): When we have a method to start a task, this should be updated
-        task.started_at = Time.now.utc
+        task.assign!(@user)
+        task.start!
       end
       it { is_expected.to eq("In Progress") }
     end
 
     context "task is completed" do
       before do
-        # TODO(Mark): When we have a method to complete a task, this should be updated
-        task.completed_at = Time.now.utc
+        task.assign!(@user)
+        task.start!
+        task.complete!("Completed")
       end
 
-      it { is_expected.to eq("Complete") }
+      it { is_expected.to eq("Completed") }
     end
   end
 
@@ -256,11 +256,30 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
-    it "closes cancelled tasks" do
+    it "closes canceled tasks" do
       task.cancel!
       expect(task.reload.complete?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:cancelled))
-      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:canceled))
+      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
+    end
+
+    it "saves feedback" do
+      task.cancel!("Feedback")
+      expect(task.reload.comment).to eq("Feedback")
+    end
+  end
+
+  context ".canceled?" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    it "returns false for task not canceled" do
+      expect(task.canceled?).to be_falsey
+    end
+
+    it "returns true for canceled task" do
+      task.cancel!
+      expect(task.canceled?).to be_truthy
     end
   end
 

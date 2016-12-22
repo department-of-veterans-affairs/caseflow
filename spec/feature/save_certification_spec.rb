@@ -23,20 +23,24 @@ RSpec.feature "Save Certification" do
     expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
 
     expect(find("#question3 .usa-input-error-message")).to(
-      have_content("Please enter the veteran's full name."))
+      have_content("Please enter the veteran's full name.")
+    )
 
     fill_in "Full Veteran Name", with: "Paul Joe"
     expect(find("#question3 .usa-input-error-message")).to_not(
-      have_content("Please enter the veteran's full name."))
+      have_content("Please enter the veteran's full name.")
+    )
 
     expect(find("#question11A .usa-input-error-message")).to(
-      have_content("Oops! Looks like you missed one!"))
+      have_content("Oops! Looks like you missed one!")
+    )
 
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
       find("label", text: "No").click
     end
     expect(find("#question10A .usa-input-error-message")).to_not(
-      have_content("Oops! Looks like you missed one!"))
+      have_content("Oops! Looks like you missed one!")
+    )
 
     expect(page).to have_css("#question8A3.usa-input-error")
   end
@@ -55,6 +59,12 @@ RSpec.feature "Save Certification" do
       find("label", text: "Attorney").click
     end
     within_fieldset("10A Was BVA hearing requested?") do
+      find("label", text: "Yes").click
+    end
+    within_fieldset("10B Was the hearing held?") do
+      find("label", text: "Yes").click
+    end
+    within_fieldset("Is the hearing transcript on file?") do
       find("label", text: "No").click
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
@@ -78,7 +88,10 @@ RSpec.feature "Save Certification" do
       expect(find_field("Attorney", visible: false)).to be_checked
     end
     within_fieldset("10A Was BVA hearing requested?") do
-      expect(find_field("No", visible: false)).to be_checked
+      expect(find_field("Yes", visible: false)).to be_checked
+    end
+    within_fieldset("10B Was the hearing held?") do
+      expect(find_field("Yes", visible: false)).to be_checked
     end
     within_fieldset("11A Are contested claims procedures applicable in this case?") do
       expect(find_field("No", visible: false)).to be_checked

@@ -56,37 +56,31 @@ class Certification < ActiveRecord::Base
   end
 
   def self.was_missing_doc
-    # Once we switch to Rails 5:
-    #
-    # self.was_missing_nod
-    #   .or(self.was_missing_soc)
-    #   .or(self.was_missing_ssoc)
-    #   .or(self.was_missing_form9)
-
-    where("(nod_matching_at IS NULL or nod_matching_at > form8_started_at) " \
-          "or (soc_matching_at IS NULL or soc_matching_at > form8_started_at) " \
-          "or (ssocs_required = 't' and (ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at)) " \
-          "or (form9_matching_at IS NULL or form9_matching_at > form8_started_at)")
+    was_missing_nod.or(was_missing_soc)
+                   .or(was_missing_ssoc)
+                   .or(was_missing_form9)
   end
 
   def self.was_missing_nod
-    where("nod_matching_at IS NULL or nod_matching_at > form8_started_at")
+    # allow 30 second lag just in case 'nod_matching_at' timestamp is a few seconds
+    # greater than 'created_at' timestamp
+    where(nod_matching_at: nil).or(where("nod_matching_at > created_at + INTERVAL '30 seconds'"))
   end
 
   def self.was_missing_soc
-    where("soc_matching_at IS NULL or soc_matching_at > form8_started_at")
+    where(soc_matching_at: nil).or(where("soc_matching_at > created_at + INTERVAL '30 seconds'"))
+  end
+
+  def self.was_missing_ssoc
+    ssoc_required.where(ssocs_matching_at: nil).or(where("ssocs_matching_at > created_at + INTERVAL '30 seconds'"))
+  end
+
+  def self.was_missing_form9
+    where(form9_matching_at: nil).or(where("form9_matching_at > created_at + INTERVAL '30 seconds'"))
   end
 
   def self.ssoc_required
     where(ssocs_required: true)
-  end
-
-  def self.was_missing_ssoc
-    ssoc_required.where("ssocs_matching_at IS NULL or ssocs_matching_at > form8_started_at")
-  end
-
-  def self.was_missing_form9
-    where("form9_matching_at IS NULL or form9_matching_at > form8_started_at")
   end
 
   private
