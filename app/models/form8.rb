@@ -36,6 +36,7 @@ class Form8 < ActiveRecord::Base
     :certifying_username,
     :certifying_official_name,
     :certifying_official_title,
+    :certifying_official_title_specify_other,
     :certification_date
   ].freeze
 

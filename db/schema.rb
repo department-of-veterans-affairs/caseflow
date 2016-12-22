@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 20161220190026) do
     t.string   "_initial_ssoc_required"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.string   "certifying_official_title_specify_other"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
