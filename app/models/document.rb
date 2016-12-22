@@ -46,14 +46,14 @@ class Document
   def fetch_and_cache_document_from_vbms
     @content = Appeal.repository.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
-    Rails.logger.info("File fetched from VBMS")
+    Rails.logger.info("File #{document_id} fetched from VBMS")
     @content
   end
 
   def fetch_content
     content = S3Service.fetch_content(file_name)
     if (content)
-      Rails.logger.info("File fetched from S3")
+      Rails.logger.info("File #{document_id} fetched from S3")
     end
     content || fetch_and_cache_document_from_vbms
   end
