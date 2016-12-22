@@ -27,8 +27,8 @@ class TasksController < ApplicationController
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user && !task.started?
-
-    render "complete" if task.complete?
+    return render "canceled" if task.canceled?
+    return render "complete" if task.complete?
   end
 
   def pdf
@@ -47,11 +47,8 @@ class TasksController < ApplicationController
   end
 
   def cancel
-    task.cancel!
-    respond_to do |format|
-      format.html { redirect_to(establish_claims_url) }
-      format.json { render json: {} }
-    end
+    task.cancel!(cancel_feedback)
+    render json: {}
   end
 
   private
@@ -165,5 +162,9 @@ class TasksController < ApplicationController
     return true unless task.complete?
 
     redirect_to complete_establish_claim_path(task)
+  end
+
+  def cancel_feedback
+    params.require(:feedback)
   end
 end

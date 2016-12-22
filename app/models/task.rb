@@ -12,7 +12,7 @@ class Task < ActiveRecord::Base
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
-    cancelled: 1,
+    canceled: 1,
     expired: 2,
     routed_to_ro: 3
   }.freeze
@@ -81,8 +81,11 @@ class Task < ActiveRecord::Base
     self
   end
 
-  def cancel!
-    complete_and_recreate!(:cancelled)
+  def cancel!(feedback = nil)
+    transaction do
+      update!(comment: feedback)
+      complete!(self.class.completion_status_code(:canceled))
+    end
   end
 
   def expire!
@@ -115,7 +118,7 @@ class Task < ActiveRecord::Base
 
   def progress_status
     if completed_at
-      "Complete"
+      completion_status_text
     elsif started_at
       "In Progress"
     elsif assigned_at
@@ -127,6 +130,10 @@ class Task < ActiveRecord::Base
 
   def complete?
     completed_at
+  end
+
+  def canceled?
+    completion_status == self.class.completion_status_code(:canceled)
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case

@@ -7,7 +7,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def text_area(attribute, options = {})
-    options[:rows] = 3
+    options[:rows] = 6
     options["aria-disabled"] = true if options[:readonly]
 
     @template.content_tag :div, id: question_id(options),
