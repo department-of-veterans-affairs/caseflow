@@ -41,14 +41,21 @@ class Document
   # Currently three levels of caching. Try to serve content
   # from memory, then look to S3 if it's not in memory, and
   # if it's not in S3 grab it from VBMS
+  # Log where we get the file from for now for easy verification
+  # of S3 integration.
   def fetch_and_cache_document_from_vbms
     @content = Appeal.repository.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
+    Rails.logger.info("File fetched from VBMS")
     @content
   end
 
   def fetch_content
-    S3Service.fetch_content(file_name) || fetch_and_cache_document_from_vbms
+    content = S3Service.fetch_content(file_name)
+    if (content)
+      Rails.logger.info("File fetched from S3")
+    end
+    content || fetch_and_cache_document_from_vbms
   end
 
   def content
