@@ -52,9 +52,7 @@ class Document
 
   def fetch_content
     content = S3Service.fetch_content(file_name)
-    if (content)
-      Rails.logger.info("File #{document_id} fetched from S3")
-    end
+    content && Rails.logger.info("File #{document_id} fetched from S3")
     content || fetch_and_cache_document_from_vbms
   end
 
