@@ -1,14 +1,13 @@
 # This file is used by Rack-based servers to start the application.
 
 require ::File.expand_path("../config/environment", __FILE__)
-require 'rack'
-require 'prometheus/client/rack/collector'
-require 'prometheus/client/rack/exporter'
+require "rack"
+require "prometheus/client/rack/collector"
+require "prometheus/client/rack/exporter"
 
 # use gzip for the '/metrics' route, since it can get big.
-use Rack::Deflater, if: -> (env, status, headers, body) {
-  (env['PATH_INFO'] == '/metrics') && body.any? && body[0].length > 512
-}
+use Rack::Deflater,
+    if: -> (env, _status, _headers, _body) { env["PATH_INFO"] == "/metrics" }
 
 # traces all HTTP requests
 use Prometheus::Client::Rack::Collector
