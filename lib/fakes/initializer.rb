@@ -10,6 +10,7 @@ class Fakes::Initializer
       "id" => "ANNE MERICA",
       "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
       "station_id" => "283",
+      "email" => "america@example.com",
       "name" => "Anne Merica"
     }
 
