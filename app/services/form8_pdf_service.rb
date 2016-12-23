@@ -87,9 +87,23 @@ class Form8PdfService
 
   PDF_CHECKBOX_SYMBOL = "1".freeze
 
+  # Rubocop complains about the number of conditions here,
+  # but IMO it's pretty clear and I don't want to break it up
+  # just for the sake of it.
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.pdf_values_for(form8)
     FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
+
+      if attribute == :certifying_official_title && value == "Other"
+        # Most instances of "#{field_name}_other" come straight from
+        # the form8, but we added the radio buttons for question 17B
+        # to Caseflow even though the Form 8 has no corresponding
+        # buttons. So the user selected "Other" instead of one of the
+        # radio button values, fill the pdf field with the
+        # user-entered value.
+        value = form8[:certifying_official_title_specify_other]
+      end
 
       if value.is_a?(Date) || value.is_a?(Time)
         value = value.to_formatted_s(:short_date)
@@ -105,6 +119,7 @@ class Form8PdfService
       pdf_values[location] = value
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.save_pdf_for!(form8)
     tmp_location = tmp_location_for(form8)

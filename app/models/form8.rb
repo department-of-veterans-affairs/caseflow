@@ -36,6 +36,7 @@ class Form8 < ActiveRecord::Base
     :certifying_username,
     :certifying_official_name,
     :certifying_official_title,
+    :certifying_official_title_specify_other,
     :certification_date
   ].freeze
 
@@ -60,6 +61,7 @@ class Form8 < ActiveRecord::Base
       representative_name: appeal.representative_name,
       representative_type: appeal.representative_type,
       hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      hearing_held: appeal.hearing_held ? "Yes" : "No",
       ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,

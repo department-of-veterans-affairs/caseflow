@@ -63,6 +63,8 @@ gem "sidekiq-cron", "~> 0.4.0"
 # remove when upgrading to rails 5
 gem 'where-or'
 
+gem 'prometheus-client'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -77,6 +79,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: :ruby
   gem 'pry'
+  gem 'rb-readline'
 
   # Linters
   gem 'rubocop', '~> 0.36.0', require: false

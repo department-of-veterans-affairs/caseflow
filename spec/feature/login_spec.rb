@@ -8,7 +8,7 @@ RSpec.feature "Login" do
 
     Fakes::AuthenticationService.vacols_regional_offices = { "DSUSER" => "pa55word!" }
     Fakes::AuthenticationService.user_session = {
-      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405"
+      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405", "email" => "test@example.com"
     }
   end
 
@@ -17,24 +17,24 @@ RSpec.feature "Login" do
   end
 
   scenario "User who's station ID has one RO doesn't require login" do
+    user = User.create(css_id: "ANNE MERICA", station_id: "314")
     Fakes::AuthenticationService.user_session = {
-      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "314"
+      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "314", "email" => "world@example.com"
     }
     visit "certifications/new/1234C"
 
     expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
+    expect(user.reload.email).to eq "world@example.com"
   end
 
   scenario "with valid credentials" do
     visit "certifications/new/1234C"
-
     # vacols login
     expect(page).to have_content("VACOLS credentials")
     fill_in "VACOLS Login ID", with: "DSUSER"
     fill_in "VACOLS Password", with: "pa55word!"
     click_on "Login"
-
     expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (DSUSER)")
   end
@@ -67,6 +67,15 @@ RSpec.feature "Login" do
     click_on "Sign out"
     visit "certifications/new/1234C"
     expect(page).to have_current_path("/login")
+  end
+
+  scenario "email should be set on login" do
+    user = User.create(css_id: "ANNE MERICA", station_id: "405")
+    visit "certifications/new/1234C"
+    fill_in "VACOLS Login ID", with: "DSUSER"
+    fill_in "VACOLS Password", with: "pa55word!"
+    click_on "Login"
+    expect(user.reload.email).to eq "test@example.com"
   end
 
   scenario "Single Sign On is down" do
