@@ -12,7 +12,7 @@ class MetricsAuth < Rack::Auth::Basic
     request = Rack::Request.new(env)
     case request.path
 
-    when '/metrics' # perform auth for /metrics
+    when "/metrics" # perform auth for /metrics
       super
     else # skip auth otherwise
       @app.call(env)
