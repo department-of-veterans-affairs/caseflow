@@ -18,15 +18,14 @@ class MetricsAuth < Rack::Auth::Basic
       @app.call(env)
     end
   end
-
 end
 
 if Rails.env.development? || Rails.env.demo?
   use MetricsAuth, "metrics" do |username, password|
-    metrics_username = ENV["METRICS_USERNAME"] || 'caseflow'
-    metrics_password = ENV["METRICS_PASSWORD"] || 'caseflow'
+    metrics_username = ENV["METRICS_USERNAME"] || "caseflow"
+    metrics_password = ENV["METRICS_PASSWORD"] || "caseflow"
     [username, password] == [metrics_username, metrics_password]
-  end
+end
 
   # use gzip for the '/metrics' route, since it can get big.
   use Rack::Deflater,
