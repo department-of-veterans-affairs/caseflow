@@ -8,7 +8,6 @@ branches:
       - master
 
 addons:
-  sauce_connect: false
 
 # Install PhantomJS 2.0 from source binary, remove once TravisCI environment has PhantomJS 2.0 installed
 # see https://github.com/travis-ci/travis-ci/issues/3225 for more details
@@ -28,7 +27,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
 
 script:
-  - bundle exec rake
+  - "bundle exec rake ci:$CI_SUITE"
 
 bundler_args: "--without development staging production"
 cache:
@@ -40,3 +39,9 @@ notifications:
 
 services:
   - redis-server
+
+# Parallelize tests by splitting them
+# up into separate test suites
+env:
+  - CI_SUITE=rspec
+  - CI_SUITE=all-other
