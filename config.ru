@@ -25,7 +25,7 @@ if Rails.env.development? || Rails.env.demo?
     metrics_username = ENV["METRICS_USERNAME"] || "caseflow"
     metrics_password = ENV["METRICS_PASSWORD"] || "caseflow"
     [username, password] == [metrics_username, metrics_password]
-end
+  end
 
   # use gzip for the '/metrics' route, since it can get big.
   use Rack::Deflater,
