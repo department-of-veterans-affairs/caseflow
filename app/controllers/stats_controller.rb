@@ -1,6 +1,9 @@
 require "json"
 
 class StatsController < ApplicationController
+  before_action :verify_authentication
+  before_action :verify_access
+
   def show
     @stats = {
       hourly: 0...24,
@@ -11,6 +14,10 @@ class StatsController < ApplicationController
   end
 
   private
+
+  def verify_access
+    verify_authorized_roles("System Admin")
+  end
 
   def json
     @stats.map { |d| { key: d.range_start.to_f, value: d.values } }.to_json

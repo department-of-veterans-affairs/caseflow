@@ -1,0 +1,11 @@
+// See autoresize.js. These styles should
+// be applied in conjunction with autoresizing
+// behavior activated by calling `window.autoresize.init()`.
+// TODO alex: refactor out into caseflow-commons
+// if we decide we need this elsewhere.
+
+[autoresize] {
+  display: block;
+  overflow: hidden;
+  resize: none;
+}

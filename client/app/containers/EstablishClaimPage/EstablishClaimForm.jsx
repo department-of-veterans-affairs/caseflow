@@ -12,7 +12,7 @@ export const POA = [
   'Private'
 ];
 export const CLAIM_LABEL_OPTIONS = [
-  ' ',
+  '',
   '172BVAG - BVA Grant',
   '170PGAMC - AMC-Partial Grant',
   '170RMDAMC - AMC-Remand'
@@ -27,9 +27,6 @@ export const SEGMENTED_LANE_OPTIONS = [
 ];
 
 export const render = function() {
-  let { task } = this.props;
-  let { appeal } = task;
-
   return (
     <form noValidate>
       <div className="cf-app-segment cf-app-segment--alt">
@@ -47,10 +44,11 @@ export const render = function() {
          readOnly={true}
         />
         <DropDown
-         label="Claim Label"
+         label="EP & Claim Label"
          name="claimLabel"
          options={CLAIM_LABEL_OPTIONS}
          onChange={this.handleFieldChange('form', 'claimLabel')}
+         required={true}
          {...this.state.form.claimLabel}
         />
         <DropDown
@@ -63,8 +61,9 @@ export const render = function() {
         <DateSelector
          label="Decision Date"
          name="decisionDate"
-         readOnly={true}
-         value={appeal.decision_date}
+         onChange={this.handleFieldChange('form', 'decisionDate')}
+         required={true}
+         {...this.state.form.decisionDate}
         />
         <DropDown
          label="Segmented Lane"

@@ -43,7 +43,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :service_connection_for,
-            question_number: "5A", label: "Service connection for:", maxlength: 5500 %>
+            question_number: "5A", label: "Service connection for:", maxlength: 5500, autoresize: true %>
 
       <%= f.date_field :service_connection_notification_date,
             question_number: "5B", label: "Date of notification of action appealed:" %>
@@ -51,7 +51,7 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :increased_rating_for,
-            question_number: "6A", label: "Increased rating for:", maxlength: 1000 %>
+            question_number: "6A", label: "Increased rating for:", maxlength: 1000, autoresize: true %>
 
       <%= f.date_field :increased_rating_notification_date,
             question_number: "6B", label: "Date of notification of action appealed:" %>
@@ -59,7 +59,8 @@
 
     <div class="cf-form-cond-req">
       <%= f.text_area :other_for,
-            question_number: "7A", label: "Other:", maxlength: 1000 %>
+            question_number: "7A", label: "Other:", maxlength: 1000,
+            autoresize: true %>
 
       <%= f.date_field :other_notification_date,
             question_number: "7B", label: "Date of notification of action appealed:" %>
@@ -134,8 +135,12 @@
     <%= f.text_field :certifying_official_name,
           question_number: "17A", label: "Name of certifying official:" %>
 
-    <%= f.text_field :certifying_official_title,
-          question_number: "17B", label: "Title of certifying official:" %>
+    <%= f.radio_buttons_field :certifying_official_title,
+          values: ["Decision Review Officer", "Rating Specialist", "Veterans Service Representative", "Claims Assistant", "Other"],
+          question_number: "17B", part: "1", label: "Title of certifying official:" %>
+
+    <%= f.text_field :certifying_official_title_specify_other,
+          question_number: "17B", part: "2", label: "Specify other title of certifying official:", secondary: true %>
 
     <%= f.date_field :certification_date,
           question_number: "17C", label: "Date:", readonly: true %>

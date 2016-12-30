@@ -30,7 +30,8 @@ class SeedDB
       User.create(
         station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
         css_id: "css_#{i}",
-        full_name: "name_#{i}"
+        full_name: "name_#{i}",
+        email: "test#{i}@example.com"
         )
     end
 
@@ -52,7 +53,7 @@ class SeedDB
 
     tasks[1].assign!(@users[1])
     tasks[1].start!
-    
+
     tasks[2].assign!(@users[2])
     tasks[2].start!
     tasks[2].complete!(0)
@@ -65,6 +66,7 @@ class SeedDB
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
     @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John Smith"))
+    @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
   end
 
   def clean_db

@@ -67,18 +67,21 @@ RSpec.feature "Dispatch" do
       allow(Appeal.repository).to receive(:establish_claim!)
     end
 
-    scenario "View my history of completed tasks" do
+    scenario "Establish a new claim page and process" do
       visit "/dispatch/establish-claim"
 
+      # View history
       expect(page).to have_content("Establish Next Claim")
       expect(page).to have_css("tr#task-#{@completed_task.id}")
-    end
 
-    scenario "Establish a new claim" do
+      click_on "Establish Next Claim"
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+      # Can't start new task til current task is complete
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
-
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
@@ -86,6 +89,14 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
+      page.fill_in "Decision Date", with: "1"
+      click_on "Create End Product"
+
+      expect(page).to have_content("Please enter the EP & Claim Label.")
+      expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+
+      page.fill_in "Decision Date", with: "01/01/2017"
+      page.select "172BVAG - BVA Grant", from: "claimLabel"
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -95,7 +106,7 @@ RSpec.feature "Dispatch" do
           "claim_type" => "Claim",
           "modifier" => "170",
           "poa" => "None",
-          "claim_label" => " ",
+          "claim_label" => "172BVAG - BVA Grant",
           "poa_code" => "",
           "gulf_war" => false,
           "allow_poa" => false,
@@ -108,6 +119,10 @@ RSpec.feature "Dispatch" do
 
       click_on "Caseflow Dispatch"
       expect(page).to have_current_path("/dispatch/establish-claim")
+
+      # No tasks left
+      expect(page).to have_content("No claims to establish right now")
+      expect(page).to have_css(".usa-button-disabled")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -143,9 +158,10 @@ RSpec.feature "Dispatch" do
       page.fill_in "Cancel Explanation", with: "Test"
       click_on "Cancel EP Establishment"
 
-      expect(page).to have_current_path("/dispatch/establish-claim")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      expect(page).to have_content("EP Establishment Canceled")
       expect(@task.reload.complete?).to be_truthy
-      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(1)
+      expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
     end
 
@@ -165,23 +181,6 @@ RSpec.feature "Dispatch" do
       click_on "Create End Product"
 
       expect(find_field("Modifier").value).to eq("172")
-    end
-
-    scenario "Establish a new claim before finishing the first" do
-      visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-
-      visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-    end
-
-    scenario "No claims left to establish disables button" do
-      @task.complete!(0)
-      visit "/dispatch/establish-claim"
-      expect(page).to have_content("No claims to establish right now")
-      expect(page).to have_css(".usa-button-disabled")
     end
   end
 end

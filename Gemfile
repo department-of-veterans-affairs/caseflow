@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3b830af"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "57c515c"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -63,6 +63,8 @@ gem "sidekiq-cron", "~> 0.4.0"
 # remove when upgrading to rails 5
 gem 'where-or'
 
+gem 'prometheus-client'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -77,6 +79,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: :ruby
   gem 'pry'
+  gem 'rb-readline'
 
   # Linters
   gem 'rubocop', '~> 0.36.0', require: false

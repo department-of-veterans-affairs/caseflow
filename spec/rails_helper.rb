@@ -49,6 +49,8 @@ end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 
+ActiveRecord::Migration.maintain_test_schema!
+
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
@@ -65,6 +67,7 @@ module StubbableUser
         "user" => {
           "id" => "DSUSER",
           "station_id" => "283",
+          "email" => "test@example.com",
           "roles" => roles || ["Certify Appeal"]
         })
     end

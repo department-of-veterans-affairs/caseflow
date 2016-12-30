@@ -1,5 +1,5 @@
 const requiredValidator = (message) => function(value) {
-  if (value === '') {
+  if (value.trim() === '') {
     return message;
   }
 
