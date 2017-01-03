@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   scope path: "/decision" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
-    get "/", to: redirect("/decision/build")
+    get "/", to: redirect("/decision/review")
 
     resources :decisions,
               path: "/build",
@@ -45,6 +45,10 @@ Rails.application.routes.draw do
       post 'docx', on: :collection
       get 'download', on: :collection
     end
+
+    resources :review,
+              path: "/review",
+              only: [:index]
   end
 
   resources :tasks, only: [] do

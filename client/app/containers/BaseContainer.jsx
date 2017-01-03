@@ -8,9 +8,11 @@ import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionBuilder from './DecisionBuilder';
+import DecisionReviewer from './DecisionReviewer';
 
 const Pages = {
   DecisionBuilder,
+  DecisionReviewer,
   EstablishClaim,
   TasksManagerIndex,
   TestPage
