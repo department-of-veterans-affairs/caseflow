@@ -8899,6 +8899,18 @@
       "from": "react-on-rails@6.1.2",
       "resolved": "https://registry.npmjs.org/react-on-rails/-/react-on-rails-6.1.2.tgz"
     },
+    "react-pdf-js": {
+      "version": "1.0.32",
+      "from": "react-pdf-js@latest",
+      "resolved": "https://registry.npmjs.org/react-pdf-js/-/react-pdf-js-1.0.32.tgz",
+      "dependencies": {
+        "pdfjs-dist": {
+          "version": "1.6.361",
+          "from": "pdfjs-dist@1.6.361",
+          "resolved": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-1.6.361.tgz"
+        }
+      }
+    },
     "readable-stream": {
       "version": "2.2.2",
       "from": "readable-stream@>=2.0.2 <3.0.0",

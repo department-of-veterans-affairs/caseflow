@@ -161,3 +161,20 @@
   background-repeat: no-repeat;
   background-size: 1.3rem;
 }
+
+.cf-pdf-container {
+  background-color: $color-gray-dark;
+  width: 100%;
+  height: 400px;
+  overflow-y: scroll;
+  overflow-x: visible;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.cf-pdf-page {
+  margin: 20px 0;
+}

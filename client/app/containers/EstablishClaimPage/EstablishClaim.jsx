@@ -4,6 +4,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
+
 import {
           FormField,
           handleFieldChange,
@@ -16,7 +17,7 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
-import PDFJSAnnotate from 'pdf-annotate.js';
+
 // import PDFJSLoader from 'pdfjs-dist';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -178,56 +179,6 @@ export default class EstablishClaim extends React.Component {
     } else {
       throw new RangeError("Invalid page value");
     }
-  }
-
-  componentDidMount() {
-    const { UI } = PDFJSAnnotate;
-    // const VIEWER = document.getElementById('viewer');
-    // const RENDER_OPTIONS = {
-    //   documentId: this.props.pdfLink,
-    //   pdfDocument: null,
-    //   scale: 1,
-    //   rotate: 0
-    // };
-
-    // PDFJS.workerSrc = '../../build/webpack/pdf.worker.bundle.js';
-    // PDFJSAnnotate.setStoreAdapter(MyStoreAdapter);
-
-    // PDFJS.getDocument(RENDER_OPTIONS.documentId).then((pdf) => {
-    //   RENDER_OPTIONS.pdfDocument = pdf;
-    //   VIEWER.appendChild(UI.createPage(1));
-    //   UI.renderPage(1, RENDER_OPTIONS);
-    // });
-    //PDFJS.workerSrc = '../../../node_modules/pdfjs-dist/build/pdf.worker.bundle.js';
-
-    //PDFJS.workerSrc = 'pdf.worker.js';
-    PDFJS.disableWorker = true;
-    //PDFJSAnnotate.setStoreAdapter(MyStoreAdapter);
-    var DEFAULT_URL = this.props.pdfLink;
-    var PAGE_TO_VIEW = 1;
-    var SCALE = 1.0;
-
-    var container = document.getElementById('pageContainer');
-
-    // Loading document.
-    PDFJS.getDocument(DEFAULT_URL).then(function (pdfDocument) {
-      // Document loaded, retrieving the page.
-      return pdfDocument.getPage(PAGE_TO_VIEW).then(function (pdfPage) {
-        // Creating the page view with default parameters.
-        var pdfPageView = new PDFJS.PDFPageView({
-          container: container,
-          id: PAGE_TO_VIEW,
-          scale: SCALE,
-          defaultViewport: pdfPage.getViewport(SCALE),
-          // We can enable text/annotations layers, if needed
-          textLayerFactory: new PDFJS.DefaultTextLayerFactory(),
-          annotationLayerFactory: new PDFJS.DefaultAnnotationLayerFactory()
-        });
-        // Associates the actual page with the view, and drawing it
-        pdfPageView.setPdfPage(pdfPage);
-        return pdfPageView.draw();
-      });
-    });
   }
 
   componentDidUpdate() {

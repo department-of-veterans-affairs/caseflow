@@ -1,4 +1,5 @@
 import React from 'react';
+import PdfViewer from '../../components/PdfViewer';
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
@@ -9,10 +10,9 @@ export const render = function() {
         <h2>Review Decision</h2>
         Review the final decision from VBMS below to determine the next step.
       </div>
-      <div id="pageContainer" className="pdfViewer singlePageView"></div>
-    
-      <canvas id="the-canvas"></canvas>
-
+      <PdfViewer
+        file={pdfLink} />
+      
       {
       /* This link is here for 508 compliance, and shouldn't be visible to sighted
        users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
@@ -37,7 +37,7 @@ export const render = function() {
         establish-claim buttons.
       </a>
 
-      <iframe
+      {/*<iframe
         aria-label="The PDF embedded here is not accessible. Please use the above
           link to download the PDF and view it in a PDF reader. Then use the buttons
           below to go back and make edits or upload and certify the document."
@@ -45,7 +45,7 @@ export const render = function() {
         title="Form8 PDF"
         id="viewer"
         src={pdfjsLink}>
-      </iframe>
+      </iframe>*/}
     </div>
   );
 };
