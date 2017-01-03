@@ -1,3 +1,5 @@
+require "rails_helper"
+
 class FakeTask < Task
 end
 

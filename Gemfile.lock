@@ -213,6 +213,8 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     parallel (1.9.0)
+    parallel_tests (2.10.0)
+      parallel
     parser (2.3.1.2)
       ast (~> 2.2)
     pdf-forms (1.0.0)
@@ -363,9 +365,9 @@ GEM
       redis-namespace (>= 1.5.2)
       rufus-scheduler (>= 2.0.24)
       sidekiq (>= 4.2.1)
-    simplecov (0.11.2)
+    simplecov (0.12.0)
       docile (~> 1.1.0)
-      json (~> 1.8)
+      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     slop (3.6.0)
@@ -433,6 +435,7 @@ DEPENDENCIES
   launchy
   moment_timezone-rails
   parallel
+  parallel_tests
   pdf-forms
   pdfjs_viewer-rails
   pg

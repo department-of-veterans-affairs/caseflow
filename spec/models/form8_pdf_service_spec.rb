@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe Form8PdfService do
   context ".pdf_values_for" do
     let(:form8) do
