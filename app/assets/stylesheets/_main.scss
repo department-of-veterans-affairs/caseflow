@@ -178,3 +178,72 @@
 .cf-pdf-page {
   margin: 20px 0;
 }
+
+.pdfViewer .canvasWrapper {
+  box-shadow: 0 0 3px #bbb;
+}
+.pdfViewer .page {
+  margin-bottom: 10px;
+}
+.annotationLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+#content-wrapper {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  right: 250px;
+  bottom: 0;
+  overflow: auto;
+}
+#comment-wrapper {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  width: 250px;
+  background: #eaeaea;
+  border-left: 1px solid #d0d0d0;
+}
+#comment-wrapper h4 {
+  margin: 10px;
+}
+#comment-wrapper .comment-list {
+  font-size: 12px;
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+#comment-wrapper .comment-list-item {
+  border-bottom: 1px solid #d0d0d0;
+  padding: 10px;
+}
+#comment-wrapper .comment-list-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 47px;
+  overflow: auto;
+}
+#comment-wrapper .comment-list-form {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+}
+#comment-wrapper .comment-list-form input {
+  padding: 5px;
+  width: 100%;
+}
+.pdfViewer .page {
+  border-image: none;
+}
