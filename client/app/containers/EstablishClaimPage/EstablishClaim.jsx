@@ -221,7 +221,7 @@ export default class EstablishClaim extends React.Component {
           defaultViewport: pdfPage.getViewport(SCALE),
           // We can enable text/annotations layers, if needed
           textLayerFactory: new PDFJS.DefaultTextLayerFactory(),
-          //annotationLayerFactory: new PDFJS.DefaultAnnotationLayerFactory()
+          annotationLayerFactory: new PDFJS.DefaultAnnotationLayerFactory()
         });
         // Associates the actual page with the view, and drawing it
         pdfPageView.setPdfPage(pdfPage);
