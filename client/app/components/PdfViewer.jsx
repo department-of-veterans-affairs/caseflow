@@ -2,6 +2,27 @@ import React from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
  
+let annotationArray = [];
+
+let MyStoreAdapter = new PDFJSAnnotate.StoreAdapter({
+  getAnnotations(documentId, pageNumber) {/* ... */},
+
+  getAnnotation(documentId, annotationId) {/* ... */},
+
+  addAnnotation(documentId, pageNumber, annotation) {
+    console.log(annotation);
+    annotationArray.push(annotation);
+  },
+
+  editAnnotation(documentId, pageNumber, annotation) {/* ... */},
+
+  deleteAnnotation(documentId, annotationId) {/* ... */},
+
+  addComment(documentId, annotationId, content) {/* ... */},
+
+  deleteComment(documentId, commentId) {/* ... */}
+});
+
 class MyPdfViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -71,7 +92,23 @@ class MyPdfViewer extends React.Component {
         viewer.appendChild(page);
       }
       //UI.enableEdit();
-      UI.enablePoint();
+      
+      UI.addEventListener('annotation:add', (e) => {
+        console.log('adding an annotation');
+        console.log(e);
+      });
+
+      UI.addEventListener('annotation:click', (e) => {
+        console.log('this is an event');
+        console.log(e);
+        console.log(e.getAttribute('data-pdf-annotate-id'));
+        PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((annotation) => {
+          console.log(annotation);
+        })
+        PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((comment) => {
+          console.log(comment);
+        })
+      });
 
       // Automatically render the first page
       // This assumes that page has already been created and appended
@@ -138,6 +175,18 @@ class MyPdfViewer extends React.Component {
         }  
       });
     });
+
+    window.onkeyup = function(e) {
+      console.log(e);
+      if (e.key == 'n') {
+        UI.enablePoint();
+        UI.disableEdit();
+      }
+      if (e.key == 'm') {
+        UI.disablePoint();
+        UI.enableEdit();
+      }
+    }
   }
  
   render() {

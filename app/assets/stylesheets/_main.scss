@@ -247,3 +247,7 @@
 .pdfViewer .page {
   border-image: none;
 }
+
+[aria-hidden=true] {
+  display: inline !important;
+}
