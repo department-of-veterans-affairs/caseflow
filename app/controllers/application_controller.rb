@@ -58,7 +58,8 @@ class ApplicationController < ActionController::Base
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
       Raven.user_context(
-        email: current_user.username,
+        email: current_user.email,
+        css_id: current_user.css_id,
         regional_office: current_user.regional_office
       )
     end
