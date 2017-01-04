@@ -164,7 +164,7 @@
 
 .cf-pdf-container {
   background-color: $color-gray-dark;
-  width: 100%;
+  width: 80%;
   height: 400px;
   overflow-y: scroll;
   overflow-x: visible;
@@ -173,6 +173,7 @@
   text-align: center;
   padding-top: 10px;
   padding-bottom: 10px;
+  float: left;
 }
 
 .cf-pdf-page {
@@ -221,7 +222,7 @@
   right: 0;
   bottom: 0;
 }
-#comment-wrapper .comment-list-item {
+.comment-list-item {
   border-bottom: 1px solid #d0d0d0;
   padding: 10px;
 }
@@ -250,4 +251,13 @@
 
 [aria-hidden=true] {
   display: inline !important;
+}
+
+#cf-comment-wrapper {
+  float: right;
+  width: 15%;
+}
+
+.cf-comment-selected {
+  background: cyan;
 }

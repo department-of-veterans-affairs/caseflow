@@ -26,11 +26,12 @@ let MyStoreAdapter = new PDFJSAnnotate.StoreAdapter({
 class MyPdfViewer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      comments: []
+    };
     PDFJS.disableWorker = true;
     //PDFJSAnnotate.setStoreAdapter(MyStoreAdapter);
     
-    var DEFAULT_URL = this.props.file;
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
     PDFJSAnnotate.getStoreAdapter().addAnnotation(
       this.props.file,
@@ -45,15 +46,7 @@ class MyPdfViewer extends React.Component {
     );
 
     // Loading document.
-    PDFJS.getDocument(DEFAULT_URL).then((pdfDocument) => {
-      this.RENDER_OPTIONS = {
-        documentId: this.props.file,
-        pdfDocument: pdfDocument,
-        scale: 1,
-        rotate: 0
-      };
-      this.setState({pdfDocument: pdfDocument, isRendered: new Array(pdfDocument.pdfInfo.numPages)});
-    });
+
 
   }
   componentDidUpdate() {
@@ -77,46 +70,7 @@ class MyPdfViewer extends React.Component {
 
     //PDFJS.workerSrc = 'pdf.worker.js';
     // Document loaded, retrieving the page.
-    const { UI } = PDFJSAnnotate;
-    
-
-    let { pdfDocument } = this.state;
-    if (this.RENDER_OPTIONS) {
-
-      // Create a page in the DOM for every page in the PDF
-      let viewer = document.getElementById('viewer');
-      viewer.innerHTML = '';
-      let numPages = pdfDocument.pdfInfo.numPages;
-      for (let i=0; i<numPages; i++) {
-        let page = UI.createPage(i+1);
-        viewer.appendChild(page);
-      }
-      //UI.enableEdit();
-      
-      UI.addEventListener('annotation:add', (e) => {
-        console.log('adding an annotation');
-        console.log(e);
-      });
-
-      UI.addEventListener('annotation:click', (e) => {
-        console.log('this is an event');
-        console.log(e);
-        console.log(e.getAttribute('data-pdf-annotate-id'));
-        PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((annotation) => {
-          console.log(annotation);
-        })
-        PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((comment) => {
-          console.log(comment);
-        })
-      });
-
-      // Automatically render the first page
-      // This assumes that page has already been created and appended
-      UI.renderPage(1, this.RENDER_OPTIONS).then(([pdfPage, annotations]) => {
-        this.state.isRendered[0] = true;
-        // Useful if you need access to annotations or pdfPage.getViewport, etc.
-      });
-    }
+      return;
 
     
 
@@ -161,20 +115,92 @@ class MyPdfViewer extends React.Component {
 
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
+    
+    PDFJS.getDocument(this.props.file).then((pdfDocument) => {
+      this.RENDER_OPTIONS = {
+        documentId: this.props.file,
+        pdfDocument: pdfDocument,
+        scale: 1,
+        rotate: 0
+      };
+
+      this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+
+      // Create a page in the DOM for every page in the PDF
+      let viewer = document.getElementById('viewer');
+      viewer.innerHTML = '';
+      let numPages = pdfDocument.pdfInfo.numPages;
+      for (let i=0; i<numPages; i++) {
+        let page = UI.createPage(i+1);
+        viewer.appendChild(page);
+      }
+      //UI.enableEdit();
+      
+      UI.addEventListener('annotation:add', (e) => {
+        this.state.comments = [];
+        for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
+          PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
+            annotations.annotations.forEach((annotationId) => {
+              PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
+                if (comment.length > 0) {
+                  let commentCopy = [...this.state.comments, {uuid: annotationId.uuid, content: comment[0].content}];
+                  this.setState({comments: commentCopy});  
+                }
+              });
+            });
+          });
+        }
+        
+        
+      });
+
+      UI.addEventListener('annotation:click', (e) => {
+        // console.log('this is an event');
+        // console.log(e);
+        // console.log(e.getAttribute('data-pdf-annotate-id'));
+        // PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((annotation) => {
+        //   console.log(annotation);
+        // })
+        //PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((comment) => {
+        //})
+        let comments = [ ...this.state.comments ];
+        comments = comments.map((comment) => {
+          let copy = { ...comment };
+          copy.selected = false;
+          if (comment.uuid === e.getAttribute('data-pdf-annotate-id')) {
+            copy.selected = true;
+          }
+          return copy;
+        });
+        console.log(comments);
+        this.setState({comments: comments});
+        
+      });
+
+      // Automatically render the first page
+      // This assumes that page has already been created and appended
+      UI.renderPage(1, this.RENDER_OPTIONS).then(([pdfPage, annotations]) => {
+        this.isRendered[0] = true;
+        // Useful if you need access to annotations or pdfPage.getViewport, etc.
+      }); 
+    });
+
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
     scrollWindow.addEventListener('scroll', e => {
       Array.prototype.forEach.call(document.getElementsByClassName('page'), (ele, index) => {
-        if (!this.state.isRendered[index] &&
+        if (!this.isRendered[index] &&
             ele.getBoundingClientRect().bottom > -1000 &&
             ele.getBoundingClientRect().top < scrollWindow.clientHeight + 1000) {
-          this.state.isRendered[index] = true;
+          this.isRendered[index] = true;
           UI.renderPage(index + 1, this.RENDER_OPTIONS).catch(([pdfPage, annotations]) => {
-            this.state.isRendered[index] = false;
+            this.isRendered[index] = false;
           });
         }  
       });
     });
+
+
 
     window.onkeyup = function(e) {
       console.log(e);
@@ -190,16 +216,28 @@ class MyPdfViewer extends React.Component {
   }
  
   render() {
-    // let pageViews = [];
-    // if (this.state.pdfDocument) {
-    //   for (let i = 0; i < this.state.pdfDocument.numPages; i++) {
-    //     pageViews.push(<div key={i}><div key={"myPageContainer"+i} id={"myPageContainer"+i} className="cf-pdf-page pdfViewer singlePageView"></div><svg key={"myPageSvg"+i} id={"myPageSvg"+i} /></div>)
-    //   }  
-    // }
+    let comments = [];
+    console.log(this.state.comments);
+    this.state.comments.forEach((comment) => {
+      comments.push(<div className={"comment-list-item" + (comment.selected ? " cf-comment-selected" : "")}>{comment.content}</div>)
+    });
 
     return (
-      <div id="scrollWindow" className="cf-pdf-container">
-        <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+      <div>
+        <div id="scrollWindow" className="cf-pdf-container">
+          <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+        </div>
+        <div id="cf-comment-wrapper">
+          <h4>Comments</h4>
+          <div className="comment-list">
+            <div className="comment-list-container">
+              {comments}
+            </div>
+            <form className="comment-list-form" style={{display: 'none'}}>
+              <input type="text" placeholder="Add a Comment"/>
+            </form>
+          </div>
+        </div>
       </div>
       );
   }
