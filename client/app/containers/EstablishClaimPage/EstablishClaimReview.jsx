@@ -1,7 +1,7 @@
 import React from 'react';
 import PdfViewer from '../../components/PdfViewer';
 
-export const render = function() {
+export const render = function(pdf) {
   let { pdfLink, pdfjsLink } = this.props;
 
   return (
@@ -11,7 +11,7 @@ export const render = function() {
         Review the final decision from VBMS below to determine the next step.
       </div>
       <PdfViewer
-        file={pdfLink} />
+        file={pdf} />
       
       {
       /* This link is here for 508 compliance, and shouldn't be visible to sighted

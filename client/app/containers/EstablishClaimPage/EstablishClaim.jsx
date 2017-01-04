@@ -30,7 +30,7 @@ export default class EstablishClaim extends React.Component {
 
     this.handleFieldChange = handleFieldChange.bind(this);
     this.validateFormAndSetErrors = validateFormAndSetErrors.bind(this);
-
+    this.pdfs = this.props.pdfLink;
     // Set initial state on page render
     this.state = {
       cancelModal: false,
@@ -65,7 +65,8 @@ export default class EstablishClaim extends React.Component {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: REVIEW_PAGE,
+      pdf: 0
     };
 
     
@@ -191,6 +192,19 @@ export default class EstablishClaim extends React.Component {
 
   }
 
+  componentDidMount() {
+    window.addEventListener('keydown', (e) => {
+      
+      console.log(this.pdfs);
+      if (e.key == 'ArrowLeft') {
+        this.setState({pdf: 0});
+      }
+      if (e.key == 'ArrowRight') {
+        this.setState({pdf: 1});
+      }
+    });
+  }
+
   render() {
     let {
       loading,
@@ -200,7 +214,7 @@ export default class EstablishClaim extends React.Component {
 
     return (
       <div>
-        { this.isReviewPage() && Review.render.call(this) }
+        { this.isReviewPage() && Review.render.call(this, this.pdfs[this.state.pdf]) }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">

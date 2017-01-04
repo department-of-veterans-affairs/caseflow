@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       patch 'assign', on: :collection
       post 'perform', on: :member
       get 'pdf', on: :member
+      get 'pdf2', on: :member
     end
   end
 

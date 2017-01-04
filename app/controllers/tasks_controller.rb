@@ -37,6 +37,10 @@ class TasksController < ApplicationController
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 
+  def pdf2
+    send_file("/Users/mdbenjam/Nava/code/caseflow-certification/tmp/pdfs/form8-123C.pdf", type: "application/pdf", disposition: "inline")
+  end
+
   def assign
     # Doesn't assign if user has a task of the same type already assigned.
     next_task = current_user_next_task

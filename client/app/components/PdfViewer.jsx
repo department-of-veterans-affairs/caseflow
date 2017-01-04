@@ -113,7 +113,23 @@ class MyPdfViewer extends React.Component {
     
   }
 
-  componentDidMount = () => {
+  generateComments = (pdfDocument) => {
+    this.comments = [];
+    for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
+      PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
+        annotations.annotations.forEach((annotationId) => {
+          PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
+            if (comment.length > 0) {
+              this.comments = [...this.comments, {uuid: annotationId.uuid, content: comment[0].content}];
+              this.setState({comments: this.comments});  
+            }
+          });
+        });
+      });
+    }
+  }
+
+  draw = () => {
     const { UI } = PDFJSAnnotate;
     
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
@@ -123,6 +139,7 @@ class MyPdfViewer extends React.Component {
         scale: 1,
         rotate: 0
       };
+      this.generateComments(pdfDocument);
 
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
 
@@ -136,46 +153,14 @@ class MyPdfViewer extends React.Component {
       }
       //UI.enableEdit();
       
-      UI.addEventListener('annotation:add', (e) => {
-        this.state.comments = [];
-        for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
-          PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
-            annotations.annotations.forEach((annotationId) => {
-              PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
-                if (comment.length > 0) {
-                  let commentCopy = [...this.state.comments, {uuid: annotationId.uuid, content: comment[0].content}];
-                  this.setState({comments: commentCopy});  
-                }
-              });
-            });
-          });
-        }
-        
-        
-      });
+      if (this.annotationAddListener) {
+        UI.removeEventListener('annotation:add', this.annotationAddListener);  
+      }
+      
+      this.annotationAddListener = (e) => {this.generateComments(pdfDocument)};
+      UI.addEventListener('annotation:add', this.annotationAddListener);
 
-      UI.addEventListener('annotation:click', (e) => {
-        // console.log('this is an event');
-        // console.log(e);
-        // console.log(e.getAttribute('data-pdf-annotate-id'));
-        // PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((annotation) => {
-        //   console.log(annotation);
-        // })
-        //PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((comment) => {
-        //})
-        let comments = [ ...this.state.comments ];
-        comments = comments.map((comment) => {
-          let copy = { ...comment };
-          copy.selected = false;
-          if (comment.uuid === e.getAttribute('data-pdf-annotate-id')) {
-            copy.selected = true;
-          }
-          return copy;
-        });
-        console.log(comments);
-        this.setState({comments: comments});
-        
-      });
+      
 
       // Automatically render the first page
       // This assumes that page has already been created and appended
@@ -184,6 +169,44 @@ class MyPdfViewer extends React.Component {
         // Useful if you need access to annotations or pdfPage.getViewport, etc.
       }); 
     });
+  }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.file !== this.props.file) {
+      document.getElementById('scrollWindow').scrollTop = 0;
+      this.draw();
+
+    }
+  }
+
+  componentDidMount = () => {
+
+    const { UI } = PDFJSAnnotate;
+
+    UI.addEventListener('annotation:click', (e) => {
+      // console.log('this is an event');
+      // console.log(e);
+      // console.log(e.getAttribute('data-pdf-annotate-id'));
+      // PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((annotation) => {
+      //   console.log(annotation);
+      // })
+      //PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, e.getAttribute('data-pdf-annotate-id')).then((comment) => {
+      //})
+      let comments = [ ...this.state.comments ];
+      comments = comments.map((comment) => {
+        let copy = { ...comment };
+        copy.selected = false;
+        if (comment.uuid === e.getAttribute('data-pdf-annotate-id')) {
+          copy.selected = true;
+        }
+        return copy;
+      });
+      this.setState({comments: comments});
+      
+    });
+
+    this.draw();
+
 
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
@@ -202,7 +225,7 @@ class MyPdfViewer extends React.Component {
 
 
 
-    window.onkeyup = function(e) {
+    window.addEventListener('keyup', function(e) {
       console.log(e);
       if (e.key == 'n') {
         UI.enablePoint();
@@ -212,7 +235,7 @@ class MyPdfViewer extends React.Component {
         UI.disablePoint();
         UI.enableEdit();
       }
-    }
+    })
   }
  
   render() {
