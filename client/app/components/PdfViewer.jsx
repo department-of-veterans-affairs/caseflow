@@ -115,13 +115,14 @@ class MyPdfViewer extends React.Component {
 
   generateComments = (pdfDocument) => {
     this.comments = [];
+    this.setState({comments: this.comments});
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
         annotations.annotations.forEach((annotationId) => {
           PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
             if (comment.length > 0) {
               this.comments = [...this.comments, {uuid: annotationId.uuid, content: comment[0].content}];
-              this.setState({comments: this.comments});  
+              this.setState({comments: this.comments});
             }
           });
         });
@@ -237,12 +238,23 @@ class MyPdfViewer extends React.Component {
       }
     })
   }
+
+  jumpToComment = (uuid) => {
+    return ((e) => {
+      PDFJSAnnotate.getStoreAdapter().getAnnotation(this.props.file, uuid).then((annotation) => {
+        console.log(annotation);
+        console.log(document.getElementsByClassName('page')[annotation.page - 1].getBoundingClientRect());
+        console.log(document.getElementById('scrollWindow').scrollTop);
+        document.getElementById('scrollWindow').scrollTop = document.getElementsByClassName('page')[annotation.page - 1].getBoundingClientRect().top + annotation.y - 100 + document.getElementById('scrollWindow').scrollTop;
+      });
+    });
+  }
  
   render() {
     let comments = [];
     console.log(this.state.comments);
     this.state.comments.forEach((comment) => {
-      comments.push(<div className={"comment-list-item" + (comment.selected ? " cf-comment-selected" : "")}>{comment.content}</div>)
+      comments.push(<div onClick={this.jumpToComment(comment.uuid)} className={"comment-list-item" + (comment.selected ? " cf-comment-selected" : "")}>{comment.content}</div>)
     });
 
     return (

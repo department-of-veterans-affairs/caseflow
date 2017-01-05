@@ -49,7 +49,9 @@ Rails.application.routes.draw do
 
     resources :review,
               path: "/review",
-              only: [:index]
+              only: [:index] do
+      get 'pdf', on: :collection
+    end
   end
 
   resources :tasks, only: [] do

@@ -192,19 +192,6 @@ export default class EstablishClaim extends React.Component {
 
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', (e) => {
-      
-      console.log(this.pdfs);
-      if (e.key == 'ArrowLeft') {
-        this.setState({pdf: 0});
-      }
-      if (e.key == 'ArrowRight') {
-        this.setState({pdf: 1});
-      }
-    });
-  }
-
   render() {
     let {
       loading,
