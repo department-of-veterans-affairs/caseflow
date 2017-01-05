@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 57c515ce5d04ebd720a749a5c2bee1f83553be02
-  ref: 57c515c
+  revision: 40bdd3ce915522f0dfdc13b7a3f351243e21285f
+  ref: 40bdd3c
   specs:
-    caseflow (0.1.5)
+    caseflow (0.1.6)
       aws-sdk (~> 2)
       bourbon
       d3-rails
@@ -86,13 +86,13 @@ GEM
     addressable (2.4.0)
     arel (6.0.3)
     ast (2.3.0)
-    aws-sdk (2.6.39)
-      aws-sdk-resources (= 2.6.39)
-    aws-sdk-core (2.6.39)
+    aws-sdk (2.6.44)
+      aws-sdk-resources (= 2.6.44)
+    aws-sdk-core (2.6.44)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.6.39)
-      aws-sdk-core (= 2.6.39)
+    aws-sdk-resources (2.6.44)
+      aws-sdk-core (= 2.6.44)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -470,4 +470,4 @@ DEPENDENCIES
   where-or
 
 BUNDLED WITH
-   1.13.6
+   1.13.7
