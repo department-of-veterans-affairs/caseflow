@@ -27,7 +27,7 @@
 
   <p>
     If you can’t find the document, click the
-    <strong>cancel certification</strong> link below.
+    <strong>cancel</strong> link below.
   </p>
 
   <div class="cf-table-wrap">
@@ -50,7 +50,7 @@
         <%= render partial: 'document_match', locals: { name: "SOC", match: appeal.soc_match?, date: appeal.soc_date } %>
 
         <% appeal.ssoc_dates.each_index do |i| %>
-          <%= render partial: 'document_match', 
+          <%= render partial: 'document_match',
                      locals: { name: "SSOC #{i+1}", match: appeal.ssoc_match?(appeal.ssoc_dates[i]), date: appeal.ssoc_dates[i] } %>
         <% end %>
 
@@ -61,8 +61,8 @@
 </div>
 
 <div class="cf-app-segment">
-  <!-- a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel certification</a>-->
+  <a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel</a>
   <button type="button" class="cf-push-right cf-action-refresh">Refresh Page</button>
 </div>
 
-<%#= render partial: 'cancel_cert_modal' %>
+<%= render partial: 'cancel_certification_modal' %>
