@@ -23,7 +23,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
-  vacols_attr_accessor :grant_type
 
   attr_writer :ssoc_dates
   def ssoc_dates
