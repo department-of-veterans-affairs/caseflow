@@ -74,4 +74,35 @@ describe('EstablishClaim', () => {
       });
     });
   });
+
+  context('.getClaimTypeFromDecision', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      const task = {
+        appeal: 'b',
+        user: 'a'
+      };
+
+      wrapper = mount(<EstablishClaim task={task}/>);
+    });
+
+    it('returns 170RMDAMC - AMC-Remand for remand', () => {
+      wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
+      expect(wrapper.instance().getClaimTypeFromDecision()).to.
+        equal('170RMDAMC - AMC-Remand');
+    });
+
+    it('returns 170PGAMC - AMC-Partial Grant for partial', () => {
+      wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
+      expect(wrapper.instance().getClaimTypeFromDecision()).to.
+        equal('170PGAMC - AMC-Partial Grant');
+    });
+
+    it('returns 172BVAG - BVA Grant for full', () => {
+      wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+      expect(wrapper.instance().getClaimTypeFromDecision()).to.
+        equal('172BVAG - BVA Grant');
+    });
+  });
 });

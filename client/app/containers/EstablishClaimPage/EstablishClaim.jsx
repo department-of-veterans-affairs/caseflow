@@ -44,9 +44,6 @@ export default class EstablishClaim extends BaseForm {
           ),
         suppressAcknowledgement: new FormField(false)
       },
-      reviewForm: {
-        decisionType: new FormField(decisionType)
-      },
       loading: false,
       modal: {
         cancelFeedback: new FormField(
@@ -55,7 +52,10 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: REVIEW_PAGE,
+      reviewForm: {
+        decisionType: new FormField(decisionType)
+      }
     };
   }
 
@@ -101,9 +101,8 @@ export default class EstablishClaim extends BaseForm {
       return '170PGAMC - AMC-Partial Grant';
     } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       return '172BVAG - BVA Grant';
-    } else {
-      throw new RangeError("Invalid deicion type value");
     }
+    throw new RangeError("Invalid deicion type value");
   }
 
   handleFinishCancelTask = () => {
