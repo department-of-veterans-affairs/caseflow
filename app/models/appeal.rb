@@ -134,13 +134,14 @@ class Appeal < ActiveRecord::Base
     status == "Complete"
   end
 
-  def full_remand?
+  def remand?
     status == "Remand" && disposition == "Remanded"
   end
 
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
+    return "Remand" if remand?
   end
 
   class << self

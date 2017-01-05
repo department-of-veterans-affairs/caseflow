@@ -78,10 +78,8 @@ class AppealRepository
     issue_types = issues_record.reduce({grant: 0, remand: 0}) do |accumulator, issue|
       if issue.ISSDC == VACOLS::ISSUES::GRANT_TYPE["Full"]
         accumulator.grant = accumulator.grant + 1
-      elsif if issue.ISSDC == VACOLS::ISSUES::GRANT_TYPE["Remand"]
+      elsif issue.ISSDC == VACOLS::ISSUES::GRANT_TYPE["Remand"]
         accumulator.remand = accumulator.remand + 1
-      else
-        raise VACOLS::UnknownGrantType
       end
       accumulator
     end
