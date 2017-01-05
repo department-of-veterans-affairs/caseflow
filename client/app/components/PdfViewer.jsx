@@ -33,17 +33,7 @@ class MyPdfViewer extends React.Component {
     //PDFJSAnnotate.setStoreAdapter(MyStoreAdapter);
     
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
-    PDFJSAnnotate.getStoreAdapter().addAnnotation(
-      this.props.file,
-      1,
-      {
-        type: 'area',
-        width: 100,
-        height: 50,
-        x: 75,
-        y: 75
-      }
-    );
+ 
 
     // Loading document.
 
@@ -118,8 +108,11 @@ class MyPdfViewer extends React.Component {
     this.setState({comments: this.comments});
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
+        console.log('annotations');
+        console.log(annotations);
         annotations.annotations.forEach((annotationId) => {
           PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
+            console.log(comment);
             if (comment.length > 0) {
               this.comments = [...this.comments, {uuid: annotationId.uuid, content: comment[0].content}];
               this.setState({comments: this.comments});
@@ -259,6 +252,9 @@ class MyPdfViewer extends React.Component {
 
     return (
       <div>
+        <div id="cf-pdf-title">
+          <h2>{this.props.file}</h2>
+        </div>
         <div id="scrollWindow" className="cf-pdf-container">
           <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
         </div>
