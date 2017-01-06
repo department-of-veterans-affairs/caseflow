@@ -76,8 +76,14 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
+    let formValues = ApiUtil.convertToSnakeCase(this.getFormValues(this.state.form));
+    // We have to add in the claim_label separately, since it is derived from
+    // the form value on the review page. Use snakecase since we are handing
+    // this back to ruby.
+    formValues.claim_label = this.getClaimTypeFromDecision();
+
     let data = {
-      claim: ApiUtil.convertToSnakeCase(this.getFormValues(this.state.form))
+      claim: formValues
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
