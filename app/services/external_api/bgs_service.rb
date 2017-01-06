@@ -3,9 +3,34 @@ require "bgs"
 # Thin interface to all things BGS
 class ExternalApi::BGSService
   # :nocov:
-  # def get_eps(veteran_id)
-  #   client.claims.find_by_vbms_file_number
-  # end
+
+  ep_codes = %w(
+    170APPACT
+    170APPACTPMC
+    170PGAMC
+    170RMD
+    170RMDAMC
+    170RMDPMC
+    172GRANT
+    172BVAG
+    172BVAGPMC
+    400CORRC
+    400CORRCPMC
+    930RC
+    930RCPMC
+  )
+
+  def get_eps(vbms_id)
+    vbms_id.strip!
+    veteran_id = vbms_id[0...-1].rjust(8, '0')
+    begin
+      bgs.claims.find_by_vbms_file_number(veteran_id)
+        .select { |claim| ep_codes.include? claim[:claim_type_code] }
+    rescue => e
+      puts "Problem loading case #{veteran_id}"
+      puts e
+    end
+  end
 
   def client
     @client ||= init_client
