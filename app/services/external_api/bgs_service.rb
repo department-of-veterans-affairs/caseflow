@@ -1,7 +1,7 @@
 require "bgs"
 
 # Thin interface to all things BGS
-class BGSService
+class ExternalApi::BGSService
   # def get_eps(veteran_id)
   #   client.claims.find_by_vbms_file_number
   # end
