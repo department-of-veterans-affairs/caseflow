@@ -10,7 +10,7 @@ describe('EstablishClaim', () => {
 
     beforeEach(() => {
       const task = {
-        appeal: 'b',
+        appeal: { decision_type: 'Remand' },
         user: 'a'
       };
 
