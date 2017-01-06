@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 export default class BaseForm extends React.Component {
 
@@ -15,7 +16,7 @@ export default class BaseForm extends React.Component {
   validateFormAndSetErrors = function(form) {
         // This variable stays true until a validator fails
         // in which case we return false. Otherwise all fields
-        // are vavlid, and we retrun true.
+        // are valid, and we return true.
     let allValid = true;
     let formCopy = { ...form };
 
@@ -27,6 +28,12 @@ export default class BaseForm extends React.Component {
 
       formCopy[key].errorMessage = errorMessage;
     });
+
+    if (allValid) {
+      this.setState({
+        validating: null
+      });
+    }
 
     this.setState(
             formCopy
@@ -43,8 +50,15 @@ export default class BaseForm extends React.Component {
     }, {});
   };
 
+  formValidating = function() {
+    this.setState({
+        validating: this
+    });
+  }
+
   scrollToAndFocusFirstError = function() {
-    let errors = document.getElementsByClassName("usa-input-error-message");
+    let erroredForm = ReactDOM.findDOMNode(this.state.validating);
+    let errors = erroredForm.getElementsByClassName("usa-input-error-message");
 
     if (errors.length > 0) {
       window.scrollBy(0, errors[0].parentElement.getBoundingClientRect().top);
@@ -58,9 +72,8 @@ export default class BaseForm extends React.Component {
   };
 
   componentDidUpdate() {
-    if (this.setErrors) {
+    if (this.state.validating) {
       this.scrollToAndFocusFirstError();
     }
-    this.setErrors = false;
   }
 }
