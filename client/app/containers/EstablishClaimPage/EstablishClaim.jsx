@@ -47,7 +47,6 @@ export default class EstablishClaim extends BaseForm {
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
-      validating: null,
       modal: {
         cancelFeedback: new FormField(
           '',
@@ -55,7 +54,8 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: REVIEW_PAGE,
+      validating: null
     };
   }
 

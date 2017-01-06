@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 
 export default class BaseForm extends React.Component {
 
@@ -32,7 +32,7 @@ export default class BaseForm extends React.Component {
     if (allValid) {
       this.setState({
         validating: null
-      })
+      });
     }
 
     this.setState(
@@ -51,9 +51,7 @@ export default class BaseForm extends React.Component {
   };
 
   scrollToAndFocusFirstError = function() {
-    console.log(this.state.validating);
     let erroredForm = ReactDOM.findDOMNode(this.state.validating);
-    console.log(erroredForm);
     let errors = erroredForm.getElementsByClassName("usa-input-error-message");
 
     if (errors.length > 0) {
