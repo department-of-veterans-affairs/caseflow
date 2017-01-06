@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe CreateEstablishClaimTasksJob do
   before do
     @partial_grant = Fakes::AppealRepository.new("123C", :appeal_remand_decided)

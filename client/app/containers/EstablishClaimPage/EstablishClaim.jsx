@@ -1,16 +1,12 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 
+import BaseForm from '../BaseForm';
+
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import {
-          FormField,
-          handleFieldChange,
-          getFormValues,
-          validateFormAndSetErrors,
-          scrollToAndFocusFirstError
-       } from '../../util/FormField';
+import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
@@ -20,12 +16,9 @@ import * as Form from './EstablishClaimForm';
 export const REVIEW_PAGE = 0;
 export const FORM_PAGE = 1;
 
-export default class EstablishClaim extends React.Component {
+export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-
-    this.handleFieldChange = handleFieldChange.bind(this);
-    this.validateFormAndSetErrors = validateFormAndSetErrors.bind(this);
 
     // Set initial state on page render
     this.state = {
@@ -72,8 +65,9 @@ export default class EstablishClaim extends React.Component {
     event.preventDefault();
     handleAlertClear();
 
+    this.formValidating();
+
     if (!this.validateFormAndSetErrors(this.state.form)) {
-      this.setErrors = true;
 
       return;
     }
@@ -83,7 +77,7 @@ export default class EstablishClaim extends React.Component {
     });
 
     let data = {
-      claim: ApiUtil.convertToSnakeCase(getFormValues(this.state.form))
+      claim: ApiUtil.convertToSnakeCase(this.getFormValues(this.state.form))
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
@@ -173,13 +167,6 @@ export default class EstablishClaim extends React.Component {
     } else {
       throw new RangeError("Invalid page value");
     }
-  }
-
-  componentDidUpdate() {
-    if (this.setErrors) {
-      scrollToAndFocusFirstError();
-    }
-    this.setErrors = false;
   }
 
   render() {

@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "57c515c"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "40bdd3c"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -35,6 +35,9 @@ gem "puma", "~> 2.16.0"
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
+# BGS
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '0c44d7c'
+
 # PDF Tools
 gem 'pdf-forms'
 gem 'pdfjs_viewer-rails'
@@ -53,7 +56,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "d71251eb3d066748b395d58633af5bd5863ef928"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0b275309ea58399a79e8ed9d6e99aa703cdd687c"
 
 gem 'redis-rails'
 
@@ -96,10 +99,11 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "axe"
-  gem 'simplecov'
+  gem 'simplecov', require: false
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
+  gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
 end
