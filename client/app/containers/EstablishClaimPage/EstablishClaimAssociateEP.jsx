@@ -6,9 +6,9 @@ import Button from '../../components/Button';
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 const buildEPRow = (ep) => [
-    "10/20/16",
-    "172-BVA Grant",
-    "Pending",
+    ep.decisionDate,
+    ep.epCode,
+    ep.status,
     <Button
       name="Assign to Claim"
       classNames={["usa-button-outline"]}
@@ -33,7 +33,7 @@ export const render = function() {
         <Table
           headers={TABLE_HEADERS}
           buildRowValues={buildEPRow}
-          values={[0, 1, 2]}
+          values={this.state.associatedEPs}
         />
       </div>
     </div>;

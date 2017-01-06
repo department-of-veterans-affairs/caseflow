@@ -22,8 +22,25 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
+    let associatedEPs = [{
+      decisionDate: '01/02/2016',
+      epCode: '172-BVA Grant',
+      status: 'Pending'
+    },
+    {
+      decisionDate: '03/04/2016',
+      epCode: '170-BVA Grant',
+      status: 'Pending'
+    },
+    {
+      decisionDate: '05/06/2016',
+      epCode: '171-BVA Grant',
+      status: 'Complete'
+    }]
+
     // Set initial state on page render
     this.state = {
+      associatedEPs: associatedEPs,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
