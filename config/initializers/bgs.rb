@@ -1,1 +1,1 @@
-BGSService = (Rails.application.config.s3_enabled ? BGSService : Fakes::BGSService)
+BGSService = (ApplicationController.dependencies_faked? ? BGSService : Fakes::BGSService)
