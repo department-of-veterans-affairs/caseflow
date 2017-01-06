@@ -187,6 +187,19 @@ describe Appeal do
     end
   end
 
+  context "#remand?" do
+    subject { appeal.remand? }
+    context "is false" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
+      it { is_expected.to be_falsey }
+    end
+
+    context "is true" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Remanded") }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#decision_type" do
     subject { appeal.decision_type }
     context "is a full grant" do
@@ -197,6 +210,11 @@ describe Appeal do
     context "is a partial grant" do
       let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
       it { is_expected.to eq("Full Grant") }
+    end
+
+    context "is a remand" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Remanded") }
+      it { is_expected.to eq("Remand") }
     end
   end
 
