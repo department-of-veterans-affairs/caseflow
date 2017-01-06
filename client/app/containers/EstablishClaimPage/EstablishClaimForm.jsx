@@ -28,7 +28,7 @@ export const SEGMENTED_LANE_OPTIONS = [
 
 export const render = function() {
   return (
-    <form noValidate className={this.state.form.name}>
+    <form noValidate>
       <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
         <TextField
