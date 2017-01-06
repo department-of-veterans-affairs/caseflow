@@ -47,6 +47,7 @@ export default class EstablishClaim extends BaseForm {
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
+      validating: null,
       modal: {
         cancelFeedback: new FormField(
           '',
@@ -65,8 +66,11 @@ export default class EstablishClaim extends BaseForm {
     event.preventDefault();
     handleAlertClear();
 
+    this.setState({
+      validating: this
+    });
+
     if (!this.validateFormAndSetErrors(this.state.form)) {
-      this.setErrors = true;
 
       return;
     }
