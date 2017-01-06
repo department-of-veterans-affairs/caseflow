@@ -54,8 +54,7 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE,
-      validating: null
+      page: REVIEW_PAGE
     };
   }
 
