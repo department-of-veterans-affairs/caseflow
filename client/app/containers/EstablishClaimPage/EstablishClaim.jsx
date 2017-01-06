@@ -66,8 +66,9 @@ export default class EstablishClaim extends BaseForm {
     event.preventDefault();
     handleAlertClear();
 
+    this.formValidating();
+
     if (!this.validateFormAndSetErrors(this.state.form)) {
-      this.setErrors = true;
 
       return;
     }

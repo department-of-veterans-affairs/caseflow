@@ -35,6 +35,9 @@ gem "puma", "~> 2.16.0"
 # Style
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
+# BGS
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '0c44d7c'
+
 # PDF Tools
 gem 'pdf-forms'
 gem 'pdfjs_viewer-rails'
