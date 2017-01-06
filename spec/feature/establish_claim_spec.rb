@@ -85,7 +85,7 @@ RSpec.feature "Dispatch" do
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
-      
+
       page.select "Full Grant", from: "decisionType"
 
       click_on "Create End Product"
