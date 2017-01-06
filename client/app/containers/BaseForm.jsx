@@ -50,6 +50,12 @@ export default class BaseForm extends React.Component {
     }, {});
   };
 
+  formValidating = function() {
+    this.setState({
+        validating: this
+    });
+  }
+
   scrollToAndFocusFirstError = function() {
     let erroredForm = ReactDOM.findDOMNode(this.state.validating);
     let errors = erroredForm.getElementsByClassName("usa-input-error-message");
