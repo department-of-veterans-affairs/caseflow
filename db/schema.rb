@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161220190026) do
+ActiveRecord::Schema.define(version: 20170106141818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,17 +113,18 @@ ActiveRecord::Schema.define(version: 20161220190026) do
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "appeal_id",         null: false
-    t.string   "type",              null: false
+    t.integer  "appeal_id",             null: false
+    t.string   "type",                  null: false
     t.integer  "user_id"
     t.datetime "assigned_at"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.integer  "completion_status"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.integer  "lock_version"
     t.string   "comment"
+    t.string   "outgoing_reference_id"
   end
 
   create_table "users", force: :cascade do |t|
