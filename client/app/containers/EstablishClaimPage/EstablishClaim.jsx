@@ -12,9 +12,11 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
+import * as Associate from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
-export const FORM_PAGE = 1;
+export const ASSOCIATE_PAGE = 1;
+export const FORM_PAGE = 2;
 
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
@@ -54,7 +56,7 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: ASSOCIATE_PAGE
     };
   }
 
@@ -154,6 +156,10 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === REVIEW_PAGE;
   }
 
+  isAssociatePage() {
+    return this.state.page === ASSOCIATE_PAGE;
+  }
+
   isFormPage() {
     return this.state.page === FORM_PAGE;
   }
@@ -178,6 +184,7 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
+        { this.isAssociatePage() && Associate.render.call(this) }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
