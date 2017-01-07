@@ -84,7 +84,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(self.class.completion_status_code(:canceled))
+      complete!(status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -94,7 +94,7 @@ class Task < ActiveRecord::Base
 
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(self.class.completion_status_code(status_code))
+      complete!(status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -137,12 +137,13 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status)
+  def complete!(status:, outgoing_reference_id: nil)
     fail(AlreadyCompleteError) if complete?
 
     update!(
       completed_at: Time.now.utc,
-      completion_status: status
+      completion_status: status,
+      outgoing_reference_id: outgoing_reference_id
     )
   end
 

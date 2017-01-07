@@ -34,15 +34,15 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
           ),
-        gulfWar: new FormField(false),
-        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        gulfWarRegistry: new FormField(false),
+        endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
           ),
-        suppressAcknowledgement: new FormField(false)
+        suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
       modal: {
@@ -81,7 +81,7 @@ export default class EstablishClaim extends BaseForm {
     let data = {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.form),
-        claimLabel: this.getClaimTypeFromDecision()
+        endProductLabel: this.getClaimTypeFromDecision()
       })
     };
 

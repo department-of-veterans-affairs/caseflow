@@ -2,10 +2,20 @@ require "bgs"
 
 # Thin interface to all things BGS
 class ExternalApi::BGSService
+  attr_accessor :client
+
+  def initialize
+    @client = init_client
+  end
+
   # :nocov:
   # def get_eps(veteran_id)
   #   client.claims.find_by_vbms_file_number
   # end
+
+  def fetch_veteran_info(vbms_id)
+    client.veteran.find_by_file_number(vbms_id)
+  end
 
   def client
     @client ||= init_client
