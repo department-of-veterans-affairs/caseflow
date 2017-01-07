@@ -85,6 +85,9 @@ RSpec.feature "Dispatch" do
       expect(page).to have_content("Review Decision")
       expect(@task.reload.user).to eq(current_user)
       expect(@task.started?).to be_truthy
+
+      page.select "Full Grant", from: "decisionType"
+
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -92,11 +95,9 @@ RSpec.feature "Dispatch" do
       page.fill_in "Decision Date", with: "1"
       click_on "Create End Product"
 
-      expect(page).to have_content("Please enter the EP & Claim Label.")
       expect(page).to have_content("The date must be in mm/dd/yyyy format.")
 
       page.fill_in "Decision Date", with: "01/01/2017"
-      page.select "172BVAG - BVA Grant", from: "claimLabel"
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")

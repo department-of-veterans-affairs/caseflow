@@ -52,7 +52,7 @@ export default class BaseForm extends React.Component {
 
   formValidating = function() {
     this.setState({
-        validating: this
+      validating: this
     });
   }
 
