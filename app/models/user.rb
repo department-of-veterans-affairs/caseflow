@@ -39,6 +39,11 @@ class User < ActiveRecord::Base
     roles.include? thing
   end
 
+  def admin?
+    return false if roles.nil?
+    roles.include? "System Admin"
+  end
+
   def authenticated?
     !regional_office.blank?
   end

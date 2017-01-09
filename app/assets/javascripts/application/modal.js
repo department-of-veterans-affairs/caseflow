@@ -26,12 +26,24 @@ window.Modal = (function($) {
     }
   }
 
+  function toggleOtherTextbox(){
+     $("input[name$='cancelation-reasons']").click(function(){
+            if($('#other-reason').is(':checked')) {
+              $('#other').show();
+            }
+            else {
+              $('#other').hide();
+            }
+        });
+  }
+
   // public
   return {
     bind: function() {
       $('.cf-action-openmodal').on('click', openModal);
       $('.cf-modal').on('click', closeModal);
       $(window).on('keydown', onKeyDown);
+      toggleOtherTextbox();
     }
   };
 })($);

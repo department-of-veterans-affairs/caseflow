@@ -153,5 +153,9 @@
     <button type="submit" class="cf-push-right cf-submit">Preview Completed Form 8</button>
   </div>
 
-  <%= render partial: 'cancel_certification_modal' %>
+  <% if current_user.admin? %>
+    <%= render partial: 'cancel_certification_modal_new' %>
+  <% else %>
+    <%= render partial: 'cancel_certification_modal' %>
+  <% end %>
 <% end %>

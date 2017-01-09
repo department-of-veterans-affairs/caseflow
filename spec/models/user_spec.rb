@@ -71,6 +71,26 @@ describe User do
     end
   end
 
+  context "#admin?" do
+    subject { user.admin? }
+    before { session["user"]["roles"] = nil }
+
+    context "when user with roles that are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that don't contain admin" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that contain admin" do
+      before { session["user"]["roles"] = ["System Admin"] }
+      it { is_expected.to be_truthy }
+    end
+
+  end
+
   context "#authenticated?" do
     subject { user.authenticated? }
     before { session[:username] = "USER" }
