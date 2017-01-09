@@ -1,11 +1,14 @@
 import React, { PropTypes } from 'react';
 export default class TextField extends React.Component {
+  onChange = (event) => {
+    this.props.onChange(event.target.value);
+  }
+
   render() {
     let {
       errorMessage,
       label,
       name,
-      onChange,
       readOnly,
       required,
       type,
@@ -24,7 +27,7 @@ export default class TextField extends React.Component {
         className="cf-form-textinput"
         name={name}
         id={name}
-        onChange={onChange}
+        onChange={this.onChange}
         type={type}
         value={value}
         readOnly={readOnly}

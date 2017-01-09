@@ -6,18 +6,17 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 // TODO (mdbenjam): modify this to not accept months like 13 or days like 34
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
-
 export default class DateSelector extends React.Component {
 
-  dateFill = (event) => {
-    let value = event.target.value;
+  dateFill = (initialValue) => {
+    let value = initialValue;
 
     // If the user added characters we append a '/' before putting
     // it through the regex. If this spot doesn't accept a '/' then
     // the regex test will strip it. Otherwise, the user doesn't have
     // to type a '/'. If the user removed characters we check if the
     // last character is a '/' and remove it for them.
-    if (event.target.value.length > this.props.value.length) {
+    if (value.length > this.props.value.length) {
       value = `${value}/`;
     } else if (this.props.value.charAt(this.props.value.length - 1) === '/') {
       value = value.substr(0, value.length - 1);
@@ -28,10 +27,10 @@ export default class DateSelector extends React.Component {
     // removing any non-date characters
     let match = DATE_REGEX.exec(value);
 
-    event.target.value = match ? match[0] : '';
+    value = match ? match[0] : '';
 
     if (this.props.onChange) {
-      this.props.onChange(event);
+      this.props.onChange(value);
     }
   }
 
