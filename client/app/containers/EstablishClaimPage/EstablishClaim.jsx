@@ -22,25 +22,9 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
-    let associatedEPs = [{
-      decisionDate: '01/02/2016',
-      epCode: '172-BVA Grant',
-      status: 'Pending'
-    },
-    {
-      decisionDate: '03/04/2016',
-      epCode: '170-BVA Grant',
-      status: 'Pending'
-    },
-    {
-      decisionDate: '05/06/2016',
-      epCode: '171-BVA Grant',
-      status: 'Complete'
-    }]
-
     // Set initial state on page render
     this.state = {
-      associatedEPs: associatedEPs,
+      associatedEPs: this.props.task.appeal.eps_within_30_days,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
@@ -73,7 +57,7 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: ASSOCIATE_PAGE
+      page: REVIEW_PAGE
     };
   }
 
@@ -173,6 +157,10 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === REVIEW_PAGE;
   }
 
+  shouldShowAssociatePage() {
+    return this.props.task.appeal.eps_within_30_days;
+  }
+
   isAssociatePage() {
     return this.state.page === ASSOCIATE_PAGE;
   }
@@ -183,6 +171,12 @@ export default class EstablishClaim extends BaseForm {
 
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
+      if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);  
+      }
+    } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
       this.handleSubmit(event);
@@ -210,7 +204,7 @@ export default class EstablishClaim extends BaseForm {
               Send to RO
             </a>
             <Button
-              name="Create End Product"
+              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
             />

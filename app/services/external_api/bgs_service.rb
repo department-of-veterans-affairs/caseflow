@@ -22,12 +22,11 @@ class ExternalApi::BGSService
 
   def get_eps(vbms_id)
     vbms_id.strip!
-    veteran_id = vbms_id[0...-1].rjust(8, '0')
     begin
-      bgs.claims.find_by_vbms_file_number(veteran_id)
+      client.claims.find_by_vbms_file_number(vbms_id)
         .select { |claim| ep_codes.include? claim[:claim_type_code] }
     rescue => e
-      puts "Problem loading case #{veteran_id}"
+      puts "Problem loading case #{vbms_id}"
       puts e
     end
   end

@@ -3,6 +3,28 @@ class Appeal < ActiveRecord::Base
 
   has_many :tasks
 
+  EP_STATUS = {
+    "PEND" => "Pending",
+    "CLR" => "Cleared",
+    "CAN" => "Canceled"
+  }.freeze
+    
+  EP_CODES = {
+    "170APPACT" => "Appeal Action",
+    "170APPACTPMC" => "PMC-Appeal Action",
+    "170PGAMC" => "AMC-Partial Grant ",
+    "170RMD" => "Remand ",
+    "170RMDAMC" => "AMC-Remand",
+    "170RMDPMC" => "PMC-Remand",
+    "172GRANT" => "Grant of Benefits",
+    "172BVAG" => "BVA Grant",
+    "172BVAGPMC" => "PMC-BVA Grant",
+    "400CORRC" => "Correspondence",
+    "400CORRCPMC" => "PMC-Correspondence",
+    "930RC" => "Rating Control",
+    "930RCPMC" => "PMC-Rating Control"
+  }.freeze
+
   class MultipleDecisionError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -175,6 +197,21 @@ class Appeal < ActiveRecord::Base
   def clear_documents!
     @documents = []
     @documents_by_type = {}
+  end
+
+  def map_ep_value(code, mapping)
+    mapping[code] || code
+  end
+
+  def eps_within_30_days
+    bgs = BGSService.new
+    bgs.get_eps(sanitized_vbms_id)
+      .select { |ep| (ep[:claim_receive_date].to_time - decision_date).abs < 30.days }
+      .map do |ep|
+        ep[:claim_type_code] = map_ep_value(ep[:claim_type_code], EP_CODES)
+        ep[:status_type_code] = map_ep_value(ep[:status_type_code], EP_STATUS)
+        ep
+      end
   end
 
   def sanitized_vbms_id

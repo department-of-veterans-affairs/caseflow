@@ -2,13 +2,14 @@ import React from 'react';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
+import { formatDate } from '../../util/DateUtil';
 
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 const buildEPRow = (ep) => [
-    ep.decisionDate,
-    ep.epCode,
-    ep.status,
+    formatDate(new Date(ep.claim_receive_date)),
+    ep.claim_type_code,
+    ep.status_type_code,
     <Button
       name="Assign to Claim"
       classNames={["usa-button-outline"]}

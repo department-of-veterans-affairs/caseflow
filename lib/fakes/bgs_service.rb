@@ -1,19 +1,24 @@
 class Fakes::BGSService
   def get_eps(veteran_id)
     [{
-      decision_date: '01/02/2016',
+      claim_receive_date: Date.today - 20.days,
       claim_type_code: '172GRANT',
-      status: 'Pending'
+      status_type_code: 'PEND'
     },
     {
-      decision_date: '03/04/2016',
+      claim_receive_date: Date.today + 10.days,
       claim_type_code: '170RMD',
-      status: 'Cleared'
+      status_type_code: 'CLR'
     },
     {
-      decision_date: '05/06/2016',
+      claim_receive_date: Date.today,
       claim_type_code: '172BVAG',
-      status: 'Pending'
+      status_type_code: 'CAN'
+    },
+    {
+      claim_receive_date: Date.today - 200.days,
+      claim_type_code: '172BVAG',
+      status_type_code: 'CLR'
     }]
   end
 end
