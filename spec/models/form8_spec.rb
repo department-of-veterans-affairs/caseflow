@@ -3,13 +3,14 @@ describe Form8 do
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,
                     :_initial_insurance_loan_number,
-                    :_initial_service_connection_notification_date,
-                    :_initial_increased_rating_notification_date,
-                    :_initial_other_notification_date,
                     :_initial_representative_name,
                     :_initial_representative_type,
                     :_initial_hearing_requested,
                     :_initial_ssoc_required]
+
+  date_initial_fields = [:_initial_service_connection_notification_date,
+                         :_initial_increased_rating_notification_date,
+                         :_initial_other_notification_date]
 
   context "#attributes" do
     let(:form8) do
@@ -46,6 +47,12 @@ describe Form8 do
         f = initial_field.to_s.sub "_initial_", ""
         field = f.to_sym
         expect(form8[field]).to eq(form8[initial_field])
+      end
+    end
+
+    it "populates _initial_ date fields with the notification date" do
+      date_initial_fields.each do |initial_field|
+        expect(form8[initial_field]).to eq(form8.notification_date)
       end
     end
   end
