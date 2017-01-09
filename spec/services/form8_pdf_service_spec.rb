@@ -17,8 +17,7 @@ describe Form8PdfService do
       # date field
       soc_date: "2001-11-23T04:05:06+00:00",
 
-      # remarks and rollover fields
-
+      # remarks with rollover field
       remarks: "On February 10, 2007, Obama announced his candidacy for President of the " \
                "United States in front of the Old State Capitol building in " \
                "Springfield, Illinois.[104][105] The choice of the announcement site " \
@@ -109,6 +108,7 @@ describe Form8PdfService do
       expect( pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[17]"] ).to be_nil
       expect( pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[22]"] ).to be_nil
       expect( pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[26]"] ).to be_nil
+      expect( pdf_form8_values["form1[0].#subform[0].#area[0].TextField1[16]"] ).to be_nil
     end
 
   end
