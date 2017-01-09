@@ -266,9 +266,9 @@ describe Form8 do
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane",
         insurance_loan_number: "1337",
-        service_connection_notification_date: (Time.zone.now - 4.days).to_date,
-        increased_rating_notification_date: (Time.zone.now - 4.days).to_date,
-        other_notification_date: (Time.zone.now - 4.days).to_date,
+        service_connection_notification_date: nil,
+        increased_rating_notification_date: nil,
+        other_notification_date: nil,
         soc_date: (Time.zone.now - 4.days).to_date,
         certification_date: Time.zone.now.to_date
       )

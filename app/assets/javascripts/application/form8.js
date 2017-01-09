@@ -9,6 +9,10 @@
     return $question(questionNumber).find("input[type='text'], textarea, input[type='radio']:checked").val();
   }
 
+  function $dateInput(questionNumber) {
+    return $question(questionNumber).find('input, date');
+  }
+
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
 
 
@@ -50,6 +54,12 @@
       "17B1": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
       "17B2": { message: "Please enter the title of the Certifying Official (e.g. Decision Review Officer)." },
       "17C": { message: "" }
+    },
+
+    questionsWithDateFields: {
+        "5A": "5B",
+        "6A": "6B",
+        "7A": "7B"
     },
 
     getRequiredQuestions: function() {
@@ -110,17 +120,28 @@
       state.question13other = ($("#question13 #form8_record_other:checked").length === 1);
     },
 
+    initializeDateValues: function() {
+      var state = this.state;
+      // use notification_date as default for questions 5B, 6B, 7B
+      var notification_date = $("#form8_notification_date").val();
+
+      $.each(this.questionsWithDateFields, function(key, value) {
+        var textQuestion = "question" + key, dateQuestion = "question" + value;
+        state[dateQuestion].show = !!state[textQuestion].value;
+        // set default date only if the date is not set in the form
+        if ($dateInput(value).val() === "") $dateInput(value).val(notification_date);
+      });
+    },
+
     processState: function() {
       var state = this.state;
       var self = this;
 
-      state.question5B.show = !!state.question5A.value;
-      state.question6B.show = !!state.question6A.value;
-      state.question7B.show = !!state.question7A.value;
-
       ["8A3", "8C", "9A", "9B"].forEach(function(questionNumber) {
         state["question" + questionNumber].show = false;
       });
+
+      this.initializeDateValues();
 
       state.question8B1.show = true;
 
@@ -224,7 +245,22 @@
         $(".cf-form").removeClass("cf-is-loading");
       }
 
+      this.clearHiddenDatesOnSubmit();
+
       return invalidQuestionNumbers.length === 0;
+    },
+
+    // clear the dates on submit if the dates are hidden
+    // so default values won't be saved in the database
+    clearHiddenDatesOnSubmit: function() {
+      $.each(this.questionsWithDateFields, function(key, value) {
+        var $q = $question(value);
+        var disabled = $dateInput(value).attr('disabled');
+        if (disabled) {
+          $dateInput(value).prop('disabled', false);
+          $dateInput(value).val("");
+        }
+      });
     },
 
     toggleQuestion: function(questionNumber) {
