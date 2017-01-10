@@ -24,7 +24,13 @@ export default class EstablishClaim extends BaseForm {
 
     // Set initial state on page render
     this.state = {
-      cancelModal: false,
+      cancelModal: {
+        cancelFeedback: new FormField(
+          '',
+          requiredValidator('Please enter an explanation.')
+        )
+      },
+      cancelModalDisplay: false,
       form: {
         allowPoa: new FormField(false),
         decisionDate: new FormField(
@@ -45,17 +51,12 @@ export default class EstablishClaim extends BaseForm {
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
-      modal: {
-        cancelFeedback: new FormField(
-          '',
-          requiredValidator('Please enter an explanation.')
-          )
-      },
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
       reviewForm: {
         decisionType: new FormField(decisionType)
-      }
+      },
+      specialIssueModalDisplay: false
     };
   }
 
@@ -114,12 +115,12 @@ export default class EstablishClaim extends BaseForm {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
     let data = {
-      feedback: this.state.modal.cancelFeedback.value
+      feedback: this.state.cancelModal.cancelFeedback.value
     };
 
     handleAlertClear();
 
-    if (!this.validateFormAndSetErrors(this.state.modal)) {
+    if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
     }
 
@@ -136,21 +137,35 @@ export default class EstablishClaim extends BaseForm {
         'There was an error while cancelling the current claim. Please try again later'
       );
       this.setState({
-        cancelModal: false,
+        cancelModalDisplay: false,
         modalSubmitLoading: false
       });
     });
   }
 
-  handleModalClose = () => {
+  handleCancelModalClose = () => {
     this.setState({
-      cancelModal: false
+      cancelModalDisplay: false
+    });
+  }
+
+  handleSpecialIssueModalClose = () => {
+    this.setState({
+      specialIssueModalDisplay: false
     });
   }
 
   handleCancelTask = () => {
     this.setState({
-      cancelModal: true
+      cancelModalDisplay: true
+    });
+  }
+
+  handleCancelTaskForSpecialIssue = () => {
+    this.setState({
+      cancelModalDisplay: true,
+      specialIssueModalDisplay: false
+
     });
   }
 
@@ -188,7 +203,8 @@ export default class EstablishClaim extends BaseForm {
   render() {
     let {
       loading,
-      cancelModal,
+      cancelModalDisplay,
+      specialIssueModalDisplay,
       modalSubmitLoading
     } = this.state;
 
@@ -225,11 +241,11 @@ export default class EstablishClaim extends BaseForm {
             classNames={["cf-btn-link"]}
           />
         </div>
-        {cancelModal && <Modal
+        {cancelModalDisplay && <Modal
         buttons={[
           { classNames: ["cf-btn-link"],
             name: '\u00AB Go Back',
-            onClick: this.handleModalClose
+            onClick: this.handleCancelModalClose
           },
           { classNames: ["usa-button", "usa-button-secondary"],
             loading: modalSubmitLoading,
@@ -238,7 +254,7 @@ export default class EstablishClaim extends BaseForm {
           }
         ]}
         visible={true}
-        closeHandler={this.handleModalClose}
+        closeHandler={this.handleCancelModalClose}
         title="Cancel EP Establishment">
           <p>
             If you click the <b>Cancel EP Establishment</b>
@@ -251,10 +267,32 @@ export default class EstablishClaim extends BaseForm {
           <TextareaField
             label="Cancel Explanation"
             name="Explanation"
-            onChange={this.handleFieldChange('modal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
-            {...this.state.modal.cancelFeedback}
+            {...this.state.cancelModal.cancelFeedback}
           />
+        </Modal>}
+        {specialIssueModalDisplay && <Modal
+            buttons={[
+              { classNames: ["cf-btn-link"],
+                name: '\u00AB Close',
+                onClick: this.handleSpecialIssueModalClose
+              },
+              { classNames: ["usa-button", "usa-button-secondary"],
+                loading: modalSubmitLoading,
+                name: 'Cancel Claim Establishment',
+                onClick: this.handleCancelTaskForSpecialIssue
+              }
+            ]}
+            visible={true}
+            closeHandler={this.handleSpecialIssueModalClose}
+            title="Special Issue Grant">
+          <p>
+            You selected a special issue category not handled by AMO. Special
+            issue cases cannot be processed in caseflow at this time. Please
+            select <b>Cancel Claim Establishment</b> and proceed to process
+            this case manually in VACOLS.
+          </p>
         </Modal>}
       </div>
     );
