@@ -1,32 +1,71 @@
 class Dispatch
   class InvalidClaimError < StandardError; end
 
-  class << self
-    def validate_claim(_claim)
-      # TODO(jd): Add validations to verify establish claim data
-      # true
-      true
+  END_PRODUCT_INFO = {
+    '170RMDAMC' => 'AMC-Remand',
+    '170PGAMC' => 'AMC-Partial Grant',
+    '172BVAG' => 'BVA Grant'
+  }
+
+  END_PRODUCT_MODIFIERS = %W(170 172)
+
+  def initialize(claim:, task:)
+    # Claim info passed in via browser EP form
+    @base_claim = claim.symbolize_keys
+
+    # Full claim with merged in dynamic and default values
+    @claim = default_claim_values.merge(dynamic_claim_values).merge(@base_claim)
+    @task = task
+  end
+
+  def claim_valid?
+    valid = true
+
+    # Verify the end product code exists
+    valid = false if !@claim[:end_product_code]
+
+    # Verify the end product modifier is valid
+    valid = false unless END_PRODUCT_MODIFIERS.include?(@claim[:end_product_modifier])
+
+    # Verify the end product label and code match
+    unless END_PRODUCT_INFO[@claim[:end_product_code]] == @claim[:end_product_label]
+      valid = false
     end
 
-    def establish_claim!(claim:, task:)
-      binding.pry
-      full_claim = default_claim_values.merge(claim)
+    return valid
+  end
 
-      fail InvalidClaimError unless validate_claim(full_claim)
-      end_product = Appeal.repository.establish_claim!(claim: full_claim,
-                                                       appeal: task.appeal)
+  def validate_claim!
+    fail InvalidClaimError unless claim_valid?
+  end
 
-      task.complete!(status: 0, end_product: end_product)
-    end
+  # Core method responsible for API call to VBMS to create the end product
+  # On success will udpate the task with the end product's claim_id
+  def establish_claim!
 
-    def default_claim_values
-      {
-        # TODO(jd): Make this attr dynamic in future PR once
-        # we support routing a claim based on special issues
-        station_of_jurisdiction: "317",
-        claim_type: "Claim",
-        payee_code: "00"
-      }
-    end
+    validate_claim!
+    end_product = Appeal.repository.establish_claim!(claim: @claim,
+                                                     appeal: @task.appeal)
+
+    @task.complete!(status: 0, outgoing_reference_id: end_product.claim_id)
+  end
+
+  def dynamic_claim_values
+    {
+      date: Time.now.utc.to_date,
+
+      # TODO(jd): Make this attr dynamic in future PR once
+      # we support routing a claim based on special issues
+      station_of_jurisdiction: "317"
+    }
+  end
+
+  def default_claim_values
+    {
+      benefit_type_code: "1",
+      payee_code: "00",
+      predischarge: false,
+      claim_type: "Claim"
+    }
   end
 end

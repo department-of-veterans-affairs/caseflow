@@ -3,7 +3,7 @@ class EstablishClaimsController < TasksController
   before_action :verify_not_complete, only: [:perform]
 
   def perform
-    Dispatch.establish_claim!(claim: establish_claim_params, task: task)
+    Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
     render json: {}
   end
 
@@ -22,7 +22,8 @@ class EstablishClaimsController < TasksController
   private
 
   def establish_claim_params
-    params.require(:claim).permit(:modifier, :poa, :end_product_label, :poa_code,
-                                  :gulf_war_registry, :allow_poa, :suppress_acknowledgement_letter)
+    params.require(:claim).permit(:modifier, :poa, :end_product_code, :end_product_label,
+                                  :end_product_modifier, :poa_code, :gulf_war_registry,
+                                  :allow_poa, :suppress_acknowledgement_letter)
   end
 end

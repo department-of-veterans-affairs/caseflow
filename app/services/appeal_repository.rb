@@ -145,11 +145,15 @@ class AppealRepository
     end_product = send_and_log_request(sanitized_id, request)
 
     # Update VACOLS location
-    appeal.case_record.bfcurloc = '98'
-    MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-      appeal.case_record.save!
-    end
+    # TODO(jd): In the future we whould specifically check this is an AMC EP
+    # before updating the location to 98. For remands we need to set it to `50`
+    # appeal.case_record.bfcurloc = '98'
+    # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+      # appeal.case_record.save!
+    # end
 
+    # return end product so dispatch service can update the
+    # task's outgoing_reference_id with end_product.claim_id
     end_product
   end
 

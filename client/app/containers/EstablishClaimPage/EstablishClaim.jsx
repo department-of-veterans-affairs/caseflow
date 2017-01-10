@@ -16,6 +16,12 @@ import * as Form from './EstablishClaimForm';
 export const REVIEW_PAGE = 0;
 export const FORM_PAGE = 1;
 
+export const END_PRODUCT_INFO = {
+  'Remand': ['170RMDAMC', 'AMC-Remand'],
+  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
+  'Full Grant': ['172BVAG', 'BVA Grant']
+}
+
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
@@ -78,10 +84,12 @@ export default class EstablishClaim extends BaseForm {
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
+    let endProductInfo = this.getClaimTypeFromDecision();
     let data = {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.form),
-        endProductLabel: this.getClaimTypeFromDecision()
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
       })
     };
 
@@ -100,14 +108,12 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getClaimTypeFromDecision = () => {
-    if (this.state.reviewForm.decisionType.value === 'Remand') {
-      return '170RMDAMC - AMC-Remand';
-    } else if (this.state.reviewForm.decisionType.value === 'Partial Grant') {
-      return '170PGAMC - AMC-Partial Grant';
-    } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
-      return '172BVAG - BVA Grant';
+    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+    if (!values) {
+      throw new RangeError("Invalid deicion type value");
     }
-    throw new RangeError("Invalid deicion type value");
+
+    return values;
   }
 
   handleFinishCancelTask = () => {

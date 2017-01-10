@@ -41,7 +41,7 @@ export const render = function() {
          label="EP & Claim Label"
          name="claimLabel"
          readOnly={true}
-         value={this.getClaimTypeFromDecision()}
+         value={this.getClaimTypeFromDecision().join(' - ')}
         />
         <DropDown
          label="Modifier"

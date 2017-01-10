@@ -1,10 +1,16 @@
+require "ostruct"
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
+
   class << self
     attr_writer :documents
     attr_accessor :records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
+    attr_accessor :end_product_claim_id
   end
+
+  RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.new(vacols_id, default_attrs_method_name, overrides = {})
     # Dynamically call the specified class method name to obtain
@@ -22,12 +28,15 @@ class Fakes::AppealRepository
     @certified_appeal = appeal
   end
 
-  def self.establish_claim!(claim:, appeal:)
+  def self.establish_claim!(claim: {}, appeal: Appeal.first)
     p "Submitting claim to VBMS for appeal: #{appeal.id}"
     p "Claim data:\n", claim
 
     # set poa_code to RAISE_VBMS_ERROR_ID to force an error while testing
-    fail(VBMSError) if claim && claim["poa_code"] == RAISE_VBMS_ERROR_ID
+    fail(VBMSError) if claim && claim[:poa_code] == RAISE_VBMS_ERROR_ID
+
+    # return fake end product
+    OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
   def self.upload_form8(appeal, form8)
@@ -218,8 +227,6 @@ class Fakes::AppealRepository
       veteran_first_name: first_names[index % first_names.length]
     )
   end
-
-  RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
 
   def self.appeal_raises_vbms_error
     a = appeal_ready_to_certify
