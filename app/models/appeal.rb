@@ -185,7 +185,7 @@ class Appeal < ActiveRecord::Base
   def select_non_canceled_end_products_within_30_days(end_products)
     # Find all EPs with relevant type codes that are not canceled.
     end_products.select do |end_product|
-      (end_product[:claim_receive_date].to_time_in_current_zone - decision_date).abs < 30.days &&
+      (end_product[:claim_receive_date] - decision_date).abs < 30.days &&
         end_product[:status_type_code] != "CAN"
     end
   end
