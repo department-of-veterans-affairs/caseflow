@@ -28,7 +28,7 @@ class Fakes::AppealRepository
     @certified_appeal = appeal
   end
 
-  def self.establish_claim!(claim: {}, appeal: Appeal.first)
+  def self.establish_claim!(claim:, appeal:)
     p "Submitting claim to VBMS for appeal: #{appeal.id}"
     p "Claim data:\n", claim
 

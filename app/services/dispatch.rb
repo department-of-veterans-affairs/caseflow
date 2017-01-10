@@ -42,7 +42,6 @@ class Dispatch
   # Core method responsible for API call to VBMS to create the end product
   # On success will udpate the task with the end product's claim_id
   def establish_claim!
-
     validate_claim!
     end_product = Appeal.repository.establish_claim!(claim: @claim,
                                                      appeal: @task.appeal)

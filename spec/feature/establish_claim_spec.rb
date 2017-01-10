@@ -101,9 +101,10 @@ RSpec.feature "Dispatch" do
       page.fill_in "Decision Date", with: "1"
       click_on "Create End Product"
       expect(page).to have_content("The date must be in mm/dd/yyyy format.")
-      page.fill_in "Decision Date", with: "01/01/2017"
 
+      page.fill_in "Decision Date", with: "01/01/2017"
       page.select "172", from: "endProductModifier"
+      page.fill_in "test", "poa_code"
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -120,7 +121,7 @@ RSpec.feature "Dispatch" do
           end_product_code: "172BVAG",
           station_of_jurisdiction: "317",
           poa: "None",
-          poa_code: "",
+          poa_code: "test",
           gulf_war_registry: false,
           allow_poa: false,
           suppress_acknowledgement_letter: false
