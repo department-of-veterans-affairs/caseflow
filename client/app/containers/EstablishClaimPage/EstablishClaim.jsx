@@ -12,7 +12,7 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
-import * as Associate from './EstablishClaimAssociateEP';
+import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
@@ -23,10 +23,9 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-
     // Set initial state on page render
+
     this.state = {
-      associatedEPs: this.props.task.appeal.non_canceled_eps_within_30_days,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
@@ -36,7 +35,7 @@ export default class EstablishClaim extends BaseForm {
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
           ]
-          ),
+        ),
         gulfWar: new FormField(false),
         modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
@@ -44,7 +43,7 @@ export default class EstablishClaim extends BaseForm {
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
-          ),
+        ),
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
@@ -206,8 +205,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.non_canceled_eps_within_30_days &&
-      this.props.task.appeal.non_canceled_eps_within_30_days.length > 0;
+    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
   }
 
   isAssociatePage() {
@@ -244,7 +243,11 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
-        { this.isAssociatePage() && Associate.render.call(this) }
+        { this.isAssociatePage() &&
+          <AssociatePage
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+          />
+        }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">

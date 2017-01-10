@@ -1,8 +1,8 @@
 class Fakes::BGSService
-  cattr_accessor :ep_data
+  cattr_accessor :end_product_data
 
-  def get_eps(veteran_id)
-    ep_data || [{
+  def get_end_products(veteran_id)
+    end_product_data || [{
         benefit_claim_id: '1',
         claim_receive_date: Date.today - 20.days,
         claim_type_code: '172GRANT',

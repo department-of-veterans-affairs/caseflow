@@ -4,31 +4,16 @@ require "bgs"
 class ExternalApi::BGSService
   # :nocov:
 
-  ep_codes = %w(
-    170APPACT
-    170APPACTPMC
-    170PGAMC
-    170RMD
-    170RMDAMC
-    170RMDPMC
-    172GRANT
-    172BVAG
-    172BVAGPMC
-    400CORRC
-    400CORRCPMC
-    930RC
-    930RCPMC
-  )
-
-  def get_eps(vbms_id)
-    vbms_id.strip!
-    begin
-      client.claims.find_by_vbms_file_number(vbms_id)
-        .select { |claim| ep_codes.include? claim[:claim_type_code] }
-    rescue => e
-      puts "Problem loading case #{vbms_id}"
-      puts e
+  def filter_dispatch_end_products(end_products)
+    end_products.select do |end_product| 
+      Dispatch::END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
     end
+  end
+
+  def get_end_products(vbms_id)
+    vbms_id.strip!
+    filter_dispatch_end_products(
+      client.claims.find_by_vbms_file_number(vbms_id))
   end
 
   def client

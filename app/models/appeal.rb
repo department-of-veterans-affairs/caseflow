@@ -3,28 +3,6 @@ class Appeal < ActiveRecord::Base
 
   has_many :tasks
 
-  EP_STATUS = {
-    "PEND" => "Pending",
-    "CLR" => "Cleared",
-    "CAN" => "Canceled"
-  }.freeze
-    
-  EP_CODES = {
-    "170APPACT" => "Appeal Action",
-    "170APPACTPMC" => "PMC-Appeal Action",
-    "170PGAMC" => "AMC-Partial Grant ",
-    "170RMD" => "Remand",
-    "170RMDAMC" => "AMC-Remand",
-    "170RMDPMC" => "PMC-Remand",
-    "172GRANT" => "Grant of Benefits",
-    "172BVAG" => "BVA Grant",
-    "172BVAGPMC" => "PMC-BVA Grant",
-    "400CORRC" => "Correspondence",
-    "400CORRCPMC" => "PMC-Correspondence",
-    "930RC" => "Rating Control",
-    "930RCPMC" => "PMC-Rating Control"
-  }.freeze
-
   class MultipleDecisionError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -189,7 +167,7 @@ class Appeal < ActiveRecord::Base
       repository.upload_form8(appeal, form8)
     end
   
-    def map_ep_value(code, mapping)
+    def map_end_product_value(code, mapping)
       mapping[code] || code
     end
   end
@@ -204,17 +182,26 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def non_canceled_eps_within_30_days
-    bgs = BGSService.new
+  def select_non_canceled_end_products_within_30_days(eps)
     # Find all EPs with relevant type codes that are not canceled.
-    bgs.get_eps(sanitized_vbms_id)
-      .select do |ep| 
-        (ep[:claim_receive_date].to_time - decision_date).abs < 30.days &&
-        ep[:status_type_code] != "CAN"
-      end
+    eps.select do |ep| 
+      (ep[:claim_receive_date].to_time - decision_date).abs < 30.days &&
+      ep[:status_type_code] != "CAN"
+    end
+  end
+
+  def non_canceled_end_products_within_30_days
+    bgs = BGSService.new
+    eps = bgs.get_end_products(sanitized_vbms_id)
+    
+    select_non_canceled_end_products_within_30_days(eps)
       .map do |ep|
-        ep[:claim_type_code] = Appeal.map_ep_value(ep[:claim_type_code], EP_CODES)
-        ep[:status_type_code] = Appeal.map_ep_value(ep[:status_type_code], EP_STATUS)
+        ep[:claim_type_code] = Appeal.map_end_product_value(
+          ep[:claim_type_code],
+          Dispatch::END_PRODUCT_CODES)
+        ep[:status_type_code] = Appeal.map_end_product_value(
+          ep[:status_type_code],
+          Dispatch::END_PRODUCT_STATUS)
         ep
       end
   end
