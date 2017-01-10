@@ -214,7 +214,7 @@ export default class EstablishClaim extends BaseForm {
         { this.isReviewPage() && Review.render.call(this) }
         { this.isAssociatePage() &&
           <AssociatePage
-            endProcuts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
           />
         }
         { this.isFormPage() && Form.render.call(this) }

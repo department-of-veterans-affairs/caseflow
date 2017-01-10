@@ -26,7 +26,7 @@ export default class AssociatePage extends React.Component {
   }
 
   render = function() {
-    let endProcuts = this.props.endProcuts.sort(this.sortEndProduct);
+    let endProducts = this.props.endProducts.sort(this.sortEndProduct);
 
 
     return <div className="cf-app-segment cf-app-segment--alt">
@@ -46,7 +46,7 @@ export default class AssociatePage extends React.Component {
           <Table
             headers={TABLE_HEADERS}
             buildRowValues={this.buildEndProductRow}
-            values={endProcuts}
+            values={endProducts}
           />
         </div>
       </div>;
