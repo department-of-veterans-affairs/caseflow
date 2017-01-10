@@ -1,12 +1,16 @@
 import React, { PropTypes } from 'react';
+
 export default class TextareaField extends React.Component {
+  onChange = (event) => {
+    this.props.onChange(event.target.value);
+  }
+
   render() {
     let {
       characterCount,
       errorMessage,
       label,
       name,
-      onChange,
       required,
       type,
       value
@@ -24,7 +28,7 @@ export default class TextareaField extends React.Component {
         className="cf-form-textarea"
         name={name}
         id={name}
-        onChange={onChange}
+        onChange={this.onChange}
         type={type}
         value={value}
       />

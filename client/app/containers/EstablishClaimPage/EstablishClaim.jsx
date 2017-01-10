@@ -36,7 +36,7 @@ export default class EstablishClaim extends BaseForm {
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
           ]
-          ),
+        ),
         gulfWar: new FormField(false),
         modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
@@ -44,7 +44,7 @@ export default class EstablishClaim extends BaseForm {
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
-          ),
+        ),
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
