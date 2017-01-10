@@ -1,10 +1,14 @@
 import React, { PropTypes } from 'react';
+
 export default class RadioField extends React.Component {
+  onChange = (event) => {
+    this.props.onChange(event.target.value);
+  }
+
   render() {
     let {
       label,
       name,
-      onChange,
       options,
       value
     } = this.props;
@@ -16,7 +20,7 @@ export default class RadioField extends React.Component {
           <div className="cf-form-radio-option" key={option}>
             <input
               name={name}
-              onChange={onChange}
+              onChange={this.onChange}
               type="radio"
               id={`${name}_${option}`}
               value={option}
