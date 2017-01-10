@@ -288,7 +288,7 @@ describe Appeal do
     end
   end
 
-  context "eps_within_30_days", focus: true do
+  context "non_canceled_eps_within_30_days", focus: true do
     let(:appeal) do
       Appeal.new(
         vbms_id: "123",
@@ -312,7 +312,7 @@ describe Appeal do
         status_type_code: 'Canceled'
       }]
     end
-    it { expect(appeal.eps_within_30_days).to eq(eps)}
+    it { expect(appeal.non_canceled_eps_within_30_days).to eq(eps)}
   end
 
   context "map_ep_value" do

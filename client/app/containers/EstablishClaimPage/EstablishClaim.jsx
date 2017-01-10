@@ -26,7 +26,7 @@ export default class EstablishClaim extends BaseForm {
 
     // Set initial state on page render
     this.state = {
-      associatedEPs: this.props.task.appeal.eps_within_30_days,
+      associatedEPs: this.props.task.appeal.non_canceled_eps_within_30_days,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
@@ -175,8 +175,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.eps_within_30_days &&
-      this.props.task.appeal.eps_within_30_days.length > 0;
+    return this.props.task.appeal.non_canceled_eps_within_30_days &&
+      this.props.task.appeal.non_canceled_eps_within_30_days.length > 0;
   }
 
   isAssociatePage() {

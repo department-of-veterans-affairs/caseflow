@@ -166,7 +166,7 @@ class Task < ActiveRecord::Base
         [:decision_date,
          :veteran_name,
          :decision_type,
-         :eps_within_30_days]}],
+         :non_canceled_eps_within_30_days]}],
       methods: [:progress_status]
     )
   end
