@@ -93,8 +93,8 @@ class Task < ActiveRecord::Base
     complete_and_recreate!(:expired)
   end
 
-  def assign_existing_ep!(ep_id)
-    complete!(:assigned_to_ep, ep_id)
+  def assign_existing_ep!(end_product_id)
+    complete!(:assigned_to_ep, end_product_id)
   end
 
   def complete_and_recreate!(status_code)

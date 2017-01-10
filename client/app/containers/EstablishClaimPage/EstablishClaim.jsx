@@ -101,37 +101,6 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleAssignEp = (ep) => {
-    return () => {
-      let { id } = this.props.task;
-      let { handleAlert, handleAlertClear } = this.props;
-
-      event.preventDefault();
-      handleAlertClear();
-
-      this.setState({
-        loading: true
-      });
-
-      let data = {
-        ep_id: ep.benefit_claim_id
-      };
-
-      return ApiUtil.post(`/dispatch/establish-claim/${id}/select-ep`, { data }).then(() => {
-        window.location.reload();
-      }, () => {
-        this.setState({
-          loading: false
-        });
-        handleAlert(
-          'error',
-          'Error',
-          'There was an error while submitting the current claim. Please try again later'
-        );
-      });
-    }
-  }
-
   getClaimTypeFromDecision = () => {
     if (this.state.reviewForm.decisionType.value === 'Remand') {
       return '170RMDAMC - AMC-Remand';
@@ -246,6 +215,9 @@ export default class EstablishClaim extends BaseForm {
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            task = {this.props.task}
+            handleAlert = {this.props.handleAlert}
+            handleAlertClear = {this.props.handleAlertClear}
           />
         }
         { this.isFormPage() && Form.render.call(this) }

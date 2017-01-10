@@ -16,8 +16,40 @@ export default class AssociatePage extends React.Component {
     <Button
         name="Assign to Claim"
         classNames={["usa-button-outline"]}
+        onClick={this.handleAssignEndProduct(endProduct)}
       />
   ];
+
+  handleAssignEndProduct = (endProduct) => {
+    return () => {
+      let { id } = this.props.task;
+      let { handleAlert, handleAlertClear } = this.props;
+
+      event.preventDefault();
+      handleAlertClear();
+
+      this.setState({
+        loading: true
+      });
+
+      let data = {
+        endProduct_id: endProduct.benefit_claim_id
+      };
+
+      return ApiUtil.post(`/dispatch/establish-claim/${id}/select-ep`, { data }).then(() => {
+        window.location.reload();
+      }, () => {
+        this.setState({
+          loading: false
+        });
+        handleAlert(
+          'error',
+          'Error',
+          'There was an error while submitting the current claim. Please try again later'
+        );
+      });
+    }
+  }
 
   sortEndProduct = (date1, date2) => {
     let time1 = new Date(date1.claim_receive_date).getTime();

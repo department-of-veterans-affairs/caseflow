@@ -197,13 +197,14 @@ class Appeal < ActiveRecord::Base
 
     select_non_canceled_end_products_within_30_days(end_products)
       .map do |end_product|
-        end_product[:claim_type_code] = Appeal.map_end_product_value(
-          end_product[:claim_type_code],
+        new_end_product = end_product.clone
+        new_end_product[:claim_type_code] = Appeal.map_end_product_value(
+          new_end_product[:claim_type_code],
           Dispatch::END_PRODUCT_CODES)
-        end_product[:status_type_code] = Appeal.map_end_product_value(
-          end_product[:status_type_code],
+        new_end_product[:status_type_code] = Appeal.map_end_product_value(
+          new_end_product[:status_type_code],
           Dispatch::END_PRODUCT_STATUS)
-        end_product
+        new_end_product
       end
   end
 
