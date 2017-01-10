@@ -6,15 +6,16 @@ import { formatDate } from '../../util/DateUtil';
 
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
-const buildEPRow = (ep) => [
-  formatDate(new Date(ep.claim_receive_date)),
+const buildEPRow = function(ep) {
+  return [formatDate(new Date(ep.claim_receive_date)),
   ep.claim_type_code,
   ep.status_type_code,
   <Button
       name="Assign to Claim"
       classNames={["usa-button-outline"]}
-    />
-];
+      onClick={this.handleAssignEp(ep)}
+    />];
+}
 
 export const render = function() {
 
@@ -34,7 +35,7 @@ export const render = function() {
       <div className="usa-grid-full">
         <Table
           headers={TABLE_HEADERS}
-          buildRowValues={buildEPRow}
+          buildRowValues={buildEPRow.bind(this)}
           values={this.state.associatedEPs}
         />
       </div>

@@ -288,7 +288,7 @@ describe Appeal do
     end
   end
 
-  context "non_canceled_eps_within_30_days", focus: true do
+  context "non_canceled_eps_within_30_days" do
     let(:appeal) do
       Appeal.new(
         vbms_id: "123",

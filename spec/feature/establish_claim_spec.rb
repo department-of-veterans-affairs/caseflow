@@ -1,8 +1,33 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch" do
+RSpec.feature "Dispatch", focus: true do
   before do
     @vbms_id = "VBMS_ID1"
+
+    BGSService.ep_data = [{
+        benefit_claim_id: '1',
+        claim_receive_date: Date.today - 20.days,
+        claim_type_code: '172GRANT',
+        status_type_code: 'PEND'
+      },
+      {
+        benefit_claim_id: '2',
+        claim_receive_date: Date.today + 10.days,
+        claim_type_code: '170RMD',
+        status_type_code: 'CLR'
+      },
+      {
+        benefit_claim_id: '3',
+        claim_receive_date: Date.today,
+        claim_type_code: '172BVAG',
+        status_type_code: 'CAN'
+      },
+      {
+        benefit_claim_id: '4',
+        claim_receive_date: Date.today - 200.days,
+        claim_type_code: '172BVAG',
+        status_type_code: 'CLR'
+      }]
 
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
@@ -69,7 +94,7 @@ RSpec.feature "Dispatch" do
 
     context "Skip the associate EP page" do
       before do
-        allow_any_instance_of(BGSService).to receive(:get_eps).and_return([])
+        BGSService.ep_data = []
       end
 
       scenario "Establish a new claim page and process" do

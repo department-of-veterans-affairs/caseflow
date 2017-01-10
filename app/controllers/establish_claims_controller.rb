@@ -7,6 +7,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def select_ep
+    task.assign_existing_ep!(params[:ep_id])
+    render json: {}
+  end
+
   def start_text
     "Establish Next Claim"
   end

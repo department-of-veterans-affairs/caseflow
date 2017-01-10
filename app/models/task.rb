@@ -14,7 +14,8 @@ class Task < ActiveRecord::Base
     completed: 0,
     canceled: 1,
     expired: 2,
-    routed_to_ro: 3
+    routed_to_ro: 3,
+    assigned_to_ep: 4
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
@@ -92,6 +93,10 @@ class Task < ActiveRecord::Base
     complete_and_recreate!(:expired)
   end
 
+  def assign_existing_ep!(ep_id)
+    complete!(:assigned_to_ep, ep_id)
+  end
+
   def complete_and_recreate!(status_code)
     transaction do
       complete!(self.class.completion_status_code(status_code))
@@ -137,12 +142,13 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status)
+  def complete!(status, outgoing_status=nil)
     fail(AlreadyCompleteError) if complete?
 
     update!(
       completed_at: Time.now.utc,
-      completion_status: status
+      completion_status: status,
+      outgoing_reference_id: outgoing_status
     )
   end
 

@@ -41,9 +41,9 @@ class ExternalApi::BGSService
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
-      client_ip: user.ip_address,
-      client_station_id: user.station_id,
-      client_username: user.css_id,
+      client_ip: current_user.ip_address,
+      client_station_id: current_user.station_id,
+      client_username: current_user.css_id,
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],

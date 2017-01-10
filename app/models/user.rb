@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
+        u.ip_address = request.remote_ip
         u.regional_office = session[:regional_office]
         u.save
       end
