@@ -6,7 +6,7 @@ class Dispatch
     "CLR" => "Cleared",
     "CAN" => "Canceled"
   }.freeze
-    
+
   END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
@@ -24,6 +24,7 @@ class Dispatch
   }.freeze
 
   class << self
+    # :nocov:
     def validate_claim(_claim)
       # TODO(jd): Add validations to verify establish claim data
       true
@@ -41,6 +42,13 @@ class Dispatch
       {
         "claim_type" => "Claim"
       }
+    end
+    # :nocov:
+
+    def filter_dispatch_end_products(end_products)
+      end_products.select do |end_product|
+        END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
+      end
     end
   end
 end

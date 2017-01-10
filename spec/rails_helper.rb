@@ -64,13 +64,12 @@ module StubbableUser
 
     def authenticate!(roles: nil)
       self.stub = User.from_session(
-        {"user" => {
-                  "id" => "DSUSER",
-                  "station_id" => "283",
-                  "email" => "test@example.com",
-                  "roles" => roles || ["Certify Appeal"]
-                }
-        }, OpenStruct.new(:remote_ip => "127.0.0.1"))
+        { "user" =>
+          { "id" => "DSUSER",
+            "station_id" => "283",
+            "email" => "test@example.com",
+            "roles" => roles || ["Certify Appeal"] }
+        }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
     def current_user
