@@ -129,7 +129,9 @@
         var textQuestion = "question" + key, dateQuestion = "question" + value;
         state[dateQuestion].show = !!state[textQuestion].value;
         // set default date only if the date is not set in the form
-        if ($dateInput(value).val() === "") $dateInput(value).val(notification_date);
+        if ($dateInput(value).val() === "") {
+          $dateInput(value).val(notification_date);
+        }
       });
     },
 
@@ -254,7 +256,6 @@
     // so default values won't be saved in the database
     clearHiddenDatesOnSubmit: function() {
       $.each(this.questionsWithDateFields, function(key, value) {
-        var $q = $question(value);
         var disabled = $dateInput(value).attr('disabled');
         if (disabled) {
           $dateInput(value).prop('disabled', false);
