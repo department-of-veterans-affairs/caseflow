@@ -167,7 +167,7 @@ class Appeal < ActiveRecord::Base
       repository.upload_form8(appeal, form8)
     end
   
-    def map_ep_value(code, mapping)
+    def map_end_product_value(code, mapping)
       mapping[code] || code
     end
   end
@@ -182,7 +182,7 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def select_non_canceled_eps_within_30_days(eps)
+  def select_non_canceled_end_products_within_30_days(eps)
     # Find all EPs with relevant type codes that are not canceled.
     eps.select do |ep| 
       (ep[:claim_receive_date].to_time - decision_date).abs < 30.days &&
@@ -190,14 +190,18 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def non_canceled_eps_within_30_days
+  def non_canceled_end_products_within_30_days
     bgs = BGSService.new
-    eps = bgs.get_eps(sanitized_vbms_id)
+    eps = bgs.get_end_products(sanitized_vbms_id)
     
-    select_non_canceled_eps_within_30_days(eps)
+    select_non_canceled_end_products_within_30_days(eps)
       .map do |ep|
-        ep[:claim_type_code] = Appeal.map_ep_value(ep[:claim_type_code], Dispatch::EP_CODES)
-        ep[:status_type_code] = Appeal.map_ep_value(ep[:status_type_code], Dispatch::EP_STATUS)
+        ep[:claim_type_code] = Appeal.map_end_product_value(
+          ep[:claim_type_code],
+          Dispatch::END_PRODUCT_CODES)
+        ep[:status_type_code] = Appeal.map_end_product_value(
+          ep[:status_type_code],
+          Dispatch::END_PRODUCT_STATUS)
         ep
       end
   end

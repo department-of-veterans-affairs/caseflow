@@ -4,7 +4,7 @@ RSpec.feature "Dispatch" do
   before do
     @vbms_id = "VBMS_ID1"
 
-    BGSService.ep_data = [{
+    BGSService.end_product_data = [{
           claim_receive_date: Date.today - 20.days,
           claim_type_code: '172GRANT',
           status_type_code: 'PEND'
@@ -90,7 +90,7 @@ RSpec.feature "Dispatch" do
 
     context "Skip the associate EP page" do
       before do
-        BGSService.ep_data = []
+        BGSService.end_product_data = []
       end
 
       scenario "Establish a new claim page and process" do

@@ -24,6 +24,7 @@ export default class EstablishClaim extends BaseForm {
 
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
+
     this.state = {
       cancelModal: false,
       form: {
@@ -173,8 +174,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.non_canceled_eps_within_30_days &&
-      this.props.task.appeal.non_canceled_eps_within_30_days.length > 0;
+    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
   }
 
   isAssociatePage() {
@@ -211,9 +212,9 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
-        { this.isAssociatePage() && 
-          <AssociatePage 
-            eps={this.props.task.appeal.non_canceled_eps_within_30_days}
+        { this.isAssociatePage() &&
+          <AssociatePage
+            endProcuts={this.props.task.appeal.non_canceled_end_products_within_30_days}
           />
         }
         { this.isFormPage() && Form.render.call(this) }

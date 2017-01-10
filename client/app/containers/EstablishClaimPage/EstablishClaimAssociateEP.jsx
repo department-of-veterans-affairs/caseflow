@@ -8,24 +8,27 @@ const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 export default class AssociatePage extends React.Component {
 
-  buildEPRow = (ep) => [
-    formatDate(new Date(ep.claim_receive_date)),
-    ep.claim_type_code,
-    ep.status_type_code,
+  buildEndProductRow = (endProduct) => [
+    formatDate(new Date(endProduct.claim_receive_date)),
+    endProduct.claim_type_code,
+    endProduct.status_type_code,
     <Button
         name="Assign to Claim"
         classNames={["usa-button-outline"]}
       />
   ];
 
-  sortEP = (a, b) => {
-    let date1 = new Date(a.claim_receive_date);
-    let date2 = new Date(b.claim_receive_date);
-    return date2.getTime() - date1.getTime();
+  sortEndProduct = (date1, date2) => {
+    let time1 = new Date(date1.claim_receive_date).getTime();
+    let time2 = new Date(date2.claim_receive_date).getTime();
+
+    return time2 - time1;
   }
 
   render = function() {
-    let eps = this.props.eps.sort(this.sortEP);
+    let endProcuts = this.props.endProcuts.sort(this.sortEndProduct);
+
+
     return <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
 
@@ -42,8 +45,8 @@ export default class AssociatePage extends React.Component {
         <div className="usa-grid-full">
           <Table
             headers={TABLE_HEADERS}
-            buildRowValues={this.buildEPRow}
-            values={eps}
+            buildRowValues={this.buildEndProductRow}
+            values={endProcuts}
           />
         </div>
       </div>;

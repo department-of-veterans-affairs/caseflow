@@ -1,13 +1,13 @@
 class Dispatch
   class InvalidClaimError < StandardError; end
 
-  EP_STATUS = {
+  END_PRODUCT_STATUS = {
     "PEND" => "Pending",
     "CLR" => "Cleared",
     "CAN" => "Canceled"
   }.freeze
     
-  EP_CODES = {
+  END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
     "170PGAMC" => "AMC-Partial Grant ",

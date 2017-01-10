@@ -4,26 +4,10 @@ require "bgs"
 class ExternalApi::BGSService
   # :nocov:
 
-  ep_codes = %w(
-    170APPACT
-    170APPACTPMC
-    170PGAMC
-    170RMD
-    170RMDAMC
-    170RMDPMC
-    172GRANT
-    172BVAG
-    172BVAGPMC
-    400CORRC
-    400CORRCPMC
-    930RC
-    930RCPMC
-  )
-
-  def get_eps(vbms_id)
+  def get_end_products(vbms_id)
     vbms_id.strip!
     client.claims.find_by_vbms_file_number(vbms_id)
-      .select { |claim| ep_codes.include? claim[:claim_type_code] }
+      .select { |claim| Dispatch::END_PRODUCT_CODES.keys.include? claim[:claim_type_code] }
   end
 
   def client
@@ -36,7 +20,7 @@ class ExternalApi::BGSService
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
-      client_ip: current_user.ip_address,
+      client_ip: request.remote_ip,
       client_station_id: current_user.station_id,
       client_username: current_user.css_id,
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
