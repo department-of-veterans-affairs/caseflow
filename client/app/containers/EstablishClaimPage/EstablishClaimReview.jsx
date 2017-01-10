@@ -1,14 +1,66 @@
 import React from 'react';
 import DropDown from '../../components/DropDown';
+import Checkbox from '../../components/Checkbox';
 
-export const DECISION_TYPE = [
+const DECISION_TYPE = [
   'Remand',
   'Partial Grant',
   'Full Grant'
 ];
 
+const SPECIAL_ISSUE_FULL = [
+  'Rice Compliance',
+  'Private Attorney',
+  'Waiver of Overpayment',
+  'Pensions',
+  'VAMC',
+  'Incarcerated Veterans',
+  'DIC - death, or accrued benefits',
+  'Education or Vocational Rehab',
+  'Foreign Claims'
+];
+
+const SPECIAL_ISSUE_PARTIAL = [
+  'Manlincon Compliance',
+  'Rice Compliance',
+  'Private Attorney',
+  'Hearings - travel board & video conference',
+  'Home Loan Guaranty',
+  'Waiver of Overpayment',
+  'Education or Vocational Rehab',
+  'VAMC',
+  'Insurance',
+  'National Cemetery Administration',
+  'Spina Bifida',
+  'Radiation',
+  'Non-rating Issues',
+  'Foreign Claims',
+  'Incarcerated Veterans',
+  'Proposed Incompetency',
+  'Manila Remand',
+  'Contaminated Water at Camp LeJeune',
+  'Mustard Gas',
+  'Dependencies',
+  'DIC - death, or accrued benefits'
+];
+
+const special_issue_array = function (arr1, arr2){
+  return arr1.concat(arr2);
+}
+
+export {DECISION_TYPE, SPECIAL_ISSUE_FULL, SPECIAL_ISSUE_PARTIAL, special_issue_array}
+
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
+
+  let count = 0;
+
+  let issueType = '';
+  if (this.state.reviewForm.decisionType.value === 'Remand' || this.state.reviewForm.decisionType.value === 'Partial Grant') {
+    issueType = SPECIAL_ISSUE_PARTIAL;
+  } else {
+    issueType = SPECIAL_ISSUE_FULL;
+  }
 
   return (
     <div>
@@ -31,7 +83,7 @@ export const render = function() {
         href={pdfLink}
         download
         target="_blank">
-        "The PDF viewer in your browser may not be accessible. Click to download
+        The PDF viewer in your browser may not be accessible. Click to download
         the Decision PDF so you can preview it in a reader with accessibility features
         such as Adobe Acrobat.
       </a>
@@ -57,6 +109,19 @@ export const render = function() {
        onChange={this.handleFieldChange('reviewForm', 'decisionType')}
        {...this.state.reviewForm.decisionType}
       />
+
+      {
+        issueType.map((issue) =>
+        {
+          return <Checkbox
+            label={issue}
+            name={issue}
+            onChange={this.handleFieldChange('reviewForm', 'checkboxes')}
+            key={count++}
+            {...this.state.reviewForm.checkboxes}
+          />;
+        })
+      }
     </div>
   );
 };
