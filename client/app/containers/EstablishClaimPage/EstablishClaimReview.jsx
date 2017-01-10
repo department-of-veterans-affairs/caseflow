@@ -2,9 +2,9 @@ import React from 'react';
 import DropDown from '../../components/DropDown';
 
 export const DECISION_TYPE = [
-  'Remand',
+  'Full Grant',
   'Partial Grant',
-  'Full Grant'
+  'Remand'
 ];
 
 export const render = function() {
