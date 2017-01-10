@@ -288,7 +288,57 @@ describe Appeal do
     end
   end
 
-  context "non_canceled_eps_within_30_days", focus: true do
+
+  context "select_non_canceled_eps_within_30_days" do
+    let(:appeal) do
+      Appeal.new(
+        vbms_id: "123",
+        decision_date: Date.today.to_time
+      )
+    end
+    let(:eps_output) do
+      [{
+        claim_receive_date: Date.today,
+        claim_type_code: '172BVAG',
+        status_type_code: 'PEND'
+      }]
+    end
+    subject { appeal.select_non_canceled_eps_within_30_days(eps_input) }
+
+    context "filters out old EP" do
+      let(:eps_input) do
+        [{
+          claim_receive_date: Date.today,
+          claim_type_code: '172BVAG',
+          status_type_code: 'PEND'
+        },
+        {
+          claim_receive_date: Date.today - 200.days,
+          claim_type_code: '172BVAG',
+          status_type_code: 'CLR'
+        }]
+      end
+      it { is_expected.to eq(eps_output)}
+    end
+
+    context "filters out cancel EP" do
+      let(:eps_input) do
+        [{
+          claim_receive_date: Date.today,
+          claim_type_code: '172BVAG',
+          status_type_code: 'PEND'
+        },
+        {
+          claim_receive_date: Date.today,
+          claim_type_code: '172BVAG',
+          status_type_code: 'CAN'
+        }]
+      end
+      it { is_expected.to eq(eps_output)}
+    end
+  end
+
+  context "non_canceled_eps_within_30_days" do
     let(:appeal) do
       Appeal.new(
         vbms_id: "123",
@@ -305,11 +355,29 @@ describe Appeal do
         claim_receive_date: Date.today + 10.days,
         claim_type_code: 'Remand',
         status_type_code: 'Cleared'
+      }]
+    end
+
+    before do
+      BGSService.ep_data = [{
+        claim_receive_date: Date.today - 20.days,
+        claim_type_code: '172GRANT',
+        status_type_code: 'PEND'
+      },
+      {
+        claim_receive_date: Date.today + 10.days,
+        claim_type_code: '170RMD',
+        status_type_code: 'CLR'
       },
       {
         claim_receive_date: Date.today,
-        claim_type_code: 'BVA Grant',
-        status_type_code: 'Canceled'
+        claim_type_code: '172BVAG',
+        status_type_code: 'CAN'
+      },
+      {
+        claim_receive_date: Date.today - 200.days,
+        claim_type_code: '172BVAG',
+        status_type_code: 'CLR'
       }]
     end
     it { expect(appeal.non_canceled_eps_within_30_days).to eq(eps)}
