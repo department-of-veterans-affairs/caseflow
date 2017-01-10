@@ -4,16 +4,8 @@ require "bgs"
 class ExternalApi::BGSService
   # :nocov:
 
-  def filter_dispatch_end_products(end_products)
-    end_products.select do |end_product| 
-      Dispatch::END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
-    end
-  end
-
   def get_end_products(vbms_id)
-    vbms_id.strip!
-    filter_dispatch_end_products(
-      client.claims.find_by_vbms_file_number(vbms_id))
+    client.claims.find_by_vbms_file_number(vbms_id.strip)
   end
 
   def client
