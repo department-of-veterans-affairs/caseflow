@@ -4,26 +4,27 @@ RSpec.feature "Dispatch" do
   before do
     @vbms_id = "VBMS_ID1"
 
-    BGSService.end_product_data = [{
-          claim_receive_date: Date.today - 20.days,
-          claim_type_code: '172GRANT',
-          status_type_code: 'PEND'
-        },
-        {
-          claim_receive_date: Date.today + 10.days,
-          claim_type_code: '170RMD',
-          status_type_code: 'CLR'
-        },
-        {
-          claim_receive_date: Date.today,
-          claim_type_code: '172BVAG',
-          status_type_code: 'CAN'
-        },
-        {
-          claim_receive_date: Date.today - 200.days,
-          claim_type_code: '172BVAG',
-          status_type_code: 'CLR'
-        }]
+    BGSService.end_product_data = [
+      {
+        claim_receive_date: Time.zone.now - 20.days,
+        claim_type_code: "172GRANT",
+        status_type_code: "PEND"
+      },
+      {
+        claim_receive_date: Time.zone.now + 10.days,
+        claim_type_code: "170RMD",
+        status_type_code: "CLR"
+      },
+      {
+        claim_receive_date: Time.zone.now,
+        claim_type_code: "172BVAG",
+        status_type_code: "CAN"
+      },
+      {
+        claim_receive_date: Time.zone.now - 200.days,
+        claim_type_code: "172BVAG",
+        status_type_code: "CLR"
+      }]
 
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
@@ -78,7 +79,7 @@ RSpec.feature "Dispatch" do
                                               user: current_user,
                                               assigned_at: 1.day.ago,
                                               started_at: 1.day.ago,
-                                              completed_at: Time.now.utc)
+                                              completed_at: Time.zone.now.utc)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),

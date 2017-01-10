@@ -166,7 +166,7 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
     end
-  
+
     def map_end_product_value(code, mapping)
       mapping[code] || code
     end
@@ -184,9 +184,9 @@ class Appeal < ActiveRecord::Base
 
   def select_non_canceled_end_products_within_30_days(end_products)
     # Find all EPs with relevant type codes that are not canceled.
-    end_products.select do |end_product| 
-      (end_product[:claim_receive_date].to_time - decision_date).abs < 30.days &&
-      end_product[:status_type_code] != "CAN"
+    end_products.select do |end_product|
+      (end_product[:claim_receive_date].to_time_in_current_zone - decision_date).abs < 30.days &&
+        end_product[:status_type_code] != "CAN"
     end
   end
 
@@ -194,7 +194,7 @@ class Appeal < ActiveRecord::Base
     bgs = BGSService.new
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
-    
+
     select_non_canceled_end_products_within_30_days(end_products)
       .map do |end_product|
         end_product[:claim_type_code] = Appeal.map_end_product_value(

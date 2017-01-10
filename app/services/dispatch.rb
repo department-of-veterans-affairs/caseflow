@@ -6,7 +6,7 @@ class Dispatch
     "CLR" => "Cleared",
     "CAN" => "Canceled"
   }.freeze
-    
+
   END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
@@ -46,7 +46,7 @@ class Dispatch
     # :nocov:
 
     def filter_dispatch_end_products(end_products)
-      end_products.select do |end_product| 
+      end_products.select do |end_product|
         END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
       end
     end
