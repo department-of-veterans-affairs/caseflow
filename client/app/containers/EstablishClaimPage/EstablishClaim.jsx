@@ -12,7 +12,7 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
-import * as Associate from './EstablishClaimAssociateEP';
+import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
@@ -23,10 +23,8 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-
     // Set initial state on page render
     this.state = {
-      associatedEPs: this.props.task.appeal.non_canceled_eps_within_30_days,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
@@ -213,7 +211,11 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
-        { this.isAssociatePage() && Associate.render.call(this) }
+        { this.isAssociatePage() && 
+          <AssociatePage 
+            eps={this.props.task.appeal.non_canceled_eps_within_30_days}
+          />
+        }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
