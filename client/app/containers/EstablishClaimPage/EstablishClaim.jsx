@@ -175,7 +175,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.eps_within_30_days;
+    return this.props.task.appeal.eps_within_30_days &&
+      this.props.task.appeal.eps_within_30_days.length > 0;
   }
 
   isAssociatePage() {
@@ -191,7 +192,7 @@ export default class EstablishClaim extends BaseForm {
       if (this.shouldShowAssociatePage()) {
         this.handlePageChange(ASSOCIATE_PAGE);
       } else {
-        this.handlePageChange(FORM_PAGE);  
+        this.handlePageChange(FORM_PAGE);
       }
     } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);

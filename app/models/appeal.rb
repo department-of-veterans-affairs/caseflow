@@ -13,7 +13,7 @@ class Appeal < ActiveRecord::Base
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
     "170PGAMC" => "AMC-Partial Grant ",
-    "170RMD" => "Remand ",
+    "170RMD" => "Remand",
     "170RMDAMC" => "AMC-Remand",
     "170RMDPMC" => "PMC-Remand",
     "172GRANT" => "Grant of Benefits",
@@ -188,7 +188,11 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
     end
-   end
+  
+    def map_ep_value(code, mapping)
+      mapping[code] || code
+    end
+  end
 
   def documents_with_type(type)
     @documents_by_type ||= {}
@@ -200,17 +204,13 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def map_ep_value(code, mapping)
-    mapping[code] || code
-  end
-
   def eps_within_30_days
     bgs = BGSService.new
     bgs.get_eps(sanitized_vbms_id)
       .select { |ep| (ep[:claim_receive_date].to_time - decision_date).abs < 30.days }
       .map do |ep|
-        ep[:claim_type_code] = map_ep_value(ep[:claim_type_code], EP_CODES)
-        ep[:status_type_code] = map_ep_value(ep[:status_type_code], EP_STATUS)
+        ep[:claim_type_code] = Appeal.map_ep_value(ep[:claim_type_code], EP_CODES)
+        ep[:status_type_code] = Appeal.map_ep_value(ep[:status_type_code], EP_STATUS)
         ep
       end
   end

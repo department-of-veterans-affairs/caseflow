@@ -287,4 +287,43 @@ describe Appeal do
       it { expect { appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
     end
   end
+
+  context "eps_within_30_days", focus: true do
+    let(:appeal) do
+      Appeal.new(
+        vbms_id: "123",
+        decision_date: Date.today.to_time
+      )
+    end
+    let(:eps) do
+      [{
+        claim_receive_date: Date.today - 20.days,
+        claim_type_code: 'Grant of Benefits',
+        status_type_code: 'Pending'
+      },
+      {
+        claim_receive_date: Date.today + 10.days,
+        claim_type_code: 'Remand',
+        status_type_code: 'Cleared'
+      },
+      {
+        claim_receive_date: Date.today,
+        claim_type_code: 'BVA Grant',
+        status_type_code: 'Canceled'
+      }]
+    end
+    it { expect(appeal.eps_within_30_days).to eq(eps)}
+  end
+
+  context "map_ep_value" do
+
+    it "when mapping exists" do
+      expect(Appeal.map_ep_value("170APPACT", Appeal::EP_CODES)).to eq("Appeal Action")
+    end
+
+    it "when mapping doesn't exist" do
+      expect(Appeal.map_ep_value("Test", Appeal::EP_CODES)).to eq("Test")
+    end
+  end
+
 end

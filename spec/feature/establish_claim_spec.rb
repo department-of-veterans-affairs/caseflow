@@ -67,63 +67,98 @@ RSpec.feature "Dispatch" do
       allow(Appeal.repository).to receive(:establish_claim!)
     end
 
-    scenario "Establish a new claim page and process" do
+    context "Skip the associate EP page" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:get_eps).and_return([])
+      end
+
+      scenario "Establish a new claim page and process" do
+        visit "/dispatch/establish-claim"
+
+        # View history
+        expect(page).to have_content("Establish Next Claim")
+        expect(page).to have_css("tr#task-#{@completed_task.id}")
+
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        # Can't start new task til current task is complete
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        expect(page).to have_content("Review Decision")
+        expect(@task.reload.user).to eq(current_user)
+        expect(@task.started?).to be_truthy
+
+        page.select "Full Grant", from: "decisionType"
+
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
+        page.fill_in "Decision Date", with: "1"
+        click_on "Create End Product"
+
+        expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+
+        page.fill_in "Decision Date", with: "01/01/2017"
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("Congratulations!")
+        expect(Appeal.repository).to have_received(:establish_claim!).with(
+          claim: {
+            "claim_type" => "Claim",
+            "modifier" => "170",
+            "poa" => "None",
+            "claim_label" => "172BVAG - BVA Grant",
+            "poa_code" => "",
+            "gulf_war" => false,
+            "allow_poa" => false,
+            "suppress_acknowledgement" => false
+          },
+          appeal: @task.appeal
+        )
+        expect(@task.reload.complete?).to be_truthy
+        expect(@task.completion_status).to eq(0)
+
+        click_on "Caseflow Dispatch"
+        expect(page).to have_current_path("/dispatch/establish-claim")
+
+        # No tasks left
+        expect(page).to have_content("No claims to establish right now")
+        expect(page).to have_css(".usa-button-disabled")
+      end
+
+      scenario "Establish Claim form saves state when toggling decision" do
+        @task.assign!(current_user)
+        visit "/dispatch/establish-claim/#{@task.id}"
+        click_on "Create End Product"
+        expect(page).to have_content("Benefit Type") # React works
+        expect(page).to_not have_content("POA Code")
+
+        select("172", from: "Modifier")
+
+        click_on "\u00ABBack to review"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("Review Decision")
+
+        click_on "Create End Product"
+
+        expect(find_field("Modifier").value).to eq("172")
+      end
+    end
+
+    scenario "Associate existing claim with decision" do
       visit "/dispatch/establish-claim"
-
-      # View history
-      expect(page).to have_content("Establish Next Claim")
-      expect(page).to have_css("tr#task-#{@completed_task.id}")
-
       click_on "Establish Next Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-      # Can't start new task til current task is complete
-      visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-
-      expect(page).to have_content("Review Decision")
-      expect(@task.reload.user).to eq(current_user)
-      expect(@task.started?).to be_truthy
-
-      page.select "Full Grant", from: "decisionType"
-
       click_on "Create End Product"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
-      page.fill_in "Decision Date", with: "1"
-      click_on "Create End Product"
-
-      expect(page).to have_content("The date must be in mm/dd/yyyy format.")
-
-      page.fill_in "Decision Date", with: "01/01/2017"
-      click_on "Create End Product"
-
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      expect(page).to have_content("Congratulations!")
-      expect(Appeal.repository).to have_received(:establish_claim!).with(
-        claim: {
-          "claim_type" => "Claim",
-          "modifier" => "170",
-          "poa" => "None",
-          "claim_label" => "172BVAG - BVA Grant",
-          "poa_code" => "",
-          "gulf_war" => false,
-          "allow_poa" => false,
-          "suppress_acknowledgement" => false
-        },
-        appeal: @task.appeal
-      )
-      expect(@task.reload.complete?).to be_truthy
-      expect(@task.completion_status).to eq(0)
-
-      click_on "Caseflow Dispatch"
-      expect(page).to have_current_path("/dispatch/establish-claim")
-
-      # No tasks left
-      expect(page).to have_content("No claims to establish right now")
-      expect(page).to have_css(".usa-button-disabled")
+      expect(page).to have_content("Existing EP")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -164,24 +199,6 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
-    end
-
-    scenario "Establish Claim form saves state when toggling decision" do
-      @task.assign!(current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
-      click_on "Create End Product"
-      expect(page).to have_content("Benefit Type") # React works
-      expect(page).to_not have_content("POA Code")
-
-      select("172", from: "Modifier")
-
-      click_on "\u00ABBack to review"
-      expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      expect(page).to have_content("Review Decision")
-
-      click_on "Create End Product"
-
-      expect(find_field("Modifier").value).to eq("172")
     end
   end
 end
