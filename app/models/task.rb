@@ -18,6 +18,11 @@ class Task < ActiveRecord::Base
     assigned_existing_ep: 4
   }.freeze
 
+  # Use this to define status texts that don't properly titlize
+  COMPLETION_STATUS_TEXT_MAPPING = {
+    assigned_existing_ep: "Assigned Existing EP"
+  }.freeze
+
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
@@ -85,7 +90,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(self.class.completion_status_code(:canceled))
+      complete!(status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -93,13 +98,14 @@ class Task < ActiveRecord::Base
     complete_and_recreate!(:expired)
   end
 
-  def assign_existing_ep!(end_product_id)
-    complete!(self.class.completion_status_code(:assigned_existing_ep), end_product_id)
+  def assign_existing_end_product!(end_product_id)
+    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
+              outgoing_reference_id: end_product_id)
   end
 
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(self.class.completion_status_code(status_code))
+      complete!(status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -142,22 +148,20 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status, outgoing_status = nil)
+  def complete!(status:, outgoing_reference_id: nil)
     fail(AlreadyCompleteError) if complete?
 
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
-      outgoing_reference_id: outgoing_status
+      outgoing_reference_id: outgoing_reference_id
     )
   end
 
   def completion_status_text
-    if self.class.completion_status_code(:assigned_existing_ep) == completion_status
-      "Assigned Existing EP"
-    else
-      COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
-    end
+    status = COMPLETION_STATUS_MAPPING.key(completion_status)
+    COMPLETION_STATUS_TEXT_MAPPING[status] ||
+      status.to_s.titleize
   end
 
   def no_open_tasks_for_appeal

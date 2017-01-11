@@ -9,6 +9,14 @@ const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 export default class AssociatePage extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: null
+    }
+  }
+
   buildEndProductRow = (endProduct) => [
     formatDate(new Date(endProduct.claim_receive_date)),
     endProduct.claim_type_code,
@@ -18,6 +26,7 @@ export default class AssociatePage extends React.Component {
         name="Assign to Claim"
         classNames={["usa-button-outline"]}
         onClick={this.handleAssignEndProduct(endProduct)}
+        loading={this.state.loading==endProduct.benefit_claim_id}
       />
   ];
 
@@ -29,19 +38,19 @@ export default class AssociatePage extends React.Component {
     handleAlertClear();
 
     this.setState({
-      loading: true
+      loading: endProduct.benefit_claim_id
     });
 
     let data = ApiUtil.convertToSnakeCase({
       endProductId: endProduct.benefit_claim_id
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/select-ep`, { data }).
+    return ApiUtil.post(`/dispatch/establish-claim/${id}/assign-existing-end-product`, { data }).
       then(() => {
         window.location.reload();
       }, () => {
         this.setState({
-          loading: false
+          loading: null
         });
         handleAlert(
             'error',

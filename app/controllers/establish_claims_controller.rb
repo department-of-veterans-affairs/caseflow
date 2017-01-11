@@ -7,8 +7,8 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
-  def select_ep
-    task.assign_existing_ep!(params[:end_product_id])
+  def assign_existing_end_product
+    task.assign_existing_end_product!(params[:end_product_id])
     render json: {}
   end
 
