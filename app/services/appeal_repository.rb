@@ -21,7 +21,7 @@ class AppealRepository
 
   ESTABLISH_CLAIM_VETERAN_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
-    address_line3 city state country zipcode
+    address_line3 city state country zip_code
   ).freeze
 
   def self.load_vacols_data(appeal)
@@ -88,7 +88,7 @@ class AppealRepository
 
   def self.amc_full_grants(decided_after:)
     full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::Case.amc_full_grants(decided_after)
+      VACOLS::Case.amc_full_grants(decided_after: decided_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
@@ -132,8 +132,11 @@ class AppealRepository
   end
   # :nocov:
 
+
   def self.establish_claim!(appeal:, claim:)
-    raw_veteran_record = BGSService.new.fetch_veteran_info
+    @vbms_client ||= init_vbms_client
+
+    raw_veteran_record = BGSService.new.fetch_veteran_info(appeal.vbms_id)
 
     # Reduce keys in raw response down to what we specifically need for
     # establish claim
