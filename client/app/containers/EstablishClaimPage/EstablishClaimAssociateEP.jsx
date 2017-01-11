@@ -26,7 +26,7 @@ export default class AssociatePage extends React.Component {
         name="Assign to Claim"
         classNames={["usa-button-outline"]}
         onClick={this.handleAssignEndProduct(endProduct)}
-        loading={this.state.loading==endProduct.benefit_claim_id}
+        loading={this.state.loading === endProduct.benefit_claim_id}
       />
   ];
 
