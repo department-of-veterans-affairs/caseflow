@@ -135,8 +135,12 @@
     <%= f.text_field :certifying_official_name,
           question_number: "17A", label: "Name of certifying official:" %>
 
-    <%= f.text_field :certifying_official_title,
-          question_number: "17B", label: "Title of certifying official:" %>
+    <%= f.radio_buttons_field :certifying_official_title,
+          values: ["Decision Review Officer", "Rating Specialist", "Veterans Service Representative", "Claims Assistant", "Other"],
+          question_number: "17B", part: "1", label: "Title of certifying official:" %>
+
+    <%= f.text_field :certifying_official_title_specify_other,
+          question_number: "17B", part: "2", label: "Specify other title of certifying official:", secondary: true %>
 
     <%= f.date_field :certification_date,
           question_number: "17C", label: "Date:", readonly: true %>
@@ -145,7 +149,7 @@
   <div class="cf-app-segment">
     <%= loading_indicator %>
 
-    <a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel certification</a>
+    <a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">Cancel</a>
     <button type="submit" class="cf-push-right cf-submit">Preview Completed Form 8</button>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
-  <title>Caseflow Certification</title>
+  <title>Caseflow <%= logo_name %></title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
@@ -60,9 +60,8 @@
         ga('send', 'pageview', '<%= current_ga_path %>');
       </script>
 
-  <link rel="icon" type="image/png" sizes="32x32"   href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96"   href="/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16"   href="/favicon-16x16.png">
+  <%= favicon_link_tag %>
+  
 </head>
 <body>
   <header>

@@ -1,3 +1,4 @@
+require "fileutils"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -6,6 +7,10 @@ Rails.application.configure do
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
+
+  cache_dir = Rails.root.join("tmp", "cache", "paralleltests#{ENV['TEST_ENV_NUMBER']}")
+  FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
+  config.cache_store = :file_store, cache_dir
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
@@ -40,9 +45,15 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
+  if ENV['TEST_ENV_NUMBER']
+    assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
+    config.assets.configure do |env|
+      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
+    end
+  end
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
   ENV["CASEFLOW_FEEDBACK_URL"] = "test.feedback.url"
 end
-

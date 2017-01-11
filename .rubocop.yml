@@ -9,6 +9,7 @@ AllCops:
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
+    - './.simplecov'
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

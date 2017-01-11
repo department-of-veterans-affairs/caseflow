@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe ReassignOldTasksJob do
   let!(:appeal1) { Appeal.create(vacols_id: "1") }
   let!(:appeal2) { Appeal.create(vacols_id: "2") }

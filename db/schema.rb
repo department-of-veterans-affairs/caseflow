@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212185240) do
+ActiveRecord::Schema.define(version: 20170106141818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,28 +107,31 @@ ActiveRecord::Schema.define(version: 20161212185240) do
     t.string   "_initial_ssoc_required"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.string   "certifying_official_title_specify_other"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
   create_table "tasks", force: :cascade do |t|
-    t.integer  "appeal_id",         null: false
-    t.string   "type",              null: false
+    t.integer  "appeal_id",             null: false
+    t.string   "type",                  null: false
     t.integer  "user_id"
     t.datetime "assigned_at"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.integer  "completion_status"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.integer  "lock_version"
     t.string   "comment"
+    t.string   "outgoing_reference_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false
     t.string "css_id",     null: false
     t.string "full_name"
+    t.string "email"
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree

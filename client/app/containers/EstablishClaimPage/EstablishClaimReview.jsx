@@ -1,7 +1,13 @@
 import React from 'react';
-import PdfViewer from '../../components/PdfViewer';
+import DropDown from '../../components/DropDown';
 
-export const render = function(pdf) {
+export const DECISION_TYPE = [
+  'Full Grant',
+  'Partial Grant',
+  'Remand'
+];
+
+export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
 
   return (
@@ -10,10 +16,8 @@ export const render = function(pdf) {
         <h2>Review Decision</h2>
         Review the final decision from VBMS below to determine the next step.
       </div>
-      <PdfViewer
-        file={pdf} />
-      
       {
+
       /* This link is here for 508 compliance, and shouldn't be visible to sighted
        users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
        is the accessibility standard and is used across gov't, so we'll recommend it
@@ -37,15 +41,22 @@ export const render = function(pdf) {
         establish-claim buttons.
       </a>
 
-      {/*<iframe
+      <iframe
         aria-label="The PDF embedded here is not accessible. Please use the above
           link to download the PDF and view it in a PDF reader. Then use the buttons
           below to go back and make edits or upload and certify the document."
         className="cf-doc-embed cf-app-segment"
         title="Form8 PDF"
-        id="viewer"
         src={pdfjsLink}>
-      </iframe>*/}
+      </iframe>
+
+      <DropDown
+       label="Select a Decision Type"
+       name="decisionType"
+       options={DECISION_TYPE}
+       onChange={this.handleFieldChange('reviewForm', 'decisionType')}
+       {...this.state.reviewForm.decisionType}
+      />
     </div>
   );
 };

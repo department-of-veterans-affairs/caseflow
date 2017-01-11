@@ -125,8 +125,9 @@ class MyPdfViewer extends React.Component {
 
   draw = () => {
     const { UI } = PDFJSAnnotate;
-    
+    debugger;
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
+      
       this.RENDER_OPTIONS = {
         documentId: this.props.file,
         pdfDocument: pdfDocument,

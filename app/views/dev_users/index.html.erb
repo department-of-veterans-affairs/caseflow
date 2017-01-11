@@ -4,14 +4,22 @@
       <h1>Switch User</h1>
 
       <% @users.each do |user| %>
-        <p><%= link_to user.css_id, set_user_path(user), method: :post %></p>
+        <p><%= link_to "#{user.css_id} at station #{user.station_id}", set_user_path(user), method: :post %></p>
       <% end %>
     </div>
     
     <div class="usa-width-one-half">
-      <h1>Page Links</h1>
+	<h1>Page Links</h1>
+	<h2>Dispatch</h2>
       <p><a href="/dispatch/establish-claim">Establish Claim</a></p>
-      <p><a href="/certifications/new/123C">Certification</a></p>
+      <h2>Certification</h2>
+      <p><a href="/certifications/new/123C">Ready to Certify</a></p>
+      <p><a href="/certifications/new/456C">Mismatched Documents</a></p>
+      <p><a href="/certifications/new/789C">Already Certified</a></p>
+      <p><a href="/certifications/new/321C">Remands Decided</a></p>
+      <p><a href="/certifications/new/654C">Full Grant Decided</a></p>
+      <p><a href="/certifications/new/000ERR">VBMS Error</a></p>
+      <p><a href="/certifications/new/001ERR">Ready to Certify</a></p>
     </div>
   </div>  
 </div>

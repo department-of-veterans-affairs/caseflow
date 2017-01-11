@@ -12,12 +12,6 @@ export const POA = [
   'VSO',
   'Private'
 ];
-export const CLAIM_LABEL_OPTIONS = [
-  '',
-  '172BVAG - BVA Grant',
-  '170PGAMC - AMC-Partial Grant',
-  '170RMDAMC - AMC-Remand'
-];
 export const MODIFIER_OPTIONS = [
   '170',
   '172',
@@ -51,13 +45,11 @@ export const render = function() {
          value="00 - Veteran"
          readOnly={true}
         />
-        <DropDown
+        <TextField
          label="EP & Claim Label"
          name="claimLabel"
-         options={CLAIM_LABEL_OPTIONS}
-         onChange={this.handleFieldChange('form', 'claimLabel')}
-         required={true}
-         {...this.state.form.claimLabel}
+         readOnly={true}
+         value={this.getClaimTypeFromDecision()}
         />
         <SearchableDropDown
          label="Modifier"

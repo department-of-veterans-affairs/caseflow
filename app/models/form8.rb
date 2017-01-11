@@ -36,6 +36,7 @@ class Form8 < ActiveRecord::Base
     :certifying_username,
     :certifying_official_name,
     :certifying_official_title,
+    :certifying_official_title_specify_other,
     :certification_date
   ].freeze
 
@@ -60,6 +61,7 @@ class Form8 < ActiveRecord::Base
       representative_name: appeal.representative_name,
       representative_type: appeal.representative_type,
       hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      hearing_held: appeal.hearing_held ? "Yes" : "No",
       ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
@@ -172,7 +174,25 @@ class Form8 < ActiveRecord::Base
   end
 
   def pdf_location
-    Form8.pdf_service.output_location_for(self)
+    path = Form8.pdf_service.output_location_for(self)
+    fetch_from_s3_and_save(path) unless File.exist?(path)
+    path
+  end
+
+  def fetch_from_s3_and_save(destination_path)
+    s3.fetch_file(pdf_filename, destination_path)
+  end
+
+  def s3
+    Rails.application.config.s3_enabled ? S3Service : Fakes::S3Service
+  end
+
+  def pdf_filename
+    "form8-#{vacols_id}.pdf"
+  end
+
+  def tmp_filename
+    "form8-#{vacols_id}.tmp"
   end
 
   def update_from_string_params(params)
