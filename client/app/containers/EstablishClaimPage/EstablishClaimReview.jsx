@@ -95,15 +95,16 @@ export const render = function() {
         title="Form8 PDF"
         src={pdfjsLink}>
       </iframe>
-
+      <div className="cf-app-segment cf-app-segment--alt">
       <DropDown
-       label="Select a Decision Type"
+       label="Decision Type"
        name="decisionType"
        options={DECISION_TYPE}
        onChange={this.handleFieldChange('reviewForm', 'decisionType')}
        {...this.state.reviewForm.decisionType}
       />
 
+    <label>Special Issue Categories</label>
       {
         issueType.map((issue) =>
         {
@@ -117,5 +118,6 @@ export const render = function() {
         })
       }
     </div>
+  </div>
   );
 };
