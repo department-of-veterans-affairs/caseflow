@@ -25,68 +25,92 @@ class Dispatch
 
   END_PRODUCT_MODIFIERS = %w(170 172).freeze
 
-  def initialize(claim:, task:)
-    # Claim info passed in via browser EP form
-    @base_claim = claim.symbolize_keys
+  def self.filter_dispatch_end_products(end_products)
+    end_products.select do |end_product|
+      END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
+    end
+  end
 
-    # Full claim with merged in dynamic and default values
-    @claim = default_claim_values.merge(dynamic_claim_values).merge(@base_claim)
+  def initialize(claim:, task:)
+    @claim = Claim.new(claim)
     @task = task
   end
-
-  def claim_valid?
-    valid = true
-
-    # Verify the end product code exists
-    valid = false unless @claim[:end_product_code]
-
-    # Verify the end product modifier is valid
-    valid = false unless END_PRODUCT_MODIFIERS.include?(@claim[:end_product_modifier])
-
-    # Verify the end product label and code match
-    unless END_PRODUCT_CODES[@claim[:end_product_code]] == @claim[:end_product_label]
-      valid = false
-    end
-
-    valid
-  end
+  attr_accessor :task, :claim
 
   def validate_claim!
-    fail InvalidClaimError unless claim_valid?
+    fail InvalidClaimError unless claim.valid?
   end
 
   # Core method responsible for API call to VBMS to create the end product
   # On success will udpate the task with the end product's claim_id
   def establish_claim!
     validate_claim!
-    end_product = Appeal.repository.establish_claim!(claim: @claim,
-                                                     appeal: @task.appeal)
+    end_product = Appeal.repository.establish_claim!(claim: claim.to_hash,
+                                                     appeal: task.appeal)
 
-    @task.complete!(status: 0, outgoing_reference_id: end_product.claim_id)
+    task.complete!(status: 0, outgoing_reference_id: end_product.claim_id)
   end
 
-  def dynamic_claim_values
-    {
-      date: Time.now.utc.to_date,
 
-      # TODO(jd): Make this attr dynamic in future PR once
-      # we support routing a claim based on special issues
-      station_of_jurisdiction: "317"
-    }
-  end
+  # Class used for validating the claim object
+  class Claim
+    include ActiveModel::Validations
 
-  def default_claim_values
-    {
-      benefit_type_code: "1",
-      payee_code: "00",
-      predischarge: false,
-      claim_type: "Claim"
-    }
-  end
+    # This is a list of the "variable attrs" that are returned from the
+    # browser's End Product form
+    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label)
+    BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter)
+    OTHER_VARIABLE_ATTRS = %i(poa poa_code)
+    VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
 
-  def self.filter_dispatch_end_products(end_products)
-    end_products.select do |end_product|
-      END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
+    attr_accessor *VARIABLE_ATTRS
+
+    validates_presence_of *PRESENT_VARIABLE_ATTRS
+    validates_inclusion_of *BOOLEAN_VARIABLE_ATTRS, in: [true, false]
+    validate :end_product_code_and_label_match
+
+    def initialize(attributes={})
+      attributes.each do |k,v|
+        instance_variable_set("@#{k}", v)
+      end
     end
+
+    def to_hash
+      hash = default_values.merge(dynamic_values)
+
+      VARIABLE_ATTRS.reduce(hash) do |hash, attr|
+        val = instance_variable_get("@#{attr}")
+        hash[attr] = val unless val.nil?
+        hash
+      end
+    end
+
+    def dynamic_values
+      {
+        date: Time.now.utc.to_date,
+
+        # TODO(jd): Make this attr dynamic in future PR once
+        # we support routing a claim based on special issues
+        station_of_jurisdiction: "317"
+      }
+    end
+
+    private
+
+    def default_values
+      {
+        benefit_type_code: "1",
+        payee_code: "00",
+        predischarge: false,
+        claim_type: "Claim"
+      }
+    end
+
+    def end_product_code_and_label_match
+      unless END_PRODUCT_CODES[end_product_code] == end_product_label
+        errors.add(:end_product_label, "must match end_product_code")
+      end
+    end
+
   end
 end
