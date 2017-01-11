@@ -56,6 +56,9 @@ Rails.application.routes.draw do
   end
   # :nocov:
 
+  resources :functions, only: :index
+  patch '/functions/change', to: 'functions#change'
+
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
