@@ -1,4 +1,11 @@
 import React from 'react';
+import DropDown from '../../components/DropDown';
+
+export const DECISION_TYPE = [
+  'Full Grant',
+  'Partial Grant',
+  'Remand'
+];
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
@@ -42,6 +49,14 @@ export const render = function() {
         title="Form8 PDF"
         src={pdfjsLink}>
       </iframe>
+
+      <DropDown
+       label="Select a Decision Type"
+       name="decisionType"
+       options={DECISION_TYPE}
+       onChange={this.handleFieldChange('reviewForm', 'decisionType')}
+       {...this.state.reviewForm.decisionType}
+      />
     </div>
   );
 };

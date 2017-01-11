@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe Certification do
   let(:certification_date) { nil }
   let(:certification) { Certification.new(vacols_id: "4949") }
@@ -12,10 +10,9 @@ describe Certification do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "4949" => appeal_hash }
-    Appeal.stub(:find_or_create_by_vacols_id) do |_vacols_id|
-      appeal
-    end
-    Appeal.repository.stub(:load_vacols_data) {}
+    allow(Appeal).to receive(:find_or_create_by_vacols_id) { appeal }
+
+    allow(Appeal.repository).to receive(:load_vacols_data) {}
   end
 
   after do

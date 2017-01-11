@@ -20,22 +20,20 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
+    let decisionType = this.props.task.appeal.decision_type;
+
     // Set initial state on page render
     this.state = {
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
-        claimLabel: new FormField(
-          Form.CLAIM_LABEL_OPTIONS[0],
-          requiredValidator('Please enter the EP & Claim Label.')
-          ),
         decisionDate: new FormField(
           formatDate(this.props.task.appeal.decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
           ]
-          ),
+        ),
         gulfWar: new FormField(false),
         modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
@@ -43,7 +41,7 @@ export default class EstablishClaim extends BaseForm {
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
-          ),
+        ),
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
@@ -54,7 +52,10 @@ export default class EstablishClaim extends BaseForm {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: REVIEW_PAGE,
+      reviewForm: {
+        decisionType: new FormField(decisionType)
+      }
     };
   }
 
@@ -65,9 +66,9 @@ export default class EstablishClaim extends BaseForm {
     event.preventDefault();
     handleAlertClear();
 
-    if (!this.validateFormAndSetErrors(this.state.form)) {
-      this.setErrors = true;
+    this.formValidating();
 
+    if (!this.validateFormAndSetErrors(this.state.form)) {
       return;
     }
 
@@ -75,8 +76,13 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
+    // We have to add in the claimLabel separately, since it is derived from
+    // the form value on the review page.
     let data = {
-      claim: ApiUtil.convertToSnakeCase(this.getFormValues(this.state.form))
+      claim: ApiUtil.convertToSnakeCase({
+        ...this.getFormValues(this.state.form),
+        claimLabel: this.getClaimTypeFromDecision()
+      })
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
@@ -91,6 +97,17 @@ export default class EstablishClaim extends BaseForm {
         'There was an error while submitting the current claim. Please try again later'
       );
     });
+  }
+
+  getClaimTypeFromDecision = () => {
+    if (this.state.reviewForm.decisionType.value === 'Remand') {
+      return '170RMDAMC - AMC-Remand';
+    } else if (this.state.reviewForm.decisionType.value === 'Partial Grant') {
+      return '170PGAMC - AMC-Partial Grant';
+    } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+      return '172BVAG - BVA Grant';
+    }
+    throw new RangeError("Invalid deicion type value");
   }
 
   handleFinishCancelTask = () => {

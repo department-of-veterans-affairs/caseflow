@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe Appeal do
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
@@ -72,16 +70,14 @@ describe Appeal do
 
   context ".find_or_create_by_vacols_id" do
     before do
-      Appeal.repository.stub(:load_vacols_data) do |_appeal|
-        nil
-      end
+      allow(Appeal.repository).to receive(:load_vacols_data).and_return(nil)
     end
+
     subject { Appeal.find_or_create_by_vacols_id("123C") }
+
     context "sets the vacols_id" do
       before do
-        Appeal.any_instance.stub(:save) do |appeal|
-          appeal
-        end
+        allow_any_instance_of(Appeal).to receive(:save) {}
       end
 
       it do
@@ -187,6 +183,19 @@ describe Appeal do
     end
   end
 
+  context "#remand?" do
+    subject { appeal.remand? }
+    context "is false" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
+      it { is_expected.to be_falsey }
+    end
+
+    context "is true" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Remanded") }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#decision_type" do
     subject { appeal.decision_type }
     context "is a full grant" do
@@ -197,6 +206,11 @@ describe Appeal do
     context "is a partial grant" do
       let(:appeal) { Appeal.new(vacols_id: "123", status: "Complete") }
       it { is_expected.to eq("Full Grant") }
+    end
+
+    context "is a remand" do
+      let(:appeal) { Appeal.new(vacols_id: "123", status: "Remand", disposition: "Remanded") }
+      it { is_expected.to eq("Remand") }
     end
   end
 

@@ -1,4 +1,3 @@
-require_relative "../rails_helper"
 describe Form8 do
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
@@ -228,6 +227,30 @@ describe Form8 do
       expect(form8.service_connection_for_initial).to eq("one\ntwo (see continued remarks page 2)")
       expect(form8.remarks_continued).to eq("\n \nContinued:\nseven" \
                                                  "\n \nService Connection For Continued:\nthree")
+    end
+  end
+
+  context "#pdf_location" do
+    let(:form8) do
+      Form8.new(
+        appellant_name: "Brad Pitt",
+        appellant_relationship: "Fancy man",
+        file_number: "1234QWERTY",
+        veteran_name: "Joe Patriot"
+      )
+    end
+
+    let(:path) { form8.pdf_location }
+
+    before do
+      Form8PdfService.save_pdf_for!(form8)
+    end
+
+    it "should fetch the PDF from s3 and save it locally if the PDF does not exists locally" do
+      File.delete(path)
+      expect(File.exist?(path)).to eq false
+      form8.pdf_location
+      expect(File.exist?(path)).to eq true
     end
   end
 
