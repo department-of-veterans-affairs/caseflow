@@ -1,14 +1,62 @@
 import React from 'react';
 import DropDown from '../../components/DropDown';
+import Checkbox from '../../components/Checkbox';
 
 export const DECISION_TYPE = [
-  'Remand',
+  'Full Grant',
   'Partial Grant',
-  'Full Grant'
+  'Remand'
+];
+
+export const SPECIAL_ISSUE_FULL = [
+  'Rice Compliance',
+  'Private Attorney',
+  'Waiver of Overpayment',
+  'Pensions',
+  'VAMC',
+  'Incarcerated Veterans',
+  'DIC - death, or accrued benefits',
+  'Education or Vocational Rehab',
+  'Foreign Claims'
+];
+
+export const SPECIAL_ISSUE_PARTIAL = [
+  'Manlincon Compliance',
+  'Rice Compliance',
+  'Private Attorney',
+  'Hearings - travel board & video conference',
+  'Home Loan Guaranty',
+  'Waiver of Overpayment',
+  'Education or Vocational Rehab',
+  'VAMC',
+  'Insurance',
+  'National Cemetery Administration',
+  'Spina Bifida',
+  'Radiation',
+  'Non-rating Issues',
+  'Foreign Claims',
+  'Incarcerated Veterans',
+  'Proposed Incompetency',
+  'Manila Remand',
+  'Contaminated Water at Camp LeJeune',
+  'Mustard Gas',
+  'Dependencies',
+  'DIC - death, or accrued benefits'
 ];
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
+
+  let count = 0;
+
+  let issueType = '';
+
+  if (this.state.reviewForm.decisionType.value === 'Remand' ||
+  this.state.reviewForm.decisionType.value === 'Partial Grant') {
+    issueType = SPECIAL_ISSUE_PARTIAL;
+  } else {
+    issueType = SPECIAL_ISSUE_FULL;
+  }
 
   return (
     <div>
@@ -31,7 +79,7 @@ export const render = function() {
         href={pdfLink}
         download
         target="_blank">
-        "The PDF viewer in your browser may not be accessible. Click to download
+        The PDF viewer in your browser may not be accessible. Click to download
         the Decision PDF so you can preview it in a reader with accessibility features
         such as Adobe Acrobat.
       </a>
@@ -49,14 +97,31 @@ export const render = function() {
         title="Form8 PDF"
         src={pdfjsLink}>
       </iframe>
-
+      <div className="cf-app-segment cf-app-segment--alt">
       <DropDown
-       label="Select a Decision Type"
+       label="Decision Type"
        name="decisionType"
        options={DECISION_TYPE}
        onChange={this.handleFieldChange('reviewForm', 'decisionType')}
        {...this.state.reviewForm.decisionType}
       />
+
+    <label>Special Issue Categories</label>
+      {
+
+        /* eslint-disable no-return-assign */
+        issueType.map((issue) =>
+        <Checkbox
+            label={issue}
+            name={issue}
+            {...this.state.specialIssues[issue]}
+            onChange={this.handleFieldChange('specialIssues', issue)}
+            key={count += 1}
+          />)
+
+          /* eslint-enable no-return-assign */
+      }
     </div>
+  </div>
   );
 };

@@ -12,17 +12,20 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
+import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
-export const FORM_PAGE = 1;
+export const ASSOCIATE_PAGE = 1;
+export const FORM_PAGE = 2;
 
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-
+    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
     // Set initial state on page render
+
     this.state = {
       cancelModal: {
         cancelFeedback: new FormField(
@@ -56,8 +59,12 @@ export default class EstablishClaim extends BaseForm {
       reviewForm: {
         decisionType: new FormField(decisionType)
       },
+      specialIssues: {},
       specialIssueModalDisplay: false
     };
+    specialIssues.forEach((issue) => {
+      this.state.specialIssues[issue] = new FormField(false);
+    });
   }
 
   handleSubmit = (event) => {
@@ -186,12 +193,27 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === REVIEW_PAGE;
   }
 
+  shouldShowAssociatePage() {
+    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
+  }
+
+  isAssociatePage() {
+    return this.state.page === ASSOCIATE_PAGE;
+  }
+
   isFormPage() {
     return this.state.page === FORM_PAGE;
   }
 
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
+      if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);
+      }
+    } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
       this.handleSubmit(event);
@@ -211,6 +233,11 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
+        { this.isAssociatePage() &&
+          <AssociatePage
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+          />
+        }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
@@ -219,7 +246,7 @@ export default class EstablishClaim extends BaseForm {
               Send to RO
             </a>
             <Button
-              name="Create End Product"
+              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
             />
@@ -267,32 +294,10 @@ export default class EstablishClaim extends BaseForm {
           <TextareaField
             label="Cancel Explanation"
             name="Explanation"
-            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('modal', 'cancelFeedback')}
             required={true}
-            {...this.state.cancelModal.cancelFeedback}
+            {...this.state.modal.cancelFeedback}
           />
-        </Modal>}
-        {specialIssueModalDisplay && <Modal
-            buttons={[
-              { classNames: ["cf-btn-link"],
-                name: '\u00AB Close',
-                onClick: this.handleSpecialIssueModalClose
-              },
-              { classNames: ["usa-button", "usa-button-secondary"],
-                loading: modalSubmitLoading,
-                name: 'Cancel Claim Establishment',
-                onClick: this.handleCancelTaskForSpecialIssue
-              }
-            ]}
-            visible={true}
-            closeHandler={this.handleSpecialIssueModalClose}
-            title="Special Issue Grant">
-          <p>
-            You selected a special issue category not handled by AMO. Special
-            issue cases cannot be processed in caseflow at this time. Please
-            select <b>Cancel Claim Establishment</b> and proceed to process
-            this case manually in VACOLS.
-          </p>
         </Modal>}
       </div>
     );

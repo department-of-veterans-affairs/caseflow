@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   has_many :tasks
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :roles
+  attr_accessor :roles, :ip_address
   attr_writer :regional_office
 
   TASK_TYPE_TO_ROLES = {
@@ -64,7 +64,7 @@ class User < ActiveRecord::Base
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
-    def from_session(session)
+    def from_session(session, request)
       user = session["user"] ||= authentication_service.default_user_session
 
       return nil if user.nil?
@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
+        u.ip_address = request.remote_ip
         u.regional_office = session[:regional_office]
         u.save
       end
