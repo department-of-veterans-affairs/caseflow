@@ -1,30 +1,30 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch" do
   before do
     @vbms_id = "VBMS_ID1"
 
     BGSService.end_product_data = [
       {
-        benefit_claim_id: '1',
+        benefit_claim_id: "1",
         claim_receive_date: Time.zone.now - 20.days,
         claim_type_code: "172GRANT",
         status_type_code: "PEND"
       },
       {
-        benefit_claim_id: '2',
+        benefit_claim_id: "2",
         claim_receive_date: Time.zone.now + 10.days,
         claim_type_code: "170RMD",
         status_type_code: "CLR"
       },
       {
-        benefit_claim_id: '3',
+        benefit_claim_id: "3",
         claim_receive_date: Time.zone.now,
         claim_type_code: "172BVAG",
         status_type_code: "CAN"
       },
       {
-        benefit_claim_id: '4',
+        benefit_claim_id: "4",
         claim_receive_date: Time.zone.now - 200.days,
         claim_type_code: "172BVAG",
         status_type_code: "CLR"
@@ -185,6 +185,13 @@ RSpec.feature "Dispatch", focus: true do
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Existing EP")
+
+      page.find("#button-Assign-to-Claim1").click
+
+      expect(page).to have_content("Congratulations!")
+
+      expect(@task.reload.completion_status).to eq(4)
+      expect(@task.reload.outgoing_reference_id).to eq("1")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do

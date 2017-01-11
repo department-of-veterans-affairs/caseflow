@@ -14,41 +14,41 @@ export default class AssociatePage extends React.Component {
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button
+        id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
         name="Assign to Claim"
         classNames={["usa-button-outline"]}
         onClick={this.handleAssignEndProduct(endProduct)}
       />
   ];
 
-  handleAssignEndProduct = (endProduct) => {
-    return () => {
-      let { id } = this.props.task;
-      let { handleAlert, handleAlertClear } = this.props;
+  handleAssignEndProduct = (endProduct) => () => {
+    let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
 
-      event.preventDefault();
-      handleAlertClear();
+    event.preventDefault();
+    handleAlertClear();
 
-      this.setState({
-        loading: true
-      });
+    this.setState({
+      loading: true
+    });
 
-      let data = {
-        endProduct_id: endProduct.benefit_claim_id
-      };
+    let data = ApiUtil.convertToSnakeCase({
+      endProductId: endProduct.benefit_claim_id
+    });
 
-      return ApiUtil.post(`/dispatch/establish-claim/${id}/select-ep`, { data }).then(() => {
+    return ApiUtil.post(`/dispatch/establish-claim/${id}/select-ep`, { data }).
+      then(() => {
         window.location.reload();
       }, () => {
         this.setState({
           loading: false
         });
         handleAlert(
-          'error',
-          'Error',
-          'There was an error while submitting the current claim. Please try again later'
-        );
+            'error',
+            'Error',
+            'There was an error while assigning the EP. Please try again later'
+          );
       });
-    }
   }
 
   sortEndProduct = (date1, date2) => {

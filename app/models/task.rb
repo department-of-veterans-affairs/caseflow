@@ -142,7 +142,7 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status, outgoing_status=nil)
+  def complete!(status, outgoing_status = nil)
     fail(AlreadyCompleteError) if complete?
 
     update!(
@@ -153,7 +153,7 @@ class Task < ActiveRecord::Base
   end
 
   def completion_status_text
-    if (self.class.completion_status_code(:assigned_existing_ep) == completion_status)
+    if self.class.completion_status_code(:assigned_existing_ep) == completion_status
       "Assigned Existing EP"
     else
       COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
