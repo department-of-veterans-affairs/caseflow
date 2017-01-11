@@ -16,8 +16,9 @@
           </div><br/>
         </p>
         <p>
-            <div class="cf-modal-segment">Why can't be this case certified in Caseflow?<span class='cf-required'> (Required)</span>
-                <span class="usa-input-error-message"></span>
+            <div class="cf-modal-segment" id="reasons">Why can't be this case certified in Caseflow?<span class='cf-required'> (Required)</span>
+              <span class="usa-input-error-message" id="error-message-radio"></span>
+
                 <fieldset class="usa-fieldset-inputs usa-sans">
 
                   <legend class="usa-sr-only">Cancelation Reasons</legend>
@@ -43,20 +44,20 @@
                 </fieldset>
             </div>
           <div class="cf-modal-segment" id="other">Tell us more about your situation.<span class='cf-required'> (Required)</span>
-            <span class="usa-input-error-message"></span>
+            <span class="usa-input-error-message" id="error-message-other"></span>
             <textarea id="other-text"></textarea>
           </div>
         </p>
         <p>
-          <div class="cf-modal-segment">What's your VA email address?<span class='cf-required'> (Required)</span>
-            <span class="usa-input-error-message"></span>
+          <div class="cf-modal-segment" id ="email">What's your VA email address?<span class='cf-required'> (Required)</span>
+            <span class="usa-input-error-message" id="error-message-email"></span>
             <input id="input-type-text" name="input-type-text" type="text">
           </div><br/><br/>
         </p>
         <p>
           <div class="cf-modal-segment">
             <a href="#" class="cf-modal-link cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">&laquo; Go back</a>
-            <a href="<%= cancel_certification_path(id: appeal.vacols_id) %>" class="cf-push-right usa-button usa-button-secondary">Cancel Certification</a>
+            <a id="cancel-certification-link" href="<%= cancel_certification_path(id: appeal.vacols_id) %>" class="cf-push-right usa-button usa-button-secondary">Cancel Certification</a>
           </div>
         </p>
     </div>
