@@ -2,13 +2,13 @@ import React from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 
-const DECISION_TYPE = [
+export const DECISION_TYPE = [
   'Remand',
   'Partial Grant',
   'Full Grant'
 ];
 
-const SPECIAL_ISSUE_FULL = [
+export const SPECIAL_ISSUE_FULL = [
   'Rice Compliance',
   'Private Attorney',
   'Waiver of Overpayment',
@@ -20,7 +20,7 @@ const SPECIAL_ISSUE_FULL = [
   'Foreign Claims'
 ];
 
-const SPECIAL_ISSUE_PARTIAL = [
+export const SPECIAL_ISSUE_PARTIAL = [
   'Manlincon Compliance',
   'Rice Compliance',
   'Private Attorney',
@@ -43,12 +43,6 @@ const SPECIAL_ISSUE_PARTIAL = [
   'Dependencies',
   'DIC - death, or accrued benefits'
 ];
-
-const special_issue_array = function (arr1, arr2){
-  return arr1.concat(arr2);
-}
-
-export {DECISION_TYPE, SPECIAL_ISSUE_FULL, SPECIAL_ISSUE_PARTIAL, special_issue_array}
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
@@ -116,9 +110,9 @@ export const render = function() {
           return <Checkbox
             label={issue}
             name={issue}
-            onChange={this.handleFieldChange('reviewForm', 'checkboxes')}
+            {...this.state.specialIssues[issue]}
+            onChange={this.handleFieldChange('specialIssues', issue)}
             key={count++}
-            {...this.state.reviewForm.checkboxes}
           />;
         })
       }

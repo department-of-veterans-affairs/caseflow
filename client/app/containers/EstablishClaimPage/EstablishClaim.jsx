@@ -21,13 +21,8 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-    let specialIssues = Review.special_issue_array(Review.SPECIAL_ISSUE_FULL, Review.SPECIAL_ISSUE_PARTIAL)
-    let something = function (){
-      for (var i = 0; i < specialIssues.length; i++){
-        new FormField(false)
-    }}
-    //console.log(specialIssues);
-
+    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+    
     // Set initial state on page render
     this.state = {
       cancelModal: false,
@@ -60,12 +55,13 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
       reviewForm: {
-        decisionType: new FormField(decisionType),
-        //checkboxes: new FormField(false)
-        checkboxes: something(specialIssues)
-        //checkboxes: special_issue_array(Review.SPECIAL_ISSUE_FULL, Review.SPECIAL_ISSUE_PARTIAL)
-      }
+        decisionType: new FormField(decisionType)
+      },
+      specialIssues : {}
     };
+    specialIssues.forEach((issue) => {
+      this.state.specialIssues[issue] = new FormField(false)
+    })
   }
 
   handleSubmit = (event) => {
