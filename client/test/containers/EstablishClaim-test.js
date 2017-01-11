@@ -94,7 +94,7 @@ describe('EstablishClaim', () => {
     it('returns 170RMDAMC - AMC-Remand for remand', () => {
       wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
       expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        eql(['170RMDAMC',  'AMC-Remand']);
+        eql(['170RMDAMC', 'AMC-Remand']);
     });
 
     it('returns 170PGAMC - AMC-Partial Grant for partial', () => {

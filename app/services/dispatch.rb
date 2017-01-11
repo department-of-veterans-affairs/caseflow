@@ -51,37 +51,35 @@ class Dispatch
     task.complete!(status: 0, outgoing_reference_id: end_product.claim_id)
   end
 
-
   # Class used for validating the claim object
   class Claim
     include ActiveModel::Validations
 
     # This is a list of the "variable attrs" that are returned from the
     # browser's End Product form
-    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label)
-    BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter)
-    OTHER_VARIABLE_ATTRS = %i(poa poa_code)
+    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label).freeze
+    BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
+    OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
     VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
 
-    attr_accessor *VARIABLE_ATTRS
+    attr_accessor(*VARIABLE_ATTRS)
 
-    validates_presence_of *PRESENT_VARIABLE_ATTRS
-    validates_inclusion_of *BOOLEAN_VARIABLE_ATTRS, in: [true, false]
+    validates_presence_of(*PRESENT_VARIABLE_ATTRS)
+    validates_inclusion_of(*BOOLEAN_VARIABLE_ATTRS, in: [true, false])
     validate :end_product_code_and_label_match
 
-    def initialize(attributes={})
-      attributes.each do |k,v|
+    def initialize(attributes = {})
+      attributes.each do |k, v|
         instance_variable_set("@#{k}", v)
       end
     end
 
     def to_hash
-      hash = default_values.merge(dynamic_values)
+      initial_hash = default_values.merge(dynamic_values)
 
-      VARIABLE_ATTRS.reduce(hash) do |hash, attr|
+      VARIABLE_ATTRS.each_with_object(initial_hash) do |attr, hash|
         val = instance_variable_get("@#{attr}")
         hash[attr] = val unless val.nil?
-        hash
       end
     end
 
@@ -111,6 +109,5 @@ class Dispatch
         errors.add(:end_product_label, "must match end_product_code")
       end
     end
-
   end
 end
