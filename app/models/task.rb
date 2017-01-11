@@ -163,7 +163,11 @@ class Task < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      include: [:user, appeal: { methods: [:decision_date, :veteran_name, :decision_type] }],
+      include: [:user, appeal: { methods:
+        [:decision_date,
+         :veteran_name,
+         :decision_type,
+         :non_canceled_end_products_within_30_days] }],
       methods: [:progress_status]
     )
   end

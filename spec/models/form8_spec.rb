@@ -230,6 +230,30 @@ describe Form8 do
     end
   end
 
+  context "#pdf_location" do
+    let(:form8) do
+      Form8.new(
+        appellant_name: "Brad Pitt",
+        appellant_relationship: "Fancy man",
+        file_number: "1234QWERTY",
+        veteran_name: "Joe Patriot"
+      )
+    end
+
+    let(:path) { form8.pdf_location }
+
+    before do
+      Form8PdfService.save_pdf_for!(form8)
+    end
+
+    it "should fetch the PDF from s3 and save it locally if the PDF does not exists locally" do
+      File.delete(path)
+      expect(File.exist?(path)).to eq false
+      form8.pdf_location
+      expect(File.exist?(path)).to eq true
+    end
+  end
+
   context ".from_appeal" do
     before do
       Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))

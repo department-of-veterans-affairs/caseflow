@@ -1,13 +1,12 @@
-const ZERO_INDEX_MONTH_OFFSET = 1;
+import { leftPad } from './StringUtil';
 
-// This will leftpad a day or month so 1/3 becomes 01/03
-export const leftPadDate = (value) => `00${value}`.slice(-2);
+const ZERO_INDEX_MONTH_OFFSET = 1;
 
 export const formatDate = function(dateString) {
   let date = new Date(dateString);
 
-  let month = leftPadDate(date.getMonth() + ZERO_INDEX_MONTH_OFFSET);
-  let day = leftPadDate(date.getDate());
+  let month = leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
+  let day = leftPad(date.getDate(), 2, '0');
   let year = date.getFullYear();
 
   return `${month}/${day}/${year}`;
