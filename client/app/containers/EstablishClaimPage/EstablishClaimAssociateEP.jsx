@@ -6,7 +6,6 @@ import { formatDate } from '../../util/DateUtil';
 
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
-
 export default class AssociatePage extends React.Component {
 
   buildEndProductRow = (endProduct) => [
