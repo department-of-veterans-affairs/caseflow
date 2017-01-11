@@ -56,7 +56,7 @@ class SeedDB
 
     tasks[2].assign!(@users[2])
     tasks[2].start!
-    tasks[2].complete!(0)
+    tasks[2].complete!(status: 0)
 
     @tasks.push(*tasks)
   end
