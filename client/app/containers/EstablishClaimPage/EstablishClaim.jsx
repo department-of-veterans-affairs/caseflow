@@ -59,11 +59,11 @@ export default class EstablishClaim extends BaseForm {
       reviewForm: {
         decisionType: new FormField(decisionType)
       },
-      specialIssues : {}
+      specialIssues: {}
     };
     specialIssues.forEach((issue) => {
-      this.state.specialIssues[issue] = new FormField(false)
-    })
+      this.state.specialIssues[issue] = new FormField(false);
+    });
   }
 
   handleSubmit = (event) => {

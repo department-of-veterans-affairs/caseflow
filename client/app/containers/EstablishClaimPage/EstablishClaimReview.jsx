@@ -50,7 +50,9 @@ export const render = function() {
   let count = 0;
 
   let issueType = '';
-  if (this.state.reviewForm.decisionType.value === 'Remand' || this.state.reviewForm.decisionType.value === 'Partial Grant') {
+
+  if (this.state.reviewForm.decisionType.value === 'Remand' ||
+  this.state.reviewForm.decisionType.value === 'Partial Grant') {
     issueType = SPECIAL_ISSUE_PARTIAL;
   } else {
     issueType = SPECIAL_ISSUE_FULL;
@@ -106,16 +108,18 @@ export const render = function() {
 
     <label>Special Issue Categories</label>
       {
+
+        /* eslint-disable no-return-assign */
         issueType.map((issue) =>
-        {
-          return <Checkbox
+        <Checkbox
             label={issue}
             name={issue}
             {...this.state.specialIssues[issue]}
             onChange={this.handleFieldChange('specialIssues', issue)}
-            key={count++}
-          />;
-        })
+            key={count += 1}
+          />)
+
+          /* eslint-enable no-return-assign */
       }
     </div>
   </div>
