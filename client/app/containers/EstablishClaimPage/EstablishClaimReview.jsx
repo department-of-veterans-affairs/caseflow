@@ -44,6 +44,16 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'DIC - death, or accrued benefits'
 ];
 
+export const UNHANDLED_SPECIAL_ISSUES = [
+  'Pensions',
+  'VAMC',
+  'DIC = death, or accrued benefits',
+  'Foreign Claims',
+  'Education or Vocational Rehab',
+  'Waiver of Overpayment',
+  'National Cemetery Administration'
+]
+
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
 
@@ -108,17 +118,15 @@ export const render = function() {
 
     <label>Special Issue Categories</label>
       {
-
         /* eslint-disable no-return-assign */
         issueType.map((issue) =>
         <Checkbox
             label={issue}
-            name={issue}
+            name={issue.split(' ').join('')}
             {...this.state.specialIssues[issue]}
-            onChange={this.handleFieldChange('specialIssues', issue)}
+            onChange={this.handleFieldChange('specialIssues', issue.split(' ').join(''))}
             key={count += 1}
           />)
-
           /* eslint-enable no-return-assign */
       }
     </div>

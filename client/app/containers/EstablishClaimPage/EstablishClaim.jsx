@@ -60,10 +60,10 @@ export default class EstablishClaim extends BaseForm {
         decisionType: new FormField(decisionType)
       },
       specialIssues: {},
-      specialIssueModalDisplay: true
+      specialIssueModalDisplay: false
     };
     specialIssues.forEach((issue) => {
-      this.state.specialIssues[issue] = new FormField(false);
+      this.state.specialIssues[issue.split(' ').join('')] = new FormField(false);
     });
   }
 
@@ -209,11 +209,7 @@ export default class EstablishClaim extends BaseForm {
 
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
-      if (this.shouldShowAssociatePage()) {
-        this.handlePageChange(ASSOCIATE_PAGE);
-      } else {
-        this.handlePageChange(FORM_PAGE);
-      }
+      this.handleReviewPageSubmit();
     } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
@@ -221,6 +217,22 @@ export default class EstablishClaim extends BaseForm {
     } else {
       throw new RangeError("Invalid page value");
     }
+  }
+
+  handleReviewPageSubmit() {
+    if (!this.validateReviewPageSubmit()) {
+      this.setState({
+        specialIssueModalDisplay: true
+      })
+    } else if (this.shouldShowAssociatePage()) {
+      this.handlePageChange(ASSOCIATE_PAGE);
+    } else {
+      this.handlePageChange(FORM_PAGE);
+    }
+  }
+
+  validateReviewPageSubmit() {
+    return false
   }
 
   render() {
