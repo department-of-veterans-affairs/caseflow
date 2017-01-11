@@ -84,7 +84,7 @@ class Dispatch
     }
   end
 
-  def filter_dispatch_end_products(end_products)
+  def self.filter_dispatch_end_products(end_products)
     end_products.select do |end_product|
       END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
     end

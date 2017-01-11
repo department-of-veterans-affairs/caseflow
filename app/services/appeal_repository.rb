@@ -132,7 +132,6 @@ class AppealRepository
   end
   # :nocov:
 
-
   def self.establish_claim!(appeal:, claim:)
     @vbms_client ||= init_vbms_client
 
