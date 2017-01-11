@@ -60,7 +60,7 @@ export default class EstablishClaim extends BaseForm {
         decisionType: new FormField(decisionType)
       },
       specialIssues: {},
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: true
     };
     specialIssues.forEach((issue) => {
       this.state.specialIssues[issue] = new FormField(false);
@@ -169,11 +169,12 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleCancelTaskForSpecialIssue = () => {
+    debugger;
     this.setState({
       cancelModalDisplay: true,
       specialIssueModalDisplay: false
-
     });
+    debugger;
   }
 
   hasPoa() {
@@ -269,20 +270,20 @@ export default class EstablishClaim extends BaseForm {
           />
         </div>
         {cancelModalDisplay && <Modal
-        buttons={[
-          { classNames: ["cf-btn-link"],
-            name: '\u00AB Go Back',
-            onClick: this.handleCancelModalClose
-          },
-          { classNames: ["usa-button", "usa-button-secondary"],
-            loading: modalSubmitLoading,
-            name: 'Cancel EP Establishment',
-            onClick: this.handleFinishCancelTask
-          }
-        ]}
-        visible={true}
-        closeHandler={this.handleCancelModalClose}
-        title="Cancel EP Establishment">
+          buttons={[
+            { classNames: ["cf-btn-link"],
+              name: '\u00AB Go Back',
+              onClick: this.handleCancelModalClose
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+              loading: modalSubmitLoading,
+              name: 'Cancel EP Establishment',
+              onClick: this.handleFinishCancelTask
+            }
+          ]}
+          visible={true}
+          closeHandler={this.handleCancelModalClose}
+          title="Cancel EP Establishment">
           <p>
             If you click the <b>Cancel EP Establishment</b>
             button below your work will not be
@@ -294,10 +295,31 @@ export default class EstablishClaim extends BaseForm {
           <TextareaField
             label="Cancel Explanation"
             name="Explanation"
-            onChange={this.handleFieldChange('modal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
-            {...this.state.modal.cancelFeedback}
+            {...this.state.cancelModal.cancelFeedback}
           />
+        </Modal>}
+        {specialIssueModalDisplay && <Modal
+          buttons={[
+            { classNames: ["cf-btn-link"],
+                name: '\u00AB Close',
+                onClick: this.handleSpecialIssueModalClose
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+                name: 'Cancel Claim Establishment',
+                onClick: this.handleCancelTaskForSpecialIssue
+            }
+          ]}
+          visible={true}
+          closeHandler={this.handleSpecialIssueModalClose}
+          title="Special Issue Grant">
+          <p>
+            You selected a special issue category not handled by AMO. Special
+            issue cases cannot be processed in caseflow at this time. Please
+            select <b>Cancel Claim Establishment</b> and proceed to process
+            this case manually in VACOLS.
+          </p>
         </Modal>}
       </div>
     );
