@@ -3,9 +3,9 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 
 export const DECISION_TYPE = [
-  'Remand',
+  'Full Grant',
   'Partial Grant',
-  'Full Grant'
+  'Remand'
 ];
 
 export const SPECIAL_ISSUE_FULL = [

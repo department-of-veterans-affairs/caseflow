@@ -12,9 +12,11 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
+import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
-export const FORM_PAGE = 1;
+export const ASSOCIATE_PAGE = 1;
+export const FORM_PAGE = 2;
 
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
@@ -22,8 +24,8 @@ export default class EstablishClaim extends BaseForm {
 
     let decisionType = this.props.task.appeal.decision_type;
     let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
-    
     // Set initial state on page render
+
     this.state = {
       cancelModal: false,
       form: {
@@ -176,12 +178,27 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === REVIEW_PAGE;
   }
 
+  shouldShowAssociatePage() {
+    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
+  }
+
+  isAssociatePage() {
+    return this.state.page === ASSOCIATE_PAGE;
+  }
+
   isFormPage() {
     return this.state.page === FORM_PAGE;
   }
 
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
+      if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);
+      }
+    } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
       this.handleSubmit(event);
@@ -200,6 +217,11 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
+        { this.isAssociatePage() &&
+          <AssociatePage
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+          />
+        }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
@@ -208,7 +230,7 @@ export default class EstablishClaim extends BaseForm {
               Send to RO
             </a>
             <Button
-              name="Create End Product"
+              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
             />

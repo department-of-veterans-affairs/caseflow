@@ -57,6 +57,7 @@ production_vacols:
   host: <%= ENV["VACOLS_HOST"] %>
   port: <%= ENV["VACOLS_PORT"] %>
   database: <%= ENV["VACOLS_DATABASE"] %>
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

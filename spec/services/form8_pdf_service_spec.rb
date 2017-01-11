@@ -101,12 +101,21 @@ describe Form8PdfService do
 
   context ".save_pdf_for!" do
     let(:final_location) { Form8PdfService.output_location_for(form8) }
+
     before do
       Form8PdfService.save_pdf_for!(form8)
     end
+
     it "should create a file at output location" do
       expect(File.exist?(File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.pdf"))).to be_truthy
     end
+
+    it "should save a file in s3" do
+      path = form8.s3.files[form8.pdf_filename]
+      expect(path).to_not be nil
+      expect(File.exist?(path)).to eq true
+    end
+
     it "should delete temporary file" do
       expect(File.exist?(File.join(Rails.root, "tmp", "pdfs", "form8-#{form8.vacols_id}.tmp"))).to be_falsy
     end
