@@ -15,7 +15,7 @@ class Task < ActiveRecord::Base
     canceled: 1,
     expired: 2,
     routed_to_ro: 3,
-    assigned_to_ep: 4
+    assigned_existing_ep: 4
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
@@ -94,7 +94,7 @@ class Task < ActiveRecord::Base
   end
 
   def assign_existing_ep!(end_product_id)
-    complete!(:assigned_to_ep, end_product_id)
+    complete!(self.class.completion_status_code(:assigned_existing_ep), end_product_id)
   end
 
   def complete_and_recreate!(status_code)
@@ -123,7 +123,7 @@ class Task < ActiveRecord::Base
 
   def progress_status
     if completed_at
-      completion_status_text
+      "Completed"
     elsif started_at
       "In Progress"
     elsif assigned_at
@@ -153,7 +153,11 @@ class Task < ActiveRecord::Base
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+    if (self.class.completion_status_code(:assigned_existing_ep) == completion_status)
+      "Assigned Existing EP"
+    else
+      COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+    end
   end
 
   def no_open_tasks_for_appeal
