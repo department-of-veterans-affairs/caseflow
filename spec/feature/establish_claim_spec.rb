@@ -190,7 +190,8 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_content("Congratulations!")
 
-      expect(@task.reload.completion_status).to eq(4)
+      expect(@task.reload.completion_status)
+        .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
     end
 
