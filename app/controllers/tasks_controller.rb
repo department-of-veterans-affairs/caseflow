@@ -38,12 +38,25 @@ class TasksController < ApplicationController
   end
 
   def assign
-    # Doesn't assign if user has a task of the same type already assigned.
-    next_task = current_user_next_task
-    return not_found unless next_task
+    respond_to do |format|
+      format.html do
+        # Doesn't assign if user has a task of the same type already assigned.
+        next_task = current_user_next_task
+        return not_found unless next_task
 
-    next_task.assign!(current_user) unless next_task.assigned?
-    redirect_to url_for(action: next_task.initial_action, id: next_task.id)
+        next_task.assign!(current_user) unless next_task.assigned?
+        return redirect_to url_for(action: next_task.initial_action, id: next_task.id)
+      end
+
+      format.json do
+        # Doesn't assign if user has a task of the same type already assigned.
+        next_task = current_user_next_task
+        next_task.assign!(current_user) unless next_task.assigned?
+        return render json: {
+          next_task_id: next_task.id
+        }
+      end
+    end
   end
 
   def cancel

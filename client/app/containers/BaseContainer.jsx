@@ -7,9 +7,11 @@ import Alert from '../components/Alert';
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
+import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 
 const Pages = {
   EstablishClaim,
+  EstablishClaimComplete,
   TasksManagerIndex,
   TestPage
 };

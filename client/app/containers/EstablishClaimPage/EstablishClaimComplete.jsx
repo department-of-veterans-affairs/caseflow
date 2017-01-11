@@ -1,0 +1,58 @@
+import React, { PropTypes } from 'react';
+import ApiUtil from '../../util/ApiUtil';
+
+import Button from '../../components/Button';
+
+export default class EstablishClaimComplete extends React.Component {
+
+  render() {
+    let {
+      availableTasks,
+      buttonText,
+      checklist,
+      firstHeader,
+      secondHeader
+    } = this.props;
+
+    return <div
+        id="certifications-generate"
+        className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
+      <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
+      <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
+
+      <ul className="cf-list-checklist">
+        {checklist.map((listValue) => <li key={listValue}>
+          <span className="cf-icon-success--bg"></span>{listValue}</li>)}
+      </ul>
+      <div className="cf-centered-buttons">
+        <a href="/dispatch/establish-claim">View History</a>
+        { availableTasks &&
+        <Button
+          name={buttonText}
+          onClick={() => {
+            ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
+              window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
+            });
+          }}
+          classNames={["usa-button-primary", "cf-push-right"]}
+        />
+        }
+        { !availableTasks &&
+        <Button
+            name={buttonText}
+            classNames={["usa-button-disabled", "cf-push-right"]}
+            disabled={true}
+        />
+        }
+      </div>
+    </div>;
+  }
+}
+
+EstablishClaimComplete.propTypes = {
+  availableTasks: PropTypes.object,
+  buttonText: PropTypes.string,
+  checklist: PropTypes.array,
+  firstHeader: PropTypes.string,
+  secondHeader: PropTypes.string
+};

@@ -2,8 +2,8 @@
 <%= react_component("BaseContainer", props: {
     availableTasks: current_user_next_task,
     buttonText: start_text,
-    checklist: ["Reviewed decision", "EP established"],
+    checklist: ["Reviewed decision", "Assigned existing EP to claim"],
     firstHeader: "Congratulations!",
     page: "EstablishClaimComplete",
-    secondHeader: task.appeal.veteran_name + "'s End Product has been created."
+    secondHeader: task.appeal.veteran_name + "'s claim has been assigned an EP."
 }) %>
