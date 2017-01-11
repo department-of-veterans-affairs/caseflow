@@ -14,7 +14,7 @@ export default class AssociatePage extends React.Component {
 
     this.state = {
       loading: null
-    }
+    };
   }
 
   buildEndProductRow = (endProduct) => [
@@ -45,8 +45,9 @@ export default class AssociatePage extends React.Component {
       endProductId: endProduct.benefit_claim_id
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/assign-existing-end-product`, { data }).
-      then(() => {
+    return ApiUtil.post(
+      `/dispatch/establish-claim/${id}/assign-existing-end-product`,
+      { data }).then(() => {
         window.location.reload();
       }, () => {
         this.setState({
