@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.from_session(session)
+    @current_user ||= User.from_session(session, request)
   end
   helper_method :current_user
 

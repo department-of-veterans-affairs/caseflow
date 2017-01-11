@@ -1,1 +1,1 @@
-BGSService = (ApplicationController.dependencies_faked? ? ExternalApi::BGSService : Fakes::BGSService)
+BGSService = (!ApplicationController.dependencies_faked? ? ExternalApi::BGSService : Fakes::BGSService)
