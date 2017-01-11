@@ -10,6 +10,7 @@ export default class EstablishClaimComplete extends React.Component {
       availableTasks,
       buttonText,
       checklist,
+      content,
       firstHeader,
       secondHeader
     } = this.props;
@@ -24,6 +25,11 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
+      { content &&
+        <ul className="cf-list-checklist">
+            {content}
+        </ul>
+      }
       <div className="cf-centered-buttons">
         <a href="/dispatch/establish-claim">View History</a>
         { availableTasks &&
@@ -53,6 +59,7 @@ EstablishClaimComplete.propTypes = {
   availableTasks: PropTypes.object,
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
+  content: PropTypes.string,
   firstHeader: PropTypes.string,
   secondHeader: PropTypes.string
 };

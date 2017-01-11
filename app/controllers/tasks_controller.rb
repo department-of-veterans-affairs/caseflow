@@ -28,6 +28,7 @@ class TasksController < ApplicationController
     # for a given task
     task.start! if current_user == task.user && !task.started?
     return render "canceled" if task.canceled?
+    return render "assigned_existing_ep" if task.assigned_existing_ep?
     return render "complete" if task.complete?
   end
 
