@@ -166,7 +166,11 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
     end
-   end
+
+    def map_end_product_value(code, mapping)
+      mapping[code] || code
+    end
+  end
 
   def documents_with_type(type)
     @documents_by_type ||= {}
@@ -176,6 +180,32 @@ class Appeal < ActiveRecord::Base
   def clear_documents!
     @documents = []
     @documents_by_type = {}
+  end
+
+  def select_non_canceled_end_products_within_30_days(end_products)
+    # Find all EPs with relevant type codes that are not canceled.
+    end_products.select do |end_product|
+      (end_product[:claim_receive_date] - decision_date).abs < 30.days &&
+        end_product[:status_type_code] != "CAN"
+    end
+  end
+
+  def non_canceled_end_products_within_30_days
+    bgs = BGSService.new
+    end_products = Dispatch.filter_dispatch_end_products(
+      bgs.get_end_products(sanitized_vbms_id))
+
+    select_non_canceled_end_products_within_30_days(end_products)
+      .map do |end_product|
+        new_end_product = end_product.clone
+        new_end_product[:claim_type_code] = Appeal.map_end_product_value(
+          new_end_product[:claim_type_code],
+          Dispatch::END_PRODUCT_CODES)
+        new_end_product[:status_type_code] = Appeal.map_end_product_value(
+          new_end_product[:status_type_code],
+          Dispatch::END_PRODUCT_STATUS)
+        new_end_product
+      end
   end
 
   def sanitized_vbms_id
