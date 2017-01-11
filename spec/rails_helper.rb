@@ -118,7 +118,7 @@ def create_tasks(count, opts = {})
     task.assign!(user)
 
     task.start! if %i(started completed).include?(opts[:initial_state])
-    task.complete!(status: 0, outgoing_reference_id: '123') if %i(completed).include?(opts[:initial_state])
+    task.complete!(status: 0, outgoing_reference_id: "123") if %i(completed).include?(opts[:initial_state])
     task
   end
 end

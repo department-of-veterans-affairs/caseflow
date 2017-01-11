@@ -10,18 +10,20 @@ describe Dispatch do
     Fakes::AppealRepository.end_product_claim_id = "12345"
   end
 
-  let(:task) {  create_tasks(1).first }
-  let(:claim) { {
-    poa: "None",
-    end_product_code: "172BVAG",
-    end_product_label: "BVA Grant",
-    end_product_modifier: "170",
-    poa_code: "",
-    gulf_war_registry: false,
-    allow_poa: false,
-    suppress_acknowledgement_letter: false
+  let(:task) { create_tasks(1).first }
+  let(:claim) do
+    {
+      poa: "None",
+      end_product_code: "172BVAG",
+      end_product_label: "BVA Grant",
+      end_product_modifier: "170",
+      poa_code: "",
+      gulf_war_registry: false,
+      allow_poa: false,
+      suppress_acknowledgement_letter: false
 
-  } }
+    }
+  end
   let(:dispatch) { Dispatch.new(claim: claim, task: task) }
 
   context "#claim_valid?" do

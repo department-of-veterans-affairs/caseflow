@@ -22,8 +22,7 @@ class AppealRepository
   ESTABLISH_CLAIM_VETERAN_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zipcode
-  )
-
+  ).freeze
 
   def self.load_vacols_data(appeal)
     case_record = MetricsService.timer "loaded VACOLS case #{appeal.vacols_id}" do
@@ -149,7 +148,7 @@ class AppealRepository
     # before updating the location to 98. For remands we need to set it to `50`
     # appeal.case_record.bfcurloc = '98'
     # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-      # appeal.case_record.save!
+    # appeal.case_record.save!
     # end
 
     # return end product so dispatch service can update the

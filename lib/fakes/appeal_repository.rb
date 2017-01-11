@@ -2,7 +2,6 @@ require "ostruct"
 
 # frozen_string_literal: true
 class Fakes::AppealRepository
-
   class << self
     attr_writer :documents
     attr_accessor :records

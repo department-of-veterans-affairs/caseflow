@@ -2,12 +2,12 @@ class Dispatch
   class InvalidClaimError < StandardError; end
 
   END_PRODUCT_INFO = {
-    '170RMDAMC' => 'AMC-Remand',
-    '170PGAMC' => 'AMC-Partial Grant',
-    '172BVAG' => 'BVA Grant'
-  }
+    "170RMDAMC" => "AMC-Remand",
+    "170PGAMC" => "AMC-Partial Grant",
+    "172BVAG" => "BVA Grant"
+  }.freeze
 
-  END_PRODUCT_MODIFIERS = %W(170 172)
+  END_PRODUCT_MODIFIERS = %w(170 172).freeze
 
   def initialize(claim:, task:)
     # Claim info passed in via browser EP form
@@ -22,7 +22,7 @@ class Dispatch
     valid = true
 
     # Verify the end product code exists
-    valid = false if !@claim[:end_product_code]
+    valid = false unless @claim[:end_product_code]
 
     # Verify the end product modifier is valid
     valid = false unless END_PRODUCT_MODIFIERS.include?(@claim[:end_product_modifier])
@@ -32,7 +32,7 @@ class Dispatch
       valid = false
     end
 
-    return valid
+    valid
   end
 
   def validate_claim!

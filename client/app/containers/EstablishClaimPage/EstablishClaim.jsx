@@ -17,10 +17,10 @@ export const REVIEW_PAGE = 0;
 export const FORM_PAGE = 1;
 
 export const END_PRODUCT_INFO = {
-  'Remand': ['170RMDAMC', 'AMC-Remand'],
+  'Full Grant': ['172BVAG', 'BVA Grant'],
   'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
-  'Full Grant': ['172BVAG', 'BVA Grant']
-}
+  'Remand': ['170RMDAMC', 'AMC-Remand']
+};
 
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
@@ -40,8 +40,8 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        gulfWarRegistry: new FormField(false),
         endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
@@ -66,8 +66,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleSubmit = (event) => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
+    let { handleAlert, handleAlertClear, task } = this.props;
 
     event.preventDefault();
     handleAlertClear();
@@ -93,22 +92,24 @@ export default class EstablishClaim extends BaseForm {
       })
     };
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
-      window.location.reload();
-    }, () => {
-      this.setState({
-        loading: false
-      });
-      handleAlert(
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
+      then(() => {
+        window.location.reload();
+      }, () => {
+        this.setState({
+          loading: false
+        });
+        handleAlert(
         'error',
         'Error',
         'There was an error while submitting the current claim. Please try again later'
       );
-    });
+      });
   }
 
   getClaimTypeFromDecision = () => {
     let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+
     if (!values) {
       throw new RangeError("Invalid deicion type value");
     }

@@ -1,5 +1,5 @@
 require "rails_helper"
-require 'ostruct'
+require "ostruct"
 
 class FakeTask < Task
 end
