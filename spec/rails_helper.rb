@@ -72,6 +72,16 @@ module StubbableUser
         }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
+    def tester!(roles: nil)
+      self.stub = User.from_session(
+        { "user" =>
+          { "id" => ENV["TEST_USER_ID"],
+            "station_id" => "283",
+            "email" => "test@example.com",
+            "roles" => roles || ["Certify Appeal"] }
+        }, OpenStruct.new(remote_ip: "127.0.0.1"))
+    end
+
     def current_user
       @stub
     end

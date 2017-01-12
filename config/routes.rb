@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
+
+    # ONLY FOR UAT TESTING
+    if ENV["TEST_USER_ID"]
+      post 'uncertify', on: :member
+    end
+
   end
 
   scope path: "/dispatch" do

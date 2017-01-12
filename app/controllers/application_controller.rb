@@ -41,7 +41,11 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.from_session(session, request)
+    @current_user ||= begin
+      user = User.from_session(session, request)
+      RequestStore.store[:current_user] = user
+      user
+    end
   end
   helper_method :current_user
 

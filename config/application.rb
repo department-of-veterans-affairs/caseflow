@@ -33,5 +33,7 @@ module CaseflowCertification
 
     # default to no analytics (production only)
     config.google_analytics_account = nil
+
+     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
   end
 end

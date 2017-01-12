@@ -68,6 +68,8 @@ gem 'where-or'
 
 gem 'prometheus-client'
 
+gem 'request_store'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
