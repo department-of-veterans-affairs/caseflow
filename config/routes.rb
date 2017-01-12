@@ -35,8 +35,6 @@ Rails.application.routes.draw do
   end
 
   scope path: "/decision" do
-    # TODO(jd): Make this its own controller action that looks at the user's roles
-    # and redirects accordingly
     get "/", to: redirect("/decision/review")
 
     resources :review,

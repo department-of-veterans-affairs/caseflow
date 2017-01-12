@@ -7,28 +7,31 @@ class ReviewController < ApplicationController
   end
 
   def pdf
-    puts params
-    if params[:document] == "0"
+    case params[:document]
+    when "0"
       file_name = "VA8.pdf"
-    elsif params[:document] == "1"
+    when "1"
       file_name = "FakeDecisionDocument.pdf"
-    elsif params[:document] == "2"
+    when "2"
       file_name = "VA9.pdf"
-    elsif params[:document] == "3"
+    when "3"
       file_name = "KnockKnockJokes.pdf"
     else
       return redirect_to "/404"
     end
-    send_file(File.join(Rails.root, "lib", "pdfs", file_name), type: "application/pdf", disposition: "inline")
+
+    send_file(
+      File.join(Rails.root, "lib", "pdfs", file_name),
+      type: "application/pdf",
+      disposition: "inline")
   end
 
-  def get_pdfs
+  def pdf_urls
     pdfs = []
-    for i in 0..3
+    (0..3).each do |i|
       pdfs.push(pdf_review_index_path(document: i))
     end
-    puts pdfs
     pdfs
   end
-  helper_method :get_pdfs
+  helper_method :pdf_urls
 end

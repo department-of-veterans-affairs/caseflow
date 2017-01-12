@@ -1,6 +1,15 @@
 @import 'core/variables';
 
+.cf-pdf-page-container {
+  position: absolute;
+  top: 90px;
+  bottom: 0;
+}
+
 .cf-pdf-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   width: 70%;
 }
 
@@ -23,11 +32,12 @@
 }
 
 .pdfViewer .canvasWrapper {
-  box-shadow: 0 0 3px #bbb;
+  box-shadow: 0 0 3px #color-gray-warm-dark;
 }
 
 .pdfViewer .page {
   margin-bottom: 10px;
+  border-image: none;
 }
 
 .annotationLayer {
@@ -38,88 +48,30 @@
   bottom: 0;
 }
 
-#content-wrapper {
-  position: absolute;
-  top: 35px;
-  left: 0;
-  right: 250px;
-  bottom: 0;
-  overflow: auto;
-}
-#comment-wrapper {
-  position: absolute;
-  top: 35px;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
-  width: 250px;
-  background: #eaeaea;
-  border-left: 1px solid #d0d0d0;
-}
-
-#comment-wrapper h4 {
-  margin: 10px;
-}
-
-#comment-wrapper .comment-list {
-  font-size: 12px;
-  position: absolute;
-  top: 38px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-.comment-list-item {
-  border-bottom: 1px solid #d0d0d0;
-  padding: 10px;
-}
-#comment-wrapper .comment-list-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 47px;
-  overflow: auto;
-}
-#comment-wrapper .comment-list-form {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 10px;
-}
-#comment-wrapper .comment-list-form input {
-  padding: 5px;
-  width: 100%;
-}
-.pdfViewer .page {
-  border-image: none;
-}
-
 [aria-hidden=true] {
   display: inline !important;
 }
 
-#cf-comment-wrapper {
+.cf-comment-wrapper {
   float: right;
   width: 30%;
+  height: 100%;
   text-align: left;
   background: $color-white;
 }
 
 .cf-comment-selected {
-  background: cyan;
+  background: $color-primary-alt-light;
 }
 
-#cf-pdf-title {
+.cf-pdf-title {
   background: $color-gray-light;
   width: 100%;
-  margin-top: 20px;
-}
 
-#cf-pdf-title h2 {
-  margin-bottom: 0px;
-  margin-top: 0px;
+  h2 {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
 }
 
 .cf-full-page-app {
