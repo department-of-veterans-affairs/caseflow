@@ -48,7 +48,7 @@ describe AssociatedVacolsModel do
 
   context "#check_and_load_vacols_data!" do
     it do
-      TestVacolsModelRepository.should_receive(:load_vacols_data).exactly(1).times
+      expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(1).times
       model.check_and_load_vacols_data!
       model.check_and_load_vacols_data!
     end

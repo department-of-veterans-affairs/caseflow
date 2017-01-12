@@ -46,6 +46,17 @@ class CertificationsController < ApplicationController
     render layout: "application"
   end
 
+  # ONLY FOR TEST USER
+  def uncertify
+    if current_user.id == ENV["TEST_USER_ID"]
+      @certification = Certification.find_by(vacols_id: vacols_id)
+      @certification.decertify!(current_user.id)
+      @certification.destroy
+    end
+
+    redirect_to new_certification_path(vacols_id: ENV["TEST_APPEAL_ID"])
+  end
+
   private
 
   def verify_access

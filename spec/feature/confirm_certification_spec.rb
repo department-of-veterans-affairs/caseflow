@@ -50,4 +50,39 @@ RSpec.feature "Confirm Certification" do
     certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
   end
+
+  scenario "Non Test User unable to uncertify an appeal" do
+    visit "certifications/5555C"
+    click_on("Upload and certify")
+
+    certification = Certification.find_or_create_by_vacols_id("5555C")
+    expect(certification.reload.completed_at).to eq(Time.zone.now)
+    expect(page).not_to have_content("Uncertify Appeal")
+  end
+
+  context "Test User" do
+    before do
+      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+      User.clear_stub!
+      User.tester!
+      Fakes::AppealRepository.records = {
+        ENV["TEST_APPEAL_ID"] => Fakes::AppealRepository.appeal_ready_to_certify
+      }
+
+      certification = Certification.create!(vacols_id: ENV["TEST_APPEAL_ID"])
+      certification.form8.update_from_appeal(certification.appeal)
+      certification.form8.save_pdf!
+    end
+
+    after { Timecop.return }
+
+    scenario "Test User able to uncertify an appeal" do
+      visit "certifications/123C"
+      click_on("Upload and certify")
+
+      certification = Certification.find_or_create_by_vacols_id("123C")
+      expect(certification.reload.completed_at).to eq(Time.zone.now)
+      expect(page).to have_content("Uncertify Appeal")
+    end
+  end
 end
