@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe Document do
   let(:document) { Document.new(type: "NOD", document_id: "123") }
   let(:file) { document.default_path }

@@ -14,7 +14,13 @@ class Task < ActiveRecord::Base
     completed: 0,
     canceled: 1,
     expired: 2,
-    routed_to_ro: 3
+    routed_to_ro: 3,
+    assigned_existing_ep: 4
+  }.freeze
+
+  # Use this to define status texts that don't properly titlize
+  COMPLETION_STATUS_TEXT_MAPPING = {
+    assigned_existing_ep: "Assigned Existing EP"
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
@@ -84,7 +90,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(self.class.completion_status_code(:canceled))
+      complete!(status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -92,9 +98,14 @@ class Task < ActiveRecord::Base
     complete_and_recreate!(:expired)
   end
 
+  def assign_existing_end_product!(end_product_id)
+    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
+              outgoing_reference_id: end_product_id)
+  end
+
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(self.class.completion_status_code(status_code))
+      complete!(status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -118,7 +129,7 @@ class Task < ActiveRecord::Base
 
   def progress_status
     if completed_at
-      completion_status_text
+      "Completed"
     elsif started_at
       "In Progress"
     elsif assigned_at
@@ -137,17 +148,20 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status)
+  def complete!(status:, outgoing_reference_id: nil)
     fail(AlreadyCompleteError) if complete?
 
     update!(
       completed_at: Time.now.utc,
-      completion_status: status
+      completion_status: status,
+      outgoing_reference_id: outgoing_reference_id
     )
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+    status = COMPLETION_STATUS_MAPPING.key(completion_status)
+    COMPLETION_STATUS_TEXT_MAPPING[status] ||
+      status.to_s.titleize
   end
 
   def no_open_tasks_for_appeal
@@ -162,7 +176,11 @@ class Task < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      include: [:user, appeal: { methods: [:decision_date, :veteran_name] }],
+      include: [:user, appeal: { methods:
+        [:decision_date,
+         :veteran_name,
+         :decision_type,
+         :non_canceled_end_products_within_30_days] }],
       methods: [:progress_status]
     )
   end

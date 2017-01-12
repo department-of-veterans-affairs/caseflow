@@ -1,48 +1,42 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 
+import BaseForm from '../BaseForm';
+
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import {
-          FormField,
-          handleFieldChange,
-          getFormValues,
-          validateFormAndSetErrors,
-          scrollToAndFocusFirstError
-       } from '../../util/FormField';
+import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
+import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
-export const FORM_PAGE = 1;
+export const ASSOCIATE_PAGE = 1;
+export const FORM_PAGE = 2;
 
-export default class EstablishClaim extends React.Component {
+export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
-    this.handleFieldChange = handleFieldChange.bind(this);
-    this.validateFormAndSetErrors = validateFormAndSetErrors.bind(this);
-
+    let decisionType = this.props.task.appeal.decision_type;
+    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
     // Set initial state on page render
+
     this.state = {
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
-        claimLabel: new FormField(
-          Form.CLAIM_LABEL_OPTIONS[0],
-          requiredValidator('Please enter the EP & Claim Label.')
-          ),
         decisionDate: new FormField(
           formatDate(this.props.task.appeal.decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
           ]
-          ),
+        ),
         gulfWar: new FormField(false),
         modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         poa: new FormField(Form.POA[0]),
@@ -50,7 +44,7 @@ export default class EstablishClaim extends React.Component {
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
-          ),
+        ),
         suppressAcknowledgement: new FormField(false)
       },
       loading: false,
@@ -61,8 +55,15 @@ export default class EstablishClaim extends React.Component {
           )
       },
       modalSubmitLoading: false,
-      page: REVIEW_PAGE
+      page: REVIEW_PAGE,
+      reviewForm: {
+        decisionType: new FormField(decisionType)
+      },
+      specialIssues: {}
     };
+    specialIssues.forEach((issue) => {
+      this.state.specialIssues[issue] = new FormField(false);
+    });
   }
 
   handleSubmit = (event) => {
@@ -72,9 +73,9 @@ export default class EstablishClaim extends React.Component {
     event.preventDefault();
     handleAlertClear();
 
-    if (!this.validateFormAndSetErrors(this.state.form)) {
-      this.setErrors = true;
+    this.formValidating();
 
+    if (!this.validateFormAndSetErrors(this.state.form)) {
       return;
     }
 
@@ -82,8 +83,13 @@ export default class EstablishClaim extends React.Component {
       loading: true
     });
 
+    // We have to add in the claimLabel separately, since it is derived from
+    // the form value on the review page.
     let data = {
-      claim: ApiUtil.convertToSnakeCase(getFormValues(this.state.form))
+      claim: ApiUtil.convertToSnakeCase({
+        ...this.getFormValues(this.state.form),
+        claimLabel: this.getClaimTypeFromDecision()
+      })
     };
 
     return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
@@ -98,6 +104,17 @@ export default class EstablishClaim extends React.Component {
         'There was an error while submitting the current claim. Please try again later'
       );
     });
+  }
+
+  getClaimTypeFromDecision = () => {
+    if (this.state.reviewForm.decisionType.value === 'Remand') {
+      return '170RMDAMC - AMC-Remand';
+    } else if (this.state.reviewForm.decisionType.value === 'Partial Grant') {
+      return '170PGAMC - AMC-Partial Grant';
+    } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+      return '172BVAG - BVA Grant';
+    }
+    throw new RangeError("Invalid deicion type value");
   }
 
   handleFinishCancelTask = () => {
@@ -161,25 +178,33 @@ export default class EstablishClaim extends React.Component {
     return this.state.page === REVIEW_PAGE;
   }
 
+  shouldShowAssociatePage() {
+    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
+  }
+
+  isAssociatePage() {
+    return this.state.page === ASSOCIATE_PAGE;
+  }
+
   isFormPage() {
     return this.state.page === FORM_PAGE;
   }
 
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
+      if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);
+      }
+    } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
       this.handleSubmit(event);
     } else {
       throw new RangeError("Invalid page value");
     }
-  }
-
-  componentDidUpdate() {
-    if (this.setErrors) {
-      scrollToAndFocusFirstError();
-    }
-    this.setErrors = false;
   }
 
   render() {
@@ -192,6 +217,14 @@ export default class EstablishClaim extends React.Component {
     return (
       <div>
         { this.isReviewPage() && Review.render.call(this) }
+        { this.isAssociatePage() &&
+          <AssociatePage
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            task = {this.props.task}
+            handleAlert = {this.props.handleAlert}
+            handleAlertClear = {this.props.handleAlertClear}
+          />
+        }
         { this.isFormPage() && Form.render.call(this) }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
@@ -200,7 +233,7 @@ export default class EstablishClaim extends React.Component {
               Send to RO
             </a>
             <Button
-              name="Create End Product"
+              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
             />

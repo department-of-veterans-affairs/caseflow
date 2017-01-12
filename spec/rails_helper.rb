@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
+require "simplecov"
+
 require File.expand_path("../../config/environment", __FILE__)
 
 # Prevent database truncation if the environment is production
@@ -36,7 +38,16 @@ require_relative "support/database_cleaner"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :sniffybara
+Capybara.register_driver(:parallel_sniffybara) do |app|
+  options = {
+    port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
+    phantomjs_options: ["--disk-cache=true"]
+  }
+
+  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
+end
+
+Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -53,12 +64,12 @@ module StubbableUser
 
     def authenticate!(roles: nil)
       self.stub = User.from_session(
-        "user" => {
-          "id" => "DSUSER",
-          "station_id" => "283",
-          "email" => "test@example.com",
-          "roles" => roles || ["Certify Appeal"]
-        })
+        { "user" =>
+          { "id" => "DSUSER",
+            "station_id" => "283",
+            "email" => "test@example.com",
+            "roles" => roles || ["Certify Appeal"] }
+        }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
     def current_user
@@ -69,8 +80,8 @@ module StubbableUser
       self.stub = nil
     end
 
-    def from_session(session)
-      @stub || super(session)
+    def from_session(session, request)
+      @stub || super(session, request)
     end
   end
 
@@ -107,7 +118,7 @@ def create_tasks(count, opts = {})
     task.assign!(user)
 
     task.start! if %i(started completed).include?(opts[:initial_state])
-    task.complete!(0) if %i(completed).include?(opts[:initial_state])
+    task.complete!(status: 0) if %i(completed).include?(opts[:initial_state])
   end
 end
 

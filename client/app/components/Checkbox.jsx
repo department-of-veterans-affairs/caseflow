@@ -1,5 +1,10 @@
 import React, { PropTypes } from 'react';
+
 export default class Checkbox extends React.Component {
+  onChange = (event) => {
+    this.props.onChange(event.target.checked);
+  }
+
   render() {
     let {
       label,
@@ -12,7 +17,7 @@ export default class Checkbox extends React.Component {
 
       <input
         name={name}
-        onChange={this.props.onChange}
+        onChange={this.onChange}
         type="checkbox"
         id={name}
         checked={value}

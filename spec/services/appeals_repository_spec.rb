@@ -61,7 +61,7 @@ describe AppealRepository do
     let(:appeal) { Appeal.new(vacols_id: "123C") }
     subject { AppealRepository.load_vacols_data(appeal) }
     it do
-      AppealRepository.should_receive(:set_vacols_values).exactly(1).times
+      expect(AppealRepository).to receive(:set_vacols_values).exactly(1).times
       is_expected.to eq(appeal)
     end
   end

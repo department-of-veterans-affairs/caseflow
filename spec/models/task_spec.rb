@@ -1,3 +1,5 @@
+require "rails_helper"
+
 class FakeTask < Task
 end
 
@@ -139,7 +141,7 @@ describe Task do
       before do
         task.assign!(@user)
         task.start!
-        task.complete!("Completed")
+        task.complete!(status: 0)
       end
 
       it { is_expected.to eq("Completed") }
@@ -216,7 +218,7 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
 
     it "completes the task" do
-      task.complete!(3)
+      task.complete!(status: 3)
       expect(task.reload.completed_at).to be_truthy
       expect(task.completion_status).to eq(3)
     end
@@ -226,7 +228,7 @@ describe Task do
       status = 10
       task.update!(completed_at: time, completion_status: status)
 
-      expect { task.complete!(2) }.to raise_error(Task::AlreadyCompleteError)
+      expect { task.complete!(status: 2) }.to raise_error(Task::AlreadyCompleteError)
 
       # Confirm complete values are still the original
       expect(task.reload.completed_at).to eq(time)

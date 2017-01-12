@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe AssociatedVacolsModel do
   class TestVacolsModelRepository
     def self.load_vacols_data(model)
