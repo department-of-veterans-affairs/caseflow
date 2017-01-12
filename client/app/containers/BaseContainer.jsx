@@ -11,7 +11,6 @@ import DecisionBuilder from './DecisionBuilder';
 import DecisionReviewer from './DecisionReviewer';
 
 const Pages = {
-  DecisionBuilder,
   DecisionReviewer,
   EstablishClaim,
   TasksManagerIndex,

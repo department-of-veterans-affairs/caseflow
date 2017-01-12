@@ -455,7 +455,6 @@ DEPENDENCIES
   connect_vbms!
   database_cleaner
   guard-rspec
-  htmltoword
   jbuilder (~> 2.0)
   jquery-rails
   jshint

@@ -24,8 +24,6 @@ export default class DecisionReviewer extends React.Component {
 
   componentDidMount() {
     window.addEventListener('keydown', (e) => {
-      console.log('here!');
-      console.log(this.state);
       if (e.key == 'ArrowLeft') {
         this.setState({pdf: Math.max(this.state.pdf - 1, 0)});
       }
@@ -40,14 +38,8 @@ export default class DecisionReviewer extends React.Component {
 
     return (
       <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Review Decision</h2>
-          Review the final decision from VBMS below to determine the next step.
-        </div>
-
         <PdfViewer
           file={pdfLinks[this.state.pdf]} />
-
       </div>
     );
   }

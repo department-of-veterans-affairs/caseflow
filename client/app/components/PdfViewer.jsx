@@ -125,9 +125,8 @@ class MyPdfViewer extends React.Component {
 
   draw = () => {
     const { UI } = PDFJSAnnotate;
-    debugger;
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
-      
+
       this.RENDER_OPTIONS = {
         documentId: this.props.file,
         pdfDocument: pdfDocument,
@@ -170,7 +169,6 @@ class MyPdfViewer extends React.Component {
     if (oldProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.draw();
-
     }
   }
 
@@ -254,10 +252,12 @@ class MyPdfViewer extends React.Component {
     return (
       <div>
         <div id="cf-pdf-title">
-          <h2>{this.props.file}</h2>
+            <h2>{this.props.file}</h2>
         </div>
-        <div id="scrollWindow" className="cf-pdf-container">
-          <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+        <div className="cf-pdf-container">  
+          <div id="scrollWindow" className="cf-pdf-scroll-view">
+            <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+          </div>
         </div>
         <div id="cf-comment-wrapper">
           <h4>Comments</h4>

@@ -58,7 +58,7 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_document_file(_document)
-    path = File.join(Rails.root, "lib", "pdfs", "aca.pdf")
+    path = File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
     IO.binread(path)
   end
 

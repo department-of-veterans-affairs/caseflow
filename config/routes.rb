@@ -31,7 +31,6 @@ Rails.application.routes.draw do
       patch 'assign', on: :collection
       post 'perform', on: :member
       get 'pdf', on: :member
-      get 'pdf2', on: :member
     end
   end
 
@@ -39,13 +38,6 @@ Rails.application.routes.draw do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
     get "/", to: redirect("/decision/review")
-
-    resources :decisions,
-              path: "/build",
-              only: [:index] do
-      post 'docx', on: :collection
-      get 'download', on: :collection
-    end
 
     resources :review,
               path: "/review",

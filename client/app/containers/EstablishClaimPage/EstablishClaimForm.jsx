@@ -3,7 +3,6 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
-import SearchableDropDown from '../../components/SearchableDropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
@@ -14,14 +13,7 @@ export const POA = [
 ];
 export const MODIFIER_OPTIONS = [
   '170',
-  '172',
-  '165',
-  '40',
-  '25',
-  '-1',
-  'abc',
-  'def',
-  'ghi'
+  '172'
 ];
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
@@ -51,7 +43,7 @@ export const render = function() {
          readOnly={true}
          value={this.getClaimTypeFromDecision()}
         />
-        <SearchableDropDown
+        <DropDown
          label="Modifier"
          name="modifier"
          options={MODIFIER_OPTIONS}
