@@ -39,11 +39,15 @@ RSpec.feature "Dispatch" do
       )]
       }
     }
+    Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
+
     appeal = Appeal.create(
       vacols_id: "123C",
       vbms_id: @vbms_id
     )
     @task = EstablishClaim.create(appeal: appeal)
+
+    Timecop.freeze(Time.utc(2017, 1, 1))
   end
 
   context "As a manager" do
@@ -90,7 +94,7 @@ RSpec.feature "Dispatch" do
                                           user: other_user,
                                           assigned_at: 1.day.ago)
 
-      allow(Appeal.repository).to receive(:establish_claim!)
+      allow(Appeal.repository).to receive(:establish_claim!).and_call_original
     end
 
     context "Skip the associate EP page" do
@@ -98,7 +102,7 @@ RSpec.feature "Dispatch" do
         BGSService.end_product_data = []
       end
 
-      scenario "Establish a new claim page and process" do
+      scenario "Establish a new claim page and process pt1" do
         visit "/dispatch/establish-claim"
 
         # View history
@@ -127,27 +131,46 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+      end
 
+      scenario "stablish a new claim page and process pt2" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        page.select "Full Grant", from: "decisionType"
+        click_on "Create End Product"
+
+        # Test date, text, radio button, & checkbox inputs
         page.fill_in "Decision Date", with: "01/01/2017"
+        page.select "172", from: "endProductModifier"
+        page.find("#POA_VSO").trigger("click")
+        page.fill_in "POA Code", with: "my poa code"
+        page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Congratulations!")
         expect(Appeal.repository).to have_received(:establish_claim!).with(
           claim: {
-            "claim_type" => "Claim",
-            "modifier" => "170",
-            "poa" => "None",
-            "claim_label" => "172BVAG - BVA Grant",
-            "poa_code" => "",
-            "gulf_war" => false,
-            "allow_poa" => false,
-            "suppress_acknowledgement" => false
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            date: Time.now.utc.to_date,
+            end_product_modifier: "172",
+            end_product_label: "BVA Grant",
+            end_product_code: "172BVAG",
+            station_of_jurisdiction: "317",
+            poa: "VSO",
+            poa_code: "my poa code",
+            gulf_war_registry: true,
+            allow_poa: false,
+            suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
         )
         expect(@task.reload.complete?).to be_truthy
         expect(@task.completion_status).to eq(0)
+        expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
         click_on "Caseflow Dispatch"
         expect(page).to have_current_path("/dispatch/establish-claim")

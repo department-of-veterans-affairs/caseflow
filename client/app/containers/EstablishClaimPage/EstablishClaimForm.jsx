@@ -22,7 +22,7 @@ export const SEGMENTED_LANE_OPTIONS = [
 
 export const render = function() {
   return (
-    <form noValidate>
+    <form noValidate id="end_product">
       <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
         <TextField
@@ -41,14 +41,14 @@ export const render = function() {
          label="EP & Claim Label"
          name="claimLabel"
          readOnly={true}
-         value={this.getClaimTypeFromDecision()}
+         value={this.getClaimTypeFromDecision().join(' - ')}
         />
         <DropDown
          label="Modifier"
-         name="modifier"
+         name="endProductModifier"
          options={MODIFIER_OPTIONS}
-         onChange={this.handleFieldChange('form', 'modifier')}
-         {...this.state.form.modifier}
+         onChange={this.handleFieldChange('form', 'endProductModifier')}
+         {...this.state.form.endProductModifier}
         />
         <DateSelector
          label="Decision Date"
@@ -91,15 +91,15 @@ export const render = function() {
         /></div>}
         <Checkbox
          label="Gulf War Registry Permit"
-         name="gulfWar"
-         {...this.state.form.gulfWar}
-         onChange={this.handleFieldChange('form', 'gulfWar')}
+         name="gulfWarRegistry"
+         {...this.state.form.gulfWarRegistry}
+         onChange={this.handleFieldChange('form', 'gulfWarRegistry')}
         />
         <Checkbox
          label="Suppress Acknowledgement Letter"
-         name="suppressAcknowledgement"
-         {...this.state.form.suppressAcknowledgement}
-         onChange={this.handleFieldChange('form', 'suppressAcknowledgement')}
+         name="suppressAcknowledgementLetter"
+         {...this.state.form.suppressAcknowledgementLetter}
+         onChange={this.handleFieldChange('form', 'suppressAcknowledgementLetter')}
         />
       </div>
     </form>

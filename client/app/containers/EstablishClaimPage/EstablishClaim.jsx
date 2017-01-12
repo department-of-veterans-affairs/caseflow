@@ -18,6 +18,12 @@ export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
 export const FORM_PAGE = 2;
 
+export const END_PRODUCT_INFO = {
+  'Full Grant': ['172BVAG', 'BVA Grant'],
+  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
+  'Remand': ['170RMDAMC', 'AMC-Remand']
+};
+
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
@@ -37,15 +43,15 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        gulfWar: new FormField(false),
-        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
         ),
-        suppressAcknowledgement: new FormField(false)
+        suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
       modal: {
@@ -67,8 +73,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleSubmit = (event) => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
+    let { handleAlert, handleAlertClear, task } = this.props;
 
     event.preventDefault();
     handleAlertClear();
@@ -85,36 +90,38 @@ export default class EstablishClaim extends BaseForm {
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
+    let endProductInfo = this.getClaimTypeFromDecision();
     let data = {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.form),
-        claimLabel: this.getClaimTypeFromDecision()
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
       })
     };
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
-      window.location.reload();
-    }, () => {
-      this.setState({
-        loading: false
-      });
-      handleAlert(
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
+      then(() => {
+        window.location.reload();
+      }, () => {
+        this.setState({
+          loading: false
+        });
+        handleAlert(
         'error',
         'Error',
         'There was an error while submitting the current claim. Please try again later'
       );
-    });
+      });
   }
 
   getClaimTypeFromDecision = () => {
-    if (this.state.reviewForm.decisionType.value === 'Remand') {
-      return '170RMDAMC - AMC-Remand';
-    } else if (this.state.reviewForm.decisionType.value === 'Partial Grant') {
-      return '170PGAMC - AMC-Partial Grant';
-    } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
-      return '172BVAG - BVA Grant';
+    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+
+    if (!values) {
+      throw new RangeError("Invalid deicion type value");
     }
-    throw new RangeError("Invalid deicion type value");
+
+    return values;
   }
 
   handleFinishCancelTask = () => {
