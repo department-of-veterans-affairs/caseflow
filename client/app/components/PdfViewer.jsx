@@ -185,24 +185,26 @@ export default class PdfViewer extends React.Component {
     });
 
     return (
-      <div className="cf-pdf-page-container">
-        <div className="cf-pdf-title">
-            <h2>{this.props.file}</h2>
+      <div>
+        <div className="cf-pdf-toolbar">
+          <h4>{this.props.file}</h4>
         </div>
-        <div className="cf-pdf-container">
-          <div id="scrollWindow" className="cf-pdf-scroll-view">
-            <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
-          </div>
-        </div>
-        <div className="cf-comment-wrapper">
-          <h4>Comments</h4>
-          <div className="comment-list">
-            <div className="comment-list-container">
-              {comments}
+        <div className="cf-pdf-page-container">
+          <div className="cf-pdf-container">
+            <div id="scrollWindow" className="cf-pdf-scroll-view">
+              <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
             </div>
-            <form className="comment-list-form" style={{ display: 'none' }}>
-              <input type="text" placeholder="Add a Comment"/>
-            </form>
+          </div>
+          <div className="cf-comment-wrapper">
+            <h4>Comments</h4>
+            <div className="comment-list">
+              <div className="comment-list-container">
+                {comments}
+              </div>
+              <form className="comment-list-form" style={{ display: 'none' }}>
+                <input type="text" placeholder="Add a Comment"/>
+              </form>
+            </div>
           </div>
         </div>
       </div>

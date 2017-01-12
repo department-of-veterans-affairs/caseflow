@@ -2,24 +2,28 @@
 
 .cf-pdf-page-container {
   position: absolute;
-  top: 90px;
+  top: 120px;
   bottom: 0;
+  right: 0;
+  left: 0;
 }
 
 .cf-pdf-container {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 70%;
+  right: 300px;
+  left: 0;
 }
 
 .cf-pdf-scroll-view {
   background-color: $color-gray-dark;
   width: 100%;
-  height: 400px;
+  top: 0;
+  bottom: 0;
+  position: absolute;
   overflow-y: scroll;
   overflow-x: visible;
-  margin-bottom: 10px;
   text-align: center;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -54,8 +58,11 @@
 
 .cf-comment-wrapper {
   float: right;
-  width: 30%;
-  height: 100%;
+  width: 300px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
   text-align: left;
   background: $color-white;
 }
@@ -64,14 +71,11 @@
   background: $color-primary-alt-light;
 }
 
-.cf-pdf-title {
-  background: $color-gray-light;
+.cf-pdf-toolbar {
+  background: $color-gray-warm-light;
   width: 100%;
-
-  h2 {
-    margin-bottom: 0;
-    margin-top: 0;
-  }
+  top: 90px;
+  height: 30px;
 }
 
 .cf-full-page-app {
