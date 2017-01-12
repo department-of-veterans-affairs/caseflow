@@ -26,6 +26,8 @@
 
     <%= f.hidden_field :vacols_id %>
 
+    <%= f.date_field :notification_date, class: "hidden-field", disabled: true, label: "Notification Date" %>
+
     <%= f.text_field :appellant_name,
           question_number: "1A", label: "Name of Appellant (If other than veteran):" %>
 
