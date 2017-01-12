@@ -14,9 +14,9 @@ class ReviewController < ApplicationController
     elsif params[:document] == "1"
       file_name = "FakeDecisionDocument.pdf"
     elsif params[:document] == "2"
-      file_name = "aca.pdf"
+      file_name = "VA9.pdf"
     elsif params[:document] == "3"
-      file_name = "pepsi-arnell-021109.pdf"
+      file_name = "KnockKnockJokes.pdf"
     else
       return redirect_to "/404"
     end
