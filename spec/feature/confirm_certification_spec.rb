@@ -15,8 +15,6 @@ RSpec.feature "Confirm Certification" do
     certification.form8.save_pdf!
   end
 
-  after { Timecop.return }
-
   scenario "Screen reader user visits pdf link" do
     visit "certifications/5555C"
     # We want this content to only appear for screen reader users, so

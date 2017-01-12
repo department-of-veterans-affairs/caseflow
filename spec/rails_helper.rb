@@ -118,7 +118,8 @@ def create_tasks(count, opts = {})
     task.assign!(user)
 
     task.start! if %i(started completed).include?(opts[:initial_state])
-    task.complete!(status: 0) if %i(completed).include?(opts[:initial_state])
+    task.complete!(status: 0, outgoing_reference_id: "123") if %i(completed).include?(opts[:initial_state])
+    task
   end
 end
 
@@ -131,6 +132,8 @@ RSpec.configure do |config|
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) { User.unauthenticate! }
+
+  config.after(:each) { Timecop.return }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

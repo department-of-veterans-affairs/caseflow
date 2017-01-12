@@ -19,6 +19,11 @@ end
 class AppealRepository
   FORM_8_DOC_TYPE_ID = 178
 
+  ESTABLISH_CLAIM_VETERAN_ATTRIBUTES = %i(
+    file_number sex first_name last_name ssn address_line1 address_line2
+    address_line3 city state country zip_code
+  ).freeze
+
   def self.load_vacols_data(appeal)
     case_record = MetricsService.timer "loaded VACOLS case #{appeal.vacols_id}" do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
@@ -83,7 +88,7 @@ class AppealRepository
 
   def self.amc_full_grants(decided_after:)
     full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::Case.amc_full_grants(decided_after)
+      VACOLS::Case.amc_full_grants(decided_after: decided_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
@@ -127,18 +132,36 @@ class AppealRepository
   end
   # :nocov:
 
-  # TODO(jd): Remove this rubocop exception when we
-  # start using the arguments
-  # rubocop:disable UnusedMethodArgument
-  def self.establish_claim!(claim:, appeal:)
-    # TODO(jd): Add VBMS integration here
-    # VBMS.api_call_go!(claim)
+  def self.establish_claim!(appeal:, claim:)
+    @vbms_client ||= init_vbms_client
+
+    raw_veteran_record = BGSService.new.fetch_veteran_info(appeal.vbms_id)
+
+    # Reduce keys in raw response down to what we specifically need for
+    # establish claim
+    veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
+
+    sanitized_id = appeal.sanitized_vbms_id
+    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+    end_product = send_and_log_request(sanitized_id, request)
 
     # Update VACOLS location
+    # TODO(jd): In the future we whould specifically check this is an AMC EP
+    # before updating the location to 98. For remands we need to set it to `50`
     # appeal.case_record.bfcurloc = '98'
     # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
     # appeal.case_record.save!
     # end
+
+    # return end product so dispatch service can update the
+    # task's outgoing_reference_id with end_product.claim_id
+    end_product
+  end
+
+  def self.parse_veteran_establish_claim_info(veteran_record)
+    veteran_record.select do |key, _|
+      ESTABLISH_CLAIM_VETERAN_ATTRIBUTES.include?(key)
+    end
   end
 
   def self.certify(appeal)
@@ -247,5 +270,6 @@ class AppealRepository
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
+
   # :nocov:
 end
