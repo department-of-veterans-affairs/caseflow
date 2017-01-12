@@ -1,4 +1,4 @@
-require 'wannabe_bool'
+require "wannabe_bool"
 
 class FunctionsController < ApplicationController
   before_action :verify_access
