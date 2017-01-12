@@ -56,4 +56,8 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
   #
   ENV["CASEFLOW_FEEDBACK_URL"] = "test.feedback.url"
+
+  # For testing uncertification methods
+  ENV["TEST_USER_ID"] = "Certify Appeal"
+  ENV["TEST_APPEAL_ID"] = "123C"
 end
