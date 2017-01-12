@@ -1,6 +1,7 @@
 import React from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
+import ApiUtil from '../../util/ApiUtil';
 
 export const DECISION_TYPE = [
   'Full Grant',
@@ -47,7 +48,7 @@ export const SPECIAL_ISSUE_PARTIAL = [
 export const UNHANDLED_SPECIAL_ISSUES = [
   'Pensions',
   'VAMC',
-  'DIC = death, or accrued benefits',
+  'DIC - death, or accrued benefits',
   'Foreign Claims',
   'Education or Vocational Rehab',
   'Waiver of Overpayment',
@@ -122,9 +123,10 @@ export const render = function() {
         issueType.map((issue) =>
         <Checkbox
             label={issue}
-            name={issue.split(' ').join('')}
+            name={ApiUtil.convertToCamelCase(issue)}
             {...this.state.specialIssues[issue]}
-            onChange={this.handleFieldChange('specialIssues', issue.split(' ').join(''))}
+            onChange={this.handleFieldChange('specialIssues',
+                ApiUtil.convertToCamelCase(issue))}
             key={count += 1}
           />)
           /* eslint-enable no-return-assign */

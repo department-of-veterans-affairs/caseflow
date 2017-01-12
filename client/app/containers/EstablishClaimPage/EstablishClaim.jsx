@@ -63,7 +63,7 @@ export default class EstablishClaim extends BaseForm {
       specialIssueModalDisplay: false
     };
     specialIssues.forEach((issue) => {
-      this.state.specialIssues[issue.split(' ').join('')] = new FormField(false);
+      this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
   }
 
@@ -169,12 +169,10 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleCancelTaskForSpecialIssue = () => {
-    debugger;
     this.setState({
       cancelModalDisplay: true,
       specialIssueModalDisplay: false
     });
-    debugger;
   }
 
   hasPoa() {
@@ -232,7 +230,13 @@ export default class EstablishClaim extends BaseForm {
   }
 
   validateReviewPageSubmit() {
-    return false
+    let validOutput = true;
+    Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value == true){
+        validOutput = false;
+      }
+    });
+    return validOutput;
   }
 
   render() {

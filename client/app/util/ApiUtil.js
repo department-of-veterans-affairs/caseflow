@@ -5,7 +5,7 @@ import ReactOnRails from 'react-on-rails';
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
 
-  // Converts snakeCase to camel_case
+  // Converts snake_case to camelCase
   convertToSnakeCase(data = {}) {
     let result = {};
 
@@ -20,6 +20,14 @@ const ApiUtil = {
     }
 
     return result;
+  },
+
+  // Converts regular language to camelCase
+  convertToCamelCase(phrase = '') {
+    return phrase.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+      if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+      return index == 0 ? match.toLowerCase() : match.toUpperCase();
+    });
   },
 
   get(url, options = {}) {
