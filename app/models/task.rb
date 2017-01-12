@@ -14,7 +14,13 @@ class Task < ActiveRecord::Base
     completed: 0,
     canceled: 1,
     expired: 2,
-    routed_to_ro: 3
+    routed_to_ro: 3,
+    assigned_existing_ep: 4
+  }.freeze
+
+  # Use this to define status texts that don't properly titlize
+  COMPLETION_STATUS_TEXT_MAPPING = {
+    assigned_existing_ep: "Assigned Existing EP"
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
@@ -92,6 +98,11 @@ class Task < ActiveRecord::Base
     complete_and_recreate!(:expired)
   end
 
+  def assign_existing_end_product!(end_product_id)
+    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
+              outgoing_reference_id: end_product_id)
+  end
+
   def complete_and_recreate!(status_code)
     transaction do
       complete!(status: self.class.completion_status_code(status_code))
@@ -118,7 +129,7 @@ class Task < ActiveRecord::Base
 
   def progress_status
     if completed_at
-      completion_status_text
+      "Completed"
     elsif started_at
       "In Progress"
     elsif assigned_at
@@ -148,7 +159,9 @@ class Task < ActiveRecord::Base
   end
 
   def completion_status_text
-    COMPLETION_STATUS_MAPPING.key(completion_status).to_s.titleize
+    status = COMPLETION_STATUS_MAPPING.key(completion_status)
+    COMPLETION_STATUS_TEXT_MAPPING[status] ||
+      status.to_s.titleize
   end
 
   def no_open_tasks_for_appeal

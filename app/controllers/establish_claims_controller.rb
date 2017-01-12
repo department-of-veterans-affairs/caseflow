@@ -7,6 +7,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def assign_existing_end_product
+    task.assign_existing_end_product!(params[:end_product_id])
+    render json: {}
+  end
+
   def start_text
     "Establish Next Claim"
   end

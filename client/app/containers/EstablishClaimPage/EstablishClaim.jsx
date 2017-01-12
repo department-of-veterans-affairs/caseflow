@@ -29,6 +29,7 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
+    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
     // Set initial state on page render
 
     this.state = {
@@ -63,8 +64,12 @@ export default class EstablishClaim extends BaseForm {
       page: REVIEW_PAGE,
       reviewForm: {
         decisionType: new FormField(decisionType)
-      }
+      },
+      specialIssues: {}
     };
+    specialIssues.forEach((issue) => {
+      this.state.specialIssues[issue] = new FormField(false);
+    });
   }
 
   handleSubmit = (event) => {
@@ -222,6 +227,9 @@ export default class EstablishClaim extends BaseForm {
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            task = {this.props.task}
+            handleAlert = {this.props.handleAlert}
+            handleAlertClear = {this.props.handleAlertClear}
           />
         }
         { this.isFormPage() && Form.render.call(this) }
