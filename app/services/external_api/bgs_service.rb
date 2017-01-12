@@ -25,6 +25,9 @@ class ExternalApi::BGSService
   private
 
   def init_client
+    # Fetch current_user from global thread
+    current_user = RequestStore[:current_user]
+
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
