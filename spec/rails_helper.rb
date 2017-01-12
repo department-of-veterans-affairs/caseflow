@@ -133,6 +133,9 @@ RSpec.configure do |config|
   end
   config.before(:all) { User.unauthenticate! }
 
+  config.before(:each) do
+    Capybara.reset_sessions!
+  end
   config.after(:each) { Timecop.return }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
