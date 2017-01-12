@@ -1,6 +1,6 @@
 <% content_for :page_title do task.appeal.task_header end %>
 <%= react_component('BaseContainer', props: {
-    availableTasks: current_user_next_task,
+    availableTasks: !!current_user_next_task,
     buttonText: start_text,
     checklist: ['Reviewed decision', 'Assigned existing EP to claim'],
     content: 'Way to go! You can now establish the next claim or

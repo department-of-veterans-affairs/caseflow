@@ -36,11 +36,10 @@ export default class EstablishClaimComplete extends React.Component {
         <Button
           name={buttonText}
           onClick={() => {
-            ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
-              window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
-            });
+              this.onClick();
           }}
           classNames={["usa-button-primary", "cf-push-right"]}
+          disabled={!availableTasks}
         />
         }
         { !availableTasks &&
@@ -53,10 +52,17 @@ export default class EstablishClaimComplete extends React.Component {
       </div>
     </div>;
   }
+
+  onClick = () => {
+    ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
+      window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
+    });
+  };
+
 }
 
 EstablishClaimComplete.propTypes = {
-  availableTasks: PropTypes.object,
+  availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
   content: PropTypes.string,

@@ -48,7 +48,7 @@ export default class AssociatePage extends React.Component {
     return ApiUtil.post(
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
       { data }).then(() => {
-        window.location = `/dispatch/establish-claim/${id}`;
+        window.location.reload();
       }, () => {
         this.setState({
           loading: null

@@ -39,10 +39,10 @@ class TasksController < ApplicationController
   end
 
   def assign
+    # Doesn't assign if user has a task of the same type already assigned.
+    next_task = current_user_next_task
     respond_to do |format|
       format.html do
-        # Doesn't assign if user has a task of the same type already assigned.
-        next_task = current_user_next_task
         return not_found unless next_task
 
         next_task.assign!(current_user) unless next_task.assigned?
@@ -50,8 +50,9 @@ class TasksController < ApplicationController
       end
 
       format.json do
-        # Doesn't assign if user has a task of the same type already assigned.
-        next_task = current_user_next_task
+        return render json: {
+            errors: ['There were no tasks'] }, status: 500 unless next_task
+
         next_task.assign!(current_user) unless next_task.assigned?
         return render json: {
           next_task_id: next_task.id
