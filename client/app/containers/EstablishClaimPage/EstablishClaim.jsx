@@ -59,8 +59,8 @@ export default class EstablishClaim extends BaseForm {
       reviewForm: {
         decisionType: new FormField(decisionType)
       },
-      specialIssues: {},
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: false,
+      specialIssues: {}
     };
     specialIssues.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
@@ -221,7 +221,7 @@ export default class EstablishClaim extends BaseForm {
     if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
-      })
+      });
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
@@ -231,11 +231,13 @@ export default class EstablishClaim extends BaseForm {
 
   validateReviewPageSubmit() {
     let validOutput = true;
+
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value == true){
+      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value === true) {
         validOutput = false;
       }
     });
+
     return validOutput;
   }
 
@@ -322,12 +324,12 @@ export default class EstablishClaim extends BaseForm {
         {specialIssueModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-btn-link"],
-                name: '\u00AB Close',
-                onClick: this.handleSpecialIssueModalClose
+              name: '\u00AB Close',
+              onClick: this.handleSpecialIssueModalClose
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-                name: 'Cancel Claim Establishment',
-                onClick: this.handleCancelTaskForSpecialIssue
+              name: 'Cancel Claim Establishment',
+              onClick: this.handleCancelTaskForSpecialIssue
             }
           ]}
           visible={true}

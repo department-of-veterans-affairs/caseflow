@@ -53,7 +53,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   'Education or Vocational Rehab',
   'Waiver of Overpayment',
   'National Cemetery Administration'
-]
+];
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
@@ -119,6 +119,7 @@ export const render = function() {
 
     <label>Special Issue Categories</label>
       {
+
         /* eslint-disable no-return-assign */
         issueType.map((issue) =>
         <Checkbox
@@ -129,6 +130,7 @@ export const render = function() {
                 ApiUtil.convertToCamelCase(issue))}
             key={count += 1}
           />)
+
           /* eslint-enable no-return-assign */
       }
     </div>
