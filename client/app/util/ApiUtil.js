@@ -6,6 +6,7 @@ import ReactOnRails from 'react-on-rails';
 const ApiUtil = {
 
   // Converts regular language to camelCase
+  // 'VACOLS - 123, User' becomes 'vacolsUser'
   convertToCamelCase(phrase = '') {
     // Code courtesy of Stack Overflow, Question 2970525
     return phrase.toLowerCase().

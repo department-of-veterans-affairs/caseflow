@@ -212,6 +212,14 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === FORM_PAGE;
   }
 
+  /*
+   * This function acts as a router on the end product form. If the user
+   * is on the review page, it goes to the review page validation function.
+   * That checks to make sure only valid special issues are checked and either
+   * displays an error modal or moves the user on to the next page. If the user
+   * is on the associate page, they move onto the form page. If the user is on
+   * the form page, their form is submitted, and they move to the success page.
+   */
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
       this.handleReviewPageSubmit();
