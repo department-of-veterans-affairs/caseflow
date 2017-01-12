@@ -29,7 +29,15 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render "errors/404", layout: "application", status: 404
+    respond_to do |format|
+      format.html do
+        render "errors/404", layout: "application", status: 404
+      end
+      format.json do
+        render json: {
+          errors: ["Response not found"] }, status: 500
+      end
+    end
   end
 
   def current_user

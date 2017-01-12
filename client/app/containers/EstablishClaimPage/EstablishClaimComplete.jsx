@@ -35,9 +35,7 @@ export default class EstablishClaimComplete extends React.Component {
         { availableTasks &&
         <Button
           name={buttonText}
-          onClick={() => {
-              this.onClick();
-          }}
+          onClick={this.onClick}
           classNames={["usa-button-primary", "cf-push-right"]}
           disabled={!availableTasks}
         />
