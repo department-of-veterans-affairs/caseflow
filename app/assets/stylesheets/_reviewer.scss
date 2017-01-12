@@ -25,9 +25,11 @@
 .pdfViewer .canvasWrapper {
   box-shadow: 0 0 3px #bbb;
 }
+
 .pdfViewer .page {
   margin-bottom: 10px;
 }
+
 .annotationLayer {
   position: absolute;
   top: 0;
@@ -35,6 +37,7 @@
   right: 0;
   bottom: 0;
 }
+
 #content-wrapper {
   position: absolute;
   top: 35px;
@@ -53,9 +56,11 @@
   background: #eaeaea;
   border-left: 1px solid #d0d0d0;
 }
+
 #comment-wrapper h4 {
   margin: 10px;
 }
+
 #comment-wrapper .comment-list {
   font-size: 12px;
   position: absolute;

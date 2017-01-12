@@ -18,11 +18,8 @@ class MyPdfViewer extends React.Component {
     this.setState({comments: this.comments});
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       PDFJSAnnotate.getStoreAdapter().getAnnotations(this.props.file, i).then((annotations) => {
-        console.log('annotations');
-        console.log(annotations);
         annotations.annotations.forEach((annotationId) => {
           PDFJSAnnotate.getStoreAdapter().getComments(this.props.file, annotationId.uuid).then((comment) => {
-            console.log(comment);
             if (comment.length > 0) {
               this.comments = [...this.comments, {uuid: annotationId.uuid, content: comment[0].content}];
               this.setState({comments: this.comments});
@@ -118,7 +115,6 @@ class MyPdfViewer extends React.Component {
 
 
     window.addEventListener('keyup', function(e) {
-      console.log(e);
       if (e.key == 'n') {
         UI.enablePoint();
         UI.disableEdit();
@@ -140,7 +136,6 @@ class MyPdfViewer extends React.Component {
  
   render() {
     let comments = [];
-    console.log(this.state.comments);
     this.state.comments.forEach((comment) => {
       comments.push(<div onClick={this.jumpToComment(comment.uuid)} className={"comment-list-item" + (comment.selected ? " cf-comment-selected" : "")}>{comment.content}</div>)
     });
