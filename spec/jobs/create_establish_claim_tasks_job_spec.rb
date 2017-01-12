@@ -10,8 +10,6 @@ describe CreateEstablishClaimTasksJob do
     Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))
   end
 
-  after { Timecop.return }
-
   context ".perform" do
     it "finds or creates tasks" do
       expect(EstablishClaim.count).to eq(0)

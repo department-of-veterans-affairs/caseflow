@@ -16,7 +16,6 @@ describe Certification do
   end
 
   after do
-    Timecop.return
     Fakes::AppealRepository.documents = nil
   end
 

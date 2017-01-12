@@ -5,7 +5,6 @@ RSpec.feature "Send feedback" do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
   end
-  after { Timecop.return }
 
   scenario "Sending feedback about Caseflow Certification" do
     User.authenticate!
