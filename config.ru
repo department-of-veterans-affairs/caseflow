@@ -7,15 +7,9 @@ require "prometheus/client/rack/exporter"
 
 # require basic auth for the /metrics route
 use MetricsAuth, "metrics" do |username, password|
-  # if metrics password mistakenly isn't provided
-  # for prod or prod-like envs, disable the route
-  if Rails.env.production? && ENV["METRICS_PASSWORD"].blank?
-    return false
-  end
-  # ansible passes us an empty string for a blank value,
-  # so use .blank? instead of a simple truthy check
-  metrics_username = ENV["METRICS_USERNAME"].blank? ? "caseflow" : ENV["METRICS_USERNAME"]
-  metrics_password = ENV["METRICS_PASSWORD"].blank? ? "caseflow" : ENV["METRICS_PASSWORD"]
+  # if metrics password mistakenly isn't provided, disable the route
+  return false if ENV["METRICS_PASSWORD"].blank?
+
   [username, password] == [metrics_username, metrics_password]
 end
 
