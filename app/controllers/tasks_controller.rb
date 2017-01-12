@@ -28,6 +28,7 @@ class TasksController < ApplicationController
     # for a given task
     task.start! if current_user == task.user && !task.started?
     return render "canceled" if task.canceled?
+    return render "assigned_existing_ep" if task.assigned_existing_ep?
     return render "complete" if task.complete?
   end
 
@@ -43,7 +44,15 @@ class TasksController < ApplicationController
     return not_found unless next_task
 
     next_task.assign!(current_user) unless next_task.assigned?
-    redirect_to url_for(action: next_task.initial_action, id: next_task.id)
+
+    respond_to do |format|
+      format.html do
+        return redirect_to url_for(action: next_task.initial_action, id: next_task.id)
+      end
+      format.json do
+        return render json: { next_task_id: next_task.id }
+      end
+    end
   end
 
   def cancel
