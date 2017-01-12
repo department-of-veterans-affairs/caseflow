@@ -122,7 +122,7 @@ class Appeal < ActiveRecord::Base
 
   def uncertify!(user_id)
     return unless user_id == ENV["TEST_USER_ID"]
-    Appeal.uncertify(self){}
+    Appeal.uncertify(self)
   end
 
   def fetch_documents!

@@ -50,7 +50,7 @@ class CertificationsController < ApplicationController
   def uncertify
     if current_user.id == ENV["TEST_USER_ID"]
       @certification = Certification.find_by(vacols_id: vacols_id)
-      @certification.decertify!(current_user.id)
+      @certification.uncertify!(current_user.id)
       @certification.destroy
     end
 
