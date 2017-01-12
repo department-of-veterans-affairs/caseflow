@@ -157,17 +157,14 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleCancelModalClose = () => {
-    this.setState({
-      cancelModalDisplay: false
-    });
-  }
+  handleModalClose = function (modal) {
+    return () => {
+      let stateObject = {};
 
-  handleSpecialIssueModalClose = () => {
-    this.setState({
-      specialIssueModalDisplay: false
-    });
-  }
+      stateObject[modal] = false;
+      this.setState(stateObject);
+    };
+  };
 
   handleCancelTask = () => {
     this.setState({
@@ -248,7 +245,7 @@ export default class EstablishClaim extends BaseForm {
     let validOutput = true;
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value === true) {
+      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value) {
         validOutput = false;
       }
     });
@@ -309,7 +306,7 @@ export default class EstablishClaim extends BaseForm {
           buttons={[
             { classNames: ["cf-btn-link"],
               name: '\u00AB Go Back',
-              onClick: this.handleCancelModalClose
+              onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
               loading: modalSubmitLoading,
@@ -318,7 +315,7 @@ export default class EstablishClaim extends BaseForm {
             }
           ]}
           visible={true}
-          closeHandler={this.handleCancelModalClose}
+          closeHandler={this.handleModalClose('cancelModalDisplay')}
           title="Cancel EP Establishment">
           <p>
             If you click the <b>Cancel EP Establishment</b>
@@ -340,7 +337,7 @@ export default class EstablishClaim extends BaseForm {
           buttons={[
             { classNames: ["cf-btn-link"],
               name: '\u00AB Close',
-              onClick: this.handleSpecialIssueModalClose
+              onClick: this.handleModalClose('specialIssueModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
               name: 'Cancel Claim Establishment',
@@ -348,7 +345,7 @@ export default class EstablishClaim extends BaseForm {
             }
           ]}
           visible={true}
-          closeHandler={this.handleSpecialIssueModalClose}
+          closeHandler={this.handleModalClose('specialIssueModalDisplay')}
           title="Special Issue Grant">
           <p>
             You selected a special issue category not handled by AMO. Special
