@@ -9,8 +9,7 @@ const config = {
     'es5-shim/es5-shim',
     'es5-shim/es5-sham',
     'babel-polyfill',
-    './app/index',
-    'pdfjs-dist/build/pdf.worker.entry'
+    './app/index'
   ],
 
   output: {

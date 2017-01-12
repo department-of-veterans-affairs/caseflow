@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import SearchableDropDown from '../components/SearchableDropDown';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import ApiUtil from '../util/ApiUtil';
