@@ -35,7 +35,7 @@ class Dispatch
 
       fail InvalidClaimError unless validate_claim(full_claim)
       Appeal.repository.establish_claim!(claim: full_claim, appeal: task.appeal)
-      task.complete!(0)
+      task.complete!(status: Task.completion_status_code(:completed))
     end
 
     def default_claim_values

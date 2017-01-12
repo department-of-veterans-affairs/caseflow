@@ -9,7 +9,7 @@ describe ReassignOldTasksJob do
 
   let!(:finished_task) do
     EstablishClaim.create(appeal_id:
-    appeal2.id).complete!(status_code)
+    appeal2.id).complete!(status: status_code)
   end
 
   context ".perform" do

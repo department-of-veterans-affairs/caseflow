@@ -30,6 +30,7 @@ Rails.application.routes.draw do
 
       patch 'assign', on: :collection
       post 'perform', on: :member
+      post 'assign-existing-end-product', on: :member
       get 'pdf', on: :member
     end
   end
