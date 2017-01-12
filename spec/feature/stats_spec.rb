@@ -53,8 +53,6 @@ RSpec.feature "Stats Dashboard" do
     User.authenticate!(roles: ["System Admin"])
   end
 
-  after { Timecop.return }
-
   scenario "Switching tab intervals" do
     visit "/stats"
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
