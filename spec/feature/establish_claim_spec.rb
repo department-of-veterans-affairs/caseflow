@@ -102,7 +102,7 @@ RSpec.feature "Dispatch" do
         BGSService.end_product_data = []
       end
 
-      scenario "Establish a new claim page and process" do
+      scenario "Establish a new claim page and process pt1" do
         visit "/dispatch/establish-claim"
 
         # View history
@@ -131,6 +131,13 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+      end
+
+      scenario "stablish a new claim page and process pt2" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        page.select "Full Grant", from: "decisionType"
+        click_on "Create End Product"
 
         # Test date, text, radio button, & checkbox inputs
         page.fill_in "Decision Date", with: "01/01/2017"
