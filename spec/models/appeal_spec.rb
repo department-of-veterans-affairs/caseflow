@@ -287,4 +287,129 @@ describe Appeal do
       it { expect { appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
     end
   end
+
+  context "select_non_canceled_end_products_within_30_days" do
+    let(:appeal) do
+      Appeal.new(
+        vbms_id: "123",
+        decision_date: 1.day.ago
+      )
+    end
+    let(:yesterday) { 1.day.ago }
+    let(:last_year) { 365.days.ago }
+
+    let(:end_products_output) do
+      [{
+        claim_receive_date: yesterday,
+        claim_type_code: "172BVAG",
+        status_type_code: "PEND"
+      }]
+    end
+    subject { appeal.select_non_canceled_end_products_within_30_days(end_products_input) }
+
+    context "filters out old EP" do
+      let(:end_products_input) do
+        [
+          {
+            claim_receive_date: yesterday,
+            claim_type_code: "172BVAG",
+            status_type_code: "PEND"
+          },
+          {
+            claim_receive_date: last_year,
+            claim_type_code: "172BVAG",
+            status_type_code: "CLR"
+          }
+        ]
+      end
+      it { is_expected.to eq(end_products_output) }
+    end
+
+    context "filters out cancel EP" do
+      let(:end_products_input) do
+        [
+          {
+            claim_receive_date: yesterday,
+            claim_type_code: "172BVAG",
+            status_type_code: "PEND"
+          },
+          {
+            claim_receive_date: yesterday,
+            claim_type_code: "172BVAG",
+            status_type_code: "CAN"
+          }
+        ]
+      end
+      it { is_expected.to eq(end_products_output) }
+    end
+  end
+
+  context "non_canceled_end_procuts_within_30_days" do
+    let(:appeal) do
+      Appeal.new(
+        vbms_id: "123",
+        decision_date: 1.day.ago
+      )
+    end
+
+    let(:yesterday) { 1.day.ago }
+    let(:twenty_days_ago) { 20.days.ago }
+    let(:last_year) { 365.days.ago }
+
+    let(:end_products) do
+      [
+        {
+          claim_receive_date: twenty_days_ago,
+          claim_type_code: "Grant of Benefits",
+          status_type_code: "Pending"
+        },
+        {
+          claim_receive_date: yesterday,
+          claim_type_code: "Remand",
+          status_type_code: "Cleared"
+        }
+      ]
+    end
+
+    before do
+      BGSService.end_product_data = [
+        {
+          claim_receive_date: twenty_days_ago,
+          claim_type_code: "172GRANT",
+          status_type_code: "PEND"
+        },
+        {
+          claim_receive_date: yesterday,
+          claim_type_code: "170RMD",
+          status_type_code: "CLR"
+        },
+        {
+          claim_receive_date: yesterday,
+          claim_type_code: "172BVAG",
+          status_type_code: "CAN"
+        },
+        {
+          claim_receive_date: last_year,
+          claim_type_code: "172BVAG",
+          status_type_code: "CLR"
+        }
+      ]
+    end
+    it do
+      expect(appeal.non_canceled_end_products_within_30_days)
+        .to eq(end_products.slice(0, 2))
+    end
+  end
+
+  context "map_ep_value" do
+    it "when mapping exists" do
+      expect(Appeal.map_end_product_value("170APPACT", Dispatch::END_PRODUCT_CODES))
+        .to eq("Appeal Action")
+    end
+
+    it "when mapping doesn't exist" do
+      expect(Appeal.map_end_product_value("Test", Dispatch::END_PRODUCT_CODES))
+        .to eq("Test")
+    end
+  end
 end
