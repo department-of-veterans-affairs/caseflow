@@ -8,7 +8,7 @@ require "prometheus/client/rack/exporter"
 # require basic auth for the /metrics route
 use MetricsAuth, "metrics" do |username, password|
   # if we mistakenly didn't set a password for this route, disable the route
-  if ENV["METRICS_PASSWORD"].blank? || ENV["METRICS_USERNAME"].blank?
+  if ENV["METRICS_PASSWORD"].blank?
     permit = false
   else
     permit = [username, password] == [ENV["METRICS_USERNAME"], ENV["METRICS_PASSWORD"]]
