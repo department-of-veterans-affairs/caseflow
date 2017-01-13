@@ -11,10 +11,7 @@ export const POA = [
   'VSO',
   'Private'
 ];
-export const MODIFIER_OPTIONS = [
-  '170',
-  '172'
-];
+
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
   'Spec Ops (National)'
@@ -46,7 +43,7 @@ export const render = function() {
         <DropDown
          label="Modifier"
          name="endProductModifier"
-         options={MODIFIER_OPTIONS}
+         options={this.validModifiers()}
          onChange={this.handleFieldChange('form', 'endProductModifier')}
          {...this.state.form.endProductModifier}
         />

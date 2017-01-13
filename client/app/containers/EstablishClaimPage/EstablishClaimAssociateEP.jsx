@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
@@ -95,3 +95,10 @@ export default class AssociatePage extends React.Component {
       </div>;
   };
 }
+
+AssociatePage.propTypes = {
+  endProducts: PropTypes.arrayOf(PropTypes.object).isRequired,
+  handleAlert: PropTypes.func.isRequired,
+  handleAlertClear: PropTypes.func.isRequired,
+  task: PropTypes.object.isRequired
+};

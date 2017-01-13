@@ -24,6 +24,21 @@ export const END_PRODUCT_INFO = {
   'Remand': ['170RMDAMC', 'AMC-Remand']
 };
 
+const FULL_GRANT_MODIFIER_OPTIONS = [
+  '172'
+];
+
+const PARTIAL_GRANT_MODIFIER_OPTIONS = [
+  '170',
+  '171',
+  '175',
+  '176',
+  '177',
+  '178',
+  '179'
+];
+
+
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
@@ -43,7 +58,7 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        endProductModifier: new FormField(''),
         gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
@@ -214,6 +229,35 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  endProductModifierHash = () => {
+    let end_products = this.props.task.appeal.non_canceled_end_products_within_30_days;
+    return end_products.reduce((modifier_object, end_product) => {
+      modifier_object[end_product['end_product_type_code']] = true;
+      return modifier_object;
+    }, {});
+  }
+
+  validModifiers = () => {
+    let modifiers = [];
+    let modifierHash = this.endProductModifierHash();
+
+    if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+      modifiers = FULL_GRANT_MODIFIER_OPTIONS;
+    } else {
+      modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
+    }
+
+    return modifiers.filter((modifier) => {
+      return !modifierHash[modifier];
+    });
+  }
+
+  establishNextClaimIsDisabled = () => {
+    return this.isAssociatePage() && 
+      this.state.reviewForm.decisionType.value === 'Full Grant' &&
+      this.endProductModifierHash()['172'];
+  }
+
   render() {
     let {
       loading,
@@ -243,6 +287,7 @@ export default class EstablishClaim extends BaseForm {
               name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
+              disabled={this.establishNextClaimIsDisabled()}
             />
           </div>
           { this.isFormPage() &&
