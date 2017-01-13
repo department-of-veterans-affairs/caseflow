@@ -63,12 +63,14 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
+      admin_roles = roles && roles.include?("System Admin") ? ["System Admin"] : []
       self.stub = User.from_session(
         { "user" =>
           { "id" => "DSUSER",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
+            "roles" => roles || ["Certify Appeal"],
+            "admin_roles" => admin_roles }
         }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
