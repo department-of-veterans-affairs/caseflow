@@ -70,15 +70,6 @@ RSpec.feature "Cancel certification" do
       expect(page).to_not have_css(".usa-input-error")
 
       expect(page).to have_content("The certification has been cancelled")
-
-
-
-
-
-      # No input at all
-      # Other no textbox
-      # Email, not valid
-
     end
   end
 end
