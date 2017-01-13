@@ -27,11 +27,9 @@ class ReviewController < ApplicationController
   end
 
   def pdf_urls
-    pdfs = []
-    (0..3).each do |i|
-      pdfs.push(pdf_review_index_path(document: i))
+    [*0..3].map do |i|
+      pdf_review_index_path(document: i)
     end
-    pdfs
   end
   helper_method :pdf_urls
 end

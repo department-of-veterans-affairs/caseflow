@@ -5,7 +5,7 @@ import PdfViewer from '../components/PdfViewer';
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
-
+    console.log(this.props.pdfLinks);
     this.state = { pdf: 0 };
   }
 

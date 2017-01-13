@@ -8,9 +8,6 @@ export default class PdfViewer extends React.Component {
     this.state = {
       comments: []
     };
-    PDFJS.disableWorker = true;
-
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
   }
 
   generateComments = (pdfDocument) => {
@@ -24,14 +21,11 @@ export default class PdfViewer extends React.Component {
           storeAdapter.getComments(this.props.file, annotationId.uuid).
             then((comment) => {
 
-              if (comment.length > 0) {
-                this.comments = [
-                  ...this.comments,
-                  {
+              if (comment.length) {
+                this.comments.push({
                     content: comment[0].content,
                     uuid: annotationId.uuid
-                  }
-                ];
+                  });
                 this.setState({ comments: this.comments });
               }
             });
@@ -102,8 +96,10 @@ export default class PdfViewer extends React.Component {
   }
 
   componentDidMount = () => {
-
     const { UI } = PDFJSAnnotate;
+
+    PDFJS.disableWorker = true;
+    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
