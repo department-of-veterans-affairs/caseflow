@@ -1,12 +1,131 @@
 //= require jquery
 
 window.Modal = (function($) {
-
-  window.radioValidated = true;
-  window.emailValidate = true;
+  var state = {};
+  var questionNames = ["cancellationReason", "otherReason", "email"];
+  var errorMessages = {
+    "cancellationReason": "Make sure you've selected an option below.",
+    "otherReason": "Make sure you’ve filled out the comment box below.",
+    "email":  "Make sure you’ve entered a valid email address below."
+  };
+  var interactiveQuestions = ["otherReason"];
   var emailPattern = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
 
+  function init() {
+    initState();
 
+    $("#cancellation-form input, #cancellation-form textarea").on("change keyup paste mouseup", function() {
+      return reevalulate();
+    });
+
+    $("#cancellation-form").on("submit", function() {
+      return onSubmit();
+    });
+  }
+
+  function reevalulate() {
+    fetchState();
+    processState();
+    render();
+  }
+
+  function $question(questionName) {
+    return $("#question" + questionName);
+  }
+
+  function questionValue(questionName) {
+    return $question(questionName).find("input[type='text'], textarea, input[type='radio']:checked").val();
+  }
+
+  function fetchState() {
+    questionNames.forEach(function(questionName) {
+      state[questionName].value = questionValue(questionName);
+    });
+  }
+
+  function processState() {
+    questionNames.forEach(function(questionName) {
+      validateQuestion(questionName, false);
+    });
+    state["otherReason"].show = false;
+    if (state["cancellationReason"].value == "Other"){
+      state["otherReason"].show = true;
+    }
+
+  }
+
+  function render() {
+    questionNames.forEach(function(questionName) {
+      var error = state[questionName].error;
+      var $q = $question(questionName);
+      $q.find(".usa-input-error-message").html(error);
+      $q.toggleClass("usa-input-error", !!error);
+    });
+    interactiveQuestions.forEach(function(questionName) {
+        toggleQuestion(questionName);
+    });
+  }
+
+  function toggleQuestion(questionName) {
+      var $q = $question(questionName);
+      var hideQuestion = !state[questionName].show;
+
+      $q.toggleClass('hidden-field', hideQuestion);
+  }
+
+  function onSubmit() {
+    var invalidQuestionNames;
+
+    fetchState();
+    invalidQuestionNames = getInvalidQuestionNames();
+    render();
+
+    if (invalidQuestionNames.length > 0) {
+      // remove loading style
+      $(".cf-form").removeClass("cf-is-loading");
+    }
+    return invalidQuestionNames.length === 0;
+  }
+
+  function getInvalidQuestionNames() {
+    return questionNames.filter(function(questionName){
+      return !validateQuestion(questionName, true);
+    });
+  }
+
+  function validateQuestion(questionName, showError) {
+    var questionState = state[questionName];
+    var isValid = !!questionState.value || !questionState.show;
+
+    if (isValid && questionName == "email") {
+      isValid = emailPattern.test(questionState.value)
+    }
+
+    if(isValid) {
+      questionState.error = null;
+    }
+    else if(showError) {
+      questionState.error = errorMessages[questionName];
+    }
+
+    return isValid;
+  }
+
+  function initState() {
+    questionNames.forEach(function(questionName) {
+      state[questionName] = { show: true }
+    });
+    interactiveQuestions.forEach(function(questionName) {
+        state[questionName] = { show: false };
+        toggleQuestion(questionName);
+    });
+    $question("cancellationReason").find("input[type=radio]").prop("checked", false);
+    questionNames.forEach(function(questionName) {
+      $question(questionName).find(".question-label").append(
+        $("<span class='cf-required'> (Required)</span>")
+      );
+    });
+  }
 
   function openModal(e) {
     e.preventDefault();
@@ -32,110 +151,14 @@ window.Modal = (function($) {
     }
   }
 
-  function validateQuestions(){
-    const DIV = 'div';
-    const SPAN = 'span';
-    const FIELDSET = 'fieldset';
-    const ERROR_CLASS = 'usa-input-error';
-
-    var submitButton = $("#cancel-certification-link");
-    var radioInput = $("input:radio[name='cancelation-reasons']");
-    var textboxInput = $("textarea[id='other-text']");
-    var emailInput = $(":root").find('#confirm-cancel-certification').find( 'input[type="text"]');
-
-    var ERROR_MESSAGES = {};
-      ERROR_MESSAGES[radioInput] = "Make sure you've selected an option bellow.";
-      ERROR_MESSAGES[textboxInput] =   "Make sure you’ve filled out the comment box below.";
-      ERROR_MESSAGES[emailInput] =   "Make sure you’ve entered a valid email address below.";
-
-    function addError(element) {
-              element.parent().addClass(ERROR_CLASS);
-              element.prev(SPAN).text(ERROR_MESSAGES[element]);
-              $(element).css("width", '46rem');
-              $(element).focus();
-    }
-
-    function removeError(element) {
-      element.closest(DIV).removeClass(ERROR_CLASS);
-      element.prev(SPAN).empty();
-    }
-
-    function hasError(element){
-      return element.closest(DIV).hasClass(ERROR_CLASS);
-    }
-
-    radioInput.click(function(event) {
-              if (hasError(radioInput)) {
-                radioInput.closest(DIV).removeClass(ERROR_CLASS);
-                radioInput.closest(FIELDSET).prev(SPAN).empty();
-                window.radioValidated = true;
-              }
-              if (hasError(textboxInput)) {
-                removeError(textboxInput);
-                window.radioValidated = true;
-              }
-              if($('#other-reason').is(':checked')) {
-                $('#other').show();
-              }
-              else {
-                $('#other').hide();
-              }
-    });
-
-    submitButton.click(function(event) {
-
-        checkCancelationReasons();
-        checkEmail();
-
-        function checkCancelationReasons(){
-          if(radioInput.is(":checked")){
-              if($('#other-reason').is(':checked')) {
-                if(!textboxInput.val()){
-                  addError(textboxInput);
-                  window.radioValidated = false;
-                }
-                else{
-                  if (hasError(textboxInput)) {
-                    removeError(textboxInput);
-                    window.radioValidated = true;
-                  }
-                }
-              }
-          }
-          else{
-            radioInput.closest(DIV).addClass(ERROR_CLASS);
-            radioInput.closest(FIELDSET).prev(SPAN).text(ERROR_MESSAGES[radioInput]);
-            window.radioValidated = false;
-          }
-        }
-
-        function checkEmail(){
-          if ( ! emailInput.val() || (!emailPattern.test(emailInput.val()))){
-            addError(emailInput);
-            window.emailValidated = false;
-          }
-          else {
-            if (hasError(emailInput)) {
-              removeError(emailInput);
-              window.emailValidated = true;
-            }
-          }
-        }
-
-       if (!window.radioValidated || !window.emailValidated) {
-            event.preventDefault();
-        }
-    });
-  }
-
   // public
   return {
     bind: function() {
-      $("input[name$='cancelation-reasons']").prop('checked', false);
       $('.cf-action-openmodal').on('click', openModal);
       $('.cf-modal').on('click', closeModal);
       $(window).on('keydown', onKeyDown);
-      validateQuestions();
+
+      init();
     }
   };
 })($);

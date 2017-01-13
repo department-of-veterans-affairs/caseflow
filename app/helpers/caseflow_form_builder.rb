@@ -12,7 +12,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
 
     @template.content_tag :div, id: question_id(options),
                                 class: "cf-form-textarea" do
-      question_label(attribute, options) + super(attribute, trim_options(options))
+      question_label(attribute, options) + error_container + super(attribute, trim_options(options))
     end
   end
 
@@ -46,7 +46,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   private
 
   def question_id(options)
-    "question#{options[:question_number]}#{options[:part]}"
+    "question#{options[:question_number]}#{options[:part]}#{options[:question_name]}"
   end
 
   def wrapped_text_field(attribute, options, input)
@@ -110,7 +110,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   end
 
   def trim_options(options)
-    options.except(:question_number, :label, :secondary, :part)
+    options.except(:question_number, :label, :secondary, :part, :question_name)
   end
 
   def error_container
