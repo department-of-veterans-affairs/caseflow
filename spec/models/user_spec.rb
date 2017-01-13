@@ -35,6 +35,41 @@ describe User do
     end
   end
 
+  context "#functions" do
+    subject { user.functions }
+
+    context "user has only system admin role" do
+      before { session["user"]["roles"] = ["System Admin"] }
+      before { session["user"]["admin_roles"] = ["System Admin"] }
+      result = {
+        "Establish Claim" => { enabled: false },
+        "Manage Claim Establishment" => { enabled: false },
+        "Certify Appeal" => { enabled: false }
+      }
+      it { is_expected.to eq result }
+    end
+
+    context "user has more than a system admin role" do
+      before { session["user"]["roles"] = ["System Admin"] }
+      before { session["user"]["admin_roles"] = ["System Admin", "Manage Claim Establishment"] }
+      result = {
+        "Establish Claim" => { enabled: false },
+        "Manage Claim Establishment" => { enabled: true },
+        "Certify Appeal" => { enabled: false }
+      }
+      it { is_expected.to eq result }
+    end
+  end
+
+  context "#toggle_admin_roles" do
+    it "adds a function and then removes" do
+      user.toggle_admin_roles(role: "Establish Claim", enable: true)
+      expect(user.admin_roles).to eq ["Establish Claim"]
+      user.toggle_admin_roles(role: "Establish Claim", enable: false)
+      expect(user.admin_roles).to eq []
+    end
+  end
+
   context "#display_name" do
     subject { user.display_name }
 
@@ -67,6 +102,18 @@ describe User do
 
     context "when roles contains the thing" do
       before { session["user"]["roles"] = ["Do the thing"] }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when system admin roles don't contain the thing" do
+      before { session["user"]["roles"] = ["System Admin"] }
+      before { session["user"]["admin_roles"] = ["System Admin"] }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when system admin roles contain the thing" do
+      before { session["user"]["roles"] = ["System Admin"] }
+      before { session["user"]["admin_roles"] = ["System Admin", "Do the thing"] }
       it { is_expected.to be_truthy }
     end
   end
@@ -134,6 +181,7 @@ describe User do
     context "gets a user object from a session" do
       before do
         session["user"]["roles"] = ["Do the thing"]
+        session["user"]["admin_roles"] = ["Do even more"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
         session["user"]["ip_address"] = "127.0.0.1"
@@ -144,6 +192,7 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
+        expect(subject.admin_roles).to eq(["Do even more"])
       end
 
       it "persists user to DB" do
