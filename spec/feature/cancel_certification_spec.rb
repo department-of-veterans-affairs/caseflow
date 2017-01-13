@@ -32,7 +32,7 @@ RSpec.feature "Cancel certification" do
     end
   end
 
-  context "New cancellation modal", focus: true do
+  context "New cancellation modal" do
     scenario "Click cancel link and confirm modal" do
       User.authenticate!(roles: ["Certify Appeal", "System Admin"])
 
