@@ -120,6 +120,11 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
+  def uncertify!(user_id)
+    return unless user_id == ENV["TEST_USER_ID"]
+    Appeal.uncertify(self)
+  end
+
   def fetch_documents!
     self.class.repository.fetch_documents_for(self)
     @documents
@@ -165,6 +170,15 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
+    end
+
+    # ONLY FOR TEST USER and for TEST_APPEAL_ID
+    def uncertify!(appeal)
+      return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
+
+      Form8.find_by(vacols_id: appeal.vacols_id).destroy
+      File.delete(form8.pdf_location) unless File.exist?(form8.pdf_location)
+      repository.uncertify(appeal)
     end
 
     def map_end_product_value(code, mapping)
