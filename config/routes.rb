@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
+
+    # ONLY FOR UAT TESTING
+    if ENV["TEST_USER_ID"]
+      post 'uncertify', on: :member
+    end
+
   end
 
   scope path: "/dispatch" do
@@ -49,6 +55,9 @@ Rails.application.routes.draw do
     end
   end
   # :nocov:
+
+  resources :functions, only: :index
+  patch '/functions/change', to: 'functions#change'
 
   resources :offices, only: :index
 

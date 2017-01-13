@@ -61,7 +61,7 @@
       </script>
 
   <%= favicon_link_tag %>
-  
+
 </head>
 <body>
   <header>
@@ -86,6 +86,12 @@
               <% if ApplicationController.dependencies_faked? %>
                 <li>
                   <a href="<%= url_for controller: 'dev_users', action: 'index'%>">Switch User</a>
+                </li>
+              <% end %>
+
+              <% if current_user.admin? %>
+                <li>
+                  <a href="<%= url_for controller: 'functions', action: 'index'%>">Change Functions</a>
                 </li>
               <% end %>
 

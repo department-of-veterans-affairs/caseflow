@@ -83,7 +83,6 @@ describe AppealRepository do
 
   context ".set_vacols_values" do
     before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
-    after { Timecop.return }
 
     subject do
       appeal = Appeal.new

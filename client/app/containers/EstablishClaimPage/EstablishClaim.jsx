@@ -18,6 +18,12 @@ export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
 export const FORM_PAGE = 2;
 
+export const END_PRODUCT_INFO = {
+  'Full Grant': ['172BVAG', 'BVA Grant'],
+  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
+  'Remand': ['170RMDAMC', 'AMC-Remand']
+};
+
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
@@ -27,7 +33,13 @@ export default class EstablishClaim extends BaseForm {
     // Set initial state on page render
 
     this.state = {
-      cancelModal: false,
+      cancelModal: {
+        cancelFeedback: new FormField(
+          '',
+          requiredValidator('Please enter an explanation.')
+        )
+      },
+      cancelModalDisplay: false,
       form: {
         allowPoa: new FormField(false),
         decisionDate: new FormField(
@@ -37,38 +49,32 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        gulfWar: new FormField(false),
-        modifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
         ),
-        suppressAcknowledgement: new FormField(false)
+        suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
-      modal: {
-        cancelFeedback: new FormField(
-          '',
-          requiredValidator('Please enter an explanation.')
-          )
-      },
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
       reviewForm: {
         decisionType: new FormField(decisionType)
       },
+      specialIssueModalDisplay: false,
       specialIssues: {}
     };
     specialIssues.forEach((issue) => {
-      this.state.specialIssues[issue] = new FormField(false);
+      this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
   }
 
   handleSubmit = (event) => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
+    let { handleAlert, handleAlertClear, task } = this.props;
 
     event.preventDefault();
     handleAlertClear();
@@ -85,48 +91,50 @@ export default class EstablishClaim extends BaseForm {
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
+    let endProductInfo = this.getClaimTypeFromDecision();
     let data = {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.form),
-        claimLabel: this.getClaimTypeFromDecision()
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
       })
     };
 
-    return ApiUtil.post(`/dispatch/establish-claim/${id}/perform`, { data }).then(() => {
-      window.location.reload();
-    }, () => {
-      this.setState({
-        loading: false
-      });
-      handleAlert(
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
+      then(() => {
+        window.location.reload();
+      }, () => {
+        this.setState({
+          loading: false
+        });
+        handleAlert(
         'error',
         'Error',
         'There was an error while submitting the current claim. Please try again later'
       );
-    });
+      });
   }
 
   getClaimTypeFromDecision = () => {
-    if (this.state.reviewForm.decisionType.value === 'Remand') {
-      return '170RMDAMC - AMC-Remand';
-    } else if (this.state.reviewForm.decisionType.value === 'Partial Grant') {
-      return '170PGAMC - AMC-Partial Grant';
-    } else if (this.state.reviewForm.decisionType.value === 'Full Grant') {
-      return '172BVAG - BVA Grant';
+    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+
+    if (!values) {
+      throw new RangeError("Invalid deicion type value");
     }
-    throw new RangeError("Invalid deicion type value");
+
+    return values;
   }
 
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
     let data = {
-      feedback: this.state.modal.cancelFeedback.value
+      feedback: this.state.cancelModal.cancelFeedback.value
     };
 
     handleAlertClear();
 
-    if (!this.validateFormAndSetErrors(this.state.modal)) {
+    if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
     }
 
@@ -143,21 +151,31 @@ export default class EstablishClaim extends BaseForm {
         'There was an error while cancelling the current claim. Please try again later'
       );
       this.setState({
-        cancelModal: false,
+        cancelModalDisplay: false,
         modalSubmitLoading: false
       });
     });
   }
 
-  handleModalClose = () => {
-    this.setState({
-      cancelModal: false
-    });
-  }
+  handleModalClose = function (modal) {
+    return () => {
+      let stateObject = {};
+
+      stateObject[modal] = false;
+      this.setState(stateObject);
+    };
+  };
 
   handleCancelTask = () => {
     this.setState({
-      cancelModal: true
+      cancelModalDisplay: true
+    });
+  }
+
+  handleCancelTaskForSpecialIssue = () => {
+    this.setState({
+      cancelModalDisplay: true,
+      specialIssueModalDisplay: false
     });
   }
 
@@ -191,13 +209,17 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === FORM_PAGE;
   }
 
+  /*
+   * This function acts as a router on the end product form. If the user
+   * is on the review page, it goes to the review page validation function.
+   * That checks to make sure only valid special issues are checked and either
+   * displays an error modal or moves the user on to the next page. If the user
+   * is on the associate page, they move onto the form page. If the user is on
+   * the form page, their form is submitted, and they move to the success page.
+   */
   handleCreateEndProduct = (event) => {
     if (this.isReviewPage()) {
-      if (this.shouldShowAssociatePage()) {
-        this.handlePageChange(ASSOCIATE_PAGE);
-      } else {
-        this.handlePageChange(FORM_PAGE);
-      }
+      this.handleReviewPageSubmit();
     } else if (this.isAssociatePage()) {
       this.handlePageChange(FORM_PAGE);
     } else if (this.isFormPage()) {
@@ -207,10 +229,35 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  handleReviewPageSubmit() {
+    if (!this.validateReviewPageSubmit()) {
+      this.setState({
+        specialIssueModalDisplay: true
+      });
+    } else if (this.shouldShowAssociatePage()) {
+      this.handlePageChange(ASSOCIATE_PAGE);
+    } else {
+      this.handlePageChange(FORM_PAGE);
+    }
+  }
+
+  validateReviewPageSubmit() {
+    let validOutput = true;
+
+    Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value) {
+        validOutput = false;
+      }
+    });
+
+    return validOutput;
+  }
+
   render() {
     let {
       loading,
-      cancelModal,
+      cancelModalDisplay,
+      specialIssueModalDisplay,
       modalSubmitLoading
     } = this.state;
 
@@ -255,21 +302,21 @@ export default class EstablishClaim extends BaseForm {
             classNames={["cf-btn-link"]}
           />
         </div>
-        {cancelModal && <Modal
-        buttons={[
-          { classNames: ["cf-btn-link"],
-            name: '\u00AB Go Back',
-            onClick: this.handleModalClose
-          },
-          { classNames: ["usa-button", "usa-button-secondary"],
-            loading: modalSubmitLoading,
-            name: 'Cancel EP Establishment',
-            onClick: this.handleFinishCancelTask
-          }
-        ]}
-        visible={true}
-        closeHandler={this.handleModalClose}
-        title="Cancel EP Establishment">
+        {cancelModalDisplay && <Modal
+          buttons={[
+            { classNames: ["cf-btn-link"],
+              name: '\u00AB Go Back',
+              onClick: this.handleModalClose('cancelModalDisplay')
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+              loading: modalSubmitLoading,
+              name: 'Cancel EP Establishment',
+              onClick: this.handleFinishCancelTask
+            }
+          ]}
+          visible={true}
+          closeHandler={this.handleModalClose('cancelModalDisplay')}
+          title="Cancel EP Establishment">
           <p>
             If you click the <b>Cancel EP Establishment</b>
             button below your work will not be
@@ -281,10 +328,31 @@ export default class EstablishClaim extends BaseForm {
           <TextareaField
             label="Cancel Explanation"
             name="Explanation"
-            onChange={this.handleFieldChange('modal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
-            {...this.state.modal.cancelFeedback}
+            {...this.state.cancelModal.cancelFeedback}
           />
+        </Modal>}
+        {specialIssueModalDisplay && <Modal
+          buttons={[
+            { classNames: ["cf-btn-link"],
+              name: '\u00AB Close',
+              onClick: this.handleModalClose('specialIssueModalDisplay')
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+              name: 'Cancel Claim Establishment',
+              onClick: this.handleCancelTaskForSpecialIssue
+            }
+          ]}
+          visible={true}
+          closeHandler={this.handleModalClose('specialIssueModalDisplay')}
+          title="Special Issue Grant">
+          <p>
+            You selected a special issue category not handled by AMO. Special
+            issue cases cannot be processed in caseflow at this time. Please
+            select <b>Cancel Claim Establishment</b> and proceed to process
+            this case manually in VACOLS.
+          </p>
         </Modal>}
       </div>
     );
