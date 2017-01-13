@@ -32,9 +32,9 @@ RSpec.feature "Cancel certification" do
     end
   end
 
-  context "New cancellation modal" do
+  context "New cancellation modal", focus: true do
     scenario "Click cancel link and confirm modal" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(roles: ["Certify Appeal", "System Admin"])
 
       Fakes::AppealRepository.records = {
         "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
