@@ -135,7 +135,6 @@ describe User do
       before { session["user"]["roles"] = ["System Admin"] }
       it { is_expected.to be_truthy }
     end
-
   end
 
   context "#authenticated?" do

@@ -9,7 +9,6 @@ RSpec.feature "Cancel certification" do
         "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
       }
 
-
       visit "certifications/new/5555C"
       click_on "Cancel"
       expect(page).to have_content("Are you sure you can't certify this case?")

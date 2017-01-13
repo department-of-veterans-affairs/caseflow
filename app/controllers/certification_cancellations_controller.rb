@@ -3,7 +3,7 @@ class CertificationCancellationsController < ApplicationController
   before_action :verify_access
 
   def create
-    render 'cancel'
+    render "cancel"
   end
 
   private
@@ -12,4 +12,3 @@ class CertificationCancellationsController < ApplicationController
     verify_authorized_roles("Certify Appeal")
   end
 end
-
