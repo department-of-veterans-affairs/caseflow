@@ -48,7 +48,7 @@ window.Modal = (function($) {
       validateQuestion(questionName, false);
     });
     state["otherReason"].show = false;
-    if (state["cancellationReason"].value == "Other"){
+    if (state["cancellationReason"].value === "Other"){
       state["otherReason"].show = true;
     }
 
@@ -97,8 +97,8 @@ window.Modal = (function($) {
     var questionState = state[questionName];
     var isValid = !!questionState.value || !questionState.show;
 
-    if (isValid && questionName == "email") {
-      isValid = emailPattern.test(questionState.value)
+    if (isValid && questionName === "email") {
+      isValid = emailPattern.test(questionState.value);
     }
 
     if(isValid) {
@@ -113,7 +113,7 @@ window.Modal = (function($) {
 
   function initState() {
     questionNames.forEach(function(questionName) {
-      state[questionName] = { show: true }
+      state[questionName] = { show: true };
     });
     interactiveQuestions.forEach(function(questionName) {
         state[questionName] = { show: false };
