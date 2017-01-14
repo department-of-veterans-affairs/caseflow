@@ -24,6 +24,8 @@ Rails.application.routes.draw do
 
   end
 
+  resources :certification_cancellations
+
   scope path: "/dispatch" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
