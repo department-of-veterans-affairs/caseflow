@@ -10,16 +10,16 @@ RSpec.feature "Change Functions" do
     expect(page).to have_content "Manage Claim Establishment (Disabled)"
     expect(page).to have_content "Certify Appeal (Disabled)"
 
-    find("#establish_claim", "Enable").click
-    find("#certify_appeal", "Enable").click
+    click_link("establish_claim")
+    click_link("certify_appeal")
 
     expect(page).to have_content "Establish Claim (Enabled)"
     expect(page).to have_content "Manage Claim Establishment (Disabled)"
     expect(page).to have_content "Certify Appeal (Enabled)"
 
-    find("#establish_claim", "Disable").click
+    click_link("establish_claim")
     expect(page).to have_content "Establish Claim (Disabled)"
-    find("#certify_appeal", "Disable").click
+    click_link("certify_appeal")
 
     visit "/certifications/new/123C"
     expect(page).to have_content("You aren't authorized to use this part of Caseflow yet.")

@@ -93,7 +93,8 @@ describe Dispatch do
 
     it "does nothing when valid" do
       expect(dispatch.claim.valid?).to be_truthy
-      expect { subject }.to_not raise_error(Dispatch::InvalidClaimError)
+      # Dispatch::InvalidClaimError
+      expect { subject }.to_not raise_error
     end
   end
 

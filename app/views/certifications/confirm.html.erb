@@ -10,6 +10,18 @@
   </ul>
 
   <p class="cf-msg-screen-text">Way to go! You can now close this browser window and open another case in VACOLS.</p>
+  <% if Rails.env.development? || Rails.env.demo? || Rails.env.test? %>
+      <%= link_to "Next Ready Certification", new_certification_path(vacols_id: "#{params[:id].to_i+1}C")%>
+      <br>
+      <%= link_to "Next Mismatched Certification", new_certification_path(vacols_id: "#{params[:id].to_i+333}C")%>
+      <br>
+      <%= link_to "Next Certified Certification", new_certification_path(vacols_id: "#{params[:id].to_i+666}C")%>
+      <br>
+      <%= link_to "Next Remand Certification", new_certification_path(vacols_id: "#{params[:id].to_i+198}C")%>
+      <br>
+      <%= link_to "Next Full Grant Certification", new_certification_path(vacols_id: "#{params[:id].to_i+531}C")%>
+      <br>
+  <% end %>
   <% if current_user.css_id == ENV['TEST_USER_ID'] && params[:id] == ENV["TEST_APPEAL_ID"] %>
       <%= link_to "Uncertify Appeal", uncertify_certification_path(params[:id]), method: :post %>
   <% end %>
