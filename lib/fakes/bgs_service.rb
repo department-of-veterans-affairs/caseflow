@@ -26,7 +26,7 @@ class Fakes::BGSService
 
   def get_end_products(_veteran_id)
     ep_data = [END_PRODUCTS[0], END_PRODUCTS[1], END_PRODUCTS[2]]
-    10.times.each do |num|
+    rand(10..20).times.each do |num|
       rand_ep = {
         benefit_claim_id: num.to_s,
         claim_receive_date: Time.zone.now - rand(0..10).days,
