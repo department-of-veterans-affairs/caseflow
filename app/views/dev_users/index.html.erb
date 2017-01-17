@@ -1,25 +1,29 @@
 <div class="cf-app-segment cf-app-segment--alt">
-  <div class="usa-grid-full">
-    <div class="usa-width-one-half">
-      <h1>Switch User</h1>
+    <div class="usa-grid-full">
+	<div class="usa-width-one-half">
+	    <h1>Switch User Type</h1>
+	    <% @users.each do |user| %>
+		<p><%= link_to "#{user.css_id} at station #{user.station_id}", set_user_path(user), method: :post %></p>
+	    <% end %>
+	</div>
+	<div class="usa-width-one-half">
+	    <h1>Page Links</h1>
 
-      <% @users.each do |user| %>
-        <p><%= link_to "#{user.css_id} at station #{user.station_id}", set_user_path(user), method: :post %></p>
-      <% end %>
-    </div>
+	    <h2>Admin</h2>
+	    <p><a href="/stats">Stats</a></p>
+	    <p><a href="/functions">Functions</a></p>
 
-    <div class="usa-width-one-half">
-	<h1>Page Links</h1>
-	<h2>Dispatch</h2>
-      <p><a href="/dispatch/establish-claim">Establish Claim</a></p>
-      <h2>Certification</h2>
-      <p><a href="/certifications/new/123C">Ready to Certify</a></p>
-      <p><a href="/certifications/new/456C">Mismatched Documents</a></p>
-      <p><a href="/certifications/new/789C">Already Certified</a></p>
-      <p><a href="/certifications/new/321C">Remands Decided</a></p>
-      <p><a href="/certifications/new/654C">Full Grant Decided</a></p>
-      <p><a href="/certifications/new/000ERR">VBMS Error</a></p>
-      <p><a href="/certifications/new/001ERR">Missing Data</a></p>
+	    <h2>Dispatch</h2>
+	    <p><a href="/dispatch/establish-claim">Establish Claim</a></p>
+
+	    <h2>Certification</h2>
+	    <p><a href="/certifications/new/123C">Ready to Certify</a></p>
+	    <p><a href="/certifications/new/456C">Mismatched Documents</a></p>
+	    <p><a href="/certifications/new/789C">Already Certified</a></p>
+	    <p><a href="/certifications/new/321C">Remands Decided</a></p>
+	    <p><a href="/certifications/new/654C">Full Grant Decided</a></p>
+	    <p><a href="/certifications/new/000ERR">VBMS Error</a></p>
+	    <p><a href="/certifications/new/001ERR">Missing Data</a></p>
+	</div>
     </div>
-  </div>
 </div>
