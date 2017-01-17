@@ -110,7 +110,7 @@ class Appeal < ActiveRecord::Base
 
   def decision
     decisions = documents_with_type("BVA Decision").select do |decision|
-      (decision.received_at.to_time_in_current_zone - decision_date).abs <= 1.day
+      (decision.received_at.in_time_zone - decision_date).abs <= 1.day
     end
     fail(MultipleDecisionError) if decisions.size > 1
     decisions.first
