@@ -173,7 +173,7 @@ class Appeal < ActiveRecord::Base
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify!(appeal)
+    def uncertify(appeal)
       return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
 
       Form8.find_by(vacols_id: appeal.vacols_id).destroy
