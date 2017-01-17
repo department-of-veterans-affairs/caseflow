@@ -34,7 +34,7 @@ RSpec.feature "Dispatch" do
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
       @vbms_id => { documents: [Document.new(
-        received_at: Time.current - 7.days, type: "BVA Decision",
+        received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
         document_id: "123"
       )]
       }
