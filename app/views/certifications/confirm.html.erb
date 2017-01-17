@@ -10,8 +10,5 @@
   </ul>
 
   <p class="cf-msg-screen-text">Way to go! You can now close this browser window and open another case in VACOLS.</p>
-  <% if current_user.css_id == ENV['TEST_USER_ID'] && params[:id] == ENV["TEST_APPEAL_ID"] %>
-      <%= link_to "Uncertify Appeal", uncertify_certification_path(params[:id]), method: :post %>
-  <% end %>
 
 </div>
