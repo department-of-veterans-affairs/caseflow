@@ -1,0 +1,17 @@
+<div class="cf-app-segment cf-app-segment--alt">
+  <div class="usa-grid-full">
+    <h1>Change Functions</h1>
+    <% @functions.each do |name, value| %>
+      <p>
+        <% if value[:enabled]  %>
+            &#9989; <%= name %> (Enabled)
+            <%= link_to "Disable", functions_change_url(function: name, enable: false), method: :patch, id: name.gsub(/\s+/, "_").downcase  %>
+        <% else %>
+            &#10060; <%= name %> (Disabled)
+            <%= link_to "Enable", functions_change_url(function: name, enable: true), method: :patch, id: name.gsub(/\s+/, "_").downcase %>
+        <% end %>
+      </p>
+    <% end %>
+</div>
+
+

@@ -57,7 +57,7 @@ class Dispatch
 
     # This is a list of the "variable attrs" that are returned from the
     # browser's End Product form
-    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label).freeze
+    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label date).freeze
     BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
     OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
     VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
@@ -74,19 +74,27 @@ class Dispatch
       end
     end
 
+    # TODO(jd): Consider moving this to date util in the future
+    def formatted_date
+      Date.strptime(date, "%m/%d/%Y")
+    end
+
     def to_hash
       initial_hash = default_values.merge(dynamic_values)
 
-      VARIABLE_ATTRS.each_with_object(initial_hash) do |attr, hash|
+      result = VARIABLE_ATTRS.each_with_object(initial_hash) do |attr, hash|
         val = instance_variable_get("@#{attr}")
         hash[attr] = val unless val.nil?
       end
+
+      # override date attr, ensuring it's properly formatted
+      result[:date] = formatted_date
+
+      result
     end
 
     def dynamic_values
       {
-        date: Time.now.utc.to_date,
-
         # TODO(jd): Make this attr dynamic in future PR once
         # we support routing a claim based on special issues
         station_of_jurisdiction: "317"

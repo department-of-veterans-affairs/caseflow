@@ -59,6 +59,11 @@ class CertificationsController < ApplicationController
 
   private
 
+  def certification_cancellation
+    @certification_cancellation ||= CertificationCancellation.new(certification: certification)
+  end
+  helper_method :certification_cancellation
+
   def verify_access
     verify_authorized_roles("Certify Appeal")
   end

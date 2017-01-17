@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 40bdd3ce915522f0dfdc13b7a3f351243e21285f
-  ref: 40bdd3c
+  revision: 8f590179f30e92a3af8928ba4d33439dab571307
+  ref: 8f59017
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -10,6 +10,7 @@ GIT
       jquery-rails
       momentjs-rails
       neat
+      rails (~> 4.2)
       us_web_design_standards
 
 GIT
@@ -418,6 +419,7 @@ GEM
       tzinfo (>= 1.0.0)
     uglifier (3.0.0)
       execjs (>= 0.3.0, < 3)
+    wannabe_bool (0.6.0)
     wasabi (3.5.0)
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
@@ -495,6 +497,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (>= 1.3.0)
   us_web_design_standards!
+  wannabe_bool
   web-console (~> 2.0)
   where-or
 

@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.feature "Save Certification" do
   before do
     User.authenticate!
+    Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
   end
 
   scenario "Submit form while missing required values" do
@@ -53,6 +54,16 @@ RSpec.feature "Save Certification" do
 
     visit "certifications/new/5555C"
 
+    fill_in "5A Service connection for", with: "Wonderful World"
+    expect(find_field("5B Date of notification of action appealed").value).to eq "02/01/2017"
+    page.execute_script("$('#question5B input').val('08/08/2016')")
+
+    fill_in "6A Increased rating for", with: "Can be better"
+    expect(find_field("6B Date of notification of action appealed").value).to eq "02/01/2017"
+
+    # 7A question is empty so question 7B should not be visible
+    expect(page).to_not have_content("7B Date of notification of action appealed")
+
     fill_in "Full Veteran Name", with: "Joe Patriot"
     fill_in "8A Representative Name", with: "Jane Patriot"
     within_fieldset("8A Representative Type") do
@@ -82,6 +93,14 @@ RSpec.feature "Save Certification" do
 
     visit "certifications/new/5555C"
     expect(find_field("Full Veteran Name").value).to eq("Joe Patriot")
+
+    expect(find_field("5A Service connection for").value).to eq "Wonderful World"
+    expect(find_field("5B Date of notification of action appealed").value).to eq "08/08/2016"
+
+    expect(find_field("6A Increased rating for").value).to eq "Can be better"
+    expect(find_field("6B Date of notification of action appealed").value).to eq "02/01/2017"
+
+    expect(page).to_not have_content("7B Date of notification of action appealed")
     expect(find_field("8A Representative Name").value).to eq("Jane Patriot")
 
     within_fieldset("8A Representative Type") do
@@ -138,6 +157,40 @@ RSpec.feature "Save Certification" do
 
     visit "certifications/new/6666C"
     expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy, Q")
+  end
+
+  scenario "Saving a certification and go back and make edits" do
+    Fakes::AppealRepository.records = {
+      "12345C" => Fakes::AppealRepository.appeal_ready_to_certify
+    }
+
+    visit "certifications/new/12345C"
+
+    fill_in "5A Service connection for", with: "Wonderful World"
+    page.execute_script("$('#question5B input').val('08/08/2016')")
+    # fill out the text and leave the default date
+    fill_in "7A Other", with: "other stuff"
+
+    within_fieldset("9A Is VA Form 646, or equivalent, of record?") do
+      find("label", text: "Yes").click
+    end
+
+    within_fieldset("11A Are contested claims procedures applicable in this case?") do
+      find("label", text: "No").click
+    end
+
+    fill_in "17A Name of certifying official", with: "Kavi"
+    within_fieldset("17B Title of certifying official") do
+      find("label", text: "Other").click
+    end
+    fill_in "Specify other title of certifying official", with: "Ray Romano"
+
+    click_on "Preview Completed Form 8"
+    click_on "Go back and make edits"
+
+    expect(find_field("5B Date of notification of action appealed").value).to eq "08/08/2016"
+    expect(page).to_not have_content("6B Date of notification of action appealed")
+    expect(find_field("7B Date of notification of action appealed").value).to eq "02/01/2017"
   end
 
   scenario "Saving a certification passes the correct values into the PDF service" do

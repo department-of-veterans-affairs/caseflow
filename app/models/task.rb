@@ -147,6 +147,10 @@ class Task < ActiveRecord::Base
     completion_status == self.class.completion_status_code(:canceled)
   end
 
+  def assigned_existing_ep?
+    completion_status == self.class.completion_status_code(:assigned_existing_ep)
+  end
+
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status:, outgoing_reference_id: nil)
     fail(AlreadyCompleteError) if complete?
