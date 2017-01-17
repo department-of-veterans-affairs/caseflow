@@ -3,6 +3,5 @@
   task: task.to_hash,
   pdfLink: pdf_establish_claim_path(id: task.id, time: Time.now.to_i),
   pdfjsLink: pdfjs.full_path(file: pdf_establish_claim_path(id: task.id, time: Time.now.to_i)),
-  page: "EstablishClaim",
-  regionalOffice: task.appeal.regional_office_key
+  page: "EstablishClaim"
 }) %>

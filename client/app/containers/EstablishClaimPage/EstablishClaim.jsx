@@ -14,6 +14,8 @@ import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
+/* eslint-disable max-len */
+
 export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
 export const FORM_PAGE = 2;
@@ -234,23 +236,28 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  /*
+   * This function takes the special issues from the review page and sets the station
+   * of jurisdiction in the form page. Special issues that all go to the same spot are
+   * defined in the constant ROUTING_SPECIAL_ISSUES. Special issues that go back to the
+   * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
+   */
   setStationState() {
+    let stateObject = this.state;
+
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
-      if
-        (this.state.specialIssues[ApiUtil.convertToCamelCase(issue.specialIssue)].
-              value) {
-        let stateObject = this.state;
-
-        if (issue.stationOfJurisdiction) {
-          stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
-        } else {
-          stateObject.form.stationOfJurisdiction.value = this.props.regionalOffice;
-        }
-
-        this.setState({
-          stateObject
-        });
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
+    });
+    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[issue].value) {
+        stateObject.form.stationOfJurisdiction.value =
+          this.props.task.appeal.regional_office_key;
+      }
+    });
+    this.setState({
+      stateObject
     });
   }
 
@@ -397,6 +404,7 @@ export default class EstablishClaim extends BaseForm {
 }
 
 EstablishClaim.propTypes = {
-  regionalOffice: PropTypes.string,
   task: PropTypes.object.isRequired
 };
+
+/* eslint-enable max-len */

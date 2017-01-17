@@ -21,7 +21,7 @@ describe Dispatch do
       gulf_war_registry: false,
       allow_poa: false,
       suppress_acknowledgement_letter: false,
-      station_of_jurisdiction: "499 - National Work Queue"
+      station_of_jurisdiction: "499"
     }
   end
   let(:dispatch) { Dispatch.new(claim: claim, task: task) }

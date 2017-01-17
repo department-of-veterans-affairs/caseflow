@@ -57,13 +57,25 @@ export const UNHANDLED_SPECIAL_ISSUES = [
 
 export const ROUTING_SPECIAL_ISSUES = [
   {
-    specialIssue: 'Mustard Gas',
+    specialIssue: 'mustardGas',
     stationOfJurisdiction: '351 - Muskogee'
-  },
-  {
-    specialIssue: 'Private Attorney',
-    stationOfJurisdiction: ''
   }
+];
+
+export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
+  'dependencies',
+  'educationOrVocationalRehab',
+  'hearingsTravelBoardVideoConference',
+  'homeLoanGuaranty',
+  'incarceratedVeterans',
+  'manilaRemand',
+  'manlinconCompliance',
+  'nonratingIssues',
+  'privateAttorney',
+  'proposedIncompetency',
+  'radiation',
+  'riceCompliance',
+  'spinaBifida'
 ];
 
 export const render = function() {
