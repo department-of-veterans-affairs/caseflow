@@ -24,6 +24,11 @@ export const END_PRODUCT_INFO = {
   'Remand': ['170RMDAMC', 'AMC-Remand']
 };
 
+// This page is used by AMC to establish claims. This is
+// the last step in the appeals process, and is after the decsion
+// has been made. By establishing an EP, we ensure the appeal
+// has properly been "handed off" to the right party for adjusting
+// the veteran's benefits
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
@@ -42,7 +47,8 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay: false,
       form: {
         allowPoa: new FormField(false),
-        decisionDate: new FormField(
+        // This is the decision date that gets mapped to the claim's creation date
+        date: new FormField(
           formatDate(this.props.task.appeal.decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),

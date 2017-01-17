@@ -140,7 +140,8 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         # Test date, text, radio button, & checkbox inputs
-        page.fill_in "Decision Date", with: "01/01/2017"
+        date = "01/08/2017"
+        page.fill_in "Decision Date", with: date
         page.select "172", from: "endProductModifier"
         page.find("#POA_VSO").trigger("click")
         page.fill_in "POA Code", with: "my poa code"
@@ -155,7 +156,7 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            date: Time.now.utc.to_date,
+            date: Date.strptime(date, "%m/%d/%Y"),
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
