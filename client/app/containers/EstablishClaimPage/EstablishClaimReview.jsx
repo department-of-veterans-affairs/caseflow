@@ -55,6 +55,10 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   'National Cemetery Administration'
 ];
 
+export const ROUTING_SPECIAL_ISSUES = [
+  {special_issue: 'Mustard Gas', station: '351 - Muskogee'}
+]
+
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
 

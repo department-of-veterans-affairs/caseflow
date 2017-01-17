@@ -67,8 +67,8 @@ export const render = function() {
         <TextField
          label="Station"
          name="Station"
-         value="499 - National Work Queue"
          readOnly={true}
+         {...this.state.form.station}
         />
         <RadioField
          label="POA"
