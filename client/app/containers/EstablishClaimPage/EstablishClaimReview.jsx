@@ -56,7 +56,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
 ];
 
 export const ROUTING_SPECIAL_ISSUES = [
-  {special_issue: 'Mustard Gas', station: '351 - Muskogee'}
+  {special_issue: 'Mustard Gas', stationOfJurisdiction: '351 - Muskogee'}
 ]
 
 export const render = function() {

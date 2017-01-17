@@ -65,10 +65,10 @@ export const render = function() {
          {...this.state.form.segmentedLane}
         />
         <TextField
-         label="Station"
-         name="Station"
+         label="Station of Jurisdiction"
+         name="stationOfJurisdiction"
          readOnly={true}
-         {...this.state.form.station}
+         {...this.state.form.stationOfJurisdiction}
         />
         <RadioField
          label="POA"

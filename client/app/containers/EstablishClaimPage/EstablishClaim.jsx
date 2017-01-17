@@ -51,7 +51,7 @@ export default class EstablishClaim extends BaseForm {
         ),
         endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         gulfWarRegistry: new FormField(false),
-        station: new FormField('499 - National Work Queue'),
+        stationOfJurisdiction: new FormField('499 - National Work Queue'),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
@@ -247,7 +247,7 @@ export default class EstablishClaim extends BaseForm {
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue.special_issue)].value) {
         let stateObject = this.state;
-        stateObject.form.station.value = issue.station;
+        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
 
         this.setState({
           stateObject

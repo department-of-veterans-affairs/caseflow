@@ -10,7 +10,7 @@ class Dispatch
   END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
-    "170PGAMC" => "AMC-Partial Grant ",
+    "170PGAMC" => "AMC-Partial Grant",
     "170RMD" => "Remand",
     "170RMDAMC" => "AMC-Remand",
     "170RMDPMC" => "PMC-Remand",
@@ -57,14 +57,14 @@ class Dispatch
 
     # This is a list of the "variable attrs" that are returned from the
     # browser's End Product form
-    PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label).freeze
+    PRESENT_VARIABLE_ATTRS = %i(station_of_jurisdiction end_product_modifier end_product_code end_product_label).freeze
     BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
     OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
     VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
 
     attr_accessor(*VARIABLE_ATTRS)
 
-    validates_presence_of(*PRESENT_VARIABLE_ATTRS)
+    #validates_presence_of(*PRESENT_VARIABLE_ATTRS)
     validates_inclusion_of(*BOOLEAN_VARIABLE_ATTRS, in: [true, false])
     validate :end_product_code_and_label_match
 
@@ -86,10 +86,6 @@ class Dispatch
     def dynamic_values
       {
         date: Time.now.utc.to_date,
-
-        # TODO(jd): Make this attr dynamic in future PR once
-        # we support routing a claim based on special issues
-        station_of_jurisdiction: "317"
       }
     end
 
