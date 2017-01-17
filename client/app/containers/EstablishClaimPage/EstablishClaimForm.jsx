@@ -55,7 +55,7 @@ export const render = function() {
          name="date"
          onChange={this.handleFieldChange('form', 'date')}
          required={true}
-         {...this.state.form.decisionDate}
+         {...this.state.form.date}
         />
         <DropDown
          label="Segmented Lane"

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch" do
   before do
     @vbms_id = "VBMS_ID1"
 
@@ -140,7 +140,8 @@ RSpec.feature "Dispatch", focus: true do
         click_on "Create End Product"
 
         # Test date, text, radio button, & checkbox inputs
-        page.fill_in "Decision Date", with: "01/08/2017"
+        date = "01/08/2017"
+        page.fill_in "Decision Date", with: date
         page.select "172", from: "endProductModifier"
         page.find("#POA_VSO").trigger("click")
         page.fill_in "POA Code", with: "my poa code"
