@@ -82,6 +82,8 @@ export default class EstablishClaim extends BaseForm {
 
     this.formValidating();
 
+    this.prepareStationOfJurisdictionValue();
+
     if (!this.validateFormAndSetErrors(this.state.form)) {
       return;
     }
@@ -254,6 +256,15 @@ export default class EstablishClaim extends BaseForm {
         })
       }
     });
+  }
+
+  prepareStationOfJurisdictionValue() {
+    let stateObject = this.state;
+    stateObject.form.stationOfJurisdiction.value = stateObject.form.stationOfJurisdiction.value.substring(0,3);
+
+    this.setState({
+      stateObject
+    })
   }
 
   validateReviewPageSubmit() {
