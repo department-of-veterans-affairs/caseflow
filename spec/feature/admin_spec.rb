@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Admin", focus: true do
+RSpec.feature "Admin" do
   before do
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
