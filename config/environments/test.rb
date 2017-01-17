@@ -57,6 +57,9 @@ Rails.application.configure do
   #
   ENV["CASEFLOW_FEEDBACK_URL"] = "test.feedback.url"
 
+  ENV["METRICS_USERNAME"] = "caseflow"
+  ENV["METRICS_PASSWORD"] = "caseflow"
+
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "Certify Appeal"
   ENV["TEST_APPEAL_ID"] = "123C"

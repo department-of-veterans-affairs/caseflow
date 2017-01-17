@@ -77,11 +77,9 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
-    
+
   # TODO(jd): Get GA account for demo environment
   # config.google_analytics_account = "UA-74789258-1"
   #
-  # TODO(alex): we'll set urls for feedback in UAT and prod in Jenkins.
-  # Should we also set this there?
   ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
 end

@@ -34,7 +34,7 @@ RSpec.feature "Dispatch" do
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
       @vbms_id => { documents: [Document.new(
-        received_at: Time.current - 7.days, type: "BVA Decision",
+        received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
         document_id: "123"
       )]
       }
@@ -140,7 +140,8 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         # Test date, text, radio button, & checkbox inputs
-        page.fill_in "Decision Date", with: "01/01/2017"
+        date = "01/08/2017"
+        page.fill_in "Decision Date", with: date
         page.select "172", from: "endProductModifier"
         page.find("#POA_VSO").trigger("click")
         page.fill_in "POA Code", with: "my poa code"
@@ -155,8 +156,8 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            date: Time.now.utc.to_date,
             station_of_jurisdiction: "397",
+            date: Date.strptime(date, "%m/%d/%Y"),
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
