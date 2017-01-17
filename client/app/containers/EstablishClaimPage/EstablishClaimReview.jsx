@@ -115,7 +115,7 @@ export const render = function() {
        label="Decision Type"
        name="decisionType"
        options={DECISION_TYPE}
-       onChange={this.handleGrantTypeChange}
+       onChange={this.handleDecisionTypeChange}
        {...this.state.reviewForm.decisionType}
       />
 
@@ -154,7 +154,7 @@ export const render = function() {
         You selected a special issue category not handled by AMO. Special
         issue cases cannot be processed in caseflow at this time. Please
         select <b>Cancel Claim Establishment</b> and proceed to process
-        this case manually in VACOLS.
+        this case manually in VBMS.
       </p>
     </Modal>}
   </div>

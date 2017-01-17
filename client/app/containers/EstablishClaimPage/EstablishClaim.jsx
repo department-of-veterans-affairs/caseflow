@@ -60,7 +60,7 @@ export default class EstablishClaim extends BaseForm {
       }
     };
 
-    let validModifiers = this.validModifiers(decisionType);
+    let validModifiers = this.validModifiers();
 
     this.state = {
       ...this.state,
@@ -258,15 +258,15 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  /* 
+   * This function gets the set of unused modifiers. For a full grant, only one
+   * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
+   * are all potentially valid. This removes any modifiers that have already been
+   * used in previous EPs.
+   */
   validModifiers = () => {
     let modifiers = [];
     let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
-
-    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
-      modifierObject[endProduct.end_product_type_code] = true;
-
-      return modifierObject;
-    }, {});
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
@@ -274,24 +274,25 @@ export default class EstablishClaim extends BaseForm {
       modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
     }
 
+    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
+      modifierObject[endProduct.end_product_type_code] = true;
+
+      return modifierObject;
+    }, {});
+
     return modifiers.filter((modifier) => !modifierHash[modifier]);
   }
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
-  handleGrantTypeChange = (value) => {
+  handleDecisionTypeChange = (value) => {
     this.handleFieldChange('reviewForm', 'decisionType')(value);
 
     let stateObject = {};
     let modifiers = this.validModifiers();
 
     stateObject.form = { ...this.state.form };
-
-    if (modifiers.length > 0) {
-      stateObject.form.endProductModifier.value = modifiers[0];
-    } else {
-      stateObject.form.endProductModifier.value = null;
-    }
+    stateObject.form.endProductModifier.value = modifiers[0];
 
     this.setState(stateObject);
   }
@@ -334,7 +335,7 @@ export default class EstablishClaim extends BaseForm {
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task = {this.props.task}
-            grantType = {this.state.reviewForm.decisionType.value}
+            decisionType = {this.state.reviewForm.decisionType.value}
             handleAlert = {this.props.handleAlert}
             handleAlertClear = {this.props.handleAlertClear}
             hasAvailableModifers = {this.hasAvailableModifers()}
