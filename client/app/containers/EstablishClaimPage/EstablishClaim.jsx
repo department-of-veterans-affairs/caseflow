@@ -272,8 +272,10 @@ export default class EstablishClaim extends BaseForm {
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task = {this.props.task}
+            grantType = {this.state.reviewForm.decisionType.value}
             handleAlert = {this.props.handleAlert}
             handleAlertClear = {this.props.handleAlertClear}
+            hasAvailableModifers = {!this.establishNextClaimIsDisabled()}
           />
         }
         { this.isFormPage() && Form.render.call(this) }
