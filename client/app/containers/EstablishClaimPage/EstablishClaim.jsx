@@ -258,7 +258,7 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
-  /* 
+  /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
    * are all potentially valid. This removes any modifiers that have already been

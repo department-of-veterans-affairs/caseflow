@@ -142,7 +142,6 @@ RSpec.feature "Dispatch" do
         # Test date, text, radio button, & checkbox inputs
         date = "01/08/2017"
         page.fill_in "Decision Date", with: date
-        page.select "172", from: "endProductModifier"
         page.find("#POA_VSO").trigger("click")
         page.fill_in "POA Code", with: "my poa code"
         page.find("#gulfWarRegistry").trigger("click")
@@ -188,7 +187,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_content("Benefit Type") # React works
         expect(page).to_not have_content("POA Code")
 
-        select("172", from: "Modifier")
+        page.fill_in "Decision Date", with: "01/01/1111"
 
         click_on "\u00ABBack to review"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -196,7 +195,7 @@ RSpec.feature "Dispatch" do
 
         click_on "Create End Product"
 
-        expect(find_field("Modifier").value).to eq("172")
+        expect(find_field("Decision Date").value).to eq("01/01/1111")
       end
     end
 
@@ -223,23 +222,27 @@ RSpec.feature "Dispatch" do
       before do
         allow(Appeal.repository).to receive(:establish_claim!).and_call_original
 
-        BGSService.end_product_data = [{
-          benefit_claim_id: "1",
-          claim_receive_date: Time.zone.now - 20.days,
-          claim_type_code: "172GRANT",
-          end_product_type_code: "172",
-          status_type_code: "PEND"
-        },
-                                       {
-                                         benefit_claim_id: "2",
-                                         claim_receive_date: Time.zone.now + 10.days,
-                                         claim_type_code: "170RMD",
-                                         end_product_type_code: "170",
-                                         status_type_code: "CLR"
-                                       }]
+        BGSService.end_product_data =
+          [
+            {
+              benefit_claim_id: "1",
+              claim_receive_date: Time.zone.now - 20.days,
+              claim_type_code: "172GRANT",
+              end_product_type_code: "172",
+              status_type_code: "PEND"
+            },
+            {
+              benefit_claim_id: "2",
+              claim_receive_date: Time.zone.now + 10.days,
+              claim_type_code: "170RMD",
+              end_product_type_code: "170",
+              status_type_code: "CLR"
+            }
+          ]
       end
 
       scenario "Unavailable modifiers" do
+        # Test that the full grant associate page disables the Create New EP button
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -253,6 +256,8 @@ RSpec.feature "Dispatch" do
 
         expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
 
+        # Test that for a partial grant, the list of available modifiers is restricted
+        # to unused modifiers.
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
         page.select("Partial Grant", from: "decisionType")
@@ -260,7 +265,6 @@ RSpec.feature "Dispatch" do
 
         click_on "Create New EP"
 
-        # Test date, text, radio button, & checkbox inputs
         page.fill_in "Decision Date", with: "01/01/2017"
         click_on "Create End Product"
         expect(Appeal.repository).to have_received(:establish_claim!).with(
