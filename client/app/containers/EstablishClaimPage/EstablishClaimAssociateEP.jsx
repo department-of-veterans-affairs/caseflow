@@ -75,7 +75,7 @@ export default class AssociatePage extends React.Component {
     return <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
 
-        {this.props.hasAvailableModifers && 
+        {this.props.hasAvailableModifers &&
           <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
               <h3 className="usa-alert-heading">Existing EP</h3>
@@ -86,13 +86,13 @@ export default class AssociatePage extends React.Component {
             </div>
           </div>}
 
-        {!this.props.hasAvailableModifers && 
+        {!this.props.hasAvailableModifers &&
           <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
-              <h3 className="usa-alert-heading">Existing EP, all EP & Claim Label 
+              <h3 className="usa-alert-heading">Existing EP, all EP & Claim Label
               Modifiers in use</h3>
-              <p className="usa-alert-text">We found one or more existing EP(s) 
-              created within 30 days of this decision date. You may assign an 
+              <p className="usa-alert-text">We found one or more existing EP(s)
+              created within 30 days of this decision date. You may assign an
               existing EP from the table below to this claim.</p>
               <p className="usa-alert-text">
               A new {this.props.grantType} EP cannot be created for this Veteran
@@ -100,7 +100,7 @@ export default class AssociatePage extends React.Component {
               </p>
             </div>
           </div>}
-          
+
         <div className="usa-grid-full">
           <Table
             headers={TABLE_HEADERS}

@@ -218,6 +218,72 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.outgoing_reference_id).to eq("1")
     end
 
+    context "Add existing Full Grant & Partial Grant EPs" do
+      before do
+        allow(Appeal.repository).to receive(:establish_claim!).and_call_original
+
+        BGSService.end_product_data = [{
+          benefit_claim_id: "1",
+          claim_receive_date: Time.zone.now - 20.days,
+          claim_type_code: "172GRANT",
+          end_product_type_code: "172",
+          status_type_code: "PEND"
+        },
+                                       {
+                                         benefit_claim_id: "2",
+                                         claim_receive_date: Time.zone.now + 10.days,
+                                         claim_type_code: "170RMD",
+                                         end_product_type_code: "170",
+                                         status_type_code: "CLR"
+                                       }]
+      end
+
+      scenario "Unavailable modifiers" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        page.select("Full Grant", from: "decisionType")
+
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("EP & Claim Label Modifiers in use")
+
+        expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
+
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        page.select("Partial Grant", from: "decisionType")
+        click_on "Create End Product"
+
+        click_on "Create New EP"
+
+        # Test date, text, radio button, & checkbox inputs
+        page.fill_in "Decision Date", with: "01/01/2017"
+        click_on "Create End Product"
+        expect(Appeal.repository).to have_received(:establish_claim!).with(
+          claim: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            date: Time.now.utc.to_date,
+            end_product_modifier: "171",
+            end_product_label: "AMC-Partial Grant",
+            end_product_code: "170PGAMC",
+            station_of_jurisdiction: "317",
+            poa: "None",
+            poa_code: "",
+            gulf_war_registry: false,
+            allow_poa: false,
+            suppress_acknowledgement_letter: false
+          },
+          appeal: @task.appeal
+        )
+      end
+    end
+
     scenario "Visit an Establish Claim task that is assigned to another user" do
       visit "/dispatch/establish-claim/#{@other_task.id}"
       expect(page).to have_current_path("/unauthorized")

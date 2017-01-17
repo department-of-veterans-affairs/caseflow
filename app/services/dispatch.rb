@@ -10,7 +10,7 @@ class Dispatch
   END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
-    "170PGAMC" => "AMC-Partial Grant ",
+    "170PGAMC" => "AMC-Partial Grant",
     "170RMD" => "Remand",
     "170RMDAMC" => "AMC-Remand",
     "170RMDPMC" => "PMC-Remand",

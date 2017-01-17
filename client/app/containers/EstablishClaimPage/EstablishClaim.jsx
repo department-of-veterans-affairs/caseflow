@@ -38,16 +38,27 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
     let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+
     // Set initial state on page render
 
+    // The reviewForm decisionType is needed in the state first since
+    // it is used to calculate the validModifiers
     this.state = {
+      reviewForm: {
+        decisionType: new FormField(decisionType)
+      }
+    };
+
+    let validModifiers = this.validModifiers(decisionType);
+
+    this.state = {
+      ...this.state,
       cancelModal: false,
       form: {
         allowPoa: new FormField(false),
@@ -58,7 +69,7 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        endProductModifier: new FormField(''),
+        endProductModifier: new FormField(validModifiers[0]),
         gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
@@ -77,9 +88,6 @@ export default class EstablishClaim extends BaseForm {
       },
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
-      reviewForm: {
-        decisionType: new FormField(decisionType)
-      },
       specialIssues: {}
     };
     specialIssues.forEach((issue) => {
@@ -229,17 +237,15 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
-  endProductModifierHash = () => {
-    let end_products = this.props.task.appeal.non_canceled_end_products_within_30_days;
-    return end_products.reduce((modifier_object, end_product) => {
-      modifier_object[end_product['end_product_type_code']] = true;
-      return modifier_object;
-    }, {});
-  }
-
   validModifiers = () => {
     let modifiers = [];
-    let modifierHash = this.endProductModifierHash();
+    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+
+    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
+      modifierObject[endProduct.end_product_type_code] = true;
+
+      return modifierObject;
+    }, {});
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
@@ -247,15 +253,26 @@ export default class EstablishClaim extends BaseForm {
       modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
     }
 
-    return modifiers.filter((modifier) => {
-      return !modifierHash[modifier];
-    });
+    return modifiers.filter((modifier) => !modifierHash[modifier]);
   }
 
-  establishNextClaimIsDisabled = () => {
-    return this.isAssociatePage() && 
-      this.state.reviewForm.decisionType.value === 'Full Grant' &&
-      this.endProductModifierHash()['172'];
+  hasAvailableModifers = () => this.validModifiers().length > 0
+
+  handleGrantTypeChange = (value) => {
+    this.handleFieldChange('reviewForm', 'decisionType')(value);
+
+    let stateObject = {};
+    let modifiers = this.validModifiers();
+
+    stateObject.form = { ...this.state.form };
+
+    if (modifiers.length > 0) {
+      stateObject.form.endProductModifier.value = modifiers[0];
+    } else {
+      stateObject.form.endProductModifier.value = null;
+    }
+
+    this.setState(stateObject);
   }
 
   render() {
@@ -275,7 +292,7 @@ export default class EstablishClaim extends BaseForm {
             grantType = {this.state.reviewForm.decisionType.value}
             handleAlert = {this.props.handleAlert}
             handleAlertClear = {this.props.handleAlertClear}
-            hasAvailableModifers = {!this.establishNextClaimIsDisabled()}
+            hasAvailableModifers = {this.hasAvailableModifers()}
           />
         }
         { this.isFormPage() && Form.render.call(this) }
@@ -289,7 +306,7 @@ export default class EstablishClaim extends BaseForm {
               name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
-              disabled={this.establishNextClaimIsDisabled()}
+              disabled={!this.hasAvailableModifers() && this.isAssociatePage()}
             />
           </div>
           { this.isFormPage() &&

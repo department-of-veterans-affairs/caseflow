@@ -102,7 +102,7 @@ export const render = function() {
        label="Decision Type"
        name="decisionType"
        options={DECISION_TYPE}
-       onChange={this.handleFieldChange('reviewForm', 'decisionType')}
+       onChange={this.handleGrantTypeChange}
        {...this.state.reviewForm.decisionType}
       />
 
