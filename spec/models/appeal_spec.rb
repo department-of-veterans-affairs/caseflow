@@ -234,7 +234,7 @@ describe Appeal do
   context "#decision" do
     let(:decision) do
       Document.new(
-        received_at: Date.zone.today,
+        received_at: Time.zone.now.to_date,
         type: "BVA Decision"
       )
     end
