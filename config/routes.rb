@@ -58,6 +58,13 @@ Rails.application.routes.draw do
   end
   # :nocov:
 
+  namespace :admin do
+    # get "/establish-claim", to: "admin_controller#establish-claim"
+    # get "/establish-claim/:id", to: "admin_controller#establish-claim"
+    resource :establish_claim,
+             only: [:show, :create]
+  end
+
   resources :functions, only: :index
   patch '/functions/change', to: 'functions#change'
 
