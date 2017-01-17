@@ -37,4 +37,3 @@ RSpec.feature "Admin", focus: true do
     expect(Task.count).to eq(2)
   end
 end
-

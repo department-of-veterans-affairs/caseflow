@@ -39,13 +39,12 @@ class AppealRepository
       VACOLS::Case.includes(:folder, :correspondent).find_by_bfcorlid(appeal.vbms_id)
     end
 
-    raise MultipleAppealsByVBMSIDError if case_records.length > 1
+    fail MultipleAppealsByVBMSIDError if case_records.length > 1
 
     set_vacols_values(appeal: appeal, case_record: case_records.first)
 
     appeal
   end
-
 
   # TODO: consider persisting these records
   def self.build_appeal(case_record)
