@@ -35,14 +35,15 @@ class User < ActiveRecord::Base
     end
   end
 
-  def admin?
-    roles.include?("System Admin")
-  end
-
   def can?(thing)
     return false if roles.nil?
     return true if admin? && admin_roles.include?(thing)
     roles.include? thing
+  end
+
+  def admin?
+    return false if roles.nil?
+    roles.include? "System Admin"
   end
 
   def authenticated?
