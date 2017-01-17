@@ -64,7 +64,7 @@ class Dispatch
 
     attr_accessor(*VARIABLE_ATTRS)
 
-    #validates_presence_of(*PRESENT_VARIABLE_ATTRS)
+    validates_presence_of(*PRESENT_VARIABLE_ATTRS)
     validates_inclusion_of(*BOOLEAN_VARIABLE_ATTRS, in: [true, false])
     validate :end_product_code_and_label_match
 
@@ -85,7 +85,7 @@ class Dispatch
 
     def dynamic_values
       {
-        date: Time.now.utc.to_date,
+        date: Time.now.utc.to_date
       }
     end
 

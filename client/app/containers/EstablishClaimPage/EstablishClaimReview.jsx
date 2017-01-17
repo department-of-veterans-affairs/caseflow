@@ -56,8 +56,11 @@ export const UNHANDLED_SPECIAL_ISSUES = [
 ];
 
 export const ROUTING_SPECIAL_ISSUES = [
-  {special_issue: 'Mustard Gas', stationOfJurisdiction: '351 - Muskogee'}
-]
+  {
+    specialIssue: 'Mustard Gas',
+    stationOfJurisdiction: '351 - Muskogee'
+  }
+];
 
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;

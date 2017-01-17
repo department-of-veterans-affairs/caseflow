@@ -51,13 +51,13 @@ export default class EstablishClaim extends BaseForm {
         ),
         endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         gulfWarRegistry: new FormField(false),
-        stationOfJurisdiction: new FormField('499 - National Work Queue'),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
         segmentedLane: new FormField(
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
         ),
+        stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
@@ -82,8 +82,6 @@ export default class EstablishClaim extends BaseForm {
 
     this.formValidating();
 
-    this.prepareStationOfJurisdictionValue();
-
     if (!this.validateFormAndSetErrors(this.state.form)) {
       return;
     }
@@ -92,16 +90,7 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    // We have to add in the claimLabel separately, since it is derived from
-    // the form value on the review page.
-    let endProductInfo = this.getClaimTypeFromDecision();
-    let data = {
-      claim: ApiUtil.convertToSnakeCase({
-        ...this.getFormValues(this.state.form),
-        endProductCode: endProductInfo[0],
-        endProductLabel: endProductInfo[1]
-      })
-    };
+    let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then(() => {
@@ -247,24 +236,42 @@ export default class EstablishClaim extends BaseForm {
 
   setStationState() {
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue.special_issue)].value) {
+      if
+        (this.state.specialIssues[ApiUtil.convertToCamelCase(issue.specialIssue)].
+              value) {
         let stateObject = this.state;
+
         stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
 
         this.setState({
           stateObject
-        })
+        });
       }
     });
   }
 
-  prepareStationOfJurisdictionValue() {
+  prepareData() {
     let stateObject = this.state;
-    stateObject.form.stationOfJurisdiction.value = stateObject.form.stationOfJurisdiction.value.substring(0,3);
+
+    stateObject.form.stationOfJurisdiction.value =
+        stateObject.form.stationOfJurisdiction.value.substring(0, 3);
 
     this.setState({
       stateObject
-    })
+    });
+
+    // We have to add in the claimLabel separately, since it is derived from
+    // the form value on the review page.
+    let endProductInfo = this.getClaimTypeFromDecision();
+
+
+    return {
+      claim: ApiUtil.convertToSnakeCase({
+        ...this.getFormValues(this.state.form),
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
+      })
+    };
   }
 
   validateReviewPageSubmit() {
