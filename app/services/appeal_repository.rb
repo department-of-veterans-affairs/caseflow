@@ -34,6 +34,7 @@ class AppealRepository
     appeal
   end
 
+  # :nocov:
   def self.load_vacols_data_by_vbms_id(appeal)
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
       VACOLS::Case.includes(:folder, :correspondent).find_by_bfcorlid(appeal.vbms_id)
@@ -45,6 +46,7 @@ class AppealRepository
 
     appeal
   end
+  # :nocov:
 
   # TODO: consider persisting these records
   def self.build_appeal(case_record)
