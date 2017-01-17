@@ -1,6 +1,8 @@
 import React from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
+import Modal from '../../components/Modal';
+
 import ApiUtil from '../../util/ApiUtil';
 
 export const DECISION_TYPE = [
@@ -134,6 +136,27 @@ export const render = function() {
           /* eslint-enable no-return-assign */
       }
     </div>
+    {this.state.specialIssueModalDisplay && <Modal
+      buttons={[
+        { classNames: ["cf-btn-link"],
+          name: '\u00AB Close',
+          onClick: this.handleModalClose('specialIssueModalDisplay')
+        },
+        { classNames: ["usa-button", "usa-button-secondary"],
+          name: 'Cancel Claim Establishment',
+          onClick: this.handleCancelTaskForSpecialIssue
+        }
+      ]}
+      visible={true}
+      closeHandler={this.handleModalClose('specialIssueModalDisplay')}
+      title="Special Issue Grant">
+      <p>
+        You selected a special issue category not handled by AMO. Special
+        issue cases cannot be processed in caseflow at this time. Please
+        select <b>Cancel Claim Establishment</b> and proceed to process
+        this case manually in VACOLS.
+      </p>
+    </Modal>}
   </div>
   );
 };

@@ -64,7 +64,6 @@ export default class EstablishClaim extends BaseForm {
 
     this.state = {
       ...this.state,
-      cancelModal: false,
       cancelModal: {
         cancelFeedback: new FormField(
           '',
@@ -325,7 +324,6 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      specialIssueModalDisplay,
       modalSubmitLoading
     } = this.state;
 
@@ -403,27 +401,6 @@ export default class EstablishClaim extends BaseForm {
             required={true}
             {...this.state.cancelModal.cancelFeedback}
           />
-        </Modal>}
-        {specialIssueModalDisplay && <Modal
-          buttons={[
-            { classNames: ["cf-btn-link"],
-              name: '\u00AB Close',
-              onClick: this.handleModalClose('specialIssueModalDisplay')
-            },
-            { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Cancel Claim Establishment',
-              onClick: this.handleCancelTaskForSpecialIssue
-            }
-          ]}
-          visible={true}
-          closeHandler={this.handleModalClose('specialIssueModalDisplay')}
-          title="Special Issue Grant">
-          <p>
-            You selected a special issue category not handled by AMO. Special
-            issue cases cannot be processed in caseflow at this time. Please
-            select <b>Cancel Claim Establishment</b> and proceed to process
-            this case manually in VACOLS.
-          </p>
         </Modal>}
       </div>
     );
