@@ -37,19 +37,26 @@ export default class PdfViewer extends React.Component {
   addEventListners = (pdfDocument) => {
     const { UI } = PDFJSAnnotate;
 
-    if (this.annotationAddListener) {
-      UI.removeEventListener('annotation:add', this.annotationAddListener);
-    }
+    this.removeEventListeners();
+
     this.annotationAddListener = () => {
       this.generateComments(pdfDocument);
     };
     UI.addEventListener('annotation:add', this.annotationAddListener);
   }
 
+  removeEventListeners = () => {
+    const { UI } = PDFJSAnnotate;
+    
+    if (this.annotationAddListener) {
+      UI.removeEventListener('annotation:add', this.annotationAddListener);
+    }
+  }
+
   renderPage = (index) => {
     const { UI } = PDFJSAnnotate;
 
-    this.RENDER_OPTIONS = {
+    let RENDER_OPTIONS = {
       documentId: this.props.file,
       pdfDocument: this.state.pdfDocument,
       rotate: 0,
@@ -57,7 +64,7 @@ export default class PdfViewer extends React.Component {
     };
 
     this.isRendered[index] = true;
-    UI.renderPage(index + 1, this.RENDER_OPTIONS).catch(() => {
+    UI.renderPage(index + 1, RENDER_OPTIONS).catch(() => {
       this.isRendered[index] = false;
     });
   }
@@ -88,7 +95,7 @@ export default class PdfViewer extends React.Component {
     });
   }
 
-  componentDidUpdate(oldProps) {
+  componentWillReceiveProps(oldProps) {
     if (oldProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.draw();
@@ -130,6 +137,12 @@ export default class PdfViewer extends React.Component {
       Array.prototype.forEach.call(page, (ele, index) => {
         let boundingRect = ele.getBoundingClientRect();
 
+        // This renders each page as it comes into view. i.e. when
+        // the top of the next page is within a thousand pixels of
+        // the current view we render it. If the bottom of the page
+        // above is within a thousand pixels of the current view
+        // we also redner it.
+        // TODO: Make this more robust and avoid magic numbers.
         if (!this.isRendered[index] &&
             boundingRect.bottom > -1000 &&
             boundingRect.top < scrollWindow.clientHeight + 1000) {
@@ -141,17 +154,23 @@ export default class PdfViewer extends React.Component {
 
     window.addEventListener('keyup', (event) => {
       if (event.key === 'n') {
+        // Enabling point allows you to add comments.
         UI.enablePoint();
         UI.disableEdit();
       }
       if (event.key === 'm') {
+        // Enabling edit allows you to select comments.
         UI.disablePoint();
         UI.enableEdit();
       }
     });
   }
 
-  jumpToComment = (uuid) => () => {
+  componentWillUnmount = () => {
+    this.removeEventListeners();
+  }
+
+  scrollToAnnotation = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
       getAnnotation(this.props.file, uuid).
@@ -168,16 +187,15 @@ export default class PdfViewer extends React.Component {
   render() {
     let comments = [];
 
-    this.state.comments.forEach((comment, index) => {
+    comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
-      comments.push(
-        <div
-          onClick={this.jumpToComment(comment.uuid)}
+      return <div
+          onClick={this.scrollToAnnotation(comment.uuid)}
           className={`comment-list-item${selectedClass}`}
           key={`comment${index}`}>
           {comment.content}
-        </div>);
+        </div>;
     });
 
     return (
