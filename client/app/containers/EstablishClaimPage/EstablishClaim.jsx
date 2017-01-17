@@ -241,7 +241,11 @@ export default class EstablishClaim extends BaseForm {
               value) {
         let stateObject = this.state;
 
-        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+        if (issue.stationOfJurisdiction) {
+          stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+        } else {
+          stateObject.form.stationOfJurisdiction.value = this.props.regionalOffice;
+        }
 
         this.setState({
           stateObject
@@ -393,5 +397,6 @@ export default class EstablishClaim extends BaseForm {
 }
 
 EstablishClaim.propTypes = {
+  regionalOffice: PropTypes.string,
   task: PropTypes.object.isRequired
 };

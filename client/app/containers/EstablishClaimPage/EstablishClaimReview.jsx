@@ -59,6 +59,10 @@ export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'Mustard Gas',
     stationOfJurisdiction: '351 - Muskogee'
+  },
+  {
+    specialIssue: 'Private Attorney',
+    stationOfJurisdiction: ''
   }
 ];
 
