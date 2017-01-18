@@ -86,6 +86,8 @@ describe('EstablishClaim', () => {
     let wrapper;
 
     beforeEach(() => {
+
+      /* eslint-disable camelcase */
       const task = {
         appeal: {
           decision_type: 'Remand',
@@ -93,6 +95,8 @@ describe('EstablishClaim', () => {
         },
         user: 'a'
       };
+
+      /* eslint-enable camelcase */
 
       wrapper = mount(<EstablishClaim task={task}/>);
     });
