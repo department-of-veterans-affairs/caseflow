@@ -1,0 +1,51 @@
+<div class="cf-app-segment cf-app-segment--alt usa-grid">
+  <h2>Create Establish Claim task</h2>
+  <% flash.each do |key,value| %>
+    <div class="<%= "usa-alert usa-alert-#{key} cf-app-segment" %>" role="alert">
+      <div class="usa-alert-body">
+        <h3 class="usa-alert-heading"><%= value %></h3>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_for @appeal, url: admin_establish_claim_path, method: "POST",
+    html: { id: "establish-claim-form", class: "cf-form" },
+    builder: CaseflowFormBuilder do |f| %>
+
+      <%= f.text_field :vbms_id, label: "VBMS ID", question_name: "vbms_id" %>
+
+      <button type="submit" class="cf-submit">Create Task</button>
+  <% end %>
+  <hr class="cf-section-break"/>
+  <h2>Existing Tasks</h2>
+  <div class="usa-width-one-whole">
+    <% if @existing_tasks.count.zero? %>
+      <p>No existing tasks</p>
+    <% else %>
+      <table class="usa-table-borderless" summary="list of tasks">
+        <thead>
+          <tr>
+            <th scope="col"><h3>Veteran</h3></th>
+            <th scope="col"><h3>Decision Type</h3></th>
+            <th scope="col"><h3>Status</h3></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @existing_tasks.each do |task| %>
+            <tr id="task-<%= task.id %>">
+              <td>
+                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
+              </td>
+              <td>
+                <%= task.appeal.decision_type %>
+              </td>
+              <td>
+                <%= task.progress_status %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

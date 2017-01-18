@@ -81,22 +81,22 @@
             <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
               <li><a href="/help" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
               <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
-              <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: 'whats_new', action: 'show'%>">What's New?</a></li>
+              <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
 
               <% if ApplicationController.dependencies_faked? %>
                 <li>
-                  <a href="<%= url_for controller: 'dev_users', action: 'index'%>">Switch User</a>
+                  <a href="<%= url_for controller: '/dev_users', action: 'index'%>">Switch User</a>
                 </li>
               <% end %>
 
               <% if current_user.admin? %>
                 <li>
-                  <a href="<%= url_for controller: 'functions', action: 'index'%>">Change Functions</a>
+                  <a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a>
                 </li>
               <% end %>
 
               <li>
-                <a href="<%= url_for controller: 'sessions', action: 'destroy'%>">Sign out</a>
+                <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>
               </li>
             </ul>
           </div>
