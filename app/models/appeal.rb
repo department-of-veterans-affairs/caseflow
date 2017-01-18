@@ -159,6 +159,14 @@ class Appeal < ActiveRecord::Base
       appeal
     end
 
+    def find_or_create_by_vbms_id(vbms_id)
+      appeal = find_or_initialize_by(vbms_id: vbms_id)
+      repository.load_vacols_data_by_vbms_id(appeal)
+      appeal.save
+
+      appeal
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -173,11 +181,9 @@ class Appeal < ActiveRecord::Base
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify!(appeal)
+    def uncertify(appeal)
       return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
-
-      Form8.find_by(vacols_id: appeal.vacols_id).destroy
-      File.delete(form8.pdf_location) unless File.exist?(form8.pdf_location)
+      Form8.delete_all(vacols_id: appeal.vacols_id)
       repository.uncertify(appeal)
     end
 

@@ -8,24 +8,28 @@ class Fakes::BGSService
         benefit_claim_id: "1",
         claim_receive_date: Time.zone.now - 20.days,
         claim_type_code: "172GRANT",
+        end_product_type_code: "172",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
         claim_receive_date: Time.zone.now + 10.days,
         claim_type_code: "170RMD",
+        end_product_type_code: "170",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
         claim_receive_date: Time.zone.now,
         claim_type_code: "172BVAG",
+        end_product_type_code: "172",
         status_type_code: "CAN"
       },
       {
         benefit_claim_id: "4",
         claim_receive_date: Time.zone.now - 200.days,
         claim_type_code: "172BVAG",
+        end_product_type_code: "172",
         status_type_code: "CLR"
       },
       {

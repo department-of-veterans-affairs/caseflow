@@ -43,6 +43,16 @@ Rails.application.routes.draw do
     end
   end
 
+  scope path: "/decision" do
+    get "/", to: redirect("/decision/review")
+
+    resources :review,
+              path: "/review",
+              only: [:index] do
+      get 'pdf', on: :collection
+    end
+  end
+
   resources :tasks, only: [] do
     patch 'cancel', on: :member
   end
@@ -57,6 +67,11 @@ Rails.application.routes.draw do
     end
   end
   # :nocov:
+
+  namespace :admin do
+    resource :establish_claim,
+             only: [:show, :create]
+  end
 
   resources :functions, only: :index
   patch '/functions/change', to: 'functions#change'
