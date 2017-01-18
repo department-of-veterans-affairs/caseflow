@@ -261,7 +261,7 @@ RSpec.feature "Dispatch" do
             end_product_modifier: "171",
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
-            station_of_jurisdiction: "317",
+            station_of_jurisdiction: "397",
             poa: "None",
             poa_code: "",
             gulf_war_registry: false,
