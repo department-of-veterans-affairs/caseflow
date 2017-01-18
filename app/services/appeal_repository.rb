@@ -149,13 +149,13 @@ class AppealRepository
   def self.establish_claim!(appeal:, claim:)
     @vbms_client ||= init_vbms_client
 
-    raw_veteran_record = BGSService.new.fetch_veteran_info(appeal.vbms_id)
+    sanitized_id = appeal.sanitized_vbms_id
+    raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
 
     # Reduce keys in raw response down to what we specifically need for
     # establish claim
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
-    sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
     end_product = send_and_log_request(sanitized_id, request)
 
