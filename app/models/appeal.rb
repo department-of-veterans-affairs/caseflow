@@ -173,11 +173,9 @@ class Appeal < ActiveRecord::Base
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify!(appeal)
+    def uncertify(appeal)
       return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
-
-      Form8.find_by(vacols_id: appeal.vacols_id).destroy
-      File.delete(form8.pdf_location) unless File.exist?(form8.pdf_location)
+      Form8.delete_all(vacols_id: appeal.vacols_id)
       repository.uncertify(appeal)
     end
 
