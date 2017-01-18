@@ -79,10 +79,10 @@ RSpec.feature "Confirm Certification" do
       click_on("Upload and certify")
 
       certification = Certification.find_or_create_by_vacols_id("123C")
-      # expect(certification.reload.completed_at).to eq(Time.zone.now)
-      # expect(page).to have_content("Uncertify Appeal")
-      # click_link("Uncertify Appeal")
-      # expect(certification.appeal.certified?).to be_falsey
+      expect(certification.reload.completed_at).to eq(Time.zone.now)
+      expect(page).to have_content("Uncertify Appeal")
+      click_link("Uncertify Appeal")
+      expect(certification.appeal.certified?).to be_falsey
     end
   end
 end
