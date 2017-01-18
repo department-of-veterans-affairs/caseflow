@@ -57,8 +57,10 @@ class Dispatch
 
     # This is a list of the "variable attrs" that are returned from the
     # browser's End Product form
-    PRESENT_VARIABLE_ATTRS = %i(date station_of_jurisdiction end_product_modifier end_product_code end_product_label).freeze
-    BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
+    PRESENT_VARIABLE_ATTRS =
+      %i(date station_of_jurisdiction end_product_modifier end_product_code end_product_label).freeze
+    BOOLEAN_VARIABLE_ATTRS =
+      %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
     OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
     VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
 
@@ -92,6 +94,16 @@ class Dispatch
 
       result
     end
+
+    def dynamic_values
+      {
+        # TODO(jd): Make this attr dynamic in future PR once
+        # we support routing a claim based on special issues
+        # station_of_jurisdiction: "317"
+      }
+    end
+
+    private
 
     def default_values
       {

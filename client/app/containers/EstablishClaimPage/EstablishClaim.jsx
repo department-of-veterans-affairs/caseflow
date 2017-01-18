@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 
@@ -13,8 +15,6 @@ import { formatDate } from '../../util/DateUtil';
 import * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
-
-/* eslint-disable max-len */
 
 export const REVIEW_PAGE = 0;
 export const ASSOCIATE_PAGE = 1;
@@ -413,4 +413,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-len */
+/* eslint-enable max-lines */

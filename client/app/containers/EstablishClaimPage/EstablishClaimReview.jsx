@@ -146,6 +146,7 @@ export const render = function() {
         /* eslint-disable no-return-assign */
         issueType.map((issue) =>
         <Checkbox
+            id={ApiUtil.convertToCamelCase(issue)}
             label={issue}
             name={ApiUtil.convertToCamelCase(issue)}
             {...this.state.specialIssues[issue]}
