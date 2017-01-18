@@ -125,7 +125,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
         page.select("Full Grant", from: "decisionType")
-        
+
         click_on "Create End Product"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("EP & Claim Label Modifiers in use")
@@ -141,7 +141,8 @@ RSpec.feature "Dispatch" do
 
         click_on "Create New EP"
 
-        page.fill_in "Decision Date", with: "01/01/2017"
+        date = "01/08/2017"
+        page.fill_in "Decision Date", with: date
         click_on "Create End Product"
         expect(Appeal.repository).to have_received(:establish_claim!).with(
           claim: {
@@ -149,7 +150,7 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            date: Time.now.utc.to_date,
+            date: Date.strptime(date, "%m/%d/%Y"),
             end_product_modifier: "171",
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
@@ -285,8 +286,6 @@ RSpec.feature "Dispatch" do
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
     end
-
-    
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
       visit "/dispatch/establish-claim/#{@other_task.id}"
