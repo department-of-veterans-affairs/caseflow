@@ -228,7 +228,8 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      regional_office_key: "531"
     }
   end
 

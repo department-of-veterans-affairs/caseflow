@@ -156,11 +156,11 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
+            station_of_jurisdiction: "397",
             date: Date.strptime(date, "%m/%d/%Y"),
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
-            station_of_jurisdiction: "317",
             poa: "VSO",
             poa_code: "my poa code",
             gulf_war_registry: true,
@@ -257,6 +257,25 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.complete?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
+    end
+
+    scenario "A regional office special issue routes correctly" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#privateAttorney").trigger("click")
+      click_on "Create End Product"
+      click_on "Create New EP"
+      expect(find_field("Station of Jurisdiction").value).to eq("")
+    end
+
+    scenario "A national office special issue routes correctly" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.select "Remand", from: "decisionType"
+      page.find("#mustardGas").trigger("click")
+      click_on "Create End Product"
+      click_on "Create New EP"
+      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee")
     end
   end
 end

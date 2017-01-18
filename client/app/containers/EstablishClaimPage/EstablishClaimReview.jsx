@@ -55,6 +55,29 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   'National Cemetery Administration'
 ];
 
+export const ROUTING_SPECIAL_ISSUES = [
+  {
+    specialIssue: 'mustardGas',
+    stationOfJurisdiction: '351 - Muskogee'
+  }
+];
+
+export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
+  'dependencies',
+  'educationOrVocationalRehab',
+  'hearingsTravelBoardVideoConference',
+  'homeLoanGuaranty',
+  'incarceratedVeterans',
+  'manilaRemand',
+  'manlinconCompliance',
+  'nonratingIssues',
+  'privateAttorney',
+  'proposedIncompetency',
+  'radiation',
+  'riceCompliance',
+  'spinaBifida'
+];
+
 export const render = function() {
   let { pdfLink, pdfjsLink } = this.props;
 
@@ -123,6 +146,7 @@ export const render = function() {
         /* eslint-disable no-return-assign */
         issueType.map((issue) =>
         <Checkbox
+            id={ApiUtil.convertToCamelCase(issue)}
             label={issue}
             name={ApiUtil.convertToCamelCase(issue)}
             {...this.state.specialIssues[issue]}
