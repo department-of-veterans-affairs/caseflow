@@ -316,7 +316,7 @@ export default class EstablishClaim extends BaseForm {
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.form.stationOfJurisdiction.value =
-          this.props.task.appeal.regional_office_key;
+          this.props.task.appeal.station_key;
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
