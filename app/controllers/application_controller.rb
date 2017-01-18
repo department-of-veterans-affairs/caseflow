@@ -29,11 +29,23 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render "errors/404", layout: "application", status: 404
+    respond_to do |format|
+      format.html do
+        render "errors/404", layout: "application", status: 404
+      end
+      format.json do
+        render json: {
+          errors: ["Response not found"] }, status: 404
+      end
+    end
   end
 
   def current_user
-    @current_user ||= User.from_session(session, request)
+    @current_user ||= begin
+      user = User.from_session(session, request)
+      RequestStore.store[:current_user] = user
+      user
+    end
   end
   helper_method :current_user
 
@@ -98,6 +110,10 @@ class ApplicationController < ActionController::Base
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def verify_system_admin
+    verify_authorized_roles("System Admin")
   end
 
   def on_vbms_error
