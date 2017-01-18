@@ -12,7 +12,10 @@ describe('EstablishClaim', () => {
 
       /* eslint-disable camelcase */
       const task = {
-        appeal: { decision_type: 'Remand' },
+        appeal: {
+          decision_type: 'Remand',
+          non_canceled_end_products_within_30_days: []
+        },
         user: 'a'
       };
 
@@ -84,7 +87,10 @@ describe('EstablishClaim', () => {
 
     beforeEach(() => {
       const task = {
-        appeal: 'b',
+        appeal: {
+          decision_type: 'Remand',
+          non_canceled_end_products_within_30_days: []
+        },
         user: 'a'
       };
 
