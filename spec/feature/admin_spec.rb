@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Admin" do
   before do
+    User.authenticate!(roles: ["System Admin"])
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_remand_decided,
       "456D" => Fakes::AppealRepository.appeal_full_grant_decided
