@@ -251,15 +251,15 @@ export default class EstablishClaim extends BaseForm {
   setStationState() {
     let stateObject = this.state;
 
-    Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
-        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
-      }
-    });
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.form.stationOfJurisdiction.value =
           this.props.task.appeal.regional_office_key;
+      }
+    });
+    Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
     this.setState({
