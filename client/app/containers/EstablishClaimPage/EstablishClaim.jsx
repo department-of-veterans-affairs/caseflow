@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 
@@ -89,6 +91,7 @@ export default class EstablishClaim extends BaseForm {
           Form.SEGMENTED_LANE_OPTIONS[0],
           requiredValidator('Please enter a Segmented Lane.')
         ),
+        stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
@@ -118,16 +121,7 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    // We have to add in the claimLabel separately, since it is derived from
-    // the form value on the review page.
-    let endProductInfo = this.getClaimTypeFromDecision();
-    let data = {
-      claim: ApiUtil.convertToSnakeCase({
-        ...this.getFormValues(this.state.form),
-        endProductCode: endProductInfo[0],
-        endProductLabel: endProductInfo[1]
-      })
-    };
+    let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then(() => {
@@ -298,6 +292,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleReviewPageSubmit() {
+    this.setStationState();
     if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
@@ -307,6 +302,55 @@ export default class EstablishClaim extends BaseForm {
     } else {
       this.handlePageChange(FORM_PAGE);
     }
+  }
+
+  /*
+   * This function takes the special issues from the review page and sets the station
+   * of jurisdiction in the form page. Special issues that all go to the same spot are
+   * defined in the constant ROUTING_SPECIAL_ISSUES. Special issues that go back to the
+   * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
+   */
+  setStationState() {
+    let stateObject = this.state;
+
+    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[issue].value) {
+        stateObject.form.stationOfJurisdiction.value =
+          this.props.task.appeal.regional_office_key;
+      }
+    });
+    Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+      }
+    });
+    this.setState({
+      stateObject
+    });
+  }
+
+  prepareData() {
+    let stateObject = this.state;
+
+    stateObject.form.stationOfJurisdiction.value =
+        stateObject.form.stationOfJurisdiction.value.substring(0, 3);
+
+    this.setState({
+      stateObject
+    });
+
+    // We have to add in the claimLabel separately, since it is derived from
+    // the form value on the review page.
+    let endProductInfo = this.getClaimTypeFromDecision();
+
+
+    return {
+      claim: ApiUtil.convertToSnakeCase({
+        ...this.getFormValues(this.state.form),
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
+      })
+    };
   }
 
   validateReviewPageSubmit() {
@@ -411,3 +455,5 @@ export default class EstablishClaim extends BaseForm {
 EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
+
+/* eslint-enable max-lines */
