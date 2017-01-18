@@ -107,7 +107,7 @@ export default class EstablishClaim extends BaseForm {
 
   handleSubmit = (event) => {
     let { handleAlert, handleAlertClear, task } = this.props;
-
+    debugger;
     event.preventDefault();
     handleAlertClear();
 
