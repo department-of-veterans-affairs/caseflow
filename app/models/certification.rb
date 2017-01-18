@@ -87,7 +87,7 @@ class Certification < ActiveRecord::Base
   def uncertify!(user_id)
     # YEAH, I KNOW THIS IS REDUNDANT! -Artem
     return unless user_id == ENV["TEST_USER_ID"]
-    appeal.uncertify(user_id)
+    appeal.uncertify!(user_id)
   end
 
   private

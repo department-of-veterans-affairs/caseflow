@@ -51,7 +51,7 @@ class CertificationsController < ApplicationController
     if current_user.css_id == ENV["TEST_USER_ID"]
       @certification = Certification.find_by(vacols_id: vacols_id)
       @certification.uncertify!(current_user.css_id)
-      @certification.destroy
+      Certification.delete_all(vacols_id: vacols_id)
     end
 
     redirect_to new_certification_path(vacols_id: ENV["TEST_APPEAL_ID"])
