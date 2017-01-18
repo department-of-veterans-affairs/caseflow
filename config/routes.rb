@@ -16,7 +16,15 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
+
+    # ONLY FOR UAT TESTING
+    if ENV["TEST_USER_ID"]
+      post 'uncertify', on: :member
+    end
+
   end
+
+  resources :certification_cancellations
 
   scope path: "/dispatch" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
@@ -30,6 +38,7 @@ Rails.application.routes.draw do
 
       patch 'assign', on: :collection
       post 'perform', on: :member
+      post 'assign-existing-end-product', on: :member
       get 'pdf', on: :member
     end
   end
@@ -58,6 +67,14 @@ Rails.application.routes.draw do
     end
   end
   # :nocov:
+
+  namespace :admin do
+    resource :establish_claim,
+             only: [:show, :create]
+  end
+
+  resources :functions, only: :index
+  patch '/functions/change', to: 'functions#change'
 
   resources :offices, only: :index
 

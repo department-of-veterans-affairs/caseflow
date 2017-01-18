@@ -12,7 +12,10 @@ describe('EstablishClaim', () => {
 
       /* eslint-disable camelcase */
       const task = {
-        appeal: { decision_type: 'Remand' },
+        appeal: {
+          decision_type: 'Remand',
+          non_canceled_end_products_within_30_days: []
+        },
         user: 'a'
       };
 
@@ -83,10 +86,17 @@ describe('EstablishClaim', () => {
     let wrapper;
 
     beforeEach(() => {
+
+      /* eslint-disable camelcase */
       const task = {
-        appeal: 'b',
+        appeal: {
+          decision_type: 'Remand',
+          non_canceled_end_products_within_30_days: []
+        },
         user: 'a'
       };
+
+      /* eslint-enable camelcase */
 
       wrapper = mount(<EstablishClaim task={task}/>);
     });
@@ -94,19 +104,19 @@ describe('EstablishClaim', () => {
     it('returns 170RMDAMC - AMC-Remand for remand', () => {
       wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
       expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        equal('170RMDAMC - AMC-Remand');
+        eql(['170RMDAMC', 'AMC-Remand']);
     });
 
     it('returns 170PGAMC - AMC-Partial Grant for partial', () => {
       wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
       expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        equal('170PGAMC - AMC-Partial Grant');
+        eql(['170PGAMC', 'AMC-Partial Grant']);
     });
 
     it('returns 172BVAG - BVA Grant for full', () => {
       wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
       expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        equal('172BVAG - BVA Grant');
+        eql(['172BVAG', 'BVA Grant']);
     });
   });
 });

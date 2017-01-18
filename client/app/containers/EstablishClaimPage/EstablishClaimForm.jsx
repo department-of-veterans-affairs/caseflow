@@ -11,18 +11,18 @@ export const POA = [
   'VSO',
   'Private'
 ];
-export const MODIFIER_OPTIONS = [
-  '170',
-  '172'
-];
+
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
   'Spec Ops (National)'
 ];
 
 export const render = function() {
+  let modifiers = this.validModifiers();
+
+
   return (
-    <form noValidate>
+    <form noValidate id="end_product">
       <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
         <TextField
@@ -41,21 +41,22 @@ export const render = function() {
          label="EP & Claim Label"
          name="claimLabel"
          readOnly={true}
-         value={this.getClaimTypeFromDecision()}
+         value={this.getClaimTypeFromDecision().join(' - ')}
         />
         <DropDown
          label="Modifier"
-         name="modifier"
-         options={MODIFIER_OPTIONS}
-         onChange={this.handleFieldChange('form', 'modifier')}
-         {...this.state.form.modifier}
+         name="endProductModifier"
+         options={modifiers}
+         onChange={this.handleFieldChange('form', 'endProductModifier')}
+         readOnly={modifiers.length === 1}
+         {...this.state.form.endProductModifier}
         />
         <DateSelector
          label="Decision Date"
-         name="decisionDate"
-         onChange={this.handleFieldChange('form', 'decisionDate')}
+         name="date"
+         onChange={this.handleFieldChange('form', 'date')}
          required={true}
-         {...this.state.form.decisionDate}
+         {...this.state.form.date}
         />
         <DropDown
          label="Segmented Lane"
@@ -65,10 +66,10 @@ export const render = function() {
          {...this.state.form.segmentedLane}
         />
         <TextField
-         label="Station"
-         name="Station"
-         value="499 - National Work Queue"
+         label="Station of Jurisdiction"
+         name="stationOfJurisdiction"
          readOnly={true}
+         {...this.state.form.stationOfJurisdiction}
         />
         <RadioField
          label="POA"
@@ -91,15 +92,15 @@ export const render = function() {
         /></div>}
         <Checkbox
          label="Gulf War Registry Permit"
-         name="gulfWar"
-         {...this.state.form.gulfWar}
-         onChange={this.handleFieldChange('form', 'gulfWar')}
+         name="gulfWarRegistry"
+         {...this.state.form.gulfWarRegistry}
+         onChange={this.handleFieldChange('form', 'gulfWarRegistry')}
         />
         <Checkbox
          label="Suppress Acknowledgement Letter"
-         name="suppressAcknowledgement"
-         {...this.state.form.suppressAcknowledgement}
-         onChange={this.handleFieldChange('form', 'suppressAcknowledgement')}
+         name="suppressAcknowledgementLetter"
+         {...this.state.form.suppressAcknowledgementLetter}
+         onChange={this.handleFieldChange('form', 'suppressAcknowledgementLetter')}
         />
       </div>
     </form>

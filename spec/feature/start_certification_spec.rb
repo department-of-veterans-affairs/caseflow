@@ -4,7 +4,6 @@ RSpec.feature "Start Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
-  after { Timecop.return }
 
   scenario "Starting a certification before logging in redirects to login page" do
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }

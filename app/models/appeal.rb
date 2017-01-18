@@ -110,7 +110,7 @@ class Appeal < ActiveRecord::Base
 
   def decision
     decisions = documents_with_type("BVA Decision").select do |decision|
-      (decision.received_at - decision_date).abs <= 1.day
+      (decision.received_at.in_time_zone - decision_date).abs <= 1.day
     end
     fail(MultipleDecisionError) if decisions.size > 1
     decisions.first
@@ -118,6 +118,11 @@ class Appeal < ActiveRecord::Base
 
   def certify!
     Appeal.certify(self)
+  end
+
+  def uncertify!(user_id)
+    return unless user_id == ENV["TEST_USER_ID"]
+    Appeal.uncertify(self)
   end
 
   def fetch_documents!
@@ -154,6 +159,14 @@ class Appeal < ActiveRecord::Base
       appeal
     end
 
+    def find_or_create_by_vbms_id(vbms_id)
+      appeal = find_or_initialize_by(vbms_id: vbms_id)
+      repository.load_vacols_data_by_vbms_id(appeal)
+      appeal.save
+
+      appeal
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -165,6 +178,13 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal)
       repository.upload_form8(appeal, form8)
+    end
+
+    # ONLY FOR TEST USER and for TEST_APPEAL_ID
+    def uncertify(appeal)
+      return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
+      Form8.delete_all(vacols_id: appeal.vacols_id)
+      repository.uncertify(appeal)
     end
 
     def map_end_product_value(code, mapping)

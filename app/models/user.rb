@@ -2,12 +2,14 @@ class User < ActiveRecord::Base
   has_many :tasks
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :roles, :ip_address
+  attr_accessor :roles, :ip_address, :admin_roles
   attr_writer :regional_office
 
   TASK_TYPE_TO_ROLES = {
     EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
   }.freeze
+
+  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal"].freeze
 
   def username
     css_id
@@ -35,8 +37,13 @@ class User < ActiveRecord::Base
 
   def can?(thing)
     return false if roles.nil?
-    return true if roles.include? "System Admin"
+    return true if admin? && admin_roles.include?(thing)
     roles.include? thing
+  end
+
+  def admin?
+    return false if roles.nil?
+    roles.include? "System Admin"
   end
 
   def authenticated?
@@ -54,6 +61,18 @@ class User < ActiveRecord::Base
     super.merge(display_name: display_name)
   end
 
+  def functions
+    User::FUNCTIONS.each_with_object({}) do |function, result|
+      result[function] ||= {}
+      result[function][:enabled] = admin_roles.include?(function)
+    end
+  end
+
+  def toggle_admin_roles(role:, enable: true)
+    return if role == "System Admin"
+    enable ? admin_roles << role : admin_roles.delete(role)
+  end
+
   private
 
   def station_offices
@@ -69,11 +88,14 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
+      user["admin_roles"] ||= user["roles"] && user["roles"].include?("System Admin") ? ["System Admin"] : []
+
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
         u.ip_address = request.remote_ip
+        u.admin_roles = user["admin_roles"]
         u.regional_office = session[:regional_office]
         u.save
       end
