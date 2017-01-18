@@ -74,7 +74,7 @@ RSpec.feature "Confirm Certification" do
 
     after { Timecop.return }
 
-    scenario "Test User able to uncertify an appeal" do
+    skip "Test User able to uncertify an appeal" do
       visit "certifications/123C"
       click_on("Upload and certify")
 
