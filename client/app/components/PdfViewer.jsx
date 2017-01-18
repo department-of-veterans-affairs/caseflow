@@ -23,9 +23,9 @@ export default class PdfViewer extends React.Component {
 
               if (comment.length) {
                 this.comments.push({
-                    content: comment[0].content,
-                    uuid: annotationId.uuid
-                  });
+                  content: comment[0].content,
+                  uuid: annotationId.uuid
+                });
                 this.setState({ comments: this.comments });
               }
             });
@@ -47,7 +47,7 @@ export default class PdfViewer extends React.Component {
 
   removeEventListeners = () => {
     const { UI } = PDFJSAnnotate;
-    
+
     if (this.annotationAddListener) {
       UI.removeEventListener('annotation:add', this.annotationAddListener);
     }
