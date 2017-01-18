@@ -1,4 +1,6 @@
 class Admin::EstablishClaimsController < ApplicationController
+  before_action :verify_system_admin
+
   def show
     @appeal = Appeal.new
     @existing_tasks = EstablishClaim.newest_first.limit(100)
