@@ -26,6 +26,20 @@ export const END_PRODUCT_INFO = {
   'Remand': ['170RMDAMC', 'AMC-Remand']
 };
 
+const FULL_GRANT_MODIFIER_OPTIONS = [
+  '172'
+];
+
+const PARTIAL_GRANT_MODIFIER_OPTIONS = [
+  '170',
+  '171',
+  '175',
+  '176',
+  '177',
+  '178',
+  '179'
+];
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -37,9 +51,21 @@ export default class EstablishClaim extends BaseForm {
 
     let decisionType = this.props.task.appeal.decision_type;
     let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+
     // Set initial state on page render
 
+    // The reviewForm decisionType is needed in the state first since
+    // it is used to calculate the validModifiers
     this.state = {
+      reviewForm: {
+        decisionType: new FormField(decisionType)
+      }
+    };
+
+    let validModifiers = this.validModifiers();
+
+    this.state = {
+      ...this.state,
       cancelModal: {
         cancelFeedback: new FormField(
           '',
@@ -57,7 +83,7 @@ export default class EstablishClaim extends BaseForm {
             dateValidator()
           ]
         ),
-        endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
+        endProductModifier: new FormField(validModifiers[0]),
         gulfWarRegistry: new FormField(false),
         poa: new FormField(Form.POA[0]),
         poaCode: new FormField(''),
@@ -71,9 +97,6 @@ export default class EstablishClaim extends BaseForm {
       loading: false,
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
-      reviewForm: {
-        decisionType: new FormField(decisionType)
-      },
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
@@ -229,6 +252,45 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  /*
+   * This function gets the set of unused modifiers. For a full grant, only one
+   * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
+   * are all potentially valid. This removes any modifiers that have already been
+   * used in previous EPs.
+   */
+  validModifiers = () => {
+    let modifiers = [];
+    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+
+    if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+      modifiers = FULL_GRANT_MODIFIER_OPTIONS;
+    } else {
+      modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
+    }
+
+    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
+      modifierObject[endProduct.end_product_type_code] = true;
+
+      return modifierObject;
+    }, {});
+
+    return modifiers.filter((modifier) => !modifierHash[modifier]);
+  }
+
+  hasAvailableModifers = () => this.validModifiers().length > 0
+
+  handleDecisionTypeChange = (value) => {
+    this.handleFieldChange('reviewForm', 'decisionType')(value);
+
+    let stateObject = {};
+    let modifiers = this.validModifiers();
+
+    stateObject.form = { ...this.state.form };
+    stateObject.form.endProductModifier.value = modifiers[0];
+
+    this.setState(stateObject);
+  }
+
   handleReviewPageSubmit() {
     this.setStationState();
     if (!this.validateReviewPageSubmit()) {
@@ -307,7 +369,6 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      specialIssueModalDisplay,
       modalSubmitLoading
     } = this.state;
 
@@ -318,8 +379,10 @@ export default class EstablishClaim extends BaseForm {
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task = {this.props.task}
+            decisionType = {this.state.reviewForm.decisionType.value}
             handleAlert = {this.props.handleAlert}
             handleAlertClear = {this.props.handleAlertClear}
+            hasAvailableModifers = {this.hasAvailableModifers()}
           />
         }
         { this.isFormPage() && Form.render.call(this) }
@@ -333,6 +396,7 @@ export default class EstablishClaim extends BaseForm {
               name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
               onClick={this.handleCreateEndProduct}
+              disabled={!this.hasAvailableModifers() && this.isAssociatePage()}
             />
           </div>
           { this.isFormPage() &&
@@ -382,27 +446,6 @@ export default class EstablishClaim extends BaseForm {
             required={true}
             {...this.state.cancelModal.cancelFeedback}
           />
-        </Modal>}
-        {specialIssueModalDisplay && <Modal
-          buttons={[
-            { classNames: ["cf-btn-link"],
-              name: '\u00AB Close',
-              onClick: this.handleModalClose('specialIssueModalDisplay')
-            },
-            { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Cancel Claim Establishment',
-              onClick: this.handleCancelTaskForSpecialIssue
-            }
-          ]}
-          visible={true}
-          closeHandler={this.handleModalClose('specialIssueModalDisplay')}
-          title="Special Issue Grant">
-          <p>
-            You selected a special issue category not handled by AMO. Special
-            issue cases cannot be processed in caseflow at this time. Please
-            select <b>Cancel Claim Establishment</b> and proceed to process
-            this case manually in VACOLS.
-          </p>
         </Modal>}
       </div>
     );

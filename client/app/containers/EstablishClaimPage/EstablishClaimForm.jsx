@@ -11,16 +11,16 @@ export const POA = [
   'VSO',
   'Private'
 ];
-export const MODIFIER_OPTIONS = [
-  '170',
-  '172'
-];
+
 export const SEGMENTED_LANE_OPTIONS = [
   'Core (National)',
   'Spec Ops (National)'
 ];
 
 export const render = function() {
+  let modifiers = this.validModifiers();
+
+
   return (
     <form noValidate id="end_product">
       <div className="cf-app-segment cf-app-segment--alt">
@@ -46,8 +46,9 @@ export const render = function() {
         <DropDown
          label="Modifier"
          name="endProductModifier"
-         options={MODIFIER_OPTIONS}
+         options={modifiers}
          onChange={this.handleFieldChange('form', 'endProductModifier')}
+         readOnly={modifiers.length === 1}
          {...this.state.form.endProductModifier}
         />
         <DateSelector

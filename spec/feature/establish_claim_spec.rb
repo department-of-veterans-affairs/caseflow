@@ -48,6 +48,8 @@ RSpec.feature "Dispatch" do
     @task = EstablishClaim.create(appeal: appeal)
 
     Timecop.freeze(Time.utc(2017, 1, 1))
+
+    allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
   end
 
   context "As a manager" do
@@ -93,8 +95,6 @@ RSpec.feature "Dispatch" do
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),
                                           user: other_user,
                                           assigned_at: 1.day.ago)
-
-      allow(Appeal.repository).to receive(:establish_claim!).and_call_original
     end
 
     context "Skip the associate EP page" do
@@ -133,7 +133,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_content("The date must be in mm/dd/yyyy format.")
       end
 
-      scenario "stablish a new claim page and process pt2" do
+      scenario "Establish a new claim page and process pt2" do
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
         page.select "Full Grant", from: "decisionType"
@@ -142,7 +142,6 @@ RSpec.feature "Dispatch" do
         # Test date, text, radio button, & checkbox inputs
         date = "01/08/2017"
         page.fill_in "Decision Date", with: date
-        page.select "172", from: "endProductModifier"
         page.find("#POA_VSO").trigger("click")
         page.fill_in "POA Code", with: "my poa code"
         page.find("#gulfWarRegistry").trigger("click")
@@ -150,7 +149,7 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Congratulations!")
-        expect(Appeal.repository).to have_received(:establish_claim!).with(
+        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -188,7 +187,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_content("Benefit Type") # React works
         expect(page).to_not have_content("POA Code")
 
-        select("172", from: "Modifier")
+        page.fill_in "Decision Date", with: "01/01/1111"
 
         click_on "\u00ABBack to review"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -196,7 +195,81 @@ RSpec.feature "Dispatch" do
 
         click_on "Create End Product"
 
-        expect(find_field("Modifier").value).to eq("172")
+        expect(find_field("Decision Date").value).to eq("01/01/1111")
+      end
+    end
+
+    context "Add existing Full Grant & Partial Grant EPs" do
+      before do
+        BGSService.end_product_data =
+          [
+            {
+              benefit_claim_id: "1",
+              claim_receive_date: Time.zone.now - 10.days,
+              claim_type_code: "172GRANT",
+              end_product_type_code: "172",
+              status_type_code: "PEND"
+            },
+            {
+              benefit_claim_id: "2",
+              claim_receive_date: Time.zone.now + 10.days,
+              claim_type_code: "170RMD",
+              end_product_type_code: "170",
+              status_type_code: "CLR"
+            }
+          ]
+      end
+
+      scenario "Unavailable modifiers" do
+        # Test that the full grant associate page disables the Create New EP button
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        page.select("Full Grant", from: "decisionType")
+
+        click_on "Create End Product"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("EP & Claim Label Modifiers in use")
+
+        expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
+
+        # Test that for a partial grant, the list of available modifiers is restricted
+        # to unused modifiers.
+        visit "/dispatch/establish-claim"
+        click_on "Establish Next Claim"
+        page.select("Partial Grant", from: "decisionType")
+        click_on "Create End Product"
+
+        click_on "Create New EP"
+
+        date = "01/08/2017"
+        page.fill_in "Decision Date", with: date
+
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("Congratulations!")
+
+        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+          claim: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            date: Date.strptime(date, "%m/%d/%Y"),
+            end_product_modifier: "171",
+            end_product_label: "AMC-Partial Grant",
+            end_product_code: "170PGAMC",
+            station_of_jurisdiction: "397",
+            poa: "None",
+            poa_code: "",
+            gulf_war_registry: false,
+            allow_poa: false,
+            suppress_acknowledgement_letter: false
+          },
+          appeal: @task.appeal
+        )
       end
     end
 

@@ -13,12 +13,20 @@ export default class Button extends React.Component {
       type
     } = this.props;
 
+    if (!classNames) {
+      classNames = ['cf-submit'];
+    }
+
+    if (disabled) {
+      classNames.push('usa-button-disabled');
+    }
+
     return <span>
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
-        className={classNames ? classNames.join(' ') : "cf-submit"}
+        className={classNames.join(' ')}
         type={type}
         disabled={disabled}
         onClick={onClick}>
