@@ -95,7 +95,7 @@ class VACOLS::Case < VACOLS::Record
   # These scopes query VACOLS and cannot be covered by automated tests.
   # :nocov:
   def self.remands_ready_for_claims_establishment
-    VACOLS::Case.includes(:folder, :correspondent).where("
+    VACOLS::Case.joins(:folder, :correspondent).where("
 
       BFMPRO = 'REM'
       -- Remand status.
@@ -103,6 +103,8 @@ class VACOLS::Case < VACOLS::Record
       and BFCURLOC = '97'
       -- Currently sitting in loc 97.
 
+      and TIVBMS = 'Y'
+      -- Only include VBMS cases.
     ")
   end
 
@@ -112,11 +114,11 @@ class VACOLS::Case < VACOLS::Record
       BFDC = '1'
       -- Cases marked with the disposition Allowed, which have at least one grant.
 
-      and BFDDEC > to_date(?, 'YYYY-MM-DD HH24:MI')
-      -- As all full grants are in HIST status, we must time bracket our requests.
+      and BFDDEC >= to_date(?, 'YYYY-MM-DD HH24:MI')
+      -- As all full grants are in HIS status, we must time bracket our requests.
 
-      and (TIVBMS = 'Y' or TISUBJ2 = 'Y')
-      -- Only VBMS (TIVBMS) or Virtual VA (TISUBJ2) cases, please.
+      and TIVBMS = 'Y'
+      -- Only include VBMS cases.
 
       and BFSO <> 'T'
       -- Exclude cases with a private attorney.
