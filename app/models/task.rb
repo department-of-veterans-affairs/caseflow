@@ -184,6 +184,7 @@ class Task < ActiveRecord::Base
         [:decision_date,
          :veteran_name,
          :decision_type,
+         :station_key,
          :non_canceled_end_products_within_30_days] }],
       methods: [:progress_status]
     )

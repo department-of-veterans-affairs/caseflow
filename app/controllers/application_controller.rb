@@ -112,6 +112,10 @@ class ApplicationController < ActionController::Base
     redirect_to "/unauthorized"
   end
 
+  def verify_system_admin
+    verify_authorized_roles("System Admin")
+  end
+
   def on_vbms_error
     respond_to do |format|
       format.html do

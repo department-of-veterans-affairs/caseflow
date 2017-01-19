@@ -14,14 +14,15 @@ describe Dispatch do
   let(:claim) do
     {
       poa: "None",
+      date: "03/03/2017",
       end_product_code: "172BVAG",
       end_product_label: "BVA Grant",
       end_product_modifier: "170",
       poa_code: "",
       gulf_war_registry: false,
       allow_poa: false,
-      suppress_acknowledgement_letter: false
-
+      suppress_acknowledgement_letter: false,
+      station_of_jurisdiction: "499"
     }
   end
   let(:dispatch) { Dispatch.new(claim: claim, task: task) }
@@ -51,15 +52,19 @@ describe Dispatch do
         expect(dispatch.claim.errors.keys).to include(:end_product_label)
       end
     end
+
     context "#dynamic_values" do
       subject { dispatch.claim.dynamic_values }
 
       it "returns a hash" do
         is_expected.to be_an_instance_of(Hash)
       end
+    end
 
-      it "returns a date attr matching the current timestamp" do
-        expect(subject[:date]).to eq(Time.now.utc.to_date)
+    context "#formatted_date" do
+      subject { dispatch.claim.formatted_date }
+      it "returns a date object" do
+        is_expected.to be_an_instance_of(Date)
       end
     end
 

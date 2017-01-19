@@ -75,6 +75,11 @@ class Appeal < ActiveRecord::Base
     "#{regional_office[:city]}, #{regional_office[:state]}"
   end
 
+  def station_key
+    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
+    result && result.first
+  end
+
   def nod_match?
     nod_date && documents_with_type("NOD").any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
@@ -110,7 +115,7 @@ class Appeal < ActiveRecord::Base
 
   def decision
     decisions = documents_with_type("BVA Decision").select do |decision|
-      (decision.received_at - decision_date).abs <= 1.day
+      (decision.received_at.in_time_zone - decision_date).abs <= 1.day
     end
     fail(MultipleDecisionError) if decisions.size > 1
     decisions.first
@@ -159,6 +164,14 @@ class Appeal < ActiveRecord::Base
       appeal
     end
 
+    def find_or_create_by_vbms_id(vbms_id)
+      appeal = find_or_initialize_by(vbms_id: vbms_id)
+      repository.load_vacols_data_by_vbms_id(appeal)
+      appeal.save
+
+      appeal
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -173,11 +186,9 @@ class Appeal < ActiveRecord::Base
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify!(appeal)
+    def uncertify(appeal)
       return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
-
-      Form8.find_by(vacols_id: appeal.vacols_id).destroy
-      File.delete(form8.pdf_location) unless File.exist?(form8.pdf_location)
+      Form8.delete_all(vacols_id: appeal.vacols_id)
       repository.uncertify(appeal)
     end
 
@@ -199,7 +210,8 @@ class Appeal < ActiveRecord::Base
   def select_non_canceled_end_products_within_30_days(end_products)
     # Find all EPs with relevant type codes that are not canceled.
     end_products.select do |end_product|
-      (end_product[:claim_receive_date] - decision_date).abs < 30.days &&
+      claim_date = DateTime.strptime(end_product[:claim_receive_date], "%m/%d/%Y").in_time_zone
+      (claim_date - decision_date).abs < 30.days &&
         end_product[:status_type_code] != "CAN"
     end
   end
