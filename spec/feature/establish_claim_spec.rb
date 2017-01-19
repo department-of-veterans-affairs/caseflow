@@ -7,25 +7,25 @@ RSpec.feature "Dispatch" do
     BGSService.end_product_data = [
       {
         benefit_claim_id: "1",
-        claim_receive_date: Time.zone.now - 20.days,
+        claim_receive_date: (Time.zone.now - 20.days).to_formatted_s(:short_date),
         claim_type_code: "172GRANT",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
-        claim_receive_date: Time.zone.now + 10.days,
+        claim_receive_date: (Time.zone.now + 10.days).to_formatted_s(:short_date),
         claim_type_code: "170RMD",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
-        claim_receive_date: Time.zone.now,
+        claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
         claim_type_code: "172BVAG",
         status_type_code: "CAN"
       },
       {
         benefit_claim_id: "4",
-        claim_receive_date: Time.zone.now - 200.days,
+        claim_receive_date: (Time.zone.now - 200.days).to_formatted_s(:short_date),
         claim_type_code: "172BVAG",
         status_type_code: "CLR"
       }]
@@ -205,14 +205,14 @@ RSpec.feature "Dispatch" do
           [
             {
               benefit_claim_id: "1",
-              claim_receive_date: Time.zone.now - 10.days,
+              claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
               claim_type_code: "172GRANT",
               end_product_type_code: "172",
               status_type_code: "PEND"
             },
             {
               benefit_claim_id: "2",
-              claim_receive_date: Time.zone.now + 10.days,
+              claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
               claim_type_code: "170RMD",
               end_product_type_code: "170",
               status_type_code: "CLR"
