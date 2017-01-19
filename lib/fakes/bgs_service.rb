@@ -2,6 +2,7 @@ class Fakes::BGSService
   cattr_accessor :end_product_data
   attr_accessor :client
 
+  # rubocop:disable Metrics/MethodLength
   def end_product_defaults
     default_date = 10.days.ago.to_formatted_s(:short_date)
     [
@@ -122,7 +123,6 @@ class Fakes::BGSService
   #   # What is the endpoint?
   # end
 
-  # rubocop:disable Metrics/MethodLength
   def fetch_veteran_info(_)
     {
       address_line1: "1234 FAKE ST",
