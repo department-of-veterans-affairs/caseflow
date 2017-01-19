@@ -20,7 +20,7 @@ export default class DropDown extends React.Component {
         {label || name} {required && <span className="cf-required">(Required)</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <select value={value} onChange={this.onChange} id={name} readOnly={readOnly}>
+      <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
         {options.map((option, index) =>
           <option
             value={option}
