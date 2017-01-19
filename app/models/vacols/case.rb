@@ -105,7 +105,7 @@ class VACOLS::Case < VACOLS::Record
 
       and TIVBMS = 'Y'
       -- Only include VBMS cases.
-    ")
+    ").order("BFDDEC ASC")
   end
 
   def self.amc_full_grants(decided_after:)
@@ -126,7 +126,7 @@ class VACOLS::Case < VACOLS::Record
       and VACOLS.ISSUE_CNT_REMAND(BFKEY) = 0
       -- Check that there are no remands on the case. Denials can be included.
 
-    }, decided_after.strftime("%Y-%m-%d %H:%M"))
+    }, decided_after.strftime("%Y-%m-%d %H:%M")).order("BFDDEC ASC")
   end
   # :nocov:
 end
