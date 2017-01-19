@@ -284,8 +284,8 @@ describe Certification do
 
     context "when certification exists with that vacols_id and it has been cancelled before" do
       before do
-          @certification = Certification.create(vacols_id: vacols_id)
-          CertificationCancellation.create(certification_id: @certification.id)
+        @certification = Certification.create(vacols_id: vacols_id)
+        CertificationCancellation.create(certification_id: @certification.id)
       end
 
       it "creates a new certification" do
