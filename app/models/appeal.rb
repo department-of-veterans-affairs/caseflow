@@ -75,6 +75,11 @@ class Appeal < ActiveRecord::Base
     "#{regional_office[:city]}, #{regional_office[:state]}"
   end
 
+  def station_key
+    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
+    result && result.first
+  end
+
   def nod_match?
     nod_date && documents_with_type("NOD").any? { |doc| doc.received_at.to_date == nod_date.to_date }
   end
