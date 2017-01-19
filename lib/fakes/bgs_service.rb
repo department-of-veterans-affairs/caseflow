@@ -2,9 +2,9 @@ class Fakes::BGSService
   cattr_accessor :end_product_data
   attr_accessor :client
 
-  DEFAULT_CLAIM_RECEIVE_DATE = 10.days.ago.to_formatted_s(:short_date)
-
-  END_PRODUCTS =
+  # rubocop:disable Metrics/MethodLength
+  def end_product_defaults
+    default_date = 10.days.ago.to_formatted_s(:short_date)
     [
       {
         benefit_claim_id: "1",
@@ -15,7 +15,7 @@ class Fakes::BGSService
       },
       {
         benefit_claim_id: "2",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170RMD",
         end_product_type_code: "170",
         status_type_code: "CLR"
@@ -36,93 +36,93 @@ class Fakes::BGSService
       },
       {
         benefit_claim_id: "5",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170APPACT",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "6",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170APPACTPMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "7",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170PGAMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "8",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170RMD",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "9",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170RMDAMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "10",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "170RMDPMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "11",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "172GRANT",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "12",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "172BVAG",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "13",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "172BVAGPMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "14",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "400CORRC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "15",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "400CORRCPMC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "16",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "930RC",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "17",
-        claim_receive_date: DEFAULT_CLAIM_RECEIVE_DATE,
+        claim_receive_date: default_date,
         claim_type_code: "930RCPMC",
         status_type_code: "PEND"
       }
-    ].freeze
+    ]
+  end
 
   def get_end_products(_veteran_id)
-    end_product_data || END_PRODUCTS
+    end_product_data || end_product_defaults
   end
 
   # def get_eps(veteran_id)
   #   # What is the endpoint?
   # end
 
-  # rubocop:disable Metrics/MethodLength
   def fetch_veteran_info(_)
     {
       address_line1: "1234 FAKE ST",
