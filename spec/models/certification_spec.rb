@@ -274,17 +274,28 @@ describe Certification do
     let(:vacols_id) { "1122" }
     subject { Certification.find_or_create_by_vacols_id(vacols_id) }
 
-    context "when certification exists with that vacols_id" do
+    context "when certification exists with that vacols_id and it has not been cancelled before" do
       before { @certification = Certification.create(vacols_id: vacols_id) }
 
-      it "loads that certification" do
+      it "loads that certification " do
         expect(subject.id).to eq(@certification.id)
+      end
+    end
+
+    context "when certification exists with that vacols_id and it has been cancelled before" do
+      before do
+          @certification = Certification.create(vacols_id: vacols_id)
+          CertificationCancellation.create(certification_id: @certification.id)
+      end
+
+      it "creates a new certification" do
+        expect(subject.id).to eq(Certification.where(vacols_id: vacols_id).last.id)
       end
     end
 
     context "when certification doesn't exist with that vacols_id" do
       it "creates a certification" do
-        expect(subject.id).to eq(Certification.where(vacols_id: vacols_id).first.id)
+        expect(subject.id).to eq(Certification.where(vacols_id: vacols_id).last.id)
       end
     end
   end

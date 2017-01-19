@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170106141818) do
+ActiveRecord::Schema.define(version: 20170117194115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(version: 20170106141818) do
   end
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
+
+  create_table "certification_cancellations", force: :cascade do |t|
+    t.integer "certification_id"
+    t.string  "cancellation_reason"
+    t.string  "other_reason"
+    t.string  "email"
+  end
+
+  add_index "certification_cancellations", ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true, using: :btree
 
   create_table "certifications", force: :cascade do |t|
     t.string   "vacols_id"

@@ -5,6 +5,7 @@
 # using Caseflow.
 #
 class Certification < ActiveRecord::Base
+  has_one :certification_cancellation, dependent: :destroy
   def start!
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,
@@ -137,8 +138,12 @@ class Certification < ActiveRecord::Base
   end
 
   class << self
+    # Return existing certification only if it was not cancelled before
     def find_or_create_by_vacols_id(vacols_id)
-      find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
+      if !!(certification = find_by(vacols_id: vacols_id))
+        return certification if !CertificationCancellation.find_by(certification_id: certification.id)
+      end
+      return create!(vacols_id: vacols_id)
     end
   end
 end
