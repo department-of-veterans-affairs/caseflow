@@ -1,7 +1,6 @@
 class CertificationCancellationsController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
-  layout "application"
 
   def create
     CertificationCancellation.create(certification_cancellation_params)
