@@ -29,6 +29,7 @@ class EstablishClaimsController < TasksController
   def establish_claim_params
     params.require(:claim).permit(:modifier, :end_product_code, :end_product_label,
                                   :end_product_modifier, :gulf_war_registry,
-                                  :suppress_acknowledgement_letter, :date)
+                                  :suppress_acknowledgement_letter, :station_of_jurisdiction,
+                                  :date)
   end
 end

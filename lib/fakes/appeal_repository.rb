@@ -10,6 +10,7 @@ class Fakes::AppealRepository
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
+  RASIE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
 
   def self.new(vacols_id, default_attrs_method_name, overrides = {})
     # Dynamically call the specified class method name to obtain
@@ -42,6 +43,7 @@ class Fakes::AppealRepository
 
   def self.load_vacols_data(appeal)
     return unless @records
+
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
@@ -51,6 +53,22 @@ class Fakes::AppealRepository
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
     appeal.assign_from_vacols(record)
+  end
+
+  def self.load_vacols_data_by_vbms_id(appeal)
+    return unless @records
+
+    # simulate VACOLS returning 2 appeals for a given vbms_id
+    fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+
+    # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
+    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+      # TODO(jd): create a more dynamic setup
+      @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
+    end
+
+    appeal.vacols_id = record[0]
+    appeal.assign_from_vacols(record[1])
   end
 
   def self.fetch_documents_for(appeal)
@@ -183,6 +201,7 @@ class Fakes::AppealRepository
 
   def self.appeal_remand_decided
     {
+      vbms_id: "REMAND_VBMS_ID",
       type: "Original",
       status: "Remand",
       disposition: "Remanded",
@@ -197,6 +216,7 @@ class Fakes::AppealRepository
 
   def self.appeal_full_grant_decided
     {
+      vbms_id: "FULLGRANT_VBMS_ID",
       type: "Post Remand",
       status: "Complete",
       disposition: "Allowed",
@@ -205,7 +225,8 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      regional_office_key: "RO13"
     }
   end
 

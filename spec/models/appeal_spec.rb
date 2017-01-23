@@ -231,6 +231,34 @@ describe Appeal do
     end
   end
 
+  context "#station_key" do
+    let(:appeal) do
+      Appeal.new(
+        veteran_first_name: "Davy",
+        veteran_middle_initial: "Q",
+        veteran_last_name: "Crockett",
+        regional_office_key: regional_office_key
+      )
+    end
+
+    subject { appeal.station_key }
+
+    context "when regional office key is mapped to a station" do
+      let(:regional_office_key) { "RO13" }
+      it { is_expected.to eq("313") }
+    end
+
+    context "when regional office key is one of many mapped to a station" do
+      let(:regional_office_key) { "RO16" }
+      it { is_expected.to eq("316") }
+    end
+
+    context "when regional office key is not mapped to a station" do
+      let(:regional_office_key) { "ROXX" }
+      it { is_expected.to be_nil }
+    end
+  end
+
   context "#decision" do
     let(:decision) do
       Document.new(
@@ -295,8 +323,8 @@ describe Appeal do
         decision_date: 1.day.ago
       )
     end
-    let(:yesterday) { 1.day.ago }
-    let(:last_year) { 365.days.ago }
+    let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
+    let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
     let(:end_products_output) do
       [{
@@ -352,9 +380,9 @@ describe Appeal do
       )
     end
 
-    let(:yesterday) { 1.day.ago }
-    let(:twenty_days_ago) { 20.days.ago }
-    let(:last_year) { 365.days.ago }
+    let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
+    let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
+    let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
     let(:end_products) do
       [

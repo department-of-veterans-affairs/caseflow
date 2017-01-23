@@ -11,6 +11,9 @@ export const MODIFIER_OPTIONS = [
 ];
 
 export const render = function() {
+  let modifiers = this.validModifiers();
+
+
   return (
     <form noValidate id="end_product">
       <div className="cf-app-segment cf-app-segment--alt">
@@ -36,8 +39,9 @@ export const render = function() {
         <DropDown
          label="Modifier"
          name="endProductModifier"
-         options={MODIFIER_OPTIONS}
+         options={modifiers}
          onChange={this.handleFieldChange('form', 'endProductModifier')}
+         readOnly={modifiers.length === 1}
          {...this.state.form.endProductModifier}
         />
         <DateSelector
@@ -48,10 +52,10 @@ export const render = function() {
          {...this.state.form.date}
         />
         <TextField
-         label="Station"
-         name="Station"
-         value="499 - National Work Queue"
+         label="Station of Jurisdiction"
+         name="stationOfJurisdiction"
          readOnly={true}
+         {...this.state.form.stationOfJurisdiction}
         />
         <Checkbox
          label="Gulf War Registry Permit"

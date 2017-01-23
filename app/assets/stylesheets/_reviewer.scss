@@ -1,0 +1,86 @@
+@import 'core/variables';
+
+.cf-pdf-page-container {
+  position: absolute;
+  top: 120px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.cf-pdf-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 300px;
+  left: 0;
+}
+
+.cf-pdf-scroll-view {
+  background-color: $color-gray-dark;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  overflow-y: scroll;
+  overflow-x: visible;
+  text-align: center;
+  padding: 10px 0;
+  float: left;
+}
+
+.cf-pdf-page {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.pdfViewer .canvasWrapper {
+  box-shadow: 0 0 3px #color-gray-warm-dark;
+}
+
+.pdfViewer .page {
+  margin-bottom: 10px;
+  border-image: none;
+}
+
+.annotationLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+[aria-hidden=true] {
+  display: inline !important;
+}
+
+.cf-comment-wrapper {
+  float: right;
+  width: 300px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  text-align: left;
+  background: $color-white;
+}
+
+.cf-comment-selected {
+  background: $color-primary-alt-light;
+}
+
+.cf-pdf-toolbar {
+  background: $color-gray-warm-light;
+  width: 100%;
+  top: 90px;
+  height: 30px;
+}
+
+.cf-full-page-app {
+  width: 100%;
+}
+
+.pdfViewer.singlePageView .page {
+  margin: auto;
+}

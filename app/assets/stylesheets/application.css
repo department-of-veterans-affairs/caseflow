@@ -13,4 +13,6 @@
  *= require _main.scss
  *= require _tasks.scss
  *= require _autoresize.scss
+ *= require _pdf_viewer.css
+ *= require _reviewer.scss
  */
