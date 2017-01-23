@@ -1,20 +1,13 @@
 import React from 'react';
 
-import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
-export const POA = [
-  'None',
-  'VSO',
-  'Private'
-];
-
-export const SEGMENTED_LANE_OPTIONS = [
-  'Core (National)',
-  'Spec Ops (National)'
+export const MODIFIER_OPTIONS = [
+  '170',
+  '172'
 ];
 
 export const render = function() {
@@ -58,38 +51,12 @@ export const render = function() {
          required={true}
          {...this.state.form.date}
         />
-        <DropDown
-         label="Segmented Lane"
-         name="segmentedLane"
-         options={SEGMENTED_LANE_OPTIONS}
-         onChange={this.handleFieldChange('form', 'segmentedLane')}
-         {...this.state.form.segmentedLane}
-        />
         <TextField
          label="Station of Jurisdiction"
          name="stationOfJurisdiction"
          readOnly={true}
          {...this.state.form.stationOfJurisdiction}
         />
-        <RadioField
-         label="POA"
-         name="POA"
-         options={POA}
-         onChange={this.handleFieldChange('form', 'poa')}
-         {...this.state.form.poa}
-        />
-        {this.hasPoa() && <div><TextField
-         label="POA Code"
-         name="POACode"
-         {...this.state.form.poaCode}
-         onChange={this.handleFieldChange('form', 'poaCode')}
-        />
-        <Checkbox
-         label="Allow POA Access to Documents"
-         name="allowPoa"
-         {...this.state.form.allowPoa}
-         onChange={this.handleFieldChange('form', 'allowPoa')}
-        /></div>}
         <Checkbox
          label="Gulf War Registry Permit"
          name="gulfWarRegistry"
