@@ -11,14 +11,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170106141818) do
+ActiveRecord::Schema.define(version: 20170123155914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "appeals", force: :cascade do |t|
-    t.string "vacols_id", null: false
-    t.string "vbms_id"
+    t.string  "vacols_id",                              null: false
+    t.string  "vbms_id"
+    t.boolean "rice_compliance"
+    t.boolean "private_attorney"
+    t.boolean "waiver_of_overpayment"
+    t.boolean "pensions"
+    t.boolean "vamc"
+    t.boolean "incarcerated_veterans"
+    t.boolean "dic_death_or_accrued_benefits"
+    t.boolean "education_or_vocational_rehab"
+    t.boolean "foreign_claims"
+    t.boolean "manlicon_compliance"
+    t.boolean "hearings_travel_board_video_conference"
+    t.boolean "home_loan_guaranty"
+    t.boolean "insurance"
+    t.boolean "national_cemetery_administration"
+    t.boolean "spina_bifida"
+    t.boolean "radiation"
+    t.boolean "non_rating_issues"
+    t.boolean "proposed_incompetency"
+    t.boolean "manila_remand"
+    t.boolean "contaminated_water_at_camp_lejeune"
+    t.boolean "mustard_gas"
+    t.boolean "dependencies"
   end
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree

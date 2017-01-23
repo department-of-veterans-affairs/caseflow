@@ -32,4 +32,8 @@ class EstablishClaimsController < TasksController
                                   :allow_poa, :suppress_acknowledgement_letter,
                                   :station_of_jurisdiction, :date)
   end
+
+  def save_special_issues
+    Appeal.update_attributes!(special_issues, params[:selected_issues])
+  end
 end

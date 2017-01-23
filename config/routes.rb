@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
       get 'pdf', on: :member
+      post "dispatch/establish-claim/:id", to: "establish_claims#save_special_issues"
     end
   end
 
