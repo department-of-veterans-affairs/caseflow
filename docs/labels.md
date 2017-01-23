@@ -1,6 +1,7 @@
 From now, if you want to add a label, you need to run it by the team, so everyone agrees what it means and we can add it to this list:
 
 ##Labels Definitions
+- **discussion** An issue used for the team to discuss solutions and ideas related to a high level problem. The team can discuss on the issue for some amount of time, and come together in person to determine the outcome.
 - **bug** - A bug that has been found with code in production. Any bugs with stories that have not yet been completed should be handled on that issue.
 - **starter-task** - An issue that would be good for a new developer to work on. Because it's easy.
 - **tech-improvement** - An issue that has to do with removing technical debt, or improving a technical issue with the application (e.g. upgrading the version of Ruby), and may not have a visible effect in the UX.
