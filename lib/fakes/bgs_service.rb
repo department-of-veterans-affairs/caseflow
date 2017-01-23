@@ -169,7 +169,7 @@ class Fakes::BGSService
   end
 
   def get_end_products(_veteran_id)
-    end_product_data || all_grants
+    end_product_data || no_grants
   end
 
   # rubocop:disable Metrics/MethodLength
