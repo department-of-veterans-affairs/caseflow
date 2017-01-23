@@ -32,9 +32,6 @@ class Fakes::AppealRepository
     p "Submitting claim to VBMS for appeal: #{appeal.id}"
     p "Claim data:\n", claim
 
-    # set poa_code to RAISE_VBMS_ERROR_ID to force an error while testing
-    fail(VBMSError) if claim && claim[:poa_code] == RAISE_VBMS_ERROR_ID
-
     # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
@@ -229,7 +226,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "531"
+      regional_office_key: "RO13"
     }
   end
 

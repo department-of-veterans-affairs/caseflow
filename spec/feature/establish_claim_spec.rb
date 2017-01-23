@@ -7,25 +7,25 @@ RSpec.feature "Dispatch" do
     BGSService.end_product_data = [
       {
         benefit_claim_id: "1",
-        claim_receive_date: Time.zone.now - 20.days,
+        claim_receive_date: (Time.zone.now - 20.days).to_formatted_s(:short_date),
         claim_type_code: "172GRANT",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
-        claim_receive_date: Time.zone.now + 10.days,
+        claim_receive_date: (Time.zone.now + 10.days).to_formatted_s(:short_date),
         claim_type_code: "170RMD",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
-        claim_receive_date: Time.zone.now,
+        claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
         claim_type_code: "172BVAG",
         status_type_code: "CAN"
       },
       {
         benefit_claim_id: "4",
-        claim_receive_date: Time.zone.now - 200.days,
+        claim_receive_date: (Time.zone.now - 200.days).to_formatted_s(:short_date),
         claim_type_code: "172BVAG",
         status_type_code: "CLR"
       }]
@@ -142,8 +142,6 @@ RSpec.feature "Dispatch" do
         # Test date, text, radio button, & checkbox inputs
         date = "01/08/2017"
         page.fill_in "Decision Date", with: date
-        page.find("#POA_VSO").trigger("click")
-        page.fill_in "POA Code", with: "my poa code"
         page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
@@ -160,10 +158,7 @@ RSpec.feature "Dispatch" do
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
-            poa: "VSO",
-            poa_code: "my poa code",
             gulf_war_registry: true,
-            allow_poa: false,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
@@ -185,7 +180,6 @@ RSpec.feature "Dispatch" do
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Create End Product"
         expect(page).to have_content("Benefit Type") # React works
-        expect(page).to_not have_content("POA Code")
 
         page.fill_in "Decision Date", with: "01/01/1111"
 
@@ -205,14 +199,14 @@ RSpec.feature "Dispatch" do
           [
             {
               benefit_claim_id: "1",
-              claim_receive_date: Time.zone.now - 10.days,
+              claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
               claim_type_code: "172GRANT",
               end_product_type_code: "172",
               status_type_code: "PEND"
             },
             {
               benefit_claim_id: "2",
-              claim_receive_date: Time.zone.now + 10.days,
+              claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
               claim_type_code: "170RMD",
               end_product_type_code: "170",
               status_type_code: "CLR"
@@ -262,10 +256,7 @@ RSpec.feature "Dispatch" do
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
             station_of_jurisdiction: "397",
-            poa: "None",
-            poa_code: "",
             gulf_war_registry: false,
-            allow_poa: false,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
