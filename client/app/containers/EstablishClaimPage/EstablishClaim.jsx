@@ -389,9 +389,11 @@ export default class EstablishClaim extends BaseForm {
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
-            <a href="#send_to_ro" className="cf-btn-link cf-adjacent-buttons">
-              Send to RO
-            </a>
+            <Button
+                name="Cancel"
+                onClick={this.handleCancelTask}
+                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+            />
             <Button
               name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
               loading={loading}
@@ -410,11 +412,6 @@ export default class EstablishClaim extends BaseForm {
               />
             </div>
           }
-          <Button
-            name="Cancel"
-            onClick={this.handleCancelTask}
-            classNames={["cf-btn-link"]}
-          />
         </div>
         {cancelModalDisplay && <Modal
           buttons={[
