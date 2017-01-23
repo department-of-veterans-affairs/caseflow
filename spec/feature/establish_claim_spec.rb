@@ -142,8 +142,6 @@ RSpec.feature "Dispatch" do
         # Test date, text, radio button, & checkbox inputs
         date = "01/08/2017"
         page.fill_in "Decision Date", with: date
-        page.find("#POA_VSO").trigger("click")
-        page.fill_in "POA Code", with: "my poa code"
         page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
@@ -160,10 +158,7 @@ RSpec.feature "Dispatch" do
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
-            poa: "VSO",
-            poa_code: "my poa code",
             gulf_war_registry: true,
-            allow_poa: false,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
@@ -185,7 +180,6 @@ RSpec.feature "Dispatch" do
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Create End Product"
         expect(page).to have_content("Benefit Type") # React works
-        expect(page).to_not have_content("POA Code")
 
         page.fill_in "Decision Date", with: "01/01/1111"
 
@@ -262,10 +256,7 @@ RSpec.feature "Dispatch" do
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
             station_of_jurisdiction: "397",
-            poa: "None",
-            poa_code: "",
             gulf_war_registry: false,
-            allow_poa: false,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
