@@ -284,15 +284,15 @@ class Fakes::AppealRepository
     unless Rails.env.test?
 
       self.records = {
+        "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
+        "321C" => Fakes::AppealRepository.appeal_remand_decided,
+        "654C" => Fakes::AppealRepository.appeal_full_grant_decided,
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
       50.times.each do |i|
         records["#{123 + i}C"] = Fakes::AppealRepository.appeal_ready_to_certify
-        records["#{456 + i}C"] = Fakes::AppealRepository.appeal_mismatched_docs
         records["#{789 + i}C"] = Fakes::AppealRepository.appeal_already_certified
-        records["#{321 + i}C"] = Fakes::AppealRepository.appeal_remand_decided
-        records["#{654 + i}C"] = Fakes::AppealRepository.appeal_full_grant_decided
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document] }
       end

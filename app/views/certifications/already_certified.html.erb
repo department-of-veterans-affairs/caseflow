@@ -15,9 +15,6 @@
     being re-certified to the board, Caseflow is not currently able to
     process remand cases.
   </p>
-  <% if current_user.css_id == ENV['TEST_USER_ID'] && params[:vacols_id] == ENV["TEST_APPEAL_ID"] %>
-      <%= link_to "Uncertify Appeal", uncertify_certification_path(params[:vacols_id]), method: :post %>
-  <% end %>
 </div>
 
 <%#= render partial: 'cancel_cert_modal' %>

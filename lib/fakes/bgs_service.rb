@@ -2,25 +2,27 @@ class Fakes::BGSService
   cattr_accessor :end_product_data
   attr_accessor :client
 
-  END_PRODUCTS =
+  # rubocop:disable Metrics/MethodLength
+  def end_product_defaults
+    default_date = 10.days.ago.to_formatted_s(:short_date)
     [
       {
         benefit_claim_id: "1",
-        claim_receive_date: Time.zone.now - 20.days,
+        claim_receive_date: 20.days.ago.to_formatted_s(:short_date),
         claim_type_code: "172GRANT",
         end_product_type_code: "172",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
-        claim_receive_date: Time.zone.now + 10.days,
+        claim_receive_date: default_date,
         claim_type_code: "170RMD",
         end_product_type_code: "170",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
-        claim_receive_date: Time.zone.now,
+        claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
         claim_type_code: "172BVAG",
         end_product_type_code: "172",
         status_type_code: "CAN"
@@ -110,7 +112,8 @@ class Fakes::BGSService
         claim_type_code: "930RCPMC",
         status_type_code: "PEND"
       }
-    ].freeze
+    ]
+  end
 
   def get_end_products(_veteran_id)
     end_product_data || end_product_defaults

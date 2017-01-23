@@ -6,14 +6,13 @@ class Fakes::Initializer
       "RO13" => "RO13"
     }
 
-    # User.authentication_service.user_session = {
-    #  "id" => "ANNE MERICA",
-    #  "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
-    #  "station_id" => "283",
-    #  "email" => "america@example.com",
-    #  "name" => "Anne Merica"
-    # }
-    User.authentication_service.user_session = User.find_by(id: "Cave Johnson")
+    User.authentication_service.user_session = {
+     "id" => "Sessioned User",
+     "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
+     "station_id" => "283",
+     "email" => "america@example.com",
+     "name" => "Fake Name"
+    }
 
     Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
