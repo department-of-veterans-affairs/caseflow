@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 8f590179f30e92a3af8928ba4d33439dab571307
-  ref: 8f59017
+  revision: 6a0cb8e42025beb46f0d80f4e35af52191042bc3
+  ref: 6a0cb8e
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -99,13 +99,13 @@ GEM
       nokogiri
     arel (6.0.3)
     ast (2.3.0)
-    aws-sdk (2.6.44)
-      aws-sdk-resources (= 2.6.44)
-    aws-sdk-core (2.6.44)
+    aws-sdk (2.6.46)
+      aws-sdk-resources (= 2.6.46)
+    aws-sdk-core (2.6.46)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.6.44)
-      aws-sdk-core (= 2.6.44)
+    aws-sdk-resources (2.6.46)
+      aws-sdk-core (= 2.6.46)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -210,7 +210,7 @@ GEM
     mini_portile2 (2.1.0)
     minitest (5.9.0)
     moment_timezone-rails (0.5.0)
-    momentjs-rails (2.15.1)
+    momentjs-rails (2.17.1)
       railties (>= 3.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
