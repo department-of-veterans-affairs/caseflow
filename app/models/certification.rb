@@ -6,6 +6,7 @@
 #
 class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
+
   def start!
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,
