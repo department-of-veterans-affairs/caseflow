@@ -290,6 +290,7 @@ describe Certification do
 
       it "creates a new certification" do
         expect(subject.id).to eq(Certification.where(vacols_id: vacols_id).last.id)
+        expect(subject.id).not_to eq(@certification.id)
       end
     end
 

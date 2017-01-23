@@ -3,8 +3,8 @@ class CertificationCancellationsController < ApplicationController
   before_action :verify_access
 
   def create
-    CertificationCancellation.create(certification_cancellation_params)
-    render "cancel"
+    @certification_cancellation = CertificationCancellation.create(certification_cancellation_params)
+    redirect_to @certification_cancellation
   end
 
   private
