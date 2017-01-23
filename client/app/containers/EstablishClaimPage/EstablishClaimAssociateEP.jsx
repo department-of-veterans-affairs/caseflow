@@ -30,7 +30,7 @@ export default class AssociatePage extends React.Component {
       />
   ];
 
-  handleAssignEndProduct = (endProduct) => () => {
+  handleAssignEndProduct = (endProduct) => (event) => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 

@@ -24,12 +24,16 @@ class TasksController < ApplicationController
   end
 
   def show
-    # Future safeguard for when we give managers a show view
-    # for a given task
-    task.start! if current_user == task.user && !task.started?
+    start_task!
+
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
     return render "complete" if task.complete?
+
+    # TODO: Reassess the best way to handle decision errors
+    return render "no_decisions" if task.appeal.decision.nil?
+  rescue Appeal::MultipleDecisionError
+    render "multiple_decisions"
   end
 
   def pdf
@@ -57,7 +61,11 @@ class TasksController < ApplicationController
 
   def cancel
     task.cancel!(cancel_feedback)
-    render json: {}
+
+    respond_to do |format|
+      format.html { redirect_to establish_claims_path }
+      format.json { render json: {} }
+    end
   end
 
   private
@@ -175,5 +183,11 @@ class TasksController < ApplicationController
 
   def cancel_feedback
     params.require(:feedback)
+  end
+
+  def start_task!
+    # Future safeguard for when we give managers a show view
+    # for a given task
+    task.start! if current_user == task.user && !task.started?
   end
 end

@@ -1,0 +1,13 @@
+<!-- TODO: Remove me when decisions are handled in task creation -->
+<% content_for :page_title do task.appeal.task_header end %>
+
+<div class="usa-alert usa-alert-error" role="alert">
+  <div class="usa-alert-body">
+    <h3 class="usa-alert-heading">No Decision</h3>
+    <p class="usa-alert-text">
+      There are no decision documents associated with this veteran for the range of the decision date (<%= task.appeal.decision_date.to_formatted_s(:short_date) %>). 
+
+      Please make sure the decision document exists and try again or <%= link_to "cancel this claims establishment", cancel_task_path(task, feedback: "No decisions"), method: :patch %>.
+    </p>
+  </div>
+</div>
