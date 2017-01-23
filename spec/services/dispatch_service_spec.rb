@@ -18,8 +18,6 @@ describe Dispatch do
       end_product_label: "BVA Grant",
       end_product_modifier: "170",
       gulf_war_registry: false,
-      suppress_acknowledgement_letter: false
-
       suppress_acknowledgement_letter: false,
       station_of_jurisdiction: "499"
     }

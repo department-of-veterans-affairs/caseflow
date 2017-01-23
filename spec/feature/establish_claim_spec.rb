@@ -142,7 +142,6 @@ RSpec.feature "Dispatch" do
         # Test date, text, radio button, & checkbox inputs
         date = "01/08/2017"
         page.fill_in "Decision Date", with: date
-        page.select "172", from: "endProductModifier"
         page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
@@ -159,7 +158,6 @@ RSpec.feature "Dispatch" do
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
-            station_of_jurisdiction: "317",
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
@@ -258,10 +256,7 @@ RSpec.feature "Dispatch" do
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
             station_of_jurisdiction: "397",
-            poa: "None",
-            poa_code: "",
             gulf_war_registry: false,
-            allow_poa: false,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
