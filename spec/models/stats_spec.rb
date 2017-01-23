@@ -12,31 +12,6 @@ describe Stats do
   let(:hourly_stats) { Rails.cache.read("stats-2016-2-17-15") }
   let(:prev_weekly_stats) { Rails.cache.read("stats-2016-w06") }
 
-  context "#values" do
-    let(:stats) { Stats.new(time: Stats.now, interval: "daily") }
-    subject { stats.values }
-
-    context "when cached stat values exist" do
-      before do
-        Rails.cache.write("stats-2016-2-17", certifications_started: 44)
-      end
-
-      it "loads cached value" do
-        expect(subject[:certifications_started]).to eq(44)
-      end
-    end
-
-    context "when no cached stat values exist" do
-      before do
-        Certification.create(completed_at: 4.hours.ago)
-      end
-
-      it "calculates and caches values" do
-        expect(subject[:certifications_completed]).to eq(1)
-      end
-    end
-  end
-
   context ".calculate_all!" do
     it "calculates and saves all calculated stats" do
       Certification.create(completed_at: 40.days.ago)
