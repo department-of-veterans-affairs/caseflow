@@ -13,14 +13,11 @@ describe Dispatch do
   let(:task) { create_tasks(1).first }
   let(:claim) do
     {
-      poa: "None",
       date: "03/03/2017",
       end_product_code: "172BVAG",
       end_product_label: "BVA Grant",
       end_product_modifier: "170",
-      poa_code: "",
       gulf_war_registry: false,
-      allow_poa: false,
       suppress_acknowledgement_letter: false,
       station_of_jurisdiction: "499"
     }
