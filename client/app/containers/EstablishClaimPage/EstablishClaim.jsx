@@ -46,7 +46,6 @@ export default class EstablishClaim extends BaseForm {
       },
       cancelModalDisplay: false,
       form: {
-        allowPoa: new FormField(false),
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
           formatDate(this.props.task.appeal.decision_date),
@@ -57,12 +56,6 @@ export default class EstablishClaim extends BaseForm {
         ),
         endProductModifier: new FormField(Form.MODIFIER_OPTIONS[0]),
         gulfWarRegistry: new FormField(false),
-        poa: new FormField(Form.POA[0]),
-        poaCode: new FormField(''),
-        segmentedLane: new FormField(
-          Form.SEGMENTED_LANE_OPTIONS[0],
-          requiredValidator('Please enter a Segmented Lane.')
-        ),
         suppressAcknowledgementLetter: new FormField(false)
       },
       loading: false,
@@ -183,10 +176,6 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay: true,
       specialIssueModalDisplay: false
     });
-  }
-
-  hasPoa() {
-    return this.state.form.poa.value === 'VSO' || this.state.form.poa.value === 'Private';
   }
 
   handlePageChange = (page) => {

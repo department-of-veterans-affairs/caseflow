@@ -58,9 +58,8 @@ class Dispatch
     # This is a list of the "variable attrs" that are returned from the
     # browser's End Product form
     PRESENT_VARIABLE_ATTRS = %i(end_product_modifier end_product_code end_product_label date).freeze
-    BOOLEAN_VARIABLE_ATTRS = %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
-    OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
-    VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
+    BOOLEAN_VARIABLE_ATTRS = %i(gulf_war_registry suppress_acknowledgement_letter).freeze
+    VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS
 
     attr_accessor(*VARIABLE_ATTRS)
 
