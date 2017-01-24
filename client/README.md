@@ -14,11 +14,17 @@ The frontend code is compiled using [Webpack](https://webpack.github.io/) & [Bab
 
 Caseflow's frontend uses npm (Node Package Manager) to manage its JS dependencies. Similar to Rail's Gemfile, the frontend manages its dependencies via a `package.json` file located in `/client`. You can search for JS libraries on [NPM's website](https://www.npmjs.com/). To add a new dependency:
 
-> $ npm install new-library --save
+> $ npm install <new-library> --save
 
-This will add information about the library to the `package.json`. Then to install the new dependency:
+Ensure the dependency management file  (npm-shrinkwrap.json) is updated:
 
-> $ npm install
+> $ npm shrinkwrap
+
+If you run into any errors with extraneous files run:
+
+> $ npm prune
+
+Please make sure to commit changes to the package.json and npm-shrinkwrap.json together.
 
 ## Styling
 

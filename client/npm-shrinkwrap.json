@@ -2274,15 +2274,15 @@
           "from": "combined-stream@>=1.0.5 <1.1.0",
           "resolved": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.5.tgz"
         },
-        "commander": {
-          "version": "2.9.0",
-          "from": "commander@>=2.9.0 <3.0.0",
-          "resolved": "https://registry.npmjs.org/commander/-/commander-2.9.0.tgz"
-        },
         "concat-map": {
           "version": "0.0.1",
           "from": "concat-map@0.0.1",
           "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
+        },
+        "commander": {
+          "version": "2.9.0",
+          "from": "commander@>=2.9.0 <3.0.0",
+          "resolved": "https://registry.npmjs.org/commander/-/commander-2.9.0.tgz"
         },
         "console-control-strings": {
           "version": "1.1.0",
@@ -2449,15 +2449,15 @@
           "from": "is-fullwidth-code-point@>=1.0.0 <2.0.0",
           "resolved": "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-1.0.0.tgz"
         },
-        "is-property": {
-          "version": "1.0.2",
-          "from": "is-property@>=1.0.0 <2.0.0",
-          "resolved": "https://registry.npmjs.org/is-property/-/is-property-1.0.2.tgz"
-        },
         "is-my-json-valid": {
           "version": "2.13.1",
           "from": "is-my-json-valid@>=2.12.4 <3.0.0",
           "resolved": "https://registry.npmjs.org/is-my-json-valid/-/is-my-json-valid-2.13.1.tgz"
+        },
+        "is-property": {
+          "version": "1.0.2",
+          "from": "is-property@>=1.0.0 <2.0.0",
+          "resolved": "https://registry.npmjs.org/is-property/-/is-property-1.0.2.tgz"
         },
         "is-typedarray": {
           "version": "1.0.0",
@@ -5164,11 +5164,6 @@
       "version": "3.0.0",
       "from": "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz",
       "resolved": "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz"
-    },
-    "strip-json-comments": {
-      "version": "1.0.4",
-      "from": "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-1.0.4.tgz",
-      "resolved": "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-1.0.4.tgz"
     },
     "superagent": {
       "version": "3.0.0",
