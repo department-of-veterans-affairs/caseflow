@@ -16,7 +16,7 @@ Caseflow's frontend uses npm (Node Package Manager) to manage its JS dependencie
 
 > $ npm install <new-library> --save
 
-Ensure the dependency management file  (npm-shrinkwrap.json) is updated:
+The above command will update the package.json and install the module to the `/node_modules` directory. However, this does not guarantee a deterministic install, especially when multiple modules have the same dependency module. To ensure consist installation of npm modules, we use [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap). After installing a new package (updating package.json) you must also ensure the dependency management file (`npm-shrinkwrap.json`) is updated:
 
 > $ npm shrinkwrap
 
@@ -24,6 +24,7 @@ If you run into any errors with extraneous files run:
 
 > $ npm prune
 
+When doing a fresh `npm install` of all packages, if a valid `npm-shrinkwrap.json` file exists, it will be used to deterministically install packaged.
 Please make sure to commit changes to the package.json and npm-shrinkwrap.json together.
 
 ## Styling
