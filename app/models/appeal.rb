@@ -223,8 +223,11 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
   def pending_eps
-    bgs = BGSService.new
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
 
@@ -232,7 +235,6 @@ class Appeal < ActiveRecord::Base
   end
 
   def non_canceled_end_products_within_30_days
-    bgs = BGSService.new
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
 

@@ -193,7 +193,7 @@ RSpec.feature "Dispatch" do
       end
     end
 
-    context "Add existing Full Grant & Partial Grant EPs", focus: true do
+    context "Add existing Full Grant & Partial Grant EPs" do
       before do
         BGSService.end_product_data =
           [
