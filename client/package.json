@@ -47,11 +47,11 @@
     "babel-eslint": "^6.1.2",
     "chai": "^3.5.0",
     "enzyme": "^2.6.0",
-    "eslint": "^3.10.2",
+    "eslint": "^3.11.1",
+    "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-react": "^6.7.1",
     "mocha": "^3.1.2",
     "npm-shrinkwrap": "^6.0.2",
-    "pdfjs-dist": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-1.6.414.tgz",
     "react-addons-test-utils": "^0.14.8"
   },
   "optionalDependencies": {
