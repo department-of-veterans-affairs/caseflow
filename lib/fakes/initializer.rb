@@ -7,11 +7,11 @@ class Fakes::Initializer
     }
 
     User.authentication_service.user_session = {
-     "id" => "Sessioned User",
-     "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
-     "station_id" => "283",
-     "email" => "america@example.com",
-     "name" => "Fake Name"
+      "id" => "Sessioned User",
+      "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
+      "station_id" => "283",
+      "email" => "america@example.com",
+      "name" => "Fake Name"
     }
 
     Appeal.repository = Fakes::AppealRepository

@@ -123,7 +123,6 @@ class Fakes::BGSService
   #   # What is the endpoint?
   # end
 
-  # rubocop:disable Metrics/MethodLength
   def fetch_veteran_info(_)
     {
       address_line1: "1234 FAKE ST",
