@@ -207,19 +207,6 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def map_ep_values(end_products)
-    end_products.map do |end_product|
-      new_end_product = end_product.clone
-      new_end_product[:claim_type_code] = Appeal.map_end_product_value(
-        new_end_product[:claim_type_code],
-        Dispatch::END_PRODUCT_CODES)
-      new_end_product[:status_type_code] = Appeal.map_end_product_value(
-        new_end_product[:status_type_code],
-        Dispatch::END_PRODUCT_STATUS)
-      new_end_product
-    end
-  end
-
   def select_non_canceled_end_products_within_30_days(end_products)
     # Find all EPs with relevant type codes that are not canceled.
     end_products.select do |end_product|
@@ -241,7 +228,7 @@ class Appeal < ActiveRecord::Base
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
 
-    map_ep_values(select_pending_eps(end_products))
+    Dispatch.map_ep_values(select_pending_eps(end_products))
   end
 
   def non_canceled_end_products_within_30_days
@@ -249,7 +236,7 @@ class Appeal < ActiveRecord::Base
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
 
-    map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
+    Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
   end
 
   def sanitized_vbms_id

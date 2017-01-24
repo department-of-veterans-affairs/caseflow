@@ -6,13 +6,13 @@ class DevController < ApplicationController
 
   def set_end_products
     case params[:type]
-    when 'full'
+    when "full"
       BGSService.end_product_data = BGSService.existing_full_grants
-    when 'partial'
+    when "partial"
       BGSService.end_product_data = BGSService.existing_partial_grants
-    when 'none'
+    when "none"
       BGSService.end_product_data = BGSService.no_grants
-    when 'all'
+    when "all"
       BGSService.end_product_data = BGSService.all_grants
     end
 
