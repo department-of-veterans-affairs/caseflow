@@ -60,9 +60,8 @@ class Dispatch
     PRESENT_VARIABLE_ATTRS =
       %i(date station_of_jurisdiction end_product_modifier end_product_code end_product_label).freeze
     BOOLEAN_VARIABLE_ATTRS =
-      %i(allow_poa gulf_war_registry suppress_acknowledgement_letter).freeze
-    OTHER_VARIABLE_ATTRS = %i(poa poa_code).freeze
-    VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS + OTHER_VARIABLE_ATTRS
+      %i(gulf_war_registry suppress_acknowledgement_letter).freeze
+    VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS
 
     attr_accessor(*VARIABLE_ATTRS)
 
