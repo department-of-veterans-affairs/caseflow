@@ -1,5 +1,3 @@
-class CertificationCancellation
-  include ActiveModel::Model
-
-  attr_accessor :certification, :cancellation_reason, :other_reason, :email
+class CertificationCancellation < ActiveRecord::Base
+  belongs_to :certification
 end
