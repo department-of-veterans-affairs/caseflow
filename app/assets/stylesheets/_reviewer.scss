@@ -1,8 +1,22 @@
 @import 'core/variables';
 
+$caseflow-background: #f9f9f9;
+
+.cf-nav-full-screen {
+  padding: 10px 30px;
+  
+  .usa-grid-full {
+    max-width: none;
+  }
+
+  .cf-nav-dropdown {
+    right: 30px;
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
-  top: 120px;
+  top: 50px;
   bottom: 0;
   right: 0;
   left: 0;
@@ -12,12 +26,12 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 300px;
+  right: 380px;
   left: 0;
 }
 
 .cf-pdf-scroll-view {
-  background-color: $color-gray-dark;
+  background-color: $color-gray;
   width: 100%;
   top: 0;
   bottom: 0;
@@ -57,24 +71,77 @@
 
 .cf-comment-wrapper {
   float: right;
-  width: 300px;
+  width: 380px;
   top: 0;
   bottom: 0;
   right: 0;
   position: absolute;
   text-align: left;
-  background: $color-white;
+  background: $caseflow-background;
+  padding: 0 30px;
 }
 
 .cf-comment-selected {
   background: $color-primary-alt-light;
 }
 
-.cf-pdf-toolbar {
-  background: $color-gray-warm-light;
+.cf-pdf-comment-list-item {
+  background-color: $color-white;
+  border-radius: 3px;
+  padding: 20px;
+  margin-bottom: 10px;
+  border: 1px solid $color-gray-lighter;
+}
+
+.cf-pdf-header {
+  background: $color-gray-dark;
   width: 100%;
-  top: 90px;
   height: 30px;
+  position: absolute;
+  z-index: 10;
+  opacity: .9;
+  color: $color-white;
+  padding: 3px 20px;
+}
+
+.cf-pdf-footer {
+  background: $color-gray-dark;
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  z-index: 10;
+  opacity: .9;
+  bottom: 0px;
+  color: $color-white;
+  padding: 3px 20px;
+}
+
+.cf-pdf-buttons-left {
+  text-align: left;
+}
+
+.cf-pdf-buttons-right {
+  text-align: right;
+}
+
+.cf-pdf-buttons {
+  text-align: center;
+}
+
+.cf-heading-alt {
+  border-bottom: 1px solid $color-gray-lighter;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+  margin-top: 30px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 17px;
+  text-transform: uppercase;
+}
+
+.cf-pdf-meta-title {
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .cf-full-page-app {
