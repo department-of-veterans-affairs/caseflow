@@ -12,8 +12,8 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import * as Review from './EstablishClaimReview';
-import * as Form from './EstablishClaimForm';
+import EstablishClaimReview, * as Review from './EstablishClaimReview';
+import EstablishClaimForm, * as Form from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
@@ -363,15 +363,25 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <div>
-        { this.isReviewPage() && Review.render.call(this) }
+        { this.isReviewPage() &&
+          <EstablishClaimReview
+            decisionType={this.state.reviewForm.decisionType}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
+            specialIssues={this.state.specialIssues}
+            handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleFieldChange={this.handleFieldChange}
+            handleModalClose={this.handleModalClose}
+            specialIssueModalDisplay={this.state.specialIssueModalDisplay}
+          />
+        }
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-            task = {this.props.task}
-            decisionType = {this.state.reviewForm.decisionType.value}
-            handleAlert = {this.props.handleAlert}
-            handleAlertClear = {this.props.handleAlertClear}
-            hasAvailableModifers = {this.hasAvailableModifers()}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
         { this.isFormPage() && Form.render.call(this) }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 export default class BaseForm extends React.Component {
 
-  handleFieldChange = function (form, field) {
+  handleFieldChange = (form, field) => {
     return (value) => {
       let stateObject = {};
 
