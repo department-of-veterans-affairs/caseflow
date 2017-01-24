@@ -1,4 +1,4 @@
-describe Appeal, focus: true do
+describe Appeal do
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
@@ -459,7 +459,7 @@ describe Appeal, focus: true do
         }
       ]
     end
-    it do
+    it "filters eps that are not canceled and were created within 30 days" do
       expect(appeal.non_canceled_end_products_within_30_days)
         .to eq(end_products.slice(0, 2))
     end
@@ -512,7 +512,7 @@ describe Appeal, focus: true do
         }
       ]
     end
-    it do
+    it "filters onlying pending eps" do
       expect(appeal.pending_eps)
         .to eq(end_products.slice(0, 2))
     end
