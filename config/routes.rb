@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 
   end
 
-  resources :certification_cancellations
+  resources :certification_cancellations, only: [:show, :create]
 
   scope path: "/dispatch" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
