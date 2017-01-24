@@ -194,4 +194,4 @@ export default class EstablishClaimReview extends React.Component {
     </div>
     );
   }
-};
+}
