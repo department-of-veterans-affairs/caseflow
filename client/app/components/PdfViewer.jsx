@@ -252,7 +252,7 @@ export default class PdfViewer extends React.Component {
             <div className="cf-heading-alt">
               Notes
               <span className="cf-right-side">
-                <a href="#">+ Add a Note</a>
+                <a href="#">+ Add a Note <i className="fa fa-pencil" aria-hidden="true"></i></a>
               </span>
             </div>
             <div className="cf-pdf-comment-list">
