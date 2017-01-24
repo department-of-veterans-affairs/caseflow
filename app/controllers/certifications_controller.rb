@@ -60,7 +60,7 @@ class CertificationsController < ApplicationController
   private
 
   def certification_cancellation
-    @certification_cancellation ||= CertificationCancellation.new(certification: certification)
+    @certification_cancellation ||= CertificationCancellation.new(certification_id: certification.id)
   end
   helper_method :certification_cancellation
 
