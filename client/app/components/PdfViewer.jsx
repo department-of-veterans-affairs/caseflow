@@ -3,12 +3,15 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import DateSelector from '../components/DateSelector';
 import DropDown from '../components/DropDown';
+import Button from '../components/Button';
 
 export default class PdfViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      comments: []
+      comments: [],
+      currentPage: 1,
+      numPages: 0
     };
   }
 
@@ -77,7 +80,11 @@ export default class PdfViewer extends React.Component {
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-      this.state.pdfDocument = pdfDocument;
+      this.setState({
+        currentPage: 1,
+        numPages: pdfDocument.pdfInfo.numPages,
+        pdfDocument: pdfDocument
+      });
 
       // Create a page in the DOM for every page in the PDF
       let viewer = document.getElementById('viewer');
@@ -139,6 +146,15 @@ export default class PdfViewer extends React.Component {
       Array.prototype.forEach.call(page, (ele, index) => {
         let boundingRect = ele.getBoundingClientRect();
 
+        // You are on this page, if the top of the page is above the middle
+        // and the bottom of the page is below the middle
+        if (boundingRect.top < scrollWindow.clientHeight / 2 &&
+            boundingRect.bottom > scrollWindow.clientHeight / 2) {
+          this.setState({
+            currentPage: index + 1
+          });
+        }
+
         // This renders each page as it comes into view. i.e. when
         // the top of the next page is within a thousand pixels of
         // the current view we render it. If the bottom of the page
@@ -188,7 +204,6 @@ export default class PdfViewer extends React.Component {
 
   render() {
     let comments = [];
-
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
@@ -210,7 +225,7 @@ export default class PdfViewer extends React.Component {
                   {this.props.file}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
-                  1/4
+                  {this.state.currentPage} / {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
                   <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
@@ -219,7 +234,7 @@ export default class PdfViewer extends React.Component {
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+              <div id="viewer" className="cf-crosshair-cursor cf-pdf-page pdfViewer singlePageView"></div>
             </div>
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">

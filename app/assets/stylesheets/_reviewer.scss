@@ -120,7 +120,9 @@ $caseflow-background: #f9f9f9;
   font-size: 15px;
 }
 
-
+.cf-crosshair-cursor {
+  cursor: crosshair;
+}
 
 .cf-pdf-buttons {
   &-left {
