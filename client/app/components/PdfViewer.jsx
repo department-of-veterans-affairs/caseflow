@@ -114,7 +114,7 @@ export default class PdfViewer extends React.Component {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.disableWorker = true;
+    PDFJS.workerSrc = '../assets/dist/pdf.worker.js';
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
@@ -239,7 +239,9 @@ export default class PdfViewer extends React.Component {
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <i className="cf-pdf-button fa fa-chevron-left" aria-hidden="true"></i> Previous
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i> Previous
+                  </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
@@ -247,7 +249,9 @@ export default class PdfViewer extends React.Component {
                   <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  Next <i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
+                  <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
+                    Next <i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
+                  </Button>
                 </div>
               </div>
             </div>

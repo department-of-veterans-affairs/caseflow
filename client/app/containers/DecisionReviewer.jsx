@@ -8,17 +8,25 @@ export default class DecisionReviewer extends React.Component {
     this.state = { pdf: 0 };
   }
 
+  previousPdf = () => {
+    this.setState({
+      pdf: Math.max(this.state.pdf - 1, 0)
+    });
+  }
+
+  nextPdf = () => {
+    this.setState({
+      pdf: Math.min(this.state.pdf + 1, this.props.pdfLinks.length - 1)
+    });
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {
-        this.setState({
-          pdf: Math.max(this.state.pdf - 1, 0)
-        });
+        previousPdf();
       }
       if (event.key === 'ArrowRight') {
-        this.setState({
-          pdf: Math.min(this.state.pdf + 1, this.props.pdfLinks.length - 1)
-        });
+        nextPdf();
       }
     });
   }
@@ -29,7 +37,9 @@ export default class DecisionReviewer extends React.Component {
     return (
       <div>
         <PdfViewer
-          file={pdfLinks[this.state.pdf]} />
+          file={pdfLinks[this.state.pdf]}
+          previousPdf={this.previousPdf}
+          nextPdf={this.nextPdf} />
       </div>
     );
   }
