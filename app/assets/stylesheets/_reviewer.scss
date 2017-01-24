@@ -104,6 +104,7 @@ $caseflow-background: #f9f9f9;
   opacity: .9;
   color: $color-white;
   padding: 3px 20px;
+  font-size: 15px;
 }
 
 .cf-pdf-footer {
@@ -116,18 +117,27 @@ $caseflow-background: #f9f9f9;
   bottom: 0px;
   color: $color-white;
   padding: 3px 20px;
+  font-size: 15px;
 }
 
-.cf-pdf-buttons-left {
-  text-align: left;
-}
 
-.cf-pdf-buttons-right {
-  text-align: right;
-}
 
 .cf-pdf-buttons {
-  text-align: center;
+  &-left {
+    text-align: left;
+  }
+
+  &-right {
+    text-align: right;
+  }
+
+  &-center {
+    text-align: center;
+  }
+}
+
+.cf-pdf-button {
+  margin: 0 20px;
 }
 
 .cf-heading-alt {

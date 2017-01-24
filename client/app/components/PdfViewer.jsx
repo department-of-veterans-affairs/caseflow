@@ -209,11 +209,12 @@ export default class PdfViewer extends React.Component {
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   {this.props.file}
                 </div>
-                <div className="usa-width-one-third cf-pdf-buttons">
+                <div className="usa-width-one-third cf-pdf-buttons-center">
                   1/4
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  buttons
+                  <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -223,13 +224,15 @@ export default class PdfViewer extends React.Component {
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  &lt; Previous
+                  <i className="cf-pdf-button fa fa-chevron-left" aria-hidden="true"></i> Previous
                 </div>
-                <div className="usa-width-one-third cf-pdf-buttons">
-                - +
+                <div className="usa-width-one-third cf-pdf-buttons-center">
+                  <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  Next &gt;
+                  Next <i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -252,8 +255,9 @@ export default class PdfViewer extends React.Component {
             <div className="cf-heading-alt">
               Notes
               <span className="cf-right-side">
-                <a href="#">+ Add a Note <i className="fa fa-pencil" aria-hidden="true"></i></a>
+                <a href="#">+ Add a Note</a>
               </span>
+              <i className="fa fa-pencil" aria-hidden="true"></i>
             </div>
             <div className="cf-pdf-comment-list">
               <div className="cf-pdf-comment">
