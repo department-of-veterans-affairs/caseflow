@@ -1,4 +1,5 @@
 class DevController < ApplicationController
+  # :nocov:
   def set_user
     session["user"] = User.authentication_service.get_user_session(params[:id])
     redirect_to "/dev/users"
@@ -18,4 +19,5 @@ class DevController < ApplicationController
 
     redirect_to "/dev/users"
   end
+  # :nocov:
 end
