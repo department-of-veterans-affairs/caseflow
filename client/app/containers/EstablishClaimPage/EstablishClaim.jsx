@@ -6,7 +6,6 @@ import ApiUtil from '../../util/ApiUtil';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
-import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
@@ -367,11 +366,13 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimReview
             decisionType={this.state.reviewForm.decisionType}
             handleDecisionTypeChange={this.handleDecisionTypeChange}
-            specialIssues={this.state.specialIssues}
+            handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
+            handlePageChange={this.handleCreateEndProduct}
             specialIssueModalDisplay={this.state.specialIssueModalDisplay}
+            specialIssues={this.state.specialIssues}
           />
         }
         { this.isAssociatePage() &&
@@ -381,44 +382,23 @@ export default class EstablishClaim extends BaseForm {
             decisionType={this.state.reviewForm.decisionType.value}
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
+            handleCancelTask={this.handleCancelTask}
+            handlePageChange={this.handleCreateEndProduct}
             hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
         { this.isFormPage() &&
           <EstablishClaimForm
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            handleCancelTask={this.handleCancelTask}
+            handleCreateEndProduct={this.handleCreateEndProduct}
             handleFieldChange={this.handleFieldChange}
+            loading={loading}
             form={this.state.form}
             validModifiers={this.validModifiers()}
           />
         }
 
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          <div className="cf-push-right">
-            <Button
-                name="Cancel"
-                onClick={this.handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
-            />
-            <Button
-              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
-              loading={loading}
-              onClick={this.handleCreateEndProduct}
-              disabled={!this.hasAvailableModifers() && this.isAssociatePage()}
-            />
-          </div>
-          { this.isFormPage() &&
-            <div className="task-link-row">
-              <Button
-                name={"\u00ABBack to review"}
-                onClick={() => {
-                  this.handlePageChange(REVIEW_PAGE);
-                } }
-                classNames={["cf-btn-link"]}
-              />
-            </div>
-          }
-        </div>
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-btn-link"],

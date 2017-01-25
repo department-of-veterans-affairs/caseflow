@@ -68,7 +68,13 @@ export default class AssociatePage extends React.Component {
     return time2 - time1;
   }
 
-  render = function() {
+  render() {
+    let {
+      handleCancelTask,
+      handlePageChange,
+      hasAvailableModifers
+    } = this.props;
+
     let endProducts = this.props.endProducts.sort(this.sortEndProduct);
     let alertTitle = '';
     let alertBody = '';
@@ -88,7 +94,8 @@ export default class AssociatePage extends React.Component {
               'ID as all EP modifiers are currently in use.';
     }
 
-    return <div className="cf-app-segment cf-app-segment--alt">
+    return (<div>
+      <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
 
         <div className="usa-alert usa-alert-warning">
@@ -105,7 +112,22 @@ export default class AssociatePage extends React.Component {
             values={endProducts}
           />
         </div>
-      </div>;
+      </div>
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+            name="Cancel"
+            onClick={handleCancelTask}
+            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create New EP"
+            onClick={handlePageChange}
+            disabled={!hasAvailableModifers}
+          />
+        </div>
+      </div>
+    </div>);
   };
 }
 
