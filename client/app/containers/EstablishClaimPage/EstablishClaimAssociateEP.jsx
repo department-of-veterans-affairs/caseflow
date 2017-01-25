@@ -5,6 +5,8 @@ import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
+import EstablishClaim, { SELECTED_ISSUES } from './EstablishClaim'
+
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 export default class AssociatePage extends React.Component {
@@ -29,7 +31,7 @@ export default class AssociatePage extends React.Component {
         loading={this.state.loading === endProduct.benefit_claim_id}
       />
   ];
-
+//()=>{this.handleAssignEndProduct(endProduct); this.handleSpecialIssues(SELECTED_ISSUES);}onClick={this.handleAssignEndProduct(endProduct)
   handleAssignEndProduct = (endProduct) => (event) => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
@@ -61,13 +63,9 @@ export default class AssociatePage extends React.Component {
             'There was an error while assigning the EP. Please try again later'
           );
       });
-
-      console.log("here" + data.keys);
   }
-
-
 /*
-  handleSpecialIssues = (specialIssues) => (event) => {
+  handleSpecialIssues = (SELECTED_ISSUES) => (event) => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
 
@@ -79,11 +77,11 @@ export default class AssociatePage extends React.Component {
     });
 
     let data = ApiUtil.convertToSnakeCase({
-      specialIssues: specialIssues
+      special_issues: SELECTED_ISSUES
     });
 
     return ApiUtil.post(
-      `/dispatch/establish-claim/${id}/assign-existing-end-product`,
+      `/dispatch/establish-claim/${id}/special_issues`,
       { data }).then(() => {
         window.location.reload();
       }, () => {

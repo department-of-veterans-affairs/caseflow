@@ -4,6 +4,7 @@ class EstablishClaimsController < TasksController
 
   def perform
     Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
+    Appeal.new(params[:special_issues])
     render json: {}
   end
 
@@ -25,8 +26,8 @@ class EstablishClaimsController < TasksController
   end
 
   def special_issues
+    Appeal.update_attributes!(params[:special_issues])
     binding.pry
-    #Appeal.update_attributes!(special_issues, params[:selected_issues])
   end
 
   private
