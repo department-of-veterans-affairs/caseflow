@@ -210,7 +210,7 @@ RSpec.feature "Dispatch" do
               claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
               claim_type_code: "170RMD",
               end_product_type_code: "170",
-              status_type_code: "CLR"
+              status_type_code: "PEND"
             }
           ]
       end
