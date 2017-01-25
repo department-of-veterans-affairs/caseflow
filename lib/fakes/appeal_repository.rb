@@ -14,7 +14,7 @@ class Fakes::AppealRepository
 
   def self.new(vacols_id, default_attrs_method_name, overrides = {})
     # Dynamically call the specified class method name to obtain
-    # the hash of defualt values eg:
+    # the hash of default values eg:
     #   AppealRepository.new("123C", :appeal_ready_to_certify)
     default_attrs = send(default_attrs_method_name)
     attrs = default_attrs.merge(overrides) # merge in overrides
@@ -86,11 +86,11 @@ class Fakes::AppealRepository
   end
 
   def self.remands_ready_for_claims_establishment
-    [@records["321C"]]
+    [@records["#{321 + rand(0..40)}C"]]
   end
 
   def self.amc_full_grants(decided_after:)
-    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
+    [@records["#{654 + rand(0..40)}C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
   # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
@@ -281,15 +281,15 @@ class Fakes::AppealRepository
     unless Rails.env.test?
 
       self.records = {
-        "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
-        "789C" => Fakes::AppealRepository.appeal_already_certified,
         "321C" => Fakes::AppealRepository.appeal_remand_decided,
         "654C" => Fakes::AppealRepository.appeal_full_grant_decided,
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
       50.times.each do |i|
+        records["#{123 + i}C"] = Fakes::AppealRepository.appeal_ready_to_certify
+        records["#{789 + i}C"] = Fakes::AppealRepository.appeal_already_certified
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document] }
       end
