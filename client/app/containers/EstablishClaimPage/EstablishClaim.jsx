@@ -12,7 +12,7 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import * as Review from './EstablishClaimReview';
+import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import * as Form from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
@@ -173,13 +173,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = function (modal) {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
@@ -358,20 +356,39 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      modalSubmitLoading
+      modalSubmitLoading,
+      specialIssueModalDisplay,
+      specialIssues
     } = this.state;
+
+    let {
+      pdfLink,
+      pdfjsLink
+    } = this.props;
 
     return (
       <div>
-        { this.isReviewPage() && Review.render.call(this) }
+        { this.isReviewPage() &&
+          <EstablishClaimReview
+            decisionType={this.state.reviewForm.decisionType}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
+            handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleFieldChange={this.handleFieldChange}
+            handleModalClose={this.handleModalClose}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
+            specialIssues={specialIssues}
+          />
+        }
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-            task = {this.props.task}
-            decisionType = {this.state.reviewForm.decisionType.value}
-            handleAlert = {this.props.handleAlert}
-            handleAlertClear = {this.props.handleAlertClear}
-            hasAvailableModifers = {this.hasAvailableModifers()}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
         { this.isFormPage() && Form.render.call(this) }
