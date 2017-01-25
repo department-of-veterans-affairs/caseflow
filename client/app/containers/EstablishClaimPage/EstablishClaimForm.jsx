@@ -79,4 +79,4 @@ export default class EstablishClaimForm extends React.Component {
       </form>
     );
   }
-};
+}
