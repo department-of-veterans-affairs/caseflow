@@ -109,7 +109,17 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(decided_after:)
-    VACOLS::Case.joins(:folder, :correspondent).where(%{
+    VACOLS::Case.joins(:folder, :correspondent).joins("
+      join
+      (
+        select ISSKEY,
+        count(case when ISSDC = '3' then 1 end) ISSUE_CNT_REMAND
+
+        from ISSUES
+        group by ISSKEY
+      )
+      on ISSKEY = BFKEY
+      ").where(%{
 
       BFDC = '1'
       -- Cases marked with the disposition Allowed, which have at least one grant.
@@ -123,7 +133,7 @@ class VACOLS::Case < VACOLS::Record
       and BFSO <> 'T'
       -- Exclude cases with a private attorney.
 
-      and VACOLS.ISSUE_CNT_REMAND(BFKEY) = 0
+      and ISSUE_CNT_REMAND = 0
       -- Check that there are no remands on the case. Denials can be included.
 
     }, decided_after.strftime("%Y-%m-%d %H:%M")).order("BFDDEC ASC")
