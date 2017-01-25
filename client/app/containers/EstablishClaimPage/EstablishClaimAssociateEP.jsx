@@ -22,12 +22,12 @@ export default class AssociatePage extends React.Component {
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button
-        id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
-        name="Assign to Claim"
-        classNames={["usa-button-outline"]}
-        onClick={this.handleAssignEndProduct(endProduct)}
-        loading={this.state.loading === endProduct.benefit_claim_id}
-      />
+      id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
+      name="Assign to Claim"
+      classNames={["usa-button-outline"]}
+      onClick={this.handleAssignEndProduct(endProduct)}
+      loading={this.state.loading === endProduct.benefit_claim_id}
+    />
   ];
 
   handleAssignEndProduct = (endProduct) => (event) => {
@@ -54,10 +54,10 @@ export default class AssociatePage extends React.Component {
           loading: null
         });
         handleAlert(
-            'error',
-            'Error',
-            'There was an error while assigning the EP. Please try again later'
-          );
+          'error',
+          'Error',
+          'There was an error while assigning the EP. Please try again later'
+        );
       });
   }
 
@@ -94,7 +94,7 @@ export default class AssociatePage extends React.Component {
               'ID as all EP modifiers are currently in use.';
     }
 
-    return (<div>
+    return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
 
@@ -127,8 +127,8 @@ export default class AssociatePage extends React.Component {
           />
         </div>
       </div>
-    </div>);
-  };
+    </div>;
+  }
 }
 
 AssociatePage.propTypes = {

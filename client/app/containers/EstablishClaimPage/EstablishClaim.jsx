@@ -370,10 +370,12 @@ export default class EstablishClaim extends BaseForm {
         { this.isReviewPage() &&
           <EstablishClaimReview
             decisionType={this.state.reviewForm.decisionType}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
+            handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
+            handlePageChange={this.handleCreateEndProduct}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}
@@ -385,6 +387,7 @@ export default class EstablishClaim extends BaseForm {
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
             decisionType={this.state.reviewForm.decisionType.value}
+            shouldShowAssociatePage={this.shouldShowAssociatePage()}
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
             handleCancelTask={this.handleCancelTask}
