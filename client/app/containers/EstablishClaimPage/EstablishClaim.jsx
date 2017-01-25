@@ -247,7 +247,7 @@ export default class EstablishClaim extends BaseForm {
    */
   validModifiers = () => {
     let modifiers = [];
-    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+    let endProducts = this.props.task.appeal.pending_eps;
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
