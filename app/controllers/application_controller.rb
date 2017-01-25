@@ -116,6 +116,10 @@ class ApplicationController < ActionController::Base
     verify_authorized_roles("System Admin")
   end
 
+  def verify_manage_claim_establishment
+    verify_authorized_roles("Manage Claim Establishment")
+  end
+
   def on_vbms_error
     respond_to do |format|
       format.html do

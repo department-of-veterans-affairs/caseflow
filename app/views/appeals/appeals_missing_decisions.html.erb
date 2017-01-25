@@ -1,0 +1,4 @@
+<%= react_component("BaseContainer", props: {
+    appealsMissingDecisions: @appeals_missing_decisions.map(&:to_hash),
+    page: "AppealsMissingDecisionsIndex"
+}) %>
