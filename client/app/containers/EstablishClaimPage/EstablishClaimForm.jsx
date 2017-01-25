@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
@@ -80,3 +80,10 @@ export default class EstablishClaimForm extends React.Component {
     );
   }
 }
+
+EstablishClaimForm.propTypes = {
+  claimLabelValue: PropTypes.string.isRequired,
+  form: PropTypes.object.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
+};
