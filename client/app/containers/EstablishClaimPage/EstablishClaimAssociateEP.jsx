@@ -41,8 +41,45 @@ export default class AssociatePage extends React.Component {
       loading: endProduct.benefit_claim_id
     });
 
+     let data = ApiUtil.convertToSnakeCase({
+       endProductId: endProduct.benefit_claim_id
+     });
+
+    //let data = { specialIssues: ["hello", "world"]}
+
+    return ApiUtil.post(
+      `/dispatch/establish-claim/${id}/assign-existing-end-product`,
+      { data }).then(() => {
+        window.location.reload();
+      }, () => {
+        this.setState({
+          loading: null
+        });
+        handleAlert(
+            'error',
+            'Error',
+            'There was an error while assigning the EP. Please try again later'
+          );
+      });
+
+      console.log("here" + data.keys);
+  }
+
+
+/*
+  handleSpecialIssues = (specialIssues) => (event) => {
+    let { id } = this.props.task;
+    let { handleAlert, handleAlertClear } = this.props;
+
+    event.preventDefault();
+    handleAlertClear();
+
+    this.setState({
+      loading: endProduct.benefit_claim_id
+    });
+
     let data = ApiUtil.convertToSnakeCase({
-      endProductId: endProduct.benefit_claim_id
+      specialIssues: specialIssues
     });
 
     return ApiUtil.post(
@@ -60,7 +97,7 @@ export default class AssociatePage extends React.Component {
           );
       });
   }
-
+*/
   sortEndProduct = (date1, date2) => {
     let time1 = new Date(date1.claim_receive_date).getTime();
     let time2 = new Date(date2.claim_receive_date).getTime();

@@ -24,6 +24,11 @@ class EstablishClaimsController < TasksController
     establish_claims_path
   end
 
+  def special_issues
+    binding.pry
+    #Appeal.update_attributes!(special_issues, params[:selected_issues])
+  end
+
   private
 
   def establish_claim_params
@@ -31,9 +36,5 @@ class EstablishClaimsController < TasksController
                                   :end_product_modifier, :gulf_war_registry,
                                   :suppress_acknowledgement_letter, :station_of_jurisdiction,
                                   :date)
-  end
-
-  def save_special_issues
-    Appeal.update_attributes!(special_issues, params[:selected_issues])
   end
 end

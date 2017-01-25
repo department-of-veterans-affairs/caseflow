@@ -357,20 +357,17 @@ export default class EstablishClaim extends BaseForm {
 
     return validOutput;
   }
-/*
+
   getSelectedIssues(){
     SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value===true) {
-        SELECTED_ISSUES.push(ApiUtil.convertToSnakeCase(SPECIAL_ISSUES[issue]);
+      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value==true
+          && ($.inArray(issue, SELECTED_ISSUES)==-1)) {
+        SELECTED_ISSUES.push(issue);
       }
     })
     console.log(SELECTED_ISSUES);
   }
-*/
 
-  getSelectedIssues(){
-    
-  }
   render() {
     let {
       loading,
