@@ -7,10 +7,10 @@ const TABLE_HEADERS = ['Veteran', 'Decision Type', 'Decision Date', 'Days in Que
 export default class AppealsMissingDecisionsIndex extends React.Component {
 
   buildAppealRow = (appeal) => [
-    appeal.veteran_name + ' (' + appeal.vbms_id + ')',
+    `${appeal.veteran_name} (${appeal.vbms_id})`,
     appeal.decision_type,
     formatDate(appeal.decision_date),
-    appeal.days_in_queue + ' days'
+    `${appeal.days_in_queue} days`
   ];
 
   render() {

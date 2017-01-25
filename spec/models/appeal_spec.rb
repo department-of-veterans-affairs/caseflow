@@ -316,33 +316,35 @@ describe Appeal do
     end
   end
 
-  context "#find_appeals_missing_decisions", focus: true do
+  context "#find_appeals_missing_decisions" do
     let!(:decision) { Document.new(received_at: Time.zone.now.to_date, type: "BVA Decision") }
     let!(:no_decision) { Document.new(received_at: Time.zone.now.to_date, type: "No Decision") }
-    let!(:appeal_with_decision) { Appeal.create(vacols_id: "123", vbms_id: "123") }
-    let!(:appeal_one_without_decision) { Appeal.create(vacols_id: "456", vbms_id: "456") }
-    let!(:appeal_two_without_decision) { Appeal.create(vacols_id: "789", vbms_id: "789") }
+    let!(:appeal_with_decision) { Appeal.create(vacols_id: "123A", vbms_id: "123") }
+    let!(:appeal_one_without_decision) { Appeal.create(vacols_id: "456B", vbms_id: "REMAND_VBMS_ID") }
+    let!(:appeal_two_without_decision) { Appeal.create(vacols_id: "789C", vbms_id: "REMAND_VBMS_ID") }
 
     context "returns both appeals with no decisions in correct order" do
       subject { Appeal.find_appeals_missing_decisions }
       before do
-        appeal_with_decision.documents = [decision]
-        appeal_one_without_decision.documents = [no_decision]
-        appeal_two_without_decision.documents = [no_decision]
         Fakes::AppealRepository.records = {
-            "123" => Fakes::AppealRepository.appeal_remand_decided,
-            "456" => Fakes::AppealRepository.appeal_remand_decided,
-            "789" => Fakes::AppealRepository.appeal_remand_decided,
-            @vbms_id => { documents: [Document.new(
-                received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
-                document_id: "123"
-            )]
-          }
+          "123A" => Fakes::AppealRepository.appeal_remand_decided,
+          "456B" => Fakes::AppealRepository.appeal_remand_decided,
+          "789C" => Fakes::AppealRepository.appeal_remand_decided,
+          "123" => { documents: [Document.new(
+            received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
+            document_id: "123"
+          )] },
+          "456" => { documents: [Document.new(
+            received_at: Time.current.to_date, type: "Not a BVA Decision",
+            document_id: "456"
+          )] },
+          "789" => { documents: [Document.new(
+            received_at: Time.current.to_date, type: "Not a BVA Decision",
+            document_id: "789"
+          )] }
         }
-        appeal_one_without_decision.decision_date = Time.current
-        appeal_two_without_decision.decision_date = Time.current - 1.day
       end
-      it { is_expected.to eq([appeal_two_without_decision, appeal_one_without_decision]) }
+      it { is_expected.to eq([appeal_one_without_decision, appeal_two_without_decision]) }
     end
   end
 
