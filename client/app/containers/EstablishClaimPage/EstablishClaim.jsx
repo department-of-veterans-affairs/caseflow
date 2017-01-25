@@ -13,7 +13,7 @@ import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
-import * as Form from './EstablishClaimForm';
+import EstablishClaimForm, * as Form from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
@@ -384,7 +384,14 @@ export default class EstablishClaim extends BaseForm {
             hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
-        { this.isFormPage() && Form.render.call(this) }
+        { this.isFormPage() &&
+          <EstablishClaimForm
+            claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            handleFieldChange={this.handleFieldChange}
+            form={this.state.form}
+            validModifiers={this.validModifiers()}
+          />
+        }
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
