@@ -51,7 +51,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
 
         // Click VAMC special issue checkbox
-        wrapper.find('#vamc').simulate('change', { target: {checked: true }});
+        wrapper.find('#vamc').simulate('change', { target: { checked: true } });
 
         // Click to create end product
         wrapper.find('#button-Create-End-Product').simulate('click');

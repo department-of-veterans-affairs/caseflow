@@ -173,13 +173,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = (modal) => {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
