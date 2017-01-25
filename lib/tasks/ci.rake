@@ -2,7 +2,16 @@ require "rainbow"
 
 CODE_COVERAGE_THRESHOLD = 90
 
+task(:default).clear
+task default: ["ci:warning", :spec, "ci:other"]
+
 namespace :ci do
+  desc "Warns against running the tests in serial"
+  task :warning do
+    puts Rainbow("Warning! You are running the tasks in serial which is very slow.").red
+    puts Rainbow("Please try `rake ci:all` to run the tests faster in parallel").red
+  end
+
   desc "Runs all the continuous integration scripts"
   task :all do
     Rake::Task["parallel:spec"].invoke(4) # 4 processes
