@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { FORM_PAGE } from
+import EstablishClaim, { FORM_PAGE, REVIEW_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
 
 describe('EstablishClaim', () => {
@@ -23,12 +23,12 @@ describe('EstablishClaim', () => {
 
       wrapper = mount(<EstablishClaim task={task}/>);
 
-      // Force component to Form page
-      wrapper.setState({ page: FORM_PAGE });
     });
 
     context('when task is canceled', () => {
       beforeEach(() => {
+        // Force component to Form page
+        wrapper.setState({ page: FORM_PAGE });
         wrapper.find('#button-Cancel').simulate('click');
       });
 
@@ -39,6 +39,35 @@ describe('EstablishClaim', () => {
       it('modal can be closed', () => {
         wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
+      });
+    });
+
+    context('EstablishClaimReview', () => {
+      beforeEach(() => {
+        wrapper.setState({ page: REVIEW_PAGE });
+      });
+
+      it('shows special issues modal if special issue selected', () => {
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+
+        // Click VAMC special issue checkbox
+        wrapper.find('#vamc').simulate('change', { target: { checked: true } });
+
+        // Click to create end product
+        wrapper.find('#button-Create-End-Product').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
+      });
+
+      it('shows cancel model', () => {
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+
+        // click cancel to open modal
+        wrapper.find('#button-Cancel').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
+
+        // Click go back and close modal
+        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });
   });
