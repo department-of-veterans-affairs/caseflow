@@ -11,7 +11,8 @@ export default class PdfViewer extends React.Component {
     this.state = {
       comments: [],
       currentPage: 1,
-      numPages: 0
+      numPages: 0,
+      scale: 1
     };
   }
 
@@ -65,7 +66,7 @@ export default class PdfViewer extends React.Component {
       documentId: this.props.file,
       pdfDocument: this.state.pdfDocument,
       rotate: 0,
-      scale: 1
+      scale: this.state.scale
     };
 
     this.isRendered[index] = true;
@@ -74,14 +75,14 @@ export default class PdfViewer extends React.Component {
     });
   }
 
-  draw = () => {
+  draw = (startPage = 1) => {
     const { UI } = PDFJSAnnotate;
 
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
       this.setState({
-        currentPage: 1,
+        currentPage: startPage,
         numPages: pdfDocument.pdfInfo.numPages,
         pdfDocument: pdfDocument
       });
@@ -100,7 +101,8 @@ export default class PdfViewer extends React.Component {
 
       // Automatically render the first page
       // This assumes that page has already been created and appended
-      this.renderPage(0);
+      this.renderPage(startPage - 1);
+      document.getElementById('scrollWindow').scrollTop = 0;
     });
   }
 
@@ -111,10 +113,18 @@ export default class PdfViewer extends React.Component {
     }
   }
 
+  zoom = (delta) => {
+    return () => {
+      this.setState({
+        scale: this.state.scale + delta
+      });
+      this.draw(this.state.currentPage);
+    }
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.workerSrc = '../assets/dist/pdf.worker.js';
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
@@ -240,19 +250,21 @@ export default class PdfViewer extends React.Component {
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i> Previous
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(-.1)}>
                     <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
                   </Button>
                   <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
-                  <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(.1)}>
+                    <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
+                  </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
                   <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
-                    Next <i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
+                    Next<i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>

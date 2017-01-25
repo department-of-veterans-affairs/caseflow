@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
-
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PdfViewer from '../components/PdfViewer';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = { pdf: 0 };
+    console.log('constructed');
+    PDFJS.workerSrc = '../assets/dist/pdf.worker.js';
   }
 
   previousPdf = () => {
