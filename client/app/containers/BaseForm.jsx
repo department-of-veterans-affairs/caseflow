@@ -3,14 +3,12 @@ import ReactDOM from 'react-dom';
 
 export default class BaseForm extends React.Component {
 
-  handleFieldChange = function (form, field) {
-    return (value) => {
-      let stateObject = {};
+  handleFieldChange = (form, field) => (value) => {
+    let stateObject = {};
 
-      stateObject[form] = { ...this.state[form] };
-      stateObject[form][field].value = value;
-      this.setState(stateObject);
-    };
+    stateObject[form] = { ...this.state[form] };
+    stateObject[form][field].value = value;
+    this.setState(stateObject);
   };
 
   validateFormAndSetErrors = function(form) {

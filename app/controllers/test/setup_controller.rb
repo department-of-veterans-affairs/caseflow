@@ -19,6 +19,22 @@ class Test::SetupController < ApplicationController
     redirect_to "/test/users"
   end
 
+  # Set end products in DEMO
+  def set_end_products
+    case params[:type]
+    when "full"
+      BGSService.end_product_data = BGSService.existing_full_grants
+    when "partial"
+      BGSService.end_product_data = BGSService.existing_partial_grants
+    when "none"
+      BGSService.end_product_data = BGSService.no_grants
+    when "all"
+      BGSService.end_product_data = BGSService.all_grants
+    end
+
+    redirect_to "/dev/users"
+  end
+
   private
 
   def require_uat_test_user
