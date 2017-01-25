@@ -20,6 +20,7 @@ class Test::SetupController < ApplicationController
   end
 
   # Set end products in DEMO
+  # :nocov:
   def set_end_products
     case params[:type]
     when "full"
@@ -34,6 +35,7 @@ class Test::SetupController < ApplicationController
 
     redirect_to "/dev/users"
   end
+  # :nocov:
 
   private
 
