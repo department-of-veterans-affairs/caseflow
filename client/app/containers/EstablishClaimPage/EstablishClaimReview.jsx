@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
@@ -209,7 +209,18 @@ export default class EstablishClaimReview extends React.Component {
           this case manually in VBMS.
         </p>
       </Modal>}
-    </div>
-    );
+    </div>);
   }
 }
+
+EstablishClaimReview.propTypes = {
+  decisionType: PropTypes.object.isRequired,
+  handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
+  handleDecisionTypeChange: PropTypes.func.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  handleModalClose: PropTypes.func.isRequired,
+  pdfLink: PropTypes.string.isRequired,
+  pdfjsLink: PropTypes.string.isRequired,
+  specialIssueModalDisplay: PropTypes.bool.isRequired,
+  specialIssues: PropTypes.object.isRequired
+};

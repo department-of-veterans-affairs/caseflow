@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -80,6 +80,7 @@ export default class EstablishClaimForm extends React.Component {
           />
         </div>
       </form>
+
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-right">
           <Button
@@ -97,3 +98,10 @@ export default class EstablishClaimForm extends React.Component {
     </div>);
   }
 }
+
+EstablishClaimForm.propTypes = {
+  claimLabelValue: PropTypes.string.isRequired,
+  form: PropTypes.object.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
+};

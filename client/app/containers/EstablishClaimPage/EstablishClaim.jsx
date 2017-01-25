@@ -172,13 +172,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = function (modal) {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
@@ -357,8 +355,15 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      modalSubmitLoading
+      modalSubmitLoading,
+      specialIssueModalDisplay,
+      specialIssues
     } = this.state;
+
+    let {
+      pdfLink,
+      pdfjsLink
+    } = this.props;
 
     return (
       <div>
@@ -366,13 +371,13 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimReview
             decisionType={this.state.reviewForm.decisionType}
             handleDecisionTypeChange={this.handleDecisionTypeChange}
-            handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
-            handlePageChange={this.handleCreateEndProduct}
-            specialIssueModalDisplay={this.state.specialIssueModalDisplay}
-            specialIssues={this.state.specialIssues}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
+            specialIssues={specialIssues}
           />
         }
         { this.isAssociatePage() &&
