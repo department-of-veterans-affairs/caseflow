@@ -31,6 +31,19 @@ class Dispatch
     end
   end
 
+  def self.map_ep_values(end_products)
+    end_products.map do |end_product|
+      new_end_product = end_product.clone
+      new_end_product[:claim_type_code] = Appeal.map_end_product_value(
+        new_end_product[:claim_type_code],
+        Dispatch::END_PRODUCT_CODES)
+      new_end_product[:status_type_code] = Appeal.map_end_product_value(
+        new_end_product[:status_type_code],
+        Dispatch::END_PRODUCT_STATUS)
+      new_end_product
+    end
+  end
+
   def initialize(claim:, task:)
     @claim = Claim.new(claim)
     @task = task
