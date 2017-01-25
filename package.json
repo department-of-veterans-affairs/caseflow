@@ -13,7 +13,5 @@
     "lint": "cd client && npm run lint"
   },
   "devDependencies": {
-    "eslint": "^3.11.1",
-    "eslint-plugin-mocha": "^4.7.0"
   }
 }

@@ -38,6 +38,7 @@
         <%= f.text_field :email,
           question_name: "email", label: "What's your VA email address?" %>
 
+        <%= f.hidden_field :certification_id, value: certification_cancellation.certification_id  %>
         <p>
           <div class="cf-modal-segment">
             <a href="#" class="cf-modal-link cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">  &laquo; Go back

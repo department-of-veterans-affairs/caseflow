@@ -18,6 +18,15 @@ ActiveRecord::Schema.define(version: 20170123155914) do
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
 
+  create_table "certification_cancellations", force: :cascade do |t|
+    t.integer "certification_id"
+    t.string  "cancellation_reason"
+    t.string  "other_reason"
+    t.string  "email"
+  end
+
+  add_index "certification_cancellations", ["certification_id"], name: "index_certification_cancellations_on_certification_id", unique: true, using: :btree
+
   create_table "certifications", force: :cascade do |t|
     t.string   "vacols_id"
     t.boolean  "already_certified"
