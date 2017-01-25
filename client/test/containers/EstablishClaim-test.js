@@ -14,7 +14,8 @@ describe('EstablishClaim', () => {
       const task = {
         appeal: {
           decision_type: 'Remand',
-          non_canceled_end_products_within_30_days: []
+          non_canceled_end_products_within_30_days: [],
+          pending_eps: []
         },
         user: 'a'
       };
