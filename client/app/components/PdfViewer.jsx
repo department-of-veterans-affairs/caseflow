@@ -244,7 +244,9 @@ export default class PdfViewer extends React.Component {
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
-                  <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                    <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
+                  </Button>
                   <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
                   <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
                 </div>
