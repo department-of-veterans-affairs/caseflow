@@ -178,12 +178,10 @@ class Appeal < ActiveRecord::Base
 
     def find_appeals_missing_decisions
       appeals_missing_decisions = []
-      Appeal.all.sort_by { |appeal| appeal.decision_date }.each do |appeal|
-        unless appeal.decision
-          appeals_missing_decisions << appeal
-        end
+      Appeal.all.find_each do |appeal|
+        appeals_missing_decisions << appeal unless appeal.decision
       end
-      appeals_missing_decisions
+      appeals_missing_decisions.sort_by(&:decision_date)
     end
 
     def repository
@@ -270,5 +268,4 @@ class Appeal < ActiveRecord::Base
       ]
     )
   end
-
 end

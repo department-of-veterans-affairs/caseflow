@@ -13,5 +13,4 @@ class AppealsController < ApplicationController
   def logo_path
     establish_claims_path
   end
-
 end
