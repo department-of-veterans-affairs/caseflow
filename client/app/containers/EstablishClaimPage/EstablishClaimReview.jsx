@@ -198,8 +198,8 @@ export default class EstablishClaimReview extends React.Component {
 
 EstablishClaimReview.propTypes = {
   decisionType: PropTypes.object.isRequired,
-  handleDecisionTypeChange: PropTypes.func.isRequired,
   handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
+  handleDecisionTypeChange: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleModalClose: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
