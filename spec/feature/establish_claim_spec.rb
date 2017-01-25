@@ -175,7 +175,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
-      scenario "Establish Claim form saves state when toggling decision" do
+      skip "Establish Claim form saves state when going back/forward in browser" do
         @task.assign!(current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Create End Product"
@@ -183,7 +183,8 @@ RSpec.feature "Dispatch" do
 
         page.fill_in "Decision Date", with: "01/01/1111"
 
-        click_on "\u00ABBack to review"
+        # page.go_back_in_browser (pseudocode)
+
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Review Decision")
 
