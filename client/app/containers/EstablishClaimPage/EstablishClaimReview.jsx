@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
+import Button from '../../components/Button';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -80,107 +81,146 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
   'spinaBifida'
 ];
 
-export const render = function() {
-  let { pdfLink, pdfjsLink } = this.props;
+export default class EstablishClaimReview extends React.Component {
+  render() {
+    let {
+      decisionType,
+      handleCancelTask,
+      handleCancelTaskForSpecialIssue,
+      handleDecisionTypeChange,
+      handleFieldChange,
+      handleModalClose,
+      handlePageChange,
+      pdfLink,
+      pdfjsLink,
+      specialIssueModalDisplay,
+      specialIssues
+    } = this.props;
 
-  let count = 0;
+    let count = 0;
 
-  let issueType = '';
+    let issueType = '';
 
-  if (this.state.reviewForm.decisionType.value === 'Remand' ||
-  this.state.reviewForm.decisionType.value === 'Partial Grant') {
-    issueType = SPECIAL_ISSUE_PARTIAL;
-  } else {
-    issueType = SPECIAL_ISSUE_FULL;
-  }
+    if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
+      issueType = SPECIAL_ISSUE_PARTIAL;
+    } else {
+      issueType = SPECIAL_ISSUE_FULL;
+    }
 
-  return (
-    <div>
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h2>Review Decision</h2>
-        Review the final decision from VBMS below to determine the next step.
-      </div>
-      {
+    return (
+      <div>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Review Decision</h2>
+          Review the final decision from VBMS below to determine the next step.
+        </div>
+        {
 
-      /* This link is here for 508 compliance, and shouldn't be visible to sighted
-       users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
-       is the accessibility standard and is used across gov't, so we'll recommend it
-       for now. The usa-sr-only class will place an element off screen without
-       affecting its placement in tab order, thus making it invisible onscreen
-       but read out by screen readers. */
-      }
-      <a
-        className="usa-sr-only"
-        id="sr-download-link"
-        href={pdfLink}
-        download
-        target="_blank">
-        The PDF viewer in your browser may not be accessible. Click to download
-        the Decision PDF so you can preview it in a reader with accessibility features
-        such as Adobe Acrobat.
-      </a>
-      <a className="usa-sr-only" href="#establish-claim-buttons">
-        If you are using a screen reader and have downloaded and verified the Decision
-        PDF, click this link to skip past the browser PDF viewer to the
-        establish-claim buttons.
-      </a>
-
-      <iframe
-        aria-label="The PDF embedded here is not accessible. Please use the above
-          link to download the PDF and view it in a PDF reader. Then use the buttons
-          below to go back and make edits or upload and certify the document."
-        className="cf-doc-embed cf-app-segment"
-        title="Form8 PDF"
-        src={pdfjsLink}>
-      </iframe>
-      <div className="cf-app-segment cf-app-segment--alt">
-      <DropDown
-       label="Decision Type"
-       name="decisionType"
-       options={DECISION_TYPE}
-       onChange={this.handleDecisionTypeChange}
-       {...this.state.reviewForm.decisionType}
-      />
-
-    <label>Special Issue Categories</label>
-      {
-
-        /* eslint-disable no-return-assign */
-        issueType.map((issue) =>
-        <Checkbox
-            id={ApiUtil.convertToCamelCase(issue)}
-            label={issue}
-            name={ApiUtil.convertToCamelCase(issue)}
-            {...this.state.specialIssues[issue]}
-            onChange={this.handleFieldChange('specialIssues',
-                ApiUtil.convertToCamelCase(issue))}
-            key={count += 1}
-          />)
-
-          /* eslint-enable no-return-assign */
-      }
-    </div>
-    {this.state.specialIssueModalDisplay && <Modal
-      buttons={[
-        { classNames: ["cf-btn-link"],
-          name: '\u00AB Close',
-          onClick: this.handleModalClose('specialIssueModalDisplay')
-        },
-        { classNames: ["usa-button", "usa-button-secondary"],
-          name: 'Cancel Claim Establishment',
-          onClick: this.handleCancelTaskForSpecialIssue
+        /* This link is here for 508 compliance, and shouldn't be visible to sighted
+         users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
+         is the accessibility standard and is used across gov't, so we'll recommend it
+         for now. The usa-sr-only class will place an element off screen without
+         affecting its placement in tab order, thus making it invisible onscreen
+         but read out by screen readers. */
         }
-      ]}
-      visible={true}
-      closeHandler={this.handleModalClose('specialIssueModalDisplay')}
-      title="Special Issue Grant">
-      <p>
-        You selected a special issue category not handled by AMO. Special
-        issue cases cannot be processed in caseflow at this time. Please
-        select <b>Cancel Claim Establishment</b> and proceed to process
-        this case manually in VBMS.
-      </p>
-    </Modal>}
-  </div>
-  );
+        <a
+          className="usa-sr-only"
+          id="sr-download-link"
+          href={pdfLink}
+          download
+          target="_blank">
+          The PDF viewer in your browser may not be accessible. Click to download
+          the Decision PDF so you can preview it in a reader with accessibility features
+          such as Adobe Acrobat.
+        </a>
+        <a className="usa-sr-only" href="#establish-claim-buttons">
+          If you are using a screen reader and have downloaded and verified the Decision
+          PDF, click this link to skip past the browser PDF viewer to the
+          establish-claim buttons.
+        </a>
+
+        <iframe
+          aria-label="The PDF embedded here is not accessible. Please use the above
+            link to download the PDF and view it in a PDF reader. Then use the buttons
+            below to go back and make edits or upload and certify the document."
+          className="cf-doc-embed cf-app-segment"
+          title="Form8 PDF"
+          src={pdfjsLink}>
+        </iframe>
+        <div className="cf-app-segment cf-app-segment--alt">
+        <DropDown
+         label="Decision Type"
+         name="decisionType"
+         options={DECISION_TYPE}
+         onChange={handleDecisionTypeChange}
+         {...decisionType}
+        />
+
+      <label>Special Issue Categories</label>
+        {
+
+          /* eslint-disable no-return-assign */
+          issueType.map((issue) =>
+          <Checkbox
+              id={ApiUtil.convertToCamelCase(issue)}
+              label={issue}
+              name={ApiUtil.convertToCamelCase(issue)}
+              {...specialIssues[issue]}
+              onChange={handleFieldChange('specialIssues',
+                  ApiUtil.convertToCamelCase(issue))}
+              key={count += 1}
+            />)
+
+            /* eslint-enable no-return-assign */
+        }
+      </div>
+
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+              name="Cancel"
+              onClick={handleCancelTask}
+              classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create End Product"
+            onClick={handlePageChange}
+          />
+        </div>
+      </div>
+
+      {specialIssueModalDisplay && <Modal
+        buttons={[
+          { classNames: ["cf-btn-link"],
+            name: '\u00AB Close',
+            onClick: handleModalClose('specialIssueModalDisplay')
+          },
+          { classNames: ["usa-button", "usa-button-secondary"],
+            name: 'Cancel Claim Establishment',
+            onClick: handleCancelTaskForSpecialIssue
+          }
+        ]}
+        visible={true}
+        closeHandler={handleModalClose('specialIssueModalDisplay')}
+        title="Special Issue Grant">
+        <p>
+          You selected a special issue category not handled by AMO. Special
+          issue cases cannot be processed in caseflow at this time. Please
+          select <b>Cancel Claim Establishment</b> and proceed to process
+          this case manually in VBMS.
+        </p>
+      </Modal>}
+    </div>);
+  }
+}
+
+EstablishClaimReview.propTypes = {
+  decisionType: PropTypes.object.isRequired,
+  handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
+  handleDecisionTypeChange: PropTypes.func.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  handleModalClose: PropTypes.func.isRequired,
+  pdfLink: PropTypes.string.isRequired,
+  pdfjsLink: PropTypes.string.isRequired,
+  specialIssueModalDisplay: PropTypes.bool.isRequired,
+  specialIssues: PropTypes.object.isRequired
 };
