@@ -15,7 +15,7 @@ export default class EstablishClaimForm extends React.Component {
   render() {
     let {
       claimLabelValue,
-      form,
+      claimForm,
       handleCreateEndProduct,
       handleCancelTask,
       handleFieldChange,
@@ -50,38 +50,37 @@ export default class EstablishClaimForm extends React.Component {
            label="Modifier"
            name="endProductModifier"
            options={validModifiers}
-           onChange={handleFieldChange('form', 'endProductModifier')}
+           onChange={handleFieldChange('claimForm', 'endProductModifier')}
            readOnly={validModifiers.length === 1}
-           {...form.endProductModifier}
+           {...claimForm.endProductModifier}
           />
           <DateSelector
            label="Decision Date"
            name="date"
-           onChange={handleFieldChange('form', 'date')}
+           onChange={handleFieldChange('claimForm', 'date')}
            required={true}
-           {...form.date}
+           {...claimForm.date}
           />
           <TextField
            label="Station of Jurisdiction"
            name="stationOfJurisdiction"
            readOnly={true}
-           {...form.stationOfJurisdiction}
+           {...claimForm.stationOfJurisdiction}
           />
           <Checkbox
            label="Gulf War Registry Permit"
            name="gulfWarRegistry"
-           {...form.gulfWarRegistry}
-           onChange={handleFieldChange('form', 'gulfWarRegistry')}
+           {...claimForm.gulfWarRegistry}
+           onChange={handleFieldChange('claimForm', 'gulfWarRegistry')}
           />
           <Checkbox
            label="Suppress Acknowledgement Letter"
            name="suppressAcknowledgementLetter"
-           {...form.suppressAcknowledgementLetter}
-           onChange={handleFieldChange('form', 'suppressAcknowledgementLetter')}
+           {...claimForm.suppressAcknowledgementLetter}
+           onChange={handleFieldChange('claimForm', 'suppressAcknowledgementLetter')}
           />
         </div>
       </form>
-
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-right">
           <Button
@@ -101,8 +100,8 @@ export default class EstablishClaimForm extends React.Component {
 }
 
 EstablishClaimForm.propTypes = {
+  claimForm: PropTypes.object.isRequired,
   claimLabelValue: PropTypes.string.isRequired,
-  form: PropTypes.object.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
