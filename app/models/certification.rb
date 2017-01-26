@@ -12,7 +12,9 @@ class Certification < ActiveRecord::Base
     # or if we last updated it earlier than 48 hours ago,
     # refresh it with new data.
     if form8_started_at.nil? || form8.updated_at < 48.hours.ago
-      form8.update_from_appeal(appeal)
+      ActiveRecord::Base.transaction do
+        form8.update_from_appeal(appeal)
+      end
     else
       form8.update_certification_date
     end
