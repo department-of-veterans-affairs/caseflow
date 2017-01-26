@@ -6,14 +6,13 @@ import ApiUtil from '../../util/ApiUtil';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
-import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import * as Review from './EstablishClaimReview';
-import * as Form from './EstablishClaimForm';
+import EstablishClaimReview, * as Review from './EstablishClaimReview';
+import EstablishClaimForm from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
@@ -73,7 +72,7 @@ export default class EstablishClaim extends BaseForm {
         )
       },
       cancelModalDisplay: false,
-      form: {
+      claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
           formatDate(this.props.task.appeal.decision_date),
@@ -106,7 +105,7 @@ export default class EstablishClaim extends BaseForm {
 
     this.formValidating();
 
-    if (!this.validateFormAndSetErrors(this.state.form)) {
+    if (!this.validateFormAndSetErrors(this.state.claimForm)) {
       return;
     }
 
@@ -173,13 +172,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = function (modal) {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
@@ -249,7 +246,7 @@ export default class EstablishClaim extends BaseForm {
    */
   validModifiers = () => {
     let modifiers = [];
-    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+    let endProducts = this.props.task.appeal.pending_eps;
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
@@ -274,8 +271,8 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = {};
     let modifiers = this.validModifiers();
 
-    stateObject.form = { ...this.state.form };
-    stateObject.form.endProductModifier.value = modifiers[0];
+    stateObject.claimForm = { ...this.state.claimForm };
+    stateObject.claimForm.endProductModifier.value = modifiers[0];
 
     this.setState(stateObject);
   }
@@ -304,13 +301,13 @@ export default class EstablishClaim extends BaseForm {
 
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
-        stateObject.form.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value =
           this.props.task.appeal.station_key;
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
-        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+        stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
     this.setState({
@@ -321,8 +318,8 @@ export default class EstablishClaim extends BaseForm {
   prepareData() {
     let stateObject = this.state;
 
-    stateObject.form.stationOfJurisdiction.value =
-        stateObject.form.stationOfJurisdiction.value.substring(0, 3);
+    stateObject.claimForm.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
 
     this.setState({
       stateObject
@@ -335,7 +332,7 @@ export default class EstablishClaim extends BaseForm {
 
     return {
       claim: ApiUtil.convertToSnakeCase({
-        ...this.getFormValues(this.state.form),
+        ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       })
@@ -358,50 +355,57 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      modalSubmitLoading
+      modalSubmitLoading,
+      specialIssueModalDisplay,
+      specialIssues
     } = this.state;
+
+    let {
+      pdfLink,
+      pdfjsLink
+    } = this.props;
 
     return (
       <div>
-        { this.isReviewPage() && Review.render.call(this) }
+        { this.isReviewPage() &&
+          <EstablishClaimReview
+            decisionType={this.state.reviewForm.decisionType}
+            handleCancelTask={this.handleCancelTask}
+            handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
+            handleFieldChange={this.handleFieldChange}
+            handleModalClose={this.handleModalClose}
+            handlePageChange={this.handleCreateEndProduct}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
+            specialIssues={specialIssues}
+          />
+        }
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-            task = {this.props.task}
-            decisionType = {this.state.reviewForm.decisionType.value}
-            handleAlert = {this.props.handleAlert}
-            handleAlertClear = {this.props.handleAlertClear}
-            hasAvailableModifers = {this.hasAvailableModifers()}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            handleCancelTask={this.handleCancelTask}
+            handlePageChange={this.handleCreateEndProduct}
+            hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
-        { this.isFormPage() && Form.render.call(this) }
+        { this.isFormPage() &&
+          <EstablishClaimForm
+            claimForm={this.state.claimForm}
+            claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            handleCancelTask={this.handleCancelTask}
+            handleCreateEndProduct={this.handleCreateEndProduct}
+            handleFieldChange={this.handleFieldChange}
+            loading={loading}
+            validModifiers={this.validModifiers()}
+          />
+        }
 
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          <div className="cf-push-right">
-            <Button
-                name="Cancel"
-                onClick={this.handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
-            />
-            <Button
-              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
-              loading={loading}
-              onClick={this.handleCreateEndProduct}
-              disabled={!this.hasAvailableModifers() && this.isAssociatePage()}
-            />
-          </div>
-          { this.isFormPage() &&
-            <div className="task-link-row">
-              <Button
-                name={"\u00ABBack to review"}
-                onClick={() => {
-                  this.handlePageChange(REVIEW_PAGE);
-                } }
-                classNames={["cf-btn-link"]}
-              />
-            </div>
-          }
-        </div>
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-btn-link"],

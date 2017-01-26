@@ -5,12 +5,16 @@
 # using Caseflow.
 #
 class Certification < ActiveRecord::Base
+  has_one :certification_cancellation, dependent: :destroy
+
   def start!
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,
     # refresh it with new data.
     if form8_started_at.nil? || form8.updated_at < 48.hours.ago
-      form8.update_from_appeal(appeal)
+      ActiveRecord::Base.transaction do
+        form8.update_from_appeal(appeal)
+      end
     else
       form8.update_certification_date
     end
@@ -83,9 +87,8 @@ class Certification < ActiveRecord::Base
     where(ssocs_required: true)
   end
 
-  # ONLY FOR TEST USER
+  # Only for TEST_USER
   def uncertify!(user_id)
-    # YEAH, I KNOW THIS IS REDUNDANT! -Artem
     return unless user_id == ENV["TEST_USER_ID"]
     appeal.uncertify!(user_id)
   end
@@ -137,8 +140,16 @@ class Certification < ActiveRecord::Base
   end
 
   class << self
+    # Return existing certification only if it was not cancelled before
     def find_or_create_by_vacols_id(vacols_id)
-      find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
+      Certification.join_cancellations
+                   .where(certification_cancellations: { certification_id: nil })
+                   .find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
+    end
+
+    def join_cancellations
+      Certification.joins("LEFT OUTER JOIN certification_cancellations ON
+        certifications.id = certification_cancellations.certification_id")
     end
   end
 end

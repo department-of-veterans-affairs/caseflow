@@ -39,6 +39,7 @@ RSpec.feature "Cancel certification" do
       Fakes::AppealRepository.records = {
         "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
       }
+      certification = Certification.create!(vacols_id: "5555C")
 
       visit "certifications/new/5555C"
       click_on "Cancel"
@@ -68,7 +69,14 @@ RSpec.feature "Cancel certification" do
       click_on "Cancel Certification"
       expect(page).to_not have_css(".usa-input-error")
 
+      # Test resulting page
       expect(page).to have_content("The certification has been cancelled")
+
+      # Test CertificationCancellation resulting record
+      expect(CertificationCancellation.last.id).to eq(certification.id)
+      expect(CertificationCancellation.last.cancellation_reason).to eq("Other")
+      expect(CertificationCancellation.last.other_reason).to eq("Test")
+      expect(CertificationCancellation.last.email).to eq("fk@va.gov")
     end
   end
 end

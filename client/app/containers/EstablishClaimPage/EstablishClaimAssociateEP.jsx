@@ -22,12 +22,12 @@ export default class AssociatePage extends React.Component {
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button
-        id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
-        name="Assign to Claim"
-        classNames={["usa-button-outline"]}
-        onClick={this.handleAssignEndProduct(endProduct)}
-        loading={this.state.loading === endProduct.benefit_claim_id}
-      />
+      id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
+      name="Assign to Claim"
+      classNames={["usa-button-outline"]}
+      onClick={this.handleAssignEndProduct(endProduct)}
+      loading={this.state.loading === endProduct.benefit_claim_id}
+    />
   ];
 
   handleAssignEndProduct = (endProduct) => (event) => {
@@ -54,10 +54,10 @@ export default class AssociatePage extends React.Component {
           loading: null
         });
         handleAlert(
-            'error',
-            'Error',
-            'There was an error while assigning the EP. Please try again later'
-          );
+          'error',
+          'Error',
+          'There was an error while assigning the EP. Please try again later'
+        );
       });
   }
 
@@ -68,7 +68,13 @@ export default class AssociatePage extends React.Component {
     return time2 - time1;
   }
 
-  render = function() {
+  render() {
+    let {
+      handleCancelTask,
+      handlePageChange,
+      hasAvailableModifers
+    } = this.props;
+
     let endProducts = this.props.endProducts.sort(this.sortEndProduct);
     let alertTitle = '';
     let alertBody = '';
@@ -88,7 +94,8 @@ export default class AssociatePage extends React.Component {
               'ID as all EP modifiers are currently in use.';
     }
 
-    return <div className="cf-app-segment cf-app-segment--alt">
+    return <div>
+      <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
 
         <div className="usa-alert usa-alert-warning">
@@ -105,8 +112,23 @@ export default class AssociatePage extends React.Component {
             values={endProducts}
           />
         </div>
-      </div>;
-  };
+      </div>
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+            name="Cancel"
+            onClick={handleCancelTask}
+            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create New EP"
+            onClick={handlePageChange}
+            disabled={!hasAvailableModifers}
+          />
+        </div>
+      </div>
+    </div>;
+  }
 }
 
 AssociatePage.propTypes = {
