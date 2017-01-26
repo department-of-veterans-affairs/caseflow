@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { FORM_PAGE } from
+import EstablishClaim, { ASSOCIATE_PAGE, FORM_PAGE, REVIEW_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
 
 describe('EstablishClaim', () => {
@@ -14,7 +14,8 @@ describe('EstablishClaim', () => {
       const task = {
         appeal: {
           decision_type: 'Remand',
-          non_canceled_end_products_within_30_days: []
+          non_canceled_end_products_within_30_days: [],
+          pending_eps: []
         },
         user: 'a'
       };
@@ -23,24 +24,74 @@ describe('EstablishClaim', () => {
 
       wrapper = mount(<EstablishClaim task={task}/>);
 
-      // Force component to Form page
-      wrapper.setState({ page: FORM_PAGE });
     });
 
-    context('when task is canceled', () => {
+    context('EstablishClaimForm', () => {
       beforeEach(() => {
+        // Force component to Form page
+        wrapper.setState({ page: FORM_PAGE });
+      });
+
+      it('shows cancel modal', () => {
+        expect(wrapper.find('.cf-modal')).to.have.length(0);
+
+        // click cancel to open modal
         wrapper.find('#button-Cancel').simulate('click');
-      });
-
-      it('modal is shown', () => {
         expect(wrapper.find('.cf-modal')).to.have.length(1);
-      });
 
-      it('modal can be closed', () => {
+        // Click go back and close modal
         wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });
+
+    context('AssociateEP', () => {
+      beforeEach(() => {
+        wrapper.setState({ page: ASSOCIATE_PAGE });
+      });
+
+      it('shows cancel model', () => {
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+
+        // click cancel to open modal
+        wrapper.find('#button-Cancel').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
+
+        // Click go back and close modal
+        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+      });
+    });
+
+    context('EstablishClaimReview', () => {
+      beforeEach(() => {
+        wrapper.setState({ page: REVIEW_PAGE });
+      });
+
+      it('shows special issues modal if special issue selected', () => {
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+
+        // Click VAMC special issue checkbox
+        wrapper.find('#vamc').simulate('change', { target: { checked: true } });
+
+        // Click to create end product
+        wrapper.find('#button-Create-End-Product').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
+      });
+
+      it('shows cancel model', () => {
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+
+        // click cancel to open modal
+        wrapper.find('#button-Cancel').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
+
+        // Click go back and close modal
+        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+      });
+    });
+
   });
 
   context('.getClaimTypeFromDecision', () => {
@@ -52,7 +103,8 @@ describe('EstablishClaim', () => {
       const task = {
         appeal: {
           decision_type: 'Remand',
-          non_canceled_end_products_within_30_days: []
+          non_canceled_end_products_within_30_days: [],
+          pending_eps: []
         },
         user: 'a'
       };

@@ -172,13 +172,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = function (modal) {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
@@ -248,7 +246,7 @@ export default class EstablishClaim extends BaseForm {
    */
   validModifiers = () => {
     let modifiers = [];
-    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+    let endProducts = this.props.task.appeal.pending_eps;
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
@@ -357,22 +355,31 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      modalSubmitLoading
+      modalSubmitLoading,
+      specialIssueModalDisplay,
+      specialIssues
     } = this.state;
+
+    let {
+      pdfLink,
+      pdfjsLink
+    } = this.props;
 
     return (
       <div>
         { this.isReviewPage() &&
           <EstablishClaimReview
             decisionType={this.state.reviewForm.decisionType}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handlePageChange={this.handleCreateEndProduct}
-            specialIssueModalDisplay={this.state.specialIssueModalDisplay}
-            specialIssues={this.state.specialIssues}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
+            specialIssues={specialIssues}
           />
         }
         { this.isAssociatePage() &&

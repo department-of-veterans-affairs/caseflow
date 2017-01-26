@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -17,13 +17,14 @@ export default class EstablishClaimForm extends React.Component {
       claimLabelValue,
       claimForm,
       handleCreateEndProduct,
+      handleCancelTask,
       handleFieldChange,
       loading,
       validModifiers
     } = this.props;
 
 
-    return (<div>
+    return <div>
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
@@ -84,7 +85,7 @@ export default class EstablishClaimForm extends React.Component {
         <div className="cf-push-right">
           <Button
             name="Cancel"
-            onClick={this.handleCancelTask}
+            onClick={handleCancelTask}
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
@@ -94,6 +95,13 @@ export default class EstablishClaimForm extends React.Component {
           />
         </div>
       </div>
-    </div>);
+    </div>;
   }
 }
+
+EstablishClaimForm.propTypes = {
+  claimLabelValue: PropTypes.string.isRequired,
+  claimForm: PropTypes.object.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
+};
