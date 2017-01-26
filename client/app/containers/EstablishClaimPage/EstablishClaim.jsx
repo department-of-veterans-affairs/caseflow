@@ -72,7 +72,7 @@ export default class EstablishClaim extends BaseForm {
         )
       },
       cancelModalDisplay: false,
-      form: {
+      claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
           formatDate(this.props.task.appeal.decision_date),
@@ -105,7 +105,7 @@ export default class EstablishClaim extends BaseForm {
 
     this.formValidating();
 
-    if (!this.validateFormAndSetErrors(this.state.form)) {
+    if (!this.validateFormAndSetErrors(this.state.claimForm)) {
       return;
     }
 
@@ -271,8 +271,8 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = {};
     let modifiers = this.validModifiers();
 
-    stateObject.form = { ...this.state.form };
-    stateObject.form.endProductModifier.value = modifiers[0];
+    stateObject.claimForm = { ...this.state.claimForm };
+    stateObject.claimForm.endProductModifier.value = modifiers[0];
 
     this.setState(stateObject);
   }
@@ -301,13 +301,13 @@ export default class EstablishClaim extends BaseForm {
 
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
-        stateObject.form.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value =
           this.props.task.appeal.station_key;
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
-        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+        stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
     this.setState({
@@ -318,8 +318,8 @@ export default class EstablishClaim extends BaseForm {
   prepareData() {
     let stateObject = this.state;
 
-    stateObject.form.stationOfJurisdiction.value =
-        stateObject.form.stationOfJurisdiction.value.substring(0, 3);
+    stateObject.claimForm.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
 
     this.setState({
       stateObject
@@ -332,7 +332,7 @@ export default class EstablishClaim extends BaseForm {
 
     return {
       claim: ApiUtil.convertToSnakeCase({
-        ...this.getFormValues(this.state.form),
+        ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       })
@@ -387,7 +387,6 @@ export default class EstablishClaim extends BaseForm {
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
             decisionType={this.state.reviewForm.decisionType.value}
-            shouldShowAssociatePage={this.shouldShowAssociatePage()}
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
             handleCancelTask={this.handleCancelTask}
@@ -397,12 +396,12 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isFormPage() &&
           <EstablishClaimForm
+            claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
             handleCreateEndProduct={this.handleCreateEndProduct}
             handleFieldChange={this.handleFieldChange}
             loading={loading}
-            form={this.state.form}
             validModifiers={this.validModifiers()}
           />
         }
