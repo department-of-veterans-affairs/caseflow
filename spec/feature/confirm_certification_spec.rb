@@ -57,6 +57,8 @@ RSpec.feature "Confirm Certification" do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
       test_certification.form8.update_from_appeal(test_certification.appeal)
       test_certification.form8.save_pdf!
+
+      ENV["DEPLOY_ENV"] = "uat"
     end
 
     scenario "is not able to be uncertified by a non-test user" do
@@ -79,7 +81,7 @@ RSpec.feature "Confirm Certification" do
       expect(certification.reload.completed_at).to eq(Time.zone.now)
       expect(page).to have_content("Uncertify Appeal")
       click_link("Uncertify Appeal")
-      expect(certification.appeal.certified?).to be_falsey
+      expect(Certification.where(id: certification.id).count).to eq(0)
     end
   end
 end
