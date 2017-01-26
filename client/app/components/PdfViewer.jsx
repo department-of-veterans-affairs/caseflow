@@ -14,8 +14,12 @@ export default class PdfViewer extends BaseForm {
     super(props);
     this.state = {
       commentForm: {
-        addComment: new FormField('')
+        addComment: new FormField(''),
+        editComment: new FormField('')
       },
+      commentBoxEventListener: null,
+      commentOverIndex: -1,
+      editingComment: -1,
       isAddingComment: false,
       isPlacingNote: false,
       comments: [],
@@ -35,17 +39,78 @@ export default class PdfViewer extends BaseForm {
         annotations.annotations.forEach((annotationId) => {
           storeAdapter.getComments(this.props.file, annotationId.uuid).
             then((comment) => {
-
               if (comment.length) {
                 this.comments.push({
                   content: comment[0].content,
-                  uuid: annotationId.uuid
+                  annotationUuid: annotationId.uuid,
+                  commentUuid: comment[0].uuid
                 });
                 this.setState({ comments: this.comments });
               }
             });
         });
       });
+    }
+  }
+
+  showEditIcon = (index) => {
+    return () => {
+      this.setState({
+        commentOverIndex: index
+      });
+    }
+  }
+
+  hideEditIcon = (index) => {
+    return () => {
+      if (this.state.commentOverIndex === index) {
+        this.setState({
+          commentOverIndex: -1
+        });
+      }
+    }
+  }
+
+  editComment = (index) => {
+    return () => {
+      let commentForm = {...this.state.commentForm};
+      commentForm.editComment.value = this.state.comments[index].content;
+      this.setState({
+        editingComment: index,
+        commentForm: commentForm
+      });
+    }
+  }
+
+  saveEdit = (comment) => {
+    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+    return (event) => {
+      if (event.key === 'Enter') {
+        let commentToAdd = this.state.commentForm.editComment.value;
+        storeAdapter.deleteComment(
+          this.props.file,
+          comment.commentUuid
+        ).then(() => {
+          storeAdapter.addComment(
+            this.props.file,
+            comment.annotationUuid,
+            commentToAdd
+          ).then(() => {
+            this.generateComments(this.state.pdfDocument);
+          }).catch(() => {
+            console.log('comment could not be added');
+          });
+        });
+        
+        this.setState({
+          editingComment: -1
+        });
+      }
+      if (event.key === 'Escape') {
+        this.setState({
+          editingComment: -1
+        });
+      }
     }
   }
 
@@ -79,6 +144,8 @@ export default class PdfViewer extends BaseForm {
   };
 
   addNote = () => {
+    const { UI } = PDFJSAnnotate;
+    
     this.setState({
       isPlacingNote: true
     });
@@ -86,19 +153,22 @@ export default class PdfViewer extends BaseForm {
 
   commentKeyPress = (saveNote) => {
     return (event) => {
-      debugger;
+      let commentForm = {...this.state.commentForm};
       if(event.type === 'blur' || event.key === 'Enter') {
         if (this.state.commentForm.addComment.value.length > 0) {
           saveNote(this.state.commentForm.addComment.value);  
         }
+        commentForm.addComment.value = '';
         this.setState({
           isAddingComment: false,
-          commentForm: {addComment: {value: ''}}
+          commentForm: commentForm
         });
       }
       if (event.key === 'Escape') {
+        commentForm.addComment.value = '';
         this.setState({
-          isAddingComment: false
+          isAddingComment: false,
+          commentForm: commentForm
         });
       }
     }
@@ -107,11 +177,7 @@ export default class PdfViewer extends BaseForm {
   placeNote = (viewport, pageNumber) => {
     return (event) => {
       if (this.state.isPlacingNote) {
-        this.setState({
-          isPlacingNote: false,
-          isAddingComment: true
-        });
-
+        
         let annotation = {
           "type": "point",
           "x": event.offsetX/this.state.scale,
@@ -122,9 +188,19 @@ export default class PdfViewer extends BaseForm {
         }
         let commentBox = document.getElementById('addComment');
         let commentEvent = this.commentKeyPress(this.saveNote(annotation, viewport, pageNumber));
+        if (this.state.commentBoxEventListener) {
+          commentBox.removeEventListener("keyup", this.state.commentBoxEventListener);
+          commentBox.removeEventListener("blur", this.state.commentBoxEventListener);
+        }
+        
         commentBox.addEventListener('keyup', commentEvent);
-        commentBox.focus();
         commentBox.addEventListener('blur', commentEvent);
+        this.setState({
+          isPlacingNote: false,
+          isAddingComment: true,
+          commentBoxEventListener: commentEvent
+        });
+        return false;
       }
     }
   }
@@ -265,7 +341,7 @@ export default class PdfViewer extends BaseForm {
         let copy = { ...comment };
 
         copy.selected = false;
-        if (comment.uuid === event.getAttribute('data-pdf-annotate-id')) {
+        if (comment.annotationUuid === event.getAttribute('data-pdf-annotate-id')) {
           copy.selected = true;
         }
 
@@ -283,23 +359,18 @@ export default class PdfViewer extends BaseForm {
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
 
-
-    window.addEventListener('keyup', (event) => {
-      if (event.key === 'n') {
-        // Enabling point allows you to add comments.
-        UI.enablePoint();
-        UI.disableEdit();
-      }
-      if (event.key === 'm') {
-        // Enabling edit allows you to select comments.
-        UI.disablePoint();
-        UI.enableEdit();
-      }
-    });
+    UI.enableEdit();
   }
 
   componentWillUnmount = () => {
     this.removeEventListeners();
+  }
+
+  componentDidUpdate = () => {
+    if (this.state.isAddingComment) {
+      let commentBox = document.getElementById('addComment');
+      commentBox.focus();
+    }
   }
 
   scrollToAnnotation = (uuid) => () => {
@@ -321,10 +392,28 @@ export default class PdfViewer extends BaseForm {
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
+      if (this.state.editingComment === index) {
+        return (
+          <div className="cf-pdf-comment-list-item" onKeyUp={this.saveEdit(comment)}>
+            <TextareaField
+              label="Edit Comment"
+              name="editComment"
+              onChange={this.handleFieldChange('commentForm', 'editComment')}
+              {...this.state.commentForm.editComment}
+            />
+          </div>);
+      }
       return <div
-          onClick={this.scrollToAnnotation(comment.uuid)}
+          onClick={this.scrollToAnnotation(comment.annotationUuid)}
+          onMouseEnter={this.showEditIcon(index)}
+          onMouseLeave={this.hideEditIcon(index)}
           className={`cf-pdf-comment-list-item${selectedClass}`}
-          key={`comment${index}`}>
+          key={`comment${index}`}
+          id={`comment${index}`}>
+          {this.state.commentOverIndex === index && 
+            <div className="cf-pdf-edit-comment" onClick={this.editComment(index)}>
+              <i className="cf-pdf-edit-comment-icon fa fa-pencil" aria-hidden="true"></i>
+            </div>}
           {comment.content}
         </div>;
     });
@@ -353,7 +442,7 @@ export default class PdfViewer extends BaseForm {
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div id="viewer" className="cf-crosshair-cursor cf-pdf-page pdfViewer singlePageView"></div>
+              <div id="viewer" className={(this.state.isPlacingNote? "cf-comment-cursor " : "") + "cf-pdf-page pdfViewer singlePageView"}></div>
             </div>
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
@@ -409,7 +498,6 @@ export default class PdfViewer extends BaseForm {
               <span className="cf-right-side">
                 <a onClick={this.addNote}>+ Add a Note</a>
               </span>
-              <i className="fa fa-pencil" aria-hidden="true"></i>
             </div>
             <div className="cf-pdf-comment-list">
               <div className="cf-pdf-comment-list-item" hidden={!this.state.isAddingComment}>

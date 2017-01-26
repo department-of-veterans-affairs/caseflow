@@ -121,8 +121,8 @@ $caseflow-background: #f9f9f9;
   line-height: 50px;
 }
 
-.cf-crosshair-cursor {
-  cursor: crosshair;
+.cf-comment-cursor {
+  cursor: url(asset-path('comment-icon.png')),copy;
 }
 
 .cf-pdf-buttons {
@@ -156,6 +156,22 @@ $caseflow-background: #f9f9f9;
   &:focus {
     box-shadow: none;
   }
+}
+
+.cf-pdf-edit-comment {
+  float: right;
+  position: relative;
+  margin-right: -30px;
+  
+}
+
+.cf-pdf-edit-comment-icon {
+  color: $color-primary;
+  border: 2px solid $color-primary;
+  border-radius: 3px;
+  margin: auto;
+  padding: 10px;
+  background-color: $color-white;
 }
 
 .cf-heading-alt {
