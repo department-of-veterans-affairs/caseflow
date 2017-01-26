@@ -5,8 +5,6 @@ import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import EstablishClaim, { SELECTED_ISSUES } from './EstablishClaim'
-
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
 export default class AssociatePage extends React.Component {
@@ -31,7 +29,7 @@ export default class AssociatePage extends React.Component {
         loading={this.state.loading === endProduct.benefit_claim_id}
       />
   ];
-//()=>{this.handleAssignEndProduct(endProduct); this.handleSpecialIssues(SELECTED_ISSUES);}onClick={this.handleAssignEndProduct(endProduct)
+
   handleAssignEndProduct = (endProduct) => (event) => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
@@ -43,11 +41,9 @@ export default class AssociatePage extends React.Component {
       loading: endProduct.benefit_claim_id
     });
 
-     let data = ApiUtil.convertToSnakeCase({
-       endProductId: endProduct.benefit_claim_id
-     });
-
-    //let data = { specialIssues: ["hello", "world"]}
+    let data = ApiUtil.convertToSnakeCase({
+      endProductId: endProduct.benefit_claim_id
+    });
 
     return ApiUtil.post(
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
@@ -64,38 +60,7 @@ export default class AssociatePage extends React.Component {
           );
       });
   }
-/*
-  handleSpecialIssues = (SELECTED_ISSUES) => (event) => {
-    let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
 
-    event.preventDefault();
-    handleAlertClear();
-
-    this.setState({
-      loading: endProduct.benefit_claim_id
-    });
-
-    let data = ApiUtil.convertToSnakeCase({
-      special_issues: SELECTED_ISSUES
-    });
-
-    return ApiUtil.post(
-      `/dispatch/establish-claim/${id}/special_issues`,
-      { data }).then(() => {
-        window.location.reload();
-      }, () => {
-        this.setState({
-          loading: null
-        });
-        handleAlert(
-            'error',
-            'Error',
-            'There was an error while assigning the EP. Please try again later'
-          );
-      });
-  }
-*/
   sortEndProduct = (date1, date2) => {
     let time1 = new Date(date1.claim_receive_date).getTime();
     let time2 = new Date(date2.claim_receive_date).getTime();

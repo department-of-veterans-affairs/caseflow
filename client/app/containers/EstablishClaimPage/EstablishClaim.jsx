@@ -42,8 +42,6 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 
 const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
 
-export const SELECTED_ISSUES = [];
-
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -200,15 +198,8 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       page
     });
-    let data = ApiUtil.convertToSnakeCase(this.getFormValues(this.state["specialIssues"]))
-    let { id } = this.props.task;
-    console.log(ApiUtil.convertToSnakeCase(this.getFormValues(this.state["specialIssues"])));
-    console.log(this.props.task);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
-    ApiUtil.post(
-      `/dispatch/establish-claim/${id}/special-issues`,
-      { data })
   }
 
   isReviewPage() {
@@ -289,7 +280,6 @@ export default class EstablishClaim extends BaseForm {
 
   handleReviewPageSubmit() {
     this.setStationState();
-    this.getSelectedIssues();
     if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
@@ -345,7 +335,9 @@ export default class EstablishClaim extends BaseForm {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.form),
         endProductCode: endProductInfo[0],
-        endProductLabel: endProductInfo[1]
+        endProductLabel: endProductInfo[1],
+        specialIssues: ApiUtil.convertToSnakeCase(
+          this.getFormValues(this.state.specialIssues))
       })
     };
   }
@@ -360,16 +352,6 @@ export default class EstablishClaim extends BaseForm {
     });
 
     return validOutput;
-  }
-
-  getSelectedIssues(){
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value==true
-          && ($.inArray(issue, SELECTED_ISSUES)==-1)) {
-        SELECTED_ISSUES.push(issue);
-      }
-    })
-    console.log(SELECTED_ISSUES);
   }
 
   render() {

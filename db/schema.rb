@@ -28,14 +28,14 @@ ActiveRecord::Schema.define(version: 20170123155914) do
     t.boolean "dic_death_or_accrued_benefits",          default: false
     t.boolean "education_or_vocational_rehab",          default: false
     t.boolean "foreign_claims",                         default: false
-    t.boolean "manlicon_compliance",                    default: false
+    t.boolean "manlincon_compliance",                   default: false
     t.boolean "hearings_travel_board_video_conference", default: false
     t.boolean "home_loan_guaranty",                     default: false
     t.boolean "insurance",                              default: false
     t.boolean "national_cemetery_administration",       default: false
     t.boolean "spina_bifida",                           default: false
     t.boolean "radiation",                              default: false
-    t.boolean "non_rating_issues",                      default: false
+    t.boolean "nonrating_issues",                       default: false
     t.boolean "proposed_incompetency",                  default: false
     t.boolean "manila_remand",                          default: false
     t.boolean "contaminated_water_at_camp_lejeune",     default: false

@@ -4,7 +4,7 @@ class EstablishClaimsController < TasksController
 
   def perform
     Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
-    Appeal.new(params[:special_issues])
+    task.appeal.update_attributes(establish_claim_params[:special_issues])
     render json: {}
   end
 
@@ -25,17 +25,20 @@ class EstablishClaimsController < TasksController
     establish_claims_path
   end
 
-  def special_issues
-    Appeal.update_attributes!(params[:special_issues])
-    binding.pry
-  end
-
   private
 
   def establish_claim_params
-    params.require(:claim).permit(:modifier, :end_product_code, :end_product_label,
-                                  :end_product_modifier, :gulf_war_registry,
-                                  :suppress_acknowledgement_letter, :station_of_jurisdiction,
-                                  :date)
+    params.require(:claim)
+          .permit(:modifier, :end_product_code, :end_product_label, :end_product_modifier, :gulf_war_registry,
+                  :suppress_acknowledgement_letter, :station_of_jurisdiction, :date,
+                  special_issues: [:rice_compliance, :private_attorney, :waiver_of_overpayment,
+                                   :pensions, :vamc, :incarcerated_veterans,
+                                   :dic_death_or_accrued_benefits, :education_or_vocational_rehab,
+                                   :foreign_claims, :manlincon_compliance,
+                                   :hearings_travel_board_video_conference, :home_loan_guaranty,
+                                   :insurance, :national_cemetery_administration, :spina_bifida,
+                                   :radiation, :nonrating_issues, :proposed_incompetency,
+                                   :manila_remand, :contaminated_water_at_camp_lejeune,
+                                   :mustard_gas, :dependencies])
   end
 end
