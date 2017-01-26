@@ -100,8 +100,8 @@ export default class EstablishClaimForm extends React.Component {
 }
 
 EstablishClaimForm.propTypes = {
-  claimLabelValue: PropTypes.string.isRequired,
   claimForm: PropTypes.object.isRequired,
+  claimLabelValue: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
