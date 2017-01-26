@@ -138,8 +138,8 @@ $caseflow-background: #f9f9f9;
   }
 }
 
-.cf-pdf-button {
-  margin: 0 20px;
+[type="button"].cf-pdf-button {
+  margin: 0 30px !important;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -148,8 +148,8 @@ $caseflow-background: #f9f9f9;
     text-decoration: none;
     background-color: transparent;
   }
-  &:foucs {
-    outline: none;
+  &:focus {
+    box-shadow: none;
   }
 }
 

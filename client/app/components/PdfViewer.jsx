@@ -75,14 +75,15 @@ export default class PdfViewer extends React.Component {
     });
   }
 
-  draw = (startPage = 1) => {
+  draw = (file, scrollLocation = 0) => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.getDocument(this.props.file).then((pdfDocument) => {
+    PDFJS.getDocument(file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+
       this.setState({
-        currentPage: startPage,
+        currentPage: 1,
         numPages: pdfDocument.pdfInfo.numPages,
         pdfDocument: pdfDocument
       });
@@ -101,25 +102,58 @@ export default class PdfViewer extends React.Component {
 
       // Automatically render the first page
       // This assumes that page has already been created and appended
-      this.renderPage(startPage - 1);
-      document.getElementById('scrollWindow').scrollTop = 0;
+      this.renderPage(0);
+      document.getElementById('scrollWindow').scrollTop = scrollLocation;
+      console.log("scrollLocation: " + scrollLocation);
+      console.log(this.state.scale);
+      this.scrollEvent();
     });
   }
 
-  componentWillReceiveProps(oldProps) {
-    if (oldProps.file !== this.props.file) {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
-      this.draw();
+      this.draw(nextProps.file);
     }
   }
 
   zoom = (delta) => {
     return () => {
+      let zoomFactor = (this.state.scale + delta) / this.state.scale;
       this.setState({
         scale: this.state.scale + delta
       });
-      this.draw(this.state.currentPage);
+      this.draw(this.props.file, document.getElementById('scrollWindow').scrollTop * zoomFactor);
     }
+  }
+
+  scrollEvent = () => {
+    let page = document.getElementsByClassName('page');
+
+    Array.prototype.forEach.call(page, (ele, index) => {
+      let boundingRect = ele.getBoundingClientRect();
+
+      // You are on this page, if the top of the page is above the middle
+      // and the bottom of the page is below the middle
+      if (boundingRect.top < scrollWindow.clientHeight / 2 &&
+          boundingRect.bottom > scrollWindow.clientHeight / 2) {
+        this.setState({
+          currentPage: index + 1
+        });
+      }
+
+      // This renders each page as it comes into view. i.e. when
+      // the top of the next page is within a thousand pixels of
+      // the current view we render it. If the bottom of the page
+      // above is within a thousand pixels of the current view
+      // we also redner it.
+      // TODO: Make this more robust and avoid magic numbers.
+      if (!this.isRendered[index] &&
+          boundingRect.bottom > -1000 &&
+          boundingRect.top < scrollWindow.clientHeight + 1000) {
+        this.renderPage(index);
+      }
+    });
   }
 
   componentDidMount = () => {
@@ -144,40 +178,13 @@ export default class PdfViewer extends React.Component {
 
     });
 
-    this.draw();
+    this.draw(this.props.file);
 
 
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
 
-    scrollWindow.addEventListener('scroll', () => {
-      let page = document.getElementsByClassName('page');
-
-      Array.prototype.forEach.call(page, (ele, index) => {
-        let boundingRect = ele.getBoundingClientRect();
-
-        // You are on this page, if the top of the page is above the middle
-        // and the bottom of the page is below the middle
-        if (boundingRect.top < scrollWindow.clientHeight / 2 &&
-            boundingRect.bottom > scrollWindow.clientHeight / 2) {
-          this.setState({
-            currentPage: index + 1
-          });
-        }
-
-        // This renders each page as it comes into view. i.e. when
-        // the top of the next page is within a thousand pixels of
-        // the current view we render it. If the bottom of the page
-        // above is within a thousand pixels of the current view
-        // we also redner it.
-        // TODO: Make this more robust and avoid magic numbers.
-        if (!this.isRendered[index] &&
-            boundingRect.bottom > -1000 &&
-            boundingRect.top < scrollWindow.clientHeight + 1000) {
-          this.renderPage(index);
-        }
-      });
-    });
+    scrollWindow.addEventListener('scroll', this.scrollEvent);
 
 
     window.addEventListener('keyup', (event) => {
@@ -238,8 +245,12 @@ export default class PdfViewer extends React.Component {
                   {this.state.currentPage} / {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-                  <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
+                  <Button name="download" classNames={["cf-pdf-button"]}>
+                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="print" classNames={["cf-pdf-button"]}>
+                    <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -254,17 +265,17 @@ export default class PdfViewer extends React.Component {
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(-.1)}>
-                    <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i className="fa fa-minus" aria-hidden="true"></i>
                   </Button>
                   <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(.1)}>
-                    <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(.3)}>
+                    <i className="fa fa-plus" aria-hidden="true"></i>
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
                   <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
-                    Next<i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
+                    Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
