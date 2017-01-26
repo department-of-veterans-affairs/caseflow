@@ -93,6 +93,10 @@ class Fakes::AppealRepository
     [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
   end
 
+  def self.uncertify(_appeal)
+    # noop
+  end
+
   # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
   # rubocop:disable Metrics/MethodLength
   def self.appeal_ready_to_certify

@@ -84,6 +84,10 @@ RSpec.feature "Save Certification" do
     within_fieldset("12B Supplemental statement of the case") do
       find("label", text: "Not required").click
     end
+    within_fieldset("13 Records to be forwarded to Board of Veterans' Appeals") do
+      find("label", text: "OTHER").click
+    end
+    fill_in "Specify other", with: "Records"
     fill_in "17A Name of certifying official", with: "Gieuseppe"
     within_fieldset("17B Title of certifying official") do
       find("label", text: "Decision Review Officer").click
@@ -118,6 +122,11 @@ RSpec.feature "Save Certification" do
     within_fieldset("12B Supplemental statement of the case") do
       expect(find_field("Not required", visible: false)).to be_checked
     end
+    within_fieldset("13 Records to be forwarded to Board of Veterans' Appeals") do
+      expect(find_field("OTHER", visible: false)).to be_checked
+    end
+    expect(find_field("Specify other").value).to eq("Records")
+
     expect(find_field("17A Name of certifying official").value).to eq("Gieuseppe")
     within_fieldset("17B Title of certifying official") do
       expect(find_field("Decision Review Officer")).to be_checked

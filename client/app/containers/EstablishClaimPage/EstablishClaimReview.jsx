@@ -209,7 +209,8 @@ export default class EstablishClaimReview extends React.Component {
           this case manually in VBMS.
         </p>
       </Modal>}
-    </div>);
+    </div>
+    );
   }
 }
 
