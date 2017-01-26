@@ -1,14 +1,23 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
+import appendChild from 'pdf-annotate.js';
 import DateSelector from '../components/DateSelector';
 import DropDown from '../components/DropDown';
 import Button from '../components/Button';
+import TextareaField from '../components/TextareaField';
+import FormField from '../util/FormField';
+import BaseForm from '../containers/BaseForm';
 
-export default class PdfViewer extends React.Component {
+export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
     this.state = {
+      commentForm: {
+        addComment: new FormField('')
+      },
+      isAddingComment: false,
+      isPlacingNote: false,
       comments: [],
       currentPage: 1,
       numPages: 0,
@@ -21,7 +30,7 @@ export default class PdfViewer extends React.Component {
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
     this.setState({ comments: this.comments });
-    for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
+    for (let i = 1; i <= pdfDocument.pdfInfo.numPages; i++) {
       storeAdapter.getAnnotations(this.props.file, i).then((annotations) => {
         annotations.annotations.forEach((annotationId) => {
           storeAdapter.getComments(this.props.file, annotationId.uuid).
@@ -59,6 +68,42 @@ export default class PdfViewer extends React.Component {
     }
   }
 
+  generateUUID() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  };
+
+  addNote = (viewport, pageNumber) => {
+    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+    return (event) => {
+      if (this.state.isPlacingNote) {
+        let annotation = {
+          "type": "point",
+          "x": event.offsetX/this.state.scale,
+          "y": event.offsetY/this.state.scale,
+          class: "Annotation",
+          uuid: this.generateUUID(),
+          page: pageNumber
+        }
+        storeAdapter.addAnnotation(
+          this.props.file,
+          pageNumber,
+          annotation
+        ).then((annotation) => {
+          storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
+            let svg = document.getElementById('pageContainer'+(pageNumber)).getElementsByClassName("annotationLayer")[0];
+            PDFJSAnnotate.render(svg, viewport, annotations);
+          });
+        });
+      }
+    }
+  }
+
   renderPage = (index) => {
     const { UI } = PDFJSAnnotate;
 
@@ -70,7 +115,12 @@ export default class PdfViewer extends React.Component {
     };
 
     this.isRendered[index] = true;
-    UI.renderPage(index + 1, RENDER_OPTIONS).catch(() => {
+    UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+      let pageContainer = document.getElementById('pageContainer'+(index+1));
+      console.log(pageContainer);
+      debugger;
+      pageContainer.addEventListener('click', this.addNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
+    }).catch(() => {
       this.isRendered[index] = false;
     });
   }
@@ -245,11 +295,12 @@ export default class PdfViewer extends React.Component {
                   {this.state.currentPage} / {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="download" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  
+                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
                   </Button>
-                  <Button name="print" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
+                  <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
+                    Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
@@ -260,22 +311,42 @@ export default class PdfViewer extends React.Component {
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'cyan'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'orange'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'white'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'magenta'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'green'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                    <i style={{color:'yellow'}} className="fa fa-bookmark" aria-hidden="true"></i>
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(-.3)}>
                     <i className="fa fa-minus" aria-hidden="true"></i>
                   </Button>
-                  <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                  <Button name="fit" classNames={["cf-pdf-button"]} onClick={this.zoom(1)}>
+                    <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                  </Button>
                   <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(.3)}>
                     <i className="fa fa-plus" aria-hidden="true"></i>
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
-                    Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
+                  <Button name="download" classNames={["cf-pdf-button"]}>
+                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  </Button>
+                  <Button name="print" classNames={["cf-pdf-button"]}>
+                    <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
@@ -285,17 +356,7 @@ export default class PdfViewer extends React.Component {
             <div className="cf-heading-alt">Document</div>
             <p className="cf-pdf-meta-title"><b>Filename:</b></p>
             <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
-            <DateSelector
-             label="Receipt Date:"
-             name="date"
-             value="01/02/2017"
-            />
-            <DropDown
-             label="Document Tab"
-             name="documentTab"
-             options={["one", "two"]}
-             value="one"
-            />
+            <p className="cf-pdf-meta-title"><b>Receipt Date:</b> 01/02/2017</p>
             <div className="cf-heading-alt">
               Notes
               <span className="cf-right-side">
@@ -304,12 +365,15 @@ export default class PdfViewer extends React.Component {
               <i className="fa fa-pencil" aria-hidden="true"></i>
             </div>
             <div className="cf-pdf-comment-list">
-              <div className="cf-pdf-comment">
-                {comments}
-              </div>
-              <form className="comment-list-form" style={{ display: 'none' }}>
-                <input type="text" placeholder="Add a Comment"/>
-              </form>
+              {this.state.isAddingComment && <div className="cf-pdf-comment-list-item">
+                <TextareaField
+                  label="Add Comment"
+                  name="addComment"
+                  onChange={this.handleFieldChange('commentForm', 'addComment')}
+                  {...this.state.commentForm.addComment}
+                />
+              </div>}
+              {comments}
             </div>
           </div>
         </div>

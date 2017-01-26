@@ -116,8 +116,9 @@ $caseflow-background: #f9f9f9;
   opacity: .9;
   bottom: 0px;
   color: $color-white;
-  padding: 15px 20px;
+  padding: 0 20px;
   font-size: 15px;
+  line-height: 50px;
 }
 
 .cf-crosshair-cursor {
@@ -138,8 +139,12 @@ $caseflow-background: #f9f9f9;
   }
 }
 
+.cf-pdf-bookmarks {
+  transform: scale(2, 2.6);
+}
+
 [type="button"].cf-pdf-button {
-  margin: 0 30px !important;
+  margin: 0 15px !important;
   color: inherit;
   padding: 0;
   background-color: transparent;
