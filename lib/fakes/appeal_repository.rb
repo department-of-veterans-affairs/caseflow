@@ -31,8 +31,8 @@ class Fakes::AppealRepository
   def self.establish_claim!(claim:, appeal:)
     p "Submitting claim to VBMS for appeal: #{appeal.id}"
     p "Claim data:\n", claim
+    p "Appeal:\n", appeal
 
-    # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
