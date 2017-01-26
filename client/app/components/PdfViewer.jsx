@@ -78,10 +78,40 @@ export default class PdfViewer extends BaseForm {
     return uuid;
   };
 
-  addNote = (viewport, pageNumber) => {
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+  addNote = () => {
+    this.setState({
+      isPlacingNote: true
+    });
+  }
+
+  commentKeyPress = (saveNote) => {
+    return (event) => {
+      debugger;
+      if(event.type === 'blur' || event.key === 'Enter') {
+        if (this.state.commentForm.addComment.value.length > 0) {
+          saveNote(this.state.commentForm.addComment.value);  
+        }
+        this.setState({
+          isAddingComment: false,
+          commentForm: {addComment: {value: ''}}
+        });
+      }
+      if (event.key === 'Escape') {
+        this.setState({
+          isAddingComment: false
+        });
+      }
+    }
+  }
+
+  placeNote = (viewport, pageNumber) => {
     return (event) => {
       if (this.state.isPlacingNote) {
+        this.setState({
+          isPlacingNote: false,
+          isAddingComment: true
+        });
+
         let annotation = {
           "type": "point",
           "x": event.offsetX/this.state.scale,
@@ -90,17 +120,35 @@ export default class PdfViewer extends BaseForm {
           uuid: this.generateUUID(),
           page: pageNumber
         }
-        storeAdapter.addAnnotation(
-          this.props.file,
-          pageNumber,
-          annotation
-        ).then((annotation) => {
-          storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
-            let svg = document.getElementById('pageContainer'+(pageNumber)).getElementsByClassName("annotationLayer")[0];
-            PDFJSAnnotate.render(svg, viewport, annotations);
-          });
-        });
+        let commentBox = document.getElementById('addComment');
+        let commentEvent = this.commentKeyPress(this.saveNote(annotation, viewport, pageNumber));
+        commentBox.addEventListener('keyup', commentEvent);
+        commentBox.focus();
+        commentBox.addEventListener('blur', commentEvent);
       }
+    }
+  }
+
+  saveNote = (annotation, viewport, pageNumber) => {
+    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+    return (content) => {
+      storeAdapter.addAnnotation(
+        this.props.file,
+        pageNumber,
+        annotation
+      ).then((annotation) => {
+        storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
+          storeAdapter.addComment(
+            this.props.file,
+            annotation.uuid,
+            content
+          ).then(() => {
+            this.generateComments(this.state.pdfDocument);
+          });
+          let svg = document.getElementById('pageContainer'+(pageNumber)).getElementsByClassName("annotationLayer")[0];
+          PDFJSAnnotate.render(svg, viewport, annotations);
+        });
+      });
     }
   }
 
@@ -118,8 +166,7 @@ export default class PdfViewer extends BaseForm {
     UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
       let pageContainer = document.getElementById('pageContainer'+(index+1));
       console.log(pageContainer);
-      debugger;
-      pageContainer.addEventListener('click', this.addNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
+      pageContainer.addEventListener('click', this.placeNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
     }).catch(() => {
       this.isRendered[index] = false;
     });
@@ -360,19 +407,19 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-heading-alt">
               Notes
               <span className="cf-right-side">
-                <a href="#">+ Add a Note</a>
+                <a onClick={this.addNote}>+ Add a Note</a>
               </span>
               <i className="fa fa-pencil" aria-hidden="true"></i>
             </div>
             <div className="cf-pdf-comment-list">
-              {this.state.isAddingComment && <div className="cf-pdf-comment-list-item">
+              <div className="cf-pdf-comment-list-item" hidden={!this.state.isAddingComment}>
                 <TextareaField
                   label="Add Comment"
                   name="addComment"
                   onChange={this.handleFieldChange('commentForm', 'addComment')}
                   {...this.state.commentForm.addComment}
                 />
-              </div>}
+              </div>
               {comments}
             </div>
           </div>
