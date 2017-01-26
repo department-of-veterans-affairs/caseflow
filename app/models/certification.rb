@@ -87,9 +87,8 @@ class Certification < ActiveRecord::Base
     where(ssocs_required: true)
   end
 
-  # ONLY FOR TEST USER
+  # Only for TEST_USER
   def uncertify!(user_id)
-    # YEAH, I KNOW THIS IS REDUNDANT! -Artem
     return unless user_id == ENV["TEST_USER_ID"]
     appeal.uncertify!(user_id)
   end
