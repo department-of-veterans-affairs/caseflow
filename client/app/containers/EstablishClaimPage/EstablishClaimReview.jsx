@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
+import Button from '../../components/Button';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -84,10 +85,12 @@ export default class EstablishClaimReview extends React.Component {
   render() {
     let {
       decisionType,
+      handleCancelTask,
       handleCancelTaskForSpecialIssue,
       handleDecisionTypeChange,
       handleFieldChange,
       handleModalClose,
+      handlePageChange,
       pdfLink,
       pdfjsLink,
       specialIssueModalDisplay,
@@ -170,6 +173,21 @@ export default class EstablishClaimReview extends React.Component {
             /* eslint-enable no-return-assign */
         }
       </div>
+
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+              name="Cancel"
+              onClick={handleCancelTask}
+              classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create End Product"
+            onClick={handlePageChange}
+          />
+        </div>
+      </div>
+
       {specialIssueModalDisplay && <Modal
         buttons={[
           { classNames: ["cf-btn-link"],
@@ -191,8 +209,7 @@ export default class EstablishClaimReview extends React.Component {
           this case manually in VBMS.
         </p>
       </Modal>}
-    </div>
-    );
+    </div>);
   }
 }
 

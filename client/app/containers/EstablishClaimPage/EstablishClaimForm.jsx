@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 
+import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
@@ -15,12 +16,15 @@ export default class EstablishClaimForm extends React.Component {
     let {
       claimLabelValue,
       form,
+      handleCreateEndProduct,
+      handleCancelTask,
       handleFieldChange,
+      loading,
       validModifiers
     } = this.props;
 
 
-    return (
+    return <div>
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Create End Product</h1>
@@ -77,7 +81,22 @@ export default class EstablishClaimForm extends React.Component {
           />
         </div>
       </form>
-    );
+
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+            name="Cancel"
+            onClick={handleCancelTask}
+            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create End Product"
+            loading={loading}
+            onClick={handleCreateEndProduct}
+          />
+        </div>
+      </div>
+    </div>;
   }
 }
 

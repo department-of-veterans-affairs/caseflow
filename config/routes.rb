@@ -65,6 +65,7 @@ Rails.application.routes.draw do
     scope "/dev" do
       get '/users', to: "dev_users#index"
       post '/set-user/:id', to: "dev#set_user", as: 'set_user'
+      get '/set-end-products', to: "dev#set_end_products", as: 'set_end_products'
     end
   end
   # :nocov:
