@@ -3,8 +3,8 @@ class EstablishClaimsController < TasksController
   before_action :verify_not_complete, only: [:perform]
 
   def perform
+    task.appeal.update_attributes(special_issues_params)
     Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
-    task.appeal.update_attributes(establish_claim_params[:special_issues])
     render json: {}
   end
 
@@ -40,5 +40,17 @@ class EstablishClaimsController < TasksController
                                    :radiation, :nonrating_issues, :proposed_incompetency,
                                    :manila_remand, :contaminated_water_at_camp_lejeune,
                                    :mustard_gas, :dependencies])
+  end
+
+  def special_issues_params
+    params.require(:specialIssues).permit(:rice_compliance, :private_attorney, :waiver_of_overpayment,
+                                          :pensions, :vamc, :incarcerated_veterans,
+                                          :dic_death_or_accrued_benefits, :education_or_vocational_rehab,
+                                          :foreign_claims, :manlincon_compliance,
+                                          :hearings_travel_board_video_conference, :home_loan_guaranty,
+                                          :insurance, :national_cemetery_administration, :spina_bifida,
+                                          :radiation, :nonrating_issues, :proposed_incompetency,
+                                          :manila_remand, :contaminated_water_at_camp_lejeune,
+                                          :mustard_gas, :dependencies)
   end
 end

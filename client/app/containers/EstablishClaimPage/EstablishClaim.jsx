@@ -334,10 +334,10 @@ export default class EstablishClaim extends BaseForm {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
-        endProductLabel: endProductInfo[1],
-        specialIssues: ApiUtil.convertToSnakeCase(
-          this.getFormValues(this.state.specialIssues))
-      })
+        endProductLabel: endProductInfo[1]
+      }),
+      specialIssues: ApiUtil.convertToSnakeCase(
+        this.getFormValues(this.state.specialIssues))
     };
   }
 
