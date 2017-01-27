@@ -97,10 +97,9 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
-    event.preventDefault();
     handleAlertClear();
 
     this.formValidating();
@@ -257,8 +256,7 @@ export default class EstablishClaim extends BaseForm {
     this.setState(stateObject);
   }
 
-  handleReviewPageSubmit = (event) => {
-    event.preventDefault();
+  handleReviewPageSubmit = () => {
     this.setStationState();
 
     if (!this.validateReviewPageSubmit()) {
@@ -272,8 +270,7 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
-  handleAssociatePageSubmit = (event) => {
-    event.preventDefault();
+  handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
 
