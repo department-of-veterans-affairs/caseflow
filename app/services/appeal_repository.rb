@@ -197,7 +197,7 @@ class AppealRepository
     appeal.case_record.save!
   end
 
-  def self.upload_form8(appeal, form8)
+  def self.upload_and_clean_document(appeal, form8)
     upload_document(appeal, form8)
     File.delete(form8.pdf_location)
   end

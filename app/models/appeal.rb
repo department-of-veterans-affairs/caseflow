@@ -182,7 +182,7 @@ class Appeal < ActiveRecord::Base
       fail "No Form 8 found for appeal being certified" unless form8
 
       repository.certify(appeal)
-      repository.upload_form8(appeal, form8)
+      repository.upload_and_clean_document(appeal, form8)
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
