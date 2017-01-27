@@ -50,12 +50,14 @@ module PumaThreadLogger
         if (thread_count > 0)
           # It might be cool if we knew the Puma worker index for this worker,
           # but that didn't look easy to me.
+          # I'm not 100% confident of the right way to measure this,
+          # so I added a few.
           msg = "Puma stats -- Process pid: #{Process.pid} "\
            "Total threads: #{thread_count} "\
            "Backlog of actions: #{backlog} "\
            "Waiting threads: #{waiting} "\
            "Active threads: #{thread_count - waiting}"\
-           "Percent of live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
+           "Live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
           Rails.logger.info(msg)
         end
       end
