@@ -105,19 +105,12 @@
     </nav>
   </header>
 
-  <% if content_for?(:full_page_content) %>
-    <main class="cf-full-page-app">
-      <%= yield(:full_page_content) if content_for?(:full_page_content) %>
+  <main class="usa-grid">
+    <div class="cf-app">
+      <%= yield(:content) if content_for?(:content) %>
       <%= yield %>
-    </main>
-  <% else %>
-    <main class="usa-grid">
-      <div class="cf-app">
-        <%= yield(:content) if content_for?(:content) %>
-        <%= yield %>
-      </div>
-    </main>
-  <% end %>
+    </div>
+  </main>
 
   <footer class="cf-txt-c usa-grid cf-app-footer">
     <div class="cf-push-left">
