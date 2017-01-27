@@ -33,7 +33,7 @@ class Test::SetupController < ApplicationController
       BGSService.end_product_data = BGSService.all_grants
     end
 
-    redirect_to "/dev/users"
+    redirect_to "/test/users"
   end
   # :nocov:
 
