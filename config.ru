@@ -54,7 +54,8 @@ module PumaThreadLogger
            "Total threads: #{thread_count} "\
            "Backlog of actions: #{backlog} "\
            "Waiting threads: #{waiting} "\
-           "Active threads: #{thread_count - waiting}"
+           "Active threads: #{thread_count - waiting}"\
+           "Percent of live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
           Rails.logger.info(msg)
         end
       end
