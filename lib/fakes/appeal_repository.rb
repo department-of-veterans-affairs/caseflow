@@ -56,7 +56,6 @@ class Fakes::AppealRepository
   end
 
   def self.load_vacols_data_by_vbms_id(appeal)
-    binding.pry
     return unless @records
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
@@ -73,7 +72,6 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    binding.pry
     vbms_record = @records[appeal.vbms_id]
     if vbms_record
       appeal.documents = vbms_record[:documents]
