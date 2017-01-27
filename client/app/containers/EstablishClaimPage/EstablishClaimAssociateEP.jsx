@@ -71,7 +71,7 @@ export default class AssociatePage extends React.Component {
   render() {
     let {
       handleCancelTask,
-      handlePageChange,
+      handleSubmit,
       hasAvailableModifers
     } = this.props;
 
@@ -122,7 +122,7 @@ export default class AssociatePage extends React.Component {
           />
           <Button
             name="Create New EP"
-            onClick={handlePageChange}
+            onClick={handleSubmit}
             disabled={!hasAvailableModifers}
           />
         </div>
@@ -136,6 +136,7 @@ AssociatePage.propTypes = {
   endProducts: PropTypes.arrayOf(PropTypes.object).isRequired,
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   task: PropTypes.object.isRequired
 };
