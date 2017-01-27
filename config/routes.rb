@@ -89,12 +89,13 @@ Rails.application.routes.draw do
     # Only allow data_setup routes if TEST_USER is set
     if ENV["TEST_USER_ID"]
       post "setup_certification" => "setup#certification"
+      post "setup_claims_establishment" => "setup#claims_establishment"
     end
 
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
       post "/set_user/:id", to: "setup#set_user", as: "set_user"
-      get "/set-end-products", to: "setup#set_end_products", as: 'set_end_products'
+      post "/set-end-products", to: "setup#set_end_products", as: 'set_end_products'
     end
   end
   # :nocov:
