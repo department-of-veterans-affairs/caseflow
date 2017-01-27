@@ -78,6 +78,7 @@ export default class AssociatePage extends React.Component {
     let endProducts = this.props.endProducts.sort(this.sortEndProduct);
 
     let alert;
+
     if (this.props.hasAvailableModifers) {
       alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
         <p className="usa-alert-text">We found one or more existing EP(s)
@@ -87,7 +88,9 @@ export default class AssociatePage extends React.Component {
         </p>
       </div>;
     } else {
-      alert = <div><h3 className="usa-alert-heading">Existing EP, all EP & Claim Label Modifiers in use</h3>
+      alert = <div><h3 className="usa-alert-heading">
+          Existing EP, all EP & Claim Label Modifiers in use
+        </h3>
         <p className="usa-alert-text">We found one or more existing EP(s)
           created within 30 days of this decision date. You may assign a
           existing EP from the table below to this claim.
