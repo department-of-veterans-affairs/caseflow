@@ -32,6 +32,7 @@ class Fakes::AppealRepository
     p "Submitting claim to VBMS for appeal: #{appeal.id}"
     p "Claim data:\n", claim
 
+    # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 

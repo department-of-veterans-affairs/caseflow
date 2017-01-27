@@ -34,7 +34,6 @@ Rails.application.routes.draw do
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
       get 'pdf', on: :member
-      post "special-issues", on: :member
     end
   end
 
