@@ -130,19 +130,18 @@
 .cf-checklist {
   list-style-type: none;
   margin: 0 auto;
-  margin-bottom: 3rem;
   margin-bottom: 4rem;
   position: relative;
   max-width: 50%;
-}
 
-.cf-checklist li::before {
-  content: '';
-}
+  li::before {
+    content: '';
+  }
 
-.cf-checklist .cf-icon-success--bg {
-  font-size: 2.5rem;
-  margin-right: 1.8rem;
+  .cf-icon-success--bg {
+    font-size: 2.5rem;
+    margin-right: 1.8rem;
+  }
 }
 
 .cf-msg-screen-deck {
