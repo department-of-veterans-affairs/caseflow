@@ -25,10 +25,10 @@
   <div class="usa-grid-full">
     <div class="usa-width-one-half">
       <h1>End Product Seed Data</h1>
-      <p><a href="/dev/set-end-products/?type=all">All Grants</a></p>
-      <p><a href="/dev/set-end-products/?type=none">No Grants</a></p>
-      <p><a href="/dev/set-end-products/?type=partial">Partial Grants</a></p>
-      <p><a href="/dev/set-end-products/?type=full">Full Grants</a></p>
+      <p><%= link_to "All Grants", test_set_end_products_path(type: "all"), method: :post %></a></p>
+      <p><%= link_to "No Grants", test_set_end_products_path(type: "none"), method: :post %></a></p>
+      <p><%= link_to "Partial Grants", test_set_end_products_path(type: "partial"), method: :post %></a></p>
+      <p><%= link_to "Full Grants", test_set_end_products_path(type: "full"), method: :post %></a></p>
     </div>
     <div class="usa-width-one-half">
     </div>

@@ -47,8 +47,8 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
-  classNames: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node,
+  classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
   id: PropTypes.string,
   linkStyle: PropTypes.bool,

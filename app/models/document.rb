@@ -7,13 +7,13 @@ class Document
     "95" => "SOC",
     "97" => "SSOC",
     "115" => "VA 21-4138 Statement In Support of Claim",
+    "178" => "Form 8",
     "179" => "Form 9",
     "475" => "Third Party Correspondence",
     "713" => "NOD",
     "856" => "NOD",
     "857" => "Form 9",
     "27"  => "BVA Decision"
-
   }.freeze
 
   ALT_TYPES = {
@@ -37,6 +37,10 @@ class Document
       document_id: vbms_document.document_id,
       filename: vbms_document.filename
     )
+  end
+
+  def self.type_id(type)
+    TYPES.key(type)
   end
 
   # Currently three levels of caching. Try to serve content

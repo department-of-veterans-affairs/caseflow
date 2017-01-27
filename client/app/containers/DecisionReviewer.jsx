@@ -23,10 +23,10 @@ export default class DecisionReviewer extends React.Component {
   componentDidMount() {
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {
-        previousPdf();
+        this.previousPdf();
       }
       if (event.key === 'ArrowRight') {
-        nextPdf();
+        this.nextPdf();
       }
     });
   }

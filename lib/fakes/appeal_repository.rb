@@ -36,7 +36,7 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
-  def self.upload_form8(appeal, form8)
+  def self.upload_and_clean_document(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
   end
