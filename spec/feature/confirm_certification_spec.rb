@@ -44,7 +44,7 @@ RSpec.feature "Confirm Certification" do
     expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
     expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
 
-    expect(page).to have_content("Congratulations! The case has been certified.")
+    expect(page).to have_content("Congratulations!")
 
     certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
