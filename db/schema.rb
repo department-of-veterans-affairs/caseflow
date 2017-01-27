@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170117194115) do
+ActiveRecord::Schema.define(version: 20170124205843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(version: 20170117194115) do
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
     t.string   "ssoc_required"
-    t.text     "record_other_explanation",                                   array: true
+    t.text     "record_other_explanation"
     t.text     "remarks"
     t.string   "certifying_office"
     t.string   "certifying_username"
