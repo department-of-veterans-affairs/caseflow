@@ -23,7 +23,7 @@ class Document
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :document_id
+  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :document_id, :filename
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -34,7 +34,8 @@ class Document
       type: TYPES[vbms_document.doc_type] || :other,
       alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
       received_at: vbms_document.received_at,
-      document_id: vbms_document.document_id
+      document_id: vbms_document.document_id,
+      filename: vbms_document.filename
     )
   end
 
@@ -57,7 +58,7 @@ class Document
   end
 
   def content
-    @content ||= fetch_content
+    @content ||= fetch_and_cache_document_from_vbms
   end
 
   def serve

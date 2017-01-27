@@ -4,6 +4,7 @@ import PDFJSAnnotate from 'pdf-annotate.js';
 import DateSelector from '../components/DateSelector';
 import DropDown from '../components/DropDown';
 import Button from '../components/Button';
+import { formatDate } from '../util/DateUtil';
 
 export default class PdfViewer extends React.Component {
   constructor(props) {
@@ -222,7 +223,7 @@ export default class PdfViewer extends React.Component {
             <div className="cf-pdf-header">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  {this.props.file}
+                  {this.props.name}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   {this.state.currentPage} / {this.state.numPages}
@@ -258,13 +259,9 @@ export default class PdfViewer extends React.Component {
           </div>
           <div className="cf-comment-wrapper">
             <div className="cf-heading-alt">Document</div>
-            <p className="cf-pdf-meta-title"><b>Filename:</b></p>
-            <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
-            <DateSelector
-             label="Receipt Date:"
-             name="date"
-             value="01/02/2017"
-            />
+            <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.name}</p>
+            <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.type}</p>
+            <p className="cf-pdf-meta-title"><b>Receipt Date:</b> {formatDate(this.props.receivedAt)}</p>
             <DropDown
              label="Document Tab"
              name="documentTab"
