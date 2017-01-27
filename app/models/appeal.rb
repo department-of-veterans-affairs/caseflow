@@ -38,6 +38,10 @@ class Appeal < ActiveRecord::Base
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
 
+  def veteran_full_name
+    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ")
+  end
+
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
