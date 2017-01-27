@@ -23,4 +23,7 @@ use Prometheus::Client::Rack::Collector
 # exposes a metrics HTTP endpoint to be scraped by a prometheus server
 use Prometheus::Client::Rack::Exporter
 
+# log puma stats to stdout
+use PumaStatsLogger::Middleware
+
 run Rails.application

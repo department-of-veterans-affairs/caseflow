@@ -253,6 +253,9 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     puma (2.16.0)
+    puma-stats-logger (0.2.1)
+      json
+      puma
     quantile (0.2.0)
     rack (1.6.4)
     rack-protection (1.5.3)
@@ -472,6 +475,7 @@ DEPENDENCIES
   prometheus-client
   pry
   puma (~> 2.16.0)
+  puma-stats-logger
   rails (= 4.2.7.1)
   rails_stdout_logging
   rainbow
