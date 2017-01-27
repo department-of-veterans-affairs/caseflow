@@ -73,9 +73,6 @@ gem 'prometheus-client'
 
 gem 'request_store'
 
-# Adds middleware to gather Puma stats and log to stdout
-gem 'puma-stats-logger'
-
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
