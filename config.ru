@@ -56,7 +56,7 @@ module PumaThreadLogger
            "Total threads: #{thread_count} "\
            "Backlog of actions: #{backlog} "\
            "Waiting threads: #{waiting} "\
-           "Active threads: #{thread_count - waiting}"\
+           "Active threads: #{thread_count - waiting} "\
            "Live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
           Rails.logger.info(msg)
         end
@@ -66,9 +66,11 @@ module PumaThreadLogger
   end
 end
 
-module Puma
-  class ThreadPool
-    prepend PumaThreadLogger
+if ENV["THREAD_LOGGING"] == "enabled"
+  module Puma
+    class ThreadPool
+      prepend PumaThreadLogger
+    end
   end
 end
 
