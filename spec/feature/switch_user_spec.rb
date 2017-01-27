@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Switch User", focus: true do
+RSpec.feature "Switch User" do
   before do
     # Switch user only works in demo deploy env
     ENV["DEPLOY_ENV"] = "dev"
