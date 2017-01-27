@@ -3,7 +3,7 @@ class EstablishClaimsController < TasksController
   before_action :verify_not_complete, only: [:perform]
 
   def perform
-    task.appeal.update_attributes(special_issues_params)
+    task.appeal.update!(special_issues_params)
     Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
     render json: {}
   end
