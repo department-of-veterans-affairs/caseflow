@@ -1,6 +1,5 @@
 class ReviewController < ApplicationController
   def index
-    render layout: "full_screen"
   end
 
   def logo_name
