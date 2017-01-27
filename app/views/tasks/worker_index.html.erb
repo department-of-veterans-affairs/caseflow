@@ -16,6 +16,10 @@
     <% end %>
   </div>
 
+  <% if test_user? %>
+    <%= link_to "Reset Claims Establishment Tasks", test_setup_claims_establishment_path, method: :post %>
+  <% end %>
+
   <div class="usa-width-one-whole">
     <h2>Work History</h2>
   </div>

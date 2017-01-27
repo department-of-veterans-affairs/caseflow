@@ -1,5 +1,5 @@
 class Test::SetupController < ApplicationController
-  before_action :require_uat_test_user, only: [:setup_certification]
+  before_action :require_uat_test_user, only: [:certification, :claims_establishment]
   before_action :require_demo, only: [:set_user]
 
   # Used for resetting data in UAT for certification
@@ -11,6 +11,19 @@ class Test::SetupController < ApplicationController
     Certification.delete_all(vacols_id: test_appeal_id)
 
     redirect_to new_certification_path(vacols_id: test_appeal_id)
+  end
+
+  # Used for resetting data in UAT for claims establishment
+  def claims_establishment
+    # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
+    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
+
+    EstablishClaim.delete_all
+    TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id)
+    TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
+
+    CreateEstablishClaimTasksJob.perform_now unless ApplicationController.dependencies_faked?
+    redirect_to establish_claims_path
   end
 
   # Set current user in DEMO
@@ -40,10 +53,18 @@ class Test::SetupController < ApplicationController
   private
 
   def require_uat_test_user
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:uat) && current_user.css_id == ENV["TEST_USER_ID"]
+    redirect_to "/unauthorized" unless test_user?
   end
 
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def full_grant_id
+    "2500867"
+  end
+
+  def partial_grant_id
+    "2734975"
   end
 end

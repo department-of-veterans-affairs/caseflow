@@ -254,6 +254,11 @@ describe Form8 do
     end
   end
 
+  context "#document_type_id" do
+    subject { Form8.new.document_type_id }
+    it { is_expected.to eq("178") }
+  end
+
   context ".from_appeal" do
     before do
       Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
