@@ -83,7 +83,7 @@ export default class PdfViewer extends React.Component {
       this.setState({
         currentPage: 1,
         numPages: pdfDocument.pdfInfo.numPages,
-        pdfDocument: pdfDocument
+        pdfDocument
       });
 
       // Create a page in the DOM for every page in the PDF
@@ -204,6 +204,7 @@ export default class PdfViewer extends React.Component {
 
   render() {
     let comments = [];
+
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
@@ -234,12 +235,18 @@ export default class PdfViewer extends React.Component {
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div id="viewer" className="cf-crosshair-cursor cf-pdf-page pdfViewer singlePageView"></div>
+              <div
+                id="viewer"
+                className="cf-crosshair-cursor cf-pdf-page pdfViewer singlePageView">
+              </div>
             </div>
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.previousPdf}>
                     <i className="fa fa-chevron-left" aria-hidden="true"></i> Previous
                   </Button>
                 </div>
@@ -249,8 +256,11 @@ export default class PdfViewer extends React.Component {
                   <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
-                    Next <i className="cf-pdf-button fa fa-chevron-right" aria-hidden="true"></i>
+                  <Button
+                    name="next"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.nextPdf}>
+                    Next <i className="fa fa-chevron-right" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
