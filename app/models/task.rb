@@ -1,4 +1,6 @@
 class Task < ActiveRecord::Base
+  include AASM
+
   belongs_to :user
   belongs_to :appeal
 
@@ -24,6 +26,26 @@ class Task < ActiveRecord::Base
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
+
+  aasm do
+    state :unprepared, :unassigned, :assigned, :started, :completed
+
+    event :prepare do
+      transitions :from => :unprepared, :to => :unassigned
+    end
+
+    event :assign do
+      transitions :from => :unassigned, :to => :assigned
+    end
+
+    event :start do
+      transitions :from => :assigned, :to => :started
+    end
+
+    event :complete do
+      transitions :from => :started, :to => :completed
+    end
+  end
 
   class << self
     def unassigned

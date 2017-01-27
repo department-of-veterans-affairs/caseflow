@@ -57,6 +57,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (4.11.1)
     actionmailer (4.2.7.1)
       actionpack (= 4.2.7.1)
       actionview (= 4.2.7.1)
@@ -447,6 +448,7 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
+  aasm
   activerecord-jdbcsqlite3-adapter
   activerecord-oracle_enhanced-adapter
   bgs!

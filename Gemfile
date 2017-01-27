@@ -73,6 +73,9 @@ gem 'prometheus-client'
 
 gem 'request_store'
 
+# State machine
+gem 'aasm'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
