@@ -1,5 +1,7 @@
 class ReviewController < ApplicationController
   def index
+    vbms_id = params[:vbms_id]
+    @appeal = Appeal.find_or_create_by_vbms_id(vbms_id)
   end
 
   def logo_name
