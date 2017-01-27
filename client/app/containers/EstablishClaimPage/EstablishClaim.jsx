@@ -97,10 +97,9 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
-    event.preventDefault();
     handleAlertClear();
 
     this.formValidating();
@@ -219,26 +218,6 @@ export default class EstablishClaim extends BaseForm {
   }
 
   /*
-   * This function acts as a router on the end product form. If the user
-   * is on the review page, it goes to the review page validation function.
-   * That checks to make sure only valid special issues are checked and either
-   * displays an error modal or moves the user on to the next page. If the user
-   * is on the associate page, they move onto the form page. If the user is on
-   * the form page, their form is submitted, and they move to the success page.
-   */
-  handleCreateEndProduct = (event) => {
-    if (this.isReviewPage()) {
-      this.handleReviewPageSubmit();
-    } else if (this.isAssociatePage()) {
-      this.handlePageChange(FORM_PAGE);
-    } else if (this.isFormPage()) {
-      this.handleSubmit(event);
-    } else {
-      throw new RangeError("Invalid page value");
-    }
-  }
-
-  /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
    * are all potentially valid. This removes any modifiers that have already been
@@ -277,8 +256,9 @@ export default class EstablishClaim extends BaseForm {
     this.setState(stateObject);
   }
 
-  handleReviewPageSubmit() {
+  handleReviewPageSubmit = () => {
     this.setStationState();
+
     if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
@@ -288,6 +268,10 @@ export default class EstablishClaim extends BaseForm {
     } else {
       this.handlePageChange(FORM_PAGE);
     }
+  }
+
+  handleAssociatePageSubmit = () => {
+    this.handlePageChange(FORM_PAGE);
   }
 
   /*
@@ -375,7 +359,7 @@ export default class EstablishClaim extends BaseForm {
             handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
-            handlePageChange={this.handleCreateEndProduct}
+            handleSubmit={this.handleReviewPageSubmit}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}
@@ -390,7 +374,7 @@ export default class EstablishClaim extends BaseForm {
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
             handleCancelTask={this.handleCancelTask}
-            handlePageChange={this.handleCreateEndProduct}
+            handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
@@ -399,7 +383,7 @@ export default class EstablishClaim extends BaseForm {
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
-            handleCreateEndProduct={this.handleCreateEndProduct}
+            handleSubmit={this.handleSubmit}
             handleFieldChange={this.handleFieldChange}
             loading={loading}
             validModifiers={this.validModifiers()}
