@@ -36,7 +36,7 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
-  def self.upload_form8(appeal, form8)
+  def self.upload_and_clean_document(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
   end
@@ -91,6 +91,10 @@ class Fakes::AppealRepository
 
   def self.amc_full_grants(decided_after:)
     [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
+  end
+
+  def self.uncertify(_appeal)
+    # noop
   end
 
   # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?

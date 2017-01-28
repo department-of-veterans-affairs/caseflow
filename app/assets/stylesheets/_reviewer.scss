@@ -1,12 +1,12 @@
 @import 'core/variables';
-@import "font-awesome-sprockets";
-@import "font-awesome";
+@import 'font-awesome-sprockets';
+@import 'font-awesome';
 
 $caseflow-background: #f9f9f9;
 
 .cf-nav-full-screen {
   padding: 10px 30px;
-  
+
   .usa-grid-full {
     max-width: none;
   }
@@ -98,18 +98,27 @@ $caseflow-background: #f9f9f9;
 .cf-pdf-header {
   background: $color-gray-dark;
   width: 100%;
+<<<<<<< HEAD
   height: 50px;
+=======
+  height: 30px;
+>>>>>>> master
   position: absolute;
   z-index: 10;
   opacity: .9;
   color: $color-white;
+<<<<<<< HEAD
   padding: 15px 20px;
+=======
+  padding: 3px 20px;
+>>>>>>> master
   font-size: 15px;
 }
 
 .cf-pdf-footer {
   background: $color-gray-dark;
   width: 100%;
+<<<<<<< HEAD
   height: 50px;
   position: absolute;
   z-index: 10;
@@ -123,6 +132,20 @@ $caseflow-background: #f9f9f9;
 
 .cf-comment-cursor {
   cursor: url(asset-path('comment-icon.png')),copy;
+=======
+  height: 30px;
+  position: absolute;
+  z-index: 10;
+  opacity: .9;
+  bottom: 0;
+  color: $color-white;
+  padding: 3px 20px;
+  font-size: 15px;
+}
+
+.cf-crosshair-cursor {
+  cursor: crosshair;
+>>>>>>> master
 }
 
 .cf-pdf-buttons {
@@ -149,10 +172,12 @@ $caseflow-background: #f9f9f9;
   padding: 0;
   background-color: transparent;
   font-size: inherit;
+
   &:hover {
     text-decoration: none;
     background-color: transparent;
   }
+
   &:focus {
     box-shadow: none;
   }

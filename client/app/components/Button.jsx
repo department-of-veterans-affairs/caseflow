@@ -2,6 +2,14 @@ import React, { PropTypes } from 'react';
 import { loadingSymbolHtml } from './RenderFunctions.jsx';
 
 export default class Button extends React.Component {
+  componentDidMount() {
+    if (this.props.type === 'submit') {
+      console.warn(`Warning! You are using a button with type submit.
+        Was this intended? Make sure to use event.preventDefault() if
+        you're using it with a form and an onClick handler`);
+    }
+  }
+
   render() {
     let {
       classNames,
@@ -47,6 +55,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node,
   disabled: PropTypes.bool,

@@ -27,7 +27,7 @@ class CertificationsController < ApplicationController
   end
 
   def show
-    render "confirm" if params[:confirm]
+    render "confirm", layout: "application" if params[:confirm]
   end
 
   def pdf
@@ -46,21 +46,10 @@ class CertificationsController < ApplicationController
     render layout: "application"
   end
 
-  # ONLY FOR TEST USER
-  def uncertify
-    if current_user.css_id == ENV["TEST_USER_ID"]
-      @certification = Certification.find_by(vacols_id: vacols_id)
-      @certification.uncertify!(current_user.css_id)
-      Certification.delete_all(vacols_id: vacols_id)
-    end
-
-    redirect_to new_certification_path(vacols_id: ENV["TEST_APPEAL_ID"])
-  end
-
   private
 
   def certification_cancellation
-    @certification_cancellation ||= CertificationCancellation.new(certification: certification)
+    @certification_cancellation ||= CertificationCancellation.new(certification_id: certification.id)
   end
   helper_method :certification_cancellation
 

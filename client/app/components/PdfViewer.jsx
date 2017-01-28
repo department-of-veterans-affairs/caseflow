@@ -254,7 +254,6 @@ export default class PdfViewer extends BaseForm {
     PDFJS.getDocument(file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-
       this.setState({
         currentPage: 1,
         numPages: pdfDocument.pdfInfo.numPages,
@@ -332,6 +331,7 @@ export default class PdfViewer extends BaseForm {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
+    PDFJS.workerSrc = '../assets/pdf.worker.js';
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
@@ -358,7 +358,6 @@ export default class PdfViewer extends BaseForm {
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
-
     UI.enableEdit();
   }
 
@@ -431,7 +430,6 @@ export default class PdfViewer extends BaseForm {
                   {this.state.currentPage} / {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  
                   <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
                     <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
                   </Button>

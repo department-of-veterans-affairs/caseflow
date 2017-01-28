@@ -7,7 +7,8 @@ RSpec.feature "Confirm Certification" do
     Form8.pdf_service = FakePdfService
 
     Fakes::AppealRepository.records = {
-      "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
+      "5555C" => Fakes::AppealRepository.appeal_ready_to_certify,
+      ENV["TEST_APPEAL_ID"] => Fakes::AppealRepository.appeal_ready_to_certify
     }
 
     certification = Certification.create!(vacols_id: "5555C")
@@ -43,46 +44,9 @@ RSpec.feature "Confirm Certification" do
     expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
     expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
 
-    expect(page).to have_content("Congratulations! The case has been certified.")
+    expect(page).to have_content("Congratulations!")
 
     certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
-  end
-
-  scenario "Non Test User unable to uncertify an appeal" do
-    visit "certifications/5555C"
-    click_on("Upload and certify")
-
-    certification = Certification.find_or_create_by_vacols_id("5555C")
-    expect(certification.reload.completed_at).to eq(Time.zone.now)
-    expect(page).not_to have_content("Uncertify Appeal")
-  end
-
-  context "Test User" do
-    before do
-      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-      User.clear_stub!
-      User.tester!
-      Fakes::AppealRepository.records = {
-        ENV["TEST_APPEAL_ID"] => Fakes::AppealRepository.appeal_ready_to_certify
-      }
-
-      certification = Certification.create!(vacols_id: ENV["TEST_APPEAL_ID"])
-      certification.form8.update_from_appeal(certification.appeal)
-      certification.form8.save_pdf!
-    end
-
-    after { Timecop.return }
-
-    scenario "Test User able to uncertify an appeal" do
-      visit "certifications/123C"
-      click_on("Upload and certify")
-
-      certification = Certification.find_or_create_by_vacols_id("123C")
-      expect(certification.reload.completed_at).to eq(Time.zone.now)
-      expect(page).to have_content("Uncertify Appeal")
-      click_link("Uncertify Appeal")
-      expect(certification.appeal.certified?).to be_falsey
-    end
   end
 end

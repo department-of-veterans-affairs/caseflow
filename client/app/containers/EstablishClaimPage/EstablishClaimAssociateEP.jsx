@@ -22,12 +22,12 @@ export default class AssociatePage extends React.Component {
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button
-        id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
-        name="Assign to Claim"
-        classNames={["usa-button-outline"]}
-        onClick={this.handleAssignEndProduct(endProduct)}
-        loading={this.state.loading === endProduct.benefit_claim_id}
-      />
+      id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
+      name="Assign to Claim"
+      classNames={["usa-button-outline"]}
+      onClick={this.handleAssignEndProduct(endProduct)}
+      loading={this.state.loading === endProduct.benefit_claim_id}
+    />
   ];
 
   handleAssignEndProduct = (endProduct) => (event) => {
@@ -54,10 +54,10 @@ export default class AssociatePage extends React.Component {
           loading: null
         });
         handleAlert(
-            'error',
-            'Error',
-            'There was an error while assigning the EP. Please try again later'
-          );
+          'error',
+          'Error',
+          'There was an error while assigning the EP. Please try again later'
+        );
       });
   }
 
@@ -68,36 +68,48 @@ export default class AssociatePage extends React.Component {
     return time2 - time1;
   }
 
-  render = function() {
+  render() {
+    let {
+      handleCancelTask,
+      handleSubmit,
+      hasAvailableModifers
+    } = this.props;
+
     let endProducts = this.props.endProducts.sort(this.sortEndProduct);
-    let alertTitle = '';
-    let alertBody = '';
+
+    let alert;
 
     if (this.props.hasAvailableModifers) {
-      alertTitle = 'Existing EP';
-      alertBody = 'We found one or more existing EP(s) ' +
-              'created within 30 days of this decision date. ' +
-              'Please review the existing EP(s) in the table below. ' +
-              'Select one to assign to this claim or create a new EP.';
+      alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
+        <p className="usa-alert-text">We found one or more existing EP(s)
+          created within 30 days of this decision date.
+          Please review the existing EP(s) in the table below.
+          Select one to assign to this claim or create a new EP.
+        </p>
+      </div>;
     } else {
-      alertTitle = 'Existing EP, all EP & Claim Label Modifiers in use ';
-      alertBody = 'We found one or more existing EP(s) ' +
-              'created within 30 days of this decision date. You may assign an' +
-              'existing EP from the table below to this claim. ' +
-              `A new ${this.props.grantType} EP cannot be created for this Veteran ` +
-              'ID as all EP modifiers are currently in use.';
+      alert = <div><h3 className="usa-alert-heading">
+          Existing EP, all EP & Claim Label Modifiers in use
+        </h3>
+        <p className="usa-alert-text">We found one or more existing EP(s)
+          created within 30 days of this decision date. You may assign a
+          existing EP from the table below to this claim.
+        </p>
+        <p className="usa-alert-text">
+          A new {this.props.decisionType} EP cannot be created for this Veteran
+          ID as all EP modifiers are currently in use.
+        </p>
+      </div>;
     }
 
-    return <div className="cf-app-segment cf-app-segment--alt">
+    return <div>
+      <div className="cf-app-segment cf-app-segment--alt">
         <h1>Create End Product</h1>
-
         <div className="usa-alert usa-alert-warning">
           <div className="usa-alert-body">
-            <h3 className="usa-alert-heading">{alertTitle}</h3>
-            <p className="usa-alert-text">{alertBody}</p>
+            {alert}
           </div>
         </div>
-
         <div className="usa-grid-full">
           <Table
             headers={TABLE_HEADERS}
@@ -105,8 +117,23 @@ export default class AssociatePage extends React.Component {
             values={endProducts}
           />
         </div>
-      </div>;
-  };
+      </div>
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-right">
+          <Button
+            name="Cancel"
+            onClick={handleCancelTask}
+            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+          />
+          <Button
+            name="Create New EP"
+            onClick={handleSubmit}
+            disabled={!hasAvailableModifers}
+          />
+        </div>
+      </div>
+    </div>;
+  }
 }
 
 AssociatePage.propTypes = {
@@ -114,6 +141,7 @@ AssociatePage.propTypes = {
   endProducts: PropTypes.arrayOf(PropTypes.object).isRequired,
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   task: PropTypes.object.isRequired
 };

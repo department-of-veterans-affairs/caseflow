@@ -7,7 +7,18 @@ export default class DecisionReviewer extends React.Component {
     super(props);
     this.state = { pdf: 0 };
     console.log('constructed');
-    PDFJS.workerSrc = '../assets/dist/pdf.worker.js';
+  }
+
+  previousPdf = () => {
+    this.setState({
+      pdf: Math.max(this.state.pdf - 1, 0)
+    });
+  }
+
+  nextPdf = () => {
+    this.setState({
+      pdf: Math.min(this.state.pdf + 1, this.props.pdfLinks.length - 1)
+    });
   }
 
   previousPdf = () => {
@@ -25,10 +36,10 @@ export default class DecisionReviewer extends React.Component {
   componentDidMount() {
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {
-        previousPdf();
+        this.previousPdf();
       }
       if (event.key === 'ArrowRight') {
-        nextPdf();
+        this.nextPdf();
       }
     });
   }
