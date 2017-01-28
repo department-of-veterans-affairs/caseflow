@@ -13,6 +13,7 @@ export default class Button extends React.Component {
   render() {
     let {
       classNames,
+      children,
       id,
       name,
       disabled,
@@ -20,6 +21,10 @@ export default class Button extends React.Component {
       onClick,
       type
     } = this.props;
+
+    if (!children) {
+      children = name;
+    }
 
     if (!classNames) {
       classNames = ['cf-submit'];
@@ -38,7 +43,7 @@ export default class Button extends React.Component {
         type={type}
         disabled={disabled}
         onClick={onClick}>
-          {name}
+          {children}
       </button>
     }
     </span>;
@@ -50,6 +55,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
   id: PropTypes.string,
