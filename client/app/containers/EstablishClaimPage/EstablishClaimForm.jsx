@@ -16,9 +16,9 @@ export default class EstablishClaimForm extends React.Component {
     let {
       claimLabelValue,
       claimForm,
-      handleCreateEndProduct,
       handleCancelTask,
       handleFieldChange,
+      handleSubmit,
       loading,
       validModifiers
     } = this.props;
@@ -91,7 +91,7 @@ export default class EstablishClaimForm extends React.Component {
           <Button
             name="Create End Product"
             loading={loading}
-            onClick={handleCreateEndProduct}
+            onClick={handleSubmit}
           />
         </div>
       </div>
@@ -103,5 +103,6 @@ EstablishClaimForm.propTypes = {
   claimForm: PropTypes.object.isRequired,
   claimLabelValue: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
