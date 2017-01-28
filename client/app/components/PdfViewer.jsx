@@ -114,7 +114,7 @@ export default class PdfViewer extends React.Component {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.workerSrc = '../assets/dist/pdf.worker.js';
+    PDFJS.workerSrc = '../assets/pdf.worker.js';
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
