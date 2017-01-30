@@ -185,8 +185,8 @@ export default class PdfViewer extends BaseForm {
         page: pageNumber,
         "type": "point",
         uuid: generateUUID(),
-        "x": event.offsetX / this.state.scale,
-        "y": event.offsetY / this.state.scale
+        "x": (event.offsetX + event.srcElement.offsetLeft) / this.state.scale,
+        "y": (event.offsetY + event.srcElement.offsetTop) / this.state.scale
       };
       let commentBox = document.getElementById('addComment');
       let commentEvent = this.commentKeyPress(
