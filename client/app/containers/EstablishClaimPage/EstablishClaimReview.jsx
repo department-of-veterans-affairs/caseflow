@@ -90,7 +90,7 @@ export default class EstablishClaimReview extends React.Component {
       handleDecisionTypeChange,
       handleFieldChange,
       handleModalClose,
-      handlePageChange,
+      handleSubmit,
       pdfLink,
       pdfjsLink,
       specialIssueModalDisplay,
@@ -183,7 +183,7 @@ export default class EstablishClaimReview extends React.Component {
           />
           <Button
             name="Create End Product"
-            onClick={handlePageChange}
+            onClick={handleSubmit}
           />
         </div>
       </div>
@@ -220,6 +220,7 @@ EstablishClaimReview.propTypes = {
   handleDecisionTypeChange: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleModalClose: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssueModalDisplay: PropTypes.bool.isRequired,
