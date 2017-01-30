@@ -24,6 +24,7 @@ use Prometheus::Client::Rack::Collector
 use Prometheus::Client::Rack::Exporter
 
 
+# rubocop:disable all
 # TODO (alex): this should be a temporary addition to try to solve
 # a deployment bug. We should refactor or remove this after it serves its purpose.
 module PumaThreadLogger
@@ -47,7 +48,7 @@ module PumaThreadLogger
         # For some reason, even a single Puma server (not clustered) has two booted ThreadPools.
         # One of them is empty, and the other is actually doing work.
         # The check above ignores the empty one.
-        if (thread_count > 0)
+        if thread_count > 0
           # It might be cool if we knew the Puma worker index for this worker,
           # but that didn't look easy to me.
           # I'm not 100% confident of the right way to measure this,
@@ -73,5 +74,6 @@ if ENV["THREAD_LOGGING"] == "enabled"
     end
   end
 end
+# rubocop:enable all
 
 run Rails.application
