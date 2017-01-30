@@ -71,7 +71,7 @@ $caseflow-background: #f9f9f9;
   display: inline !important;
 }
 
-.cf-comment-wrapper {
+.cf-sidebar-wrapper {
   float: right;
   width: 380px;
   top: 0;
@@ -80,11 +80,27 @@ $caseflow-background: #f9f9f9;
   position: absolute;
   text-align: left;
   background: $caseflow-background;
+}
+
+.cf-document-info-wrapper {
   padding: 0 30px;
+}
+
+.cf-comment-wrapper {
+  padding: 0 30px;
+  position: absolute;
+  top: 250px;
+  bottom: 0;
+  width: 380px;
+  overflow-y: scroll;
 }
 
 .cf-comment-selected {
   background: $color-primary-alt-light;
+}
+
+.cf-pdf-comment-list {
+  overflow-y: scroll;
 }
 
 .cf-pdf-comment-list-item {
@@ -122,7 +138,7 @@ $caseflow-background: #f9f9f9;
 }
 
 .cf-comment-cursor {
-  cursor: url(asset-path('comment-icon.png')),copy;
+  cursor: copy;
 }
 
 .cf-pdf-buttons {
@@ -164,7 +180,7 @@ $caseflow-background: #f9f9f9;
   float: right;
   position: relative;
   margin-right: -30px;
-  
+  overflow: visible;
 }
 
 .cf-pdf-edit-comment-icon {

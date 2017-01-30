@@ -393,7 +393,7 @@ export default class PdfViewer extends BaseForm {
 
       if (this.state.editingComment === index) {
         return (
-          <div className="cf-pdf-comment-list-item" onKeyUp={this.saveEdit(comment)}>
+          <div key="commentEditor" className="cf-pdf-comment-list-item" onKeyUp={this.saveEdit(comment)}>
             <TextareaField
               label="Edit Comment"
               name="editComment"
@@ -486,27 +486,32 @@ export default class PdfViewer extends BaseForm {
               </div>
             </div>
           </div>
-          <div className="cf-comment-wrapper">
-            <div className="cf-heading-alt">Document</div>
-            <p className="cf-pdf-meta-title"><b>Filename:</b></p>
-            <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
-            <p className="cf-pdf-meta-title"><b>Receipt Date:</b> 01/02/2017</p>
-            <div className="cf-heading-alt">
-              Notes
-              <span className="cf-right-side">
-                <a onClick={this.addNote}>+ Add a Note</a>
-              </span>
-            </div>
-            <div className="cf-pdf-comment-list">
-              <div className="cf-pdf-comment-list-item" hidden={!this.state.isAddingComment}>
-                <TextareaField
-                  label="Add Comment"
-                  name="addComment"
-                  onChange={this.handleFieldChange('commentForm', 'addComment')}
-                  {...this.state.commentForm.addComment}
-                />
+          <div className="cf-sidebar-wrapper">
+            <div className="cf-document-info-wrapper">
+              <div className="cf-heading-alt">Document</div>
+              <p className="cf-pdf-meta-title"><b>Filename:</b></p>
+              <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
+              <p className="cf-pdf-meta-title"><b>Receipt Date:</b> 01/02/2017</p>
+              <div className="cf-heading-alt">
+                Notes
+                <span className="cf-right-side">
+                  <a onClick={this.addNote}>+ Add a Note</a>
+                </span>
               </div>
-              {comments}
+            </div>
+            
+            <div className="cf-comment-wrapper">
+              <div className="cf-pdf-comment-list">
+                <div className="cf-pdf-comment-list-item" hidden={!this.state.isAddingComment}>
+                  <TextareaField
+                    label="Add Comment"
+                    name="addComment"
+                    onChange={this.handleFieldChange('commentForm', 'addComment')}
+                    {...this.state.commentForm.addComment}
+                  />
+                </div>
+                {comments}
+              </div>
             </div>
           </div>
         </div>
