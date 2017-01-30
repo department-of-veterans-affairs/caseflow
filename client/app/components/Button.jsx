@@ -57,7 +57,6 @@ Button.defaultProps = {
 Button.propTypes = {
   children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
-  children: PropTypes.node,
   disabled: PropTypes.bool,
   id: PropTypes.string,
   linkStyle: PropTypes.bool,

@@ -1,29 +1,45 @@
+/* eslint-disable max-lines */
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
-import appendChild from 'pdf-annotate.js';
-import DateSelector from '../components/DateSelector';
-import DropDown from '../components/DropDown';
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 
+/* eslint-disable no-bitwise */
+/* eslint-disable no-mixed-operators */
+let generateUUID = function() {
+  let date = new Date().getTime();
+  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
+    let random = (date + Math.random() * 16) % 16 | 0;
+
+    date = Math.floor(date / 16);
+
+    return (character === 'x' ? random : random & 0x3 | 0x8).toString(16);
+  });
+
+  return uuid;
+};
+
+/* eslint-enable no-bitwise */
+/* eslint-enable no-mixed-operators */
+
 export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
     this.state = {
+      commentBoxEventListener: null,
       commentForm: {
         addComment: new FormField(''),
         editComment: new FormField('')
       },
-      commentBoxEventListener: null,
       commentOverIndex: -1,
+      comments: [],
+      currentPage: 1,
       editingComment: -1,
       isAddingComment: false,
       isPlacingNote: false,
-      comments: [],
-      currentPage: 1,
       numPages: 0,
       scale: 1
     };
@@ -41,9 +57,9 @@ export default class PdfViewer extends BaseForm {
             then((comment) => {
               if (comment.length) {
                 this.comments.push({
-                  content: comment[0].content,
                   annotationUuid: annotationId.uuid,
-                  commentUuid: comment[0].uuid
+                  commentUuid: comment[0].uuid,
+                  content: comment[0].content
                 });
                 this.setState({ comments: this.comments });
               }
@@ -53,40 +69,37 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  showEditIcon = (index) => {
-    return () => {
+  showEditIcon = (index) => () => {
+    this.setState({
+      commentOverIndex: index
+    });
+  }
+
+  hideEditIcon = (index) => () => {
+    if (this.state.commentOverIndex === index) {
       this.setState({
-        commentOverIndex: index
+        commentOverIndex: -1
       });
     }
   }
 
-  hideEditIcon = (index) => {
-    return () => {
-      if (this.state.commentOverIndex === index) {
-        this.setState({
-          commentOverIndex: -1
-        });
-      }
-    }
-  }
+  editComment = (index) => () => {
+    let commentForm = { ...this.state.commentForm };
 
-  editComment = (index) => {
-    return () => {
-      let commentForm = {...this.state.commentForm};
-      commentForm.editComment.value = this.state.comments[index].content;
-      this.setState({
-        editingComment: index,
-        commentForm: commentForm
-      });
-    }
+    commentForm.editComment.value = this.state.comments[index].content;
+    this.setState({
+      commentForm,
+      editingComment: index
+    });
   }
 
   saveEdit = (comment) => {
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+
     return (event) => {
       if (event.key === 'Enter') {
         let commentToAdd = this.state.commentForm.editComment.value;
+
         storeAdapter.deleteComment(
           this.props.file,
           comment.commentUuid
@@ -97,11 +110,15 @@ export default class PdfViewer extends BaseForm {
             commentToAdd
           ).then(() => {
             this.generateComments(this.state.pdfDocument);
-          }).catch(() => {
-            console.log('comment could not be added');
+          }).
+          catch(() => {
+            // TODO: Add error case if comment can't be added
           });
+        }).
+        catch(() => {
+          // TODO: Add error case if comment can't be added
         });
-        
+
         this.setState({
           editingComment: -1
         });
@@ -111,7 +128,7 @@ export default class PdfViewer extends BaseForm {
           editingComment: -1
         });
       }
-    }
+    };
   }
 
   addEventListners = (pdfDocument) => {
@@ -133,99 +150,88 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  generateUUID() {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (d + Math.random()*16)%16 | 0;
-      d = Math.floor(d/16);
-      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-  };
-
   addNote = () => {
-    const { UI } = PDFJSAnnotate;
-    
     this.setState({
       isPlacingNote: true
     });
   }
 
-  commentKeyPress = (saveNote) => {
-    return (event) => {
-      let commentForm = {...this.state.commentForm};
-      if(event.type === 'blur' || event.key === 'Enter') {
-        if (this.state.commentForm.addComment.value.length > 0) {
-          saveNote(this.state.commentForm.addComment.value);  
-        }
-        commentForm.addComment.value = '';
-        this.setState({
-          isAddingComment: false,
-          commentForm: commentForm
-        });
+  commentKeyPress = (saveNote) => (event) => {
+    let commentForm = { ...this.state.commentForm };
+
+    if (event.type === 'blur' || event.key === 'Enter') {
+      if (this.state.commentForm.addComment.value.length > 0) {
+        saveNote(this.state.commentForm.addComment.value);
       }
-      if (event.key === 'Escape') {
-        commentForm.addComment.value = '';
-        this.setState({
-          isAddingComment: false,
-          commentForm: commentForm
-        });
-      }
+      commentForm.addComment.value = '';
+      this.setState({
+        commentForm,
+        isAddingComment: false
+      });
+    }
+    if (event.key === 'Escape') {
+      commentForm.addComment.value = '';
+      this.setState({
+        commentForm,
+        isAddingComment: false
+      });
     }
   }
 
-  placeNote = (viewport, pageNumber) => {
-    return (event) => {
-      if (this.state.isPlacingNote) {
-        
-        let annotation = {
-          "type": "point",
-          "x": event.offsetX/this.state.scale,
-          "y": event.offsetY/this.state.scale,
-          class: "Annotation",
-          uuid: this.generateUUID(),
-          page: pageNumber
-        }
-        let commentBox = document.getElementById('addComment');
-        let commentEvent = this.commentKeyPress(this.saveNote(annotation, viewport, pageNumber));
-        if (this.state.commentBoxEventListener) {
-          commentBox.removeEventListener("keyup", this.state.commentBoxEventListener);
-          commentBox.removeEventListener("blur", this.state.commentBoxEventListener);
-        }
-        
-        commentBox.addEventListener('keyup', commentEvent);
-        commentBox.addEventListener('blur', commentEvent);
-        this.setState({
-          isPlacingNote: false,
-          isAddingComment: true,
-          commentBoxEventListener: commentEvent
-        });
-        return false;
+  placeNote = (viewport, pageNumber) => (event) => {
+    if (this.state.isPlacingNote) {
+      let annotation = {
+        class: "Annotation",
+        page: pageNumber,
+        "type": "point",
+        uuid: generateUUID(),
+        "x": event.offsetX / this.state.scale,
+        "y": event.offsetY / this.state.scale
+      };
+      let commentBox = document.getElementById('addComment');
+      let commentEvent = this.commentKeyPress(
+        this.saveNote(annotation, viewport, pageNumber));
+
+      if (this.state.commentBoxEventListener) {
+        commentBox.removeEventListener("keyup", this.state.commentBoxEventListener);
+        commentBox.removeEventListener("blur", this.state.commentBoxEventListener);
       }
+
+      commentBox.addEventListener('keyup', commentEvent);
+      commentBox.addEventListener('blur', commentEvent);
+      this.setState({
+        commentBoxEventListener: commentEvent,
+        isAddingComment: true,
+        isPlacingNote: false
+      });
     }
   }
 
   saveNote = (annotation, viewport, pageNumber) => {
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+
+
     return (content) => {
       storeAdapter.addAnnotation(
         this.props.file,
         pageNumber,
         annotation
-      ).then((annotation) => {
+      ).then((returnedAnnotation) => {
         storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
           storeAdapter.addComment(
             this.props.file,
-            annotation.uuid,
+            returnedAnnotation.uuid,
             content
           ).then(() => {
             this.generateComments(this.state.pdfDocument);
           });
-          let svg = document.getElementById('pageContainer'+(pageNumber)).getElementsByClassName("annotationLayer")[0];
+          let svg = document.getElementById(`pageContainer${pageNumber}`).
+            getElementsByClassName("annotationLayer")[0];
+
           PDFJSAnnotate.render(svg, viewport, annotations);
         });
       });
-    }
+    };
   }
 
   renderPage = (index) => {
@@ -240,44 +246,48 @@ export default class PdfViewer extends BaseForm {
 
     this.isRendered[index] = true;
     UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
-      let pageContainer = document.getElementById('pageContainer'+(index+1));
-      console.log(pageContainer);
-      pageContainer.addEventListener('click', this.placeNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
-    }).catch(() => {
+      let pageContainer = document.getElementById(`pageContainer${index + 1}`);
+
+      pageContainer.addEventListener('click',
+        this.placeNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
+    }).
+    catch(() => {
       this.isRendered[index] = false;
     });
   }
 
-  draw = (file, scrollLocation = 0) => {
+  createPages = (pdfDocument) => {
     const { UI } = PDFJSAnnotate;
 
+    // Create a page in the DOM for every page in the PDF
+    let viewer = document.getElementById('viewer');
+
+    viewer.innerHTML = '';
+
+    for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
+      let page = UI.createPage(i + 1);
+
+      viewer.appendChild(page);
+    }
+  }
+
+  draw = (file, scrollLocation = 0) => {
     PDFJS.getDocument(file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
       this.setState({
         currentPage: 1,
         numPages: pdfDocument.pdfInfo.numPages,
-        pdfDocument: pdfDocument
+        pdfDocument
       });
 
-      // Create a page in the DOM for every page in the PDF
-      let viewer = document.getElementById('viewer');
-
-      viewer.innerHTML = '';
-
-      for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
-        let page = UI.createPage(i + 1);
-
-        viewer.appendChild(page);
-      }
+      this.createPages(pdfDocument);
       this.addEventListners(pdfDocument);
 
       // Automatically render the first page
       // This assumes that page has already been created and appended
       this.renderPage(0);
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
-      console.log("scrollLocation: " + scrollLocation);
-      console.log(this.state.scale);
       this.scrollEvent();
     });
   }
@@ -289,18 +299,19 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  zoom = (delta) => {
-    return () => {
-      let zoomFactor = (this.state.scale + delta) / this.state.scale;
-      this.setState({
-        scale: this.state.scale + delta
-      });
-      this.draw(this.props.file, document.getElementById('scrollWindow').scrollTop * zoomFactor);
-    }
+  zoom = (delta) => () => {
+    let zoomFactor = (this.state.scale + delta) / this.state.scale;
+
+    this.setState({
+      scale: this.state.scale + delta
+    });
+    this.draw(this.props.file,
+      document.getElementById('scrollWindow').scrollTop * zoomFactor);
   }
 
   scrollEvent = () => {
     let page = document.getElementsByClassName('page');
+    let scrollWindow = document.getElementById('scrollWindow');
 
     Array.prototype.forEach.call(page, (ele, index) => {
       let boundingRect = ele.getBoundingClientRect();
@@ -353,7 +364,6 @@ export default class PdfViewer extends BaseForm {
 
     this.draw(this.props.file);
 
-
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
 
@@ -368,6 +378,7 @@ export default class PdfViewer extends BaseForm {
   componentDidUpdate = () => {
     if (this.state.isAddingComment) {
       let commentBox = document.getElementById('addComment');
+
       commentBox.focus();
     }
   }
@@ -388,12 +399,16 @@ export default class PdfViewer extends BaseForm {
 
   render() {
     let comments = [];
+
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
       if (this.state.editingComment === index) {
         return (
-          <div key="commentEditor" className="cf-pdf-comment-list-item" onKeyUp={this.saveEdit(comment)}>
+          <div
+            key="commentEditor"
+            className="cf-pdf-comment-list-item"
+            onKeyUp={this.saveEdit(comment)}>
             <TextareaField
               label="Edit Comment"
               name="editComment"
@@ -402,6 +417,7 @@ export default class PdfViewer extends BaseForm {
             />
           </div>);
       }
+
       return <div
           onClick={this.scrollToAnnotation(comment.annotationUuid)}
           onMouseEnter={this.showEditIcon(index)}
@@ -409,9 +425,11 @@ export default class PdfViewer extends BaseForm {
           className={`cf-pdf-comment-list-item${selectedClass}`}
           key={`comment${index}`}
           id={`comment${index}`}>
-          {this.state.commentOverIndex === index && 
+          {this.state.commentOverIndex === index &&
             <div className="cf-pdf-edit-comment" onClick={this.editComment(index)}>
-              <i className="cf-pdf-edit-comment-icon fa fa-pencil" aria-hidden="true"></i>
+              <i
+                className="cf-pdf-edit-comment-icon fa fa-pencil"
+                aria-hidden="true"></i>
             </div>}
           {comment.content}
         </div>;
@@ -430,48 +448,103 @@ export default class PdfViewer extends BaseForm {
                   {this.state.currentPage} / {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.props.previousPdf}>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.previousPdf}>
                     <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
                   </Button>
-                  <Button name="next" classNames={["cf-pdf-button"]} onClick={this.props.nextPdf}>
+                  <Button
+                    name="next"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.nextPdf}>
                     Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div id="viewer" className={(this.state.isPlacingNote? "cf-comment-cursor " : "") + "cf-pdf-page pdfViewer singlePageView"}></div>
+              <div
+                id="viewer"
+                className={`${this.state.isPlacingNote ? "cf-comment-cursor " : ""}` +
+                `cf-pdf-page pdfViewer singlePageView`}>
+              </div>
             </div>
             <div className="cf-pdf-footer">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'cyan'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#23ABF6' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'orange'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#F6A623' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'white'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#FFFFFF' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'magenta'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#F772E7' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'green'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#3FCD65' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-bookmarks cf-pdf-button"]} onClick={this.zoom(-.3)}>
-                    <i style={{color:'yellow'}} className="fa fa-bookmark" aria-hidden="true"></i>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
+                    <i
+                      style={{ color: '#EFDF1A' }}
+                      className="fa fa-bookmark"
+                      aria-hidden="true"></i>
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(-.3)}>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.zoom(-0.3)}>
                     <i className="fa fa-minus" aria-hidden="true"></i>
                   </Button>
-                  <Button name="fit" classNames={["cf-pdf-button"]} onClick={this.zoom(1)}>
+                  <Button
+                    name="fit"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.zoom(1)}>
                     <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
                   </Button>
-                  <Button name="previous" classNames={["cf-pdf-button"]} onClick={this.zoom(.3)}>
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.zoom(0.3)}>
                     <i className="fa fa-plus" aria-hidden="true"></i>
                   </Button>
                 </div>
@@ -499,10 +572,12 @@ export default class PdfViewer extends BaseForm {
                 </span>
               </div>
             </div>
-            
+
             <div className="cf-comment-wrapper">
               <div className="cf-pdf-comment-list">
-                <div className="cf-pdf-comment-list-item" hidden={!this.state.isAddingComment}>
+                <div
+                  className="cf-pdf-comment-list-item"
+                  hidden={!this.state.isAddingComment}>
                   <TextareaField
                     label="Add Comment"
                     name="addComment"
@@ -523,3 +598,5 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   file: PropTypes.string.isRequired
 };
+
+/* eslint-enable max-lines */

@@ -89,18 +89,18 @@ $caseflow-background: #f9f9f9;
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 250px;
+  top: 240px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
 }
 
 .cf-comment-selected {
-  background: $color-primary-alt-light;
+  box-shadow: 0 0 10px $color-primary;
 }
 
 .cf-pdf-comment-list {
-  overflow-y: scroll;
+  padding-top: 10px;
 }
 
 .cf-pdf-comment-list-item {
