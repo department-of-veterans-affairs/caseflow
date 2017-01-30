@@ -342,5 +342,17 @@ RSpec.feature "Dispatch" do
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee")
     end
+
+    scenario "A special issue is chosen and saved in database" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.select "Remand", from: "decisionType"
+      page.find("#insurance").trigger("click")
+      click_on "Create End Product"
+      click_on "Create New EP"
+      click_on "Create End Product"
+      expect(page).to have_content("Congratulations!")
+      expect(@task.appeal.reload.insurance).to be_truthy
+    end
   end
 end
