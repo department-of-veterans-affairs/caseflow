@@ -94,7 +94,8 @@ export default class EstablishClaimReview extends React.Component {
       pdfLink,
       pdfjsLink,
       specialIssueModalDisplay,
-      specialIssues
+      specialIssues,
+      task
     } = this.props;
 
     let count = 0;
@@ -112,6 +113,18 @@ export default class EstablishClaimReview extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Review Decision</h2>
           Review the final decision from VBMS below to determine the next step.
+          {task.appeal.decisions.length > 1 && <div className="usa-alert usa-alert-warning">
+          <div className="usa-alert-body">
+            <div>
+              <h3 className="usa-alert-heading">Existing EP</h3>
+              <p className="usa-alert-text">We found one or more existing EP(s)
+                created within 30 days of this decision date.
+                Please review the existing EP(s) in the table below.
+                Select one to assign to this claim or create a new EP.
+              </p>
+            </div>
+          </div>
+        </div>}
         </div>
         {
 
@@ -125,7 +138,7 @@ export default class EstablishClaimReview extends React.Component {
         <a
           className="usa-sr-only"
           id="sr-download-link"
-          href={pdfLink}
+          href={`${pdfLink}&decision_number=0`}
           download
           target="_blank">
           The PDF viewer in your browser may not be accessible. Click to download
@@ -144,7 +157,7 @@ export default class EstablishClaimReview extends React.Component {
             below to go back and make edits or upload and certify the document."
           className="cf-doc-embed cf-app-segment"
           title="Form8 PDF"
-          src={pdfjsLink}>
+          src={`${pdfjsLink}&decision_number=0`}>
         </iframe>
         <div className="cf-app-segment cf-app-segment--alt">
         <DropDown
@@ -224,5 +237,6 @@ EstablishClaimReview.propTypes = {
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssueModalDisplay: PropTypes.bool.isRequired,
-  specialIssues: PropTypes.object.isRequired
+  specialIssues: PropTypes.object.isRequired,
+  task: PropTypes.object.isRequired
 };

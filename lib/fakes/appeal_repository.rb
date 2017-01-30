@@ -277,6 +277,10 @@ class Fakes::AppealRepository
     Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4")
   end
 
+  def self.decision_document2
+    Document.new(type: "BVA Decision", received_at: 8.days.ago, document_id: "5")
+  end
+
   def self.set_vbms_documents!
     @documents = [nod_document, soc_document, form9_document, decision_document]
   end
@@ -295,7 +299,7 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document] }
+        @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document, decision_document2] }
       end
     end
   end

@@ -36,7 +36,9 @@ class TasksController < ApplicationController
 
   def pdf
     return redirect_to "/404" if task.appeal.decisions.nil?
-    decision = task.appeal.decisions[0]
+    decision_number = params[:decision_number].to_i
+    return redirect_to "/404" if decision_number > task.appeal.decisions.size
+    decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 

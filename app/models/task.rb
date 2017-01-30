@@ -182,6 +182,7 @@ class Task < ActiveRecord::Base
     serializable_hash(
       include: [:user, appeal: { methods:
         [:decision_date,
+         :decisions,
          :veteran_name,
          :decision_type,
          :station_key,
