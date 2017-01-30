@@ -27,7 +27,7 @@ class CertificationsController < ApplicationController
   end
 
   def show
-    render "confirm" if params[:confirm]
+    render "confirm", layout: "application" if params[:confirm]
   end
 
   def pdf
