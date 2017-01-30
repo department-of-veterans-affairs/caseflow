@@ -204,12 +204,12 @@ describe Task do
     before { task.complete_and_recreate!(3) }
     it "completes and creates a new task" do
       new_task = appeal.tasks.where(type: task.type).to_complete.first
-      expect(task.complete?).to be_truthy
+      expect(task.completed?).to be_truthy
       expect(task.id).not_to eq(new_task.id)
     end
 
     it "fails on already completed tasks" do
-      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completed?).to be_truthy
       expect { task.cancel! }.to raise_error(Task::AlreadyCompleteError)
     end
   end
@@ -249,7 +249,7 @@ describe Task do
 
     it "closes unfinished tasks" do
       task.expire!
-      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completed?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
     end
@@ -261,7 +261,7 @@ describe Task do
 
     it "closes canceled tasks" do
       task.cancel!
-      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completed?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:canceled))
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
     end

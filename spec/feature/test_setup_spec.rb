@@ -53,7 +53,7 @@ RSpec.feature "Test Setup" do
 
     scenario "is allowed by a non-test user" do
       user = User.tester!(roles: ["Establish Claim"])
-      EstablishClaim.create(appeal: appeal, user: user).complete!(status: 0)
+      EstablishClaim.create(appeal: appeal).assign!(user).start!.complete!(status: 0)
 
       visit "dispatch/establish-claim"
       expect(page).to_not have_content("No previous tasks")
