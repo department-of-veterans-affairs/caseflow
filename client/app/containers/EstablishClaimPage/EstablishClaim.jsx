@@ -39,6 +39,8 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
+const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -49,7 +51,6 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
 
     // Set initial state on page render
 
@@ -92,7 +93,7 @@ export default class EstablishClaim extends BaseForm {
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
-    specialIssues.forEach((issue) => {
+    SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
   }
@@ -195,7 +196,6 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       page
     });
-
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -319,7 +319,9 @@ export default class EstablishClaim extends BaseForm {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      })
+      }),
+      specialIssues: ApiUtil.convertToSnakeCase(
+        this.getFormValues(this.state.specialIssues))
     };
   }
 
