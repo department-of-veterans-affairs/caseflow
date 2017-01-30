@@ -73,6 +73,8 @@ gem 'prometheus-client'
 
 gem 'request_store'
 
+gem 'font-awesome-sass'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
