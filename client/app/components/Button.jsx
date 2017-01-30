@@ -21,6 +21,10 @@ export default class Button extends React.Component {
       onClick,
       type
     } = this.props;
+    // Disabled the button when loading
+    if (loading) {
+      disabled = loading;
+    }
 
     if (!children) {
       children = name;
@@ -31,12 +35,18 @@ export default class Button extends React.Component {
     }
 
     if (disabled) {
+      // remove any usa-button styling and then add disabled styling
+      classNames = classNames.filter((className) => {
+        return !className.includes('usa-button');
+      });
       classNames.push('usa-button-disabled');
     }
 
+    if (loading) {
+      children = loadingSymbolHtml();
+    }
+
     return <span>
-    {loading && loadingSymbolHtml()}
-    {!loading &&
       <button
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
         className={classNames.join(' ')}
@@ -45,7 +55,6 @@ export default class Button extends React.Component {
         onClick={onClick}>
           {children}
       </button>
-    }
     </span>;
   }
 }
