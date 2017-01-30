@@ -38,7 +38,7 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
-        id={id || `${type}-${name.replace(/\s/g, '-')}`}
+        id={id || `button-${name.replace(/\s/g, '-')}`}
         className={classNames.join(' ')}
         type="button"
         disabled={disabled}
