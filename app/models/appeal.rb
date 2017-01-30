@@ -38,6 +38,10 @@ class Appeal < ActiveRecord::Base
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
 
+  def veteran_full_name
+    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ")
+  end
+
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
@@ -182,7 +186,7 @@ class Appeal < ActiveRecord::Base
       fail "No Form 8 found for appeal being certified" unless form8
 
       repository.certify(appeal)
-      repository.upload_form8(appeal, form8)
+      repository.upload_and_clean_document(appeal, form8)
     end
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
@@ -216,22 +220,29 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def non_canceled_end_products_within_30_days
-    bgs = BGSService.new
+  def select_pending_eps(end_products)
+    # Find all pending EPs
+    end_products.select do |end_product|
+      end_product[:status_type_code] == "PEND"
+    end
+  end
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
+  def pending_eps
     end_products = Dispatch.filter_dispatch_end_products(
       bgs.get_end_products(sanitized_vbms_id))
 
-    select_non_canceled_end_products_within_30_days(end_products)
-      .map do |end_product|
-        new_end_product = end_product.clone
-        new_end_product[:claim_type_code] = Appeal.map_end_product_value(
-          new_end_product[:claim_type_code],
-          Dispatch::END_PRODUCT_CODES)
-        new_end_product[:status_type_code] = Appeal.map_end_product_value(
-          new_end_product[:status_type_code],
-          Dispatch::END_PRODUCT_STATUS)
-        new_end_product
-      end
+    Dispatch.map_ep_values(select_pending_eps(end_products))
+  end
+
+  def non_canceled_end_products_within_30_days
+    end_products = Dispatch.filter_dispatch_end_products(
+      bgs.get_end_products(sanitized_vbms_id))
+
+    Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
   end
 
   def sanitized_vbms_id

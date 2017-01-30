@@ -6,14 +6,13 @@ import ApiUtil from '../../util/ApiUtil';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
-import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import * as Review from './EstablishClaimReview';
-import * as Form from './EstablishClaimForm';
+import EstablishClaimReview, * as Review from './EstablishClaimReview';
+import EstablishClaimForm from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 export const REVIEW_PAGE = 0;
@@ -40,6 +39,8 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
+const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -50,7 +51,6 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-    let specialIssues = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
 
     // Set initial state on page render
 
@@ -73,7 +73,7 @@ export default class EstablishClaim extends BaseForm {
         )
       },
       cancelModalDisplay: false,
-      form: {
+      claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
           formatDate(this.props.task.appeal.decision_date),
@@ -93,20 +93,19 @@ export default class EstablishClaim extends BaseForm {
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
-    specialIssues.forEach((issue) => {
+    SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
-    event.preventDefault();
     handleAlertClear();
 
     this.formValidating();
 
-    if (!this.validateFormAndSetErrors(this.state.form)) {
+    if (!this.validateFormAndSetErrors(this.state.claimForm)) {
       return;
     }
 
@@ -173,13 +172,11 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  handleModalClose = function (modal) {
-    return () => {
-      let stateObject = {};
+  handleModalClose = (modal) => () => {
+    let stateObject = {};
 
-      stateObject[modal] = false;
-      this.setState(stateObject);
-    };
+    stateObject[modal] = false;
+    this.setState(stateObject);
   };
 
   handleCancelTask = () => {
@@ -199,7 +196,6 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       page
     });
-
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -222,26 +218,6 @@ export default class EstablishClaim extends BaseForm {
   }
 
   /*
-   * This function acts as a router on the end product form. If the user
-   * is on the review page, it goes to the review page validation function.
-   * That checks to make sure only valid special issues are checked and either
-   * displays an error modal or moves the user on to the next page. If the user
-   * is on the associate page, they move onto the form page. If the user is on
-   * the form page, their form is submitted, and they move to the success page.
-   */
-  handleCreateEndProduct = (event) => {
-    if (this.isReviewPage()) {
-      this.handleReviewPageSubmit();
-    } else if (this.isAssociatePage()) {
-      this.handlePageChange(FORM_PAGE);
-    } else if (this.isFormPage()) {
-      this.handleSubmit(event);
-    } else {
-      throw new RangeError("Invalid page value");
-    }
-  }
-
-  /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
    * are all potentially valid. This removes any modifiers that have already been
@@ -249,7 +225,7 @@ export default class EstablishClaim extends BaseForm {
    */
   validModifiers = () => {
     let modifiers = [];
-    let endProducts = this.props.task.appeal.non_canceled_end_products_within_30_days;
+    let endProducts = this.props.task.appeal.pending_eps;
 
     if (this.state.reviewForm.decisionType.value === 'Full Grant') {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
@@ -274,14 +250,15 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = {};
     let modifiers = this.validModifiers();
 
-    stateObject.form = { ...this.state.form };
-    stateObject.form.endProductModifier.value = modifiers[0];
+    stateObject.claimForm = { ...this.state.claimForm };
+    stateObject.claimForm.endProductModifier.value = modifiers[0];
 
     this.setState(stateObject);
   }
 
-  handleReviewPageSubmit() {
+  handleReviewPageSubmit = () => {
     this.setStationState();
+
     if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
@@ -291,6 +268,10 @@ export default class EstablishClaim extends BaseForm {
     } else {
       this.handlePageChange(FORM_PAGE);
     }
+  }
+
+  handleAssociatePageSubmit = () => {
+    this.handlePageChange(FORM_PAGE);
   }
 
   /*
@@ -304,13 +285,13 @@ export default class EstablishClaim extends BaseForm {
 
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
-        stateObject.form.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value =
           this.props.task.appeal.station_key;
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
-        stateObject.form.stationOfJurisdiction.value = issue.stationOfJurisdiction;
+        stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
     this.setState({
@@ -321,8 +302,8 @@ export default class EstablishClaim extends BaseForm {
   prepareData() {
     let stateObject = this.state;
 
-    stateObject.form.stationOfJurisdiction.value =
-        stateObject.form.stationOfJurisdiction.value.substring(0, 3);
+    stateObject.claimForm.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
 
     this.setState({
       stateObject
@@ -335,10 +316,12 @@ export default class EstablishClaim extends BaseForm {
 
     return {
       claim: ApiUtil.convertToSnakeCase({
-        ...this.getFormValues(this.state.form),
+        ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      })
+      }),
+      specialIssues: ApiUtil.convertToSnakeCase(
+        this.getFormValues(this.state.specialIssues))
     };
   }
 
@@ -358,50 +341,57 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
-      modalSubmitLoading
+      modalSubmitLoading,
+      specialIssueModalDisplay,
+      specialIssues
     } = this.state;
+
+    let {
+      pdfLink,
+      pdfjsLink
+    } = this.props;
 
     return (
       <div>
-        { this.isReviewPage() && Review.render.call(this) }
+        { this.isReviewPage() &&
+          <EstablishClaimReview
+            decisionType={this.state.reviewForm.decisionType}
+            handleCancelTask={this.handleCancelTask}
+            handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
+            handleDecisionTypeChange={this.handleDecisionTypeChange}
+            handleFieldChange={this.handleFieldChange}
+            handleModalClose={this.handleModalClose}
+            handleSubmit={this.handleReviewPageSubmit}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
+            specialIssues={specialIssues}
+          />
+        }
         { this.isAssociatePage() &&
           <AssociatePage
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-            task = {this.props.task}
-            decisionType = {this.state.reviewForm.decisionType.value}
-            handleAlert = {this.props.handleAlert}
-            handleAlertClear = {this.props.handleAlertClear}
-            hasAvailableModifers = {this.hasAvailableModifers()}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleAssociatePageSubmit}
+            hasAvailableModifers={this.hasAvailableModifers()}
           />
         }
-        { this.isFormPage() && Form.render.call(this) }
+        { this.isFormPage() &&
+          <EstablishClaimForm
+            claimForm={this.state.claimForm}
+            claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleSubmit}
+            handleFieldChange={this.handleFieldChange}
+            loading={loading}
+            validModifiers={this.validModifiers()}
+          />
+        }
 
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          <div className="cf-push-right">
-            <Button
-                name="Cancel"
-                onClick={this.handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
-            />
-            <Button
-              name={this.isAssociatePage() ? "Create New EP" : "Create End Product"}
-              loading={loading}
-              onClick={this.handleCreateEndProduct}
-              disabled={!this.hasAvailableModifers() && this.isAssociatePage()}
-            />
-          </div>
-          { this.isFormPage() &&
-            <div className="task-link-row">
-              <Button
-                name={"\u00ABBack to review"}
-                onClick={() => {
-                  this.handlePageChange(REVIEW_PAGE);
-                } }
-                classNames={["cf-btn-link"]}
-              />
-            </div>
-          }
-        </div>
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-btn-link"],

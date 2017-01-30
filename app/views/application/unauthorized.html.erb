@@ -8,7 +8,7 @@
 
   <% if ApplicationController.dependencies_faked? %>
     <p class="cf-msg-screen-text">
-      <a href="<%= url_for controller: 'dev_users', action: 'index'%>">
+      <a href="<%= test_users_url %>">
         Switch users to access this page.
       </a>
     </p>

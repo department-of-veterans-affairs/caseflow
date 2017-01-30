@@ -16,12 +16,6 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
-
-    # ONLY FOR UAT TESTING
-    if ENV["TEST_USER_ID"]
-      post 'uncertify', on: :member
-    end
-
   end
 
   resources :certification_cancellations, only: [:show, :create]
@@ -59,15 +53,6 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  # :nocov:
-  if ApplicationController.dependencies_faked?
-    scope "/dev" do
-      get '/users', to: "dev_users#index"
-      post '/set-user/:id', to: "dev#set_user", as: 'set_user'
-    end
-  end
-  # :nocov:
-
   namespace :admin do
     resource :establish_claim,
              only: [:show, :create]
@@ -99,44 +84,19 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  # :nocov:
+  namespace :test do
+    # Only allow data_setup routes if TEST_USER is set
+    if ENV["TEST_USER_ID"]
+      post "setup_certification" => "setup#certification"
+      post "setup_claims_establishment" => "setup#claims_establishment"
+    end
 
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+    if ApplicationController.dependencies_faked?
+      resources :users, only: [:index]
+      post "/set_user/:id", to: "setup#set_user", as: "set_user"
+      post "/set-end-products", to: "setup#set_end_products", as: 'set_end_products'
+    end
+  end
+  # :nocov:
 end

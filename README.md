@@ -1,4 +1,4 @@
-#Caseflow 
+#Caseflow
 
 - [Caseflow](https://github.com/department-of-veterans-affairs/caseflow) ([Travis](https://travis-ci.org/department-of-veterans-affairs/caseflow))
 - [eFolder Express](https://github.com/department-of-veterans-affairs/caseflow-efolder) ([Travis](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder))
@@ -81,7 +81,7 @@ To log in, you can use the following credentials:
 Username: "DSUSER"
 Password: "DSUSER"
 
-To get to the various pages in the workflow we have a set of five URLs of dummy data. 
+To get to the various pages in the workflow we have a set of five URLs of dummy data.
 
 [http://localhost:3000/certifications/new/123C](http://localhost:3000/certifications/new/123C) is an appeal that is ready to certify.
 [http://localhost:3000/certifications/new/456C](http://localhost:3000/certifications/new/456C) is an appeal with mismatched docs.
@@ -99,7 +99,7 @@ In dev mode, we don't log in with CSS and instead take on the [identity of a use
 To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
 
 To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
-The database is seeded with a number of tasks, users, and appeals. 
+The database is seeded with a number of tasks, users, and appeals.
 
 To see the worker view, you need the following role: [Establish Claim].
 From this view you can start a new task and go through the flow of establishing a claim.
@@ -158,7 +158,7 @@ Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
 
 ### Changing between test users
-Select 'Switch User' from the dropdown or navigate to 
+Select 'Switch User' from the dropdown or navigate to
 [http://localhost:3000/dev/users](http://localhost:3000/dev/users). You can use
 this page to switch to any user that is currently in the database. The users' names specify
 what roles they have and therefore what pages they can access. To add new users with new
@@ -173,3 +173,6 @@ add more links and users as needed.
 To run the test suite:
 `$ rake`
 
+For parallelized tests:
+`$ rake parallel:setup[4]`
+`$ rake ci:all`

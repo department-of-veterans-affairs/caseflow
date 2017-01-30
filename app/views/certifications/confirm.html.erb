@@ -2,15 +2,15 @@
 
 <div id="certifications-generate" class="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
   <h1 class="cf-success cf-msg-screen-heading">Congratulations!</h1>
-  <h2 class="cf-msg-screen-deck">The case has been certified.</h2>
+  <h2 class="cf-msg-screen-deck"><%= appeal.veteran_full_name %>'s case [<%= appeal.vbms_id%>] has been certified.</h2>
 
-  <ul class="cf-list-checklist">
+  <ul class="cf-checklist">
       <li><span class="cf-icon-success--bg"></span> Verified documents were in eFolder</li>
       <li><span class="cf-icon-success--bg cf-success"></span> Completed and uploaded Form 8</li>
   </ul>
 
-  <p class="cf-msg-screen-text">Way to go! You can now close this browser window and open another case in VACOLS.</p>
+  <p class="cf-msg-screen-text">Way to go! You can now close this window and open another appeal in VACOLS.</p>
   <% if current_user.css_id == ENV['TEST_USER_ID'] && params[:id] == ENV["TEST_APPEAL_ID"] %>
-      <%= link_to "Uncertify Appeal", uncertify_certification_path(params[:id]), method: :post %>
+      <%= link_to "Uncertify Appeal", test_setup_certification_path, method: :post %>
   <% end %>
 </div>
