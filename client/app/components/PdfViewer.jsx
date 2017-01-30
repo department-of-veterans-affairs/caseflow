@@ -1,12 +1,17 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
+import DateSelector from '../components/DateSelector';
+import DropDown from '../components/DropDown';
+import Button from '../components/Button';
 
 export default class PdfViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      comments: []
+      comments: [],
+      currentPage: 1,
+      numPages: 0
     };
   }
 
@@ -75,7 +80,11 @@ export default class PdfViewer extends React.Component {
     PDFJS.getDocument(this.props.file).then((pdfDocument) => {
       this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-      this.state.pdfDocument = pdfDocument;
+      this.setState({
+        currentPage: 1,
+        numPages: pdfDocument.pdfInfo.numPages,
+        pdfDocument
+      });
 
       // Create a page in the DOM for every page in the PDF
       let viewer = document.getElementById('viewer');
@@ -105,7 +114,7 @@ export default class PdfViewer extends React.Component {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.disableWorker = true;
+    PDFJS.workerSrc = '../assets/pdf.worker.js';
     PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
@@ -136,6 +145,15 @@ export default class PdfViewer extends React.Component {
 
       Array.prototype.forEach.call(page, (ele, index) => {
         let boundingRect = ele.getBoundingClientRect();
+
+        // You are on this page, if the top of the page is above the middle
+        // and the bottom of the page is below the middle
+        if (boundingRect.top < scrollWindow.clientHeight / 2 &&
+            boundingRect.bottom > scrollWindow.clientHeight / 2) {
+          this.setState({
+            currentPage: index + 1
+          });
+        }
 
         // This renders each page as it comes into view. i.e. when
         // the top of the next page is within a thousand pixels of
@@ -192,7 +210,7 @@ export default class PdfViewer extends React.Component {
 
       return <div
           onClick={this.scrollToAnnotation(comment.uuid)}
-          className={`comment-list-item${selectedClass}`}
+          className={`cf-pdf-comment-list-item${selectedClass}`}
           key={`comment${index}`}>
           {comment.content}
         </div>;
@@ -200,19 +218,78 @@ export default class PdfViewer extends React.Component {
 
     return (
       <div>
-        <div className="cf-pdf-toolbar">
-          <h4>{this.props.file}</h4>
-        </div>
         <div className="cf-pdf-page-container">
           <div className="cf-pdf-container">
+            <div className="cf-pdf-header">
+              <div className="usa-grid-full">
+                <div className="usa-width-one-third cf-pdf-buttons-left">
+                  {this.props.file}
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-center">
+                  {this.state.currentPage} / {this.state.numPages}
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-right">
+                  <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div id="viewer" className="cf-pdf-page pdfViewer singlePageView"></div>
+              <div
+                id="viewer"
+                className="cf-crosshair-cursor cf-pdf-page pdfViewer singlePageView">
+              </div>
+            </div>
+            <div className="cf-pdf-footer">
+              <div className="usa-grid-full">
+                <div className="usa-width-one-third cf-pdf-buttons-left">
+                  <Button
+                    name="previous"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.previousPdf}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i> Previous
+                  </Button>
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-center">
+                  <i className="cf-pdf-button fa fa-minus" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                  <i className="cf-pdf-button fa fa-plus" aria-hidden="true"></i>
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-right">
+                  <Button
+                    name="next"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.nextPdf}>
+                    Next <i className="fa fa-chevron-right" aria-hidden="true"></i>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
           <div className="cf-comment-wrapper">
-            <h4>Comments</h4>
-            <div className="comment-list">
-              <div className="comment-list-container">
+            <div className="cf-heading-alt">Document</div>
+            <p className="cf-pdf-meta-title"><b>Filename:</b></p>
+            <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
+            <DateSelector
+             label="Receipt Date:"
+             name="date"
+             value="01/02/2017"
+            />
+            <DropDown
+             label="Document Tab"
+             name="documentTab"
+             options={["one", "two"]}
+             value="one"
+            />
+            <div className="cf-heading-alt">
+              Notes
+              <span className="cf-right-side">
+                <a href="#">+ Add a Note</a>
+              </span>
+              <i className="fa fa-pencil" aria-hidden="true"></i>
+            </div>
+            <div className="cf-pdf-comment-list">
+              <div className="cf-pdf-comment">
                 {comments}
               </div>
               <form className="comment-list-form" style={{ display: 'none' }}>

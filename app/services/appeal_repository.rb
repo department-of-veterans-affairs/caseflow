@@ -17,8 +17,6 @@ end
 # :nocov:
 
 class AppealRepository
-  FORM_8_DOC_TYPE_ID = 178
-
   ESTABLISH_CLAIM_VETERAN_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zip_code
@@ -199,26 +197,29 @@ class AppealRepository
     appeal.case_record.save!
   end
 
-  def self.upload_form8(appeal, form8)
-    @vbms_client ||= init_vbms_client
-
-    request = upload_documents_request(appeal, form8)
-
-    send_and_log_request(appeal.vbms_id, request)
-
+  def self.upload_and_clean_document(appeal, form8)
+    upload_document(appeal, form8)
     File.delete(form8.pdf_location)
   end
 
-  def self.upload_documents_request(appeal, form8)
+  def self.upload_document(appeal, uploadable_document)
+    @vbms_client ||= init_vbms_client
+
+    request = upload_documents_request(appeal, uploadable_document)
+
+    send_and_log_request(appeal.vbms_id, request)
+  end
+
+  def self.upload_documents_request(appeal, uploadable_document)
     VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
       Time.zone.now,
       appeal.veteran_first_name,
       appeal.veteran_middle_initial,
       appeal.veteran_last_name,
-      "Form 8",
-      form8.pdf_location,
-      FORM_8_DOC_TYPE_ID,
+      uploadable_document.document_type,
+      uploadable_document.pdf_location,
+      uploadable_document.document_type_id,
       "VACOLS",
       true
     )

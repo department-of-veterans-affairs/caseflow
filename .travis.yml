@@ -34,7 +34,7 @@ script:
   - bundle exec rake ci:other
 
 
-bundler_args: "--without development staging production"
+bundler_args: "--deployment --without development staging production"
 cache:
   directories:
     - vendor/bundle

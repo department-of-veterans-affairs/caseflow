@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Form8 < ActiveRecord::Base
+  include UploadableDocument
+
   FORM_FIELDS = [
     :vacols_id,
     :appellant_name,
@@ -209,6 +211,10 @@ class Form8 < ActiveRecord::Base
     end
 
     update(params)
+  end
+
+  def document_type
+    "Form 8"
   end
 
   class << self
