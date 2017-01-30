@@ -1,29 +1,6 @@
 class Task < ActiveRecord::Base
   include AASM
 
-  aasm do
-    # state :unprepared, :unassigned, :assigned, :started, :completed
-
-    state :unassigned, :initial => true
-    state :assigned, :started, :completed
-
-    # event :prepare do
-    #   transitions :from => :unprepared, :to => :unassigned
-    # end
-
-    event :assign, aasm_fire_event: :assign! do
-      transitions :from => :unassigned, :to => :assigned
-    end
-
-    event :start do
-      transitions :from => :assigned, :to => :started
-    end
-
-    event :complete do
-      transitions :from => :started, :to => :completed
-    end
-  end
-
   belongs_to :user
   belongs_to :appeal
 
@@ -31,6 +8,7 @@ class Task < ActiveRecord::Base
 
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
+  class IncorrectStateTransitionError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -85,6 +63,29 @@ class Task < ActiveRecord::Base
     end
   end
 
+  aasm do
+    # state :unprepared, :unassigned, :assigned, :started, :completed
+
+    state :unassigned, :initial => true
+    state :assigned, :started, :completed
+
+    # event :prepare do
+    #   transitions :from => :unprepared, :to => :unassigned
+    # end
+
+    event :assign do
+      transitions :from => :unassigned, :to => :assigned
+    end
+
+    event :start do
+      transitions :from => :assigned, :to => :started
+    end
+
+    event :complete do
+      transitions :from => :started, :to => :completed
+    end
+  end
+
   def initial_action
     fail MustImplementInSubclassError
   end
@@ -95,14 +96,14 @@ class Task < ActiveRecord::Base
 
   def assign!(user)
     before_assign
-    # Should this be a constraint in our system?
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
+    fail(IncorrectStateTransitionError) unless may_assign?
 
     update!(
         user: user,
         assigned_at: Time.now.utc
     )
-
+    assign
     self
   end
 
@@ -130,20 +131,9 @@ class Task < ActiveRecord::Base
   end
 
   def start!
-    fail(NotAssignedError) unless assigned?
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-    return if started?
-
+    fail(IncorrectStateTransitionError) unless may_start?
     update!(started_at: Time.now.utc)
-  end
-
-  def started?
-    started_at
-  end
-
-  def assigned?
-    assigned_at
+    start
   end
 
   def progress_status
@@ -158,10 +148,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def complete?
-    completed_at
-  end
-
   def canceled?
     completion_status == self.class.completion_status_code(:canceled)
   end
@@ -172,13 +158,14 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status:, outgoing_reference_id: nil)
-    fail(AlreadyCompleteError) if complete?
+    fail(IncorrectStateTransitionError) unless may_complete?
 
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
       outgoing_reference_id: outgoing_reference_id
     )
+    complete
   end
 
   def completion_status_text

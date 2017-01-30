@@ -28,7 +28,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
-    return render "complete" if task.complete?
+    return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
     return render "no_decisions" if task.appeal.decision.nil?
@@ -47,7 +47,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign(:assigned, current_user) unless next_task.assigned?
+    next_task.assign!(current_user) unless next_task.assigned?
 
     respond_to do |format|
       format.html do
