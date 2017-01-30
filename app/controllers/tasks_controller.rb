@@ -176,7 +176,7 @@ class TasksController < ApplicationController
   end
 
   def verify_not_complete
-    return true unless task.complete?
+    return true unless task.completed?
 
     redirect_to complete_establish_claim_path(task)
   end
@@ -188,6 +188,6 @@ class TasksController < ApplicationController
   def start_task!
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user && !task.started?
+    task.start! if current_user == task.user && !task.started? && task.may_start_this?
   end
 end

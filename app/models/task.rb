@@ -73,15 +73,15 @@ class Task < ActiveRecord::Base
     #   transitions :from => :unprepared, :to => :unassigned
     # end
 
-    event :assign do
+    event :assign_this do
       transitions :from => :unassigned, :to => :assigned
     end
 
-    event :start do
+    event :start_this do
       transitions :from => :assigned, :to => :started
     end
 
-    event :complete do
+    event :complete_this do
       transitions :from => :started, :to => :completed
     end
   end
@@ -97,13 +97,13 @@ class Task < ActiveRecord::Base
   def assign!(user)
     before_assign
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-    fail(IncorrectStateTransitionError) unless may_assign?
+    fail(IncorrectStateTransitionError) unless may_assign_this?
 
     update!(
         user: user,
         assigned_at: Time.now.utc
     )
-    assign
+    assign_this!
     self
   end
 
@@ -131,9 +131,10 @@ class Task < ActiveRecord::Base
   end
 
   def start!
-    fail(IncorrectStateTransitionError) unless may_start?
+    fail(IncorrectStateTransitionError) unless may_start_this?
     update!(started_at: Time.now.utc)
-    start
+    start_this!
+    self
   end
 
   def progress_status
@@ -158,14 +159,15 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status:, outgoing_reference_id: nil)
-    fail(IncorrectStateTransitionError) unless may_complete?
+    fail(IncorrectStateTransitionError) unless may_complete_this?
 
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
       outgoing_reference_id: outgoing_reference_id
     )
-    complete
+    complete_this!
+    self
   end
 
   def completion_status_text
