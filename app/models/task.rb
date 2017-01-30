@@ -1,14 +1,34 @@
 class Task < ActiveRecord::Base
   include AASM
 
+  aasm do
+    # state :unprepared, :unassigned, :assigned, :started, :completed
+
+    state :unassigned, :initial => true
+    state :assigned, :started, :completed
+
+    # event :prepare do
+    #   transitions :from => :unprepared, :to => :unassigned
+    # end
+
+    event :assign, aasm_fire_event: :assign! do
+      transitions :from => :unassigned, :to => :assigned
+    end
+
+    event :start do
+      transitions :from => :assigned, :to => :started
+    end
+
+    event :complete do
+      transitions :from => :started, :to => :completed
+    end
+  end
+
   belongs_to :user
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
 
-  class AlreadyAssignedError < StandardError; end
-  class NotAssignedError < StandardError; end
-  class AlreadyCompleteError < StandardError; end
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
@@ -26,26 +46,6 @@ class Task < ActiveRecord::Base
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
-
-  aasm do
-    state :unprepared, :unassigned, :assigned, :started, :completed
-
-    event :prepare do
-      transitions :from => :unprepared, :to => :unassigned
-    end
-
-    event :assign do
-      transitions :from => :unassigned, :to => :assigned
-    end
-
-    event :start do
-      transitions :from => :assigned, :to => :started
-    end
-
-    event :complete do
-      transitions :from => :started, :to => :completed
-    end
-  end
 
   class << self
     def unassigned
@@ -95,17 +95,14 @@ class Task < ActiveRecord::Base
 
   def assign!(user)
     before_assign
-    fail(AlreadyAssignedError) if self.user
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-
     # Should this be a constraint in our system?
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
 
     update!(
-      user: user,
-      assigned_at: Time.now.utc
+        user: user,
+        assigned_at: Time.now.utc
     )
+
     self
   end
 

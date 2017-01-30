@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170124205843) do
+ActiveRecord::Schema.define(version: 20170130163058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(version: 20170124205843) do
     t.integer  "lock_version"
     t.string   "comment"
     t.string   "outgoing_reference_id"
+    t.string   "aasm_state"
   end
 
   create_table "users", force: :cascade do |t|
