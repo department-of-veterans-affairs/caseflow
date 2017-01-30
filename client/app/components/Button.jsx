@@ -18,8 +18,7 @@ export default class Button extends React.Component {
       name,
       disabled,
       loading,
-      onClick,
-      type
+      onClick
     } = this.props;
 
     if (!children) {
