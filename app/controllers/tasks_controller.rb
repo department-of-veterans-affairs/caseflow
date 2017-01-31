@@ -47,7 +47,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign!(current_user) unless next_task.assigned? || next_task.started?
+    next_task.assign!(current_user) unless next_task.assigned? and next_task.may_assign_this?
 
     respond_to do |format|
       format.html do

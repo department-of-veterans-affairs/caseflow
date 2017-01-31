@@ -117,20 +117,20 @@ RSpec.feature "Dispatch" do
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-        # expect(page).to have_content("Review Decision")
-        # expect(@task.reload.user).to eq(current_user)
-        # expect(@task.started?).to be_truthy
-        #
-        # page.select "Full Grant", from: "decisionType"
-        #
-        # click_on "Create End Product"
-        #
-        # expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        # expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
-        # page.fill_in "Decision Date", with: "1"
-        # click_on "Create End Product"
-        #
-        # expect(page).to have_content("The date must be in mm/dd/yyyy format.")
+        expect(page).to have_content("Review Decision")
+        expect(@task.reload.user).to eq(current_user)
+        expect(@task.started?).to be_truthy
+
+        page.select "Full Grant", from: "decisionType"
+
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
+        page.fill_in "Decision Date", with: "1"
+        click_on "Create End Product"
+
+        expect(page).to have_content("The date must be in mm/dd/yyyy format.")
       end
 
       scenario "Establish a new claim page and process pt2" do

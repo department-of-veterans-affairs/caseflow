@@ -48,15 +48,15 @@ class SeedDB
         )
     end
 
-    # # Give each user a task in a different state
-    # tasks[0].assign!(@users[0])
-    #
-    # tasks[1].assign!(@users[1])
-    # tasks[1].start!
-    #
-    # tasks[2].assign!(@users[2])
-    # tasks[2].start!
-    # tasks[2].complete!(status: 0)
+    # Give each user a task in a different state
+    tasks[0].assign!(@users[0])
+
+    tasks[1].assign!(@users[1])
+    tasks[1].start!
+
+    tasks[2].assign!(@users[2])
+    tasks[2].start!
+    tasks[2].complete!(status: 0)
 
     @tasks.push(*tasks)
   end
