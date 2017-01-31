@@ -22,28 +22,20 @@ export default class Button extends React.Component {
       type
     } = this.props;
     // Disabled the button when loading
-    if (loading) {
-      disabled = loading;
-    }
 
     if (!children) {
       children = name;
     }
 
-    if (!classNames) {
-      classNames = ['cf-submit'];
+    if (loading) {
+      disabled = loading;
+      children = loadingSymbolHtml();
     }
 
     if (disabled) {
       // remove any usa-button styling and then add disabled styling
-      classNames = classNames.filter((className) => {
-        return !className.includes('usa-button');
-      });
+      classNames = classNames.filter((className) => !className.includes('usa-button'));
       classNames.push('usa-button-disabled');
-    }
-
-    if (loading) {
-      children = loadingSymbolHtml();
     }
 
     return <span>
@@ -60,6 +52,7 @@ export default class Button extends React.Component {
 }
 
 Button.defaultProps = {
+  classNames: ['cf-submit'],
   type: 'button'
 };
 
