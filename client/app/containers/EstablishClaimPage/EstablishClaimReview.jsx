@@ -86,6 +86,25 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
 ];
 
 export default class EstablishClaimReview extends React.Component {
+  constructor(props) {
+    super(props);
+    let endProductButtonText;
+    if (this.hasMultipleDecisions()) {
+      endProductButtonText = "Create End Product For Decision 1";
+    } else {
+      endProductButtonText = "Create End Product";
+    }
+    this.state = {
+      endProductButtonText: endProductButtonText
+    };
+  }
+
+  onTabSelected = (tabNumber) => {
+    this.setState({
+      endProductButtonText: `Create End Product For Decision ${tabNumber + 1}`
+    });
+  }
+
   hasMultipleDecisions() {
     return this.props.task.appeal.decisions.length > 1;
   }
@@ -125,11 +144,16 @@ export default class EstablishClaimReview extends React.Component {
       issueType = SPECIAL_ISSUE_FULL;
     }
 
-    let tabHeaders = task.appeal.decisions.map((decision, index) => {
+    // Sort in reverse chronological order
+    let decisions = task.appeal.decisions.sort((decision1, decision2) => {
+      return (new Date(decision2.received_at)) - (new Date(decision1.received_at));
+    })
+
+    let tabHeaders = decisions.map((decision, index) => {
       return `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
     });
 
-    let pdfViews = task.appeal.decisions.map((decision, index) => {
+    let pdfViews = decisions.map((decision, index) => {
       /* This link is here for 508 compliance, and shouldn't be visible to sighted
       users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
       is the accessibility standard and is used across gov't, so we'll recommend it
@@ -192,15 +216,16 @@ export default class EstablishClaimReview extends React.Component {
         </div>
 
         <div className="cf-app-segment cf-app-segment--alt">
-          {pdfViews.length > 1 && <div>
+          {this.hasMultipleDecisions() && <div>
               <h2>Select a Decision Document</h2>
               <p>Use the tabs to review the decision documents below and
               select the decision that best fits the VACOLS Decision Criteria.</p>
               <TabWindow
                 tabs={tabHeaders}
-                pages={pdfViews}/>
+                pages={pdfViews}
+                onChange={this.onTabSelected}/>
             </div>}
-          {pdfViews.length === 1 && pdfViews[0]}
+          {!this.hasMultipleDecisions() && pdfViews[0]}
           <div>
             <DropDown
              label="Decision Type"
@@ -238,7 +263,7 @@ export default class EstablishClaimReview extends React.Component {
                 classNames={["cf-btn-link", "cf-adjacent-buttons"]}
             />
             <Button
-              name="Create End Product"
+              name={this.state.endProductButtonText}
               onClick={handleSubmit}
             />
           </div>

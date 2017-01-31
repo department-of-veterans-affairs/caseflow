@@ -21,6 +21,10 @@ export default class TabWindow extends React.Component {
     this.setState({
       currentPage: tabNumber
     });
+
+    if (this.props.onChange) {
+      this.props.onChange(tabNumber);
+    }
   }
 
   render() {
@@ -49,5 +53,6 @@ export default class TabWindow extends React.Component {
 
 TabWindow.propTypes = {
   tabs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onChange: PropTypes.func,
   pages: PropTypes.arrayOf(PropTypes.node).isRequired
 };
