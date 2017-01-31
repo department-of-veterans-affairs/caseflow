@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6a0cb8e"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "f186d50"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -43,7 +43,8 @@ gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 
 # PDF Tools
 gem 'pdf-forms'
-gem 'pdfjs_viewer-rails'
+#
+gem 'pdfjs_viewer-rails', git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: 'a4249eacbf70175db63b57e9f364d0a9a79e2b43'
 
 # Error reporting to Sentry
 gem "sentry-raven"
