@@ -309,7 +309,12 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document, decision_document2] }
+        @records["vbms_id#{i}"] = { documents: [
+          nod_document,
+          soc_document,
+          form9_document,
+          decision_document,
+          decision_document2] }
       end
     end
   end
