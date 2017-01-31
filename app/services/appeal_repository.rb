@@ -55,9 +55,9 @@ class AppealRepository
   def self.map_issues(issue_records)
     issue_records.map do |issue|
       {
-        description: issue.issdesc,
-        disposition: VACOLS::Issues::DISPOSITION_CODE[issue.issdc],
-        program: issue.issprog
+        description: issue[:issdesc],
+        disposition: VACOLS::Issues::DISPOSITION_CODE[issue[:issdc]],
+        program: issue[:issprog]
       }
     end
   end
