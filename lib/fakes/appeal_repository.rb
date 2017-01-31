@@ -214,7 +214,12 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }]
     }
   end
 
@@ -230,7 +235,12 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13"
+      regional_office_key: "RO13",
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }]
     }
   end
 
@@ -299,7 +309,12 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = { documents: [nod_document, soc_document, form9_document, decision_document, decision_document2] }
+        @records["vbms_id#{i}"] = { documents: [
+          nod_document,
+          soc_document,
+          form9_document,
+          decision_document,
+          decision_document2] }
       end
     end
   end

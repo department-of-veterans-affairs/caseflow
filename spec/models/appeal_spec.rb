@@ -263,7 +263,7 @@ describe Appeal do
     end
   end
 
-  context "#decision" do
+  context "#decisions" do
     let(:decision) do
       Document.new(
         received_at: Time.zone.now.to_date,
@@ -272,7 +272,7 @@ describe Appeal do
     end
     let(:old_decision) do
       Document.new(
-        received_at: 2.days.ago.to_date,
+        received_at: 5.days.ago.to_date,
         type: "BVA Decision"
       )
     end
@@ -282,14 +282,14 @@ describe Appeal do
       )
     end
 
-    subject { appeal.decision }
+    subject { appeal.decisions }
     context "returns single decision when only one decision" do
       before do
         appeal.documents = [decision]
         appeal.decision_date = Time.current
       end
 
-      it { is_expected.to eq(decision) }
+      it { is_expected.to eq([decision]) }
     end
 
     context "returns single decision when only one valid" do
@@ -298,7 +298,7 @@ describe Appeal do
         appeal.decision_date = Time.current
       end
 
-      it { is_expected.to eq(decision) }
+      it { is_expected.to eq([decision]) }
     end
 
     context "returns nil when no valid decision" do
@@ -307,16 +307,18 @@ describe Appeal do
         appeal.decision_date = Time.current
       end
 
-      it { is_expected.to be_nil }
+      it { is_expected.to eq([]) }
     end
 
-    context "raises error when multiple decisions" do
+    context "returns multiple decisions when there are two decisions" do
+      let(:documents) { [decision, decision.clone] }
+
       before do
-        appeal.documents = [decision, decision.clone]
+        appeal.documents = documents
         appeal.decision_date = Time.current
       end
 
-      it { expect { appeal.decision }.to raise_error(Appeal::MultipleDecisionError) }
+      it { is_expected.to eq(documents) }
     end
   end
 

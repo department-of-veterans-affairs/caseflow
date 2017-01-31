@@ -35,7 +35,7 @@ class TasksController < ApplicationController
   end
 
   def pdf
-    return redirect_to "/404" if task.appeal.decisions.nil?
+    return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
     decision_number = params[:decision_number].to_i
     return redirect_to "/404" if decision_number > task.appeal.decisions.size
     decision = task.appeal.decisions[decision_number]

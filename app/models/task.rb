@@ -188,7 +188,8 @@ class Task < ActiveRecord::Base
          :decision_type,
          :station_key,
          :non_canceled_end_products_within_30_days,
-         :pending_eps] }],
+         :pending_eps,
+         :issues] }],
       methods: [:progress_status]
     )
   end

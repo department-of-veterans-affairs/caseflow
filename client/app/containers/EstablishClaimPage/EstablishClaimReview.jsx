@@ -90,10 +90,10 @@ export default class EstablishClaimReview extends React.Component {
     return this.props.task.appeal.decisions.length > 1;
   }
 
-  buildDecisionRow = (decision) => [
-    decision.disposition,
-    "Issues",
-    "Granted"
+  buildIssueRow = (issue) => [
+    issue.program,
+    issue.description,
+    issue.disposition
   ];
 
   render() {
@@ -191,7 +191,6 @@ export default class EstablishClaimReview extends React.Component {
           </div>
         </div>;
     });
-
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -215,8 +214,8 @@ export default class EstablishClaimReview extends React.Component {
           <h3>VACOLS Decision Criteria</h3>
           <Table
             headers={TABLE_HEADERS}
-            buildRowValues={this.buildDecisionRow}
-            values={task.appeal.decisions}
+            buildRowValues={this.buildIssueRow}
+            values={task.appeal.issues}
           />
         </div>}
 

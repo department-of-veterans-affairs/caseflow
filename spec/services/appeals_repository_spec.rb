@@ -45,7 +45,12 @@ describe AppealRepository do
       bfdc: "9",
       bfddec: 1.day.ago,
       correspondent: correspondent_record,
-      folder: folder_record
+      folder: folder_record,
+      issues: [{
+        issdesc: "Issue Description",
+        issdc: "1",
+        issprog: "Issue Program"
+      }]
     )
   end
 
