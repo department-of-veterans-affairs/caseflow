@@ -147,7 +147,7 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "errors if no one is assigned" do
       expect(task.user).to be_nil
-      expect { task.start! }.to raise_error(Task::IncorrectStateTransitionError)
+      expect { task.start! }.to raise_error(AASM::InvalidTransition)
     end
 
     it "sets started_at value to current timestamp" do

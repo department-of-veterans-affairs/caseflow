@@ -77,8 +77,8 @@ class Task < ActiveRecord::Base
       transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
     end
 
-    event :start_this do
-      transitions from: :assigned, to: :started
+    event :start do
+      transitions from: :assigned, to: :started, after: :start_time
     end
 
     event :complete_this do
@@ -102,6 +102,10 @@ class Task < ActiveRecord::Base
     )
   end
 
+  def start_time
+    update!(started_at: Time.now.utc)
+  end
+
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
@@ -123,13 +127,6 @@ class Task < ActiveRecord::Base
       complete!(status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
-  end
-
-  def start!
-    fail(IncorrectStateTransitionError) unless may_start_this?
-    update!(started_at: Time.now.utc)
-    start_this!
-    self
   end
 
   def progress_status

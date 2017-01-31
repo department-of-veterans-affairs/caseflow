@@ -188,6 +188,6 @@ class TasksController < ApplicationController
   def start_task!
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user && task.may_start_this?
+    task.start! if current_user == task.user && task.may_start?
   end
 end
