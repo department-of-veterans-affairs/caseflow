@@ -85,16 +85,16 @@ RSpec.feature "Dispatch" do
 
       # completed by user task
       appeal = Appeal.create(vacols_id: "456D")
-      @completed_task = EstablishClaim.create(appeal: appeal,
-                                              user: current_user,
-                                              assigned_at: 1.day.ago,
-                                              started_at: 1.day.ago,
-                                              completed_at: Time.zone.now.utc)
+
+      @completed_task = EstablishClaim.create(appeal: appeal)
+                                      .assign!(current_user)
+                                      .start!
+                                      .complete!(status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
-      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),
-                                          user: other_user,
-                                          assigned_at: 1.day.ago)
+      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+                                  .assign!(other_user)
+                                  .start!
     end
 
     context "Skip the associate EP page" do
@@ -136,6 +136,7 @@ RSpec.feature "Dispatch" do
       scenario "Establish a new claim page and process pt2" do
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         page.select "Full Grant", from: "decisionType"
         click_on "Create End Product"
 

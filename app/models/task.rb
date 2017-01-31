@@ -66,7 +66,7 @@ class Task < ActiveRecord::Base
   aasm do
     # state :unprepared, :unassigned, :assigned, :started, :completed
 
-    state :unassigned, :initial => true
+    state :unassigned, initial: true
     state :assigned, :started, :completed
 
     # event :prepare do
@@ -74,15 +74,15 @@ class Task < ActiveRecord::Base
     # end
 
     event :assign_this do
-      transitions :from => :unassigned, :to => :assigned
+      transitions from: :unassigned, to: :assigned
     end
 
     event :start_this do
-      transitions :from => :assigned, :to => :started
+      transitions from: :assigned, to: :started
     end
 
     event :complete_this do
-      transitions :from => :started, :to => :completed
+      transitions from: :started, to: :completed
     end
   end
 
@@ -96,12 +96,12 @@ class Task < ActiveRecord::Base
 
   def assign!(user)
     before_assign
-    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
     fail(IncorrectStateTransitionError) unless may_assign_this?
+    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
 
     update!(
-        user: user,
-        assigned_at: Time.now.utc
+      user: user,
+      assigned_at: Time.now.utc
     )
     assign_this!
     self
