@@ -1,15 +1,12 @@
 import React, { PropTypes } from 'react';
 
 /**
- * This component can be used to easily build tables.
+ * This component can be used to easily build tabs.
  * There required props are:
- * - @headers {array[string]} array of strings placed in <th/> tags
- * as the table header
- * - @values {array[object]} array of objects used to build the <tr/> rows
- * @buildRowValues {function} function that takes one of the `values` objects
- * and returns a new array of strings. These string values are inserted into <td/>
- * to build the row's cells
- *  e.g:  buildRowValues(taskObject) => ['cell 1 value', 'call 2 value',...]
+ * - @tabs {array[string]} array of strings placed the tabs at the top
+ * of the window
+ * - @pages {array[node]} array of nodes displayed when the corresponding
+ * tab is selected
  *
 */
 export default class TabWindow extends React.Component {
@@ -33,7 +30,7 @@ export default class TabWindow extends React.Component {
     } = this.props;
 
     return <div>
-        <div className="cf-tab-navigation">
+        <div className="cf-tab-navigation cf-tab-navigation-full-screen">
           {tabs.map((tab, i) =>
             <div
               className={`cf-tab${i === this.state.currentPage ? " cf-active" : ""}`}
@@ -43,7 +40,7 @@ export default class TabWindow extends React.Component {
             </div>
           )}
         </div>
-        <div className="cf-tab-content">
+        <div className="cf-tab-window-body-full-screen">
           {pages[this.state.currentPage]}
         </div>
       </div>;

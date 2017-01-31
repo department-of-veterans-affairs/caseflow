@@ -161,8 +161,47 @@ export default class EstablishClaimReview extends React.Component {
             title="Form8 PDF"
             src={`${pdfjsLink}&decision_number=${index}`}>
           </iframe>
+        </div>;
+    });
+    return (
+      <div>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Review Decision</h2>
+          Review the final decision from VBMS below to determine the next step.
+          {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
+            <div className="usa-alert-body">
+              <div>
+                <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
+                <p className="usa-alert-text">
+                  We found more than one decision document for the dispatch date
+                  range {formatDate(decisionWindowStart)} - {formatDate(decisionWindowEnd)}.
+                  Please review the decisions in the tabs below and select the document
+                  that best fits the decision criteria for this case.
+                </p>
+              </div>
+            </div>
+          </div>}
+          {this.hasMultipleDecisions() && <div>
+            <h3>VACOLS Decision Criteria</h3>
+            <Table
+              headers={TABLE_HEADERS}
+              buildRowValues={this.buildIssueRow}
+              values={task.appeal.issues}
+            />
+          </div>}
+        </div>
 
-          <div className="cf-app-segment cf-app-segment--alt">          
+        <div className="cf-app-segment cf-app-segment--alt">
+          {pdfViews.length > 1 && <div>
+              <h2>Select a Decision Document</h2>
+              <p>Use the tabs to review the decision documents below and
+              select the decision that best fits the VACOLS Decision Criteria.</p>
+              <TabWindow
+                tabs={tabHeaders}
+                pages={pdfViews}/>
+            </div>}
+          {pdfViews.length === 1 && pdfViews[0]}
+          <div>
             <DropDown
              label="Decision Type"
              name="decisionType"
@@ -189,39 +228,7 @@ export default class EstablishClaimReview extends React.Component {
                 /* eslint-enable no-return-assign */
             }
           </div>
-        </div>;
-    });
-    return (
-      <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Review Decision</h2>
-          Review the final decision from VBMS below to determine the next step.
-          {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
-            <div className="usa-alert-body">
-              <div>
-                <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
-                <p className="usa-alert-text">
-                  We found more than one decision document for the dispatch date
-                  range {formatDate(decisionWindowStart)} - {formatDate(decisionWindowEnd)}.
-                  Please review the decisions in the tabs below and select the document
-                  that best fits the decision criteria for this case.
-                </p>
-              </div>
-            </div>
-          </div>}
         </div>
-        {this.hasMultipleDecisions() && <div className="cf-app-segment cf-app-segment--alt">
-          <h3>VACOLS Decision Criteria</h3>
-          <Table
-            headers={TABLE_HEADERS}
-            buildRowValues={this.buildIssueRow}
-            values={task.appeal.issues}
-          />
-        </div>}
-
-        <TabWindow
-          tabs={tabHeaders}
-          pages={pdfViews}/>
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
