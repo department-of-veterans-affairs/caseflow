@@ -47,7 +47,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign!(current_user) unless next_task.assigned? and next_task.may_assign_this?
+    next_task.assign!(current_user) if next_task.may_assign_this?
 
     respond_to do |format|
       format.html do
@@ -188,6 +188,6 @@ class TasksController < ApplicationController
   def start_task!
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user && !task.started? && task.may_start_this?
+    task.start! if current_user == task.user && task.may_start_this?
   end
 end
