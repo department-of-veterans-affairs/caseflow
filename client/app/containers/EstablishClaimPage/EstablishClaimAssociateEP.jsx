@@ -18,7 +18,7 @@ export default class AssociatePage extends React.Component {
   }
 
   buildEndProductRow = (endProduct) => [
-    formatDate(new Date(endProduct.claim_receive_date)),
+    formatDate(endProduct.claim_receive_date),
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button

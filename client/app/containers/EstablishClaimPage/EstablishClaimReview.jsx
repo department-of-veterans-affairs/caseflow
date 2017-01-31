@@ -3,8 +3,11 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
-import { formatDateObject, addDays } from '../../util/DateUtil';
+import { formatDate, addDays } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import Table from '../../components/Table';
+
+const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
 
 export const DECISION_TYPE = [
   'Full Grant',
@@ -82,6 +85,16 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
 ];
 
 export default class EstablishClaimReview extends React.Component {
+  hasMultipleDecisions() {
+    return this.props.task.appeal.decisions.length > 1;
+  }
+
+  buildDecisionRow = (decision) => [
+    decision.disposition,
+    "Issues",
+    "Granted"
+  ];
+
   render() {
     let {
       decisionType,
@@ -116,20 +129,28 @@ export default class EstablishClaimReview extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Review Decision</h2>
           Review the final decision from VBMS below to determine the next step.
-          {task.appeal.decisions.length > 1 && <div className="usa-alert usa-alert-warning">
-          <div className="usa-alert-body">
-            <div>
-              <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
-              <p className="usa-alert-text">We found more than one decision document
-              for the dispatch date range {formatDateObject(decisionWindowStart)} - 
-              {formatDateObject(decisionWindowEnd)}. Please review the decisions
-              in the tabs below and select the document that best fits the decision
-              criteria for this case.
-              </p>
+          {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
+            <div className="usa-alert-body">
+              <div>
+                <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
+                <p className="usa-alert-text">
+                  We found more than one decision document for the dispatch date
+                  range {formatDate(decisionWindowStart)} - {formatDate(decisionWindowEnd)}.
+                  Please review the decisions in the tabs below and select the document
+                  that best fits the decision criteria for this case.
+                </p>
+              </div>
             </div>
-          </div>
-        </div>}
+          </div>}
         </div>
+        {this.hasMultipleDecisions() && <div className="cf-app-segment cf-app-segment--alt">
+          <h3>VACOLS Decision Criteria</h3>
+          <Table
+            headers={TABLE_HEADERS}
+            buildRowValues={this.buildDecisionRow}
+            values={task.appeal.decisions}
+          />
+        </div>}
         {
 
         /* This link is here for 508 compliance, and shouldn't be visible to sighted

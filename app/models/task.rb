@@ -183,6 +183,7 @@ class Task < ActiveRecord::Base
       include: [:user, appeal: { methods:
         [:decision_date,
          :decisions,
+         :disposition,
          :veteran_name,
          :decision_type,
          :station_key,
