@@ -18,8 +18,7 @@ export default class Button extends React.Component {
       name,
       disabled,
       loading,
-      onClick,
-      type
+      onClick
     } = this.props;
 
     if (!children) {
@@ -38,9 +37,9 @@ export default class Button extends React.Component {
     {loading && loadingSymbolHtml()}
     {!loading &&
       <button
-        id={id || `${type}-${name.replace(/\s/g, '-')}`}
+        id={id || `button-${name.replace(/\s/g, '-')}`}
         className={classNames.join(' ')}
-        type={type}
+        type="button"
         disabled={disabled}
         onClick={onClick}>
           {children}
@@ -49,10 +48,6 @@ export default class Button extends React.Component {
     </span>;
   }
 }
-
-Button.defaultProps = {
-  type: 'button'
-};
 
 Button.propTypes = {
   children: PropTypes.node,
