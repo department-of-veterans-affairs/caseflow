@@ -55,7 +55,7 @@ RSpec.feature "Dispatch" do
   context "As a manager" do
     before do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
-      @task.assign!(User.create(station_id: "123", css_id: "ABC"))
+      @task.assign!(:assigned, User.create(station_id: "123", css_id: "ABC"))
 
       create_tasks(20, initial_state: :completed)
     end
@@ -87,14 +87,14 @@ RSpec.feature "Dispatch" do
       appeal = Appeal.create(vacols_id: "456D")
 
       @completed_task = EstablishClaim.create(appeal: appeal)
-                                      .assign!(current_user)
-                                      .start!
-                                      .complete!(status: 0)
+      @completed_task.assign!(:assigned, current_user)
+      @completed_task.start!
+      @completed_task.complete!(status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
-                                  .assign!(other_user)
-                                  .start!
+      @other_task.assign!(:assigned, other_user)
+      @other_task.start!
     end
 
     context "Skip the associate EP page" do
@@ -177,7 +177,7 @@ RSpec.feature "Dispatch" do
       end
 
       skip "Establish Claim form saves state when going back/forward in browser" do
-        @task.assign!(current_user)
+        @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Create End Product"
         expect(page).to have_content("Benefit Type") # React works
@@ -293,7 +293,7 @@ RSpec.feature "Dispatch" do
     # The cancel button is the same on both the review and form pages, so one test
     # can adequetly test both of them.
     scenario "Cancel an Establish Claim task returns me to landing page" do
-      @task.assign!(current_user)
+      @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
       # Open modal
@@ -326,7 +326,7 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "A regional office special issue routes correctly" do
-      @task.assign!(current_user)
+      @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#privateAttorney").trigger("click")
       click_on "Create End Product"
@@ -335,7 +335,7 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "A national office special issue routes correctly" do
-      @task.assign!(current_user)
+      @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.select "Remand", from: "decisionType"
       page.find("#mustardGas").trigger("click")
@@ -345,7 +345,7 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "A special issue is chosen and saved in database" do
-      @task.assign!(current_user)
+      @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.select "Remand", from: "decisionType"
       page.find("#insurance").trigger("click")

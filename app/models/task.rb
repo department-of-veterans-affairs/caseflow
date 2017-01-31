@@ -7,8 +7,8 @@ class Task < ActiveRecord::Base
   validate :no_open_tasks_for_appeal, on: :create
 
   class MustImplementInSubclassError < StandardError; end
-  class UserAlreadyHasTaskError < StandardError; end
   class IncorrectStateTransitionError < StandardError; end
+  class UserAlreadyHasTaskError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -73,8 +73,8 @@ class Task < ActiveRecord::Base
     #   transitions :from => :unprepared, :to => :unassigned
     # end
 
-    event :assign_this do
-      transitions from: :unassigned, to: :assigned
+    event :assign do
+      transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
     end
 
     event :start_this do
@@ -94,17 +94,12 @@ class Task < ActiveRecord::Base
     # Test hook for testing race conditions
   end
 
-  def assign!(user)
-    before_assign
-    fail(IncorrectStateTransitionError) unless may_assign_this?
+  def assign_user(user)
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-
     update!(
       user: user,
       assigned_at: Time.now.utc
     )
-    assign_this!
-    self
   end
 
   def cancel!(feedback = nil)
