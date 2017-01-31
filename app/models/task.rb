@@ -46,15 +46,15 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where(completed_at: nil)
+      where.not(aasm_state: "completed")
     end
 
     def completed
-      where.not(completed_at: nil)
+      where(aasm_state: "completed")
     end
 
     def to_complete_task_for_appeal(appeal)
-      where(completed_at: nil, appeal: appeal)
+      where.not(aasm_state: "completed").where(appeal: appeal)
     end
 
     def completion_status_code(text)
