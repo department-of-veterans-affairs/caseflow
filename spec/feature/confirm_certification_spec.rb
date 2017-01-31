@@ -27,7 +27,7 @@ RSpec.feature "Confirm Certification" do
     # Sending click or keypress events to elements that are not in the DOM doesn't seem to work,
     # so let's find the hidden link's href and visit it manually to check that the pdf can be
     # found there.
-    pdf_href = page.find("#sr-download-link")["href"]
+    pdf_href = page.find(:xpath, "//a[@id='sr-download-link']")[:href]
     visit(pdf_href)
     content_header = page.response_headers["Content-Disposition"]
 
