@@ -85,6 +85,11 @@ class ApplicationController < ActionController::Base
     Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
   end
 
+  def test_user?
+    Rails.deploy_env?(:uat) && current_user.css_id == ENV["TEST_USER_ID"]
+  end
+  helper_method :test_user?
+
   def check_whats_new_cookie
     client_last_seen_version = cookies[:whats_new]
     @show_whats_new_indicator = client_last_seen_version.nil? ||

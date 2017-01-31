@@ -1,14 +1,14 @@
 class Task < ActiveRecord::Base
+  include AASM
+
   belongs_to :user
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
 
-  class AlreadyAssignedError < StandardError; end
-  class NotAssignedError < StandardError; end
-  class AlreadyCompleteError < StandardError; end
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
+  class IncorrectStateTransitionError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -63,6 +63,29 @@ class Task < ActiveRecord::Base
     end
   end
 
+  aasm do
+    # state :unprepared, :unassigned, :assigned, :started, :completed
+
+    state :unassigned, initial: true
+    state :assigned, :started, :completed
+
+    # event :prepare do
+    #   transitions :from => :unprepared, :to => :unassigned
+    # end
+
+    event :assign_this do
+      transitions from: :unassigned, to: :assigned
+    end
+
+    event :start_this do
+      transitions from: :assigned, to: :started
+    end
+
+    event :complete_this do
+      transitions from: :started, to: :completed
+    end
+  end
+
   def initial_action
     fail MustImplementInSubclassError
   end
@@ -73,17 +96,14 @@ class Task < ActiveRecord::Base
 
   def assign!(user)
     before_assign
-    fail(AlreadyAssignedError) if self.user
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-
-    # Should this be a constraint in our system?
+    fail(IncorrectStateTransitionError) unless may_assign_this?
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
 
     update!(
       user: user,
       assigned_at: Time.now.utc
     )
+    assign_this!
     self
   end
 
@@ -111,20 +131,10 @@ class Task < ActiveRecord::Base
   end
 
   def start!
-    fail(NotAssignedError) unless assigned?
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-    return if started?
-
+    fail(IncorrectStateTransitionError) unless may_start_this?
     update!(started_at: Time.now.utc)
-  end
-
-  def started?
-    started_at
-  end
-
-  def assigned?
-    assigned_at
+    start_this!
+    self
   end
 
   def progress_status
@@ -139,10 +149,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def complete?
-    completed_at
-  end
-
   def canceled?
     completion_status == self.class.completion_status_code(:canceled)
   end
@@ -153,13 +159,15 @@ class Task < ActiveRecord::Base
 
   # completion_status is 0 for success, or non-zero to specify another completed case
   def complete!(status:, outgoing_reference_id: nil)
-    fail(AlreadyCompleteError) if complete?
+    fail(IncorrectStateTransitionError) unless may_complete_this?
 
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
       outgoing_reference_id: outgoing_reference_id
     )
+    complete_this!
+    self
   end
 
   def completion_status_text

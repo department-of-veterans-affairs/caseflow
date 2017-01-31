@@ -85,16 +85,16 @@ RSpec.feature "Dispatch" do
 
       # completed by user task
       appeal = Appeal.create(vacols_id: "456D")
-      @completed_task = EstablishClaim.create(appeal: appeal,
-                                              user: current_user,
-                                              assigned_at: 1.day.ago,
-                                              started_at: 1.day.ago,
-                                              completed_at: Time.zone.now.utc)
+
+      @completed_task = EstablishClaim.create(appeal: appeal)
+                                      .assign!(current_user)
+                                      .start!
+                                      .complete!(status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
-      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"),
-                                          user: other_user,
-                                          assigned_at: 1.day.ago)
+      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+                                  .assign!(other_user)
+                                  .start!
     end
 
     context "Skip the associate EP page" do
@@ -136,6 +136,7 @@ RSpec.feature "Dispatch" do
       scenario "Establish a new claim page and process pt2" do
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         page.select "Full Grant", from: "decisionType"
         click_on "Create End Product"
 
@@ -163,7 +164,7 @@ RSpec.feature "Dispatch" do
           },
           appeal: @task.appeal
         )
-        expect(@task.reload.complete?).to be_truthy
+        expect(@task.reload.completed?).to be_truthy
         expect(@task.completion_status).to eq(0)
         expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
@@ -319,7 +320,7 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("EP Establishment Canceled")
-      expect(@task.reload.complete?).to be_truthy
+      expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
     end
@@ -341,6 +342,18 @@ RSpec.feature "Dispatch" do
       click_on "Create End Product"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee")
+    end
+
+    scenario "A special issue is chosen and saved in database" do
+      @task.assign!(current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.select "Remand", from: "decisionType"
+      page.find("#insurance").trigger("click")
+      click_on "Create End Product"
+      click_on "Create New EP"
+      click_on "Create End Product"
+      expect(page).to have_content("Congratulations!")
+      expect(@task.appeal.reload.insurance).to be_truthy
     end
   end
 end

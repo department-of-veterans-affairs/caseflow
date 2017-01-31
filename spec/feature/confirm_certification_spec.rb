@@ -44,44 +44,9 @@ RSpec.feature "Confirm Certification" do
     expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq("5555C")
     expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq("5555C")
 
-    expect(page).to have_content("Congratulations! The case has been certified.")
+    expect(page).to have_content("Congratulations!")
 
     certification = Certification.find_or_create_by_vacols_id("5555C")
     expect(certification.reload.completed_at).to eq(Time.zone.now)
-  end
-
-  context "Test appeal" do
-    let(:test_appeal_id) { ENV["TEST_APPEAL_ID"] }
-
-    before do
-      test_certification = Certification.create!(vacols_id: test_appeal_id)
-      test_certification.form8.update_from_appeal(test_certification.appeal)
-      test_certification.form8.save_pdf!
-
-      ENV["DEPLOY_ENV"] = "uat"
-    end
-
-    scenario "is not able to be uncertified by a non-test user" do
-      visit "certifications/#{test_appeal_id}"
-      click_on("Upload and certify")
-
-      certification = Certification.find_or_create_by_vacols_id(test_appeal_id)
-      expect(certification.reload.completed_at).to eq(Time.zone.now)
-      expect(page).not_to have_content("Uncertify Appeal")
-    end
-
-    scenario "is able to uncertified by test user" do
-      User.clear_stub!
-      User.tester!
-
-      visit "certifications/#{test_appeal_id}"
-      click_on("Upload and certify")
-
-      certification = Certification.find_or_create_by_vacols_id(test_appeal_id)
-      expect(certification.reload.completed_at).to eq(Time.zone.now)
-      expect(page).to have_content("Uncertify Appeal")
-      click_link("Uncertify Appeal")
-      expect(Certification.where(id: certification.id).count).to eq(0)
-    end
   end
 end
