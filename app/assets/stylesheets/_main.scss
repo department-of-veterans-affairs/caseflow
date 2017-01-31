@@ -147,3 +147,11 @@
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
 }
+
+@mixin column-count($column) {
+  @include prefixer(column-count, $column, webkit moz spec);
+}
+
+.cf-multiple-columns {
+  @include column-count(2);
+}
