@@ -37,7 +37,7 @@ export default class DecisionReviewer extends React.Component {
     return (
       <div>
         <PdfViewer
-          file={`http://localhost:3000/decision/review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
+          file={`review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
           receivedAt={appealDocuments[this.state.pdf].received_at}
           type={appealDocuments[this.state.pdf].type}
           name={appealDocuments[this.state.pdf].filename}

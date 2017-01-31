@@ -81,16 +81,17 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_document_file(document)
-    case document.document_id
-    when '1'
-      path = File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-    when '2'
-      path = File.join(Rails.root, "lib", "pdfs", "VA9.pdf")
-    when '3'
-      path = File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-    else
-      path = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
-    end
+    path =
+      case document.document_id
+      when "1"
+        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+      when "2"
+        File.join(Rails.root, "lib", "pdfs", "VA9.pdf")
+      when "3"
+        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+      else
+        File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
+      end
     IO.binread(path)
   end
 
@@ -304,7 +305,10 @@ class Fakes::AppealRepository
       }
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = { vbms_id: "vbms_id#{i}", documents: [nod_document, soc_document, form9_document, decision_document] }
+        @records["vbms_id#{i}"] = {
+          vbms_id: "vbms_id#{i}",
+          documents: [nod_document, soc_document, form9_document, decision_document]
+        }
       end
     end
   end
