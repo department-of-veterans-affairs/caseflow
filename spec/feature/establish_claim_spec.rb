@@ -89,7 +89,7 @@ RSpec.feature "Dispatch" do
       @completed_task = EstablishClaim.create(appeal: appeal)
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
-      @completed_task.complete!(status: 0)
+      @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))

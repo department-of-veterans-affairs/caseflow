@@ -17,7 +17,7 @@ describe ReassignOldTasksJob do
     unfinished_task.start!
     finished_task.assign!(:assigned, user2)
     finished_task.start!
-    finished_task.complete!(status: status_code)
+    finished_task.complete!(:completed, status: status_code)
   end
 
   context ".perform" do

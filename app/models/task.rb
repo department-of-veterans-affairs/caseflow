@@ -7,7 +7,6 @@ class Task < ActiveRecord::Base
   validate :no_open_tasks_for_appeal, on: :create
 
   class MustImplementInSubclassError < StandardError; end
-  class IncorrectStateTransitionError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
@@ -81,8 +80,8 @@ class Task < ActiveRecord::Base
       transitions from: :assigned, to: :started, after: :start_time
     end
 
-    event :complete_this do
-      transitions from: :started, to: :completed
+    event :complete do
+      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -109,7 +108,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(status: self.class.completion_status_code(:canceled))
+      complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -118,13 +117,13 @@ class Task < ActiveRecord::Base
   end
 
   def assign_existing_end_product!(end_product_id)
-    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
-              outgoing_reference_id: end_product_id)
+    complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep),
+                          outgoing_reference_id: end_product_id)
   end
 
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(status: self.class.completion_status_code(status_code))
+      complete!(:completed, status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -150,16 +149,12 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status:, outgoing_reference_id: nil)
-    fail(IncorrectStateTransitionError) unless may_complete_this?
-
+  def save_completion_status(status:, outgoing_reference_id: nil)
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
       outgoing_reference_id: outgoing_reference_id
     )
-    complete_this!
-    self
   end
 
   def completion_status_text

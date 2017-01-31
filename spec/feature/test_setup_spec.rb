@@ -56,7 +56,7 @@ RSpec.feature "Test Setup" do
       task = EstablishClaim.create(appeal: appeal)
       task.assign!(:assigned, user)
       task.start!
-      task.complete!(status: 0)
+      task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
       expect(page).to_not have_content("No previous tasks")

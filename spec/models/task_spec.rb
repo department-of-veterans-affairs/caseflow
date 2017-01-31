@@ -135,7 +135,7 @@ describe Task do
       before do
         task.assign!(:assigned, @user)
         task.start!
-        task.complete!(status: 0)
+        task.complete!(:completed, status: 0)
       end
 
       it { is_expected.to eq("Completed") }
@@ -207,7 +207,7 @@ describe Task do
 
     it "fails on already completed tasks" do
       expect(task.reload.completed?).to be_truthy
-      expect { task.cancel! }.to raise_error(Task::IncorrectStateTransitionError)
+      expect { task.cancel! }.to raise_error(AASM::InvalidTransition)
     end
   end
 
@@ -219,15 +219,15 @@ describe Task do
       task.start!
     end
     it "completes the task" do
-      task.complete!(status: 3)
+      task.complete!(:completed, status: 3)
       expect(task.reload.completed_at).to be_truthy
       expect(task.completion_status).to eq(3)
     end
 
     it "errors if already complete" do
-      task.complete!(status: 3)
+      task.complete!(:completed, status: 3)
 
-      expect { task.complete!(status: 2) }.to raise_error(Task::IncorrectStateTransitionError)
+      expect { task.complete!(:completed, status: 2) }.to raise_error(AASM::InvalidTransition)
 
       # Confirm complete values are still the original
       expect(task.reload.completed_at).not_to be_nil
