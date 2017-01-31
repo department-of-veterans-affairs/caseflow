@@ -161,6 +161,34 @@ export default class EstablishClaimReview extends React.Component {
             title="Form8 PDF"
             src={`${pdfjsLink}&decision_number=${index}`}>
           </iframe>
+
+          <div className="cf-app-segment cf-app-segment--alt">          
+            <DropDown
+             label="Decision Type"
+             name="decisionType"
+             options={DECISION_TYPE}
+             onChange={handleDecisionTypeChange}
+             {...decisionType}
+            />
+
+            <label>Special Issue Categories</label>
+            {
+
+              /* eslint-disable no-return-assign */
+              issueType.map((issue) =>
+              <Checkbox
+                  id={ApiUtil.convertToCamelCase(issue)}
+                  label={issue}
+                  name={ApiUtil.convertToCamelCase(issue)}
+                  {...specialIssues[issue]}
+                  onChange={handleFieldChange('specialIssues',
+                      ApiUtil.convertToCamelCase(issue))}
+                  key={count += 1}
+                />)
+
+                /* eslint-enable no-return-assign */
+            }
+          </div>
         </div>;
     });
 
@@ -192,38 +220,9 @@ export default class EstablishClaimReview extends React.Component {
           />
         </div>}
 
-        <div className="cf-app-segment cf-app-segment--alt">
-          <TabWindow
-            tabs={tabHeaders}
-            pages={pdfViews}/>
-
-          
-          <DropDown
-           label="Decision Type"
-           name="decisionType"
-           options={DECISION_TYPE}
-           onChange={handleDecisionTypeChange}
-           {...decisionType}
-          />
-
-          <label>Special Issue Categories</label>
-          {
-
-            /* eslint-disable no-return-assign */
-            issueType.map((issue) =>
-            <Checkbox
-                id={ApiUtil.convertToCamelCase(issue)}
-                label={issue}
-                name={ApiUtil.convertToCamelCase(issue)}
-                {...specialIssues[issue]}
-                onChange={handleFieldChange('specialIssues',
-                    ApiUtil.convertToCamelCase(issue))}
-                key={count += 1}
-              />)
-
-              /* eslint-enable no-return-assign */
-          }
-        </div>
+        <TabWindow
+          tabs={tabHeaders}
+          pages={pdfViews}/>
 
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
