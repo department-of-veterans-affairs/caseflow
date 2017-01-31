@@ -3,7 +3,7 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
-
+import { formatDateObject, addDays } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
 export const DECISION_TYPE = [
@@ -102,6 +102,9 @@ export default class EstablishClaimReview extends React.Component {
 
     let issueType = '';
 
+    let decisionWindowStart = addDays(new Date(task.appeal.decision_date), -3);
+    let decisionWindowEnd = addDays(new Date(task.appeal.decision_date), 3);
+
     if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
       issueType = SPECIAL_ISSUE_PARTIAL;
     } else {
@@ -116,11 +119,12 @@ export default class EstablishClaimReview extends React.Component {
           {task.appeal.decisions.length > 1 && <div className="usa-alert usa-alert-warning">
           <div className="usa-alert-body">
             <div>
-              <h3 className="usa-alert-heading">Existing EP</h3>
-              <p className="usa-alert-text">We found one or more existing EP(s)
-                created within 30 days of this decision date.
-                Please review the existing EP(s) in the table below.
-                Select one to assign to this claim or create a new EP.
+              <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
+              <p className="usa-alert-text">We found more than one decision document
+              for the dispatch date range {formatDateObject(decisionWindowStart)} - 
+              {formatDateObject(decisionWindowEnd)}. Please review the decisions
+              in the tabs below and select the document that best fits the decision
+              criteria for this case.
               </p>
             </div>
           </div>
