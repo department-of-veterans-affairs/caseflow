@@ -29,6 +29,7 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Rice Compliance',
   'Private Attorney',
   'Hearings - travel board & video conference',
+  'Contaminated Water at Camp Lejeune',
   'Home Loan Guaranty',
   'Waiver of Overpayment',
   'Education or Vocational Rehab',
@@ -42,7 +43,6 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Incarcerated Veterans',
   'Proposed Incompetency',
   'Manila Remand',
-  'Contaminated Water at Camp LeJeune',
   'Mustard Gas',
   'Dependencies',
   'DIC - death, or accrued benefits'
