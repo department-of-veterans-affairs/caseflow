@@ -28,7 +28,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
-    return render "complete" if task.complete?
+    return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
     return render "no_decisions" if task.appeal.decisions.nil?
@@ -47,7 +47,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign!(current_user) unless next_task.assigned?
+    next_task.assign!(:assigned, current_user) if next_task.may_assign?
 
     respond_to do |format|
       format.html do
@@ -176,7 +176,7 @@ class TasksController < ApplicationController
   end
 
   def verify_not_complete
-    return true unless task.complete?
+    return true unless task.completed?
 
     redirect_to complete_establish_claim_path(task)
   end
@@ -188,6 +188,6 @@ class TasksController < ApplicationController
   def start_task!
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user && !task.started?
+    task.start! if current_user == task.user && task.may_start?
   end
 end
