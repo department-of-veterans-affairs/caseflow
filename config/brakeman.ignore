@@ -6,7 +6,7 @@
       "fingerprint": "ca492b9eafbbad210a76d7639eaf51a9fa8c68f20d8e73ac98cc93f1f239350b",
       "message": "Parameters should be whitelisted for mass assignment",
       "file": "app/controllers/certifications_controller.rb",
-      "line": 31,
+      "line": 22,
       "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "params.require(:form8).permit!",
       "render_path": null,
@@ -18,8 +18,27 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Permitting update for all form8 values from form"
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "dda2873c0e7cf489742366fcab9eb095c0f94614533f3a8fbfe93b9857a8f8cc",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/review_controller.rb",
+      "line": 17,
+      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.new(:document_id => params[:document_id]).serve, :type => \"application/pdf\", :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ReviewController",
+        "method": "pdf"
+      },
+      "user_input": "Document.new(:document_id => params[:document_id]).serve",
+      "confidence": "Medium",
+      "note": "Allow credentialed users to access any document in VBMS. Consider scoping this down."
     }
   ],
-  "updated": "2016-11-14 11:33:42 -0500",
+  "updated": "2017-02-01 16:55:06 -0500",
   "brakeman_version": "3.3.1"
 }
