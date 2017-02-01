@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
+import Button from '../components/Button';
 
 let PDF_LIST_TABLE_HEADERS = ['', 'Receipt Date', 'Document Type', 'Filename'];
 
@@ -8,8 +9,13 @@ export default class PdfListView extends React.Component {
     super(props);
   }
 
-  buildPdfRow = (file) => {
-    return ['label', file, file, file];
+  buildPdfRow = (file, index) => {
+    console.log(file + ' ' + index);
+    return [
+      'label',
+      '12/19/2016',
+      'NOD',
+      <a onClick={this.props.showPdf(index)}>{file}</a>];
   }
 
   render() {
