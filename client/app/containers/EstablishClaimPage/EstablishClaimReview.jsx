@@ -115,15 +115,15 @@ export default class EstablishClaimReview extends React.Component {
 
     let issueType = '';
 
-    let decisionWindowStart = addDays(new Date(task.appeal.decision_date), -3);
-    let decisionWindowEnd = addDays(new Date(task.appeal.decision_date), 3);
+    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
+    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
 
     if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
       issueType = SPECIAL_ISSUE_PARTIAL;
     } else {
       issueType = SPECIAL_ISSUE_FULL;
     }
-    
+
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -135,7 +135,7 @@ export default class EstablishClaimReview extends React.Component {
                 <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
                 <p className="usa-alert-text">
                   We found more than one decision document for the dispatch date
-                  range {formatDate(decisionWindowStart)} - {formatDate(decisionWindowEnd)}.
+                  range {decisionDateStart} - {decisionDateEnd}.
                   Please review the decisions in the tabs below and select the document
                   that best fits the decision criteria for this case.
                 </p>
@@ -143,14 +143,15 @@ export default class EstablishClaimReview extends React.Component {
             </div>
           </div>}
         </div>
-        {this.hasMultipleDecisions() && <div className="cf-app-segment cf-app-segment--alt">
-          <h3>VACOLS Decision Criteria</h3>
-          <Table
-            headers={TABLE_HEADERS}
-            buildRowValues={this.buildIssueRow}
-            values={task.appeal.issues}
-          />
-        </div>}
+        {this.hasMultipleDecisions() &&
+          <div className="cf-app-segment cf-app-segment--alt">
+            <h3>VACOLS Decision Criteria</h3>
+            <Table
+              headers={TABLE_HEADERS}
+              buildRowValues={this.buildIssueRow}
+              values={task.appeal.issues}
+            />
+          </div>}
         {
 
         /* This link is here for 508 compliance, and shouldn't be visible to sighted

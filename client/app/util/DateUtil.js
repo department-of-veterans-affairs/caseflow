@@ -13,6 +13,8 @@ export const formatDate = function(dateString) {
 };
 
 export const addDays = function(date, days) {
-  let dateString = date.getTime() + days * MILLISECONDS_IN_A_DAY;
-  return new Date(dateString)
+  let milliseconds = days * MILLISECONDS_IN_A_DAY;
+  let dateString = date.getTime() + milliseconds;
+
+  return new Date(dateString);
 };
