@@ -35,8 +35,7 @@
   <h2 id="what-is-caseflow">1. What is Caseflow Certification?</h2>
 
   <p>
-    Caseflow Certification, a web-based tool that makes it easy to automatically
-    fill out an electronic Form 8 for paperless appeals. The tool was built by the
+    Caseflow Certification is a web-based tool that pre-fills the electronic Form 8 for paperless appeals and checks case documents for readiness for certification. The tool was built by the
     United States Digital Service at the Department of Veterans Affairs, in close
     collaboration with Decision Review Officers and other employees in regional
     offices all over the country.
@@ -60,10 +59,10 @@
 
   <p>
     Once you're ready to certify an appeal, open and log in to VACOLS then search
-    for the Appeal ID. Once the date for the Form 9, NOD, SOC, and (optionally)
+    for the Appeal ID. Once the date for the Form 9, NOD, SOC, and any required
     SSOC have been entered into VACOLS, click the Certify Appeal button from the
     process menu. You can also select this option from the search results window or
-    the update appeal window
+    the update appeal window.
   </p>
 
   <p class="cf-help-image-wrapper">
@@ -89,7 +88,7 @@
 
   <p>
     If it's the first time you're using Caseflow Certification in a while you'll be
-    asked to log in twice. The first time you'll want to log using your standard VA
+    asked to log in twice. The first time you'll want to log in using your standard VA
     credentials (or PIV if you like). On the second login page, you'll need to log
     in using your regional office VACOLS credentials.
 
@@ -122,7 +121,7 @@
 
   <p>
     If the dates are inconsistent you can change the date in either VACOLS or VBMS
-    to match the other then click the Refresh button in Caseflow.
+    to match the other then click the Refresh button in Caseflow. If the date cannot be changed in VBMS, change the date in VACOLS.
   </p>
 
   <h3>2. The label of the document in question is missing or incorrect in VBMS</h3>
@@ -130,6 +129,14 @@
   <p>
     If a document is missing a label or uses something other than one of the labels
     listed below, you should add correct label to the document in the VBMS document
+    settings and click the refresh button in Caseflow.
+  </p>
+  
+  <h3>3. If a document is missing from the eFolder, the appeal cannot be certified using Caseflow and should instead be certified manually.</h3>
+
+  <p>
+    If a document is missing a label or uses something other than one of the labels
+    listed below, you should add the correct label to the document in the VBMS document
     settings and click the refresh button in Caseflow.
   </p>
 
@@ -157,13 +164,12 @@
     Occasionally, especially with older appeals, an NOD or a Form 9 will be
     included in a document with a more general label such as a Statement in Support
     of Claim. These documents could contain other information such as testimony or
-    evidence. The short-term guidance for this situation is to duplicate the
-    document by saving it to your computer, then re-uploading it to the eFolder.
-    Add the appropriate label from those listed in question 6 to the newly uploaded
+    evidence. Add the appropriate label(s) from those listed in question 6 to the newly uploaded
     document and make sure the date matches the one listed in VACOLS.
-
-    VBMS is pursuing a long-term solution to add multiple labels to a document to
-    avoid the need to duplicate documents.
+  </p>
+  
+  <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vbms-addlabel.png', {class: "cf-help-image", alt: 'Add correct doc label in VBMS'} %>
   </p>
 
   <h2 id="electronic-form8">8. How do I fill out an electronic Form 8?</h2>
@@ -200,16 +206,18 @@
     The Form 8 will automatically be uploaded to the eFolder, a certification date
     will be added to the appeal, and the appeal will be certified to the Board of
     Veterans Appeals!  Once you see the "Congratulations" page you can close the
-    browser window and open up another appeal using VACOLS.
+    browser window and open up another appeal using VACOLS. Please keep in mind that you should
+    continue to follow existing procedures for dispatching the Form 8 to the Board and sending 
+    the "File Certified to BVA" letter to the claimant, after the Form 8
+    has been uploaded to VBMS.
   </p>
 
   <h2 id="encounter-problem">11. What if I encounter a problem that prevents me from
     certifying the appeal?</h2>
 
   <p>
-    If you are unable to certify the appeal using Caseflow Certification, you can
-    click the Cancel Certification link. You'll see a confirmation indicating the
-    certification has been canceled and you can close the window.
+    Prior to clicking Upload and Certify, you can cancel out of the certification process at any
+    time by clicking the cancel button. A modal will appear, asking you to confirm your cancellation.
   </p>
 
   <p>
@@ -218,9 +226,14 @@
   </p>
 
   <p>
-    It's important to know that you cannot cancel a certification after clicking
-    the Upload and Certify button because the Form 8 will have already been added
-    to the eFolder and cannot be deleted.
+   If you have already clicked Upload and Certify, you will need to manually remove the Form 8
+    from VBMS and then clear the Certification date in the VACOLS "utilities menu" in order to
+    cancel the certification.
+  </p>
+  
+  <p>
+  <p class="cf-help-image-wrapper">
+    <%= image_tag 'help/vacols-cleardate.png', {class: "cf-help-image", alt: 'Clear Certification date in VACOLS'} %>
   </p>
 
   <h2 id="need-help">12. What do I do if I need help?</h2>
@@ -254,14 +267,17 @@
     has these specific documents in a Virtual VA, you'll have to manually fill out
     and upload a regular Form 8 and manually enter the Certification Date in
     VACOLS. Once the Form 8 is completed, open the appeal in VACOLS, click the
-    Certify button, and select the Hardcopy claims folder or Virtual VA option.
+    Certify button, and select the Hardcopy claims folder or Virtual VA option. Please keep in mind
+    that you should continue to follow existing procedures for sending the "File Certified to BVA" letter
+    after the Form 8 has been uploaded to VBMS.
+   
   </p>
 
   <h2 id="no-va646">15. What if my appeal does not have a completed VA-646 form?</h2>
 
   <p>
-    You should make sure the appeal has a completed VA-646 from the appellant’s
-    representative before using Caseflow Certification.
+   VA Form 646 is not a mandatory part of the Certification process to the Board and therefore
+   will not prevent you from certifying the case.
   </p>
 
   <h2 id="notification-letters">16. How should I send out notification letters after I’ve certified
@@ -295,11 +311,7 @@
   <h2 id="software-updates">19. When will you update Caseflow Certification?</h2>
   <p>
     Caseflow Certification will continue to be improved and any feedback that you
-    submit will be directly received and reviewed by our team. We are currently
-    working to introduce functionality in VBMS that will allow you to assign
-    multiple labels to appeals-related documents when required. Once this
-    functionality is available, we'll share this update and you will no longer need
-    to duplicate documents as we described earlier.
+    submit will be directly received and reviewed by our team. 
   </p>
 
   <h2 id="more-help">20. What if I still need help?</h2>
@@ -307,6 +319,7 @@
   <p>
     If you still encounter issues, have questions that aren’t answered here, or
     have ideas for improvements, reach out to the National Service Desk by calling
-    1-855-NSD-HELP (1-855-673-4357).
+    1-855-NSD-HELP (1-855-673-4357). You can also provide feedback for the Caseflow team
+    by clicking the "Send feedback" link in the Caseflow Certification app.
   </p>
 </div>
