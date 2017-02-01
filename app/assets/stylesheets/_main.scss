@@ -147,3 +147,18 @@
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
 }
+
+@mixin column-count($column, $column-gap) {
+  @include prefixer(column-count, $column, webkit moz spec);
+  @include prefixer(column-gap, $column-gap, webkit moz spec)
+}
+
+.cf-multiple-columns {
+  @include column-count(2, 10re);
+}
+
+select {
+  &[id="decisionType"] {
+    margin-bottom: 30px;
+  }
+}
