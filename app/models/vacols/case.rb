@@ -145,5 +145,38 @@ class VACOLS::Case < VACOLS::Record
                 .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, decided_after.strftime("%Y-%m-%d %H:%M"))
                 .order("BFDDEC ASC")
   end
+
+  def update_vacols_location(location)
+    return unless location
+
+    connection = self.class.connection
+    user_db_id = ''.upcase
+
+    self.class.transaction do
+      connection.execute(<<-EOQ)
+        UPDATE BRIEFF
+        SET BFDLOCIN = SYSDATE,
+            BFCURLOC = #{location},
+            BFDLOOUT = SYSDATE,
+            BFORGTIC = NULL
+        WHERE BFKEY = #{bfkey};
+      EOQ
+
+      self.class.connection.execute(<<-EOQ)
+        UPDATE PRIORLOC
+          SET LOCDIN = SYSDATE,
+            LOCSTRCV = #{user_db_id},
+            LOCEXCEP = 'Y'
+          WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
+      EOQ
+
+      self.class.connection.execute(<<-EOQ)
+        INSERT into PRIORLOC
+          (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
+        VALUES
+         (SYSDATE, SYSDATE, #{bfkey}, #{user_db_id}, :in_folder)
+        USING SQLCA;
+      EOQ
+  end
   # :nocov:
 end

@@ -142,6 +142,20 @@ class AppealRepository
   def self.dateshift_to_utc(value)
     Time.utc(value.year, value.month, value.day, 0, 0, 0)
   end
+
+  def self.update_vacols_location(case_record:, location:)
+    VACOLS::Record.transaction do
+      case_record.update_vacols_location(location)
+      case_record.update!( = location
+      case_record.
+
+      MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+        appeal.case_record.save!
+      end
+
+    end
+  end
+
   # :nocov:
 
   def self.establish_claim!(appeal:, claim:)
@@ -155,22 +169,14 @@ class AppealRepository
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
     end_product = Appeal.transaction do
-      VACOLS::Record.transaction do
         location =
           VACOLS::Case.location_after_dispatch(appeal: appeal,
                                                station: claim.station_of_jurisdiction)
 
-        if location
-          appeal.case_record.bfcurloc = location
-
-          MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-            appeal.case_record.save!
-          end
-        end
+        appeal.case_record.update_vacols_location(location)
 
         request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
         send_and_log_request(sanitized_id, request)
-      end
     end
 
     end_product
