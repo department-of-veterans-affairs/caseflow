@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-
 import PdfViewer from '../components/PdfViewer';
 
 export default class DecisionReviewer extends React.Component {
@@ -17,6 +16,18 @@ export default class DecisionReviewer extends React.Component {
   nextPdf = () => {
     this.setState({
       pdf: Math.min(this.state.pdf + 1, this.props.appealDocuments.length - 1)
+    });
+  }
+
+  previousPdf = () => {
+    this.setState({
+      pdf: Math.max(this.state.pdf - 1, 0)
+    });
+  }
+
+  nextPdf = () => {
+    this.setState({
+      pdf: Math.min(this.state.pdf + 1, this.props.pdfLinks.length - 1)
     });
   }
 

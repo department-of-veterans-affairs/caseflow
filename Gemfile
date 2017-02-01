@@ -74,6 +74,9 @@ gem 'prometheus-client'
 
 gem 'request_store'
 
+# State machine
+gem 'aasm'
+
 gem 'font-awesome-sass'
 
 group :production, :staging do
