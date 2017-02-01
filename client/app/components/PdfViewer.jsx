@@ -9,6 +9,7 @@ import BaseForm from '../containers/BaseForm';
 
 /* eslint-disable no-bitwise */
 /* eslint-disable no-mixed-operators */
+/* From http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript */
 let generateUUID = function() {
   let date = new Date().getTime();
   let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
@@ -34,10 +35,10 @@ export default class PdfViewer extends BaseForm {
         addComment: new FormField(''),
         editComment: new FormField('')
       },
-      commentOverIndex: -1,
+      commentOverIndex: null,
       comments: [],
       currentPage: 1,
-      editingComment: -1,
+      editingComment: null,
       isAddingComment: false,
       isPlacingNote: false,
       numPages: 0,
@@ -78,7 +79,7 @@ export default class PdfViewer extends BaseForm {
   hideEditIcon = (index) => () => {
     if (this.state.commentOverIndex === index) {
       this.setState({
-        commentOverIndex: -1
+        commentOverIndex: null
       });
     }
   }
@@ -93,6 +94,7 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
+  // TODO: refactor this method to make it cleaner
   saveEdit = (comment) => {
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
@@ -120,12 +122,12 @@ export default class PdfViewer extends BaseForm {
         });
 
         this.setState({
-          editingComment: -1
+          editingComment: null
         });
       }
       if (event.key === 'Escape') {
         this.setState({
-          editingComment: -1
+          editingComment: null
         });
       }
     };
@@ -158,6 +160,7 @@ export default class PdfViewer extends BaseForm {
 
   commentKeyPress = (saveNote) => (event) => {
     let commentForm = { ...this.state.commentForm };
+    // TODO: Should we continue to save on blur?
 
     if (event.type === 'blur' || event.key === 'Enter') {
       if (this.state.commentForm.addComment.value.length > 0) {
@@ -225,6 +228,7 @@ export default class PdfViewer extends BaseForm {
           ).then(() => {
             this.generateComments(this.state.pdfDocument);
           });
+          // Redraw all the annotations on the page to show the new one.
           let svg = document.getElementById(`pageContainer${pageNumber}`).
             getElementsByClassName("annotationLayer")[0];
 
@@ -439,7 +443,7 @@ export default class PdfViewer extends BaseForm {
       <div>
         <div className="cf-pdf-page-container">
           <div className="cf-pdf-container">
-            <div className="cf-pdf-header">
+            <div className="cf-pdf-header cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   {this.props.file}
@@ -470,7 +474,7 @@ export default class PdfViewer extends BaseForm {
                 `cf-pdf-page pdfViewer singlePageView`}>
               </div>
             </div>
-            <div className="cf-pdf-footer">
+            <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   <Button
