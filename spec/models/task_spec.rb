@@ -74,17 +74,21 @@ describe Task do
 
     context ".assign!" do
       it "correctly assigns a task to a user" do
+        task.prepare!
         task.assign!(:assigned, @user)
         expect(subject.user.id).to eq(@user.id)
         expect(subject.assigned_at).not_to be_nil
       end
 
       it "raises error if already assigned" do
+        task.prepare!
         task.assign!(:assigned, @user)
         expect { task.assign!(:assigned, @user) }.to raise_error(AASM::InvalidTransition)
       end
 
       it "throws error if user has another task" do
+        task.prepare!
+        task_same_user.prepare!
         task.assign!(:assigned, @user)
         expect { task_same_user.assign!(:assigned, @user) }.to raise_error(Task::UserAlreadyHasTaskError)
       end
@@ -96,6 +100,7 @@ describe Task do
       end
 
       it "assigned is true after assignment" do
+        task.prepare!
         task.assign!(:assigned, @user)
         expect(subject.assigned?).to be_truthy
       end
@@ -115,6 +120,7 @@ describe Task do
 
     context "task is assigned" do
       before do
+        task.prepare!
         task.assign!(:assigned, @user)
       end
 
@@ -125,6 +131,7 @@ describe Task do
       let!(:appeal) { Appeal.create(vacols_id: "123C") }
       let!(:task) { EstablishClaim.create(appeal: appeal) }
       before do
+        task.prepare!
         task.assign!(:assigned, @user)
         task.start!
       end
@@ -133,6 +140,7 @@ describe Task do
 
     context "task is completed" do
       before do
+        task.prepare!
         task.assign!(:assigned, @user)
         task.start!
         task.complete!(:completed, status: 0)
@@ -151,6 +159,7 @@ describe Task do
     end
 
     it "sets started_at value to current timestamp" do
+      task.prepare!
       task.assign!(:assigned, @user)
       expect(task.started_at).to be_falsey
       task.start!
@@ -162,7 +171,10 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     subject { task.started? }
-    before { task.assign!(:assigned, @user) }
+    before do
+      task.prepare!
+      task.assign!(:assigned, @user)
+    end
 
     context "not started" do
       it { is_expected.to be_falsey }
@@ -195,12 +207,13 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
       task.start!
       task.complete_and_recreate!(3)
     end
     it "completes and creates a new task" do
-      new_task = appeal.tasks.where(type: task.type).to_complete.first
+      new_task = appeal.tasks.where(type: task.type).where.not(aasm_state: "completed").first
       expect(task.completed?).to be_truthy
       expect(task.id).not_to eq(new_task.id)
     end
@@ -215,6 +228,7 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
       task.start!
     end
@@ -238,6 +252,9 @@ describe Task do
   context "#to_complete" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
+    before do
+      task.prepare!
+    end
     it { expect { Task.to_complete.find(task.id) }.not_to raise_error }
   end
 
@@ -245,6 +262,7 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
       task.start!
     end
@@ -252,7 +270,7 @@ describe Task do
       task.expire!
       expect(task.reload.completed?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
-      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(1)
+      expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
     end
   end
 
@@ -260,6 +278,7 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
       task.start!
     end
@@ -280,6 +299,7 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
       task.start!
     end
@@ -297,6 +317,7 @@ describe Task do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     before do
+      task.prepare!
       task.assign!(:assigned, @user)
     end
     it { expect { Task.assigned_not_completed.find(task.id) }.not_to raise_error }

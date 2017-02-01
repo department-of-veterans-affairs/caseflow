@@ -46,7 +46,7 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where.not(aasm_state: "completed")
+      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
 
     def completed
@@ -54,7 +54,7 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete_task_for_appeal(appeal)
-      where.not(aasm_state: "completed").where(appeal: appeal)
+      to_complete.where(appeal: appeal)
     end
 
     def completion_status_code(text)
@@ -63,14 +63,12 @@ class Task < ActiveRecord::Base
   end
 
   aasm do
-    # state :unprepared, :unassigned, :assigned, :started, :completed
+    state :unprepared, initial: true
+    state :unassigned, :assigned, :started, :completed
 
-    state :unassigned, initial: true
-    state :assigned, :started, :completed
-
-    # event :prepare do
-    #   transitions :from => :unprepared, :to => :unassigned
-    # end
+    event :prepare do
+      transitions from: :unprepared, to: :unassigned
+    end
 
     event :assign do
       transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }

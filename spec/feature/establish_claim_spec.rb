@@ -46,6 +46,7 @@ RSpec.feature "Dispatch" do
       vbms_id: @vbms_id
     )
     @task = EstablishClaim.create(appeal: appeal)
+    @task.prepare!
 
     Timecop.freeze(Time.utc(2017, 1, 1))
 
@@ -87,12 +88,14 @@ RSpec.feature "Dispatch" do
       appeal = Appeal.create(vacols_id: "456D")
 
       @completed_task = EstablishClaim.create(appeal: appeal)
+      @completed_task.prepare!
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+      @other_task.prepare!
       @other_task.assign!(:assigned, other_user)
       @other_task.start!
     end
