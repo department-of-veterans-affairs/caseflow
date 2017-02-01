@@ -150,7 +150,7 @@ class VACOLS::Case < VACOLS::Record
     return unless location
 
     connection = self.class.connection
-    user_db_id = ''.upcase
+    user_db_id = current_user.regional_office.upcase
 
     self.class.transaction do
       connection.execute(<<-EOQ)
@@ -162,7 +162,7 @@ class VACOLS::Case < VACOLS::Record
         WHERE BFKEY = #{bfkey};
       EOQ
 
-      self.class.connection.execute(<<-EOQ)
+      connection.execute(<<-EOQ)
         UPDATE PRIORLOC
         SET LOCDIN = SYSDATE,
             LOCSTRCV = #{user_db_id},
@@ -170,7 +170,7 @@ class VACOLS::Case < VACOLS::Record
         WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
       EOQ
 
-      self.class.connection.execute(<<-EOQ)
+      connection.execute(<<-EOQ)
         INSERT into PRIORLOC
           (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
         VALUES
