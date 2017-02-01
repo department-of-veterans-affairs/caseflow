@@ -569,7 +569,9 @@ export default class PdfViewer extends BaseForm {
               <div className="cf-heading-alt">Document</div>
               <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.name}</p>
               <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.type}</p>
-              <p className="cf-pdf-meta-title"><b>Receipt Date:</b> {formatDate(this.props.receivedAt)}</p>
+              <p className="cf-pdf-meta-title">
+                <b>Receipt Date:</b> {formatDate(this.props.receivedAt)}
+              </p>
               <div className="cf-heading-alt">
                 Notes
                 <span className="cf-right-side">
