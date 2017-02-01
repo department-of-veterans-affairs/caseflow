@@ -29,9 +29,13 @@ RSpec.feature "Confirm Certification" do
     # found there.
     pdf_href = page.find(:xpath, "//a[@id='sr-download-link']")[:href]
     visit(pdf_href)
-    content_header = page.response_headers["Content-Disposition"]
 
-    expect(content_header.include?("form8-TEST.pdf")).to be true
+    until page.response_headers
+      sleep(2)
+      puts "\t\tPDF not generated, revisiting #{pdf_href}"
+      visit(pdf_href)
+    end
+    expect(page.response_headers["Content-Disposition"]).to include("form8-TEST.pdf")
   end
 
   scenario "Successful confirmation" do
