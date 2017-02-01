@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from '../components/PdfViewer';
+import PdfListView from '../components/PdfListView';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
@@ -47,10 +48,12 @@ export default class DecisionReviewer extends React.Component {
 
     return (
       <div>
-        <PdfViewer
+        <PdfListView
+          files={pdfLinks} />
+        {false && <PdfViewer
           file={pdfLinks[this.state.pdf]}
           previousPdf={this.previousPdf}
-          nextPdf={this.nextPdf} />
+          nextPdf={this.nextPdf} />}
       </div>
     );
   }
