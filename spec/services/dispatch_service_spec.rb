@@ -11,6 +11,7 @@ describe Dispatch do
   end
 
   let(:task) { create_tasks(1).first }
+  let(:user) { User.create(station_id: "ABC", css_id: "123") }
   let(:claim) do
     {
       date: "03/03/2017",
@@ -101,9 +102,10 @@ describe Dispatch do
 
   context "#establish_claim!" do
     it "completes the task" do
-      expect(task.complete?).to be_falsey
+      task.start!
+      expect(task.completed?).to be_falsey
       dispatch.establish_claim!
-      expect(task.reload.complete?).to be_truthy
+      expect(task.reload.completed?).to be_truthy
       expect(task.outgoing_reference_id).to eq("12345")
     end
 

@@ -29,6 +29,7 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Rice Compliance',
   'Private Attorney',
   'Hearings - travel board & video conference',
+  'Contaminated Water at Camp Lejeune',
   'Home Loan Guaranty',
   'Waiver of Overpayment',
   'Education or Vocational Rehab',
@@ -42,7 +43,6 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Incarcerated Veterans',
   'Proposed Incompetency',
   'Manila Remand',
-  'Contaminated Water at Camp LeJeune',
   'Mustard Gas',
   'Dependencies',
   'DIC - death, or accrued benefits'
@@ -156,22 +156,24 @@ export default class EstablishClaimReview extends React.Component {
         />
 
       <label>Special Issue Categories</label>
-        {
+        <div className="cf-multiple-columns">
+          {
 
-          /* eslint-disable no-return-assign */
-          issueType.map((issue) =>
-          <Checkbox
-              id={ApiUtil.convertToCamelCase(issue)}
-              label={issue}
-              name={ApiUtil.convertToCamelCase(issue)}
-              {...specialIssues[issue]}
-              onChange={handleFieldChange('specialIssues',
-                  ApiUtil.convertToCamelCase(issue))}
-              key={count += 1}
-            />)
+            /* eslint-disable no-return-assign */
+            issueType.map((issue) =>
+            <Checkbox
+                id={ApiUtil.convertToCamelCase(issue)}
+                label={issue}
+                name={ApiUtil.convertToCamelCase(issue)}
+                {...specialIssues[issue]}
+                onChange={handleFieldChange('specialIssues',
+                    ApiUtil.convertToCamelCase(issue))}
+                key={count += 1}
+              />)
 
-            /* eslint-enable no-return-assign */
-        }
+              /* eslint-enable no-return-assign */
+          }
+        </div>
       </div>
 
       <div className="cf-app-segment" id="establish-claim-buttons">
