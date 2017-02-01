@@ -164,10 +164,10 @@ class VACOLS::Case < VACOLS::Record
 
       self.class.connection.execute(<<-EOQ)
         UPDATE PRIORLOC
-          SET LOCDIN = SYSDATE,
+        SET LOCDIN = SYSDATE,
             LOCSTRCV = #{user_db_id},
             LOCEXCEP = 'Y'
-          WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
+        WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
       EOQ
 
       self.class.connection.execute(<<-EOQ)
@@ -177,6 +177,7 @@ class VACOLS::Case < VACOLS::Record
          (SYSDATE, SYSDATE, #{bfkey}, #{user_db_id}, :in_folder)
         USING SQLCA;
       EOQ
+    end
   end
   # :nocov:
 end
