@@ -175,4 +175,5 @@ To run the test suite:
 
 For parallelized tests:
 `$ rake parallel:setup[4]`
+
 `$ rake ci:all`
