@@ -7,7 +7,9 @@
 
   function questionValue(questionNumber) {
     var value = $question(questionNumber).find("input[type='text'], textarea, input[type='radio']:checked").val();
-    if (value === undefined) return;
+    // value is returned as undefined for hidden fields
+    // trim() blows up when it is called on undefined
+    if (value === undefined) { return; }
     return value.trim();
   }
 
