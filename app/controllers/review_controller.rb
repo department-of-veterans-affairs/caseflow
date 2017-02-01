@@ -10,6 +10,8 @@ class ReviewController < ApplicationController
     "Decision"
   end
 
+  # TODO: Scope this down so that users can only see documents
+  # associated with assigned appeals
   def pdf
     document = Document.new(document_id: params[:document_id])
 
