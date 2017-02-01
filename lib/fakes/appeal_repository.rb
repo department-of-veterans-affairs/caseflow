@@ -307,22 +307,23 @@ class Fakes::AppealRepository
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
-      documents = [ 
+      documents = [
         nod_document,
         soc_document,
         form9_document,
         decision_document
       ]
-      documents_multiple_decisions = (documents.dup).push(decision_document2)
+      documents_multiple_decisions = documents.dup.push(decision_document2)
 
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         # Make every other case have two decision documents
-        if (i % 2 == 0)
-          @records["vbms_id#{i}"] = { documents:  documents}
-        else
-          @records["vbms_id#{i}"] = { documents:  documents_multiple_decisions}
-        end
+        @records["vbms_id#{i}"] =
+          if i.even?
+            { documents: documents }
+          else
+            { documents: documents_multiple_decisions }
+          end
       end
     end
   end
