@@ -25,7 +25,8 @@ use Prometheus::Client::Rack::Exporter
 
 # rubocop:disable all
 # TODO (alex): this should be a temporary addition to try to solve
-# a deployment bug. We should refactor or remove this after it serves its purpose.
+# a deployment bug. We should refactor or remove this
+# after it serves its purpose. Just a quick fix.
 module PumaThreadLogger
   def initialize *args
     Thread.new do

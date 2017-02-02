@@ -11,14 +11,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170124205843) do
+ActiveRecord::Schema.define(version: 20170201183126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "appeals", force: :cascade do |t|
-    t.string "vacols_id", null: false
-    t.string "vbms_id"
+    t.string  "vacols_id",                                              null: false
+    t.string  "vbms_id"
+    t.boolean "rice_compliance",                        default: false
+    t.boolean "private_attorney",                       default: false
+    t.boolean "waiver_of_overpayment",                  default: false
+    t.boolean "pensions",                               default: false
+    t.boolean "vamc",                                   default: false
+    t.boolean "incarcerated_veterans",                  default: false
+    t.boolean "dic_death_or_accrued_benefits",          default: false
+    t.boolean "education_or_vocational_rehab",          default: false
+    t.boolean "foreign_claims",                         default: false
+    t.boolean "manlincon_compliance",                   default: false
+    t.boolean "hearings_travel_board_video_conference", default: false
+    t.boolean "home_loan_guaranty",                     default: false
+    t.boolean "insurance",                              default: false
+    t.boolean "national_cemetery_administration",       default: false
+    t.boolean "spina_bifida",                           default: false
+    t.boolean "radiation",                              default: false
+    t.boolean "nonrating_issues",                       default: false
+    t.boolean "proposed_incompetency",                  default: false
+    t.boolean "manila_remand",                          default: false
+    t.boolean "contaminated_water_at_camp_lejeune",     default: false
+    t.boolean "mustard_gas",                            default: false
+    t.boolean "dependencies",                           default: false
   end
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
@@ -134,6 +156,7 @@ ActiveRecord::Schema.define(version: 20170124205843) do
     t.integer  "lock_version"
     t.string   "comment"
     t.string   "outgoing_reference_id"
+    t.string   "aasm_state"
   end
 
   create_table "users", force: :cascade do |t|
