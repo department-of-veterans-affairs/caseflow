@@ -3,8 +3,11 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
-
+import { formatDate, addDays } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import Table from '../../components/Table';
+
+const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
 
 export const DECISION_TYPE = [
   'Full Grant',
@@ -82,6 +85,16 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
 ];
 
 export default class EstablishClaimReview extends React.Component {
+  hasMultipleDecisions() {
+    return this.props.task.appeal.decisions.length > 1;
+  }
+
+  buildIssueRow = (issue) => [
+    issue.program,
+    issue.description,
+    issue.disposition
+  ];
+
   render() {
     let {
       decisionType,
@@ -94,12 +107,16 @@ export default class EstablishClaimReview extends React.Component {
       pdfLink,
       pdfjsLink,
       specialIssueModalDisplay,
-      specialIssues
+      specialIssues,
+      task
     } = this.props;
 
     let count = 0;
 
     let issueType = '';
+
+    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
+    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
 
     if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
       issueType = SPECIAL_ISSUE_PARTIAL;
@@ -112,7 +129,29 @@ export default class EstablishClaimReview extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Review Decision</h2>
           Review the final decision from VBMS below to determine the next step.
+          {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
+            <div className="usa-alert-body">
+              <div>
+                <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
+                <p className="usa-alert-text">
+                  We found more than one decision document for the dispatch date
+                  range {decisionDateStart} - {decisionDateEnd}.
+                  Please review the decisions in the tabs below and select the document
+                  that best fits the decision criteria for this case.
+                </p>
+              </div>
+            </div>
+          </div>}
         </div>
+        {this.hasMultipleDecisions() &&
+          <div className="cf-app-segment cf-app-segment--alt">
+            <h3>VACOLS Decision Criteria</h3>
+            <Table
+              headers={TABLE_HEADERS}
+              buildRowValues={this.buildIssueRow}
+              values={task.appeal.issues}
+            />
+          </div>}
         {
 
         /* This link is here for 508 compliance, and shouldn't be visible to sighted
@@ -125,7 +164,7 @@ export default class EstablishClaimReview extends React.Component {
         <a
           className="usa-sr-only"
           id="sr-download-link"
-          href={pdfLink}
+          href={`${pdfLink}&decision_number=0`}
           download
           target="_blank">
           The PDF viewer in your browser may not be accessible. Click to download
@@ -144,7 +183,7 @@ export default class EstablishClaimReview extends React.Component {
             below to go back and make edits or upload and certify the document."
           className="cf-doc-embed cf-app-segment"
           title="Form8 PDF"
-          src={pdfjsLink}>
+          src={`${pdfjsLink}&decision_number=0`}>
         </iframe>
         <div className="cf-app-segment cf-app-segment--alt">
         <DropDown
@@ -226,5 +265,6 @@ EstablishClaimReview.propTypes = {
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssueModalDisplay: PropTypes.bool.isRequired,
-  specialIssues: PropTypes.object.isRequired
+  specialIssues: PropTypes.object.isRequired,
+  task: PropTypes.object.isRequired
 };
