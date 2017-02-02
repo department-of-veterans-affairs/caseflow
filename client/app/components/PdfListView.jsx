@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import Button from '../components/Button';
+import { formatDate } from '../util/DateUtil';
 
 let PDF_LIST_TABLE_HEADERS = ['', 'Receipt Date', 'Document Type', 'Filename'];
 
@@ -9,13 +10,13 @@ export default class PdfListView extends React.Component {
     super(props);
   }
 
-  buildPdfRow = (file, index) => {
-    console.log(file + ' ' + index);
+  buildDocumentRow = (doc, index) => {
+    console.log(doc + ' ' + index);
     return [
       'label',
-      '12/19/2016',
-      'NOD',
-      <a onClick={this.props.showPdf(index)}>{file}</a>];
+      formatDate(doc.received_at),
+      doc.type,
+      <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
   }
 
   render() {
@@ -24,8 +25,8 @@ export default class PdfListView extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <Table
             headers={PDF_LIST_TABLE_HEADERS}
-            buildRowValues={this.buildPdfRow}
-            values={this.props.files}
+            buildRowValues={this.buildDocumentRow}
+            values={this.props.documents}
           />
         </div>
       </div>

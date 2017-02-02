@@ -52,7 +52,7 @@ export default class DecisionReviewer extends React.Component {
     return (
       <div>
         {!this.state.pdf && <PdfListView
-          files={pdfLinks}
+          documents={appealDocuments}
           showPdf={this.showPdf} />}
         {this.state.pdf && <PdfViewer
           file={`review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
@@ -61,7 +61,7 @@ export default class DecisionReviewer extends React.Component {
           name={appealDocuments[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
-          listView={this.showList} />}
+          showList={this.showList} />}
       </div>
     );
   }

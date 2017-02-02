@@ -447,7 +447,10 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-header cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  {this.props.name}
+                  <Button
+                    name={this.props.name}
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.showList} />
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   {this.state.currentPage} / {this.state.numPages}
