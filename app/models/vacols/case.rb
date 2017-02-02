@@ -6,6 +6,8 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,        foreign_key: :ticknum
   belongs_to :correspondent, foreign_key: :bfcorkey, primary_key: :stafkey
 
+  class InvalidLocationError < StandardError; end
+
   TYPES = {
     "1" => "Original",
     "2" => "Supplemental",
@@ -92,6 +94,11 @@ class VACOLS::Case < VACOLS::Record
     "6" => :video_hearing
   }.freeze
 
+  # NOTE(jd): This is a list of the valid locations that Caseflow
+  # supports updating an appeal to. This is a subset of the overall locations
+  # supported in VACOLS
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 98).freeze
+
   JOIN_ISSUE_CNT_REMAND = "
     inner join
     (
@@ -149,6 +156,9 @@ class VACOLS::Case < VACOLS::Record
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location(location)
     return unless location
+
+    fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
+
     conn = self.class.connection
 
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
