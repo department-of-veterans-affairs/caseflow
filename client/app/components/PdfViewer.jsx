@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import Button from '../components/Button';
+import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
@@ -446,7 +447,7 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-header cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  {this.props.file}
+                  {this.props.name}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   {this.state.currentPage} / {this.state.numPages}
@@ -566,9 +567,11 @@ export default class PdfViewer extends BaseForm {
           <div className="cf-sidebar-wrapper">
             <div className="cf-document-info-wrapper">
               <div className="cf-heading-alt">Document</div>
-              <p className="cf-pdf-meta-title"><b>Filename:</b></p>
-              <p className="cf-pdf-meta-title"><b>Document Type:</b></p>
-              <p className="cf-pdf-meta-title"><b>Receipt Date:</b> 01/02/2017</p>
+              <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.name}</p>
+              <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.type}</p>
+              <p className="cf-pdf-meta-title">
+                <b>Receipt Date:</b> {formatDate(this.props.receivedAt)}
+              </p>
               <div className="cf-heading-alt">
                 Notes
                 <span className="cf-right-side">
