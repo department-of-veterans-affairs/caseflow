@@ -1,12 +1,11 @@
 class Task < ActiveRecord::Base
+  include AASM
+
   belongs_to :user
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
 
-  class AlreadyAssignedError < StandardError; end
-  class NotAssignedError < StandardError; end
-  class AlreadyCompleteError < StandardError; end
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
@@ -30,6 +29,10 @@ class Task < ActiveRecord::Base
       where(user_id: nil)
     end
 
+    def unprepared
+      where(aasm_state: "unprepared")
+    end
+
     def assigned_not_completed
       to_complete.where.not(assigned_at: nil)
     end
@@ -47,19 +50,44 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where(completed_at: nil)
+      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
 
     def completed
-      where.not(completed_at: nil)
+      where(aasm_state: "completed")
     end
 
     def to_complete_task_for_appeal(appeal)
-      where(completed_at: nil, appeal: appeal)
+      to_complete.where(appeal: appeal)
     end
 
     def completion_status_code(text)
       COMPLETION_STATUS_MAPPING[text]
+    end
+  end
+
+  aasm do
+    state :unprepared, initial: true
+    state :unassigned, :assigned, :started, :completed
+
+    ## The 'unprepared' state is being used for establish claim tasks to designate
+    #  tasks attached to appeals that do not have decision documents. Tasks that are
+    #  in this state cannot be assigned to users. All tasks are in this state
+    #  immediately after creation.
+    event :prepare do
+      transitions from: :unprepared, to: :unassigned
+    end
+
+    event :assign do
+      transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
+    end
+
+    event :start do
+      transitions from: :assigned, to: :started, after: :start_time
+    end
+
+    event :complete do
+      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -71,26 +99,22 @@ class Task < ActiveRecord::Base
     # Test hook for testing race conditions
   end
 
-  def assign!(user)
-    before_assign
-    fail(AlreadyAssignedError) if self.user
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-
-    # Should this be a constraint in our system?
+  def assign_user(user)
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-
     update!(
       user: user,
       assigned_at: Time.now.utc
     )
-    self
+  end
+
+  def start_time
+    update!(started_at: Time.now.utc)
   end
 
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(status: self.class.completion_status_code(:canceled))
+      complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -99,32 +123,15 @@ class Task < ActiveRecord::Base
   end
 
   def assign_existing_end_product!(end_product_id)
-    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
-              outgoing_reference_id: end_product_id)
+    complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep),
+                          outgoing_reference_id: end_product_id)
   end
 
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(status: self.class.completion_status_code(status_code))
+      complete!(:completed, status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
-  end
-
-  def start!
-    fail(NotAssignedError) unless assigned?
-    fail(AlreadyStartedError) if started?
-    fail(AlreadyCompleteError) if complete?
-    return if started?
-
-    update!(started_at: Time.now.utc)
-  end
-
-  def started?
-    started_at
-  end
-
-  def assigned?
-    assigned_at
   end
 
   def progress_status
@@ -139,10 +146,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def complete?
-    completed_at
-  end
-
   def canceled?
     completion_status == self.class.completion_status_code(:canceled)
   end
@@ -152,9 +155,7 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status:, outgoing_reference_id: nil)
-    fail(AlreadyCompleteError) if complete?
-
+  def save_completion_status(status:, outgoing_reference_id: nil)
     update!(
       completed_at: Time.now.utc,
       completion_status: status,

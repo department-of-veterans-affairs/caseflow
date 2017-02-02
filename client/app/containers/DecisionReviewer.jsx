@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-
 import PdfViewer from '../components/PdfViewer';
 
 export default class DecisionReviewer extends React.Component {
@@ -16,7 +15,7 @@ export default class DecisionReviewer extends React.Component {
 
   nextPdf = () => {
     this.setState({
-      pdf: Math.min(this.state.pdf + 1, this.props.pdfLinks.length - 1)
+      pdf: Math.min(this.state.pdf + 1, this.props.appealDocuments.length - 1)
     });
   }
 
@@ -32,12 +31,15 @@ export default class DecisionReviewer extends React.Component {
   }
 
   render() {
-    let { pdfLinks } = this.props;
+    let { appealDocuments } = this.props;
 
     return (
       <div>
         <PdfViewer
-          file={pdfLinks[this.state.pdf]}
+          file={`review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
+          receivedAt={appealDocuments[this.state.pdf].received_at}
+          type={appealDocuments[this.state.pdf].type}
+          name={appealDocuments[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf} />
       </div>
@@ -46,5 +48,5 @@ export default class DecisionReviewer extends React.Component {
 }
 
 DecisionReviewer.propTypes = {
-  pdfLinks: PropTypes.arrayOf(PropTypes.string).isRequired
+  appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired
 };

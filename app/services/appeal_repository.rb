@@ -95,7 +95,11 @@ class AppealRepository
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
-      issues: map_issues(issue_records)
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }]
     )
 
     appeal

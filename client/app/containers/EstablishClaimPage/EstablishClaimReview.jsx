@@ -33,6 +33,7 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Rice Compliance',
   'Private Attorney',
   'Hearings - travel board & video conference',
+  'Contaminated Water at Camp Lejeune',
   'Home Loan Guaranty',
   'Waiver of Overpayment',
   'Education or Vocational Rehab',
@@ -46,7 +47,6 @@ export const SPECIAL_ISSUE_PARTIAL = [
   'Incarcerated Veterans',
   'Proposed Incompetency',
   'Manila Remand',
-  'Contaminated Water at Camp LeJeune',
   'Mustard Gas',
   'Dependencies',
   'DIC - death, or accrued benefits'
@@ -135,8 +135,8 @@ export default class EstablishClaimReview extends React.Component {
 
     let issueType = '';
 
-    let decisionWindowStart = addDays(new Date(task.appeal.decision_date), -3);
-    let decisionWindowEnd = addDays(new Date(task.appeal.decision_date), 3);
+    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
+    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
 
     if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
       issueType = SPECIAL_ISSUE_PARTIAL;
@@ -198,14 +198,16 @@ export default class EstablishClaimReview extends React.Component {
                 <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
                 <p className="usa-alert-text">
                   We found more than one decision document for the dispatch date
-                  range {formatDate(decisionWindowStart)} - {formatDate(decisionWindowEnd)}.
+                  range {decisionDateStart} - {decisionDateEnd}.
                   Please review the decisions in the tabs below and select the document
                   that best fits the decision criteria for this case.
                 </p>
               </div>
             </div>
           </div>}
-          {this.hasMultipleDecisions() && <div>
+        </div>
+        {this.hasMultipleDecisions() &&
+          <div className="cf-app-segment cf-app-segment--alt">
             <h3>VACOLS Decision Criteria</h3>
             <Table
               headers={TABLE_HEADERS}
@@ -213,29 +215,36 @@ export default class EstablishClaimReview extends React.Component {
               values={task.appeal.issues}
             />
           </div>}
-        </div>
+        {
 
+        /* This link is here for 508 compliance, and shouldn't be visible to sighted
+         users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
+         is the accessibility standard and is used across gov't, so we'll recommend it
+         for now. The usa-sr-only class will place an element off screen without
+         affecting its placement in tab order, thus making it invisible onscreen
+         but read out by screen readers. */
+        }
         <div className="cf-app-segment cf-app-segment--alt">
           {this.hasMultipleDecisions() && <div>
-              <h2>Select a Decision Document</h2>
-              <p>Use the tabs to review the decision documents below and
-              select the decision that best fits the VACOLS Decision Criteria.</p>
-              <TabWindow
-                tabs={tabHeaders}
-                pages={pdfViews}
-                onChange={this.onTabSelected}/>
-            </div>}
+            <h2>Select a Decision Document</h2>
+            <p>Use the tabs to review the decision documents below and
+            select the decision that best fits the VACOLS Decision Criteria.</p>
+            <TabWindow
+              tabs={tabHeaders}
+              pages={pdfViews}
+              onChange={this.onTabSelected}/>
+          </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <div>
-            <DropDown
-             label="Decision Type"
-             name="decisionType"
-             options={DECISION_TYPE}
-             onChange={handleDecisionTypeChange}
-             {...decisionType}
-            />
+          <DropDown
+           label="Decision Type"
+           name="decisionType"
+           options={DECISION_TYPE}
+           onChange={handleDecisionTypeChange}
+           {...decisionType}
+          />
 
-            <label>Special Issue Categories</label>
+          <label>Special Issue Categories</label>
+          <div className="cf-multiple-columns">
             {
 
               /* eslint-disable no-return-assign */
@@ -254,7 +263,6 @@ export default class EstablishClaimReview extends React.Component {
             }
           </div>
         </div>
-
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
             <Button
