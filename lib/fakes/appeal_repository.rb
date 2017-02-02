@@ -80,8 +80,18 @@ class Fakes::AppealRepository
     appeal.documents = @documents || []
   end
 
-  def self.fetch_document_file(_document)
-    path = File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+  def self.fetch_document_file(document)
+    path =
+      case document.document_id
+      when "1"
+        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+      when "2"
+        File.join(Rails.root, "lib", "pdfs", "VA9.pdf")
+      when "3"
+        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+      else
+        File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
+      end
     IO.binread(path)
   end
 
@@ -272,19 +282,19 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.new(type: "NOD", received_at: 3.days.ago, document_id: "1")
+    Document.new(type: "NOD", received_at: 3.days.ago, document_id: "1", filename: "Mark_NOD")
   end
 
   def self.soc_document
-    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6), document_id: "2")
+    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6), document_id: "2", filename: "Mark_SOC")
   end
 
   def self.form9_document
-    Document.new(type: "Form 9", received_at: 1.day.ago, document_id: "3")
+    Document.new(type: "Form 9", received_at: 1.day.ago, document_id: "3", filename: "Mark_Form_9")
   end
 
   def self.decision_document
-    Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4")
+    Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4", filename: "Mark_Decision")
   end
 
   def self.decision_document2
@@ -320,9 +330,15 @@ class Fakes::AppealRepository
         # Make every other case have two decision documents
         @records["vbms_id#{i}"] =
           if i.even?
-            { documents: documents }
+            {
+              documents: documents,
+              vbms_id: "vbms_id#{i}"
+            }
           else
-            { documents: documents_multiple_decisions }
+            {
+              documents: documents_multiple_decisions,
+              vbms_id: "vbms_id#{i}"
+            }
           end
       end
     end
