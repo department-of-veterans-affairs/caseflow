@@ -148,12 +148,10 @@ class VACOLS::Case < VACOLS::Record
 
   def update_vacols_location(location)
     return unless location
-
-    connection = self.class.connection
-    user_db_id = current_user.regional_office.upcase
+    user_db_id = RequestStore.store[:current_user].regional_office.upcase
 
     self.class.transaction do
-      connection.execute(<<-EOQ)
+      self.class.connection.execute(<<-EOQ)
         UPDATE BRIEFF
         SET BFDLOCIN = SYSDATE,
             BFCURLOC = #{location},
@@ -162,7 +160,7 @@ class VACOLS::Case < VACOLS::Record
         WHERE BFKEY = #{bfkey};
       EOQ
 
-      connection.execute(<<-EOQ)
+      self.class.connection.execute(<<-EOQ)
         UPDATE PRIORLOC
         SET LOCDIN = SYSDATE,
             LOCSTRCV = #{user_db_id},
@@ -170,7 +168,7 @@ class VACOLS::Case < VACOLS::Record
         WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
       EOQ
 
-      connection.execute(<<-EOQ)
+      self.class.connection.execute(<<-EOQ)
         INSERT into PRIORLOC
           (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
         VALUES
