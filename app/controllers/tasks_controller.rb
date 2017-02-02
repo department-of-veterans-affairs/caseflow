@@ -31,14 +31,14 @@ class TasksController < ApplicationController
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
-    return render "no_decisions" if task.appeal.decision.nil?
-  rescue Appeal::MultipleDecisionError
-    render "multiple_decisions"
+    return render "no_decisions" if task.appeal.decisions.nil?
   end
 
   def pdf
-    decision = task.appeal.decision
-    return redirect_to "/404" if decision.nil?
+    return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
+    decision_number = params[:decision_number].to_i
+    return redirect_to "/404" if decision_number > task.appeal.decisions.size
+    decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 
@@ -47,7 +47,7 @@ class TasksController < ApplicationController
     next_task = current_user_next_task
     return not_found unless next_task
 
-    next_task.assign!(current_user) if next_task.may_assign_this?
+    next_task.assign!(:assigned, current_user) if next_task.may_assign?
 
     respond_to do |format|
       format.html do
@@ -188,6 +188,6 @@ class TasksController < ApplicationController
   def start_task!
     # Future safeguard for when we give managers a show view
     # for a given task
-    task.start! if current_user == task.user && task.may_start_this?
+    task.start! if current_user == task.user && task.may_start?
   end
 end

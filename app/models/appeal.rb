@@ -22,6 +22,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
+  vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
 
   attr_writer :ssoc_dates
@@ -117,12 +118,11 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
-  def decision
+  def decisions
     decisions = documents_with_type("BVA Decision").select do |decision|
-      (decision.received_at.in_time_zone - decision_date).abs <= 1.day
+      (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
-    fail(MultipleDecisionError) if decisions.size > 1
-    decisions.first
+    decisions
   end
 
   def certify!

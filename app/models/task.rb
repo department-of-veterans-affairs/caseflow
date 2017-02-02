@@ -8,7 +8,6 @@ class Task < ActiveRecord::Base
 
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
-  class IncorrectStateTransitionError < StandardError; end
 
   COMPLETION_STATUS_MAPPING = {
     completed: 0,
@@ -30,6 +29,10 @@ class Task < ActiveRecord::Base
       where(user_id: nil)
     end
 
+    def unprepared
+      where(aasm_state: "unprepared")
+    end
+
     def assigned_not_completed
       to_complete.where.not(assigned_at: nil)
     end
@@ -47,15 +50,15 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where(completed_at: nil)
+      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
 
     def completed
-      where.not(completed_at: nil)
+      where(aasm_state: "completed")
     end
 
     def to_complete_task_for_appeal(appeal)
-      where(completed_at: nil, appeal: appeal)
+      to_complete.where(appeal: appeal)
     end
 
     def completion_status_code(text)
@@ -64,25 +67,27 @@ class Task < ActiveRecord::Base
   end
 
   aasm do
-    # state :unprepared, :unassigned, :assigned, :started, :completed
+    state :unprepared, initial: true
+    state :unassigned, :assigned, :started, :completed
 
-    state :unassigned, initial: true
-    state :assigned, :started, :completed
-
-    # event :prepare do
-    #   transitions :from => :unprepared, :to => :unassigned
-    # end
-
-    event :assign_this do
-      transitions from: :unassigned, to: :assigned
+    ## The 'unprepared' state is being used for establish claim tasks to designate
+    #  tasks attached to appeals that do not have decision documents. Tasks that are
+    #  in this state cannot be assigned to users. All tasks are in this state
+    #  immediately after creation.
+    event :prepare do
+      transitions from: :unprepared, to: :unassigned
     end
 
-    event :start_this do
-      transitions from: :assigned, to: :started
+    event :assign do
+      transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
     end
 
-    event :complete_this do
-      transitions from: :started, to: :completed
+    event :start do
+      transitions from: :assigned, to: :started, after: :start_time
+    end
+
+    event :complete do
+      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -94,23 +99,22 @@ class Task < ActiveRecord::Base
     # Test hook for testing race conditions
   end
 
-  def assign!(user)
-    before_assign
-    fail(IncorrectStateTransitionError) unless may_assign_this?
+  def assign_user(user)
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-
     update!(
       user: user,
       assigned_at: Time.now.utc
     )
-    assign_this!
-    self
+  end
+
+  def start_time
+    update!(started_at: Time.now.utc)
   end
 
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(status: self.class.completion_status_code(:canceled))
+      complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end
 
@@ -119,22 +123,15 @@ class Task < ActiveRecord::Base
   end
 
   def assign_existing_end_product!(end_product_id)
-    complete!(status: self.class.completion_status_code(:assigned_existing_ep),
-              outgoing_reference_id: end_product_id)
+    complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep),
+                          outgoing_reference_id: end_product_id)
   end
 
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(status: self.class.completion_status_code(status_code))
+      complete!(:completed, status: self.class.completion_status_code(status_code))
       self.class.create!(appeal_id: appeal_id, type: type)
     end
-  end
-
-  def start!
-    fail(IncorrectStateTransitionError) unless may_start_this?
-    update!(started_at: Time.now.utc)
-    start_this!
-    self
   end
 
   def progress_status
@@ -158,16 +155,12 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def complete!(status:, outgoing_reference_id: nil)
-    fail(IncorrectStateTransitionError) unless may_complete_this?
-
+  def save_completion_status(status:, outgoing_reference_id: nil)
     update!(
       completed_at: Time.now.utc,
       completion_status: status,
       outgoing_reference_id: outgoing_reference_id
     )
-    complete_this!
-    self
   end
 
   def completion_status_text
@@ -190,11 +183,14 @@ class Task < ActiveRecord::Base
     serializable_hash(
       include: [:user, appeal: { methods:
         [:decision_date,
+         :decisions,
+         :disposition,
          :veteran_name,
          :decision_type,
          :station_key,
          :non_canceled_end_products_within_30_days,
-         :pending_eps] }],
+         :pending_eps,
+         :issues] }],
       methods: [:progress_status]
     )
   end
