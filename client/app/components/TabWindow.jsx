@@ -39,6 +39,7 @@ export default class TabWindow extends React.Component {
             <div
               className={`cf-tab${i === this.state.currentPage ? " cf-active" : ""}`}
               key={i}
+              id={`tab-${i}`}
               onClick={this.onTabClick(i)}>
               {tab}
             </div>
