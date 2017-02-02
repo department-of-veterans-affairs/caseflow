@@ -9,10 +9,10 @@ import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionReviewer from './DecisionReviewer';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
-import AppealsMissingDecisionsIndex from './AppealsMissingDecisionsIndex';
+import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
-  AppealsMissingDecisionsIndex,
+  UnpreparedTasksIndex,
   DecisionReviewer,
   EstablishClaim,
   EstablishClaimComplete,

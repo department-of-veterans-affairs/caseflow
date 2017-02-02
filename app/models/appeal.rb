@@ -157,7 +157,7 @@ class Appeal < ActiveRecord::Base
     return "Remand" if remand?
   end
 
-  def days_in_queue
+  def days_since_decision
     (Time.zone.now - decision_date).to_i / 1.day
   end
 
@@ -178,14 +178,6 @@ class Appeal < ActiveRecord::Base
       appeal.save
 
       appeal
-    end
-
-    def find_appeals_missing_decisions
-      appeals_missing_decisions = []
-      Appeal.all.find_each do |appeal|
-        appeals_missing_decisions << appeal unless appeal.decision
-      end
-      appeals_missing_decisions.sort_by(&:decision_date)
     end
 
     def repository
@@ -266,17 +258,5 @@ class Appeal < ActiveRecord::Base
     else
       numeric
     end
-  end
-
-  def to_hash
-    serializable_hash(
-      include: [],
-      methods: [
-        :decision_date,
-        :veteran_name,
-        :decision_type,
-        :days_in_queue
-      ]
-    )
   end
 end

@@ -1,0 +1,4 @@
+<%= react_component("BaseContainer", props: {
+    unpreparedTasks: @unprepared_tasks.map(&:to_hash),
+    page: "UnpreparedTasksIndex"
+}) %>

@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, except: [:unprepared_tasks]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
+  before_action :verify_manager_access, only: [:unprepared_tasks]
 
   class TaskTypeMissingError < StandardError; end
 
@@ -58,6 +59,11 @@ class TasksController < ApplicationController
       end
     end
   end
+
+  def unprepared_tasks
+    @unprepared_tasks ||= Task.unprepared
+  end
+  helper_method :unprepared_tasks
 
   def cancel
     task.cancel!(cancel_feedback)
@@ -165,6 +171,10 @@ class TasksController < ApplicationController
 
   def verify_access
     verify_authorized_roles(task_roles[:employee])
+  end
+
+  def verify_manager_access
+    verify_authorized_roles(task_roles[:manager])
   end
 
   def verify_assigned_to_current_user

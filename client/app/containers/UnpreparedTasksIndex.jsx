@@ -4,18 +4,18 @@ import { formatDate } from '../util/DateUtil';
 
 const TABLE_HEADERS = ['Veteran', 'Decision Type', 'Decision Date', 'Days in Queue'];
 
-export default class AppealsMissingDecisionsIndex extends React.Component {
+export default class UnpreparedTasksIndex extends React.Component {
 
-  buildAppealRow = (appeal) => [
-    `${appeal.veteran_name} (${appeal.vbms_id})`,
-    appeal.decision_type,
-    formatDate(appeal.decision_date),
-    `${appeal.days_in_queue} days`
+  buildUnpreparedTaskRow = (task) => [
+    `${task.appeal.veteran_name} (${task.appeal.vbms_id})`,
+    task.appeal.decision_type,
+    formatDate(task.appeal.decision_date),
+    `${task.appeal.days_since_decision} days`
   ];
 
   render() {
     let {
-      appealsMissingDecisions
+      unpreparedTasks
     } = this.props;
 
     return <div className="cf-app-segment cf-app-segment--alt">
@@ -24,14 +24,14 @@ export default class AppealsMissingDecisionsIndex extends React.Component {
       <div className="usa-grid-full">
         <Table
           headers={TABLE_HEADERS}
-          buildRowValues={this.buildAppealRow}
-          values={appealsMissingDecisions}
+          buildRowValues={this.buildUnpreparedTaskRow}
+          values={unpreparedTasks}
         />
       </div>
     </div>;
   }
 }
 
-AppealsMissingDecisionsIndex.propTypes = {
-  appealsMissingDecisions: PropTypes.arrayOf(PropTypes.object)
+UnpreparedTasksIndex.propTypes = {
+  unpreparedTasks: PropTypes.arrayOf(PropTypes.object)
 };
