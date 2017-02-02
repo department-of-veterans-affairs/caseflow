@@ -12,12 +12,12 @@ import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete'
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
-  UnpreparedTasksIndex,
   DecisionReviewer,
   EstablishClaim,
   EstablishClaimComplete,
   TasksManagerIndex,
-  TestPage
+  TestPage,
+  UnpreparedTasksIndex
 };
 
 // This is the "base page" that wraps all pages rendered directly

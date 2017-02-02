@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access, except: [:unprepared_tasks]
+  before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
   before_action :verify_manager_access, only: [:unprepared_tasks]
 
@@ -63,7 +63,6 @@ class TasksController < ApplicationController
   def unprepared_tasks
     @unprepared_tasks ||= Task.unprepared
   end
-  helper_method :unprepared_tasks
 
   def cancel
     task.cancel!(cancel_feedback)
