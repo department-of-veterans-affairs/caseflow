@@ -35,11 +35,12 @@ class AppealRepository
   # :nocov:
   def self.load_vacols_data_by_vbms_id(appeal)
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
-      VACOLS::Case.includes(:folder, :correspondent).find_by_bfcorlid(appeal.vbms_id)
+      VACOLS::Case.includes(:folder, :correspondent).where(bfcorlid: appeal.vbms_id).all
     end
 
     fail MultipleAppealsByVBMSIDError if case_records.length > 1
 
+    appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
 
     appeal
