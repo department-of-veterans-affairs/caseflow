@@ -26,8 +26,8 @@ describe PrepareEstablishClaimTasksJob do
     it "prepares the correct tasks" do
       expect(EstablishClaim.where(aasm_state: "unprepared").count).to eq(2)
       PrepareEstablishClaimTasksJob.perform_now
-      expect(EstablishClaim.where(aasm_state: "unassigned").count).to eq(1)
-      expect(EstablishClaim.where(aasm_state: "unprepared").count).to eq(1)
+      expect(@task_one.reload.unassigned?).to be_truthy
+      expect(@task_two.reload.unprepared?).to be_truthy
     end
   end
 end

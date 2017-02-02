@@ -73,21 +73,21 @@ describe Task do
     subject { task }
 
     context ".assign!" do
-      it "correctly assigns a task to a user" do
+      before do
         task.prepare!
+      end
+      it "correctly assigns a task to a user" do
         task.assign!(:assigned, @user)
         expect(subject.user.id).to eq(@user.id)
         expect(subject.assigned_at).not_to be_nil
       end
 
       it "raises error if already assigned" do
-        task.prepare!
         task.assign!(:assigned, @user)
         expect { task.assign!(:assigned, @user) }.to raise_error(AASM::InvalidTransition)
       end
 
       it "throws error if user has another task" do
-        task.prepare!
         task_same_user.prepare!
         task.assign!(:assigned, @user)
         expect { task_same_user.assign!(:assigned, @user) }.to raise_error(Task::UserAlreadyHasTaskError)
@@ -95,12 +95,14 @@ describe Task do
     end
 
     context ".assigned?" do
+      before do
+        task.prepare!
+      end
       it "assigned is false before assignment" do
         expect(subject.assigned?).to be_falsey
       end
 
       it "assigned is true after assignment" do
-        task.prepare!
         task.assign!(:assigned, @user)
         expect(subject.assigned?).to be_truthy
       end

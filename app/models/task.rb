@@ -29,6 +29,10 @@ class Task < ActiveRecord::Base
       where(user_id: nil)
     end
 
+    def unprepared
+      where(aasm_state: "unprepared")
+    end
+
     def assigned_not_completed
       to_complete.where.not(assigned_at: nil)
     end
@@ -66,6 +70,10 @@ class Task < ActiveRecord::Base
     state :unprepared, initial: true
     state :unassigned, :assigned, :started, :completed
 
+    ## The 'unprepared' state is being used for establish claim tasks to designate
+    #  tasks attached to appeals that do not have decision documents. Tasks that are
+    #  in this state cannot be assigned to users. All tasks are in this state
+    #  immediately after creation.
     event :prepare do
       transitions from: :unprepared, to: :unassigned
     end

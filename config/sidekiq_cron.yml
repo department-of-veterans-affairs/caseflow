@@ -11,3 +11,9 @@ reassign_old_tasks:
   queue: default
   active_job: true
   disabled: true
+
+prepare_establish_claim_tasks_job:
+  cron: "2 0 * * * America/New_York"
+  class: "PrepareEstablishClaimTasksJob"
+  queue: default
+  active_job: true
