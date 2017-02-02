@@ -31,14 +31,14 @@ class TasksController < ApplicationController
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
-    return render "no_decisions" if task.appeal.decision.nil?
-  rescue Appeal::MultipleDecisionError
-    render "multiple_decisions"
+    return render "no_decisions" if task.appeal.decisions.nil?
   end
 
   def pdf
-    decision = task.appeal.decision
-    return redirect_to "/404" if decision.nil?
+    return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
+    decision_number = params[:decision_number].to_i
+    return redirect_to "/404" if decision_number > task.appeal.decisions.size
+    decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
 

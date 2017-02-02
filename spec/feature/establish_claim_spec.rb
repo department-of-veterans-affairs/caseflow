@@ -193,6 +193,31 @@ RSpec.feature "Dispatch" do
 
         expect(find_field("Decision Date").value).to eq("01/01/1111")
       end
+
+      context "Multiple decisions in VBMS" do
+        before do
+          Fakes::AppealRepository.records = {
+            "123C" => Fakes::AppealRepository.appeal_remand_decided,
+            "456D" => Fakes::AppealRepository.appeal_remand_decided,
+            @vbms_id => { documents: [Document.new(
+              received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
+              document_id: "123"
+            ), Document.new(
+              received_at: (Time.current - 6.days).to_date, type: "BVA Decision",
+              document_id: "456"
+            )
+            ] }
+          }
+        end
+
+        scenario "review page lets users choose which to use" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish Next Claim"
+
+          # View history
+          expect(page).to have_content("Multiple Decision Documents")
+        end
+      end
     end
 
     context "Add existing Full Grant & Partial Grant EPs" do
