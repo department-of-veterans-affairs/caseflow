@@ -3,62 +3,14 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
+import PDFJSAnnotate from 'pdf-annotate.js';
 
 export default class PdfListView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      documents: this.props.documents,
-      sortByDate: 'ascending',
-      sortByFilename: 'descending',
-      sortByType: null
+      numberOfComments: []
     };
-  }
-
-  sortBy = (sortType, sortDirection) => {
-    let multiplier;
-    if (sortDirection === 'ascending') {
-      multiplier = 1;
-    } else if (sortDirection === 'descending') {
-      multiplier = -1;
-    } else {
-      return;
-    }
-
-    let documents = this.state.documents.sort((doc1, doc2) => {
-      if (sortType === 'sortByDate') {
-        return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
-      }
-      if (sortType === 'sortByType') {
-        return multiplier * ((doc1.type < doc2.type) ? -1 : 1);
-      }
-      if (sortType === 'sortByFilename') {
-        return multiplier * ((doc1.filename < doc2.filename) ? -1 : 1);
-      }
-    });
-    this.setState({
-      documents: documents
-    });
-    this.props
-  }
-
-  changeSortState = (sortType) => () => {
-    let sort = this.state[sortType];
-    if (sort === null) {
-      sort = 'ascending';
-    } else if (sort === 'ascending') {
-      sort = 'descending';
-    } else {
-      sort = null;
-    }
-
-    let updatedState = this.state;
-    updatedState[sortType] = sort;
-    this.setState({
-      sort
-    });
-
-    this.sortBy(sortType, sort);
   }
 
   getDocumentTableHeaders = () => {
@@ -73,18 +25,22 @@ export default class PdfListView extends React.Component {
 
     return [
       '',
-      <div onClick={this.changeSortState('sortByDate')}>Receipt Date {getSortIcon(this.state.sortByDate)}</div>,
-      <div onClick={this.changeSortState('sortByType')}>Document Type {getSortIcon(this.state.sortByType)}</div>,
-      <div onClick={this.changeSortState('sortByFilename')}>Filename {getSortIcon(this.state.sortByFilename)}</div>
+      <div onClick={this.props.changeSortState('sortByDate')}>Receipt Date {getSortIcon(this.props.sortByDate)}</div>,
+      <div onClick={this.props.changeSortState('sortByType')}>Document Type {getSortIcon(this.props.sortByType)}</div>,
+      <div onClick={this.props.changeSortState('sortByFilename')}>Filename {getSortIcon(this.props.sortByFilename)}</div>
     ];
   }
 
   buildDocumentRow = (doc, index) => {
-    console.log(doc + ' ' + index);
     return [
-      <i style={{ color: '#23ABF6' }}
+      <div><i style={{ color: '#23ABF6' }}
         className="fa fa-bookmark cf-pdf-bookmarks"
-        aria-hidden="true"></i>,
+        aria-hidden="true"></i>
+        <span className="fa-stack fa-3x cf-pdf-comment-indicator">
+          <i className="fa fa-comment-o fa-stack-2x"></i>
+          <strong className="fa-stack-1x fa-stack-text">{this.state.numberOfComments[index]}</strong>
+        </span>
+      </div>,
       formatDate(doc.received_at),
       doc.type,
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
@@ -92,6 +48,18 @@ export default class PdfListView extends React.Component {
 
   onLabelClick = (label) => (event) => {
     console.log(label);
+  }
+
+  componentDidMount = () => {
+    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+    
+    this.props.documents.forEach((doc, index) => {
+      let numberOfComments = this.state.numberOfComments;
+      numberOfComments[index] = index;
+      this.setState({
+        numberOfComments: numberOfComments
+      });
+    });
   }
 
   render() {
@@ -109,7 +77,7 @@ export default class PdfListView extends React.Component {
               <Table
                 headers={this.getDocumentTableHeaders()}
                 buildRowValues={this.buildDocumentRow}
-                values={this.state.documents}
+                values={this.props.documents}
               />
             </div>
           </div>

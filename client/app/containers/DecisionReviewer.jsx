@@ -6,7 +6,10 @@ export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      documents: this.props.appealDocuments
+      documents: this.props.appealDocuments,
+      sortByDate: null,
+      sortByFilename: null,
+      sortByType: null,
       listView: true,
       pdf: null
     };
@@ -47,21 +50,70 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  setDocuments = (documents) => {
+
+  sortBy = (sortType, sortDirection) => {
+    let multiplier;
+    if (sortDirection === 'ascending') {
+      multiplier = 1;
+    } else if (sortDirection === 'descending') {
+      multiplier = -1;
+    } else {
+      return;
+    }
+
+    let documents = this.state.documents.sort((doc1, doc2) => {
+      if (sortType === 'sortByDate') {
+        return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
+      }
+      if (sortType === 'sortByType') {
+        return multiplier * ((doc1.type < doc2.type) ? -1 : 1);
+      }
+      if (sortType === 'sortByFilename') {
+        return multiplier * ((doc1.filename < doc2.filename) ? -1 : 1);
+      }
+    });
     this.setState({
       documents: documents
     });
+    this.props
+  }
+
+  changeSortState = (sortType) => () => {
+    let sort = this.state[sortType];
+    if (sort === null) {
+      sort = 'ascending';
+    } else if (sort === 'ascending') {
+      sort = 'descending';
+    } else {
+      sort = null;
+    }
+
+    let updatedState = this.state;
+    updatedState[sortType] = sort;
+    this.setState({
+      sort
+    });
+
+    this.sortBy(sortType, sort);
   }
 
   render() {
-    let { documents } = this.state;
+    let { 
+      documents,
+      sortByDate,
+      sortByFilename,
+      sortByType
+    } = this.state;
 
     return (
       <div>
         {this.state.pdf === null && <PdfListView
-          documents={this.state.appeal.documents}
-          setDocuments={this.setDocuments}
-          showPdf={this.showPdf} />}
+          documents={documents}
+          changeSortState={this.changeSortState}
+          showPdf={this.showPdf}
+          sortByDate={sortByDate}
+          sortByFilename={sortByFilename}
+          sortByType={sortByType} />}
         {this.state.pdf !== null && <PdfViewer
           file={`review/pdf?document_id=${documents[this.state.pdf].document_id}`}
           receivedAt={documents[this.state.pdf].received_at}
