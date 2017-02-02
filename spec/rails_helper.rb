@@ -127,6 +127,7 @@ def create_tasks(count, opts = {})
 
     user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}", full_name: "Jane Smith")
     task = EstablishClaim.create(appeal: appeal)
+    task.prepare!
     task.assign!(:assigned, user)
 
     task.start! if %i(started completed).include?(opts[:initial_state])

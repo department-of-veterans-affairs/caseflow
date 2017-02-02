@@ -46,6 +46,7 @@ RSpec.feature "Dispatch" do
       vbms_id: @vbms_id
     )
     @task = EstablishClaim.create(appeal: appeal)
+    @task.prepare!
 
     Timecop.freeze(Time.utc(2017, 1, 1))
 
@@ -87,12 +88,14 @@ RSpec.feature "Dispatch" do
       appeal = Appeal.create(vacols_id: "456D")
 
       @completed_task = EstablishClaim.create(appeal: appeal)
+      @completed_task.prepare!
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
       @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+      @other_task.prepare!
       @other_task.assign!(:assigned, other_user)
       @other_task.start!
     end
@@ -192,6 +195,31 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         expect(find_field("Decision Date").value).to eq("01/01/1111")
+      end
+
+      context "Multiple decisions in VBMS" do
+        before do
+          Fakes::AppealRepository.records = {
+            "123C" => Fakes::AppealRepository.appeal_remand_decided,
+            "456D" => Fakes::AppealRepository.appeal_remand_decided,
+            @vbms_id => { documents: [Document.new(
+              received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
+              document_id: "123"
+            ), Document.new(
+              received_at: (Time.current - 6.days).to_date, type: "BVA Decision",
+              document_id: "456"
+            )
+            ] }
+          }
+        end
+
+        scenario "review page lets users choose which to use" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish Next Claim"
+
+          # View history
+          expect(page).to have_content("Multiple Decision Documents")
+        end
       end
     end
 

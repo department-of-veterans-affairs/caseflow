@@ -366,6 +366,7 @@ export default class EstablishClaim extends BaseForm {
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}
             specialIssues={specialIssues}
+            task={this.props.task}
           />
         }
         { this.isAssociatePage() &&

@@ -15,7 +15,7 @@ RSpec.feature "Save Certification" do
     expect(page).to have_css("#question3 label .cf-required")
     expect(page).to have_css("#question10A legend .cf-required")
 
-    fill_in "Full Veteran Name", with: ""
+    fill_in "Full Veteran Name", with: "     "
     within_fieldset("8A Representative Type") do
       find("label", text: "Other").click
     end
