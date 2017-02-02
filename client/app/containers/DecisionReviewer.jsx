@@ -6,6 +6,7 @@ export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      documents: this.props.appealDocuments
       listView: true,
       pdf: null
     };
@@ -46,19 +47,26 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
+  setDocuments = (documents) => {
+    this.setState({
+      documents: documents
+    });
+  }
+
   render() {
-    let { appealDocuments } = this.props;
+    let { documents } = this.state;
 
     return (
       <div>
-        {!this.state.pdf && <PdfListView
-          documents={appealDocuments}
+        {this.state.pdf === null && <PdfListView
+          documents={this.state.appeal.documents}
+          setDocuments={this.setDocuments}
           showPdf={this.showPdf} />}
-        {this.state.pdf && <PdfViewer
-          file={`review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
-          receivedAt={appealDocuments[this.state.pdf].received_at}
-          type={appealDocuments[this.state.pdf].type}
-          name={appealDocuments[this.state.pdf].filename}
+        {this.state.pdf !== null && <PdfViewer
+          file={`review/pdf?document_id=${documents[this.state.pdf].document_id}`}
+          receivedAt={documents[this.state.pdf].received_at}
+          type={documents[this.state.pdf].type}
+          name={documents[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
           showList={this.showList} />}

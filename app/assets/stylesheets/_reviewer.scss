@@ -154,12 +154,12 @@ $caseflow-background: #f9f9f9;
 }
 
 .cf-pdf-bookmarks {
-  transform: scale(2, 2.6);
+  transform: scale(1.5, 2);
 }
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 15px !important;
+  margin: 0 8px !important;
   color: inherit;
   padding: 0;
   background-color: transparent;
