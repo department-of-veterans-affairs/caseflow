@@ -148,34 +148,39 @@ class VACOLS::Case < VACOLS::Record
 
   def update_vacols_location(location)
     return unless location
-    user_db_id = RequestStore.store[:current_user].regional_office.upcase
+    conn = self.class.connection
 
-    self.class.transaction do
-      self.class.connection.execute(<<-EOQ)
+    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    location = conn.quote(location)
+    user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
+    case_id = conn.quote(bfkey)
+
+    conn.transaction do
+      conn.execute(<<-SQL)
         UPDATE BRIEFF
         SET BFDLOCIN = SYSDATE,
             BFCURLOC = #{location},
             BFDLOOUT = SYSDATE,
             BFORGTIC = NULL
-        WHERE BFKEY = #{bfkey};
-      EOQ
+        WHERE BFKEY = #{case_id}
+      SQL
 
-      self.class.connection.execute(<<-EOQ)
+      conn.execute(<<-SQL)
         UPDATE PRIORLOC
         SET LOCDIN = SYSDATE,
             LOCSTRCV = #{user_db_id},
             LOCEXCEP = 'Y'
-        WHERE LOCKEY = #{bfkey} and LOCDIN is NULL;
-      EOQ
+        WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+      SQL
 
-      self.class.connection.execute(<<-EOQ)
+      conn.execute(<<-SQL)
         INSERT into PRIORLOC
           (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
         VALUES
-         (SYSDATE, SYSDATE, #{bfkey}, #{user_db_id}, :in_folder)
-        USING SQLCA;
-      EOQ
+         (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
+      SQL
     end
   end
+
   # :nocov:
 end
