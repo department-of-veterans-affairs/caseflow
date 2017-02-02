@@ -54,6 +54,7 @@ RSpec.feature "Test Setup" do
     scenario "is allowed by a non-test user" do
       user = User.tester!(roles: ["Establish Claim"])
       task = EstablishClaim.create(appeal: appeal)
+      task.prepare!
       task.assign!(:assigned, user)
       task.start!
       task.complete!(:completed, status: 0)
