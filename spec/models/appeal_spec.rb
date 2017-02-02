@@ -465,6 +465,20 @@ describe Appeal do
     end
   end
 
+  context "#special_issues?" do
+    let(:appeal) { Appeal.new(vacols_id: "123", dependencies: true) }
+    subject { appeal.special_issues? }
+
+    it "is true if any special issues exist" do
+      expect(subject).to be_truthy
+    end
+
+    it "is false if no special issues exist" do
+      appeal.update!(dependencies: false)
+      expect(subject).to be_falsy
+    end
+  end
+
   context "#pending_eps" do
     let(:appeal) do
       Appeal.new(

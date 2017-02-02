@@ -146,6 +146,7 @@ class VACOLS::Case < VACOLS::Record
                 .order("BFDDEC ASC")
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_vacols_location(location)
     return unless location
     conn = self.class.connection

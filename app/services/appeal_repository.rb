@@ -142,20 +142,6 @@ class AppealRepository
   def self.dateshift_to_utc(value)
     Time.utc(value.year, value.month, value.day, 0, 0, 0)
   end
-
-  def self.update_vacols_location(case_record:, location:)
-    VACOLS::Record.transaction do
-      case_record.update_vacols_location(location)
-      case_record.update!( = location
-      case_record.
-
-      MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-        appeal.case_record.save!
-      end
-
-    end
-  end
-
   # :nocov:
 
   def self.establish_claim!(appeal:, claim:)
@@ -169,14 +155,13 @@ class AppealRepository
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
     end_product = Appeal.transaction do
-        location =
-          VACOLS::Case.location_after_dispatch(appeal: appeal,
-                                               station: claim.station_of_jurisdiction)
+      location = location_after_dispatch(appeal: appeal,
+                                         station: claim.station_of_jurisdiction)
 
-        appeal.case_record.update_vacols_location(location)
+      appeal.case_record.update_vacols_location(location)
 
-        request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
-        send_and_log_request(sanitized_id, request)
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+      send_and_log_request(sanitized_id, request)
     end
 
     end_product
@@ -184,6 +169,8 @@ class AppealRepository
 
   # Determine VACOLS location desired after dispatching a decision
   # using information about the appeal and the newly assigned station
+  #
+  # rubocop:disable PerceivedComplexity, CyclomaticComplexity
   def self.location_after_dispatch(appeal:, station:)
     return if appeal.full_grant?
 
