@@ -2,8 +2,8 @@ class ReviewController < ApplicationController
   before_action :verify_system_admin
 
   def index
-    vbms_id = params[:vbms_id]
-    @appeal = Appeal.find_or_create_by_vbms_id(vbms_id)
+    vacols_id = params[:vacols_id]
+    @appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def logo_name
