@@ -4,6 +4,7 @@ RSpec.feature "Switch User" do
   before do
     # Switch user only works in demo deploy env
     ENV["DEPLOY_ENV"] = "dev"
+    BGSService.end_product_data = BGSService.no_grants
 
     User.create(station_id: "283", css_id: "123")
     User.create(station_id: "ABC", css_id: "456")
@@ -25,7 +26,6 @@ RSpec.feature "Switch User" do
     visit "test/users"
     expect(page).to have_content("All Grants")
     click_on "All Grants"
-    puts "\t\t\t#{BGSService.end_product_data}"
-    expect(BGSService.end_product_data).to match_array(BGSService.all_grants)
+    expect(BGSService.end_product_data).to include(hash_including(:end_product_type_code=>"172", :end_product_type_code=>"171", :end_product_type_code=>"170"))
   end
 end
