@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, except: [:unprepared_tasks]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end

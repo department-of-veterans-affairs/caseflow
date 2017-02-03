@@ -1,6 +1,7 @@
 class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform]
+  before_action :verify_manager_access, only: [:unprepared_tasks]
 
   def perform
     task.appeal.update!(special_issues_params)
@@ -11,6 +12,14 @@ class EstablishClaimsController < TasksController
   def assign_existing_end_product
     task.assign_existing_end_product!(params[:end_product_id])
     render json: {}
+  end
+
+  def unprepared_tasks
+    @unprepared_tasks ||= EstablishClaim.unprepared
+  end
+
+  def verify_manager_access
+    verify_authorized_roles("Manage Claim Establishment")
   end
 
   def start_text
