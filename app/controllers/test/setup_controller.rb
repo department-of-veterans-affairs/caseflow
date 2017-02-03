@@ -28,6 +28,8 @@ class Test::SetupController < ApplicationController
 
   # Set current user in DEMO
   def set_user
+    User.before_set_user # for testing only
+
     session["user"] = User.authentication_service.get_user_session(params[:id])
     redirect_to "/test/users"
   end
