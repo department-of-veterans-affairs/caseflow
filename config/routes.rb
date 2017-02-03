@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
-    get 'missing-decision', to: 'tasks#unprepared_tasks'
+    get 'missing-decision', to: 'establish_claims#unprepared_tasks'
 
     resources :establish_claims,
               path: "/establish-claim",
