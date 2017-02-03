@@ -48,6 +48,12 @@ RSpec.feature "Dispatch" do
     @task = EstablishClaim.create(appeal: appeal)
     @task.prepare!
 
+    @unprepared_appeal = Appeal.create(
+        vacols_id: "456D",
+        vbms_id: "VBMS_ID2"
+    )
+    @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
+
     Timecop.freeze(Time.utc(2017, 1, 1))
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
@@ -77,6 +83,14 @@ RSpec.feature "Dispatch" do
 
       # Verify we got a whole 10 more completed tasks
       expect(page).to have_content("Jane Smith", count: 20)
+    end
+
+    scenario "View unprepared tasks page" do
+      visit "/dispatch/missing-decision"
+
+      # should see the unprepared task
+      expect(page).to have_content("Claims Missing Decisions")
+      expect(page).to have_content(@unprepared_task.appeal.veteran_name)
     end
   end
 
