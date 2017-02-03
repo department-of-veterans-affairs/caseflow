@@ -89,13 +89,14 @@ export default class EstablishClaimReview extends React.Component {
   constructor(props) {
     super(props);
     let endProductButtonText;
+
     if (this.hasMultipleDecisions()) {
       endProductButtonText = "Create End Product For Decision 1";
     } else {
       endProductButtonText = "Create End Product";
     }
     this.state = {
-      endProductButtonText: endProductButtonText
+      endProductButtonText
     };
   }
 
@@ -131,36 +132,33 @@ export default class EstablishClaimReview extends React.Component {
       task
     } = this.props;
 
-    let count = 0;
-
-    let issueType = '';
-
     let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
     let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
 
-    if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
-      issueType = SPECIAL_ISSUE_PARTIAL;
-    } else {
-      issueType = SPECIAL_ISSUE_FULL;
-    }
+    let issueType = (() => {
+      if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
+        return SPECIAL_ISSUE_PARTIAL;
+      }
+
+      return SPECIAL_ISSUE_FULL;
+    })();
 
     // Sort in reverse chronological order
-    let decisions = task.appeal.decisions.sort((decision1, decision2) => {
-      return (new Date(decision2.received_at)) - (new Date(decision1.received_at));
-    })
+    let decisions = task.appeal.decisions.sort((decision1, decision2) =>
+      new Date(decision2.received_at) - new Date(decision1.received_at));
 
-    let tabHeaders = decisions.map((decision, index) => {
-      return `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
-    });
+    let tabHeaders = decisions.map((decision, index) =>
+      `Decision ${(index + 1)} (${formatDate(decision.received_at)})`);
 
-    let pdfViews = decisions.map((decision, index) => {
+    let pdfViews = decisions.map((decision, index) =>
+
       /* This link is here for 508 compliance, and shouldn't be visible to sighted
       users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
       is the accessibility standard and is used across gov't, so we'll recommend it
       for now. The usa-sr-only class will place an element off screen without
       affecting its placement in tab order, thus making it invisible onscreen
       but read out by screen readers. */
-      return <div>
+       <div>
           <a
             className="usa-sr-only"
             id="sr-download-link"
@@ -185,8 +183,9 @@ export default class EstablishClaimReview extends React.Component {
             title="Form8 PDF"
             src={`${pdfjsLink}&decision_number=${index}`}>
           </iframe>
-        </div>;
-    });
+        </div>);
+
+
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -248,7 +247,7 @@ export default class EstablishClaimReview extends React.Component {
             {
 
               /* eslint-disable no-return-assign */
-              issueType.map((issue) =>
+              issueType.map((issue, index) =>
               <Checkbox
                   id={ApiUtil.convertToCamelCase(issue)}
                   label={issue}
@@ -256,7 +255,7 @@ export default class EstablishClaimReview extends React.Component {
                   {...specialIssues[issue]}
                   onChange={handleFieldChange('specialIssues',
                       ApiUtil.convertToCamelCase(issue))}
-                  key={count += 1}
+                  key={index}
                 />)
 
                 /* eslint-enable no-return-assign */
