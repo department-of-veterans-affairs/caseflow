@@ -58,12 +58,13 @@ describe("DateField", function() {
       expect(DateField.isValidDate("1849-12-31")).to.be.false;
     });
 
-    it("returns true for date after 1850-01-01 and before today", function() {
+    it.only("returns true for date after 1850-01-01 and before today", function() {
       expect(DateField.isValidDate("1850-01-01")).to.be.true;
-      expect(DateField.isValidDate(Date.today-1)).to.be.true;
+      expect(DateField.isValidDate("1950-01-01")).to.be.true;
+      expect(DateField.isValidDate(Date.today.to_s)).to.be.true;
     });
     it("returns false for future date", function() {
-      expect(DateField.isValidDate(Date.today+1)).to.be.false;
+      expect(DateField.isValidDate((Date.today+1).to_s).to.be.false;
     });
 
   });
