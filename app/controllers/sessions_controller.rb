@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  skip_before_action :verify_authentication,
   def new
     if Rails.application.config.sso_service_disabled
       @error_title = "Login Service Unavailable"
