@@ -10,7 +10,7 @@
   </ul>
 
   <p class="cf-msg-screen-text">Way to go! You can now close this window and open another appeal in VACOLS.</p>
-  <% if current_user.css_id == ENV['TEST_USER_ID'] && params[:id] == ENV["TEST_APPEAL_ID"] %>
+  <% if test_user? %>
       <%= link_to "Uncertify Appeal", test_setup_certification_path, method: :post %>
   <% end %>
 </div>
