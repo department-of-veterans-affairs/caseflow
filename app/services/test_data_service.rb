@@ -27,6 +27,7 @@ class TestDataService
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(Time.zone.now))
     else
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(300.days.ago))
+    end
 
     # Upload decision document for the appeal if it isn't there
     log "Uploading decision for file #{vacols_case.bfcorlid}"
