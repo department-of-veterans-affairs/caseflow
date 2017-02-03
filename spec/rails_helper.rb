@@ -144,7 +144,10 @@ RSpec.configure do |config|
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
-  config.before(:all) { User.unauthenticate! }
+  config.before(:all) do
+    Timecop.freeze(Time.zone.today)
+    User.unauthenticate!
+  end
 
   config.after(:each) { Timecop.return }
 

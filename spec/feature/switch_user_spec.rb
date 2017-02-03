@@ -25,6 +25,7 @@ RSpec.feature "Switch User" do
     visit "test/users"
     expect(page).to have_content("All Grants")
     click_on "All Grants"
+    puts "\t\t\t#{BGSService.end_product_data}"
     expect(BGSService.end_product_data).to match_array(BGSService.all_grants)
   end
 end
