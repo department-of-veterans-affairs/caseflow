@@ -170,20 +170,31 @@ class AppealRepository
     # establish claim
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
-    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
-    end_product = send_and_log_request(sanitized_id, request)
+    end_product = Appeal.transaction do
+      location = location_after_dispatch(appeal: appeal,
+                                         station: claim.station_of_jurisdiction)
 
-    # Update VACOLS location
-    # TODO(jd): In the future we whould specifically check this is an AMC EP
-    # before updating the location to 98. For remands we need to set it to `50`
-    # appeal.case_record.bfcurloc = '98'
-    # MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
-    # appeal.case_record.save!
-    # end
+      appeal.case_record.update_vacols_location(location)
 
-    # return end product so dispatch service can update the
-    # task's outgoing_reference_id with end_product.claim_id
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+      send_and_log_request(sanitized_id, request)
+    end
+
     end_product
+  end
+
+  # Determine VACOLS location desired after dispatching a decision
+  # using information about the appeal and the newly assigned station
+  #
+  # rubocop:disable PerceivedComplexity, CyclomaticComplexity
+  def self.location_after_dispatch(appeal:, station:)
+    return if appeal.full_grant?
+
+    return "51" if appeal.vamc?
+    return "53" if appeal.national_cemetery_administration?
+
+    return "98" if station == "397" && !appeal.special_issues?
+    return "50" if station != "397" && appeal.special_issues?
   end
 
   def self.parse_veteran_establish_claim_info(veteran_record)

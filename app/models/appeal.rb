@@ -25,6 +25,14 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
 
+  SPECIAL_ISSUE_COLUMNS = %i(rice_compliance private_attorney waiver_of_overpayment
+                             pensions vamc incarcerated_veterans dic_death_or_accrued_benefits
+                             education_or_vocational_rehab foreign_claims manlincon_compliance
+                             hearings_travel_board_video_conference home_loan_guaranty insurance
+                             national_cemetery_administration spina_bifida radiation
+                             nonrating_issues proposed_incompetency manila_remand
+                             contaminated_water_at_camp_lejeune mustard_gas dependencies).freeze
+
   attr_writer :ssoc_dates
   def ssoc_dates
     @ssoc_dates ||= []
@@ -155,6 +163,13 @@ class Appeal < ActiveRecord::Base
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
     return "Remand" if remand?
+  end
+
+  # Does this appeal have any special issues
+  def special_issues?
+    SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
+      method(special_issue).call
+    end
   end
 
   class << self
