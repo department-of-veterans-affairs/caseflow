@@ -48,12 +48,6 @@ RSpec.feature "Dispatch" do
     @task = EstablishClaim.create(appeal: appeal)
     @task.prepare!
 
-    @unprepared_appeal = Appeal.create(
-        vacols_id: "456D",
-        vbms_id: "VBMS_ID2"
-    )
-    @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
-
     Timecop.freeze(Time.utc(2017, 1, 1))
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
@@ -86,6 +80,12 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "View unprepared tasks page" do
+      @unprepared_appeal = Appeal.create(
+        vacols_id: "456D",
+        vbms_id: "VBMS_ID2"
+      )
+      @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
+
       visit "/dispatch/missing-decision"
 
       # should see the unprepared task
