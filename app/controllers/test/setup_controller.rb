@@ -4,7 +4,7 @@ class Test::SetupController < ApplicationController
 
   # Used for resetting data in UAT for certification
   def certification
-    test_appeal_id = ENV["TEST_APPEAL_ID"]
+    test_appeal_id = params[:appeal_id]
 
     @certification = Certification.find_by(vacols_id: test_appeal_id)
     @certification.uncertify!(current_user.css_id)
@@ -19,7 +19,7 @@ class Test::SetupController < ApplicationController
     fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
 
     EstablishClaim.delete_all
-    TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: :full)
+    TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: "full")
     TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
 
     CreateEstablishClaimTasksJob.perform_now unless ApplicationController.dependencies_faked?
