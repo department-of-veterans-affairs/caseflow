@@ -60,7 +60,7 @@ describe("DateField", function() {
 
     it("returns true for date after 1850-01-01 and before today", function() {
       expect(DateField.isValidDate("1850-01-01")).to.be.true;
-      expect(DateField.isValidDate(Date.today)).to.be.true;
+      expect(DateField.isValidDate(Date.today-1)).to.be.true;
     });
     it("returns false for future date", function() {
       expect(DateField.isValidDate(Date.today+1)).to.be.false;
