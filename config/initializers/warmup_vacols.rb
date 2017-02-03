@@ -6,8 +6,15 @@ ActiveSupport.on_load(:active_record_vacols) do
 
   # use specified initial pool size, default to half the maximum size
   initial_pool_size = (ENV['DB_CONN_POOL_INITIAL_SIZE'] || db_config['pool'] / 2).to_i
+  Rails.logger.info("creating #{initial_pool_size} initial connections...")
+
+  MetricsService.timer "created #{initial_pool_size} connections" do
+    warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
+  end
+end
+
+def warmup_pool(pool, initial_pool_size)
   threads = []
-  pool = VACOLS::Record.connection_pool
 
   initial_pool_size.times do |i|
     threads << Thread.new do
