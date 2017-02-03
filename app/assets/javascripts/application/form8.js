@@ -15,6 +15,7 @@
 
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
 
+  var DEFAULT_INVALID_DATE_ERROR_MESSAGE = "Please enter a valid date.";
 
   window.Form8 =  {
     interactiveQuestions: [
@@ -56,6 +57,8 @@
       "17C": { message: "" }
     },
 
+    dateQuestions: {},
+
     getRequiredQuestions: function() {
       return Object.keys(this.requiredQuestions);
     },
@@ -67,8 +70,16 @@
       return this.watchedQuestions;
     },
 
+    setDateQuestions: function(){
+      $('input[type=date]').parent().map(function() {
+        questionNumber = this.id.split("question")[1];
+        return window.Form8.dateQuestions[questionNumber] = {message: DEFAULT_INVALID_DATE_ERROR_MESSAGE};
+      });
+    },
+
     init: function(){
       var self = this;
+      this.setDateQuestions();
       window.DateField.init();
       window.autoresize.init();
 
@@ -174,6 +185,13 @@
 
       if(isValid) {
         questionState.error = null;
+        //Check if question is a date question, if so check if date is valid
+        if((questionNumber in this.dateQuestions) && showError){
+          isValid = window.DateField.isValidDate(questionNumber);
+          if(!isValid){
+            questionState.error = this.dateQuestions[questionNumber];
+          }
+        }
       }
       else if(showError) {
         questionState.error = this.requiredQuestions[questionNumber];
