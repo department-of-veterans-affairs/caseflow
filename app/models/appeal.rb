@@ -206,7 +206,6 @@ class Appeal < ActiveRecord::Base
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
     def uncertify(appeal)
-      return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
       Form8.delete_all(vacols_id: appeal.vacols_id)
       repository.uncertify(appeal)
     end
