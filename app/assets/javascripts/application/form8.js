@@ -72,7 +72,7 @@
 
     setDateQuestions: function(){
       $('input[type=date]').parent().map(function() {
-        questionNumber = this.id.split("question")[1];
+        var questionNumber = this.id.split("question")[1];
         return window.Form8.dateQuestions[questionNumber] = {message: DEFAULT_INVALID_DATE_ERROR_MESSAGE};
       });
     },
