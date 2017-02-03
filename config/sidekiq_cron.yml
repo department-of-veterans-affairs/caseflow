@@ -11,3 +11,11 @@ reassign_old_tasks:
   queue: default
   active_job: true
   disabled: true
+
+# This runs an hour after the other tasks because it
+# has to run on all the tasks that the other jobs created.
+prepare_establish_claim_tasks_job:
+  cron: "2 0 * * * America/New_York"
+  class: "PrepareEstablishClaimTasksJob"
+  queue: default
+  active_job: true

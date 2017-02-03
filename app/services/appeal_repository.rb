@@ -35,11 +35,12 @@ class AppealRepository
   # :nocov:
   def self.load_vacols_data_by_vbms_id(appeal)
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
-      VACOLS::Case.includes(:folder, :correspondent).find_by_bfcorlid(appeal.vbms_id)
+      VACOLS::Case.includes(:folder, :correspondent).where(bfcorlid: appeal.vbms_id).all
     end
 
     fail MultipleAppealsByVBMSIDError if case_records.length > 1
 
+    appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
 
     appeal
@@ -50,6 +51,16 @@ class AppealRepository
   def self.build_appeal(case_record)
     appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
     set_vacols_values(appeal: appeal, case_record: case_record)
+  end
+
+  def self.map_issues(issue_records)
+    issue_records.map do |issue|
+      {
+        description: issue[:issdesc],
+        disposition: VACOLS::Issues::DISPOSITION_CODE[issue[:issdc]],
+        program: issue[:issprog]
+      }
+    end
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -83,7 +94,12 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro]
+      status: VACOLS::Case::STATUS[case_record.bfmpro],
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }]
     )
 
     appeal
