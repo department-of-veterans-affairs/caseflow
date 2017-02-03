@@ -4,6 +4,7 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import Button from '../components/Button';
 import { formatDate } from '../util/DateUtil';
+import CommentStorage from '../util/CommentStorage';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
@@ -348,7 +349,7 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     PDFJS.workerSrc = '../assets/pdf.worker.js';
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
+    PDFJSAnnotate.setStoreAdapter(new CommentStorage());
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
