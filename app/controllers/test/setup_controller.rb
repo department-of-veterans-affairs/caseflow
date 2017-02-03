@@ -4,7 +4,7 @@ class Test::SetupController < ApplicationController
 
   # Used for resetting data in UAT for certification
   def certification
-    test_appeal_id = params[:id]
+    test_appeal_id = params[:appeal_id]
 
     @certification = Certification.find_by(vacols_id: test_appeal_id)
     @certification.uncertify!(current_user.css_id)
