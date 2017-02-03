@@ -24,9 +24,7 @@ RSpec.feature "Switch User" do
   scenario "We can switch between test EP data in dev mode" do
     visit "test/users"
     expect(page).to have_content("All Grants")
-    click_on "No Grants"
     click_on "All Grants"
-    expect(page).to have_content("All Grants")
     expect(BGSService.end_product_data).to match_array(BGSService.all_grants)
   end
 end
