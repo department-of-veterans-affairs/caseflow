@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, except: [:unprepared_tasks]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
   before_action :verify_manager_access, only: [:unprepared_tasks]
 
@@ -173,7 +173,7 @@ class TasksController < ApplicationController
   end
 
   def verify_manager_access
-    verify_authorized_roles(task_roles[:manager])
+    verify_authorized_roles("Manage Claim Establishment")
   end
 
   def verify_assigned_to_current_user
