@@ -233,6 +233,14 @@ RSpec.feature "Dispatch" do
 
           # View history
           expect(page).to have_content("Multiple Decision Documents")
+
+          # Text on the tab
+          expect(page).to have_content("Decision 1 (")
+          find("#tab-1").click
+          expect(page).to have_content("Create End Product For Decision 2")
+          click_on "Create End Product For Decision 2"
+
+          expect(page).to have_content("Benefit Type")
         end
       end
     end
