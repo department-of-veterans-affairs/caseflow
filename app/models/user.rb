@@ -27,9 +27,7 @@ class User < ActiveRecord::Base
   def display_name
     # fully authenticated
     if authenticated?
-    name = "#{username} (#{regional_office})"
-    p "DISPLAY NAME: #{name}"
-    name
+      "#{username} (#{regional_office})"
 
     # just SSOI, not yet vacols authenticated
     else
