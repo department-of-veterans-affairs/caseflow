@@ -83,6 +83,10 @@ class User < ActiveRecord::Base
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
+    # Empty method used for testing purposes
+    def before_set_user
+    end
+
     def from_session(session, request)
       user = session["user"] ||= authentication_service.default_user_session
 
