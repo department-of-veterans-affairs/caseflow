@@ -22,12 +22,18 @@ class Test::SetupController < ApplicationController
     TestDataService.prepare_claims_establishment!(vacols_id: ENV["TEST_APPEAL_ID"], cancel_eps: true, decision_type: "full")
     TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
 
-    CreateEstablishClaimTasksJob.perform_now unless ApplicationController.dependencies_faked?
+    unless ApplicationController.dependencies_faked?
+      CreateEstablishClaimTasksJob.perform_now
+      PrepareEstablishClaimTasksJob.perform_now
+    end
+
     redirect_to establish_claims_path
   end
 
   # Set current user in DEMO
   def set_user
+    User.before_set_user # for testing only
+
     session["user"] = User.authentication_service.get_user_session(params[:id])
     redirect_to "/test/users"
   end
