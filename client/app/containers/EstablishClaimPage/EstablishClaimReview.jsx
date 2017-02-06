@@ -231,7 +231,7 @@ export default class EstablishClaimReview extends React.Component {
 
       {specialIssueModalDisplay && <Modal
         buttons={[
-          { classNames: ["cf-btn-link"],
+          { classNames: ["cf-modal-link", "cf-btn-link"],
             name: '\u00AB Close',
             onClick: handleModalClose('specialIssueModalDisplay')
           },
