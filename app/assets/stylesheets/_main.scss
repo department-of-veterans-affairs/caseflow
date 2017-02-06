@@ -148,6 +148,25 @@
   margin-bottom: 4rem !important;
 }
 
+.cf-tab-window-body {
+  padding-top: 20px;
+  border: 1px solid $color-gray-light;
+  border-top-width: 0;
+
+  &-full-screen {
+    padding: 30px;
+    margin-left: -30px;
+    margin-right: -30px;
+    width: auto;
+  }
+}
+
+.cf-tab-navigation-full-screen {
+  margin-left: -30px;
+  margin-right: -30px;
+  width: auto;
+}
+
 @mixin column-count($column, $column-gap) {
   @include prefixer(column-count, $column, webkit moz spec);
   @include prefixer(column-gap, $column-gap, webkit moz spec)

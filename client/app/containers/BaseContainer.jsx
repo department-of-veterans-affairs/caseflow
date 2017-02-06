@@ -9,13 +9,15 @@ import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionReviewer from './DecisionReviewer';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
+import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
   DecisionReviewer,
   EstablishClaim,
   EstablishClaimComplete,
   TasksManagerIndex,
-  TestPage
+  TestPage,
+  UnpreparedTasksIndex
 };
 
 // This is the "base page" that wraps all pages rendered directly
