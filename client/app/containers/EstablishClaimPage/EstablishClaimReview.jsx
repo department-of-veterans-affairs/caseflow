@@ -251,16 +251,17 @@ export default class EstablishClaimReview extends React.Component {
             {
 
               /* eslint-disable no-return-assign */
-              issueType.map((issue, index) =>
-              <Checkbox
-                  id={ApiUtil.convertToCamelCase(issue)}
-                  label={issue}
-                  name={ApiUtil.convertToCamelCase(issue)}
-                  {...specialIssues[issue]}
-                  onChange={handleFieldChange('specialIssues',
-                      ApiUtil.convertToCamelCase(issue))}
-                  key={index}
-                />)
+              issueType.map((issue, index) => {
+                return <Checkbox
+                    id={ApiUtil.convertToCamelCase(issue)}
+                    label={issue}
+                    name={ApiUtil.convertToCamelCase(issue)}
+                    onChange={handleFieldChange('specialIssues',
+                        ApiUtil.convertToCamelCase(issue))}
+                    key={index}
+                    {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
+                  />
+              })
 
                 /* eslint-enable no-return-assign */
             }

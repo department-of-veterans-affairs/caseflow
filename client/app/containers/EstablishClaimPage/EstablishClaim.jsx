@@ -15,9 +15,10 @@ import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
-export const REVIEW_PAGE = 0;
-export const ASSOCIATE_PAGE = 1;
-export const FORM_PAGE = 2;
+export const REVIEW_PAGE = 'review';
+export const ASSOCIATE_PAGE = 'associate';
+export const FORM_PAGE = 'form';
+
 
 export const END_PRODUCT_INFO = {
   'Full Grant': ['172BVAG', 'BVA Grant'],
@@ -50,6 +51,7 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
 
+    console.log('PARENT CONSTRUCTOR CALLED');
     let decisionType = this.props.task.appeal.decision_type;
 
     // Set initial state on page render
@@ -96,6 +98,14 @@ export default class EstablishClaim extends BaseForm {
     SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
+  }
+
+  componentDidMount() {
+    console.log("COMPONENT MOUNTED");
+    window.onpopstate = (event) => {
+      console.log('current hash', window.location.hash);
+      this.handlePageChange(window.location.hash.substring(1) || REVIEW_PAGE);
+    }
   }
 
   handleSubmit = () => {
@@ -196,6 +206,7 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       page
     });
+    window.history.pushState({ page }, '', `#${page}`)
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -259,11 +270,24 @@ export default class EstablishClaim extends BaseForm {
   handleReviewPageSubmit = () => {
     this.setStationState();
 
-    if (!this.validateReviewPageSubmit()) {
+    let validReviewPageSubmit = this.validateReviewPageSubmit();
+
+    if (validReviewPageSubmit) {
+      this.setState({
+        reviewPageVisited: true
+      });
+    } else {
       this.setState({
         specialIssueModalDisplay: true
       });
-    } else if (this.shouldShowAssociatePage()) {
+      // Do not allow page change because we do not handle
+      // these special issues in Caseflow at this time
+      return;
+    }
+
+    // route to the appropriate page based on if
+    // there are existing EPs
+    if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
       this.handlePageChange(FORM_PAGE);
