@@ -60,6 +60,11 @@ class SeedDB
     tasks[2].start!
     tasks[2].complete!(status: 0)
 
+    # Create one task with no decision documents
+    EstablishClaim.create(
+      appeal: tasks[2].appeal
+    )
+
     @tasks.push(*tasks)
   end
 
