@@ -80,4 +80,5 @@ Rails.application.configure do
 
 
   config.google_analytics_account = "UA-74789258-1"
+  config.google_analytics_host = "//www.google-analytics.com/analytics.js"
 end

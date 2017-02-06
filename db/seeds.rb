@@ -46,6 +46,8 @@ class SeedDB
       establish_claim = EstablishClaim.create(
         appeal: @appeals[i % num_appeals]
         )
+      establish_claim.prepare!
+      establish_claim
     end
 
     # Give each user a task in a different state
@@ -57,6 +59,11 @@ class SeedDB
     tasks[2].assign!(@users[2])
     tasks[2].start!
     tasks[2].complete!(status: 0)
+
+    # Create one task with no decision documents
+    EstablishClaim.create(
+      appeal: tasks[2].appeal
+    )
 
     @tasks.push(*tasks)
   end

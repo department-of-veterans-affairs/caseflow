@@ -29,6 +29,10 @@ class Task < ActiveRecord::Base
       where(user_id: nil)
     end
 
+    def unprepared
+      where(aasm_state: "unprepared")
+    end
+
     def assigned_not_completed
       to_complete.where.not(assigned_at: nil)
     end
@@ -46,7 +50,7 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete
-      where.not(aasm_state: "completed")
+      where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
 
     def completed
@@ -54,7 +58,7 @@ class Task < ActiveRecord::Base
     end
 
     def to_complete_task_for_appeal(appeal)
-      where.not(aasm_state: "completed").where(appeal: appeal)
+      to_complete.where(appeal: appeal)
     end
 
     def completion_status_code(text)
@@ -63,14 +67,16 @@ class Task < ActiveRecord::Base
   end
 
   aasm do
-    # state :unprepared, :unassigned, :assigned, :started, :completed
+    state :unprepared, initial: true
+    state :unassigned, :assigned, :started, :completed
 
-    state :unassigned, initial: true
-    state :assigned, :started, :completed
-
-    # event :prepare do
-    #   transitions :from => :unprepared, :to => :unassigned
-    # end
+    ## The 'unprepared' state is being used for establish claim tasks to designate
+    #  tasks attached to appeals that do not have decision documents. Tasks that are
+    #  in this state cannot be assigned to users. All tasks are in this state
+    #  immediately after creation.
+    event :prepare do
+      transitions from: :unprepared, to: :unassigned
+    end
 
     event :assign do
       transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
@@ -177,11 +183,15 @@ class Task < ActiveRecord::Base
     serializable_hash(
       include: [:user, appeal: { methods:
         [:decision_date,
+         :decisions,
+         :disposition,
          :veteran_name,
          :decision_type,
          :station_key,
          :non_canceled_end_products_within_30_days,
-         :pending_eps] }],
+         :pending_eps,
+         :issues,
+         :days_since_decision] }],
       methods: [:progress_status]
     )
   end
