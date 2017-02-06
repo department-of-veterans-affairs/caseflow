@@ -65,7 +65,11 @@ export const UNHANDLED_SPECIAL_ISSUES = [
 export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'mustardGas',
-    stationOfJurisdiction: '351 - Muskogee'
+    stationOfJurisdiction: '351 - Muskogee, OK'
+  },
+  {
+    specialIssue: 'contaminatedWaterAtCampLejeune',
+    stationOfJurisdiction: '327 - Louisville, KY'
   }
 ];
 
