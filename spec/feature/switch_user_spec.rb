@@ -9,6 +9,7 @@ RSpec.feature "Switch User" do
     User.create(station_id: "283", css_id: "123")
     User.create(station_id: "ABC", css_id: "456")
     User.create(station_id: "283", css_id: "ANNE MERICA")
+    User.authenticate!
   end
 
   scenario "We can switch between users in the database in dev mode" do

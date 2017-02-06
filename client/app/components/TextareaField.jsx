@@ -21,7 +21,7 @@ export default class TextareaField extends React.Component {
 
     return <div className={className}>
       <label className="question-label" htmlFor={name}>
-        {label || name} {required && <span className="cf-required">(Required)</span>}
+        {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <textarea
@@ -48,4 +48,3 @@ TextareaField.propTypes = {
   validationError: PropTypes.string,
   value: PropTypes.string
 };
-

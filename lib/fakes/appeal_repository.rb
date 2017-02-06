@@ -233,6 +233,21 @@ class Fakes::AppealRepository
     }
   end
 
+  def self.appeal_partial_grant_decided
+    {
+      vbms_id: "REMAND_VBMS_ID",
+      type: "Original",
+      status: "Remand",
+      disposition: "Allowed",
+      decision_date: 7.days.ago,
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter"
+    }
+  end
+
   def self.appeal_full_grant_decided
     {
       vbms_id: "FULLGRANT_VBMS_ID",
@@ -250,7 +265,8 @@ class Fakes::AppealRepository
         description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
         disposition: "Granted",
         program: "Compensation"
-      }]
+      }],
+      documents: [nod_document, soc_document, form9_document, decision_document]
     }
   end
 

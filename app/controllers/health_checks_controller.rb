@@ -1,6 +1,5 @@
 class HealthChecksController < ApplicationController
-  skip_before_action :authenticate
-  skip_before_action :authorize
+  skip_before_action :verify_authentication
 
   def show
     render json: { healthy: true }.merge(Rails.application.config.build_version || {})
