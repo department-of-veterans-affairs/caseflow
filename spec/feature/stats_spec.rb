@@ -21,7 +21,7 @@ RSpec.feature "Stats Dashboard" do
       soc_matching_at:     5.hours.ago,
       ssocs_required:      true,
       ssocs_matching_at:   4.hours.ago,
-      form8_started_at:    5.hours.ago,
+      form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
       completed_at:        nil
     )
@@ -32,7 +32,7 @@ RSpec.feature "Stats Dashboard" do
       soc_matching_at:     5.hours.ago,
       ssocs_required:      true,
       ssocs_matching_at:   5.hours.ago,
-      form8_started_at:    5.hours.ago,
+      form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
       completed_at:        3.hours.ago
     )
