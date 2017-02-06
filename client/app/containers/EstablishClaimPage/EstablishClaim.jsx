@@ -395,7 +395,7 @@ export default class EstablishClaim extends BaseForm {
 
         {cancelModalDisplay && <Modal
           buttons={[
-            { classNames: ["cf-btn-link"],
+            { classNames: ["cf-modal-link", "cf-btn-link"],
               name: '\u00AB Go Back',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
@@ -409,12 +409,12 @@ export default class EstablishClaim extends BaseForm {
           closeHandler={this.handleModalClose('cancelModalDisplay')}
           title="Cancel EP Establishment">
           <p>
-            If you click the <b>Cancel EP Establishment</b>
+            If you click the <b>Cancel EP Establishment </b>
             button below your work will not be
             saved and the EP for this claim will not be established.
           </p>
           <p>
-            Please tell why you are canceling this claim.
+            Please tell why you are canceling the establishment of this EP.
           </p>
           <TextareaField
             label="Cancel Explanation"
