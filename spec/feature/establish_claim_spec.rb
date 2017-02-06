@@ -78,6 +78,20 @@ RSpec.feature "Dispatch" do
       # Verify we got a whole 10 more completed tasks
       expect(page).to have_content("Jane Smith", count: 20)
     end
+
+    scenario "View unprepared tasks page" do
+      @unprepared_appeal = Appeal.create(
+        vacols_id: "456D",
+        vbms_id: "VBMS_ID2"
+      )
+      @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
+
+      visit "/dispatch/missing-decision"
+
+      # should see the unprepared task
+      expect(page).to have_content("Claims Missing Decisions")
+      expect(page).to have_content(@unprepared_task.appeal.veteran_name)
+    end
   end
 
   context "As a caseworker" do
@@ -219,6 +233,14 @@ RSpec.feature "Dispatch" do
 
           # View history
           expect(page).to have_content("Multiple Decision Documents")
+
+          # Text on the tab
+          expect(page).to have_content("Decision 1 (")
+          find("#tab-1").click
+          expect(page).to have_content("Create End Product For Decision 2")
+          click_on "Create End Product For Decision 2"
+
+          expect(page).to have_content("Benefit Type")
         end
       end
     end
