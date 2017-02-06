@@ -1,7 +1,6 @@
 require "vbms_error"
 
 class CertificationsController < ApplicationController
-  before_action :verify_authentication
   before_action :verify_access
 
   def new
