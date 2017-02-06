@@ -16,10 +16,10 @@ class Test::SetupController < ApplicationController
   # Used for resetting data in UAT for claims establishment
   def claims_establishment
     # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    # fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
+    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
 
     EstablishClaim.delete_all
-    TestDataService.prepare_claims_establishment!(vacols_id: ENV["TEST_APPEAL_ID"], cancel_eps: true, decision_type: "full")
+    TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: "full")
     TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
 
     unless ApplicationController.dependencies_faked?

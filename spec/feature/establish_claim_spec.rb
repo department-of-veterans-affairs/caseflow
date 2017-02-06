@@ -391,7 +391,7 @@ RSpec.feature "Dispatch" do
       page.find("#mustardGas").trigger("click")
       click_on "Create End Product"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
+      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee")
     end
 
     scenario "A special issue is chosen and saved in database" do
