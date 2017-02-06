@@ -180,6 +180,7 @@
     },
 
     validateRequiredQuestion: function(questionNumber, showError) {
+      var self = this;
       var questionState = this.state["question" + questionNumber];
       var isValid = !!questionState.value || !questionState.show;
 
@@ -187,7 +188,7 @@
         questionState.error = null;
         //Check if question is a date question, if so check if date is valid
         if((questionNumber in this.dateQuestions) && showError){
-          isValid = window.DateField.isValidDate(questionNumber);
+          isValid = self.isValidDate(Date.parse(questionState.value));
           if(!isValid){
             questionState.error = this.dateQuestions[questionNumber];
           }
@@ -255,6 +256,12 @@
 
       $q.toggleClass('hidden-field', hideQuestion);
       $q.find('input, textarea').prop('disabled', hideQuestion);
+    },
+
+    isValidDate: function(date){
+      var startDate = Date.parse('1850-01-01');
+      var endDate = new Date();
+      return ((startDate <= date) && (date <= endDate));
     }
   };
 })();

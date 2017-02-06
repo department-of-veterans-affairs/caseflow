@@ -35,13 +35,6 @@
       dateParts[2] = date.getFullYear();
 
       return dateParts.join('/');
-    },
-
-    isValidDate: function(questionNumber){
-      var enteredDate = Date.parse($('#question'+questionNumber).children('input').val());
-      var startDate = Date.parse('1850-01-01');
-      var endDate = new Date();
-      return ((startDate <= enteredDate) && (enteredDate <= endDate));
     }
   };
 })();
