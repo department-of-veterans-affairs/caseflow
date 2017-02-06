@@ -17,7 +17,7 @@ export default class DropDown extends React.Component {
 
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
-        {label || name} {required && <span className="cf-required">(Required)</span>}
+        {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
