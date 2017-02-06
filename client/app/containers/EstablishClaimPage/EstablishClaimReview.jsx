@@ -65,7 +65,11 @@ export const UNHANDLED_SPECIAL_ISSUES = [
 export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'mustardGas',
-    stationOfJurisdiction: '351 - Muskogee'
+    stationOfJurisdiction: '351 - Muskogee, OK'
+  },
+  {
+    specialIssue: 'contaminatedWaterAtCampLejeune',
+    stationOfJurisdiction: '327 - Louisville, KY'
   }
 ];
 
@@ -276,28 +280,28 @@ export default class EstablishClaimReview extends React.Component {
           </div>
         </div>
 
-        {specialIssueModalDisplay && <Modal
-          buttons={[
-            { classNames: ["cf-btn-link"],
-              name: '\u00AB Close',
-              onClick: handleModalClose('specialIssueModalDisplay')
-            },
-            { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Cancel Claim Establishment',
-              onClick: handleCancelTaskForSpecialIssue
-            }
-          ]}
-          visible={true}
-          closeHandler={handleModalClose('specialIssueModalDisplay')}
-          title="Special Issue Grant">
-          <p>
-            You selected a special issue category not handled by AMO. Special
-            issue cases cannot be processed in caseflow at this time. Please
-            select <b>Cancel Claim Establishment</b> and proceed to process
-            this case manually in VBMS.
-          </p>
-        </Modal>}
-      </div>
+      {specialIssueModalDisplay && <Modal
+        buttons={[
+          { classNames: ["cf-modal-link", "cf-btn-link"],
+            name: '\u00AB Close',
+            onClick: handleModalClose('specialIssueModalDisplay')
+          },
+          { classNames: ["usa-button", "usa-button-secondary"],
+            name: 'Cancel Claim Establishment',
+            onClick: handleCancelTaskForSpecialIssue
+          }
+        ]}
+        visible={true}
+        closeHandler={handleModalClose('specialIssueModalDisplay')}
+        title="Special Issue Grant">
+        <p>
+          You selected a special issue category not handled by AMO. Special
+          issue cases cannot be processed in caseflow at this time. Please
+          select <b>Cancel Claim Establishment</b> and proceed to process
+          this case manually in VBMS.
+        </p>
+      </Modal>}
+    </div>
     );
   }
 }
