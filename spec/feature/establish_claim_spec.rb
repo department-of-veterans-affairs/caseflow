@@ -43,7 +43,8 @@ RSpec.feature "Dispatch" do
 
     appeal = Appeal.create(
       vacols_id: "123C",
-      vbms_id: @vbms_id
+      vbms_id: @vbms_id,
+      regional_office_key: "RO13"
     )
     @task = EstablishClaim.create(appeal: appeal)
     @task.prepare!
@@ -375,7 +376,7 @@ RSpec.feature "Dispatch" do
       expect(@task.comment).to eq("Test")
     end
 
-    scenario "A regional office special issue routes correctly" do
+    scenario "A regional office special issue routes correctly", focus: true do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#privateAttorney").trigger("click")
