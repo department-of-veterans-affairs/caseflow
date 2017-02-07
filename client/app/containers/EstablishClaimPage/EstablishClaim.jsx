@@ -303,9 +303,9 @@ export default class EstablishClaim extends BaseForm {
     let stationKey = this.props.task.appeal.station_key;
     let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
 
-    return stationKey + ' - ' +
-        this.props.regionalOfficeCities[regionalOfficeKey].city + ', ' +
-        this.props.regionalOfficeCities[regionalOfficeKey].state;
+    return `${stationKey} - ${
+        this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+        this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   prepareData() {
@@ -439,9 +439,9 @@ export default class EstablishClaim extends BaseForm {
 }
 
 EstablishClaim.propTypes = {
-  task: PropTypes.object.isRequired,
   regionalOfficeCities: PropTypes.object.isRequired,
-  regionalOfficeStations: PropTypes.object.isRequired
+  regionalOfficeStations: PropTypes.object.isRequired,
+  task: PropTypes.object.isRequired
 };
 
 /* eslint-enable max-lines */
