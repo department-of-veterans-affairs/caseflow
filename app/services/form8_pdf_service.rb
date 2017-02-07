@@ -156,7 +156,7 @@ class Form8PdfService
       final_location
     )
 
-    form8.s3.store_file(form8.pdf_filename, final_location)
+    form8.s3.store_file(form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)
