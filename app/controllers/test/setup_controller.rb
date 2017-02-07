@@ -22,7 +22,11 @@ class Test::SetupController < ApplicationController
     TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: "full")
     TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
 
-    CreateEstablishClaimTasksJob.perform_now unless ApplicationController.dependencies_faked?
+    unless ApplicationController.dependencies_faked?
+      CreateEstablishClaimTasksJob.perform_now
+      PrepareEstablishClaimTasksJob.perform_now
+    end
+
     redirect_to establish_claims_path
   end
 
