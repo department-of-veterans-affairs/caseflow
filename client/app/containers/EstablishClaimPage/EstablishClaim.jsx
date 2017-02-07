@@ -300,10 +300,12 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getStationOfJurisdiction() {
-    // regionalOfficeKey = this.props.regionalOfficeStations[this.props.task.appeal.station_key];
-    // return this.props.task.appeal.station_key + ' - ' +
-    //     this.props.regionalOfficeCities[regionalOfficeKey].city + ', ' +
-    //     this.props.regionalOfficeCities[regionalOfficeKey].state
+    let stationKey = this.props.task.appeal.station_key;
+    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+
+    return stationKey + ' - ' +
+        this.props.regionalOfficeCities[regionalOfficeKey].city + ', ' +
+        this.props.regionalOfficeCities[regionalOfficeKey].state;
   }
 
   prepareData() {
@@ -438,8 +440,8 @@ export default class EstablishClaim extends BaseForm {
 
 EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired,
-  regionalOfficeCities: PropTypes.array.isRequired,
-  regionalOfficeStations: PropTypes.array.isRequired
+  regionalOfficeCities: PropTypes.object.isRequired,
+  regionalOfficeStations: PropTypes.object.isRequired
 };
 
 /* eslint-enable max-lines */
