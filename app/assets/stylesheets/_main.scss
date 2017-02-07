@@ -100,10 +100,14 @@
   margin-right: 10px;
   line-height: 0;
   position: relative;
-  top: -9px;
 }
 
 .cf-loading-button-symbol {
+  display: inline-block;
+}
+
+.cf-loading-indicator {
+  text-align: center;
   display: inline-block;
 }
 
@@ -174,4 +178,9 @@ select {
   &[id="decisionType"] {
     margin-bottom: 30px;
   }
+}
+
+// TODO: unify this with the styling in caseflow commons once all buttons are using React
+.icon-loading-back {
+  margin-left: -30px;
 }
