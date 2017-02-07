@@ -72,6 +72,9 @@ Rails.application.routes.draw do
 
   get 'stats(/:interval)', to: 'stats#show', as: 'stats'
 
+  get "admin/styleguide", to: "admin/styleguide#show"
+  get "admin/styleguide/modals", to: "admin/styleguide#modals"
+
   get 'help' => 'help#show'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
