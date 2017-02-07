@@ -89,6 +89,7 @@ Rails.application.routes.draw do
   namespace :test do
     # Only allow data_setup routes if TEST_USER is set
     if ENV["TEST_USER_ID"]
+      resources :setup, only: [:index]
       post "setup_certification" => "setup#certification"
       post "setup_claims_establishment" => "setup#claims_establishment"
     end
