@@ -40,9 +40,17 @@ class ReviewController < ApplicationController
   end
 
   def delete_annotation
-    binding.pry
-    annotation_id = params[:annotation_id]
-    Annotation.where(id: annotation_id).delete
+    Annotation.delete(params[:annotation_id])
+    render json: {}
+  end
+
+  def update_annotation
+    annotation = params[:annotation]
+    Annotation.find(annotation[:uuid]).update(
+      comment: annotation[:comment],
+      x_location: annotation[:x],
+      y_location: annotation[:y]
+    )
     render json: {}
   end
 end

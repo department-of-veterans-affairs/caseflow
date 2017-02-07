@@ -40,13 +40,18 @@ Rails.application.routes.draw do
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
+    resources :annotation, on: :member
+
     resources :review,
               path: "/review",
               only: [:index] do
       get 'pdf', on: :collection
+
+
       get 'get_annotations', on: :collection
       post 'add_annotation', on: :collection
       delete 'delete_annotation', on: :collection
+      patch 'update_annotation', on: :collection
     end
   end
 

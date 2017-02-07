@@ -29,12 +29,12 @@ export default class PdfViewer extends BaseForm {
     };
   }
 
-  generateComments = (pdfDocument) => {
+  generateComments = () => {
     this.comments = [];
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
     this.setState({ comments: this.comments });
-    for (let i = 1; i <= pdfDocument.pdfInfo.numPages; i++) {
+    for (let i = 1; i <= this.state.numPages; i++) {
       storeAdapter.getAnnotations(this.props.id, i).then((annotations) => {
         annotations.annotations.forEach((annotation) => {
           // storeAdapter.getComments(this.props.file, annotationId.uuid).
@@ -99,7 +99,6 @@ export default class PdfViewer extends BaseForm {
             annotation.uuid,
             annotation
             ).then(() => {
-              this.generateComments(this.state.pdfDocument);
             }).
             catch(() => {
               // TODO: Add error case if comment can't be added
@@ -119,25 +118,6 @@ export default class PdfViewer extends BaseForm {
         });
       }
     };
-  }
-
-  addEventListners = (pdfDocument) => {
-    const { UI } = PDFJSAnnotate;
-
-    this.removeEventListeners();
-
-    this.annotationAddListener = () => {
-      this.generateComments(pdfDocument);
-    };
-    UI.addEventListener('annotation:add', this.annotationAddListener);
-  }
-
-  removeEventListeners = () => {
-    const { UI } = PDFJSAnnotate;
-
-    if (this.annotationAddListener) {
-      UI.removeEventListener('annotation:add', this.annotationAddListener);
-    }
   }
 
   addNote = () => {
@@ -221,7 +201,6 @@ export default class PdfViewer extends BaseForm {
             getElementsByClassName("annotationLayer")[0];
 
           PDFJSAnnotate.render(svg, viewport, annotations);
-          this.generateComments(this.state.pdfDocument);
         });
       });
     };
@@ -266,7 +245,6 @@ export default class PdfViewer extends BaseForm {
 
   draw = (file, scrollLocation = 0) => {
     PDFJS.getDocument(file).then((pdfDocument) => {
-      this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
       this.setState({
         currentPage: 1,
@@ -275,13 +253,13 @@ export default class PdfViewer extends BaseForm {
       });
 
       this.createPages(pdfDocument);
-      this.addEventListners(pdfDocument);
-
       // Automatically render the first page
       // This assumes that page has already been created and appended
       this.renderPage(0);
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
+
+      this.generateComments();
     });
   }
 
@@ -336,7 +314,7 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     PDFJS.workerSrc = '../assets/pdf.worker.js';
-    PDFJSAnnotate.setStoreAdapter(new CommentStorage());
+    PDFJSAnnotate.setStoreAdapter(new CommentStorage(this.generateComments));
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];

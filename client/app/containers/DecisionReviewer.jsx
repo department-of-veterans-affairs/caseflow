@@ -38,6 +38,7 @@ export default class DecisionReviewer extends React.Component {
       <div>
         <PdfViewer
           file={`review/pdf?vbms_document_id=${appealDocuments[this.state.pdf].vbms_document_id}`}
+          annotations={this.state.annotations}
           id={appealDocuments[this.state.pdf].id}
           receivedAt={appealDocuments[this.state.pdf].received_at}
           type={appealDocuments[this.state.pdf].type}

@@ -2,7 +2,7 @@ import PDFJSAnnotate from 'pdf-annotate.js';
 import ApiUtil from './ApiUtil';
 
 export default class CommentStorage extends PDFJSAnnotate.StoreAdapter {
-  constructor() {
+  constructor(generateComments = () => {}) {
     super({
       getAnnotations(documentId, pageNumber) {
         return new Promise((resolve, reject) => {
@@ -26,7 +26,7 @@ export default class CommentStorage extends PDFJSAnnotate.StoreAdapter {
           getAnnotations(documentId).
             then((annotations) => {
               annotations.forEach((annotation) => {
-                if (annotation.uuid === annotationId){
+                if (annotation.uuid.toString() === annotationId.toString()){
                   resolve(annotation);
                 }
               });
@@ -45,12 +45,13 @@ export default class CommentStorage extends PDFJSAnnotate.StoreAdapter {
 
           getAnnotations(documentId).then((annotations) => {
             annotations.push(annotation);
-            updateAnnotations(documentId, annotations);
+            storedAnnotations[documentId] = annotations;
             let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
             ApiUtil.post(`/decision/review/add_annotation`, { data }).
               then((response) => {
                 annotation.uuid = JSON.parse(response.text).id;
                 resolve(annotation);
+                generateComments();
               }, () => {
                 reject();
               });
@@ -61,31 +62,41 @@ export default class CommentStorage extends PDFJSAnnotate.StoreAdapter {
 
       editAnnotation(documentId, annotationId, annotation) {
         return new Promise((resolve, reject) => {
-          let annotations = getAnnotations(documentId);
-          annotations[findAnnotation(documentId, annotationId)] = annotation;
-          updateAnnotations(documentId, annotations);
-
-          resolve(annotation);
+          let index = findAnnotation(documentId, annotationId);
+          if (index === null) {
+            reject();
+          }
+          storedAnnotations[documentId][index] = annotation;
+          
+          let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
+          ApiUtil.patch(`/decision/review/update_annotation`, { data }).
+            then((response) => {
+              resolve(annotation);
+              generateComments();
+            }, () => {
+              reject();
+            });
         });
       },
 
       deleteAnnotation(documentId, annotationId) {
         return new Promise((resolve, reject) => {
-          debugger;
-          let data = ApiUtil.convertToSnakeCase({ annotation_id: annotationId });
+          let data = ApiUtil.convertToSnakeCase({ annotationId: annotationId });
           ApiUtil.delete(`/decision/review/delete_annotation`, { data }).
             then((response) => {
               let index = findAnnotation(documentId, annotationId);
-              if (index) {
+              if (index !== null) {
                 let annotations = storedAnnotations[documentId];
                 annotations.splice(index, 1);
-                updateAnnotations(documentId, annotations);
+                storedAnnotations[documentId] = annotations;
+                generateComments();
+                resolve(true);
+              } else {
+                resolve(false);
               }
-              resolve();
             }, () => {
               reject();
             });
-          resolve(true);
         });
       },
 
@@ -112,24 +123,6 @@ export default class CommentStorage extends PDFJSAnnotate.StoreAdapter {
 
 let storedAnnotations = {};
 
-/* eslint-disable no-bitwise */
-/* eslint-disable no-mixed-operators */
-/* From http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript */
-let generateUUID = function() {
-  let date = new Date().getTime();
-  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
-    let random = (date + Math.random() * 16) % 16 | 0;
-
-    date = Math.floor(date / 16);
-
-    return (character === 'x' ? random : random & 0x3 | 0x8).toString(16);
-  });
-
-  return uuid;
-};
-
-/* eslint-enable no-bitwise */
-/* eslint-enable no-mixed-operators */
 
 let getAnnotations = (documentId) => {
   return new Promise((resolve, reject) => {
@@ -153,20 +146,18 @@ let getAnnotations = (documentId) => {
         });
     } else {
       resolve(storedAnnotations[documentId]);
-    } 
+    }
   });
-}
-
-let updateAnnotations = (documentId, annotations) => {
-  storedAnnotations[documentId] = annotations;
 }
 
 // TODO: What does this return if it's not found. Hopefully undefined.
 let findAnnotation = (documentId, annotationId) => {
-  return storedAnnotations[documentId] ((annotation, index) => {
-    if (annotation.uuid === annotationId) {
-      return index;
+  let foundIndex = null;
+  storedAnnotations[documentId].forEach((annotation, index) => {
+    if (annotation.uuid.toString() === annotationId.toString()) {
+      foundIndex = index;
     }
   });
+  return foundIndex;
 }
 
