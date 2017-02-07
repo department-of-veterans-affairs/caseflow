@@ -381,7 +381,7 @@ RSpec.feature "Dispatch" do
       page.find("#privateAttorney").trigger("click")
       click_on "Create End Product"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("")
+      expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
     end
 
     scenario "A national office special issue routes correctly" do

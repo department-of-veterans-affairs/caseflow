@@ -15,15 +15,18 @@ RSpec.feature "Test Setup" do
       test_certification.form8.save_pdf!
     end
 
+    let(:certification) { Certification.find_or_create_by_vacols_id(test_appeal_id) }
+
     scenario "isn't allowed by a non-test user" do
       User.authenticate!
 
       visit "certifications/#{test_appeal_id}"
       click_on("Upload and certify")
 
-      certification = Certification.find_or_create_by_vacols_id(test_appeal_id)
       expect(certification.reload.completed_at).to eq(Time.zone.now)
-      expect(page).not_to have_content("Uncertify Appeal")
+      visit "test/setup"
+      click_link("Uncertify Appeal")
+      expect(Certification.where(id: certification.id).count).to eq(1)
     end
 
     scenario "is allowed by a test user" do
@@ -33,8 +36,8 @@ RSpec.feature "Test Setup" do
       visit "certifications/#{test_appeal_id}"
       click_on("Upload and certify")
 
-      certification = Certification.find_or_create_by_vacols_id(test_appeal_id)
       expect(certification.reload.completed_at).to eq(Time.zone.now)
+      visit "test/setup"
       expect(page).to have_content("Uncertify Appeal")
       click_link("Uncertify Appeal")
       expect(Certification.where(id: certification.id).count).to eq(0)
@@ -43,16 +46,12 @@ RSpec.feature "Test Setup" do
 
   context "for claims establishment" do
     let(:appeal) { Appeal.create(vacols_id: "VACOLS123", vbms_id: "VBMS123") }
+    let(:user) { User.tester!(roles: ["Establish Claim"]) }
 
     scenario "isn't allowed by a non-test user" do
       User.authenticate!(roles: ["Establish Claim"])
-
-      visit "dispatch/establish-claim"
-      expect(page).not_to have_content("Reset Claims Establishment Tasks")
-    end
-
-    scenario "is allowed by a non-test user" do
-      user = User.tester!(roles: ["Establish Claim"])
+      # Have to prepare tasks separately for each user, hence repeated code
+      # Can be a Dispatch helper instead?
       task = EstablishClaim.create(appeal: appeal)
       task.prepare!
       task.assign!(:assigned, user)
@@ -60,8 +59,25 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to_not have_content("No previous tasks")
+      expect(page).to have_content("VACOLS123")
+      visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
+      visit "dispatch/establish-claim"
+      expect(page).to have_content("VACOLS123")
+    end
+
+    scenario "is allowed by a test user" do
+      task = EstablishClaim.create(appeal: appeal)
+      task.prepare!
+      task.assign!(:assigned, user)
+      task.start!
+      task.complete!(:completed, status: 0)
+
+      visit "dispatch/establish-claim"
+      expect(page).to have_content("VACOLS123")
+      visit "test/setup"
+      click_link("Reset Claims Establishment Tasks")
+      visit "dispatch/establish-claim"
       expect(page).to have_content("No previous tasks")
     end
   end
