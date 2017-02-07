@@ -251,8 +251,7 @@ export default class EstablishClaimReview extends React.Component {
             {
 
               /* eslint-disable no-return-assign */
-              issueType.map((issue, index) => {
-                return <Checkbox
+              issueType.map((issue, index) => <Checkbox
                     id={ApiUtil.convertToCamelCase(issue)}
                     label={issue}
                     name={ApiUtil.convertToCamelCase(issue)}
@@ -260,8 +259,7 @@ export default class EstablishClaimReview extends React.Component {
                         ApiUtil.convertToCamelCase(issue))}
                     key={index}
                     {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
-                  />
-              })
+                  />)
 
                 /* eslint-enable no-return-assign */
             }
