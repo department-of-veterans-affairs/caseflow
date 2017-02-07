@@ -91,10 +91,11 @@ export default class Modal extends React.Component {
         >
           {closeSymbolHtml()}
         </button>
-        <h1 className="cf-modal-title" id="modal_id-title">{title}</h1>
+        <h2 className="cf-modal-title" id="modal_id-title">{title}</h2>
         <div className="cf-modal-normal-text">
           {children}
         </div>
+        <div className="cf-modal-divider"></div>
         <div className="cf-push-row cf-modal-controls">
           {this.generateButtons()}
         </div>

@@ -100,21 +100,19 @@
   margin-right: 10px;
   line-height: 0;
   position: relative;
-  top: -9px;
 }
 
 .cf-loading-button-symbol {
   display: inline-block;
 }
 
-.cf-button-associated-text {
-  color: $color-gray;
+.cf-loading-indicator {
+  text-align: center;
+  display: inline-block;
 }
 
-.cf-modal-normal-text {
-  margin: auto;
-  width: 70%;
-  text-align: left;
+.cf-button-associated-text {
+  color: $color-gray;
 }
 
 .cf-form-textarea--full-width {
@@ -180,4 +178,9 @@ select {
   &[id="decisionType"] {
     margin-bottom: 30px;
   }
+}
+
+// TODO: unify this with the styling in caseflow commons once all buttons are using React
+.icon-loading-back {
+  margin-left: -30px;
 }

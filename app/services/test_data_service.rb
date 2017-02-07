@@ -32,7 +32,7 @@ class TestDataService
     # Upload decision document for the appeal if it isn't there
     log "Uploading decision for file #{vacols_case.bfcorlid}"
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
-    AppealRepository.upload_document(appeal, TestDecisionDocument.new) unless appeal.decision
+    AppealRepository.upload_document(appeal, TestDecisionDocument.new) if appeal.decisions.empty?
 
     cancel_end_products(appeal) if cancel_eps
   end

@@ -225,6 +225,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
       issues: [{
         description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
         disposition: "Granted",
