@@ -44,6 +44,9 @@ Rails.application.routes.draw do
               path: "/review",
               only: [:index] do
       get 'pdf', on: :collection
+      get 'get_annotations', on: :collection
+      post 'add_annotation', on: :collection
+      delete 'delete_annotation', on: :collection
     end
   end
 

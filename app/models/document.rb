@@ -1,5 +1,4 @@
-class Document
-  include ActiveModel::Model
+class Document < ActiveRecord::Base
 
   TYPES = {
     "34" => "Correspondence",
@@ -23,20 +22,19 @@ class Document
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :document_id, :filename
+  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
   end
 
   def self.from_vbms_document(vbms_document)
-    new(
-      type: TYPES[vbms_document.doc_type] || :other,
-      alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
-      received_at: vbms_document.received_at,
-      document_id: vbms_document.document_id,
-      filename: vbms_document.filename
-    )
+    find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
+      t.type = TYPES[vbms_document.doc_type] || :other
+      t.alt_types = (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] }
+      t.received_at = vbms_document.received_at
+      t.filename = vbms_document.filename
+    end
   end
 
   def self.type_id(type)
@@ -51,13 +49,13 @@ class Document
   def fetch_and_cache_document_from_vbms
     @content = Appeal.repository.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
-    Rails.logger.info("File #{document_id} fetched from VBMS")
+    Rails.logger.info("File #{vbms_document_id} fetched from VBMS")
     @content
   end
 
   def fetch_content
     content = S3Service.fetch_content(file_name)
-    content && Rails.logger.info("File #{document_id} fetched from S3")
+    content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
     content || fetch_and_cache_document_from_vbms
   end
 
@@ -71,10 +69,16 @@ class Document
   end
 
   def file_name
-    document_id.to_s
+    vbms_document_id.to_s
   end
 
   def default_path
     File.join(Rails.root, "tmp", "pdfs", file_name)
+  end
+
+  def to_hash
+    serializable_hash(
+      methods: [:vbms_document_id, :type, :received_at, :filename]
+    )
   end
 end

@@ -32,11 +32,13 @@ export default class DecisionReviewer extends React.Component {
 
   render() {
     let { appealDocuments } = this.props;
+    console.log(appealDocuments);
 
     return (
       <div>
         <PdfViewer
-          file={`review/pdf?document_id=${appealDocuments[this.state.pdf].document_id}`}
+          file={`review/pdf?vbms_document_id=${appealDocuments[this.state.pdf].vbms_document_id}`}
+          id={appealDocuments[this.state.pdf].id}
           receivedAt={appealDocuments[this.state.pdf].received_at}
           type={appealDocuments[this.state.pdf].type}
           name={appealDocuments[this.state.pdf].filename}

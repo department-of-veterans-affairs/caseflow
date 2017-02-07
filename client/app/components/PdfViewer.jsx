@@ -9,25 +9,6 @@ import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 
-/* eslint-disable no-bitwise */
-/* eslint-disable no-mixed-operators */
-/* From http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript */
-let generateUUID = function() {
-  let date = new Date().getTime();
-  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
-    let random = (date + Math.random() * 16) % 16 | 0;
-
-    date = Math.floor(date / 16);
-
-    return (character === 'x' ? random : random & 0x3 | 0x8).toString(16);
-  });
-
-  return uuid;
-};
-
-/* eslint-enable no-bitwise */
-/* eslint-enable no-mixed-operators */
-
 export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
@@ -54,19 +35,24 @@ export default class PdfViewer extends BaseForm {
 
     this.setState({ comments: this.comments });
     for (let i = 1; i <= pdfDocument.pdfInfo.numPages; i++) {
-      storeAdapter.getAnnotations(this.props.file, i).then((annotations) => {
-        annotations.annotations.forEach((annotationId) => {
-          storeAdapter.getComments(this.props.file, annotationId.uuid).
-            then((comment) => {
-              if (comment.length) {
-                this.comments.push({
-                  annotationUuid: annotationId.uuid,
-                  commentUuid: comment[0].uuid,
-                  content: comment[0].content
-                });
-                this.setState({ comments: this.comments });
-              }
-            });
+      storeAdapter.getAnnotations(this.props.id, i).then((annotations) => {
+        annotations.annotations.forEach((annotation) => {
+          // storeAdapter.getComments(this.props.file, annotationId.uuid).
+          //   then((comment) => {
+          //     if (comment.length) {
+          //       this.comments.push({
+          //         annotationUuid: annotationId.uuid,
+          //         commentUuid: comment[0].uuid,
+          //         content: comment[0].content
+          //       });
+          //       this.setState({ comments: this.comments });
+          //     }
+          //   });
+          this.comments.push({
+            annotationUuid: annotation.uuid,
+            content: annotation.comment
+          });
+          this.setState({ comments: this.comments });
         });
       });
     }
@@ -103,25 +89,25 @@ export default class PdfViewer extends BaseForm {
     return (event) => {
       if (event.key === 'Enter') {
         let commentToAdd = this.state.commentForm.editComment.value;
-
-        storeAdapter.deleteComment(
-          this.props.file,
-          comment.commentUuid
-        ).then(() => {
-          storeAdapter.addComment(
-            this.props.file,
-            comment.annotationUuid,
-            commentToAdd
-          ).then(() => {
-            this.generateComments(this.state.pdfDocument);
+        storeAdapter.getAnnotation(
+          this.props.id,
+          comment.annotationUuid,
+        ).then((annotation) => {
+          annotation.comment = commentToAdd;
+          storeAdapter.editAnnotation(
+            this.props.id,
+            annotation.uuid,
+            annotation
+            ).then(() => {
+              this.generateComments(this.state.pdfDocument);
+            }).
+            catch(() => {
+              // TODO: Add error case if comment can't be added
+            });
           }).
           catch(() => {
             // TODO: Add error case if comment can't be added
           });
-        }).
-        catch(() => {
-          // TODO: Add error case if comment can't be added
-        });
 
         this.setState({
           editingComment: null
@@ -189,7 +175,6 @@ export default class PdfViewer extends BaseForm {
         class: "Annotation",
         page: pageNumber,
         "type": "point",
-        uuid: generateUUID(),
         "x": (event.offsetX + event.srcElement.offsetLeft) / this.state.scale,
         "y": (event.offsetY + event.srcElement.offsetTop) / this.state.scale
       };
@@ -217,24 +202,26 @@ export default class PdfViewer extends BaseForm {
 
 
     return (content) => {
+      annotation['comment'] = content;
       storeAdapter.addAnnotation(
-        this.props.file,
+        this.props.id,
         pageNumber,
         annotation
       ).then((returnedAnnotation) => {
-        storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
-          storeAdapter.addComment(
-            this.props.file,
-            returnedAnnotation.uuid,
-            content
-          ).then(() => {
-            this.generateComments(this.state.pdfDocument);
-          });
+        storeAdapter.getAnnotations(this.props.id, pageNumber).then((annotations) => {
+          // storeAdapter.addComment(
+          //   this.props.file,
+          //   returnedAnnotation.uuid,
+          //   content
+          // ).then(() => {
+          //   this.generateComments(this.state.pdfDocument);
+          // });
           // Redraw all the annotations on the page to show the new one.
           let svg = document.getElementById(`pageContainer${pageNumber}`).
             getElementsByClassName("annotationLayer")[0];
 
           PDFJSAnnotate.render(svg, viewport, annotations);
+          this.generateComments(this.state.pdfDocument);
         });
       });
     };
@@ -244,7 +231,7 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     let RENDER_OPTIONS = {
-      documentId: this.props.file,
+      documentId: this.props.id,
       pdfDocument: this.state.pdfDocument,
       rotate: 0,
       scale: this.state.scale
@@ -392,7 +379,7 @@ export default class PdfViewer extends BaseForm {
   scrollToAnnotation = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
-      getAnnotation(this.props.file, uuid).
+      getAnnotation(this.props.id, uuid).
       then((annotation) => {
         let page = document.getElementsByClassName('page');
         let scrollWindow = document.getElementById('scrollWindow');

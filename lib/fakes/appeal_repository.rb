@@ -82,7 +82,7 @@ class Fakes::AppealRepository
 
   def self.fetch_document_file(document)
     path =
-      case document.document_id
+      case document.vbms_document_id
       when "1"
         File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
       when "2"
@@ -297,23 +297,47 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.new(type: "NOD", received_at: 3.days.ago, document_id: "1", filename: "Mark_NOD")
+    Document.from_vbms_document(OpenStruct.new(
+      type: "73",
+      received_at: 3.days.ago,
+      document_id: "1",
+      filename: "Mark_NOD"
+    ))
   end
 
   def self.soc_document
-    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6), document_id: "2", filename: "Mark_SOC")
+    Document.from_vbms_document(OpenStruct.new(
+      type: "95",
+      received_at: Date.new(1987, 9, 6),
+      document_id: "2",
+      filename: "Mark_SOC"
+    ))
   end
 
   def self.form9_document
-    Document.new(type: "Form 9", received_at: 1.day.ago, document_id: "3", filename: "Mark_Form_9")
+    Document.from_vbms_document(OpenStruct.new(
+      type: "179",
+      received_at: 1.day.ago,
+      document_id: "3",
+      filename: "Mark_Form_9"
+    ))
   end
 
   def self.decision_document
-    Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4", filename: "Mark_Decision")
+    Document.from_vbms_document(OpenStruct.new(
+      type: "27",
+      received_at: 7.days.ago,
+      document_id: "4",
+      filename: "Mark_Decision"
+    ))
   end
 
   def self.decision_document2
-    Document.new(type: "BVA Decision", received_at: 8.days.ago, document_id: "5")
+    Document.from_vbms_document(OpenStruct.new(
+      type: "27",
+      received_at: 8.days.ago,
+      document_id: "5"
+    ))
   end
 
   def self.set_vbms_documents!

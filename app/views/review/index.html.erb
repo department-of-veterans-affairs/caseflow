@@ -1,6 +1,6 @@
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
     page: "DecisionReviewer",
-    appealDocuments: @appeal.documents
+    appealDocuments: @appeal.documents.map(&:to_hash)
   }) %>
 <% end %>
