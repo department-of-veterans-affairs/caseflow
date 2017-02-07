@@ -113,7 +113,7 @@ export default class EstablishClaim extends BaseForm {
     });
 
     // Force navigate to the review page on initial component mount
-    // This ensures they are not mid-page
+    // This ensures they are not mid-flow
     history.replace(REVIEW_PAGE);
   }
 

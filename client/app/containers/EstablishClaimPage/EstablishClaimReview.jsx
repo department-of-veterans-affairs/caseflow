@@ -248,20 +248,16 @@ export default class EstablishClaimReview extends React.Component {
 
           <label>Special Issue Categories</label>
           <div className="cf-multiple-columns">
-            {
-
-              /* eslint-disable no-return-assign */
-              issueType.map((issue, index) => <Checkbox
-                    id={ApiUtil.convertToCamelCase(issue)}
-                    label={issue}
-                    name={ApiUtil.convertToCamelCase(issue)}
-                    onChange={handleFieldChange('specialIssues',
-                        ApiUtil.convertToCamelCase(issue))}
-                    key={index}
-                    {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
-                  />)
-
-                /* eslint-enable no-return-assign */
+            {issueType.map((issue, index) =>
+              <Checkbox
+                id={ApiUtil.convertToCamelCase(issue)}
+                label={issue}
+                name={ApiUtil.convertToCamelCase(issue)}
+                onChange={handleFieldChange('specialIssues',
+                  ApiUtil.convertToCamelCase(issue))}
+                  key={index}
+                  {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
+              />)
             }
           </div>
         </div>
