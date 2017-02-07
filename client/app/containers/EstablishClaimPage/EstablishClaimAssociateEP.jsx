@@ -13,7 +13,8 @@ export default class AssociatePage extends React.Component {
     super(props);
 
     this.state = {
-      loading: null
+      loading: null,
+      sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
   }
 
@@ -75,8 +76,6 @@ export default class AssociatePage extends React.Component {
       hasAvailableModifers
     } = this.props;
 
-    let endProducts = this.props.endProducts.sort(this.sortEndProduct);
-
     let alert;
 
     if (this.props.hasAvailableModifers) {
@@ -114,7 +113,7 @@ export default class AssociatePage extends React.Component {
           <Table
             headers={TABLE_HEADERS}
             buildRowValues={this.buildEndProductRow}
-            values={endProducts}
+            values={this.state.sortedEndProducts}
           />
         </div>
       </div>
