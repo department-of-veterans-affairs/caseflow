@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Admin", focus: true do
+RSpec.feature "Admin" do
   before do
     User.authenticate!(roles: ["System Admin"])
     Fakes::AppealRepository.records = {
