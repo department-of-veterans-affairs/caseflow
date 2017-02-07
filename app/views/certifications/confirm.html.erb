@@ -10,7 +10,5 @@
   </ul>
 
   <p class="cf-msg-screen-text">Way to go! You can now close this window and open another appeal in VACOLS.</p>
-  <% if test_user? %>
-      <%= link_to "Uncertify Appeal", test_setup_certification_path(appeal_id: params[:id]), method: :post %>
-  <% end %>
+
 </div>

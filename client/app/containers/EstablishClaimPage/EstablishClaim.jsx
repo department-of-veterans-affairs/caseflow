@@ -286,7 +286,7 @@ export default class EstablishClaim extends BaseForm {
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
-          this.props.task.appeal.station_key;
+          this.getStationOfJurisdiction();
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
@@ -297,6 +297,15 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       stateObject
     });
+  }
+
+  getStationOfJurisdiction() {
+    let stationKey = this.props.task.appeal.station_key;
+    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+
+    return `${stationKey} - ${
+        this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+        this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   prepareData() {
@@ -430,6 +439,8 @@ export default class EstablishClaim extends BaseForm {
 }
 
 EstablishClaim.propTypes = {
+  regionalOfficeCities: PropTypes.object.isRequired,
+  regionalOfficeStations: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
 
