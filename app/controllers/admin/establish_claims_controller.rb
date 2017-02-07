@@ -9,7 +9,9 @@ class Admin::EstablishClaimsController < ApplicationController
   def create
     vbms_id = params[:appeal][:vbms_id]
     appeal = Appeal.find_or_create_by_vbms_id(vbms_id)
-    EstablishClaim.find_or_create_by(appeal: appeal)
+    establish_claim = EstablishClaim.find_or_create_by(appeal: appeal)
+    # Admin has to confirm appeal has a decision document
+    establish_claim.prepare! if establish_claim.may_prepare?
 
     flash[:success] = "Task created or already existed"
     redirect_to admin_establish_claim_path
