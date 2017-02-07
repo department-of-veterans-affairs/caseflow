@@ -49,6 +49,9 @@ describe("Form8", function() {
     });
 
     context("when question is a date question", function() {
+      beforeEach(function() {
+        Form8.dateQuestions  = {"12A": {message: "Please enter a valid date."}};
+      });
 
       context("when question's value is a date before 1850-01-01", function() {
         beforeEach(function() {

@@ -53,5 +53,4 @@ describe("DateField", function() {
       expect(DateField.formatDate("2016-03-abcd")).to.eq("");
     });
   });
-
 });

@@ -185,13 +185,18 @@
       var isValid = !!questionState.value || !questionState.show;
 
       if(isValid) {
-        questionState.error = null;
         //Check if question is a date question, if so check if date is valid
-        if((questionNumber in this.dateQuestions) && showError){
+        if(questionNumber in this.dateQuestions){
           isValid = self.isValidDate(Date.parse(questionState.value));
-          if(!isValid){
+          if(isValid){
+            questionState.error = null;
+          }
+          else if(showError){
             questionState.error = this.dateQuestions[questionNumber];
           }
+        }
+        else {
+          questionState.error = null;
         }
       }
       else if(showError) {
