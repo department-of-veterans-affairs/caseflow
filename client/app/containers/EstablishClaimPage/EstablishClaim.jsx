@@ -216,9 +216,6 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handlePageChange = (page) => {
-    this.setState({
-      page
-    });
     this.state.history.push(page);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
@@ -283,25 +280,11 @@ export default class EstablishClaim extends BaseForm {
   handleReviewPageSubmit = () => {
     this.setStationState();
 
-    let validReviewPageSubmit = this.validateReviewPageSubmit();
-
-    if (validReviewPageSubmit) {
-      this.setState({
-        reviewPageVisited: true
-      });
-    } else {
+    if (!this.validateReviewPageSubmit()) {
       this.setState({
         specialIssueModalDisplay: true
       });
-
-      // Do not allow page change because we do not handle
-      // these special issues in Caseflow at this time
-      return;
-    }
-
-    // route to the appropriate page based on if
-    // there are existing EPs
-    if (this.shouldShowAssociatePage()) {
+    } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
       this.handlePageChange(FORM_PAGE);
