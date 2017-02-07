@@ -101,7 +101,7 @@
 
       this.getRequiredQuestions().forEach(function(questionNumber) {
         $question(questionNumber).find(".question-label").append(
-          $("<span class='cf-required'> (Required)</span>")
+          $("<span class='cf-required'> Required</span>")
         );
       });
     },
@@ -270,5 +270,3 @@
     }
   };
 })();
-
-

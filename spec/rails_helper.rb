@@ -88,6 +88,10 @@ module StubbableUser
       @stub
     end
 
+    def before_set_user
+      clear_stub!
+    end
+
     def unauthenticate!
       self.stub = nil
     end

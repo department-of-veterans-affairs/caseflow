@@ -25,7 +25,7 @@ RSpec.feature "Cancel certification" do
 
       visit "certifications/new/7777D"
       expect(page).to have_content("No Matching Document")
-      click_on "Cancel"
+      click_on "Cancel Certification"
       expect(page).to have_content("Are you sure you can't certify this case?")
       click_on "Yes, I'm sure"
       expect(page).to have_content("Case not certified")
@@ -42,11 +42,13 @@ RSpec.feature "Cancel certification" do
       certification = Certification.create!(vacols_id: "5555C")
 
       visit "certifications/new/5555C"
-      click_on "Cancel"
+      click_on "Cancel Certification"
       expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
 
       # Test validation errors
-      click_on "Cancel Certification"
+      within(".modal-container") do
+        click_on "Cancel Certification"
+      end
       expect(page).to have_content("Make sure you've selected an option below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
@@ -56,7 +58,9 @@ RSpec.feature "Cancel certification" do
       fill_in "What's your VA email address?", with: "fk@va.gov"
       expect(page).to_not have_css(".usa-input-error")
       fill_in "What's your VA email address?", with: "fk@va"
-      click_on "Cancel Certification"
+      within(".modal-container") do
+        click_on "Cancel Certification"
+      end
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
@@ -66,7 +70,9 @@ RSpec.feature "Cancel certification" do
       fill_in "Tell us more about your situation.", with: "Test"
       fill_in "What's your VA email address?", with: "fk@va.gov"
       expect(page).to_not have_css(".usa-input-error")
-      click_on "Cancel Certification"
+      within(".modal-container") do
+        click_on "Cancel Certification"
+      end
       expect(page).to_not have_css(".usa-input-error")
 
       # Test resulting page
