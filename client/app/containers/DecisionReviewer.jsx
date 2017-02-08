@@ -48,13 +48,15 @@ export default class DecisionReviewer extends React.Component {
           type={appealDocuments[this.state.pdf].type}
           name={appealDocuments[this.state.pdf].filename}
           previousPdf={this.previousPdf}
-          nextPdf={this.nextPdf} />
+          nextPdf={this.nextPdf}
+          pdfWorker={this.props.pdfWorker} />
       </div>
     );
   }
 }
 
 DecisionReviewer.propTypes = {
+  annotations: PropTypes.arrayOf(PropTypes.object),
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
-  annotations: PropTypes.arrayOf(PropTypes.object)
+  pdfWorker: PropTypes.string
 };

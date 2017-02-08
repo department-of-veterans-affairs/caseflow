@@ -8,6 +8,11 @@
     </div>
   <% end %>
 
+  <div class="usa-alert-body usa-alert">
+    Please remember to ensure a decision PDF has been
+    uploaded before creating a task.
+  </div>
+
   <%= form_for @appeal, url: admin_establish_claim_path, method: "POST",
     html: { id: "establish-claim-form", class: "cf-form" },
     builder: CaseflowFormBuilder do |f| %>

@@ -52,8 +52,8 @@ class Certification < ActiveRecord::Base
   end
 
   def time_to_certify
-    return nil if !completed_at || !form8_started_at
-    completed_at - form8_started_at
+    return nil if !completed_at || !created_at
+    completed_at - created_at
   end
 
   def self.completed

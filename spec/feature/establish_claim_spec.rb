@@ -78,6 +78,20 @@ RSpec.feature "Dispatch" do
       # Verify we got a whole 10 more completed tasks
       expect(page).to have_content("Jane Smith", count: 20)
     end
+
+    scenario "View unprepared tasks page" do
+      @unprepared_appeal = Appeal.create(
+        vacols_id: "456D",
+        vbms_id: "VBMS_ID2"
+      )
+      @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
+
+      visit "/dispatch/missing-decision"
+
+      # should see the unprepared task
+      expect(page).to have_content("Claims Missing Decisions")
+      expect(page).to have_content(@unprepared_task.appeal.veteran_name)
+    end
   end
 
   context "As a caseworker" do
@@ -219,6 +233,14 @@ RSpec.feature "Dispatch" do
 
           # View history
           expect(page).to have_content("Multiple Decision Documents")
+
+          # Text on the tab
+          expect(page).to have_content("Decision 1 (")
+          find("#tab-1").click
+          expect(page).to have_content("Create End Product For Decision 2")
+          click_on "Create End Product For Decision 2"
+
+          expect(page).to have_content("Benefit Type")
         end
       end
     end
@@ -359,7 +381,7 @@ RSpec.feature "Dispatch" do
       page.find("#privateAttorney").trigger("click")
       click_on "Create End Product"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("")
+      expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
     end
 
     scenario "A national office special issue routes correctly" do
@@ -369,7 +391,7 @@ RSpec.feature "Dispatch" do
       page.find("#mustardGas").trigger("click")
       click_on "Create End Product"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee")
+      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
     end
 
     scenario "A special issue is chosen and saved in database" do

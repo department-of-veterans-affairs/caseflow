@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, except: [:unprepared_tasks]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
@@ -37,7 +37,7 @@ class TasksController < ApplicationController
   def pdf
     return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
     decision_number = params[:decision_number].to_i
-    return redirect_to "/404" if decision_number > task.appeal.decisions.size
+    return redirect_to "/404" if decision_number >= task.appeal.decisions.size || decision_number < 0
     decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end

@@ -122,7 +122,7 @@ window.Modal = (function($) {
     $question("cancellationReason").find("input[type=radio]").prop("checked", false);
     questionNames.forEach(function(questionName) {
       $question(questionName).find(".question-label").append(
-        $("<span class='cf-required'> (Required)</span>")
+        $("<span class='cf-required'> Required</span>")
       );
     });
   }

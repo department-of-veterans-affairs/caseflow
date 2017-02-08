@@ -179,6 +179,16 @@ class Task < ActiveRecord::Base
     super.merge(type: type)
   end
 
+  def to_simple_hash
+    serializable_hash(
+      include: [:user, appeal: { methods:
+       [:decision_date,
+        :veteran_name,
+        :decision_type,
+        :days_since_decision] }]
+    )
+  end
+
   def to_hash
     serializable_hash(
       include: [:user, appeal: { methods:
@@ -190,7 +200,8 @@ class Task < ActiveRecord::Base
          :station_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
-         :issues] }],
+         :issues,
+         :days_since_decision] }],
       methods: [:progress_status]
     )
   end

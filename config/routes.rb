@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
+    get 'missing-decision', to: 'establish_claims#unprepared_tasks'
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -92,6 +93,7 @@ Rails.application.routes.draw do
   namespace :test do
     # Only allow data_setup routes if TEST_USER is set
     if ENV["TEST_USER_ID"]
+      resources :setup, only: [:index]
       post "setup_certification" => "setup#certification"
       post "setup_claims_establishment" => "setup#claims_establishment"
     end

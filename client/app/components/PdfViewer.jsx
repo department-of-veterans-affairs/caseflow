@@ -297,7 +297,8 @@ export default class PdfViewer extends BaseForm {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.workerSrc = '../assets/pdf.worker.js';
+    PDFJS.workerSrc = this.props.pdfWorker;
+    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
@@ -553,7 +554,8 @@ export default class PdfViewer extends BaseForm {
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
-  file: PropTypes.string.isRequired
+  file: PropTypes.string.isRequired,
+  pdfWorker: PropTypes.string
 };
 
 /* eslint-enable max-lines */

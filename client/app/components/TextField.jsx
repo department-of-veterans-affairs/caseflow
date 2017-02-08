@@ -20,7 +20,7 @@ export default class TextField extends React.Component {
 
     return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
       <label className="question-label" htmlFor={name}>
-        {label || name} {required && <span className="cf-required">(Required)</span>}
+        {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <input

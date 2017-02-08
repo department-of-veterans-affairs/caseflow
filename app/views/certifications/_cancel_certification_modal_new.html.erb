@@ -10,11 +10,11 @@
         <%=svg_icon(:close)%>
       </button>
 
-      <p class="cf-modal-title" id="<%= modal_id %>-title">Cancel certification</p>
+      <h1 class="cf-modal-title" id="<%= modal_id %>-title">Cancel certification</h1>
       <p>
         <div class="cf-modal-segment" id="<%= modal_id %>-desc">
           Please explain why this case cannot be certified with Caseflow. Once you click Cancel Certification, changes made to this case in Caseflow will not be saved.
-        </div><br/>
+        </div>
       </p>
 
       <%= form_for certification_cancellation,
@@ -39,14 +39,13 @@
           question_name: "email", label: "What's your VA email address?" %>
 
         <%= f.hidden_field :certification_id, value: certification_cancellation.certification_id  %>
-        <p>
-          <div class="cf-modal-segment">
+          <div class="cf-modal-divider"></div>
+          <div class="cf-push-row cf-modal-controls">
             <a href="#" class="cf-modal-link cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">  &laquo; Go back
             </a>
 
             <button type="submit" class="cf-push-right cf-submit">Cancel Certification</button>
           </div>
-        </p>
       <% end %>
     </div>
     <!-- /modal box messaging -->

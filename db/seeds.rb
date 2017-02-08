@@ -60,21 +60,20 @@ class SeedDB
     tasks[2].start!
     tasks[2].complete!(status: 0)
 
+    # Create one task with no decision documents
+    EstablishClaim.create(
+      appeal: tasks[2].appeal
+    )
+
     @tasks.push(*tasks)
   end
 
   def create_default_users
-    @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Anne Merica"))
+    @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Cave Johnson"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
     @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John Smith"))
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
-    # station id 316 maps to multiple ROs
-    @users.push(User.create(css_id: "Invalid Role", station_id: "316", full_name: "Anne Merica"))
-    @users.push(User.create(css_id: "Establish Claim", station_id: "316", full_name: "Jane Smith"))
-    @users.push(User.create(css_id: "Establish Claim, Manage Claim Establishment", station_id: "316", full_name: "John Doe"))
-    @users.push(User.create(css_id: "Certify Appeal", station_id: "316", full_name: "John Smith"))
-    @users.push(User.create(css_id: "System Admin", station_id: "316", full_name: "Angelina Smith"))
   end
 
   def clean_db
