@@ -7,6 +7,7 @@ end
 describe Task do
   # Clear the task from the DB before every test
   before do
+    @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
     @user = User.create(station_id: "ABC", css_id: "123")
@@ -324,4 +325,14 @@ describe Task do
     end
     it { expect { Task.assigned_not_completed.find(task.id) }.not_to raise_error }
   end
+
+  context "#days_since_creation" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal, created_at: @one_week_ago) }
+    it "returns the correct number of days" do
+      expect(task.days_since_creation).to eq(7)
+    end
+  end
+
+
 end
