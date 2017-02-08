@@ -27,7 +27,7 @@ export default class PdfViewer extends BaseForm {
       scale: 1
     };
 
-    this.props.commentStorage.setOnCommentChange(this.onCommentChange);
+    this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
   onCommentChange = () => {
@@ -569,7 +569,7 @@ export default class PdfViewer extends BaseForm {
 }
 
 PdfViewer.propTypes = {
-  commentStorage: PropTypes.object,
+  annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired
 };
 

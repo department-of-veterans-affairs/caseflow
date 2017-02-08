@@ -1,14 +1,14 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from '../components/PdfViewer';
 import PDFJSAnnotate from 'pdf-annotate.js';
-import CommentStorage from '../util/CommentStorage';
+import AnnotationStorage from '../util/AnnotationStorage';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = { pdf: 0 };
-    this.commentStorage = new CommentStorage(this.props.annotations);
-    PDFJSAnnotate.setStoreAdapter(this.commentStorage);
+    this.annotationStorage = new AnnotationStorage(this.props.annotations);
+    PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
   }
 
   previousPdf = () => {
@@ -41,7 +41,7 @@ export default class DecisionReviewer extends React.Component {
     return (
       <div>
         <PdfViewer
-          commentStorage={this.commentStorage}
+          annotationStorage={this.annotationStorage}
           file={`review/pdf?vbms_document_id=${appealDocuments[this.state.pdf].vbms_document_id}`}
           annotations={this.state.annotations}
           id={appealDocuments[this.state.pdf].id}
