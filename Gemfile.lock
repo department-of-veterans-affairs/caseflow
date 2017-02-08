@@ -1,11 +1,11 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 1d6143a9bece63607bd78eefa65b5deac1aacc9b
-  ref: 1d6143a9b
+  revision: fa1b297b996ec3b228c45a0c9cb0452131360cc3
+  ref: fa1b297b9
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
-      bourbon
+      bourbon (= 4.2.7)
       d3-rails
       jquery-rails
       momentjs-rails
@@ -109,17 +109,17 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.7.3)
-      aws-sdk-resources (= 2.7.3)
-    aws-sdk-core (2.7.3)
+    aws-sdk (2.7.4)
+      aws-sdk-resources (= 2.7.4)
+    aws-sdk-core (2.7.4)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.7.3)
-      aws-sdk-core (= 2.7.3)
+    aws-sdk-resources (2.7.4)
+      aws-sdk-core (= 2.7.4)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bourbon (4.3.0)
+    bourbon (4.2.7)
       sass (~> 3.4)
       thor (~> 0.19)
     brakeman (3.3.1)
