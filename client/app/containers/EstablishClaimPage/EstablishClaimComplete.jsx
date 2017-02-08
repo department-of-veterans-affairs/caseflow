@@ -15,7 +15,8 @@ export default class EstablishClaimComplete extends React.Component {
       secondHeader
     } = this.props;
 
-    return <div
+    return <div>
+      <div
         id="certifications-generate"
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
       <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
@@ -30,8 +31,12 @@ export default class EstablishClaimComplete extends React.Component {
             {content}
         </ul>
       }
-      <div className="cf-centered-buttons">
+    </div>
+    <div className="cf-app-segment">
+      <div className="cf-push-left">
         <a href="/dispatch/establish-claim">View History</a>
+      </div>
+      <div className="cf-push-right">
         { availableTasks &&
         <Button
           name={buttonText}
@@ -48,6 +53,7 @@ export default class EstablishClaimComplete extends React.Component {
         />
         }
       </div>
+    </div>
     </div>;
   }
 
