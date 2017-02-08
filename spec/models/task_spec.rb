@@ -334,5 +334,12 @@ describe Task do
     end
   end
 
+  context "#unprepared" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    it "returns unprepared tasks" do
+      expect(Task.unprepared.first).to eq(task)
+    end
+  end
 
 end
