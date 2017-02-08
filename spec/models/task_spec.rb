@@ -341,5 +341,4 @@ describe Task do
       expect(Task.unprepared.first).to eq(task)
     end
   end
-
 end
