@@ -189,7 +189,8 @@ select {
   background-color: $color-white;
   border-radius: 5px;
   padding: 0.4rem 2.7em;
-  svg { vertical-align: middle };
   text-align: center;
   display: inline-block;
+
+  svg { vertical-align: middle; }
 }
