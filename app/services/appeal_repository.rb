@@ -172,7 +172,7 @@ class AppealRepository
 
     end_product = Appeal.transaction do
       location = location_after_dispatch(appeal: appeal,
-                                         station: claim.station_of_jurisdiction)
+                                         station: claim[:station_of_jurisdiction])
 
       appeal.case_record.update_vacols_location(location)
 
