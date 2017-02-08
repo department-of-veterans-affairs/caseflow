@@ -15,9 +15,12 @@ import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
-export const REVIEW_PAGE = 0;
-export const ASSOCIATE_PAGE = 1;
-export const FORM_PAGE = 2;
+import { createHashHistory } from 'history';
+
+export const REVIEW_PAGE = 'review';
+export const ASSOCIATE_PAGE = 'associate';
+export const FORM_PAGE = 'form';
+
 
 export const END_PRODUCT_INFO = {
   'Full Grant': ['172BVAG', 'BVA Grant'],
@@ -87,6 +90,7 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
+      history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
@@ -96,6 +100,25 @@ export default class EstablishClaim extends BaseForm {
     SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
+  }
+
+
+  componentDidMount() {
+    let { history } = this.state;
+
+    history.listen((location) => {
+      this.setState({
+        page: location.pathname.substring(1) || REVIEW_PAGE
+      });
+    });
+
+    // Force navigate to the review page on initial component mount
+    // This ensures they are not mid-flow
+    history.replace(REVIEW_PAGE);
+  }
+
+  reloadPage = () => {
+    window.location.href = window.location.pathname + window.location.search;
   }
 
   handleSubmit = () => {
@@ -117,7 +140,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then(() => {
-        window.location.reload();
+        this.reloadPage();
       }, () => {
         this.setState({
           loading: false
@@ -158,7 +181,7 @@ export default class EstablishClaim extends BaseForm {
     });
 
     return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
-      window.location.reload();
+      this.reloadPage();
     }, () => {
       handleAlert(
         'error',
@@ -193,9 +216,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handlePageChange = (page) => {
-    this.setState({
-      page
-    });
+    this.state.history.push(page);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -350,6 +371,7 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
+      history,
       modalSubmitLoading,
       specialIssueModalDisplay,
       specialIssues
@@ -388,6 +410,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
+            history={history}
           />
         }
         { this.isFormPage() &&
