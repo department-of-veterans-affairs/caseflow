@@ -35,20 +35,10 @@ export default class PdfViewer extends BaseForm {
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
     this.setState({ comments: this.comments });
+    // TODO: Change the interface in which we query all the comments.
     for (let i = 1; i <= this.state.numPages; i++) {
       storeAdapter.getAnnotations(this.props.id, i).then((annotations) => {
         annotations.annotations.forEach((annotation) => {
-          // storeAdapter.getComments(this.props.file, annotationId.uuid).
-          //   then((comment) => {
-          //     if (comment.length) {
-          //       this.comments.push({
-          //         annotationUuid: annotationId.uuid,
-          //         commentUuid: comment[0].uuid,
-          //         content: comment[0].content
-          //       });
-          //       this.setState({ comments: this.comments });
-          //     }
-          //   });
           this.comments.push({
             annotationUuid: annotation.uuid,
             content: annotation.comment

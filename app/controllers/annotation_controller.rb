@@ -1,15 +1,6 @@
 class AnnotationController < ApplicationController
   before_action :verify_system_admin
 
-  def index
-    appeal = Appeal.find(params.require(:appeal_id))
-    ids = appeal.documents.map do |doc|
-      doc.id
-    end
-    annotations = [*Annotation.find_by(document_id: ids)]
-    render json: { annotations: annotations.map(&:to_hash) }
-  end
-
   def create
     annotation = Annotation.create(
       annotation_params
@@ -19,7 +10,7 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    render json: { success: Annotation.delete(params[:id]) }
+    render json: { success: Annotation.delete(params.require(:appeal_id)) }
   end
 
   def update
