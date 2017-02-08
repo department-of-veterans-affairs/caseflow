@@ -21,17 +21,24 @@
 </p>
 <div class="cf-help-divider"></div>
 <h2 id="modals">Modals</h2>
-<a class="usa-button usa-button-outline" href="#">Launch Modal</a>
-<ul class="usa-accordion">
+<p><a class="usa-button usa-button-outline" href="#">Launch Modal</a></p>
+<ul class="usa-accordion usa-unstyled-list">
     <li>
       <button class="usa-accordion-button"
-        aria-expanded="true" aria-controls="amendment-1">
-        Code
+        aria-expanded="false" aria-controls="modals-code">
+        Code (jQuery/ERB)
       </button>
-      <div id="amendment-1" class="usa-accordion-content">
-        <pre>
-          blah blah blah
-        </pre>
+      <div id="modals-code" class="usa-accordion-content" aria-hidden="true">
+        code block code block code block
+      </div>
+    </li>
+    <li>
+      <button class="usa-accordion-button"
+        aria-expanded="false" aria-controls="modals-react-code">
+        Code (React/ES6)
+      </button>
+      <div id="modals-react-code" class="usa-accordion-content" aria-hidden="true">
+        code block code block code block
       </div>
     </li>
   </ul>

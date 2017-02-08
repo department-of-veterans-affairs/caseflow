@@ -67,8 +67,10 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
-[aria-hidden=true] {
-  display: inline !important;
+svg {
+  [aria-hidden=true] {
+    display: inline !important;
+  }
 }
 
 .cf-sidebar-wrapper {
