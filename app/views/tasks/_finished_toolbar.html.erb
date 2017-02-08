@@ -1,11 +1,15 @@
-<div class="cf-centered-buttons">
-  <%= link_to('View History', establish_claims_path) %>
-  <% if current_user_next_task %>
-      <%= link_to(start_text, assign_establish_claims_path,
-                  class: "usa-button-primary cf-push-right", method: 'patch') %>
-  <% else %>
-      <button class="usa-button-disabled cf-push-right" disabled>
-        <%= start_text %>
-      </button>
-  <% end %>
+<div class="cf-app-segment">
+  <div class="cf-push-left">
+    <%= link_to('View History', establish_claims_path) %>
+  </div>
+  <div class="cf-push-right">
+    <% if current_user_next_task %>
+        <%= link_to(start_text, assign_establish_claims_path,
+                    class: "usa-button-primary cf-push-right", method: 'patch') %>
+    <% else %>
+        <button class="usa-button-disabled cf-push-right" disabled>
+          <%= start_text %>
+        </button>
+    <% end %>
+  </div>
 </div>
