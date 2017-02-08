@@ -67,7 +67,7 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
-svg[aria-hidden=true] {
+svg[aria-hidden=true], .fa[aria-hidden=true] {
   display: inline !important;
 }
 
