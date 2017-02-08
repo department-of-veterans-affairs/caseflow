@@ -26,7 +26,7 @@ export default class Button extends React.Component {
       classNames = classNames.filter((className) => !className.includes('usa-button'));
 
       return <span className={classNames.join(' ')}>
-        <span className="cf-loading-indicator">{loadingSymbolHtml()}</span>
+        <span className="cf-react-loading-indicator">{loadingSymbolHtml()}</span>
       </span>;
     }
 
