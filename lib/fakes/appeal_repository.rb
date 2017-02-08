@@ -301,7 +301,7 @@ class Fakes::AppealRepository
       type: "73",
       received_at: 3.days.ago,
       document_id: "1",
-      filename: "Mark_NOD"
+      filename: "My_NOD"
     ))
   end
 
@@ -310,7 +310,7 @@ class Fakes::AppealRepository
       type: "95",
       received_at: Date.new(1987, 9, 6),
       document_id: "2",
-      filename: "Mark_SOC"
+      filename: "My_SOC"
     ))
   end
 
@@ -319,7 +319,7 @@ class Fakes::AppealRepository
       type: "179",
       received_at: 1.day.ago,
       document_id: "3",
-      filename: "Mark_Form_9"
+      filename: "My_Form_9"
     ))
   end
 
@@ -328,7 +328,7 @@ class Fakes::AppealRepository
       type: "27",
       received_at: 7.days.ago,
       document_id: "4",
-      filename: "Mark_Decision"
+      filename: "My_Decision"
     ))
   end
 
@@ -336,7 +336,8 @@ class Fakes::AppealRepository
     Document.from_vbms_document(OpenStruct.new(
       type: "27",
       received_at: 8.days.ago,
-      document_id: "5"
+      document_id: "5",
+      filename: "My_Decision2"
     ))
   end
 
@@ -380,6 +381,11 @@ class Fakes::AppealRepository
             }
           end
       end
+
+      @records["FULLGRANT_VBMS_ID"] = {
+        documents: documents_multiple_decisions,
+        vbms_id: "FULLGRANT_VBMS_ID"
+      }
     end
   end
 end

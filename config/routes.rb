@@ -40,7 +40,9 @@ Rails.application.routes.draw do
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
-    resources :annotation, on: :member
+    resources :annotation, 
+              path: "/review/annotation",
+              on: :member
 
     resources :review,
               path: "/review",

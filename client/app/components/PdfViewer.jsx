@@ -180,13 +180,6 @@ export default class PdfViewer extends BaseForm {
         annotation
       ).then((returnedAnnotation) => {
         storeAdapter.getAnnotations(this.props.id, pageNumber).then((annotations) => {
-          // storeAdapter.addComment(
-          //   this.props.file,
-          //   returnedAnnotation.uuid,
-          //   content
-          // ).then(() => {
-          //   this.onCommentChange(this.state.pdfDocument);
-          // });
           // Redraw all the annotations on the page to show the new one.
           let svg = document.getElementById(`pageContainer${pageNumber}`).
             getElementsByClassName("annotationLayer")[0];

@@ -10,7 +10,7 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    render json: { success: Annotation.delete(params.require(:appeal_id)) }
+    render json: { success: Annotation.delete(params.require(:id)) }
   end
 
   def update

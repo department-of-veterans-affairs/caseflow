@@ -36,7 +36,6 @@ export default class DecisionReviewer extends React.Component {
 
   render() {
     let { appealDocuments } = this.props;
-    console.log(appealDocuments);
 
     return (
       <div>
