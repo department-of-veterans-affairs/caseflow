@@ -15,10 +15,18 @@ end
 
 def warmup_pool(pool, initial_pool_size)
   threads = []
+  latch = Concurrent::CountDownLatch.new(initial_pool_size)
 
   initial_pool_size.times do |i|
     threads << Thread.new do
       conn = pool.connection
+      Rails.logger.info("taking connection #{i}; db pool size: #{pool.connections.size}")
+      latch.count_down
+
+      # don't return the connection to the pool until all other threads have taken a connection;
+      # otherwise could take/putback the same connection initial_pool_size times
+      latch.wait()
+      Rails.logger.info("returning connection #{i}")
       conn.close
     end
   end
