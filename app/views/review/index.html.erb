@@ -1,6 +1,7 @@
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
     page: "DecisionReviewer",
-    appealDocuments: @appeal.documents.map(&:to_hash)
+    appealDocuments: @appeal.documents.map(&:to_hash),
+    annotations: @appeal.annotations_on_documents
   }) %>
 <% end %>

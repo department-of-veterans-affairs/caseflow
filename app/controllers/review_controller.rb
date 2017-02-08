@@ -21,36 +21,4 @@ class ReviewController < ApplicationController
       type: "application/pdf",
       disposition: "inline")
   end
-
-  def get_annotations
-    annotations = Annotation.where(document_id: params[:document_id])
-    render json: { annotations: annotations.map(&:to_hash) }
-  end
-
-  def add_annotation
-    annotation = params[:annotation]
-    annotation = Annotation.create(
-      document_id: annotation[:document_id],
-      page: annotation[:page],
-      x_location: annotation[:x],
-      y_location: annotation[:y],
-      comment: annotation[:comment]
-    )
-    render json: { id: annotation.id }
-  end
-
-  def delete_annotation
-    Annotation.delete(params[:annotation_id])
-    render json: {}
-  end
-
-  def update_annotation
-    annotation = params[:annotation]
-    Annotation.find(annotation[:uuid]).update(
-      comment: annotation[:comment],
-      x_location: annotation[:x],
-      y_location: annotation[:y]
-    )
-    render json: {}
-  end
 end

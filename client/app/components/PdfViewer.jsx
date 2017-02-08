@@ -4,7 +4,6 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import Button from '../components/Button';
 import { formatDate } from '../util/DateUtil';
-import CommentStorage from '../util/CommentStorage';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
@@ -27,9 +26,11 @@ export default class PdfViewer extends BaseForm {
       numPages: 0,
       scale: 1
     };
+
+    this.props.commentStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  generateComments = () => {
+  onCommentChange = () => {
     this.comments = [];
     let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
@@ -194,7 +195,7 @@ export default class PdfViewer extends BaseForm {
           //   returnedAnnotation.uuid,
           //   content
           // ).then(() => {
-          //   this.generateComments(this.state.pdfDocument);
+          //   this.onCommentChange(this.state.pdfDocument);
           // });
           // Redraw all the annotations on the page to show the new one.
           let svg = document.getElementById(`pageContainer${pageNumber}`).
@@ -259,7 +260,7 @@ export default class PdfViewer extends BaseForm {
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
 
-      this.generateComments();
+      this.onCommentChange();
     });
   }
 
@@ -314,7 +315,6 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     PDFJS.workerSrc = '../assets/pdf.worker.js';
-    PDFJSAnnotate.setStoreAdapter(new CommentStorage(this.generateComments));
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
@@ -569,6 +569,7 @@ export default class PdfViewer extends BaseForm {
 }
 
 PdfViewer.propTypes = {
+  commentStorage: PropTypes.object,
   file: PropTypes.string.isRequired
 };
 

@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 20170206153412) do
     t.integer "document_id", null: false
     t.string  "comment"
     t.integer "page"
-    t.integer "x_location"
-    t.integer "y_location"
+    t.integer "x"
+    t.integer "y"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree

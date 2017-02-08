@@ -4,8 +4,8 @@ class CreateAnnotations < ActiveRecord::Migration
       t.belongs_to :document, null: false
       t.string :comment
       t.integer :page
-      t.integer :x_location
-      t.integer :y_location
+      t.integer :x
+      t.integer :y
     end
     add_index(:annotations, :document_id)
     add_index(:annotations, :page)
