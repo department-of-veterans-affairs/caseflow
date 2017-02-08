@@ -59,14 +59,11 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
           ApiUtil.post(`/decision/review/annotation`, { data }).
             then((response) => {
+
               let responseObject = JSON.parse(response.text);
-              if (responseObject.success) {
-                annotation.uuid = responseObject.id;
-                resolve(annotation);
-                this.onCommentChange();
-              } else {
-                reject();
-              }
+              annotation.uuid = responseObject.id;
+              resolve(annotation);
+              this.onCommentChange();
             }, () => {
               reject();
             });
@@ -84,13 +81,8 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
           ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
             then((response) => {
-              let responseObject = JSON.parse(response.text);
-              if (responseObject.success) {
-                resolve(annotation);
-                this.onCommentChange();
-              } else {
-                reject();
-              }
+              resolve(annotation);
+              this.onCommentChange();
             }, () => {
               reject();
             });
@@ -102,20 +94,15 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           let data = ApiUtil.convertToSnakeCase({ annotationId: annotationId });
           ApiUtil.delete(`/decision/review/annotation/${annotationId}`).
             then((response) => {
-              let responseObject = JSON.parse(response.text);
-              if (responseObject.success) {
-                let index = this.findAnnotation(documentId, annotationId);
-                if (index !== null) {
-                  let annotations = this.storedAnnotations[documentId];
-                  annotations.splice(index, 1);
-                  this.storedAnnotations[documentId] = annotations;
-                  this.onCommentChange();
-                  resolve(true);
-                } else {
-                  resolve(false);
-                }
+              let index = this.findAnnotation(documentId, annotationId);
+              if (index !== null) {
+                let annotations = this.storedAnnotations[documentId];
+                annotations.splice(index, 1);
+                this.storedAnnotations[documentId] = annotations;
+                this.onCommentChange();
+                resolve(true);
               } else {
-                reject();
+                resolve(false);
               }
             }, () => {
               reject();

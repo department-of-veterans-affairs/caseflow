@@ -32,15 +32,14 @@ export default class PdfViewer extends BaseForm {
 
   onCommentChange = () => {
     this.comments = [];
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
     this.setState({ comments: this.comments });
     // TODO: Change the interface in which we query all the comments.
     for (let i = 1; i <= this.state.numPages; i++) {
-      storeAdapter.getAnnotations(this.props.id, i).then((annotations) => {
+      this.props.annotationStorage.getAnnotations(this.props.id, i).then((annotations) => {
         annotations.annotations.forEach((annotation) => {
           this.comments.push({
-            annotationUuid: annotation.uuid,
+            uuid: annotation.uuid,
             content: annotation.comment
           });
           this.setState({ comments: this.comments });
@@ -75,17 +74,15 @@ export default class PdfViewer extends BaseForm {
 
   // TODO: refactor this method to make it cleaner
   saveEdit = (comment) => {
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
-
     return (event) => {
       if (event.key === 'Enter') {
         let commentToAdd = this.state.commentForm.editComment.value;
-        storeAdapter.getAnnotation(
+        this.props.annotationStorage.getAnnotation(
           this.props.id,
-          comment.annotationUuid,
+          comment.uuid,
         ).then((annotation) => {
           annotation.comment = commentToAdd;
-          storeAdapter.editAnnotation(
+          this.props.annotationStorage.editAnnotation(
             this.props.id,
             annotation.uuid,
             annotation
@@ -169,17 +166,14 @@ export default class PdfViewer extends BaseForm {
   }
 
   saveNote = (annotation, viewport, pageNumber) => {
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
-
-
     return (content) => {
       annotation['comment'] = content;
-      storeAdapter.addAnnotation(
+      this.props.annotationStorage.addAnnotation(
         this.props.id,
         pageNumber,
         annotation
       ).then((returnedAnnotation) => {
-        storeAdapter.getAnnotations(this.props.id, pageNumber).then((annotations) => {
+        this.props.annotationStorage.getAnnotations(this.props.id, pageNumber).then((annotations) => {
           // Redraw all the annotations on the page to show the new one.
           let svg = document.getElementById(`pageContainer${pageNumber}`).
             getElementsByClassName("annotationLayer")[0];
@@ -298,16 +292,14 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     PDFJS.workerSrc = this.props.pdfWorker;
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
 
       comments = comments.map((comment) => {
         let copy = { ...comment };
-
         copy.selected = false;
-        if (comment.annotationUuid === event.getAttribute('data-pdf-annotate-id')) {
+        if (comment.uuid.toString() === event.getAttribute('data-pdf-annotate-id').toString()) {
           copy.selected = true;
         }
 
@@ -374,7 +366,7 @@ export default class PdfViewer extends BaseForm {
       }
 
       return <div
-          onClick={this.scrollToAnnotation(comment.annotationUuid)}
+          onClick={this.scrollToAnnotation(comment.uuid)}
           onMouseEnter={this.showEditIcon(index)}
           onMouseLeave={this.hideEditIcon(index)}
           className={`cf-pdf-comment-list-item${selectedClass}`}

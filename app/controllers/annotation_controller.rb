@@ -5,19 +5,20 @@ class AnnotationController < ApplicationController
     annotation = Annotation.create(
       annotation_params
     )
-    render json: { success: false } if !annotation.valid?
-    render json: { success: true, id: annotation.id }
+    render json: { errors: "Failed to delete annotation" }, status: :internal_server_error if !annotation.valid?
+    render json: { id: annotation.id }
   end
 
   def destroy
-    render json: { success: Annotation.delete(params.require(:id)) }
+    deleted = Annotation.delete(params.require(:id))
+    render json: { error: "Failed to delete annotation" }, status: :internal_server_error if !deleted
+    render json: { }
   end
 
   def update
-    render json: {success: 
-      Annotation.find(params[:id]).update(
-        annotation_params
-      )}
+    updated = Annotation.find(params[:id]).update(annotation_params)
+    render json: { error: "Failed to delete annotation" }, status: :internal_server_error if !updated
+    render json: { }
   end
 
   def annotation_params
