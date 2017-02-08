@@ -59,7 +59,7 @@ module PumaThreadLogger
            "Waiting threads: #{waiting} "\
            "Active threads: #{thread_count - waiting} "\
            "Live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
-          #Rails.logger.info(msg)
+          Rails.logger.info(msg)
         end
       end
     end

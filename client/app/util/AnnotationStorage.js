@@ -110,18 +110,21 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
         });
       },
 
+      // We unified annotations and comments, so we will not implement this.
       getComments: (documentId, annotationId) => {
         return new Promise((resolve, reject) => {
           resolve([]);
         });
       },
 
+      // We unified annotations and comments, so we will not implement this.
       addComment: (documentId, annotationId, content) => {
         return new Promise((resolve, reject) => {
           resolve([]);
         });
       },
 
+      // We unified annotations and comments, so we will not implement this.
       deleteComment: (documentId, commentId) => {
         return new Promise((resolve, reject) => {
           resolve([]);
