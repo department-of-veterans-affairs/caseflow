@@ -47,6 +47,43 @@ describe("Form8", function() {
         });
       });
     });
+
+    context("when question is a date question", function() {
+      beforeEach(function() {
+        Form8.dateQuestions  = {"12A": {message: "Please enter a valid date."}};
+      });
+
+      context("when question's value is a date before 1850-01-01", function() {
+        beforeEach(function() {
+          Form8.state.question12A.value = "12/31/1849";
+        });
+
+        it("returns false", function() {
+          expect(Form8.validateRequiredQuestion("12A")).to.be.false;
+        });
+      });
+
+      context("when question's value is a date after 1850-01-01 and before today", function() {
+        beforeEach(function() {
+          Form8.state.question12A.value = "01/01/1850";
+        });
+
+        it("returns true", function() {
+          expect(Form8.validateRequiredQuestion("12A")).to.be.true;
+        });
+      });
+
+      context("when question's value is a future date", function() {
+        beforeEach(function() {
+          Form8.state.question12A.value = (Date.today+1).to_s;
+        });
+
+        it("returns false", function() {
+          expect(Form8.validateRequiredQuestion("12A")).to.be.false;
+        });
+      });
+    });
+
   });
 
   context(".getInvalidQuestionNumbers", function() {

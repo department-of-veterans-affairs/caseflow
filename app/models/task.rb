@@ -179,6 +179,16 @@ class Task < ActiveRecord::Base
     super.merge(type: type)
   end
 
+  def to_simple_hash
+    serializable_hash(
+      include: [:user, appeal: { methods:
+       [:decision_date,
+        :veteran_name,
+        :decision_type,
+        :days_since_decision] }]
+    )
+  end
+
   def to_hash
     serializable_hash(
       include: [:user, appeal: { methods:

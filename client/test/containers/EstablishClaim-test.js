@@ -27,6 +27,28 @@ describe('EstablishClaim', () => {
 
     });
 
+    context('navigation', () => {
+      it('initially loads to review page', () => {
+        expect(wrapper.state().history.location.pathname).to.equal('/review');
+        expect(wrapper.state().page).to.equal('review');
+      });
+
+      it('redirects to review if no existing EPs', (done) => {
+        // Add a listener to the history object and look for the "go back" POP event
+        let unlisten = wrapper.state().history.listen((location, action) => {
+          if (action === 'POP') {
+            expect(wrapper.state().history.location.pathname).to.equal('/review');
+            unlisten();
+            done();
+          }
+        });
+
+        // manually navigate to associate EP page
+        // This simulates a user manually altering the URL
+        wrapper.state().history.push('associate');
+      });
+    });
+
     context('EstablishClaimForm', () => {
       beforeEach(() => {
         // Force component to Form page

@@ -16,7 +16,7 @@ export let loadingSymbolHtml = function() {
             width="30"
             height="30"
             viewBox="0 0 500 500"
-            className="icon-loading-front">
+            className="cf-react-icon-loading-front">
             <path
               opacity="1"
               fill="#d6d7d9"
@@ -41,7 +41,7 @@ export let loadingSymbolHtml = function() {
             width="30"
             height="30"
             viewBox="0 0 500 500"
-            className="icon-loading-back">
+            className="cf-react-icon-loading-back">
             <path
               opacity="1"
               fill="#459FD7"
