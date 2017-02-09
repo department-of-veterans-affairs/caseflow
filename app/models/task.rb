@@ -191,17 +191,20 @@ class Task < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      include: [:user, appeal: { methods:
-        [:decision_date,
-         :decisions_hash,
-         :disposition,
-         :veteran_name,
-         :decision_type,
-         :station_key,
-         :non_canceled_end_products_within_30_days,
-         :pending_eps,
-         :issues,
-         :days_since_decision] }],
+      include: [:user, appeal: {
+        include:
+          [decisions: { methods: :received_at }],
+        methods:
+          [:decision_date,
+           :decisions_hash,
+           :disposition,
+           :veteran_name,
+           :decision_type,
+           :station_key,
+           :non_canceled_end_products_within_30_days,
+           :pending_eps,
+           :issues,
+           :days_since_decision] }],
       methods: [:progress_status]
     )
   end

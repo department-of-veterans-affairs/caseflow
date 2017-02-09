@@ -29,7 +29,7 @@ describe Document do
     context "when has alt doc types" do
       let(:vbms_document) do
         OpenStruct.new(
-          vbms_document_id: "1"
+          vbms_document_id: "1",
           doc_type: "179",
           received_at: "TEST",
           alt_doc_types: ["Appeals - Notice of Disagreement (NOD)", "Appeals - Statement of the Case (SOC)"]
