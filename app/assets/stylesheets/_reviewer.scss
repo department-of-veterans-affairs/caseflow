@@ -67,6 +67,8 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
+// TODO: Get rid of the rule in caseflow commons that makes
+// this necessary!
 // scss-lint:disable QualifyingElement
 svg[aria-hidden=true],
 .fa[aria-hidden=true] {
