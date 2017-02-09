@@ -67,9 +67,12 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
-svg[aria-hidden=true], .fa[aria-hidden=true] {
+// scss-lint:disable QualifyingElement
+svg[aria-hidden=true],
+.fa[aria-hidden=true] {
   display: inline !important;
 }
+// scss-lint:enable QualifyingElement
 
 .cf-sidebar-wrapper {
   float: right;
