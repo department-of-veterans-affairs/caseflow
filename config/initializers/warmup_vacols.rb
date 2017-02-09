@@ -2,6 +2,10 @@
 # VACOLS throttles the rate of new connections, create up front to prevent 
 # blocking as pool grows under load
 ActiveSupport.on_load(:active_record_vacols) do
+  
+  # skip if accessing via 'rails c'
+  next if defined? Rails::Console
+
   db_config =  Rails.application.config.database_configuration[Rails.env]
 
   # use specified initial pool size, default to half the maximum size
