@@ -182,11 +182,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def fetch_from_s3_and_save(destination_path)
-    s3.fetch_file(pdf_filename, destination_path)
-  end
-
-  def s3
-    Rails.application.config.s3_enabled ? S3Service : Fakes::S3Service
+    S3Service.fetch_file(pdf_filename, destination_path)
   end
 
   def pdf_filename
