@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(version: 20170206153412) do
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
-  add_index "annotations", ["page"], name: "index_annotations_on_page", using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                              null: false

@@ -8,6 +8,5 @@ class CreateAnnotations < ActiveRecord::Migration
       t.integer :y
     end
     add_index(:annotations, :document_id)
-    add_index(:annotations, :page)
   end
 end

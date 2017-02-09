@@ -9,9 +9,7 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    binding.pry
-    deleted = Annotation.delete(params.require(:id))
-    render json: { error: "Failed to delete annotation" }, status: :internal_server_error if !deleted
+    deleted = Annotation.find(params.require(:id)).delete
     render json: { }
   end
 
