@@ -44,9 +44,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def annotations_on_documents
-    ids = documents.map do |doc|
-      doc.id
-    end
+    ids = documents.map(&:id)
     @annotations = Annotation.where(document_id: ids).map(&:to_hash)
   end
 
@@ -138,6 +136,10 @@ class Appeal < ActiveRecord::Base
       (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
     decisions
+  end
+
+  def decisions_hash
+    decisions.map(&:to_hash)
   end
 
   def certify!

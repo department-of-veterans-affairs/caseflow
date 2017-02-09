@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 
     resources :annotation, 
               path: "/review/annotation",
+              only: [:create, :destroy, :update],
               on: :member
 
     resources :review,

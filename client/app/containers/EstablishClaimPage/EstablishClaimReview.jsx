@@ -111,7 +111,7 @@ export default class EstablishClaimReview extends React.Component {
   }
 
   hasMultipleDecisions() {
-    return this.props.task.appeal.decisions.length > 1;
+    return this.props.task.appeal.decisions_hash.length > 1;
   }
 
   buildIssueRow = (issue) => [
@@ -148,7 +148,7 @@ export default class EstablishClaimReview extends React.Component {
     })();
 
     // Sort in reverse chronological order
-    let decisions = task.appeal.decisions.sort((decision1, decision2) =>
+    let decisions = task.appeal.decisions_hash.sort((decision1, decision2) =>
       new Date(decision2.received_at) - new Date(decision1.received_at));
 
     let tabHeaders = decisions.map((decision, index) =>
@@ -248,21 +248,16 @@ export default class EstablishClaimReview extends React.Component {
 
           <label>Special Issue Categories</label>
           <div className="cf-multiple-columns">
-            {
-
-              /* eslint-disable no-return-assign */
-              issueType.map((issue, index) =>
+            {issueType.map((issue, index) =>
               <Checkbox
-                  id={ApiUtil.convertToCamelCase(issue)}
-                  label={issue}
-                  name={ApiUtil.convertToCamelCase(issue)}
-                  {...specialIssues[issue]}
-                  onChange={handleFieldChange('specialIssues',
-                      ApiUtil.convertToCamelCase(issue))}
+                id={ApiUtil.convertToCamelCase(issue)}
+                label={issue}
+                name={ApiUtil.convertToCamelCase(issue)}
+                onChange={handleFieldChange('specialIssues',
+                  ApiUtil.convertToCamelCase(issue))}
                   key={index}
-                />)
-
-                /* eslint-enable no-return-assign */
+                  {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
+              />)
             }
           </div>
         </div>

@@ -40,15 +40,16 @@ export default class PdfViewer extends BaseForm {
     this.setState({ comments: this.comments });
     // TODO: Change the interface in which we query all the comments.
     for (let i = 1; i <= this.state.numPages; i++) {
-      this.props.annotationStorage.getAnnotations(this.props.id, i).then((annotations) => {
-        annotations.annotations.forEach((annotation) => {
-          this.comments.push({
-            uuid: annotation.uuid,
-            content: annotation.comment
+      this.props.annotationStorage.getAnnotations(this.props.id, i).
+        then((annotations) => {
+          annotations.annotations.forEach((annotation) => {
+            this.comments.push({
+              content: annotation.comment,
+              uuid: annotation.uuid
+            });
+            this.setState({ comments: this.comments });
           });
-          this.setState({ comments: this.comments });
         });
-      });
     }
   }
 
@@ -77,11 +78,11 @@ export default class PdfViewer extends BaseForm {
   }
 
   // TODO: refactor this method to make it cleaner
-  saveEdit = (comment) => {
-    return (event) => {
-      if (event.key === 'Enter') {
-        let commentToAdd = this.state.commentForm.editComment.value;
-        this.props.annotationStorage.getAnnotation(
+  saveEdit = (comment) => (event) => {
+    if (event.key === 'Enter') {
+      let commentToAdd = this.state.commentForm.editComment.value;
+
+      this.props.annotationStorage.getAnnotation(
           this.props.id,
           comment.uuid,
         ).then((annotation) => {
@@ -90,26 +91,24 @@ export default class PdfViewer extends BaseForm {
             this.props.id,
             annotation.uuid,
             annotation
-            ).then(() => {
-            }).
+            ).
             catch(() => {
               // TODO: Add error case if comment can't be added
             });
-          }).
+        }).
           catch(() => {
             // TODO: Add error case if comment can't be added
           });
 
-        this.setState({
-          editingComment: null
-        });
-      }
-      if (event.key === 'Escape') {
-        this.setState({
-          editingComment: null
-        });
-      }
-    };
+      this.setState({
+        editingComment: null
+      });
+    }
+    if (event.key === 'Escape') {
+      this.setState({
+        editingComment: null
+      });
+    }
   }
 
   addNote = () => {
@@ -169,23 +168,22 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  saveNote = (annotation, viewport, pageNumber) => {
-    return (content) => {
-      annotation['comment'] = content;
-      this.props.annotationStorage.addAnnotation(
+  saveNote = (annotation, viewport, pageNumber) => (content) => {
+    annotation.comment = content;
+    this.props.annotationStorage.addAnnotation(
         this.props.id,
         pageNumber,
         annotation
-      ).then((returnedAnnotation) => {
-        this.props.annotationStorage.getAnnotations(this.props.id, pageNumber).then((annotations) => {
-          // Redraw all the annotations on the page to show the new one.
-          let svg = document.getElementById(`pageContainer${pageNumber}`).
-            getElementsByClassName("annotationLayer")[0];
+      ).then(() => {
+        this.props.annotationStorage.getAnnotations(this.props.id, pageNumber).
+          then((annotations) => {
+            // Redraw all the annotations on the page to show the new one.
+            let svg = document.getElementById(`pageContainer${pageNumber}`).
+              getElementsByClassName("annotationLayer")[0];
 
-          PDFJSAnnotate.render(svg, viewport, annotations);
-        });
+            PDFJSAnnotate.render(svg, viewport, annotations);
+          });
       });
-    };
   }
 
   renderPage = (index) => {
@@ -302,8 +300,10 @@ export default class PdfViewer extends BaseForm {
 
       comments = comments.map((comment) => {
         let copy = { ...comment };
+
         copy.selected = false;
-        if (comment.uuid.toString() === event.getAttribute('data-pdf-annotate-id').toString()) {
+        if (comment.uuid.toString() ===
+            event.getAttribute('data-pdf-annotate-id').toString()) {
           copy.selected = true;
         }
 

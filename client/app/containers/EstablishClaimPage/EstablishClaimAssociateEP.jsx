@@ -18,6 +18,12 @@ export default class AssociatePage extends React.Component {
     };
   }
 
+  componentWillMount() {
+    if (!this.props.endProducts.length) {
+      this.props.history.goBack();
+    }
+  }
+
   buildEndProductRow = (endProduct) => [
     formatDate(endProduct.claim_receive_date),
     endProduct.claim_type_code,

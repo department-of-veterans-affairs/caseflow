@@ -2,18 +2,18 @@ import PDFJSAnnotate from 'pdf-annotate.js';
 import ApiUtil from './ApiUtil';
 
 export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
-  getAnnotationByDocumentId = (documentId) => {
-    return this.storedAnnotations[documentId] || [];
-  }
+  getAnnotationByDocumentId = (documentId) => this.storedAnnotations[documentId] || []
 
   // TODO: What does this return if it's not found. Hopefully undefined.
   findAnnotation = (documentId, annotationId) => {
     let foundIndex = null;
+
     this.storedAnnotations[documentId].forEach((annotation, index) => {
       if (annotation.uuid.toString() === annotationId.toString()) {
         foundIndex = index;
       }
     });
+
     return foundIndex;
   }
 
@@ -23,113 +23,105 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
 
   constructor(annotations) {
     super({
-      getAnnotations: (documentId, pageNumber) => {
-        return new Promise((resolve, reject) => {
-          let allAnnotations = this.getAnnotationByDocumentId(documentId);
-          let annotations = allAnnotations.filter((i) => {
-            return i.page === pageNumber;
-          });
-          resolve({
-            documentId,
-            pageNumber,
-            annotations});
-        });
-      },
-
-      getAnnotation: (documentId, annotationId) => {
-        return new Promise((resolve, reject) => {
-          let annotations = this.getAnnotationByDocumentId(documentId);
-          annotations.forEach((annotation) => {
-            if (annotation.uuid.toString() === annotationId.toString()){
-              resolve(annotation);
-            }
-          });
-        });
-      },
-
-      addAnnotation: (documentId, pageNumber, annotation) => {
-        return new Promise((resolve, reject) => {
+      addAnnotation: (documentId, pageNumber, annotation) =>
+        new Promise((resolve, reject) => {
           annotation.class = 'Annotation';
           annotation.page = pageNumber;
-          annotation.documentId = documentId
+          annotation.documentId = documentId;
 
-          let annotations = this.getAnnotationByDocumentId(documentId);
-          annotations.push(annotation);
-          this.storedAnnotations[documentId] = annotations;
-          let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
+          let allAnnotations = this.getAnnotationByDocumentId(documentId);
+
+          allAnnotations.push(annotation);
+          this.storedAnnotations[documentId] = allAnnotations;
+          let data = { annotation: ApiUtil.convertToSnakeCase(annotation) };
+
           ApiUtil.post(`/decision/review/annotation`, { data }).
-            then((response) => {
+              then((response) => {
 
-              let responseObject = JSON.parse(response.text);
-              annotation.uuid = responseObject.id;
-              resolve(annotation);
-              this.onCommentChange();
-            }, () => {
-              reject();
-            });
-        });
-      },
+                let responseObject = JSON.parse(response.text);
 
-      editAnnotation: (documentId, annotationId, annotation) => {
-        return new Promise((resolve, reject) => {
-          let index = this.findAnnotation(documentId, annotationId);
-          if (index === null) {
-            reject();
-          }
-          this.storedAnnotations[documentId][index] = annotation;
-          
-          let data = {annotation: ApiUtil.convertToSnakeCase(annotation)};
-          ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
-            then((response) => {
-              resolve(annotation);
-              this.onCommentChange();
-            }, () => {
-              reject();
-            });
-        });
-      },
+                annotation.uuid = responseObject.id;
+                resolve(annotation);
+                this.onCommentChange();
+              }, () => {
+                reject();
+              });
+        }),
 
-      deleteAnnotation: (documentId, annotationId) => {
-        return new Promise((resolve, reject) => {
-          let data = ApiUtil.convertToSnakeCase({ annotationId: annotationId });
-          ApiUtil.delete(`/decision/review/annotation/${annotationId}`).
-            then((response) => {
+      // We unified annotations and comments, so we will not implement this.
+      addComment: () => new Promise((resolve) => {
+        resolve([]);
+      }),
+
+      deleteAnnotation: (documentId, annotationId) => new Promise((resolve, reject) => {
+        ApiUtil.delete(`/decision/review/annotation/${annotationId}`).
+            then(() => {
               let index = this.findAnnotation(documentId, annotationId);
-              if (index !== null) {
-                let annotations = this.storedAnnotations[documentId];
-                annotations.splice(index, 1);
-                this.storedAnnotations[documentId] = annotations;
+
+              if (index === null) {
+                resolve(false);
+              } else {
+                let allAnnotations = this.storedAnnotations[documentId];
+
+                allAnnotations.splice(index, 1);
+                this.storedAnnotations[documentId] = allAnnotations;
                 this.onCommentChange();
                 resolve(true);
-              } else {
-                resolve(false);
               }
             }, () => {
               reject();
             });
-        });
-      },
+      }),
 
       // We unified annotations and comments, so we will not implement this.
-      getComments: (documentId, annotationId) => {
-        return new Promise((resolve, reject) => {
-          resolve([]);
+      deleteComment: () => new Promise((resolve) => {
+        resolve([]);
+      }),
+
+      editAnnotation: (documentId, annotationId, annotation) =>
+        new Promise((resolve, reject) => {
+          let index = this.findAnnotation(documentId, annotationId);
+
+          if (index === null) {
+            reject();
+          }
+          this.storedAnnotations[documentId][index] = annotation;
+
+          let data = { annotation: ApiUtil.convertToSnakeCase(annotation) };
+
+          ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
+              then(() => {
+                resolve(annotation);
+                this.onCommentChange();
+              }, () => {
+                reject();
+              });
+        }),
+
+      getAnnotation: (documentId, annotationId) => new Promise((resolve) => {
+        let allAnnotations = this.getAnnotationByDocumentId(documentId);
+
+        allAnnotations.forEach((annotation) => {
+          if (annotation.uuid.toString() === annotationId.toString()) {
+            resolve(annotation);
+          }
         });
-      },
+      }),
+
+      getAnnotations: (documentId, pageNumber) => new Promise((resolve) => {
+        let allAnnotations = this.getAnnotationByDocumentId(documentId);
+        let pageAnnotations = allAnnotations.filter((i) => i.page === pageNumber);
+
+        resolve({
+          annotations: pageAnnotations,
+          documentId,
+          pageNumber });
+      }),
 
       // We unified annotations and comments, so we will not implement this.
-      addComment: (documentId, annotationId, content) => {
-        return new Promise((resolve, reject) => {
-          resolve([]);
-        });
-      },
-
-      // We unified annotations and comments, so we will not implement this.
-      deleteComment: (documentId, commentId) => {
-        return new Promise((resolve, reject) => {
-          resolve([]);
-        });
-      }
+      getComments: () => new Promise((resolve) => {
+        resolve([]);
+      })
     });
 
     this.storedAnnotations = {};
@@ -146,9 +138,10 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
       this.storedAnnotations[annotation.documentId].push(annotation);
     });
 
-    this.onCommentChange = () => {};
+    this.onCommentChange = () => {
+      // do nothing
+    };
   }
 }
-
 
 
