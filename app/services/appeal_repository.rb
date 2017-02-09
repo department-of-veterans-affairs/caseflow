@@ -165,8 +165,8 @@ class AppealRepository
 
     sanitized_id = appeal.sanitized_vbms_id
 
-    MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
-      raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
+    raw_veteran_record = MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
+      BGSService.new.fetch_veteran_info(sanitized_id)
     end
 
     # Reduce keys in raw response down to what we specifically need for
