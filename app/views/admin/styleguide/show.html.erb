@@ -1,4 +1,5 @@
 <% content_for :styleguide_content do %>
+<% content_for :page_title do %>Commons<% end %>
 <h1 id="commons">Caseflow Commons</h1>
 <p>
   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -21,7 +22,13 @@
 </p>
 <div class="cf-help-divider"></div>
 <h2 id="modals">Modals</h2>
-<p><a class="usa-button usa-button-outline" href="#">Launch Modal</a></p>
+    <%= react_component("BaseContainer", props: {
+        page: "StyleGuide"
+      }) %>
+      <p>Modals are 490 pixels in width with 30px padding around the border and
+      contain the following: a title, explanation text, a divider,
+      and action buttons. There are modal-specific classes that must be included
+      in your modal (see below code snippets).</p>
 <ul class="usa-accordion usa-unstyled-list">
     <li>
       <button class="usa-accordion-button"
@@ -29,7 +36,9 @@
         Code (jQuery/ERB)
       </button>
       <div id="modals-code" class="usa-accordion-content" aria-hidden="true">
-        code block code block code block
+        <%= code_block do %>
+          <p>jkjlkjlkjlkjlj</p>
+        <% end %>
       </div>
     </li>
     <li>
@@ -38,7 +47,9 @@
         Code (React/ES6)
       </button>
       <div id="modals-react-code" class="usa-accordion-content" aria-hidden="true">
-        code block code block code block
+        <%= code_block do %>
+          <p>ghkhkjhhjkkhjhkhjk</p>
+        <% end %>
       </div>
     </li>
   </ul>

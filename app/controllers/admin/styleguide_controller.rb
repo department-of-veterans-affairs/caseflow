@@ -1,10 +1,14 @@
 class Admin::StyleguideController < ApplicationController
+  include ActionView::Helpers::CaptureHelper
+  include ActionView::Helpers::OutputSafetyHelper
+  include ActionView::Context
   before_action :verify_system_admin
   layout "styleguide"
 
-  # def code_block( title = nil, lang = nil, &block )
-  # output = capture( &block )
-  # render partial: 'my_html_bits/code_block',
-  #        locals:  {title: title, lang: lang, text: output }
-  # end
+  def code_block(&block)
+    result = capture(&block)
+    raw(result)
+  end
+
+  helper_method :code_block
 end
