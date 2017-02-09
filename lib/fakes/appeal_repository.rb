@@ -300,7 +300,7 @@ class Fakes::AppealRepository
 
   def self.nod_document
     Document.from_vbms_document(OpenStruct.new(
-      type: "73",
+      doc_type: "73",
       received_at: 3.days.ago,
       document_id: "1",
       filename: "My_NOD"
@@ -309,7 +309,7 @@ class Fakes::AppealRepository
 
   def self.soc_document
     Document.from_vbms_document(OpenStruct.new(
-      type: "95",
+      doc_type: "95",
       received_at: Date.new(1987, 9, 6),
       document_id: "2",
       filename: "My_SOC"
@@ -318,7 +318,7 @@ class Fakes::AppealRepository
 
   def self.form9_document
     Document.from_vbms_document(OpenStruct.new(
-      type: "179",
+      doc_type: "179",
       received_at: 1.day.ago,
       document_id: "3",
       filename: "My_Form_9"
@@ -327,7 +327,7 @@ class Fakes::AppealRepository
 
   def self.decision_document
     Document.from_vbms_document(OpenStruct.new(
-      type: "27",
+      doc_type: "27",
       received_at: 7.days.ago,
       document_id: "4",
       filename: "My_Decision"
@@ -336,7 +336,7 @@ class Fakes::AppealRepository
 
   def self.decision_document2
     Document.from_vbms_document(OpenStruct.new(
-      type: "27",
+      doc_type: "27",
       received_at: 8.days.ago,
       document_id: "5",
       filename: "My_Decision2"

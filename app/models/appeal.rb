@@ -140,6 +140,10 @@ class Appeal < ActiveRecord::Base
     decisions
   end
 
+  def decisions_hash
+    decisions.map(&:to_hash)
+  end
+
   def certify!
     Appeal.certify(self)
   end
