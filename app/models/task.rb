@@ -179,19 +179,26 @@ class Task < ActiveRecord::Base
     super.merge(type: type)
   end
 
-  def to_hash
+  def to_hash(full: false)
+    appeal_methods = [:veteran_name]
+
+    if full
+      appeal_methods.push(
+        :decision_date,
+        :decisions,
+        :disposition,
+        :veteran_name,
+        :decision_type,
+        :station_key,
+        :non_canceled_end_products_within_30_days,
+        :pending_eps,
+        :issues,
+        :days_since_decision
+      )
+    end
+
     serializable_hash(
-      include: [:user, appeal: { methods:
-        [:decision_date,
-         :decisions,
-         :disposition,
-         :veteran_name,
-         :decision_type,
-         :station_key,
-         :non_canceled_end_products_within_30_days,
-         :pending_eps,
-         :issues,
-         :days_since_decision] }],
+      include: [:user, appeal: { methods: appeal_methods }],
       methods: [:progress_status]
     )
   end
