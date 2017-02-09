@@ -37,6 +37,14 @@ const ApiUtil = {
     return result;
   },
 
+  delete(url, options = {}) {
+    return request.
+      delete(url).
+      set(this.headers(options.headers)).
+      send(options.data).
+      use(nocache);
+  },
+
   get(url, options = {}) {
     return request.
       get(url).
@@ -71,14 +79,6 @@ const ApiUtil = {
   post(url, options = {}) {
     return request.
       post(url).
-      set(this.headers(options.headers)).
-      send(options.data).
-      use(nocache);
-  },
-
-  delete(url, options = {}) {
-    return request.
-      delete(url).
       set(this.headers(options.headers)).
       send(options.data).
       use(nocache);

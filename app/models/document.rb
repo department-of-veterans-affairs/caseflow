@@ -1,5 +1,4 @@
 class Document < ActiveRecord::Base
-
   TYPES = {
     "34" => "Correspondence",
     "73" => "NOD",

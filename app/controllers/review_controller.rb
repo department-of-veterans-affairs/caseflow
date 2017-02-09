@@ -13,7 +13,6 @@ class ReviewController < ApplicationController
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
-    
     document = Document.find_by(vbms_document_id: params[:vbms_document_id])
     # The line below enables document caching for 12 hours. It's best to disable
     # this while we're still developing.

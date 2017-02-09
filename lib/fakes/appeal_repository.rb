@@ -299,48 +299,58 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.from_vbms_document(OpenStruct.new(
-      doc_type: "73",
-      received_at: 3.days.ago,
-      document_id: "1",
-      filename: "My_NOD"
-    ))
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "73",
+        received_at: 3.days.ago,
+        document_id: "1",
+        filename: "My_NOD"
+      )
+    )
   end
 
   def self.soc_document
-    Document.from_vbms_document(OpenStruct.new(
-      doc_type: "95",
-      received_at: Date.new(1987, 9, 6),
-      document_id: "2",
-      filename: "My_SOC"
-    ))
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "95",
+        received_at: Date.new(1987, 9, 6),
+        document_id: "2",
+        filename: "My_SOC"
+      )
+    )
   end
 
   def self.form9_document
-    Document.from_vbms_document(OpenStruct.new(
-      doc_type: "179",
-      received_at: 1.day.ago,
-      document_id: "3",
-      filename: "My_Form_9"
-    ))
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "179",
+        received_at: 1.day.ago,
+        document_id: "3",
+        filename: "My_Form_9"
+      )
+    )
   end
 
   def self.decision_document
-    Document.from_vbms_document(OpenStruct.new(
-      doc_type: "27",
-      received_at: 7.days.ago,
-      document_id: "4",
-      filename: "My_Decision"
-    ))
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "27",
+        received_at: 7.days.ago,
+        document_id: "4",
+        filename: "My_Decision"
+      )
+    )
   end
 
   def self.decision_document2
-    Document.from_vbms_document(OpenStruct.new(
-      doc_type: "27",
-      received_at: 8.days.ago,
-      document_id: "5",
-      filename: "My_Decision2"
-    ))
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "27",
+        received_at: 8.days.ago,
+        document_id: "5",
+        filename: "My_Decision2"
+      )
+    )
   end
 
   def self.set_vbms_documents!

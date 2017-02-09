@@ -44,9 +44,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def annotations_on_documents
-    ids = documents.map do |doc|
-      doc.id
-    end
+    ids = documents.map(&:id)
     @annotations = Annotation.where(document_id: ids).map(&:to_hash)
   end
 

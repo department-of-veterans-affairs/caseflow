@@ -9,13 +9,13 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    deleted = Annotation.find(params.require(:id)).delete
-    render json: { }
+    Annotation.find(params.require(:id)).delete
+    render json: {}
   end
 
   def update
     Annotation.find(params[:id]).update!(annotation_params)
-    render json: { }
+    render json: {}
   end
 
   def annotation_params
