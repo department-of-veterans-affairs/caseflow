@@ -41,7 +41,7 @@ $caseflow-background: #f9f9f9;
   overflow-y: scroll;
   overflow-x: visible;
   text-align: center;
-  padding: 10px 0;
+  padding: 30px 0;
   float: left;
 }
 
@@ -67,6 +67,7 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
+// TODO: This is super bad, fix the caseflow commons styling to remove this
 svg[aria-hidden=true], .fa[aria-hidden=true] {
   display: inline !important;
 }
@@ -122,14 +123,14 @@ svg[aria-hidden=true], .fa[aria-hidden=true] {
 .cf-pdf-header {
   position: absolute;
   z-index: 10;
-  opacity: .9;
+  opacity: 1;
   padding: 15px 20px;
 }
 
 .cf-pdf-footer {
   position: absolute;
   z-index: 10;
-  opacity: .9;
+  opacity: 1;
   bottom: 0;
   padding: 0 20px;
   line-height: 50px;
@@ -213,4 +214,12 @@ svg[aria-hidden=true], .fa[aria-hidden=true] {
 
 .pdfViewer.singlePageView .page {
   margin: auto;
+}
+
+.cf-label {
+  opacity: .3;
+}
+
+.cf-selected-label {
+  opacity: 1;
 }

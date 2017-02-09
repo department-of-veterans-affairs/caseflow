@@ -4,5 +4,6 @@ class DocumentController < ApplicationController
   def set_label
     document = Document.find(params[:id])
     document.update(label: params[:label])
+    render json { }
   end
 end

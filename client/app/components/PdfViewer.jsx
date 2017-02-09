@@ -30,6 +30,10 @@ export default class PdfViewer extends BaseForm {
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
+  selectLabel = () => {
+
+  }
+
   onCommentChange = () => {
     this.comments = [];
 
@@ -422,7 +426,7 @@ export default class PdfViewer extends BaseForm {
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label cf-selected-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#23ABF6' }}
@@ -431,7 +435,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#F6A623' }}
@@ -440,7 +444,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#FFFFFF' }}
@@ -449,7 +453,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#F772E7' }}
@@ -458,7 +462,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#3FCD65' }}
@@ -467,7 +471,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
+                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
                     onClick={this.zoom(-0.3)}>
                     <i
                       style={{ color: '#EFDF1A' }}
