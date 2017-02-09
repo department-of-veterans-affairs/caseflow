@@ -10,9 +10,8 @@ export default class DecisionReviewer extends React.Component {
 
     this.state = {
       documents: this.props.appealDocuments,
-      sortByDate: null,
-      sortByFilename: null,
-      sortByType: null,
+      sortBy: null,
+      sortDirection: null,
       listView: true,
       pdf: null
     };
@@ -57,7 +56,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
 
-  sortBy = (sortType, sortDirection) => {
+  sortBy = (sortBy, sortDirection) => {
     let multiplier;
     if (sortDirection === 'ascending') {
       multiplier = 1;
@@ -68,13 +67,13 @@ export default class DecisionReviewer extends React.Component {
     }
 
     let documents = this.state.documents.sort((doc1, doc2) => {
-      if (sortType === 'sortByDate') {
+      if (sortBy === 'sortByDate') {
         return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
       }
-      if (sortType === 'sortByType') {
+      if (sortBy === 'sortByType') {
         return multiplier * ((doc1.type < doc2.type) ? -1 : 1);
       }
-      if (sortType === 'sortByFilename') {
+      if (sortBy === 'sortByFilename') {
         return multiplier * ((doc1.filename < doc2.filename) ? -1 : 1);
       }
     });
@@ -84,42 +83,43 @@ export default class DecisionReviewer extends React.Component {
     this.props
   }
 
-  changeSortState = (sortType) => () => {
-    let sort = this.state[sortType];
-    if (sort === null) {
-      sort = 'ascending';
-    } else if (sort === 'ascending') {
-      sort = 'descending';
+  changeSortState = (sortBy) => () => {
+    let sortDirection = this.state.sortDirection;
+
+    if (this.state.sortBy === sortBy) {
+      if (sortDirection === 'ascending') {
+        sortDirection = 'descending';
+      } else {
+        sortDirection = 'ascending';
+      }
     } else {
-      sort = null;
+      sortDirection = 'ascending';
     }
 
-    let updatedState = this.state;
-    updatedState[sortType] = sort;
     this.setState({
-      sort
+      sortBy: sortBy,
+      sortDirection: sortDirection
     });
 
-    this.sortBy(sortType, sort);
+    this.sortBy(sortBy, sortDirection);
   }
 
   render() {
     let { 
       documents,
-      sortByDate,
-      sortByFilename,
-      sortByType
+      sortBy,
+      sortDirection,
     } = this.state;
 
     return (
       <div>
         {this.state.pdf === null && <PdfListView
+          annotationStorage={this.annotationStorage}
           documents={documents}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
-          sortByDate={sortByDate}
-          sortByFilename={sortByFilename}
-          sortByType={sortByType} />}
+          sortBy={sortBy}
+          sortDirection={sortDirection} />}
         {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?vbms_document_id=` +
@@ -131,7 +131,6 @@ export default class DecisionReviewer extends React.Component {
           nextPdf={this.nextPdf}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
-          annotations={this.state.annotations}
           id={documents[this.state.pdf].id} />}
       </div>
     );
