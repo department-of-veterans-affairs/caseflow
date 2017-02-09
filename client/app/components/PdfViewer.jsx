@@ -348,8 +348,18 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
+  onColorLabelChange = (label) => () => {
+    if (label === this.props.label.color) {
+      this.props.setLabel({});
+    } else {
+      this.props.setLabel({ color: label });  
+    }
+  }
+
   render() {
     let comments = [];
+    let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
+    let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -425,54 +435,66 @@ export default class PdfViewer extends BaseForm {
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label cf-selected-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="blue"
+                    classNames={
+                      this.props.label.color === 'blue'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('blue')}>
                     <i
                       style={{ color: '#23ABF6' }}
                       className="fa fa-bookmark"
                       aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="orange"
+                    classNames={
+                      this.props.label.color === 'orange'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('orange')}>
                     <i
                       style={{ color: '#F6A623' }}
                       className="fa fa-bookmark"
                       aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="white"
+                    classNames={
+                      this.props.label.color === 'white'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('white')}>
                     <i
                       style={{ color: '#FFFFFF' }}
                       className="fa fa-bookmark"
                       aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="pink"
+                    classNames={
+                      this.props.label.color === 'pink'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('pink')}>
                     <i
                       style={{ color: '#F772E7' }}
                       className="fa fa-bookmark"
                       aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="green"
+                    classNames={
+                      this.props.label.color === 'green'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('green')}>
                     <i
                       style={{ color: '#3FCD65' }}
                       className="fa fa-bookmark"
                       aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button cf-label"]}
-                    onClick={this.zoom(-0.3)}>
+                    name="yellow"
+                    classNames={
+                      this.props.label.color === 'yellow'? bookmarkClassesSelected: bookmarkClasses
+                    }
+                    onClick={this.onColorLabelChange('yellow')}>
                     <i
                       style={{ color: '#EFDF1A' }}
                       className="fa fa-bookmark"
@@ -551,7 +573,9 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string
+  label: PropTypes.object,
+  pdfWorker: PropTypes.string,
+  setLabel: PropTypes.func.isRequired
 };
 
 /* eslint-enable max-lines */

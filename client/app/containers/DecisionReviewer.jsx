@@ -6,7 +6,14 @@ import AnnotationStorage from '../util/AnnotationStorage';
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { pdf: 0 };
+    let labels = [];
+    for (let index = 0; index < this.props.appealDocuments.length; index++) {
+      labels[index] = {};
+    }
+    this.state = {
+      labels: labels,
+      pdf: 0
+    };
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
   }
@@ -20,6 +27,14 @@ export default class DecisionReviewer extends React.Component {
   nextPdf = () => {
     this.setState({
       pdf: Math.min(this.state.pdf + 1, this.props.appealDocuments.length - 1)
+    });
+  }
+
+  setLabel = (pdf) => (label) => {
+    let labels = [...this.state.labels];
+    labels[pdf] = label;
+    this.setState({
+      labels: labels
     });
   }
 
@@ -50,7 +65,9 @@ export default class DecisionReviewer extends React.Component {
           name={appealDocuments[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
-          pdfWorker={this.props.pdfWorker} />
+          pdfWorker={this.props.pdfWorker}
+          setLabel={this.setLabel(this.state.pdf)}
+          label={this.state.labels[this.state.pdf]} />
       </div>
     );
   }
