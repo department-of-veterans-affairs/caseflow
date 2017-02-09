@@ -1,11 +1,13 @@
 #Caseflow
 
-Following is a list of all of the the Github repositories used for Caseflow and link to Travis CI's distributed continuous integration services for building and testing.
+Following are links to view the results for each product in Travis CI as well as a link to the product's repository:
 
-- [Caseflow](https://github.com/department-of-veterans-affairs/caseflow) ([Travis CI](https://travis-ci.org/department-of-veterans-affairs/caseflow))
-- [eFolder Express](https://github.com/department-of-veterans-affairs/caseflow-efolder) ([Travis CI](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder))
-- [Caseflow Feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) ([Travis CI](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback))
-- [Caseflow Commons](https://github.com/department-of-veterans-affairs/caseflow-commons) ([Travis CI](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons))
+| Product | GitHub Repository | Travis CI |
+| --- | --- | ---|
+| Caseflow | [casflow](https://github.com/department-of-veterans-affairs/caseflow) | [Travis CI - Caseflow](https://travis-ci.org/department-of-veterans-affairs/caseflow) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
+| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 
 # Caseflow Certification
