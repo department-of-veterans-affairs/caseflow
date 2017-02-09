@@ -309,6 +309,19 @@ export default class PdfViewer extends BaseForm {
 
     });
 
+    window.addEventListener('keydown', (event) => {
+      if (this.state.editingComment === null &&
+          !this.state.isAddingComment &&
+          !this.state.isPlacingNote) {
+        if (event.key === 'ArrowLeft') {
+          this.props.previousPdf();
+        }
+        if (event.key === 'ArrowRight') {
+          this.props.nextPdf();
+        }
+      }
+    });
+
     this.draw(this.props.file);
 
     // Scroll event to render pages as they come into view

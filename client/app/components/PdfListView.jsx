@@ -3,12 +3,14 @@ import Table from '../components/Table';
 import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
+import TextField from '../components/TextField';
 
 export default class PdfListView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      numberOfComments: []
+      numberOfComments: [],
+      filterBy: this.props.filterBy
     };
   }
 
@@ -50,6 +52,14 @@ export default class PdfListView extends React.Component {
     console.log(label);
   }
 
+  onFilter = (value) => {
+    this.setState({
+      filterBy: value
+    });
+
+    this.props.onFilter(value);
+  }
+
   render() {
     return <div>
       <div className="usa-grid">
@@ -59,8 +69,17 @@ export default class PdfListView extends React.Component {
               Show only: <DocumentLabels onClick={this.onLabelClick} />
             </span>
             <span className="cf-right-side">
-              Showing {this.props.documents.length} documents
+              Showing {`${this.props.documents.length} out of ` +
+              `${this.props.numberOfDocuments}`} documents
             </span>
+            <div>
+              <TextField
+               label="Search"
+               name="Filter By"
+               value={this.state.filterBy}
+               onChange={this.onFilter}
+              />
+            </div>
             <div>
               <Table
                 headers={this.getDocumentTableHeaders()}
@@ -76,5 +95,8 @@ export default class PdfListView extends React.Component {
 }
 
 PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  filterBy: PropTypes.string.isRequired,
+  onFilter: PropTypes.func.isRequired,
+  numberOfDocuments: PropTypes.number.isRequired
 };

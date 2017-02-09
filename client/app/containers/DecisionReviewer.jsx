@@ -11,6 +11,7 @@ export default class DecisionReviewer extends React.Component {
     this.state = {
       documents: this.props.appealDocuments,
       sortBy: null,
+      filterBy: '',
       sortDirection: null,
       listView: true,
       pdf: null
@@ -28,18 +29,7 @@ export default class DecisionReviewer extends React.Component {
 
   nextPdf = () => {
     this.setState({
-      pdf: Math.min(this.state.pdf + 1, this.props.appealDocuments.length - 1)
-    });
-  }
-
-  componentDidMount() {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft') {
-        this.previousPdf();
-      }
-      if (event.key === 'ArrowRight') {
-        this.nextPdf();
-      }
+      pdf: Math.min(this.state.pdf + 1, this.state.documents.length - 1)
     });
   }
 
@@ -66,7 +56,7 @@ export default class DecisionReviewer extends React.Component {
       return;
     }
 
-    let documents = this.state.documents.sort((doc1, doc2) => {
+    this.props.appealDocuments.sort((doc1, doc2) => {
       if (sortBy === 'sortByDate') {
         return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
       }
@@ -77,10 +67,7 @@ export default class DecisionReviewer extends React.Component {
         return multiplier * ((doc1.filename < doc2.filename) ? -1 : 1);
       }
     });
-    this.setState({
-      documents: documents
-    });
-    this.props
+    this.filterDocuments(this.state.filterBy);
   }
 
   changeSortState = (sortBy) => () => {
@@ -104,6 +91,40 @@ export default class DecisionReviewer extends React.Component {
     this.sortBy(sortBy, sortDirection);
   }
 
+  filterDocuments = (filterBy) => {
+    filterBy = filterBy.toLowerCase();
+    let filteredDocuments = this.props.appealDocuments.filter((doc) => {
+      if (doc.type.toLowerCase().includes(filterBy)) {
+        return true;
+      } else if (doc.filename.toLowerCase().includes(filterBy)) {
+        return true;
+      } else if (doc.received_at.toLowerCase().includes(filterBy)) {
+        return true;
+      } else {
+        let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).reduce((combined, comment) => {
+          return combined + ' ' + comment.comment.toLowerCase();
+        }, '');
+        if (comments.includes(filterBy)) {
+          return true; 
+        } else {
+          return false;
+        }
+      }
+    });
+
+    this.setState({
+      documents: filteredDocuments
+    });
+  }
+
+  onFilter = (filterBy) => {
+    console.log('filtering!');
+    this.setState({
+      filterBy: filterBy
+    });
+    this.filterDocuments(filterBy);
+  }
+
   render() {
     let { 
       documents,
@@ -119,7 +140,10 @@ export default class DecisionReviewer extends React.Component {
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
           sortBy={sortBy}
-          sortDirection={sortDirection} />}
+          sortDirection={sortDirection}
+          numberOfDocuments={this.props.appealDocuments.length}
+          onFilter={this.onFilter}
+          filterBy={this.state.filterBy} />}
         {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?vbms_document_id=` +
