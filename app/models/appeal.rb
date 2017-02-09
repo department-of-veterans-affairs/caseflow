@@ -22,7 +22,16 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
+  vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
+
+  SPECIAL_ISSUE_COLUMNS = %i(rice_compliance private_attorney waiver_of_overpayment
+                             pensions vamc incarcerated_veterans dic_death_or_accrued_benefits
+                             education_or_vocational_rehab foreign_claims manlincon_compliance
+                             hearings_travel_board_video_conference home_loan_guaranty insurance
+                             national_cemetery_administration spina_bifida radiation
+                             nonrating_issues proposed_incompetency manila_remand
+                             contaminated_water_at_camp_lejeune mustard_gas dependencies).freeze
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -32,6 +41,11 @@ class Appeal < ActiveRecord::Base
   attr_writer :documents
   def documents
     @documents || fetch_documents!
+  end
+
+  def annotations_on_documents
+    ids = documents.map(&:id)
+    @annotations = Annotation.where(document_id: ids).map(&:to_hash)
   end
 
   def veteran_name
@@ -117,12 +131,11 @@ class Appeal < ActiveRecord::Base
     [nod_date, soc_date, form9_date].any?(&:nil?)
   end
 
-  def decision
+  def decisions
     decisions = documents_with_type("BVA Decision").select do |decision|
-      (decision.received_at.in_time_zone - decision_date).abs <= 1.day
+      (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
-    fail(MultipleDecisionError) if decisions.size > 1
-    decisions.first
+    decisions
   end
 
   def certify!
@@ -155,6 +168,17 @@ class Appeal < ActiveRecord::Base
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
     return "Remand" if remand?
+  end
+
+  def days_since_decision
+    (Time.zone.now - decision_date).to_i / 1.day
+  end
+
+  # Does this appeal have any special issues
+  def special_issues?
+    SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
+      method(special_issue).call
+    end
   end
 
   class << self
@@ -191,7 +215,6 @@ class Appeal < ActiveRecord::Base
 
     # ONLY FOR TEST USER and for TEST_APPEAL_ID
     def uncertify(appeal)
-      return unless appeal.vacols_id == ENV["TEST_APPEAL_ID"]
       Form8.delete_all(vacols_id: appeal.vacols_id)
       repository.uncertify(appeal)
     end

@@ -21,15 +21,17 @@ export default class Button extends React.Component {
       onClick,
       type
     } = this.props;
-    // Disabled the button when loading
+
+    if (loading) {
+      classNames = classNames.filter((className) => !className.includes('usa-button'));
+
+      return <span className={classNames.join(' ')}>
+        <span className="cf-react-loading-indicator">{loadingSymbolHtml()}</span>
+      </span>;
+    }
 
     if (!children) {
       children = name;
-    }
-
-    if (loading) {
-      disabled = loading;
-      children = loadingSymbolHtml();
     }
 
     if (disabled) {

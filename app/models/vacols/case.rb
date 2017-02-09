@@ -5,6 +5,9 @@ class VACOLS::Case < VACOLS::Record
 
   has_one    :folder,        foreign_key: :ticknum
   belongs_to :correspondent, foreign_key: :bfcorkey, primary_key: :stafkey
+  has_many   :issues,        foreign_key: :isskey
+
+  class InvalidLocationError < StandardError; end
 
   TYPES = {
     "1" => "Original",
@@ -92,6 +95,11 @@ class VACOLS::Case < VACOLS::Record
     "6" => :video_hearing
   }.freeze
 
+  # NOTE(jd): This is a list of the valid locations that Caseflow
+  # supports updating an appeal to. This is a subset of the overall locations
+  # supported in VACOLS
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 98).freeze
+
   JOIN_ISSUE_CNT_REMAND = "
     inner join
     (
@@ -145,5 +153,46 @@ class VACOLS::Case < VACOLS::Record
                 .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, decided_after.strftime("%Y-%m-%d %H:%M"))
                 .order("BFDDEC ASC")
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def update_vacols_location(location)
+    return unless location
+
+    fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
+
+    conn = self.class.connection
+
+    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    location = conn.quote(location)
+    user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
+    case_id = conn.quote(bfkey)
+
+    conn.transaction do
+      conn.execute(<<-SQL)
+        UPDATE BRIEFF
+        SET BFDLOCIN = SYSDATE,
+            BFCURLOC = #{location},
+            BFDLOOUT = SYSDATE,
+            BFORGTIC = NULL
+        WHERE BFKEY = #{case_id}
+      SQL
+
+      conn.execute(<<-SQL)
+        UPDATE PRIORLOC
+        SET LOCDIN = SYSDATE,
+            LOCSTRCV = #{user_db_id},
+            LOCEXCEP = 'Y'
+        WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+      SQL
+
+      conn.execute(<<-SQL)
+        INSERT into PRIORLOC
+          (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
+        VALUES
+         (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
+      SQL
+    end
+  end
+
   # :nocov:
 end

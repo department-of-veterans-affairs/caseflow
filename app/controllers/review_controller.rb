@@ -2,8 +2,8 @@ class ReviewController < ApplicationController
   before_action :verify_system_admin
 
   def index
-    vbms_id = params[:vbms_id]
-    @appeal = Appeal.find_or_create_by_vbms_id(vbms_id)
+    vacols_id = params[:vacols_id]
+    @appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def logo_name
@@ -13,8 +13,10 @@ class ReviewController < ApplicationController
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
-    document = Document.new(document_id: params[:document_id])
-
+    document = Document.find_by(vbms_document_id: params[:vbms_document_id])
+    # The line below enables document caching for 12 hours. It's best to disable
+    # this while we're still developing.
+    # expires_in 12.hours, :public => true
     send_file(
       document.serve,
       type: "application/pdf",

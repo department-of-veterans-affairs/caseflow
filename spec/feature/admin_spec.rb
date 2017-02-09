@@ -21,6 +21,7 @@ RSpec.feature "Admin" do
 
     # view existing tasks
     expect(Task.count).to eq(1)
+    expect(Task.to_complete.count).to eq(0)
     expect(page).to have_css("#task-#{@task.id}")
 
     # attempt to create a task for an existing vbms_id
@@ -36,5 +37,8 @@ RSpec.feature "Admin" do
     expect(page).to have_current_path("/admin/establish_claim")
     expect(page).to have_content "Task created"
     expect(Task.count).to eq(2)
+
+    # ensure that the task is unassigned
+    expect(Task.to_complete.count).to eq(1)
   end
 end

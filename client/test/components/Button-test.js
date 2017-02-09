@@ -4,12 +4,18 @@ import { shallow, mount } from 'enzyme';
 import Button from '../../app/components/Button';
 
 describe('Button', () => {
-  it('renders as disabled with loading indicator when loading', () => {
+  it('renders loading icon instead of button when loading', () => {
     let onChange = () => true;
-    const wrapper = shallow(<Button name="foo" onChange={onChange} loading={true} />);
+    const wrapper = shallow(<Button
+                              id="test-button"
+                              classNames={['usa-button-primary']}
+                              name="foo"
+                              onChange={onChange}
+                              loading={true} />);
 
-    expect(wrapper.find('.usa-button-disabled')).to.have.length(1);
-    expect(wrapper.find('.cf-loading-button-text')).to.have.length(1);
+    expect(wrapper.find('.usa-button-primary')).to.have.length(0);
+    expect(wrapper.find('#test-button')).to.have.length(0);
+    expect(wrapper.find('.cf-react-loading-indicator')).to.have.length(1);
   });
 
   it('removes other button classes when disabled', () => {

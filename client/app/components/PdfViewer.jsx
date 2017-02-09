@@ -8,25 +8,6 @@ import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 
-/* eslint-disable no-bitwise */
-/* eslint-disable no-mixed-operators */
-/* From http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript */
-let generateUUID = function() {
-  let date = new Date().getTime();
-  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (character) => {
-    let random = (date + Math.random() * 16) % 16 | 0;
-
-    date = Math.floor(date / 16);
-
-    return (character === 'x' ? random : random & 0x3 | 0x8).toString(16);
-  });
-
-  return uuid;
-};
-
-/* eslint-enable no-bitwise */
-/* eslint-enable no-mixed-operators */
-
 export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
@@ -45,29 +26,26 @@ export default class PdfViewer extends BaseForm {
       numPages: 0,
       scale: 1
     };
+
+    this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  generateComments = (pdfDocument) => {
+  onCommentChange = () => {
     this.comments = [];
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
 
     this.setState({ comments: this.comments });
-    for (let i = 1; i <= pdfDocument.pdfInfo.numPages; i++) {
-      storeAdapter.getAnnotations(this.props.file, i).then((annotations) => {
-        annotations.annotations.forEach((annotationId) => {
-          storeAdapter.getComments(this.props.file, annotationId.uuid).
-            then((comment) => {
-              if (comment.length) {
-                this.comments.push({
-                  annotationUuid: annotationId.uuid,
-                  commentUuid: comment[0].uuid,
-                  content: comment[0].content
-                });
-                this.setState({ comments: this.comments });
-              }
+    // TODO: Change the interface in which we query all the comments.
+    for (let i = 1; i <= this.state.numPages; i++) {
+      this.props.annotationStorage.getAnnotations(this.props.id, i).
+        then((annotations) => {
+          annotations.annotations.forEach((annotation) => {
+            this.comments.push({
+              content: annotation.comment,
+              uuid: annotation.uuid
             });
+            this.setState({ comments: this.comments });
+          });
         });
-      });
     }
   }
 
@@ -96,60 +74,36 @@ export default class PdfViewer extends BaseForm {
   }
 
   // TODO: refactor this method to make it cleaner
-  saveEdit = (comment) => {
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
+  saveEdit = (comment) => (event) => {
+    if (event.key === 'Enter') {
+      let commentToAdd = this.state.commentForm.editComment.value;
 
-    return (event) => {
-      if (event.key === 'Enter') {
-        let commentToAdd = this.state.commentForm.editComment.value;
-
-        storeAdapter.deleteComment(
-          this.props.file,
-          comment.commentUuid
-        ).then(() => {
-          storeAdapter.addComment(
-            this.props.file,
-            comment.annotationUuid,
-            commentToAdd
-          ).then(() => {
-            this.generateComments(this.state.pdfDocument);
-          }).
+      this.props.annotationStorage.getAnnotation(
+          this.props.id,
+          comment.uuid,
+        ).then((annotation) => {
+          annotation.comment = commentToAdd;
+          this.props.annotationStorage.editAnnotation(
+            this.props.id,
+            annotation.uuid,
+            annotation
+            ).
+            catch(() => {
+              // TODO: Add error case if comment can't be added
+            });
+        }).
           catch(() => {
             // TODO: Add error case if comment can't be added
           });
-        }).
-        catch(() => {
-          // TODO: Add error case if comment can't be added
-        });
 
-        this.setState({
-          editingComment: null
-        });
-      }
-      if (event.key === 'Escape') {
-        this.setState({
-          editingComment: null
-        });
-      }
-    };
-  }
-
-  addEventListners = (pdfDocument) => {
-    const { UI } = PDFJSAnnotate;
-
-    this.removeEventListeners();
-
-    this.annotationAddListener = () => {
-      this.generateComments(pdfDocument);
-    };
-    UI.addEventListener('annotation:add', this.annotationAddListener);
-  }
-
-  removeEventListeners = () => {
-    const { UI } = PDFJSAnnotate;
-
-    if (this.annotationAddListener) {
-      UI.removeEventListener('annotation:add', this.annotationAddListener);
+      this.setState({
+        editingComment: null
+      });
+    }
+    if (event.key === 'Escape') {
+      this.setState({
+        editingComment: null
+      });
     }
   }
 
@@ -188,7 +142,6 @@ export default class PdfViewer extends BaseForm {
         class: "Annotation",
         page: pageNumber,
         "type": "point",
-        uuid: generateUUID(),
         "x": (event.offsetX + event.srcElement.offsetLeft) / this.state.scale,
         "y": (event.offsetY + event.srcElement.offsetTop) / this.state.scale
       };
@@ -211,39 +164,29 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  saveNote = (annotation, viewport, pageNumber) => {
-    let storeAdapter = PDFJSAnnotate.getStoreAdapter();
-
-
-    return (content) => {
-      storeAdapter.addAnnotation(
-        this.props.file,
+  saveNote = (annotation, viewport, pageNumber) => (content) => {
+    annotation.comment = content;
+    this.props.annotationStorage.addAnnotation(
+        this.props.id,
         pageNumber,
         annotation
-      ).then((returnedAnnotation) => {
-        storeAdapter.getAnnotations(this.props.file, pageNumber).then((annotations) => {
-          storeAdapter.addComment(
-            this.props.file,
-            returnedAnnotation.uuid,
-            content
-          ).then(() => {
-            this.generateComments(this.state.pdfDocument);
-          });
-          // Redraw all the annotations on the page to show the new one.
-          let svg = document.getElementById(`pageContainer${pageNumber}`).
-            getElementsByClassName("annotationLayer")[0];
+      ).then(() => {
+        this.props.annotationStorage.getAnnotations(this.props.id, pageNumber).
+          then((annotations) => {
+            // Redraw all the annotations on the page to show the new one.
+            let svg = document.getElementById(`pageContainer${pageNumber}`).
+              getElementsByClassName("annotationLayer")[0];
 
-          PDFJSAnnotate.render(svg, viewport, annotations);
-        });
+            PDFJSAnnotate.render(svg, viewport, annotations);
+          });
       });
-    };
   }
 
   renderPage = (index) => {
     const { UI } = PDFJSAnnotate;
 
     let RENDER_OPTIONS = {
-      documentId: this.props.file,
+      documentId: this.props.id,
       pdfDocument: this.state.pdfDocument,
       rotate: 0,
       scale: this.state.scale
@@ -278,7 +221,6 @@ export default class PdfViewer extends BaseForm {
 
   draw = (file, scrollLocation = 0) => {
     PDFJS.getDocument(file).then((pdfDocument) => {
-      this.generateComments(pdfDocument);
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
       this.setState({
         currentPage: 1,
@@ -287,13 +229,13 @@ export default class PdfViewer extends BaseForm {
       });
 
       this.createPages(pdfDocument);
-      this.addEventListners(pdfDocument);
-
       // Automatically render the first page
       // This assumes that page has already been created and appended
       this.renderPage(0);
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
+
+      this.onCommentChange();
     });
   }
 
@@ -347,8 +289,7 @@ export default class PdfViewer extends BaseForm {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.workerSrc = '../assets/pdf.worker.js';
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
+    PDFJS.workerSrc = this.props.pdfWorker;
 
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
@@ -357,7 +298,8 @@ export default class PdfViewer extends BaseForm {
         let copy = { ...comment };
 
         copy.selected = false;
-        if (comment.annotationUuid === event.getAttribute('data-pdf-annotate-id')) {
+        if (comment.uuid.toString() ===
+            event.getAttribute('data-pdf-annotate-id').toString()) {
           copy.selected = true;
         }
 
@@ -376,10 +318,6 @@ export default class PdfViewer extends BaseForm {
     UI.enableEdit();
   }
 
-  componentWillUnmount = () => {
-    this.removeEventListeners();
-  }
-
   componentDidUpdate = () => {
     if (this.state.isAddingComment) {
       let commentBox = document.getElementById('addComment');
@@ -391,7 +329,7 @@ export default class PdfViewer extends BaseForm {
   scrollToAnnotation = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
-      getAnnotation(this.props.file, uuid).
+      getAnnotation(this.props.id, uuid).
       then((annotation) => {
         let page = document.getElementsByClassName('page');
         let scrollWindow = document.getElementById('scrollWindow');
@@ -424,7 +362,7 @@ export default class PdfViewer extends BaseForm {
       }
 
       return <div
-          onClick={this.scrollToAnnotation(comment.annotationUuid)}
+          onClick={this.scrollToAnnotation(comment.uuid)}
           onMouseEnter={this.showEditIcon(index)}
           onMouseLeave={this.hideEditIcon(index)}
           className={`cf-pdf-comment-list-item${selectedClass}`}
@@ -606,7 +544,9 @@ export default class PdfViewer extends BaseForm {
 }
 
 PdfViewer.propTypes = {
-  file: PropTypes.string.isRequired
+  annotationStorage: PropTypes.object,
+  file: PropTypes.string.isRequired,
+  pdfWorker: PropTypes.string
 };
 
 /* eslint-enable max-lines */

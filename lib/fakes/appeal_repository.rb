@@ -82,7 +82,7 @@ class Fakes::AppealRepository
 
   def self.fetch_document_file(document)
     path =
-      case document.document_id
+      case document.vbms_document_id
       when "1"
         File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
       when "2"
@@ -224,6 +224,27 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }]
+    }
+  end
+
+  def self.appeal_partial_grant_decided
+    {
+      vbms_id: "REMAND_VBMS_ID",
+      type: "Original",
+      status: "Remand",
+      disposition: "Allowed",
+      decision_date: 7.days.ago,
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      appellant_first_name: "Susie",
+      appellant_last_name: "Crockett",
       appellant_relationship: "Daughter"
     }
   end
@@ -240,7 +261,13 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13"
+      regional_office_key: "RO13",
+      issues: [{
+        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
+        disposition: "Granted",
+        program: "Compensation"
+      }],
+      documents: [nod_document, soc_document, form9_document, decision_document]
     }
   end
 
@@ -272,19 +299,58 @@ class Fakes::AppealRepository
   end
 
   def self.nod_document
-    Document.new(type: "NOD", received_at: 3.days.ago, document_id: "1", filename: "Mark_NOD")
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "73",
+        received_at: 3.days.ago,
+        document_id: "1",
+        filename: "My_NOD"
+      )
+    )
   end
 
   def self.soc_document
-    Document.new(type: "SOC", received_at: Date.new(1987, 9, 6), document_id: "2", filename: "Mark_SOC")
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "95",
+        received_at: Date.new(1987, 9, 6),
+        document_id: "2",
+        filename: "My_SOC"
+      )
+    )
   end
 
   def self.form9_document
-    Document.new(type: "Form 9", received_at: 1.day.ago, document_id: "3", filename: "Mark_Form_9")
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "179",
+        received_at: 1.day.ago,
+        document_id: "3",
+        filename: "My_Form_9"
+      )
+    )
   end
 
   def self.decision_document
-    Document.new(type: "BVA Decision", received_at: 7.days.ago, document_id: "4", filename: "Mark_Decision")
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "27",
+        received_at: 7.days.ago,
+        document_id: "4",
+        filename: "My_Decision"
+      )
+    )
+  end
+
+  def self.decision_document2
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "27",
+        received_at: 8.days.ago,
+        document_id: "5",
+        filename: "My_Decision2"
+      )
+    )
   end
 
   def self.set_vbms_documents!
@@ -303,13 +369,35 @@ class Fakes::AppealRepository
         "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
         "001ERR" => Fakes::AppealRepository.appeal_missing_data
       }
+      documents = [
+        nod_document,
+        soc_document,
+        form9_document,
+        decision_document
+      ]
+      documents_multiple_decisions = documents.dup.push(decision_document2)
+
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        @records["vbms_id#{i}"] = {
-          vbms_id: "vbms_id#{i}",
-          documents: [nod_document, soc_document, form9_document, decision_document]
-        }
+        # Make every other case have two decision documents
+        @records["vbms_id#{i}"] =
+          if i.even?
+            {
+              documents: documents,
+              vbms_id: "vbms_id#{i}"
+            }
+          else
+            {
+              documents: documents_multiple_decisions,
+              vbms_id: "vbms_id#{i}"
+            }
+          end
       end
+
+      @records["FULLGRANT_VBMS_ID"] = {
+        documents: documents_multiple_decisions,
+        vbms_id: "FULLGRANT_VBMS_ID"
+      }
     end
   end
 end

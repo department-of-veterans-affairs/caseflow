@@ -1,10 +1,13 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from '../components/PdfViewer';
 import PdfListView from '../components/PdfListView';
+import PDFJSAnnotate from 'pdf-annotate.js';
+import AnnotationStorage from '../util/AnnotationStorage';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       documents: this.props.appealDocuments,
       sortByDate: null,
@@ -13,6 +16,9 @@ export default class DecisionReviewer extends React.Component {
       listView: true,
       pdf: null
     };
+
+    this.annotationStorage = new AnnotationStorage(this.props.annotations);
+    PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
   }
 
   previousPdf = () => {
@@ -115,18 +121,25 @@ export default class DecisionReviewer extends React.Component {
           sortByFilename={sortByFilename}
           sortByType={sortByType} />}
         {this.state.pdf !== null && <PdfViewer
-          file={`review/pdf?document_id=${documents[this.state.pdf].document_id}`}
+          annotationStorage={this.annotationStorage}
+          file={`review/pdf?vbms_document_id=` +
+            `${documents[this.state.pdf].vbms_document_id}`}
           receivedAt={documents[this.state.pdf].received_at}
           type={documents[this.state.pdf].type}
           name={documents[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
-          showList={this.showList} />}
+          showList={this.showList}
+          pdfWorker={this.props.pdfWorker}
+          annotations={this.state.annotations}
+          id={documents[this.state.pdf].id} />}
       </div>
     );
   }
 }
 
 DecisionReviewer.propTypes = {
-  appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired
+  annotations: PropTypes.arrayOf(PropTypes.object),
+  appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
+  pdfWorker: PropTypes.string
 };

@@ -13,12 +13,19 @@ export default class AssociatePage extends React.Component {
     super(props);
 
     this.state = {
-      loading: null
+      loading: null,
+      sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
   }
 
+  componentWillMount() {
+    if (!this.props.endProducts.length) {
+      this.props.history.goBack();
+    }
+  }
+
   buildEndProductRow = (endProduct) => [
-    formatDate(new Date(endProduct.claim_receive_date)),
+    formatDate(endProduct.claim_receive_date),
     endProduct.claim_type_code,
     endProduct.status_type_code,
     <Button
@@ -75,8 +82,6 @@ export default class AssociatePage extends React.Component {
       hasAvailableModifers
     } = this.props;
 
-    let endProducts = this.props.endProducts.sort(this.sortEndProduct);
-
     let alert;
 
     if (this.props.hasAvailableModifers) {
@@ -114,7 +119,7 @@ export default class AssociatePage extends React.Component {
           <Table
             headers={TABLE_HEADERS}
             buildRowValues={this.buildEndProductRow}
-            values={endProducts}
+            values={this.state.sortedEndProducts}
           />
         </div>
       </div>

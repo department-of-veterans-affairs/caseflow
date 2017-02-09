@@ -15,9 +15,12 @@ import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import AssociatePage from './EstablishClaimAssociateEP';
 
-export const REVIEW_PAGE = 0;
-export const ASSOCIATE_PAGE = 1;
-export const FORM_PAGE = 2;
+import { createHashHistory } from 'history';
+
+export const REVIEW_PAGE = 'review';
+export const ASSOCIATE_PAGE = 'associate';
+export const FORM_PAGE = 'form';
+
 
 export const END_PRODUCT_INFO = {
   'Full Grant': ['172BVAG', 'BVA Grant'],
@@ -87,6 +90,7 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
+      history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
@@ -96,6 +100,25 @@ export default class EstablishClaim extends BaseForm {
     SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
     });
+  }
+
+
+  componentDidMount() {
+    let { history } = this.state;
+
+    history.listen((location) => {
+      this.setState({
+        page: location.pathname.substring(1) || REVIEW_PAGE
+      });
+    });
+
+    // Force navigate to the review page on initial component mount
+    // This ensures they are not mid-flow
+    history.replace(REVIEW_PAGE);
+  }
+
+  reloadPage = () => {
+    window.location.href = window.location.pathname + window.location.search;
   }
 
   handleSubmit = () => {
@@ -117,7 +140,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then(() => {
-        window.location.reload();
+        this.reloadPage();
       }, () => {
         this.setState({
           loading: false
@@ -158,7 +181,7 @@ export default class EstablishClaim extends BaseForm {
     });
 
     return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
-      window.location.reload();
+      this.reloadPage();
     }, () => {
       handleAlert(
         'error',
@@ -193,9 +216,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handlePageChange = (page) => {
-    this.setState({
-      page
-    });
+    this.state.history.push(page);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -283,10 +304,13 @@ export default class EstablishClaim extends BaseForm {
   setStationState() {
     let stateObject = this.state;
 
+    // default needs to be reset in case the user has navigated back in the form
+    stateObject.claimForm.stationOfJurisdiction.value = '397 - AMC';
+
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
-          this.props.task.appeal.station_key;
+          this.getStationOfJurisdiction();
       }
     });
     Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
@@ -297,6 +321,15 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       stateObject
     });
+  }
+
+  getStationOfJurisdiction() {
+    let stationKey = this.props.task.appeal.station_key;
+    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+
+    return `${stationKey} - ${
+        this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+        this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   prepareData() {
@@ -341,6 +374,7 @@ export default class EstablishClaim extends BaseForm {
     let {
       loading,
       cancelModalDisplay,
+      history,
       modalSubmitLoading,
       specialIssueModalDisplay,
       specialIssues
@@ -366,6 +400,7 @@ export default class EstablishClaim extends BaseForm {
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}
             specialIssues={specialIssues}
+            task={this.props.task}
           />
         }
         { this.isAssociatePage() &&
@@ -378,6 +413,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
+            history={history}
           />
         }
         { this.isFormPage() &&
@@ -394,7 +430,7 @@ export default class EstablishClaim extends BaseForm {
 
         {cancelModalDisplay && <Modal
           buttons={[
-            { classNames: ["cf-btn-link"],
+            { classNames: ["cf-modal-link", "cf-btn-link"],
               name: '\u00AB Go Back',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
@@ -408,12 +444,12 @@ export default class EstablishClaim extends BaseForm {
           closeHandler={this.handleModalClose('cancelModalDisplay')}
           title="Cancel EP Establishment">
           <p>
-            If you click the <b>Cancel EP Establishment</b>
+            If you click the <b>Cancel EP Establishment </b>
             button below your work will not be
             saved and the EP for this claim will not be established.
           </p>
           <p>
-            Please tell why you are canceling this claim.
+            Please tell why you are canceling the establishment of this EP.
           </p>
           <TextareaField
             label="Cancel Explanation"
@@ -429,6 +465,8 @@ export default class EstablishClaim extends BaseForm {
 }
 
 EstablishClaim.propTypes = {
+  regionalOfficeCities: PropTypes.object.isRequired,
+  regionalOfficeStations: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
 
