@@ -111,7 +111,7 @@ export default class EstablishClaimReview extends React.Component {
   }
 
   hasMultipleDecisions() {
-    return this.props.task.appeal.decisions_hash.length > 1;
+    return this.props.task.appeal.decisions.length > 1;
   }
 
   buildIssueRow = (issue) => [
@@ -148,7 +148,7 @@ export default class EstablishClaimReview extends React.Component {
     })();
 
     // Sort in reverse chronological order
-    let decisions = task.appeal.decisions_hash.sort((decision1, decision2) =>
+    let decisions = task.appeal.decisions.sort((decision1, decision2) =>
       new Date(decision2.received_at) - new Date(decision1.received_at));
 
     let tabHeaders = decisions.map((decision, index) =>
