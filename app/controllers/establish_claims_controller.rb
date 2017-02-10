@@ -15,7 +15,7 @@ class EstablishClaimsController < TasksController
   end
 
   def unprepared_tasks
-    @unprepared_tasks ||= EstablishClaim.unprepared
+    @unprepared_tasks ||= EstablishClaim.unprepared.oldest_first
   end
 
   def verify_manager_access
