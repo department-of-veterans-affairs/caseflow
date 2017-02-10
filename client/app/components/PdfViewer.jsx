@@ -292,6 +292,19 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
+  keyListener = (event) => {
+    if (this.state.editingComment === null &&
+        !this.state.isAddingComment &&
+        !this.state.isPlacingNote) {
+      if (event.key === 'ArrowLeft') {
+        this.props.previousPdf();
+      }
+      if (event.key === 'ArrowRight') {
+        this.props.nextPdf();
+      }
+    }
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
@@ -315,18 +328,7 @@ export default class PdfViewer extends BaseForm {
 
     });
 
-    window.addEventListener('keydown', (event) => {
-      if (this.state.editingComment === null &&
-          !this.state.isAddingComment &&
-          !this.state.isPlacingNote) {
-        if (event.key === 'ArrowLeft') {
-          this.props.previousPdf();
-        }
-        if (event.key === 'ArrowRight') {
-          this.props.nextPdf();
-        }
-      }
-    });
+    window.addEventListener('keydown', this.keyListener);
 
     this.draw(this.props.file);
 
@@ -335,6 +337,10 @@ export default class PdfViewer extends BaseForm {
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
     UI.enableEdit();
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.keyListener);
   }
 
   componentDidUpdate = () => {
