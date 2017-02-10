@@ -1,12 +1,50 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "226adafc36df1ef6be1b8fcaafca3158d947a0c4933a0b3d059732cc816bab40",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/review_controller.rb",
+      "line": 21,
+      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find_by(:vbms_document_id => params[:vbms_document_id]).serve, :type => \"application/pdf\", :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ReviewController",
+        "method": "pdf"
+      },
+      "user_input": "Document.find_by(:vbms_document_id => params[:vbms_document_id]).serve",
+      "confidence": "Medium",
+      "note": "Allow credentialed users to access any document in VBMS. Consider scoping this down."
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "c429c9acb5a54901f4a434140d97eab17dab5f1aea40695ca7f1636de4783372",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/tasks_controller.rb",
+      "line": 42,
+      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(task.appeal.decisions[params[:decision_number].to_i].serve, :type => \"application/pdf\", :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "TasksController",
+        "method": "pdf"
+      },
+      "user_input": "params[:decision_number]",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
       "warning_type": "Mass Assignment",
       "warning_code": 70,
       "fingerprint": "ca492b9eafbbad210a76d7639eaf51a9fa8c68f20d8e73ac98cc93f1f239350b",
       "message": "Parameters should be whitelisted for mass assignment",
       "file": "app/controllers/certifications_controller.rb",
-      "line": 22,
+      "line": 21,
       "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "params.require(:form8).permit!",
       "render_path": null,
@@ -39,6 +77,6 @@
       "note": "Allow credentialed users to access any document in VBMS. Consider scoping this down."
     }
   ],
-  "updated": "2017-02-01 16:55:06 -0500",
+  "updated": "2017-02-09 15:18:04 -0500",
   "brakeman_version": "3.3.1"
 }
