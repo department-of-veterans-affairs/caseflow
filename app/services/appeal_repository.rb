@@ -164,7 +164,10 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
-    raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
+
+    raw_veteran_record = MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
+      BGSService.new.fetch_veteran_info(sanitized_id)
+    end
 
     # Reduce keys in raw response down to what we specifically need for
     # establish claim
@@ -172,7 +175,7 @@ class AppealRepository
 
     end_product = Appeal.transaction do
       location = location_after_dispatch(appeal: appeal,
-                                         station: claim.station_of_jurisdiction)
+                                         station: claim[:station_of_jurisdiction])
 
       appeal.case_record.update_vacols_location(location)
 
