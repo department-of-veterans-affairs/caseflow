@@ -7,7 +7,7 @@
 
   function questionValue(questionNumber) {
     var value = $question(questionNumber).find("input[type='text'], textarea, input[type='radio']:checked").val();
-    if (value != undefined) return value.trim()
+    if (value !== undefined) { return value.trim(); }
   }
 
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
