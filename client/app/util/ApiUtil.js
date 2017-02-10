@@ -37,6 +37,14 @@ const ApiUtil = {
     return result;
   },
 
+  delete(url, options = {}) {
+    return request.
+      delete(url).
+      set(this.headers(options.headers)).
+      send(options.data).
+      use(nocache);
+  },
+
   get(url, options = {}) {
     return request.
       get(url).

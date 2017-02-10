@@ -15,7 +15,7 @@ describe PrepareEstablishClaimTasksJob do
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
       "VBMS_ID1" => { documents: [Document.new(
         received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
-        document_id: "123C"
+        vbms_document_id: "123C"
       )] }
     }
     @task_one = EstablishClaim.create(appeal: @appeal_one)
