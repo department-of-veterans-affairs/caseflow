@@ -5,7 +5,7 @@ These columns in the [Caseflow waffle board](https://waffle.io/department-of-vet
 Landing place for all new issues. We should look at and move these issues to the appropriate column ASAP.
 
 ##Backlog
-Place for any issue that isn't on deck for being designed or worked on. We will occasionally comb the backlog for issues to be pulled into
+Place for any issue that isn't on deck for being designed or worked on. We will occasionally comb the backlog for issues to be pulled into "On Deck".
 
 ##On Deck
 Place for stories that are prioritized to be added to "Ready for Dev" but don't quite have enough definition. This column was added because "Backlog" can become very unwieldy.
