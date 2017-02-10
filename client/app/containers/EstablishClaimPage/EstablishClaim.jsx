@@ -304,6 +304,9 @@ export default class EstablishClaim extends BaseForm {
   setStationState() {
     let stateObject = this.state;
 
+    // default needs to be reset in case the user has navigated back in the form
+    stateObject.claimForm.stationOfJurisdiction.value = '397 - AMC';
+
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
