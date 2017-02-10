@@ -154,6 +154,10 @@ class Task < ActiveRecord::Base
     completion_status == self.class.completion_status_code(:assigned_existing_ep)
   end
 
+  def days_since_creation
+    (Time.zone.now - created_at).to_i / 1.day
+  end
+
   # completion_status is 0 for success, or non-zero to specify another completed case
   def save_completion_status(status:, outgoing_reference_id: nil)
     update!(
@@ -184,8 +188,8 @@ class Task < ActiveRecord::Base
       include: [:user, appeal: { methods:
        [:decision_date,
         :veteran_name,
-        :decision_type,
-        :days_since_decision] }]
+        :decision_type] }],
+      methods: [:days_since_creation]
     )
   end
 
@@ -195,16 +199,15 @@ class Task < ActiveRecord::Base
         include:
           [decisions: { methods: :received_at }],
         methods:
-          [:decision_date,
-           :decisions_hash,
-           :disposition,
-           :veteran_name,
-           :decision_type,
-           :station_key,
-           :non_canceled_end_products_within_30_days,
-           :pending_eps,
-           :issues,
-           :days_since_decision] }],
+        [:decision_date,
+         :decisions_hash,
+         :disposition,
+         :veteran_name,
+         :decision_type,
+         :station_key,
+         :non_canceled_end_products_within_30_days,
+         :pending_eps,
+         :issues] }],
       methods: [:progress_status]
     )
   end
