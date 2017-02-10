@@ -22,7 +22,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
-  vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
 
   SPECIAL_ISSUE_COLUMNS = %i(rice_compliance private_attorney waiver_of_overpayment
@@ -266,6 +265,10 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(sanitized_vbms_id))
 
     Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
+  end
+
+  def issues
+    @issue ||= repository.issues(self.vacols_id)
   end
 
   def sanitized_vbms_id
