@@ -15,7 +15,7 @@ describe('Button', () => {
 
     expect(wrapper.find('.usa-button-primary')).to.have.length(0);
     expect(wrapper.find('#test-button')).to.have.length(0);
-    expect(wrapper.find('.cf-loading-indicator')).to.have.length(1);
+    expect(wrapper.find('.cf-react-loading-indicator')).to.have.length(1);
   });
 
   it('removes other button classes when disabled', () => {

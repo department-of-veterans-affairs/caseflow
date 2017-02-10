@@ -12,6 +12,7 @@
 
   var DEFAULT_RADIO_ERROR_MESSAGE = "Oops! Looks like you missed one! Please select one of these options.";
 
+  var DEFAULT_INVALID_DATE_ERROR_MESSAGE = "Please enter a valid date.";
 
   window.Form8 =  {
     interactiveQuestions: [
@@ -53,6 +54,8 @@
       "17C": { message: "" }
     },
 
+    dateQuestions: {},
+
     getRequiredQuestions: function() {
       return Object.keys(this.requiredQuestions);
     },
@@ -64,8 +67,17 @@
       return this.watchedQuestions;
     },
 
+    setDateQuestions: function(){
+      var self = this;
+      $('input[type=date]').parent().map(function() {
+        var questionNumber = this.id.split("question")[1];
+        return self.dateQuestions[questionNumber] = {message: DEFAULT_INVALID_DATE_ERROR_MESSAGE};
+      });
+    },
+
     init: function(){
       var self = this;
+      this.setDateQuestions();
       window.DateField.init();
       window.autoresize.init();
 
@@ -166,14 +178,30 @@
     },
 
     validateRequiredQuestion: function(questionNumber, showError) {
+      var self = this;
       var questionState = this.state["question" + questionNumber];
-      var isValid = !!questionState.value || !questionState.show;
+      var isValid;
+
+      if(questionNumber in this.dateQuestions){
+        isValid = self.isValidDate(Date.parse(questionState.value));
+      }
+      else {
+        isValid = !!questionState.value;
+      }
+
+      isValid = isValid || !questionState.show;
 
       if(isValid) {
         questionState.error = null;
       }
       else if(showError) {
-        questionState.error = this.requiredQuestions[questionNumber];
+        // Show date validation error only if date is entered, otherwise show date missing
+        if(questionNumber in this.dateQuestions && !!questionState.value){
+          questionState.error = this.dateQuestions[questionNumber];
+        }
+        else {
+          questionState.error = this.requiredQuestions[questionNumber];
+        }
       }
 
       return isValid;
@@ -234,6 +262,12 @@
 
       $q.toggleClass('hidden-field', hideQuestion);
       $q.find('input, textarea').prop('disabled', hideQuestion);
+    },
+
+    isValidDate: function(date){
+      var startDate = Date.parse('1850-01-01');
+      var endDate = new Date();
+      return ((startDate <= date) && (date <= endDate));
     }
   };
 })();

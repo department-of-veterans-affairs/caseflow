@@ -49,11 +49,6 @@
   color: $color-secondary;
 }
 
-.cf-centered-buttons {
-  width: 50%;
-  margin: auto;
-}
-
 .cf-associated-header {
   color: $color-primary;
   font-size: 20px;
@@ -103,11 +98,6 @@
 }
 
 .cf-loading-button-symbol {
-  display: inline-block;
-}
-
-.cf-loading-indicator {
-  text-align: center;
   display: inline-block;
 }
 
@@ -181,6 +171,21 @@ select {
 }
 
 // TODO: unify this with the styling in caseflow commons once all buttons are using React
-.icon-loading-back {
+.cf-react-icon-loading-front {
+  @include animation(backwardspin 9s linear infinite);
+}
+
+.cf-react-icon-loading-back {
+  @include animation(spin 9s linear infinite);
   margin-left: -30px;
+}
+
+.cf-react-loading-indicator {
+  background-color: $color-white;
+  border-radius: 5px;
+  padding: 0.4rem 2.7em;
+  text-align: center;
+  display: inline-block;
+
+  svg { vertical-align: middle; }
 }
