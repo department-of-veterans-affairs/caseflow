@@ -67,11 +67,15 @@ $caseflow-background: #f9f9f9;
   bottom: 0;
 }
 
-svg {
-  [aria-hidden=true] {
-    display: inline !important;
-  }
+// TODO: Get rid of the rule in caseflow commons that makes
+// this necessary!
+// scss-lint:disable QualifyingElement
+svg[aria-hidden=true],
+.fa[aria-hidden=true] {
+  display: inline !important;
+>>>>>>> 525cb568c976b43d3f96b025b891663fa4eaf434
 }
+// scss-lint:enable QualifyingElement
 
 .cf-sidebar-wrapper {
   float: right;

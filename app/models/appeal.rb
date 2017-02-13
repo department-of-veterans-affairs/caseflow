@@ -43,6 +43,11 @@ class Appeal < ActiveRecord::Base
     @documents || fetch_documents!
   end
 
+  def annotations_on_documents
+    ids = documents.map(&:id)
+    @annotations = Annotation.where(document_id: ids).map(&:to_hash)
+  end
+
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
@@ -163,10 +168,6 @@ class Appeal < ActiveRecord::Base
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
     return "Remand" if remand?
-  end
-
-  def days_since_decision
-    (Time.zone.now - decision_date).to_i / 1.day
   end
 
   # Does this appeal have any special issues
