@@ -11,11 +11,11 @@ class ExternalApi::BGSService
   # :nocov:
 
   def get_end_products(vbms_id)
-    client.claims.find_by_vbms_file_number(vbms_id.strip)
+    @end_products ||= client.claims.find_by_vbms_file_number(vbms_id.strip)
   end
 
   def fetch_veteran_info(vbms_id)
-    client.veteran.find_by_file_number(vbms_id)
+    @veteran_info ||= client.veteran.find_by_file_number(vbms_id)
   end
 
   def client
