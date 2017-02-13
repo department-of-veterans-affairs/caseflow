@@ -85,6 +85,7 @@ svg[aria-hidden=true],
   position: absolute;
   text-align: left;
   background: $caseflow-background;
+  border-top: 1px solid $color-gray-lighter;
 }
 
 .cf-document-info-wrapper {
@@ -94,7 +95,7 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 240px;
+  top: 225px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
@@ -180,6 +181,10 @@ svg[aria-hidden=true],
   }
 }
 
+[type="button"].cf-pdf-spaced-buttons {
+  padding: 0 15px;
+}
+
 .cf-pdf-edit-comment {
   float: right;
   position: relative;
@@ -194,6 +199,10 @@ svg[aria-hidden=true],
   margin: auto;
   padding: 10px;
   background-color: $color-white;
+
+  &:hover {
+    box-shadow: 1px 1px 5px 0 $color-gray;
+  }
 }
 
 .cf-heading-alt {
@@ -224,3 +233,11 @@ svg[aria-hidden=true],
   margin-left: 10px;
   font-size: 12px;
 }
+
+.cf-pdf-navigation {
+  position: absolute;
+  bottom: 50%;
+  z-index: 200;
+  width: 100%;
+}
+

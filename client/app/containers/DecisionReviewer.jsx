@@ -14,7 +14,7 @@ export default class DecisionReviewer extends React.Component {
       filterBy: '',
       sortDirection: null,
       listView: true,
-      pdf: null
+      pdf: 0
     };
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);

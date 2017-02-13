@@ -409,29 +409,35 @@ export default class PdfViewer extends BaseForm {
           <div className="cf-pdf-container">
             <div className="cf-pdf-header cf-pdf-toolbar">
               <div className="usa-grid-full">
-                <div className="usa-width-one-third cf-pdf-buttons-left">
+                <div className="usa-width-one-half cf-pdf-buttons-left">
                   <Button
-                    name={this.props.name}
+                    name="backToDocuments"
                     classNames={["cf-pdf-button"]}
-                    onClick={this.props.showList} />
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-center">
-                  {this.state.currentPage} / {this.state.numPages}
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-button"]}
-                    onClick={this.props.previousPdf}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
-                  </Button>
-                  <Button
-                    name="next"
-                    classNames={["cf-pdf-button"]}
-                    onClick={this.props.nextPdf}>
-                    Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
+                    onClick={this.props.showList}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>&nbsp; View all documents
                   </Button>
                 </div>
+                <div className="usa-width-one-half cf-pdf-buttons-right">
+                  {this.props.name}
+                </div>
+              </div>
+            </div>
+            <div className="usa-grid-full cf-pdf-navigation">
+              <div className="usa-width-one-half cf-pdf-buttons-left">
+                <Button
+                  name="previous"
+                  classNames={["cf-pdf-button"]}
+                  onClick={this.props.previousPdf}>
+                  <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
+                </Button>
+              </div>
+              <div className="usa-width-one-half cf-pdf-buttons-right">
+                <Button
+                  name="next"
+                  classNames={["cf-pdf-button cf-right-side"]}
+                  onClick={this.props.nextPdf}>
+                  <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
+                </Button>
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
@@ -500,31 +506,29 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
+                  Page {this.state.currentPage} of {this.state.numPages}
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-right">
+                  <Button name="download" classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}>
+                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(-0.3)}>
                     <i className="fa fa-minus" aria-hidden="true"></i>
                   </Button>
                   <Button
                     name="fit"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(1)}>
-                    <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                    <i className="fa fa-arrows-alt" aria-hidden="true"></i>
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(0.3)}>
                     <i className="fa fa-plus" aria-hidden="true"></i>
-                  </Button>
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="download" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                  <Button name="print" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
