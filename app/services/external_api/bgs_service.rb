@@ -18,10 +18,6 @@ class ExternalApi::BGSService
     @veteran_info ||= client.veteran.find_by_file_number(vbms_id)
   end
 
-  def client
-    @client ||= init_client
-  end
-
   private
 
   def init_client
