@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fa1b297b9"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "35af3ad8e"
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -36,7 +36,7 @@ gem "puma", "~> 2.16.0"
 gem 'wannabe_bool'
 
 # Style
-gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
+gem 'uswds-rails', git: 'https://github.com/18F/uswds-rails-gem.git'
 
 # BGS
 gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '8a0939e894dd1231ab1d1a122be0f9c6796db4a7'
