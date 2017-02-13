@@ -268,7 +268,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def issues
-    @issue ||= repository.issues(self.vacols_id)
+    @issue ||= self.class.repository.issues(self.vacols_id)
   end
 
   def sanitized_vbms_id

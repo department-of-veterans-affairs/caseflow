@@ -261,8 +261,14 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.issues
-    [{:program=>"Compensation", :description=>["Service connection", "All Others", "Post-traumatic stress disorder", nil]}]
+  def self.issues(_vacols_id)
+    [
+      {
+        program: "Compensation",
+        description: ["Service connection", "All Others", "Post-traumatic stress disorder", nil],
+        disposition: "Allowed"
+      }
+    ]
   end
 
   def self.first_names
