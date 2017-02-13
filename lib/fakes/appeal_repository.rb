@@ -264,17 +264,17 @@ class Fakes::AppealRepository
   def self.issues(_vacols_id)
     [
       VACOLS::Issue.format({
-        "issprog": "2",
-        "issprog_label": "Compensation",
-        "isscode": "10",
-        "isscode_label": "Service connection", 
-        "isslevel1": "20",
-        "isslevel1_label": "All Others",
-        "isslevel2": "30",
-        "isslevel2_label": "Post-traumatic stress disorder",
-        "isslevel3": "40",
-        "isslevel3_label": nil,
-        "issdc": "Allowed"
+        "issprog" => "2",
+        "issprog_label" => "Compensation",
+        "isscode" => "10",
+        "isscode_label" => "Service connection", 
+        "isslev1" => "20",
+        "isslev1_label" => "All Others",
+        "isslev2" => "30",
+        "isslev2_label" => "Post-traumatic stress disorder",
+        "isslev3" => nil,
+        "isslev3_label" => nil,
+        "issdc" => "Allowed"
       })
     ]
   end

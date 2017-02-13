@@ -4,14 +4,13 @@ class VACOLS::Issue < VACOLS::Record
   self.primary_key = "isskey"
 
   def self.format(issue)
-    binding.pry
+    description = ["#{issue["isscode"]} - #{issue["isscode_label"]}"]
+    description.push("#{issue["isslev1"]} - #{issue["isslev1_label"]}") if issue["isslev1"]
+    description.push("#{issue["isslev2"]} - #{issue["isslev2_label"]}") if issue["isslev2"]
+    description.push("#{issue["isslev3"]} - #{issue["isslev3_label"]}") if issue["isslev3"]
     {
       program: "#{issue["issprog"]} - #{issue["issprog_label"]}",
-      description: [
-        "#{issue["isscode"]} - #{issue["isscode_label"]}",
-        "#{issue["isslev1"]} - #{issue["isslev1_label"]}",
-        "#{issue["isslev2"]} - #{issue["isslev2_label"]}",
-        "#{issue["isslev3"]} - #{issue["isslev3_label"]}"],
+      description: description,
       disposition: VACOLS::Case::DISPOSITIONS[issue["issdc"]] || "Other"
     }
   end
