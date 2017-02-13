@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 // components
 import Modal from '../components/Modal';
@@ -14,11 +14,11 @@ export default class StyleGuide extends React.Component {
   }
 
   handleModalOpen = () => {
-    this.setState({modal: true});
+    this.setState({ modal: true });
   };
 
   handleModalClose = () => {
-    this.setState({modal: false});
+    this.setState({ modal: false });
   };
 
   render() {

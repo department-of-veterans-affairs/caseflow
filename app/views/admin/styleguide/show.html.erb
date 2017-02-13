@@ -35,10 +35,8 @@
         aria-expanded="false" aria-controls="modals-code">
         Code (jQuery/ERB)
       </button>
-      <div id="modals-code" class="usa-accordion-content" aria-hidden="true">
-        <%= code_block do %>
-          <p>jkjlkjlkjlkjlj</p>
-        <% end %>
+      <div id="modals-code" class="usa-accordion-content cf-code-sample" aria-hidden="true">
+        <%= code_sample(initialize_modal_erb) %>
       </div>
     </li>
     <li>
@@ -46,10 +44,8 @@
         aria-expanded="false" aria-controls="modals-react-code">
         Code (React/ES6)
       </button>
-      <div id="modals-react-code" class="usa-accordion-content" aria-hidden="true">
-        <%= code_block do %>
-          <p>ghkhkjhhjkkhjhkhjk</p>
-        <% end %>
+      <div id="modals-react-code" class="usa-accordion-content cf-code-sample" aria-hidden="true">
+        <%= code_sample(initialize_modal_react) %>
       </div>
     </li>
   </ul>

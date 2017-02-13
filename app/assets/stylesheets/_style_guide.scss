@@ -1,3 +1,5 @@
+@import 'core/variables';
+
 .cf-sg-layout {
   padding-top: 30px;
 }
@@ -12,4 +14,14 @@
 
 .usa-accordion-button {
   text-align: left;
+}
+
+.cf-code-sample {
+  font-family: Consolas, serif;
+  color: $color-secondary-darkest;
+}
+
+.cf-help-divider {
+  color: $color-gray-lighter;
+  border-bottom: 1px;
 }

@@ -106,7 +106,7 @@ export default class Modal extends React.Component {
 
 Modal.defaultProps = {
   buttons: []
-}
+};
 
 Modal.propTypes = {
   buttons: PropTypes.arrayOf(PropTypes.object),
