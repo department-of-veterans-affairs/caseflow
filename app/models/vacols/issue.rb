@@ -5,14 +5,19 @@ class VACOLS::Issue < VACOLS::Record
 
   DISPOSITION_CODE = {
     "1" => "Allowed",
-    "3" => "Remanded"
+    "3" => "Remanded",
+    "4" => "Denied",
+    "5" => "Vacated",
+    "6" => "Dismissed, Other",
+    "8" => "Dismissed, Death",
+    "9" => "Withdrawn"
   }.freeze
 
   def self.format(issue)
     {
       program: issue["issprog_label"],
       description: [issue["isscode_label"], issue["isslev1_label"], issue["isslev2_label"], issue["isslev3_label"]],
-      disposition: DISPOSITION_CODE[issue["issdc"]]
+      disposition: DISPOSITION_CODE[issue["issdc"]] || "Other"
     }
   end
 
