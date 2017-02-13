@@ -3,25 +3,28 @@ class VACOLS::Issue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
-  DISPOSITION_CODE = {
-    "1" => "Allowed",
-    "3" => "Remanded",
-    "4" => "Denied",
-    "5" => "Vacated",
-    "6" => "Dismissed, Other",
-    "8" => "Dismissed, Death",
-    "9" => "Withdrawn"
-  }.freeze
-
   def self.format(issue)
+    binding.pry
     {
-      program: issue["issprog_label"],
-      description: [issue["isscode_label"], issue["isslev1_label"], issue["isslev2_label"], issue["isslev3_label"]],
-      disposition: DISPOSITION_CODE[issue["issdc"]] || "Other"
+      program: "#{issue["issprog"]} - #{issue["issprog_label"]}",
+      description: [
+        "#{issue["isscode"]} - #{issue["isscode_label"]}",
+        "#{issue["isslev1"]} - #{issue["isslev1_label"]}",
+        "#{issue["isslev2"]} - #{issue["isslev2_label"]}",
+        "#{issue["isslev3"]} - #{issue["isslev3_label"]}"],
+      disposition: VACOLS::Case::DISPOSITIONS[issue["issdc"]] || "Other"
     }
   end
 
   # rubocop:disable MethodLength
+
+  # Issues can be labeled by looking up the combination of ISSPROG,
+  # ISSCODE, ISSLEV1, ISSLEV2, and ISSLEV3 in the ISSREF table.
+  # However, any one of ISSLEV1-3 may be a four-digit diagnostic code,
+  # shown in ISSREF.LEV1-3_CODE as '##'. These codes must be looked up
+  # in VFTYPES.FTKEY, where the diagnostic code is prefixed with 'DG'.
+  # This query matches each ISSUE table code with the appropriate label,
+  # either from the ISSREF or VFTYPES table.
   def self.descriptions(issue_key)
     conn = connection
     key = conn.quote(issue_key)
