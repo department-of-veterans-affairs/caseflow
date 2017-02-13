@@ -263,11 +263,11 @@ class Fakes::AppealRepository
 
   def self.issues(_vacols_id)
     [
-      VACOLS::Issue.format({
+      VACOLS::Issue.format(
         "issprog" => "2",
         "issprog_label" => "Compensation",
         "isscode" => "10",
-        "isscode_label" => "Service connection", 
+        "isscode_label" => "Service connection",
         "isslev1" => "20",
         "isslev1_label" => "All Others",
         "isslev2" => "30",
@@ -275,7 +275,7 @@ class Fakes::AppealRepository
         "isslev3" => nil,
         "isslev3_label" => nil,
         "issdc" => "Allowed"
-      })
+      )
     ]
   end
 
