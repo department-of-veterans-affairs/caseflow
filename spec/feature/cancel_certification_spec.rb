@@ -47,7 +47,7 @@ RSpec.feature "Cancel certification" do
 
       # Test validation errors
       within(".modal-container") do
-        click_on "Cancel Certification"
+        click_on "Cancel certification"
       end
       expect(page).to have_content("Make sure you've selected an option below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
@@ -59,7 +59,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to_not have_css(".usa-input-error")
       fill_in "What's your VA email address?", with: "fk@va"
       within(".modal-container") do
-        click_on "Cancel Certification"
+        click_on "Cancel certification"
       end
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
@@ -71,7 +71,7 @@ RSpec.feature "Cancel certification" do
       fill_in "What's your VA email address?", with: "fk@va.gov"
       expect(page).to_not have_css(".usa-input-error")
       within(".modal-container") do
-        click_on "Cancel Certification"
+        click_on "Cancel certification"
       end
       expect(page).to_not have_css(".usa-input-error")
 
