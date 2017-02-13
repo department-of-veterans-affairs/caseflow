@@ -169,10 +169,6 @@ class Appeal < ActiveRecord::Base
     return "Remand" if remand?
   end
 
-  def days_since_decision
-    (Time.zone.now - decision_date).to_i / 1.day
-  end
-
   # Does this appeal have any special issues
   def special_issues?
     SPECIAL_ISSUE_COLUMNS.any? do |special_issue|

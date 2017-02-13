@@ -188,6 +188,11 @@ RSpec.feature "Save Certification" do
       find("label", text: "No").click
     end
 
+    within_fieldset("13 Records to be forwarded to Board of Veterans' Appeals") do
+      find("label", text: "OUTPATIENT F").click
+      find("label", text: "CLINICAL REC").click
+    end
+
     fill_in "17A Name of certifying official", with: "Kavi"
     within_fieldset("17B Title of certifying official") do
       find("label", text: "Other").click
@@ -200,6 +205,22 @@ RSpec.feature "Save Certification" do
     expect(find_field("5B Date of notification of action appealed").value).to eq "08/08/2016"
     expect(page).to_not have_content("6B Date of notification of action appealed")
     expect(find_field("7B Date of notification of action appealed").value).to eq "02/01/2017"
+
+    within_fieldset("13 Records to be forwarded to Board of Veterans' Appeals") do
+      expect(find_field("OUTPATIENT F", visible: false)).to be_checked
+      expect(find_field("CLINICAL REC", visible: false)).to be_checked
+    end
+
+    # uncheck boxes
+    within_fieldset("13 Records to be forwarded to Board of Veterans' Appeals") do
+      find("label", text: "OUTPATIENT F").click
+      find("label", text: "CLINICAL REC").click
+    end
+    click_on "Preview Completed Form 8"
+
+    form8 = Form8.find_by(vacols_id: "12345C")
+    expect(form8.record_outpatient_f.to_b).to eq false
+    expect(form8.record_clinical_rec.to_b).to eq false
   end
 
   scenario "Saving a certification passes the correct values into the PDF service" do
