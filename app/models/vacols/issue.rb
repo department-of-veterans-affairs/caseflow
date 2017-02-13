@@ -10,17 +10,18 @@ class VACOLS::Issue < VACOLS::Record
 
   def self.format(issue)
     {
-      program: issue['issprog_label'],
+      program: issue["issprog_label"],
       description: [issue["isscode_label"], issue["isslev1_label"], issue["isslev2_label"], issue["isslev3_label"]],
       disposition: DISPOSITION_CODE[issue["issdc"]]
     }
   end
 
+  # rubocop:disable MethodLength
   def self.descriptions(issue_key)
     conn = connection
     key = conn.quote(issue_key)
 
-    issref = conn.exec_query(<<-SQL).to_hash
+    conn.exec_query(<<-SQL).to_hash
       select
         ISSUES.ISSKEY,
         ISSUES.ISSSEQ,
@@ -48,7 +49,7 @@ class VACOLS::Issue < VACOLS::Record
             VFTYPES.FTDESC else ISSREF.LEV3_DESC
           end
         end ISSLEV3_LABEL
-        
+
       from ISSUES
 
       inner join ISSREF
@@ -63,7 +64,7 @@ class VACOLS::Issue < VACOLS::Record
         and (ISSUES.ISSLEV3 is null
           or ISSREF.LEV3_CODE = '##'
           or ISSUES.ISSLEV3 = ISSREF.LEV3_CODE)
-        
+
       left join VFTYPES
         on VFTYPES.FTTYPE = 'DG'
         and ((ISSREF.LEV1_CODE = '##' and 'DG' || ISSUES.ISSLEV1 = VFTYPES.FTKEY)
@@ -73,4 +74,5 @@ class VACOLS::Issue < VACOLS::Record
       where ISSUES.ISSKEY = #{key}
     SQL
   end
+  # rubocop:enable MethodLength
 end
