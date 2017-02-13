@@ -102,7 +102,7 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
     @template.content_tag :div, class: "usa-width-one-third" do
       attributes.map do |attribute|
         @template.content_tag :div, class: "cf-form-checkbox" do
-          check_box(attribute[:attribute], include_hidden: false) +
+          check_box(attribute[:attribute]) +
             label(attribute[:attribute], attribute[:label])
         end
       end.join("\n").html_safe

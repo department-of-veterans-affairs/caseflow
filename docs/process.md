@@ -1,8 +1,11 @@
 #Caseflow Development Process
 These columns in the [Caseflow waffle board](https://waffle.io/department-of-veterans-affairs/caseflow) describe the states and life cycle of a story. This is a work-in-progress and will continue to evolve to fit the needs of the team. We will use **Retrospectives** at the end of each sprint to facilitate this.
 
+##Inbox
+Landing place for all new issues. We should look at and move these issues to the appropriate column ASAP.
+
 ##Backlog
-Landing place for new bugs or technical stories. This is also a catch all for any old issues, or issues that aren't well formed enough to be considered ready for development.
+Place for any issue that we aren't planning on designing or working on in the near future. We will occasionally comb the backlog for issues to be pulled into "Triage".
 
 ##Triage
 Place for stories that are prioritized to be added to "Ready for Dev" but don't quite have enough definition. This column was added because "Backlog" can become very unwieldy.
