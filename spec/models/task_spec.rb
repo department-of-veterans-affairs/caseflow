@@ -146,6 +146,7 @@ describe Task do
         task.prepare!
         task.assign!(:assigned, @user)
         task.start!
+        task.review!
         task.complete!(:completed, status: 0)
       end
 
@@ -213,6 +214,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
       task.complete_and_recreate!(3)
     end
     it "completes and creates a new task" do
@@ -234,6 +236,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
     end
     it "completes the task" do
       task.complete!(:completed, status: 3)
@@ -268,6 +271,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
     end
     it "closes unfinished tasks" do
       task.expire!

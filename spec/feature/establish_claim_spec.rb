@@ -105,6 +105,7 @@ RSpec.feature "Dispatch" do
       @completed_task.prepare!
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
+      @completed_task.review!
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
@@ -217,11 +218,11 @@ RSpec.feature "Dispatch" do
 
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance, and Private Attorney")
-        page.find("#confirmNote").trigger("click")
 
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{@task.id}"
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+        page.find("#confirmNote").trigger("click")
 
         click_on "Finish Routing Claim"
 

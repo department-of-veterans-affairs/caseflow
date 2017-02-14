@@ -56,6 +56,7 @@ RSpec.feature "Test Setup" do
       task.prepare!
       task.assign!(:assigned, user)
       task.start!
+      task.review!
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
@@ -71,6 +72,7 @@ RSpec.feature "Test Setup" do
       task.prepare!
       task.assign!(:assigned, user)
       task.start!
+      task.review!
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"

@@ -5,14 +5,14 @@ class EstablishClaimsController < TasksController
 
   def perform
     # If we've already created the EP, we want to send the user to the note page
-    return render json: {require_note: true} if task.reviewed?
+    return render json: { require_note: true } if task.reviewed?
 
     Task.transaction do
       task.appeal.update!(special_issues_params)
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
-      task.complete!(status: 0) if !task.appeal.special_issues?
+      task.complete!(status: 0) unless task.appeal.special_issues?
     end
-    render json: {require_note: task.appeal.special_issues?}
+    render json: { require_note: task.appeal.special_issues? }
   end
 
   def note_complete

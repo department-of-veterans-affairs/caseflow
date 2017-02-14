@@ -57,7 +57,6 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-
     // Set initial state on page render
 
     // The reviewForm decisionType is needed in the state first since
@@ -121,10 +120,9 @@ export default class EstablishClaim extends BaseForm {
       });
     });
 
-    let numberOfSpecialIssues = 
-      Object.keys(this.state.specialIssues).filter((key) => {
-        return this.state.specialIssues[key].value;
-      }).length;
+    let numberOfSpecialIssues =
+      Object.keys(this.state.specialIssues).
+        filter((key) => this.state.specialIssues[key].value).length;
 
     if (numberOfSpecialIssues > 0) {
       // Force navigate to the note page on initial component mount

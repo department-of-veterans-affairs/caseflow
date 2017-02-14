@@ -1,5 +1,10 @@
 const StringUtil = {
 
+  camelCaseToSnakeCase(variable) {
+    // convert key from camelCase to snake_case
+    return variable.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+  },
+
   // Converts regular language to camelCase
   // 'VACOLS - 123, User' becomes 'vacolsUser'
   convertToCamelCase(phrase = '') {
@@ -13,11 +18,6 @@ const StringUtil = {
 
           return index === 0 ? match.toLowerCase() : match.toUpperCase();
         });
-  },
-
-  camelCaseToSnakeCase(variable) {
-    // convert key from camelCase to snake_case
-    return variable.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
   },
 
   leftPad(string, width, padding = '0') {

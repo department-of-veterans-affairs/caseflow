@@ -122,17 +122,23 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
+      review! if started?
       complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end
 
   def expire!
-    complete_and_recreate!(:expired)
+    Task.transaction do
+      review! if started?
+      complete_and_recreate!(:expired)
+    end
   end
 
   def assign_existing_end_product!(end_product_id)
-    complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep),
-                          outgoing_reference_id: end_product_id)
+    Task.transaction do
+      review!(outgoing_reference_id: end_product_id) if started?
+      complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep))
+    end
   end
 
   def complete_and_recreate!(status_code)
