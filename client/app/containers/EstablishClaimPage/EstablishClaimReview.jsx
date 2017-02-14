@@ -114,11 +114,16 @@ export default class EstablishClaimReview extends React.Component {
     return this.props.task.appeal.decisions.length > 1;
   }
 
-  buildIssueRow = (issue) => [
-    issue.program,
-    issue.description,
-    issue.disposition
-  ];
+  buildIssueRow = (issue, index) => {
+    let description = issue.description.map((descriptor) =>
+      <div key={`${descriptor}-${index}`}>{descriptor}</div>, null);
+
+    return [
+      issue.program,
+      <div>{description}</div>,
+      issue.disposition
+    ];
+  }
 
   render() {
     let {
