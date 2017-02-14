@@ -5,21 +5,6 @@ import ReactOnRails from 'react-on-rails';
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
 
-  // Converts regular language to camelCase
-  // 'VACOLS - 123, User' becomes 'vacolsUser'
-  convertToCamelCase(phrase = '') {
-    // Code courtesy of Stack Overflow, Question 2970525
-    return phrase.toLowerCase().
-        replace(/[^a-zA-Z ]/g, "").
-        replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-          if (Number(match) === 0) {
-            return "";
-          }
-
-          return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
-  },
-
   // Converts camelCase to snake_case
   convertToSnakeCase(data = {}) {
     let result = {};

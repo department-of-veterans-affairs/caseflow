@@ -2,6 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 
 import BaseForm from '../BaseForm';
 
@@ -13,6 +14,7 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
+import EstablishClaimNote from './EstablishClaimNote';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -20,6 +22,7 @@ import { createHashHistory } from 'history';
 export const REVIEW_PAGE = 'review';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
+export const NOTE_PAGE = 'note';
 
 
 export const END_PRODUCT_INFO = {
@@ -98,7 +101,9 @@ export default class EstablishClaim extends BaseForm {
       specialIssues: {}
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
+      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
+      this.state.specialIssues[camelCaseIssue] = new FormField(false);
+      this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
 
@@ -238,6 +243,9 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === FORM_PAGE;
   }
 
+  isNotePage() {
+    return this.state.page === NOTE_PAGE;
+  }
   /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
@@ -288,6 +296,18 @@ export default class EstablishClaim extends BaseForm {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
       this.handlePageChange(FORM_PAGE);
+    }
+  }
+
+  handleFormPageSubmit = () => {
+    let markedSpecialIssues = Object.keys(this.state.specialIssues).filter((key) => {
+      return this.state.specialIssues[key].value;
+    });
+    
+    if (markedSpecialIssues.length > 0) {
+      this.handlePageChange(NOTE_PAGE);  
+    } else {
+      this.handleSubmit();
     }
   }
 
@@ -362,7 +382,7 @@ export default class EstablishClaim extends BaseForm {
     let validOutput = true;
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value) {
+      if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
         validOutput = false;
       }
     });
@@ -421,10 +441,17 @@ export default class EstablishClaim extends BaseForm {
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
-            handleSubmit={this.handleSubmit}
+            handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             loading={loading}
             validModifiers={this.validModifiers()}
+          />
+        }
+        { this.isNotePage() &&
+          <EstablishClaimNote
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleSubmit}
+            specialIssues={specialIssues}
           />
         }
 

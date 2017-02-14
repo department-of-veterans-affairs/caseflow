@@ -4,7 +4,7 @@ import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 
@@ -250,13 +250,13 @@ export default class EstablishClaimReview extends React.Component {
           <div className="cf-multiple-columns">
             {issueType.map((issue, index) =>
               <Checkbox
-                id={ApiUtil.convertToCamelCase(issue)}
+                id={StringUtil.convertToCamelCase(issue)}
                 label={issue}
-                name={ApiUtil.convertToCamelCase(issue)}
+                name={StringUtil.convertToCamelCase(issue)}
                 onChange={handleFieldChange('specialIssues',
-                  ApiUtil.convertToCamelCase(issue))}
+                  StringUtil.convertToCamelCase(issue))}
                   key={index}
-                  {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
+                  {...specialIssues[StringUtil.convertToCamelCase(issue)]}
               />)
             }
           </div>
