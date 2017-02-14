@@ -53,16 +53,6 @@ class AppealRepository
     set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
-  def self.map_issues(issue_records)
-    issue_records.map do |issue|
-      {
-        description: issue[:issdesc],
-        disposition: VACOLS::Issues::DISPOSITION_CODE[issue[:issdc]],
-        program: issue[:issprog]
-      }
-    end
-  end
-
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
@@ -94,15 +84,16 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro],
-      issues: [{
-        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
-        disposition: "Granted",
-        program: "Compensation"
-      }]
+      status: VACOLS::Case::STATUS[case_record.bfmpro]
     )
 
     appeal
+  end
+
+  def self.issues(vacols_id:)
+    VACOLS::Issue.descriptions(vacols_id).map do |issue|
+      VACOLS::Issue.format(issue)
+    end
   end
 
   # :nocov:

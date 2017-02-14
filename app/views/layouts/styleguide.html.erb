@@ -1,0 +1,18 @@
+<% content_for :content do %>
+<div class="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+  <div class="cf-push-left cf-sg-nav">
+      <ul class="usa-sidenav-list">
+        <li>
+          <a href="/admin/styleguide#">Introduction</a>
+        </li>
+        <li>
+          <a href="#modals">Modals</a>
+        </li>
+      </ul>
+  </div>
+  <div class="cf-push-right cf-sg-content">
+    <%= yield(:styleguide_content)%>
+  </div>
+</div>
+<% end %>
+<%= render template: 'layouts/application' %>

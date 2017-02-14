@@ -98,7 +98,7 @@ describe('EstablishClaim', () => {
         wrapper.find('#vamc').simulate('change', { target: { checked: true } });
 
         // Click to create end product
-        wrapper.find('#button-Create-End-Product').simulate('click');
+        wrapper.find('#button-Route-Claim').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
       });
 
