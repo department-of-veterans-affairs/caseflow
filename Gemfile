@@ -40,7 +40,7 @@ gem 'wannabe_bool'
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '8a0939e894dd1231ab1d1a122be0f9c6796db4a7'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '68f7431a3e642ed41da5ff6568aa9d45c11e6aca'
 
 # PDF Tools
 gem 'pdf-forms'
