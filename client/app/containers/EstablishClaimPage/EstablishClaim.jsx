@@ -102,6 +102,7 @@ export default class EstablishClaim extends BaseForm {
     };
     SPECIAL_ISSUES.forEach((issue) => {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
+
       this.state.specialIssues[camelCaseIssue] = new FormField(false);
       this.state.specialIssues[camelCaseIssue].issue = issue;
     });
@@ -246,6 +247,7 @@ export default class EstablishClaim extends BaseForm {
   isNotePage() {
     return this.state.page === NOTE_PAGE;
   }
+
   /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
@@ -300,12 +302,11 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleFormPageSubmit = () => {
-    let markedSpecialIssues = Object.keys(this.state.specialIssues).filter((key) => {
-      return this.state.specialIssues[key].value;
-    });
-    
+    let markedSpecialIssues = Object.keys(this.state.specialIssues).
+      filter((key) => this.state.specialIssues[key].value);
+
     if (markedSpecialIssues.length > 0) {
-      this.handlePageChange(NOTE_PAGE);  
+      this.handlePageChange(NOTE_PAGE);
     } else {
       this.handleSubmit();
     }
