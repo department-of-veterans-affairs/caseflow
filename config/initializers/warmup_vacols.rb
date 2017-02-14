@@ -10,8 +10,10 @@ ActiveSupport.on_load(:active_record_vacols) do
   initial_pool_size = (ENV['DB_CONN_POOL_INITIAL_SIZE'] || db_config['pool'] / 2).to_i
   Rails.logger.info("creating #{initial_pool_size} initial connections...")
 
-  MetricsService.timer "created #{initial_pool_size} connections" do
-    warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
+  unless ApplicationController.dependencies_faked?
+    MetricsService.timer "created #{initial_pool_size} connections" do
+      warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
+    end
   end
 end
 
