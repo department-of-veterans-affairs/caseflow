@@ -90,6 +90,7 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
+      handleFinishCancelTask: null,
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
@@ -163,12 +164,19 @@ export default class EstablishClaim extends BaseForm {
     return values;
   }
 
-  handleFinishCancelTask = () => {
+  handleFinishCancelTask = (sendSpeicalIssues) => () => {
     let { id } = this.props.task;
     let { handleAlert, handleAlertClear } = this.props;
     let data = {
-      feedback: this.state.cancelModal.cancelFeedback.value
+      feedback: this.state.cancelModal.cancelFeedback.value,
+      specialIssues: null
     };
+
+    if (sendSpeicalIssues){
+      debugger;
+      data.specialIssues = ApiUtil.convertToSnakeCase(
+        this.getFormValues(this.state.specialIssues))
+    }
 
     handleAlertClear();
 
@@ -180,7 +188,9 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: true
     });
 
-    return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
+    data = ApiUtil.convertToSnakeCase(data);
+
+    return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
       this.reloadPage();
     }, () => {
       handleAlert(
@@ -204,13 +214,15 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true
+      cancelModalDisplay: true,
+      handleFinishCancelTask: this.handleFinishCancelTask(false)
     });
   }
 
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
+      handleFinishCancelTask: this.handleFinishCancelTask(true),
       specialIssueModalDisplay: false
     });
   }
@@ -347,7 +359,7 @@ export default class EstablishClaim extends BaseForm {
     let endProductInfo = this.getClaimTypeFromDecision();
 
 
-    return {
+    return ApiUtil.convertToSnakeCase({
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
@@ -355,7 +367,7 @@ export default class EstablishClaim extends BaseForm {
       }),
       specialIssues: ApiUtil.convertToSnakeCase(
         this.getFormValues(this.state.specialIssues))
-    };
+    });
   }
 
   validateReviewPageSubmit() {
@@ -437,7 +449,7 @@ export default class EstablishClaim extends BaseForm {
             { classNames: ["usa-button", "usa-button-secondary"],
               loading: modalSubmitLoading,
               name: 'Cancel EP Establishment',
-              onClick: this.handleFinishCancelTask
+              onClick: this.state.handleFinishCancelTask
             }
           ]}
           visible={true}
