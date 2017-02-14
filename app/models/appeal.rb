@@ -39,7 +39,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents || fetch_documents!
+    @documents ||= fetch_documents!
   end
 
   def annotations_on_documents
