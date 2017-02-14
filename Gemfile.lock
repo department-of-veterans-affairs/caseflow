@@ -109,7 +109,6 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-<<<<<<< HEAD
     aws-sdk (2.7.7)
       aws-sdk-resources (= 2.7.7)
     aws-sdk-core (2.7.7)
@@ -117,15 +116,6 @@ GEM
       jmespath (~> 1.0)
     aws-sdk-resources (2.7.7)
       aws-sdk-core (= 2.7.7)
-=======
-    aws-sdk (2.7.5)
-      aws-sdk-resources (= 2.7.5)
-    aws-sdk-core (2.7.5)
-      aws-sigv4 (~> 1.0)
-      jmespath (~> 1.0)
-    aws-sdk-resources (2.7.5)
-      aws-sdk-core (= 2.7.5)
->>>>>>> Update caseflow commons to the latest version
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
