@@ -144,10 +144,6 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
-        page.fill_in "Decision Date", with: "1"
-        click_on "Create End Product"
-
-        expect(page).to have_content("The date must be in mm/dd/yyyy format.")
       end
 
       scenario "Establish a new claim page and process pt2" do
@@ -157,9 +153,7 @@ RSpec.feature "Dispatch" do
         page.select "Full Grant", from: "decisionType"
         click_on "Route Claim"
 
-        # Test date, text, radio button, & checkbox inputs
-        date = "01/08/2017"
-        page.fill_in "Decision Date", with: date
+        # Test text, radio button, & checkbox inputs
         page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
@@ -172,7 +166,7 @@ RSpec.feature "Dispatch" do
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
-            date: Date.strptime(date, "%m/%d/%Y"),
+            date: @task.appeal.decision_date.to_date,
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
@@ -199,16 +193,12 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
         expect(page).to have_content("Benefit Type") # React works
 
-        page.fill_in "Decision Date", with: "01/01/1111"
-
         # page.go_back_in_browser (pseudocode)
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Review Decision")
 
         click_on "Create End Product"
-
-        expect(find_field("Decision Date").value).to eq("01/01/1111")
       end
 
       context "Multiple decisions in VBMS" do
@@ -303,7 +293,7 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            date: Date.strptime(date, "%m/%d/%Y"),
+            date: @task.appeal.decision_date.to_date,
             end_product_modifier: "171",
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
