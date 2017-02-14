@@ -84,5 +84,4 @@ class VACOLS::Issue < VACOLS::Record
   end
   # rubocop:enable MethodLength
   # :nocov:
-  
 end
