@@ -7,7 +7,7 @@ RSpec.feature "Test Setup" do
   end
 
   context "for certification" do
-    let(:test_appeal_id) { ENV["TEST_APPEAL_IDS"].split(',')[0] }
+    let(:test_appeal_id) { ENV["TEST_APPEAL_IDS"].split(",")[0] }
 
     before do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
