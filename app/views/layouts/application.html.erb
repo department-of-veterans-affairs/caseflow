@@ -70,7 +70,7 @@
         <a href="<%= logo_path %>" id="cf-logo-link">
           <h1 class="cf-logo"><%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>Caseflow <%= logo_name %></h1>
         </a>
-        <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
+        <h2 id="page-title" class="cf-application-title">&nbsp; &gt; &nbsp;<%= yield :page_title %></h2>
 
         <% unless current_user.nil? %>
           <div class="cf-dropdown cf-nav-dropdown">
