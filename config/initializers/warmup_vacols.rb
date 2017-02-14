@@ -1,5 +1,8 @@
 # VACOLS throttles the rate of new connections, create up front to prevent
 # blocking as pool grows under load
+
+WARMUP_TABLES = ["vacols.brieff", "vacols.corres", "vacols.folder"]
+
 ActiveSupport.on_load(:active_record_vacols) do
   db_config =  Rails.application.config.database_configuration[Rails.env]
 
@@ -21,11 +24,10 @@ def warmup_pool(pool, initial_pool_size)
       conn = pool.connection
       Rails.logger.info("taking connection #{i}; db pool size: #{pool.connections.size}")
 
-      [VACOLS::Case, VACOLS::Correspondent, VACOLS::Folder].each do |vacols_class|
-        name = vacols_class.table_name
-        Rails.logger.info("fetching indexes & columns for #{name} on connection #{i}")
-        conn.indexes(name)
-        conn.columns(name)
+      WARMUP_TABLES.each do |table_name|
+        Rails.logger.info("fetching indexes & columns for #{table_name} on connection #{i}")
+        conn.indexes(table_name)
+        conn.columns(table_name)
       end
 
 
