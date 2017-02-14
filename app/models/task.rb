@@ -220,7 +220,8 @@ class Task < ActiveRecord::Base
          :station_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
-         :issues] }],
+         :issues,
+         :to_hash] }],
       methods: [:progress_status]
     )
   end

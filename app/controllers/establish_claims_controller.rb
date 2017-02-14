@@ -4,7 +4,6 @@ class EstablishClaimsController < TasksController
   before_action :verify_manager_access, only: [:unprepared_tasks]
 
   def perform
-    binding.pry
     # If we've already created the EP, we want to send the user to the note page
     return render json: {require_note: true} if task.reviewed?
 

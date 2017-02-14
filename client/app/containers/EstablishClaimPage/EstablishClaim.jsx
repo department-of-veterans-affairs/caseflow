@@ -103,11 +103,14 @@ export default class EstablishClaim extends BaseForm {
     SPECIAL_ISSUES.forEach((issue) => {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
-      this.state.specialIssues[camelCaseIssue] = new FormField(false);
+      // Check special issue boxes based on what was sent from the database
+      let snakeCaseIssue = StringUtil.camelCaseToSnakeCase(camelCaseIssue);
+
+      this.state.specialIssues[camelCaseIssue] =
+        new FormField(props.task.appeal[snakeCaseIssue]);
       this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
-
 
   componentDidMount() {
     let { history } = this.state;
@@ -118,9 +121,22 @@ export default class EstablishClaim extends BaseForm {
       });
     });
 
-    // Force navigate to the review page on initial component mount
-    // This ensures they are not mid-flow
-    history.replace(DECISION_PAGE);
+    let numberOfSpecialIssues = 
+      Object.keys(this.state.specialIssues).filter((key) => {
+        return this.state.specialIssues[key].value;
+      }).length;
+
+    if (numberOfSpecialIssues > 0) {
+      // Force navigate to the note page on initial component mount
+      // when we have special issues. This means that they have
+      // already been saved in the database, but the user navigated
+      // back to the page before the task was complete.
+      history.replace(NOTE_PAGE);
+    } else {
+      // Force navigate to the review page on initial component mount
+      // This ensures they are not mid-flow
+      history.replace(DECISION_PAGE);
+    }
   }
 
   reloadPage = () => {
@@ -147,6 +163,9 @@ export default class EstablishClaim extends BaseForm {
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then((response) => {
         if (JSON.parse(response.text).require_note) {
+          this.setState({
+            loading: false
+          });
           this.handlePageChange(NOTE_PAGE);
         } else {
           this.reloadPage();

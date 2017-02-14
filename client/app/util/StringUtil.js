@@ -15,6 +15,11 @@ const StringUtil = {
         });
   },
 
+  camelCaseToSnakeCase(variable) {
+    // convert key from camelCase to snake_case
+    return variable.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+  },
+
   leftPad(string, width, padding = '0') {
     let padded = '';
 

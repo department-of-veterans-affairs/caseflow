@@ -1,6 +1,7 @@
 import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
+import StringUtil from './StringUtil';
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
@@ -11,8 +12,7 @@ const ApiUtil = {
 
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
-        // convert key from camelCase to snake_case
-        let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+        let snakeKey = StringUtil.camelCaseToSnakeCase(key);
 
         // assign value to new object
         result[snakeKey] = data[key];
