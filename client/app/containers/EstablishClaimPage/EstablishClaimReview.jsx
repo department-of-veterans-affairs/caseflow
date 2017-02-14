@@ -95,9 +95,9 @@ export default class EstablishClaimReview extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Create End Product For Decision 1";
+      endProductButtonText = "Route Claim for Decision 1";
     } else {
-      endProductButtonText = "Create End Product";
+      endProductButtonText = "Route Claim";
     }
     this.state = {
       endProductButtonText
@@ -106,7 +106,7 @@ export default class EstablishClaimReview extends React.Component {
 
   onTabSelected = (tabNumber) => {
     this.setState({
-      endProductButtonText: `Create End Product For Decision ${tabNumber + 1}`
+      endProductButtonText: `Route Claim for Decision ${tabNumber + 1}`
     });
   }
 
@@ -114,11 +114,16 @@ export default class EstablishClaimReview extends React.Component {
     return this.props.task.appeal.decisions.length > 1;
   }
 
-  buildIssueRow = (issue) => [
-    issue.program,
-    issue.description,
-    issue.disposition
-  ];
+  buildIssueRow = (issue, index) => {
+    let description = issue.description.map((descriptor) =>
+      <div key={`${descriptor}-${index}`}>{descriptor}</div>, null);
+
+    return [
+      issue.program,
+      <div>{description}</div>,
+      issue.disposition
+    ];
+  }
 
   render() {
     let {

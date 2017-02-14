@@ -45,6 +45,9 @@ class Dispatch
   end
 
   def initialize(claim:, task:)
+    # TODO(jd): If we permanently keep the decision date a non-editable field,
+    # we should instead pass that value from the taks.appeal.decision date, rather
+    # than use the value passed from the front end
     @claim = Claim.new(claim)
     @task = task
   end

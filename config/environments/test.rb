@@ -62,5 +62,5 @@ Rails.application.configure do
 
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "Certify Appeal"
-  ENV["TEST_APPEAL_ID"] = "123C"
+  ENV["TEST_APPEAL_IDS"] = "123C,456D,678E"
 end
