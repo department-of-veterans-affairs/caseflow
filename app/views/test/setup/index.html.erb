@@ -3,7 +3,7 @@
     <div class="usa-width-one-half">
       <p><a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a></p>
         <% if ENV["TEST_APPEAL_IDS"] %>
-          <% ENV["TEST_APPEAL_IDS"].split('').each do |appeal_id| %>
+          <% ENV["TEST_APPEAL_IDS"].split(',').each do |appeal_id| %>
            <p><%= link_to "Uncertify Appeal #{appeal_id}", test_setup_certification_path(appeal_id: appeal_id), method: :post %></p>
           <% end %>
         <% end %>
