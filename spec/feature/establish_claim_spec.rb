@@ -140,7 +140,7 @@ RSpec.feature "Dispatch" do
 
         page.select "Full Grant", from: "decisionType"
 
-        click_on "Create End Product"
+        click_on "Route Claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
@@ -151,7 +151,7 @@ RSpec.feature "Dispatch" do
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         page.select "Full Grant", from: "decisionType"
-        click_on "Create End Product"
+        click_on "Route Claim"
 
         # Test text, radio button, & checkbox inputs
         page.find("#gulfWarRegistry").trigger("click")
@@ -227,8 +227,8 @@ RSpec.feature "Dispatch" do
           # Text on the tab
           expect(page).to have_content("Decision 1 (")
           find("#tab-1").click
-          expect(page).to have_content("Create End Product For Decision 2")
-          click_on "Create End Product For Decision 2"
+          expect(page).to have_content("Route Claim for Decision 2")
+          click_on "Route Claim for Decision 2"
 
           expect(page).to have_content("Benefit Type")
         end
@@ -264,7 +264,7 @@ RSpec.feature "Dispatch" do
 
         page.select("Full Grant", from: "decisionType")
 
-        click_on "Create End Product"
+        click_on "Route Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("EP & Claim Label Modifiers in use")
 
@@ -275,7 +275,7 @@ RSpec.feature "Dispatch" do
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
         page.select("Partial Grant", from: "decisionType")
-        click_on "Create End Product"
+        click_on "Route Claim"
 
         click_on "Create New EP"
 
@@ -311,7 +311,7 @@ RSpec.feature "Dispatch" do
       click_on "Establish Next Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-      click_on "Create End Product"
+      click_on "Route Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Existing EP")
@@ -369,7 +369,7 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#privateAttorney").trigger("click")
-      click_on "Create End Product"
+      click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
     end
@@ -379,7 +379,7 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@task.id}"
       page.select "Remand", from: "decisionType"
       page.find("#mustardGas").trigger("click")
-      click_on "Create End Product"
+      click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
     end
@@ -389,7 +389,7 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@task.id}"
       page.select "Remand", from: "decisionType"
       page.find("#insurance").trigger("click")
-      click_on "Create End Product"
+      click_on "Route Claim"
       click_on "Create New EP"
       click_on "Create End Product"
       expect(page).to have_content("Congratulations!")
