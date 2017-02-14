@@ -204,9 +204,11 @@ RSpec.feature "Dispatch" do
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
+        # Select special issues
         page.find("#riceCompliance").trigger("click")
         page.find("#privateAttorney").trigger("click")
 
+        # Move on to note page
         click_on "Create End Product"
         click_on "Create End Product"
 
