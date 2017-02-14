@@ -19,10 +19,10 @@ import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
 
-export const REVIEW_PAGE = 'review';
+export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
-export const NOTE_PAGE = 'note';
+export const NOTE_PAGE = 'review';
 
 
 export const END_PRODUCT_INFO = {
@@ -96,7 +96,7 @@ export default class EstablishClaim extends BaseForm {
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
-      page: REVIEW_PAGE,
+      page: DECISION_PAGE,
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
@@ -114,13 +114,13 @@ export default class EstablishClaim extends BaseForm {
 
     history.listen((location) => {
       this.setState({
-        page: location.pathname.substring(1) || REVIEW_PAGE
+        page: location.pathname.substring(1) || DECISION_PAGE
       });
     });
 
     // Force navigate to the review page on initial component mount
     // This ensures they are not mid-flow
-    history.replace(REVIEW_PAGE);
+    history.replace(DECISION_PAGE);
   }
 
   reloadPage = () => {
@@ -145,8 +145,12 @@ export default class EstablishClaim extends BaseForm {
     let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then(() => {
-        this.reloadPage();
+      then((response) => {
+        if (JSON.parse(response.text).require_note) {
+          this.handlePageChange(NOTE_PAGE);
+        } else {
+          this.reloadPage();
+        }
       }, () => {
         this.setState({
           loading: false
@@ -228,7 +232,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   isReviewPage() {
-    return this.state.page === REVIEW_PAGE;
+    return this.state.page === DECISION_PAGE;
   }
 
   shouldShowAssociatePage() {
@@ -302,14 +306,30 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleFormPageSubmit = () => {
-    let markedSpecialIssues = Object.keys(this.state.specialIssues).
-      filter((key) => this.state.specialIssues[key].value);
+    this.handleSubmit();
+  }
 
-    if (markedSpecialIssues.length > 0) {
-      this.handlePageChange(NOTE_PAGE);
-    } else {
-      this.handleSubmit();
-    }
+  handleNotePageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/note-complete`).then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+      );
+      this.setState({
+        loading: false
+      });
+    });
   }
 
   handleAssociatePageSubmit = () => {
@@ -451,7 +471,7 @@ export default class EstablishClaim extends BaseForm {
         { this.isNotePage() &&
           <EstablishClaimNote
             appeal={this.props.task.appeal}
-            handleSubmit={this.handleSubmit}
+            handleSubmit={this.handleNotePageSubmit}
             specialIssues={specialIssues}
           />
         }

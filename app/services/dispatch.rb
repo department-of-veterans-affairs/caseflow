@@ -61,7 +61,7 @@ class Dispatch
     end_product = Appeal.repository.establish_claim!(claim: claim.to_hash,
                                                      appeal: task.appeal)
 
-    task.complete!(status: 0, outgoing_reference_id: end_product.claim_id)
+    task.review!(outgoing_reference_id: end_product.claim_id)
   end
 
   # Class used for validating the claim object

@@ -4,8 +4,20 @@ class EstablishClaimsController < TasksController
   before_action :verify_manager_access, only: [:unprepared_tasks]
 
   def perform
-    task.appeal.update!(special_issues_params)
-    Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
+    binding.pry
+    # If we've already created the EP, we want to send the user to the note page
+    return render json: {require_note: true} if task.reviewed?
+
+    Task.transaction do
+      task.appeal.update!(special_issues_params)
+      Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
+      task.complete!(status: 0) if !task.appeal.special_issues?
+    end
+    render json: {require_note: task.appeal.special_issues?}
+  end
+
+  def note_complete
+    task.complete!(status: 0)
     render json: {}
   end
 

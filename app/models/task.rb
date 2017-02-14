@@ -68,7 +68,7 @@ class Task < ActiveRecord::Base
 
   aasm do
     state :unprepared, initial: true
-    state :unassigned, :assigned, :started, :completed
+    state :unassigned, :assigned, :started, :reviewed, :completed
 
     ## The 'unprepared' state is being used for establish claim tasks to designate
     #  tasks attached to appeals that do not have decision documents. Tasks that are
@@ -86,8 +86,16 @@ class Task < ActiveRecord::Base
       transitions from: :assigned, to: :started, after: :start_time
     end
 
+    # The 'review' state is being used for establish claim tasks to designate that an
+    # external action has been completed, and we want to the user to perform one more
+    # action or review the external action. In the case of establish claim we're letting
+    # them add a note to VBMS
+    event :review do
+      transitions from: :started, to: :reviewed, after: proc { |*args| save_outgoing_reference(*args) }
+    end
+
     event :complete do
-      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -159,10 +167,15 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def save_completion_status(status:, outgoing_reference_id: nil)
+  def save_completion_status(status:)
     update!(
       completed_at: Time.now.utc,
-      completion_status: status,
+      completion_status: status
+    )
+  end
+
+  def save_outgoing_reference(outgoing_reference_id: nil)
+    update!(
       outgoing_reference_id: outgoing_reference_id
     )
   end
