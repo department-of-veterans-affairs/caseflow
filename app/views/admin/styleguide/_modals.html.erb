@@ -1,0 +1,22 @@
+&lt;%<br />
+  modal_id = "&lt;MODAL_ID_HERE&gt;"<br />
+%&gt;<br />
+&lt;section class="cf-modal" id="&lt;%= modal_id %&gt;" role="alertdialog" aria-labelledby="&lt;%= modal_id %&gt;-title" aria-describedby="&lt;%= modal_id %&gt;-desc"&gt;<br />
+<br />
+  &lt;div class="cf-modal-body"&gt;<br />
+    &lt;!-- Modal box messaging --&gt;<br />
+    &lt;button type="button" class="cf-modal-close cf-action-closemodal"&gt;<br />
+      &lt;%=svg_icon(:close)%&gt;<br />
+    &lt;/button&gt;<br />
+    &lt;h1 class="cf-modal-title" id="&lt;%= modal_id %&gt;-title"&gt;Modal title.&lt;/h1&gt;<br />
+    &lt;p class="cf-modal-normal-text" id="&lt;%= modal_id %&gt;-desc"&gt;<br />
+      This is an informational modal.<br />
+    &lt;/p&gt;<br />
+    &lt;div class="cf-modal-divider"&gt;&lt;/div&gt;<br />
+    &lt;div class="cf-push-row cf-modal-controls"&gt;<br />
+      &lt;button type="button" class="usa-button-outline cf-action-closemodal cf-push-left" data-controls="#&lt;%= modal_id%&gt;"&gt;Go back&lt;/button&gt;<br />
+      &lt;a href="#" class="cf-push-right usa-button usa-button-secondary"&gt;Confirm&lt;/a&gt;<br />
+    &lt;/div&gt;<br />
+    &lt;!-- /modal box messaging --&gt;<br />
+  &lt;/div&gt;<br />
+&lt;/section&gt;<br />
