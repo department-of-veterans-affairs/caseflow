@@ -3,6 +3,7 @@ class VACOLS::Issue < VACOLS::Record
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
+  # :nocov:
   def self.format(issue)
     description = ["#{issue['isscode']} - #{issue['isscode_label']}"]
     description.push("#{issue['isslev1']} - #{issue['isslev1_label']}") if issue["isslev1"]
@@ -82,4 +83,6 @@ class VACOLS::Issue < VACOLS::Record
     SQL
   end
   # rubocop:enable MethodLength
+  # :nocov:
+  
 end
