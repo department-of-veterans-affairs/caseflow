@@ -38,8 +38,8 @@ RSpec.feature "Test Setup" do
 
       expect(certification.reload.completed_at).to eq(Time.zone.now)
       visit "test/setup"
-      expect(page).to have_content("Uncertify Appeal")
-      click_link("Uncertify Appeal")
+      expect(page).to have_content("Uncertify Appeal #{test_appeal_id}")
+      click_link("Uncertify Appeal #{test_appeal_id}")
       expect(Certification.where(id: certification.id).count).to eq(0)
     end
   end
