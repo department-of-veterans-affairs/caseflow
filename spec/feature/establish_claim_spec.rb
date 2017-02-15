@@ -368,7 +368,7 @@ RSpec.feature "Dispatch" do
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#privateAttorney").trigger("click")
+      page.find("#privateAttorneyOrAgent").trigger("click")
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
