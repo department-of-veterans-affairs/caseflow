@@ -201,7 +201,7 @@ RSpec.feature "Dispatch" do
 
         # Select special issues
         page.find("#riceCompliance").trigger("click")
-        page.find("#privateAttorney").trigger("click")
+        page.find("#privateAttorneyOrAgent").trigger("click")
 
         # Move on to note page
         click_on "Route Claim"

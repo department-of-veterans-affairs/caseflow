@@ -123,15 +123,16 @@ export default class EstablishClaim extends BaseForm {
       // already been saved in the database, but the user navigated
       // back to the page before the task was complete.
       return NOTE_PAGE;
-    } else {
-      // Force navigate to the review page on initial component mount
-      // This ensures they are not mid-flow
-      return DECISION_PAGE;
     }
+
+    // Force navigate to the review page on initial component mount
+    // This ensures they are not mid-flow
+    return DECISION_PAGE;
   }
 
   componentDidMount() {
     let { history } = this.state;
+
     history.listen((location) => {
       // If we are on the note page and you try to move to
       // a previous page in the flow then we bump you back
