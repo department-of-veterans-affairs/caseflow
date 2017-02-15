@@ -96,6 +96,7 @@ export default class EstablishClaim extends BaseForm {
       loading: false,
       modalSubmitLoading: false,
       page: DECISION_PAGE,
+      showNotePageAlert: false,
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
@@ -111,15 +112,7 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  componentDidMount() {
-    let { history } = this.state;
-
-    history.listen((location) => {
-      this.setState({
-        page: location.pathname.substring(1) || DECISION_PAGE
-      });
-    });
-
+  defaultPage() {
     let numberOfSpecialIssues =
       Object.keys(this.state.specialIssues).
         filter((key) => this.state.specialIssues[key].value).length;
@@ -129,12 +122,34 @@ export default class EstablishClaim extends BaseForm {
       // when we have special issues. This means that they have
       // already been saved in the database, but the user navigated
       // back to the page before the task was complete.
-      history.replace(NOTE_PAGE);
+      return NOTE_PAGE;
     } else {
       // Force navigate to the review page on initial component mount
       // This ensures they are not mid-flow
-      history.replace(DECISION_PAGE);
+      return DECISION_PAGE;
     }
+  }
+
+  componentDidMount() {
+    let { history } = this.state;
+    history.listen((location) => {
+      // If we are on the note page and you try to move to
+      // a previous page in the flow then we bump you back
+      // to the note page.
+      if (this.state.page === NOTE_PAGE &&
+        location.pathname.substring(1) !== NOTE_PAGE) {
+        this.handlePageChange(NOTE_PAGE);
+        this.setState({
+          showNotePageAlert: true
+        });
+      } else {
+        this.setState({
+          page: location.pathname.substring(1) || DECISION_PAGE
+        });
+      }
+    });
+
+    history.replace(this.defaultPage());
   }
 
   reloadPage = () => {
@@ -502,6 +517,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimNote
             appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
+            showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
           />
         }

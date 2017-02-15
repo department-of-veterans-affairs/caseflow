@@ -43,6 +43,19 @@ export default class EstablishClaimNote extends BaseForm {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Route Claim</h2>
+          {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
+            <div className="usa-alert-body">
+              <div>
+                <h3 className="usa-alert-heading">Cannot edit end product</h3>
+                <p className="usa-alert-text">
+                  You cannot navigate to the previous page because the end
+                  product has already been created and cannot be edited.
+                  Please proceed with adding the note below in VBMS.
+                </p>
+              </div>
+            </div>
+          </div>}
+
           <p>To better route this claim, please open VBMS and
           attach the following note to the EP you just created.</p>
 
