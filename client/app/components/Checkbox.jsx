@@ -29,7 +29,7 @@ export default class Checkbox extends React.Component {
 }
 
 Checkbox.propTypes = {
-  label: PropTypes.string,
+  label: PropTypes.node,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   value: PropTypes.bool
