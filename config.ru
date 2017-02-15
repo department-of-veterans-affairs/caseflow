@@ -31,7 +31,7 @@ module PumaThreadLogger
   def initialize *args
     Thread.new do
       loop do
-        sleep 1
+        sleep 30
 
         thread_count = 0
         backlog = 0

@@ -17,6 +17,7 @@
 //= require clipboard
 //= require jquery
 //= require jquery_ujs
+//= require components
 //= require_tree ./application
 window.onload = function () {
   // We want to be able to turn jQuery off on react pages since it
@@ -48,5 +49,3 @@ $(function () {
   "use strict";
   new Clipboard('[data-clipboard-text]');
 });
-
-

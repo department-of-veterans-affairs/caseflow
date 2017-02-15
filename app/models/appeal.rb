@@ -22,7 +22,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
-  vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
 
   SPECIAL_ISSUE_COLUMNS = %i(rice_compliance private_attorney waiver_of_overpayment
@@ -40,7 +39,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents || fetch_documents!
+    @documents ||= fetch_documents!
   end
 
   def annotations_on_documents
@@ -170,10 +169,6 @@ class Appeal < ActiveRecord::Base
     return "Remand" if remand?
   end
 
-  def days_since_decision
-    (Time.zone.now - decision_date).to_i / 1.day
-  end
-
   # Does this appeal have any special issues
   def special_issues?
     SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
@@ -266,6 +261,10 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(sanitized_vbms_id))
 
     Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
+  end
+
+  def issues
+    @issues ||= self.class.repository.issues(vacols_id)
   end
 
   def sanitized_vbms_id

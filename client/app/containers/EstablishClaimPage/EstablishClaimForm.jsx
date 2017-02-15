@@ -58,7 +58,7 @@ export default class EstablishClaimForm extends React.Component {
            label="Decision Date"
            name="date"
            onChange={handleFieldChange('claimForm', 'date')}
-           required={true}
+           readOnly={true}
            {...claimForm.date}
           />
           <TextField

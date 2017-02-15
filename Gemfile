@@ -1,6 +1,7 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fa1b297b9"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "488c712271d84658f8602b1bba4b1c71a5e781bd"
+
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -12,6 +13,7 @@ gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
+gem "rack-timeout"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -39,7 +41,7 @@ gem 'wannabe_bool'
 gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '8a0939e894dd1231ab1d1a122be0f9c6796db4a7'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '68f7431a3e642ed41da5ff6568aa9d45c11e6aca'
 
 # PDF Tools
 gem 'pdf-forms'

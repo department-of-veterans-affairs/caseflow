@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: fa1b297b996ec3b228c45a0c9cb0452131360cc3
-  ref: fa1b297b9
+  revision: 488c712271d84658f8602b1bba4b1c71a5e781bd
+  ref: 488c712271d84658f8602b1bba4b1c71a5e781bd
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -28,8 +28,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 8a0939e894dd1231ab1d1a122be0f9c6796db4a7
-  ref: 8a0939e894dd1231ab1d1a122be0f9c6796db4a7
+  revision: 68f7431a3e642ed41da5ff6568aa9d45c11e6aca
+  ref: 68f7431a3e642ed41da5ff6568aa9d45c11e6aca
   specs:
     bgs (0.1)
       nokogiri
@@ -109,13 +109,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.7.4)
-      aws-sdk-resources (= 2.7.4)
-    aws-sdk-core (2.7.4)
+    aws-sdk (2.7.7)
+      aws-sdk-resources (= 2.7.7)
+    aws-sdk-core (2.7.7)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.7.4)
-      aws-sdk-core (= 2.7.4)
+    aws-sdk-resources (2.7.7)
+      aws-sdk-core (= 2.7.7)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -265,6 +265,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rack-timeout (0.4.2)
     rails (4.2.7.1)
       actionmailer (= 4.2.7.1)
       actionpack (= 4.2.7.1)
@@ -480,6 +481,7 @@ DEPENDENCIES
   prometheus-client
   pry
   puma (~> 2.16.0)
+  rack-timeout
   rails (= 4.2.7.1)
   rails_stdout_logging
   rainbow
