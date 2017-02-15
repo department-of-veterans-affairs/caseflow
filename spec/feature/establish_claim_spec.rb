@@ -370,6 +370,8 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
+
+      # The special issue should not be saved on cancel
       expect(@task.appeal.reload.rice_compliance).to be_falsey
     end
 
