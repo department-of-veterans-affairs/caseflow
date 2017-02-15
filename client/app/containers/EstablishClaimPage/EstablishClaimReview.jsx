@@ -4,7 +4,7 @@ import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 
@@ -16,48 +16,49 @@ export const DECISION_TYPE = [
   'Remand'
 ];
 
-export const SPECIAL_ISSUE_FULL = [
-  'Rice Compliance',
-  'Private Attorney',
-  'Waiver of Overpayment',
-  'Pensions',
-  'VAMC',
+export const SPECIAL_ISSUES = [
+  'Contaminated Water at Camp LeJeune',
+  'DIC - death, or accrued benefits - United States',
+  `Education - GI Bill, dependents educational ` +
+    `assistance, scholarship, transfer of entitlement`,
+  'Foreign claim - compensation claims, dual claims, appeals',
+  'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
+  'Foreign pension, DIC - all other foreign countries',
+  'Hearing - including travel board & video conference',
+  'Home Loan Guarantee',
   'Incarcerated Veterans',
-  'DIC - death, or accrued benefits',
-  'Education or Vocational Rehab',
-  'Foreign Claims'
+  'Insurance',
+  'Manlincon Compliance',
+  'Mustard Gas',
+  'National Cemetery Administration',
+  'Non-rating issue',
+  'Pension - United States',
+  'Private Attorney or Agent',
+  'Radiation',
+  'Rice Compliance',
+  'Spina Bifida',
+  `U.S. Territory claim - American Samoa, Guam, Northern ` +
+    `Mariana Islands (Rota, Saipan & Tinian)`,
+  'U.S. Territory claim - Philippines',
+  'U.S. Territory claim - Puerto Rico and Virgin Islands',
+  'VAMC',
+  'Vocational Rehab',
+  'Waiver of Overpayment'
 ];
 
-export const SPECIAL_ISSUE_PARTIAL = [
-  'Manlincon Compliance',
-  'Rice Compliance',
-  'Private Attorney',
-  'Hearings - travel board & video conference',
-  'Contaminated Water at Camp Lejeune',
-  'Home Loan Guaranty',
-  'Waiver of Overpayment',
-  'Education or Vocational Rehab',
-  'VAMC',
-  'Insurance',
-  'National Cemetery Administration',
-  'Spina Bifida',
-  'Radiation',
-  'Non-rating Issues',
-  'Foreign Claims',
-  'Incarcerated Veterans',
-  'Proposed Incompetency',
-  'Manila Remand',
-  'Mustard Gas',
-  'Dependencies',
-  'DIC - death, or accrued benefits'
-];
+
+const SPECIAL_ISSUE_NODE_MAP = {
+  'Manlincon Compliance': <span><i>Manlincon</i> Compliance</span>,
+  'Rice Compliance': <span><i>Rice</i> Compliance</span>
+};
 
 export const UNHANDLED_SPECIAL_ISSUES = [
-  'Pensions',
+  'Pension - United States',
   'VAMC',
-  'DIC - death, or accrued benefits',
-  'Foreign Claims',
-  'Education or Vocational Rehab',
+  'DIC - death, or accrued benefits - United States',
+  'Foreign claim - compensation claims, dual claims, appeals',
+  'Education - GI Bill, dependents educational ' +
+    'assistance, scholarship, transfer of entitlement',
   'Waiver of Overpayment',
   'National Cemetery Administration'
 ];
@@ -74,16 +75,14 @@ export const ROUTING_SPECIAL_ISSUES = [
 ];
 
 export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
-  'dependencies',
-  'educationOrVocationalRehab',
-  'hearingsTravelBoardVideoConference',
-  'homeLoanGuaranty',
+  `educationGiBillDependentsEducational` +
+    `AssistanceScholarshipTransferOfEntitlement`,
+  'hearingIncludingTravelBoardVideoConference',
+  'homeLoanGuarantee',
   'incarceratedVeterans',
-  'manilaRemand',
   'manlinconCompliance',
-  'nonratingIssues',
-  'privateAttorney',
-  'proposedIncompetency',
+  'nonratingIssue',
+  'privateAttorneyOrAgent',
   'radiation',
   'riceCompliance',
   'spinaBifida'
@@ -142,14 +141,6 @@ export default class EstablishClaimReview extends React.Component {
 
     let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
     let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
-
-    let issueType = (() => {
-      if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
-        return SPECIAL_ISSUE_PARTIAL;
-      }
-
-      return SPECIAL_ISSUE_FULL;
-    })();
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
@@ -249,18 +240,22 @@ export default class EstablishClaimReview extends React.Component {
            {...decisionType}
           />
 
-          <label>Special Issue Categories</label>
+          <label><b>Select Special Issue(s)</b></label>
           <div className="cf-multiple-columns">
-            {issueType.map((issue, index) =>
-              <Checkbox
-                id={ApiUtil.convertToCamelCase(issue)}
-                label={issue}
-                name={ApiUtil.convertToCamelCase(issue)}
-                onChange={handleFieldChange('specialIssues',
-                  ApiUtil.convertToCamelCase(issue))}
-                  key={index}
-                  {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
-              />)
+            {
+              SPECIAL_ISSUES.map((issue, index) => {
+                let issueName = StringUtil.convertToCamelCase(issue);
+                let node = SPECIAL_ISSUE_NODE_MAP[issue] || issue;
+
+                return <Checkbox
+                  id={issueName}
+                  label={node}
+                  name={issueName}
+                  onChange={handleFieldChange('specialIssues', issueName)}
+                    key={index}
+                    {...specialIssues[issueName]}
+                />;
+              })
             }
           </div>
         </div>
