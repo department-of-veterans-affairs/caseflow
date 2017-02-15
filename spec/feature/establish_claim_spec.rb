@@ -51,7 +51,7 @@ RSpec.feature "Dispatch" do
 
     appeal = Appeal.create(
       vacols_id: "789E",
-      vbms_id: 'new_vbms_id'
+      vbms_id: "new_vbms_id"
     )
     @task2 = EstablishClaim.create(appeal: appeal)
     @task2.prepare!
