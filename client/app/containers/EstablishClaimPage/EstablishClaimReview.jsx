@@ -19,7 +19,8 @@ export const DECISION_TYPE = [
 export const SPECIAL_ISSUES = [
   'Contaminated Water at Camp LeJeune',
   'DIC - death, or accrued benefits - United States',
-  'Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement',
+  `Education - GI Bill, dependents educational ` +
+    `assistance, scholarship, transfer of entitlement`,
   'Foreign claim - compensation claims, dual claims, appeals',
   'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
   'Foreign pension, DIC - all other foreign countries',
@@ -36,7 +37,8 @@ export const SPECIAL_ISSUES = [
   'Radiation',
   'Rice Compliance',
   'Spina Bifida',
-  'U.S. Territory claim - American Samoa, Guam, Northern Mariana Islands (Rota, Saipan & Tinian)',
+  `U.S. Territory claim - American Samoa, Guam, Northern ` +
+    `Mariana Islands (Rota, Saipan & Tinian)`,
   'U.S. Territory claim - Philippines',
   'U.S. Territory claim - Puerto Rico and Virgin Islands',
   'VAMC',
@@ -48,15 +50,15 @@ export const SPECIAL_ISSUES = [
 const SPECIAL_ISSUE_NODE_MAP = {
   'Manlincon Compliance': <span><i>Manlincon</i> Compliance</span>,
   'Rice Compliance': <span><i>Rice</i> Compliance</span>
-}
-
+};
 
 export const UNHANDLED_SPECIAL_ISSUES = [
-  'Pensions',
+  'Pension - United States',
   'VAMC',
-  'DIC - death, or accrued benefits',
-  'Foreign Claims',
-  'Education or Vocational Rehab',
+  'DIC - death, or accrued benefits - United States',,
+  'Foreign claim - compensation claims, dual claims, appeals',
+  `Education - GI Bill, dependents educational ` +
+    `assistance, scholarship, transfer of entitlement`,
   'Waiver of Overpayment',
   'National Cemetery Administration'
 ];
@@ -73,16 +75,14 @@ export const ROUTING_SPECIAL_ISSUES = [
 ];
 
 export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
-  'dependencies',
-  'educationOrVocationalRehab',
-  'hearingsTravelBoardVideoConference',
-  'homeLoanGuaranty',
+  `educationGiBillDependentsEducational` +
+    `AssistanceScholarshipTransferOfEntitlement`,
+  'hearingIncludingTravelBoardVideoConference',
+  'homeLoanGuarantee',
   'incarceratedVeterans',
-  'manilaRemand',
   'manlinconCompliance',
-  'nonratingIssues',
-  'privateAttorney',
-  'proposedIncompetency',
+  'nonratingIssue',
+  'privateAttorneyOrAgent',
   'radiation',
   'riceCompliance',
   'spinaBifida'
@@ -242,19 +242,23 @@ export default class EstablishClaimReview extends React.Component {
            {...decisionType}
           />
 
-          <label>Special Issue Categories</label>
+          <label><b>Select Special Issue(s)</b></label>
           <div className="cf-multiple-columns">
-            {SPECIAL_ISSUES.map((issue, index) => {
-              let issueName = ApiUtil.convertToCamelCase(issue);
-              let node = SPECIAL_ISSUE_NODE_MAP[issue] || issue
-              return <Checkbox
-                id={issueName}
-                label={node}
-                name={issueName}
-                onChange={handleFieldChange('specialIssues', issueName)}
-                  key={index}
-                  {...specialIssues[issueName]}
-              />;})
+            {
+              SPECIAL_ISSUES.map((issue, index) => {
+                let issueName = ApiUtil.convertToCamelCase(issue);
+                let node = SPECIAL_ISSUE_NODE_MAP[issue] || issue;
+
+
+                return <Checkbox
+                  id={issueName}
+                  label={node}
+                  name={issueName}
+                  onChange={handleFieldChange('specialIssues', issueName)}
+                    key={index}
+                    {...specialIssues[issueName]}
+                />;
+              })
             }
           </div>
         </div>
