@@ -55,10 +55,10 @@ const SPECIAL_ISSUE_NODE_MAP = {
 export const UNHANDLED_SPECIAL_ISSUES = [
   'Pension - United States',
   'VAMC',
-  'DIC - death, or accrued benefits - United States',,
+  'DIC - death, or accrued benefits - United States',
   'Foreign claim - compensation claims, dual claims, appeals',
-  `Education - GI Bill, dependents educational ` +
-    `assistance, scholarship, transfer of entitlement`,
+  'Education - GI Bill, dependents educational ' +
+    'assistance, scholarship, transfer of entitlement',
   'Waiver of Overpayment',
   'National Cemetery Administration'
 ];

@@ -339,8 +339,9 @@ export default class EstablishClaim extends BaseForm {
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
       this.getFormValues(this.state.specialIssues));
+
     Object.keys(formValues).forEach((key) => {
-      shortenedObject[key.substring(0,60)] = formValues[key];
+      shortenedObject[key.substring(0, 60)] = formValues[key];
     });
 
     return shortenedObject;
