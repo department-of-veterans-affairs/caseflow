@@ -42,7 +42,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
