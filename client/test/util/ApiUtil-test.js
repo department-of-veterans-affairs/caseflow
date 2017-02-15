@@ -37,8 +37,8 @@ describe('ApiUtil', () => {
     beforeEach(() => {
       obj = {
         camelCaseKey: 'val',
-        secondKey: 'val2',
-        nestedKey: { secondaryKey: 'val3' }
+        nestedKey: { secondaryKey: 'val3' },
+        secondKey: 'val2'
       };
     });
 

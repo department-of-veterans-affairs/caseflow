@@ -167,8 +167,7 @@ export default class EstablishClaim extends BaseForm {
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
     let data = {
-      feedback: this.state.cancelModal.cancelFeedback.value,
-      specialIssues: null
+      feedback: this.state.cancelModal.cancelFeedback.value
     };
 
     if (this.state.submitSpecialIssuesOnCancel) {
@@ -219,8 +218,8 @@ export default class EstablishClaim extends BaseForm {
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      submitSpecialIssuesOnCancel: true,
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: false,
+      submitSpecialIssuesOnCancel: true
     });
   }
 
@@ -447,7 +446,7 @@ export default class EstablishClaim extends BaseForm {
             { classNames: ["usa-button", "usa-button-secondary"],
               loading: modalSubmitLoading,
               name: 'Cancel EP Establishment',
-              onClick: this.state.handleFinishCancelTask
+              onClick: this.handleFinishCancelTask
             }
           ]}
           visible={true}
