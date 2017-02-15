@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 
 // container components
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
+import StyleGuide from './StyleGuide';
 import TasksManagerIndex from './TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionReviewer from './DecisionReviewer';
@@ -15,6 +16,7 @@ const Pages = {
   DecisionReviewer,
   EstablishClaim,
   EstablishClaimComplete,
+  StyleGuide,
   TasksManagerIndex,
   TestPage,
   UnpreparedTasksIndex

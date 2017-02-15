@@ -104,8 +104,12 @@ export default class Modal extends React.Component {
   }
 }
 
+Modal.defaultProps = {
+  buttons: []
+};
+
 Modal.propTypes = {
-  butons: PropTypes.arrayOf(PropTypes.object),
+  buttons: PropTypes.arrayOf(PropTypes.object),
   label: PropTypes.string,
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired
