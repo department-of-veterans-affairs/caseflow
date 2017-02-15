@@ -211,7 +211,7 @@ RSpec.feature "Dispatch" do
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
 
         # Make sure note page contains the special issues
-        expect(find_field("VBMS Note").value).to have_content("Rice Compliance, and Private Attorney")
+        expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{@task.id}"
