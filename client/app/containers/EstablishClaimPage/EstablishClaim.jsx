@@ -332,6 +332,20 @@ export default class EstablishClaim extends BaseForm {
         this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
+  prepareSpecialIssues() {
+    // The database column names must be less than 63 characters
+    // so we shorten all of the keys in our hash before we send
+    // them to the backend.
+    let shortenedObject = {};
+    let formValues = ApiUtil.convertToSnakeCase(
+      this.getFormValues(this.state.specialIssues));
+    Object.keys(formValues).forEach((key) => {
+      shortenedObject[key.substring(0,60)] = formValues[key];
+    });
+
+    return shortenedObject;
+  }
+
   prepareData() {
     let stateObject = this.state;
 
@@ -346,15 +360,13 @@ export default class EstablishClaim extends BaseForm {
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
-
     return {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       }),
-      specialIssues: ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues))
+      specialIssues: this.prepareSpecialIssues()
     };
   }
 
