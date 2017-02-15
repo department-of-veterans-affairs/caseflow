@@ -19,6 +19,7 @@ describe ReassignOldTasksJob do
     finished_task.prepare!
     finished_task.assign!(:assigned, user2)
     finished_task.start!
+    finished_task.review!
     finished_task.complete!(:completed, status: status_code)
   end
 

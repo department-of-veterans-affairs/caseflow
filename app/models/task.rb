@@ -68,7 +68,7 @@ class Task < ActiveRecord::Base
 
   aasm do
     state :unprepared, initial: true
-    state :unassigned, :assigned, :started, :completed
+    state :unassigned, :assigned, :started, :reviewed, :completed
 
     ## The 'unprepared' state is being used for establish claim tasks to designate
     #  tasks attached to appeals that do not have decision documents. Tasks that are
@@ -86,8 +86,16 @@ class Task < ActiveRecord::Base
       transitions from: :assigned, to: :started, after: :start_time
     end
 
+    # The 'review' state is being used for establish claim tasks to designate that an
+    # external action has been completed, and we want to the user to perform one more
+    # action or review the external action. In the case of establish claim we're letting
+    # them add a note to VBMS
+    event :review do
+      transitions from: :started, to: :reviewed, after: proc { |*args| save_outgoing_reference(*args) }
+    end
+
     event :complete do
-      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -114,17 +122,23 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
+      review! if may_review?
       complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end
 
   def expire!
-    complete_and_recreate!(:expired)
+    Task.transaction do
+      review! if may_review?
+      complete_and_recreate!(:expired)
+    end
   end
 
   def assign_existing_end_product!(end_product_id)
-    complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep),
-                          outgoing_reference_id: end_product_id)
+    Task.transaction do
+      review!(outgoing_reference_id: end_product_id) if may_review?
+      complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep))
+    end
   end
 
   def complete_and_recreate!(status_code)
@@ -159,10 +173,15 @@ class Task < ActiveRecord::Base
   end
 
   # completion_status is 0 for success, or non-zero to specify another completed case
-  def save_completion_status(status:, outgoing_reference_id: nil)
+  def save_completion_status(status:)
     update!(
       completed_at: Time.now.utc,
-      completion_status: status,
+      completion_status: status
+    )
+  end
+
+  def save_outgoing_reference(outgoing_reference_id: nil)
+    update!(
       outgoing_reference_id: outgoing_reference_id
     )
   end
@@ -207,7 +226,8 @@ class Task < ActiveRecord::Base
          :station_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
-         :issues] }],
+         :issues,
+         :to_hash] }],
       methods: [:progress_status]
     )
   end

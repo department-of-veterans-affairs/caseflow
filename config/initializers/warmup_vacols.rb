@@ -1,15 +1,23 @@
-
-# VACOLS throttles the rate of new connections, create up front to prevent 
+# VACOLS throttles the rate of new connections, create up front to prevent
 # blocking as pool grows under load
+
+WARMUP_TABLES = ["vacols.brieff", "vacols.corres", "vacols.folder"]
+
 ActiveSupport.on_load(:active_record_vacols) do
+
+  # skip if accessing via 'rails c'
+  next if defined? Rails::Console
+
   db_config =  Rails.application.config.database_configuration[Rails.env]
 
   # use specified initial pool size, default to half the maximum size
   initial_pool_size = (ENV['DB_CONN_POOL_INITIAL_SIZE'] || db_config['pool'] / 2).to_i
   Rails.logger.info("creating #{initial_pool_size} initial connections...")
 
-  MetricsService.timer "created #{initial_pool_size} connections" do
-    warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
+  unless ApplicationController.dependencies_faked?
+    MetricsService.timer "created #{initial_pool_size} connections" do
+      warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
+    end
   end
 end
 
@@ -21,6 +29,7 @@ def warmup_pool(pool, initial_pool_size)
     threads << Thread.new do
       conn = pool.connection
       Rails.logger.info("taking connection #{i}; db pool size: #{pool.connections.size}")
+
       latch.count_down
 
       # don't return the connection to the pool until all other threads have taken a connection;
@@ -32,4 +41,12 @@ def warmup_pool(pool, initial_pool_size)
   end
 
   threads.each(&:join)
+
+  # Warmup active record too, by querying for index & columns
+  conn = VACOLS::Record.connection
+  WARMUP_TABLES.each do |table_name|
+    Rails.logger.info("fetching indexes & columns for #{table_name}")
+    conn.indexes(table_name)
+    conn.columns(table_name)
+  end
 end
