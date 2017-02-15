@@ -341,13 +341,13 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      click_on "Cancel EP Establishment"
+      click_on "Stop Processing Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
       expect(page).to have_content("Please enter an explanation")
 
       # Close modal
-      click_on "\u00AB Go Back"
+      click_on "Close"
       expect(page).to_not have_css(".cf-modal")
 
       # Open modal
@@ -355,11 +355,11 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Fill in explanation and cancel
-      page.fill_in "Cancel Explanation", with: "Test"
-      click_on "Cancel EP Establishment"
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop Processing Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      expect(page).to have_content("EP Establishment Canceled")
+      expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
