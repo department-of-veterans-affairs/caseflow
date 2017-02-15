@@ -16,8 +16,7 @@ class EstablishClaimsController < TasksController
   end
 
   def cancel
-    binding.pry
-    task.appeal.update!(optional_special_issues_params) if optional_special_issues_params
+    task.appeal.update!(special_issues_params) if params[:special_issues]
     task.cancel!(cancel_feedback)
 
     respond_to do |format|
@@ -56,18 +55,6 @@ class EstablishClaimsController < TasksController
 
   def special_issues_params
     params.require(:special_issues).permit(:rice_compliance, :private_attorney, :waiver_of_overpayment,
-                                          :pensions, :vamc, :incarcerated_veterans,
-                                          :dic_death_or_accrued_benefits, :education_or_vocational_rehab,
-                                          :foreign_claims, :manlincon_compliance,
-                                          :hearings_travel_board_video_conference, :home_loan_guaranty,
-                                          :insurance, :national_cemetery_administration, :spina_bifida,
-                                          :radiation, :nonrating_issues, :proposed_incompetency,
-                                          :manila_remand, :contaminated_water_at_camp_lejeune,
-                                          :mustard_gas, :dependencies)
-  end
-
-  def optional_special_issues_params
-    params.permit(:special_issues).permit(:rice_compliance, :private_attorney, :waiver_of_overpayment,
                                           :pensions, :vamc, :incarcerated_veterans,
                                           :dic_death_or_accrued_benefits, :education_or_vocational_rehab,
                                           :foreign_claims, :manlincon_compliance,

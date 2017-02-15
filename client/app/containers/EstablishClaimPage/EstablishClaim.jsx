@@ -173,7 +173,6 @@ export default class EstablishClaim extends BaseForm {
     };
 
     if (sendSpeicalIssues){
-      debugger;
       data.specialIssues = ApiUtil.convertToSnakeCase(
         this.getFormValues(this.state.specialIssues))
     }
@@ -426,6 +425,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             history={history}
+            specialIssues={ApiUtil.convertToSnakeCase(
+              this.getFormValues(this.state.specialIssues))}
           />
         }
         { this.isFormPage() &&
