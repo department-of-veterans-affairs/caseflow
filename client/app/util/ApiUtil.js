@@ -22,6 +22,9 @@ const ApiUtil = {
 
   // Converts camelCase to snake_case
   convertToSnakeCase(data = {}) {
+    if (typeof data !== 'object') {
+      return data;
+    }
     let result = {};
 
     for (let key in data) {
@@ -30,7 +33,7 @@ const ApiUtil = {
         let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
 
         // assign value to new object
-        result[snakeKey] = data[key];
+        result[snakeKey] = ApiUtil.convertToSnakeCase(data[key]);
       }
     }
 

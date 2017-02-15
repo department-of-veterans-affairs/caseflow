@@ -37,17 +37,19 @@ describe('ApiUtil', () => {
     beforeEach(() => {
       obj = {
         camelCaseKey: 'val',
-        secondKey: 'val2'
+        secondKey: 'val2',
+        nestedKey: { secondaryKey: 'val3' }
       };
     });
 
     it('converts object keys', () => {
       let result = ApiUtil.convertToSnakeCase(obj);
-      let length = 2;
+      let length = 3;
 
       expect(Object.keys(result).length).to.eq(length);
       expect(result.camel_case_key).to.eq('val');
       expect(result.second_key).to.eq('val2');
+      expect(result.nested_key.secondary_key).to.eq('val3');
     });
   });
 

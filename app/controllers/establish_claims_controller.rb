@@ -4,25 +4,28 @@ class EstablishClaimsController < TasksController
   before_action :verify_manager_access, only: [:unprepared_tasks]
 
   def perform
-    task.appeal.update!(special_issues_params)
-    Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
+    Task.transaction do
+      task.appeal.update!(special_issues_params)
+      Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
+    end
     render json: {}
   end
 
   def assign_existing_end_product
-    task.appeal.update!(special_issues_params)
-    task.assign_existing_end_product!(params[:end_product_id])
+    Task.transaction do
+      task.appeal.update!(special_issues_params)
+      task.assign_existing_end_product!(params[:end_product_id])
+    end
     render json: {}
   end
 
   def cancel
-    task.appeal.update!(special_issues_params) if params[:special_issues]
-    task.cancel!(cancel_feedback)
-
-    respond_to do |format|
-      format.html { redirect_to establish_claims_path }
-      format.json { render json: {} }
+    Task.transaction do
+      task.appeal.update!(special_issues_params) if params[:special_issues]
+      task.cancel!(cancel_feedback)
     end
+
+    render json: {}
   end
 
   def unprepared_tasks

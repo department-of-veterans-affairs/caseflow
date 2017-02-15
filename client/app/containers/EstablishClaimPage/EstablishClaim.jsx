@@ -90,13 +90,13 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
-      handleFinishCancelTask: null,
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
       page: REVIEW_PAGE,
       specialIssueModalDisplay: false,
-      specialIssues: {}
+      specialIssues: {},
+      submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
       this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
@@ -164,16 +164,15 @@ export default class EstablishClaim extends BaseForm {
     return values;
   }
 
-  handleFinishCancelTask = (sendSpeicalIssues) => () => {
+  handleFinishCancelTask = () => {
     let { id } = this.props.task;
     let data = {
       feedback: this.state.cancelModal.cancelFeedback.value,
       specialIssues: null
     };
 
-    if (sendSpeicalIssues) {
-      data.specialIssues = ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues));
+    if (this.state.submitSpecialIssuesOnCancel) {
+      data.specialIssues = this.getFormValues(this.state.specialIssues);
     }
 
     this.props.handleAlertClear();
@@ -213,14 +212,14 @@ export default class EstablishClaim extends BaseForm {
   handleCancelTask = () => {
     this.setState({
       cancelModalDisplay: true,
-      handleFinishCancelTask: this.handleFinishCancelTask(false)
+      submitSpecialIssuesOnCancel: false
     });
   }
 
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      handleFinishCancelTask: this.handleFinishCancelTask(true),
+      submitSpecialIssuesOnCancel: true,
       specialIssueModalDisplay: false
     });
   }
@@ -358,13 +357,12 @@ export default class EstablishClaim extends BaseForm {
 
 
     return ApiUtil.convertToSnakeCase({
-      claim: ApiUtil.convertToSnakeCase({
+      claim: {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      }),
-      specialIssues: ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues))
+      },
+      specialIssues: this.getFormValues(this.state.specialIssues)
     });
   }
 
