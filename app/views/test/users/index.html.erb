@@ -18,6 +18,9 @@
       <p><a href="/certifications/new/789C">Already Certified</a></p>
       <p><a href="/certifications/new/321C">Remands Decided</a></p>
       <p><a href="/certifications/new/654C">Full Grant Decided</a></p>
+      <% if ENV["TEST_APPEAL_ID"] %>
+	  <p><%= link_to "Uncertify Test Appeal", test_setup_certification_path(appeal_id: ENV["TEST_APPEAL_ID"]), method: :post %></p>
+      <% end %>
       <p><a href="/certifications/new/000ERR">VBMS Error</a></p>
       <p><a href="/certifications/new/001ERR">Unable to Certify</a></p>
       <h2>Misc.</h2>
