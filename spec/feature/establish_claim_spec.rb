@@ -311,6 +311,9 @@ RSpec.feature "Dispatch" do
       click_on "Establish Next Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
+      # set special issue to ensure it is saved in the database
+      page.find("#insurance").trigger("click")
+
       click_on "Route Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -323,6 +326,7 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completion_status)
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
+      expect(@task.appeal.reload.insurance).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -335,6 +339,9 @@ RSpec.feature "Dispatch" do
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
+
+      # click on special issue
+      page.find("#riceCompliance").trigger("click")
 
       # Open modal
       click_on "Cancel"
@@ -363,6 +370,19 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
+      expect(@task.appeal.reload.rice_compliance).to be_falsey
+    end
+
+    scenario "An unhandled special issue brings up cancel modal" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#dicDeathOrAccruedBenefits").trigger("click")
+      click_on "Route Claim"
+      click_on "Cancel Claim Establishment"
+      page.fill_in "Cancel Explanation", with: "Test"
+      click_on "Cancel EP Establishment"
+      expect(page).to have_content("EP Establishment Canceled")
+      expect(@task.appeal.reload.dic_death_or_accrued_benefits).to be_truthy
     end
 
     scenario "A regional office special issue routes correctly" do

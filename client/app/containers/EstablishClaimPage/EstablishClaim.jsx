@@ -166,18 +166,17 @@ export default class EstablishClaim extends BaseForm {
 
   handleFinishCancelTask = (sendSpeicalIssues) => () => {
     let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
     let data = {
       feedback: this.state.cancelModal.cancelFeedback.value,
       specialIssues: null
     };
 
-    if (sendSpeicalIssues){
+    if (sendSpeicalIssues) {
       data.specialIssues = ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues))
+        this.getFormValues(this.state.specialIssues));
     }
 
-    handleAlertClear();
+    this.props.handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
@@ -192,7 +191,7 @@ export default class EstablishClaim extends BaseForm {
     return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
       this.reloadPage();
     }, () => {
-      handleAlert(
+      this.props.handleAlert(
         'error',
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
