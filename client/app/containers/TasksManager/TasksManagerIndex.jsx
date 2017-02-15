@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
 import _uniqBy from 'lodash/uniqBy';
 
-import ApiUtil from '../util/ApiUtil';
-
-import Table from '../components/Table';
+import ApiUtil from '../../util/ApiUtil';
+import TextField from '../../components/TextField';
+import Button from '../../components/Button';
+import Table from '../../components/Table';
 
 const TABLE_HEADERS = ['Name', 'Veteran ID', 'Status', 'Worked By'];
 
@@ -16,7 +17,8 @@ export default class TasksManagerIndex extends React.Component {
       completedTasks: props.completedTasks,
       // zero-based indexing for pages
       completedTasksPage: 0,
-      isLoadingTasks: false
+      isLoadingTasks: false,
+      employeeCount: 0
     };
   }
 
@@ -93,6 +95,21 @@ export default class TasksManagerIndex extends React.Component {
           {completedCountToday} cases processed today, {toCompleteCount} in queue
         </span>
       </h1>
+
+      <h3>Enter the number of people working today.</h3>
+      <div className="usa-grid-full">
+        <TextField
+          label="Number of people"
+          name="numberOfPeople"
+          readOnly={false}
+          onChange={this.handleFieldChange('cancelModal', 'numberOfPeople')}
+          placeholder={this.state.employeeCount}
+        />
+        <Button
+          name="Update"
+          classNames={[]}
+        />
+      </div>
 
       <div className="usa-grid-full">
         <div className="usa-width-one-half">
