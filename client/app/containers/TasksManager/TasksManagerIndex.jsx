@@ -2,13 +2,14 @@ import React, { PropTypes } from 'react';
 import _uniqBy from 'lodash/uniqBy';
 
 import ApiUtil from '../../util/ApiUtil';
-import TextField from '../../components/TextField';
-import Button from '../../components/Button';
 import Table from '../../components/Table';
+import TasksManagerEmployeeCount from './TasksManagerEmployeeCount';
+import BaseForm from '../BaseForm';
+import FormField from '../../util/FormField';
 
 const TABLE_HEADERS = ['Name', 'Veteran ID', 'Status', 'Worked By'];
 
-export default class TasksManagerIndex extends React.Component {
+export default class TasksManagerIndex extends BaseForm {
   constructor(props) {
     super(props);
 
@@ -18,7 +19,9 @@ export default class TasksManagerIndex extends React.Component {
       // zero-based indexing for pages
       completedTasksPage: 0,
       isLoadingTasks: false,
-      employeeCount: 0
+      employeeCountForm: {
+        employeeCount: new FormField(0)
+      }
     };
   }
 
@@ -96,20 +99,10 @@ export default class TasksManagerIndex extends React.Component {
         </span>
       </h1>
 
-      <h3>Enter the number of people working today.</h3>
-      <div className="usa-grid-full">
-        <TextField
-          label="Number of people"
-          name="numberOfPeople"
-          readOnly={false}
-          onChange={this.handleFieldChange('cancelModal', 'numberOfPeople')}
-          placeholder={this.state.employeeCount}
-        />
-        <Button
-          name="Update"
-          classNames={[]}
-        />
-      </div>
+      <TasksManagerEmployeeCount
+        employeeCountForm={this.state.employeeCountForm}
+        handleFieldChange={this.handleFieldChange}
+      />
 
       <div className="usa-grid-full">
         <div className="usa-width-one-half">
