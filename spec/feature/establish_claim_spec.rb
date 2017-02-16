@@ -421,9 +421,9 @@ RSpec.feature "Dispatch" do
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
       click_on "Route Claim"
       click_on "Cancel Claim Establishment"
-      page.fill_in "Cancel Explanation", with: "Test"
-      click_on "Cancel EP Establishment"
-      expect(page).to have_content("EP Establishment Canceled")
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop Processing Claim"
+      expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
 
