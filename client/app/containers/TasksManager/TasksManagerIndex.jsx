@@ -20,7 +20,7 @@ export default class TasksManagerIndex extends BaseForm {
       completedTasksPage: 0,
       isLoadingTasks: false,
       employeeCountForm: {
-        employeeCount: new FormField(0)
+        employeeCount: new FormField('0')
       }
     };
   }
@@ -47,6 +47,9 @@ export default class TasksManagerIndex extends BaseForm {
     return _uniqBy(tasks, (task) => task.id);
   }
 
+  handleEmployeeCountUpdate() {
+    console.log('am i in here?');
+  }
 
   fetchCompletedTasks = (event) => {
     let { handleAlert, handleAlertClear } = this.props;
@@ -101,6 +104,7 @@ export default class TasksManagerIndex extends BaseForm {
 
       <TasksManagerEmployeeCount
         employeeCountForm={this.state.employeeCountForm}
+        handleEmployeeCountUpdate={this.handleEmployeeCountUpdate}
         handleFieldChange={this.handleFieldChange}
       />
 

@@ -7,6 +7,7 @@ export default class TasksManagerEmployeeCount extends React.Component {
 
     let {
       employeeCountForm,
+      handleEmployeeCountUpdate,
       handleFieldChange
     } = this.props;
 
@@ -24,6 +25,7 @@ export default class TasksManagerEmployeeCount extends React.Component {
           <Button
             name="Update"
             classNames={[]}
+            onClick={handleEmployeeCountUpdate}
           />
         </div>
       </div>
@@ -32,5 +34,6 @@ export default class TasksManagerEmployeeCount extends React.Component {
 
 TasksManagerEmployeeCount.propTypes = {
   employeeCountForm: PropTypes.object.isRequired,
+  handleEmployeeCountUpdate: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired
 }
