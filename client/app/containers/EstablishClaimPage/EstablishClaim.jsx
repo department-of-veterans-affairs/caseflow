@@ -98,7 +98,8 @@ export default class EstablishClaim extends BaseForm {
       page: DECISION_PAGE,
       showNotePageAlert: false,
       specialIssueModalDisplay: false,
-      specialIssues: {}
+      specialIssues: {},
+      submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
@@ -208,12 +209,15 @@ export default class EstablishClaim extends BaseForm {
 
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
     let data = {
       feedback: this.state.cancelModal.cancelFeedback.value
     };
 
-    handleAlertClear();
+    if (this.state.submitSpecialIssuesOnCancel) {
+      data.specialIssues = this.getFormValues(this.state.specialIssues);
+    }
+
+    this.props.handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
@@ -223,10 +227,12 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: true
     });
 
-    return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
+    data = ApiUtil.convertToSnakeCase(data);
+
+    return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
       this.reloadPage();
     }, () => {
-      handleAlert(
+      this.props.handleAlert(
         'error',
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
@@ -247,14 +253,16 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true
+      cancelModalDisplay: true,
+      submitSpecialIssuesOnCancel: false
     });
   }
 
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: false,
+      submitSpecialIssuesOnCancel: true
     });
   }
 
@@ -423,14 +431,14 @@ export default class EstablishClaim extends BaseForm {
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
-    return {
-      claim: ApiUtil.convertToSnakeCase({
+    return ApiUtil.convertToSnakeCase({
+      claim: {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      }),
-      specialIssues: this.prepareSpecialIssues()
-    };
+      },
+      specialIssues: this.getFormValues(this.state.specialIssues)
+    });
   }
 
   validateReviewPageSubmit() {
@@ -488,6 +496,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             history={history}
+            specialIssues={ApiUtil.convertToSnakeCase(
+              this.getFormValues(this.state.specialIssues))}
           />
         }
         { this.isFormPage() &&
