@@ -34,7 +34,9 @@ Rails.application.routes.draw do
       patch 'assign', on: :collection
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
+      post 'note-complete', on: :member
       get 'pdf', on: :member
+      patch 'cancel', on: :member
     end
   end
 
@@ -51,10 +53,6 @@ Rails.application.routes.draw do
               only: [:index] do
       get 'pdf', on: :collection
     end
-  end
-
-  resources :tasks, only: [] do
-    patch 'cancel', on: :member
   end
 
   patch "certifications" => "certifications#create"

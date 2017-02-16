@@ -101,11 +101,11 @@ describe Dispatch do
   end
 
   context "#establish_claim!" do
-    it "completes the task" do
+    it "moves the task to review" do
       task.start!
       expect(task.completed?).to be_falsey
       dispatch.establish_claim!
-      expect(task.reload.completed?).to be_truthy
+      expect(task.reload.reviewed?).to be_truthy
       expect(task.outgoing_reference_id).to eq("12345")
     end
 

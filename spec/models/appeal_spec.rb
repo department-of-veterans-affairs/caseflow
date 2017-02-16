@@ -468,7 +468,7 @@ describe Appeal do
   end
 
   context "#special_issues?" do
-    let(:appeal) { Appeal.new(vacols_id: "123", dependencies: true) }
+    let(:appeal) { Appeal.new(vacols_id: "123", us_territory_claim_philippines: true) }
     subject { appeal.special_issues? }
 
     it "is true if any special issues exist" do
@@ -476,7 +476,7 @@ describe Appeal do
     end
 
     it "is false if no special issues exist" do
-      appeal.update!(dependencies: false)
+      appeal.update!(us_territory_claim_philippines: false)
       expect(subject).to be_falsy
     end
   end
