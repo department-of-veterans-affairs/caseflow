@@ -460,22 +460,22 @@ export default class EstablishClaim extends BaseForm {
   }
 
   handleFieldChangeForTextBox = (form, field) => (value) => {
-    this.handleFieldChange(form, field)(value)
+    this.handleFieldChange(form, field)(value);
     this.setState({
       currentTextValue: value
-    })
+    });
   };
 
   getModalButtonClassNames() {
-    let buttonClassDisabled = ["usa-button", "usa-button-disabled"]
-    let buttonClassEnabled = ["usa-button", "usa-button-secondary"]
-    if(this.state.currentTextValue === ""
-    || typeof this.state.currentTextValue === undefined) {
+    let buttonClassDisabled = ["usa-button", "usa-button-disabled"];
+    let buttonClassEnabled = ["usa-button", "usa-button-secondary"];
+
+    if (this.state.currentTextValue === "") {
       return buttonClassDisabled;
     }
-    else {
-      return buttonClassEnabled;
-    }
+
+    return buttonClassEnabled;
+
   }
 
   render() {
