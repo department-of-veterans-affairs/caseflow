@@ -26,19 +26,5 @@ describe('TasksManagerIndex', () => {
     beforeEach(() => {
       tasks = createTask(5);
     });
-
-    context('See more link', () => {
-      it('shows when more available completed tasks', () => {
-        completedCountTotal = 10;
-        renderPage();
-        expect(wrapper.find('#fetchCompletedTasks')).to.have.length(1);
-      });
-
-      it('hides when already have all completed tasks', () => {
-        completedCountTotal = 3;
-        renderPage();
-        expect(wrapper.find('#fetchCompletedTasks')).to.have.length(0);
-      });
-    });
   });
 });
