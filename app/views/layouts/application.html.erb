@@ -68,7 +68,7 @@
     <nav class="cf-nav <%= content_for?(:full_page_content)? "cf-nav-full-screen": ""%>">
       <div class="usa-grid-full">
         <a href="<%= logo_path %>" id="cf-logo-link">
-          <h1 class="cf-logo"><%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>Caseflow <%= logo_name %></h1>
+          <h1 class="cf-logo"><%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>Caseflow</h1> <span class="cf-logo-name"><%= logo_name %></span>
         </a>
         <h2 id="page-title" class="cf-application-title">&nbsp; &gt; &nbsp;<%= yield :page_title %></h2>
 
