@@ -319,18 +319,6 @@ export default class EstablishClaim extends BaseForm {
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
-  handleDecisionTypeChange = (value) => {
-    this.handleFieldChange('reviewForm', 'decisionType')(value);
-
-    let stateObject = {};
-    let modifiers = this.validModifiers();
-
-    stateObject.claimForm = { ...this.state.claimForm };
-    stateObject.claimForm.endProductModifier.value = modifiers[0];
-
-    this.setState(stateObject);
-  }
-
   handleReviewPageSubmit = () => {
     this.setStationState();
 
@@ -486,7 +474,6 @@ export default class EstablishClaim extends BaseForm {
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handleSubmit={this.handleReviewPageSubmit}
