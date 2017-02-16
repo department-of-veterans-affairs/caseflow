@@ -33,7 +33,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
 
           allAnnotations.push(annotation);
           this.storedAnnotations[documentId] = allAnnotations;
-          let data = { annotation: ApiUtil.convertToSnakeCase(annotation) };
+          let data = ApiUtil.convertToSnakeCase({ annotation });
 
           ApiUtil.post(`/decision/review/annotation`, { data }).
               then((response) => {
@@ -87,7 +87,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           }
           this.storedAnnotations[documentId][index] = annotation;
 
-          let data = { annotation: ApiUtil.convertToSnakeCase(annotation) };
+          let data = ApiUtil.convertToSnakeCase({ annotation });
 
           ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
               then(() => {
