@@ -84,7 +84,8 @@ export const ROUTING_SPECIAL_ISSUES = [
     stationOfJurisdiction: '355 - San Juan, Puerto Rico'
   },
   {
-    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthernMarianaIslandsRotaSaipanTinian',
+    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
+      'MarianaIslandsRotaSaipanTinian',
     stationOfJurisdiction: '459 - Honolulu, HI'
   }
 ];
