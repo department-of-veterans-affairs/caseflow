@@ -47,16 +47,12 @@ export default class TasksManagerIndex extends BaseForm {
     return _uniqBy(tasks, (task) => task.id);
   }
 
-  reloadPage = () => {
-    window.location.href = window.location.pathname + window.location.search;
-  }
-
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
 
 
     return ApiUtil.patch(`/dispatch/employee-count/${count}`).then(() => {
-      this.reloadPage();
+      window.location.reload();
     }, () => {
       this.props.handleAlert(
         'error',

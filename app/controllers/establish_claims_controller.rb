@@ -28,6 +28,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def update_employee_count
+    Rails.cache.write("employee_count", params[:count])
+    render json: {}
+  end
+
   def cancel
     Task.transaction do
       task.appeal.update!(special_issues_params) if params[:special_issues]

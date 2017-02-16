@@ -1,7 +1,3 @@
-<%
-  count = '0'
-  count = Rails.cache.read('employee_count') if Rails.cache.read('employee_count')
-%>
 <%= react_component("BaseContainer", props: {
   page: "TasksManagerIndex",
   currentTasks: current_tasks.map(&:to_hash),
@@ -9,5 +5,5 @@
   toCompleteCount: @to_complete_count,
   completedCountToday: @completed_count_today,
   completedCountTotal: completed_count_total,
-  employeeCount: count
+  employeeCount: Rails.cache.read('employee_count') || '0'
 }) %>
