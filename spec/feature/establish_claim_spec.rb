@@ -105,6 +105,7 @@ RSpec.feature "Dispatch" do
       @completed_task.prepare!
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
+      @completed_task.review!
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
@@ -144,10 +145,6 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
-        page.fill_in "Decision Date", with: "1"
-        click_on "Create End Product"
-
-        expect(page).to have_content("The date must be in mm/dd/yyyy format.")
       end
 
       scenario "Establish a new claim page and process pt2" do
@@ -157,14 +154,17 @@ RSpec.feature "Dispatch" do
         page.select "Full Grant", from: "decisionType"
         click_on "Route Claim"
 
-        # Test date, text, radio button, & checkbox inputs
-        date = "01/08/2017"
-        page.fill_in "Decision Date", with: date
+        # Test text, radio button, & checkbox inputs
         page.find("#gulfWarRegistry").trigger("click")
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Congratulations!")
+
+        # We should not have this message on the congratulations page unless a special
+        # issue was checked.
+        expect(page).to_not have_content("Manually Added VBMS Note")
+
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
             benefit_type_code: "1",
@@ -172,7 +172,7 @@ RSpec.feature "Dispatch" do
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
-            date: Date.strptime(date, "%m/%d/%Y"),
+            date: @task.appeal.decision_date.to_date,
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
@@ -193,13 +193,42 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
+      scenario "Establish a new claim with special issues" do
+        visit "/dispatch/establish-claim"
+
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        # Select special issues
+        page.find("#riceCompliance").trigger("click")
+        page.find("#privateAttorneyOrAgent").trigger("click")
+
+        # Move on to note page
+        click_on "Route Claim"
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+
+        # Make sure note page contains the special issues
+        expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
+
+        # Ensure that the user stays on the note page on a refresh
+        visit "/dispatch/establish-claim/#{@task.id}"
+        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+        page.find("#confirmNote").trigger("click")
+
+        click_on "Finish Routing Claim"
+
+        expect(page).to have_content("Manually Added VBMS Note")
+        expect(@task.appeal.reload.rice_compliance).to be_truthy
+      end
+
       skip "Establish Claim form saves state when going back/forward in browser" do
         @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Create End Product"
         expect(page).to have_content("Benefit Type") # React works
-
-        page.fill_in "Decision Date", with: "01/01/1111"
 
         # page.go_back_in_browser (pseudocode)
 
@@ -207,8 +236,6 @@ RSpec.feature "Dispatch" do
         expect(page).to have_content("Review Decision")
 
         click_on "Create End Product"
-
-        expect(find_field("Decision Date").value).to eq("01/01/1111")
       end
 
       context "Multiple decisions in VBMS" do
@@ -303,7 +330,7 @@ RSpec.feature "Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            date: Date.strptime(date, "%m/%d/%Y"),
+            date: @task.appeal.decision_date.to_date,
             end_product_modifier: "171",
             end_product_label: "AMC-Partial Grant",
             end_product_code: "170PGAMC",
@@ -321,6 +348,9 @@ RSpec.feature "Dispatch" do
       click_on "Establish Next Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
+      # set special issue to ensure it is saved in the database
+      page.find("#insurance").trigger("click")
+
       click_on "Route Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -333,6 +363,7 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completion_status)
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
+      expect(@task.appeal.reload.insurance).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -345,6 +376,9 @@ RSpec.feature "Dispatch" do
     scenario "Cancel an Establish Claim task returns me to landing page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
+
+      # click on special issue
+      page.find("#riceCompliance").trigger("click")
 
       # Open modal
       click_on "Cancel"
@@ -373,12 +407,27 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
+
+      # The special issue should not be saved on cancel
+      expect(@task.appeal.reload.rice_compliance).to be_falsey
+    end
+
+    scenario "An unhandled special issue brings up cancel modal" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+      click_on "Route Claim"
+      click_on "Cancel Claim Establishment"
+      page.fill_in "Cancel Explanation", with: "Test"
+      click_on "Cancel EP Establishment"
+      expect(page).to have_content("EP Establishment Canceled")
+      expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
 
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#privateAttorney").trigger("click")
+      page.find("#privateAttorneyOrAgent").trigger("click")
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
@@ -392,18 +441,6 @@ RSpec.feature "Dispatch" do
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
-    end
-
-    scenario "A special issue is chosen and saved in database" do
-      @task.assign!(:assigned, current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
-      page.select "Remand", from: "decisionType"
-      page.find("#insurance").trigger("click")
-      click_on "Route Claim"
-      click_on "Create New EP"
-      click_on "Create End Product"
-      expect(page).to have_content("Congratulations!")
-      expect(@task.appeal.reload.insurance).to be_truthy
     end
   end
 end

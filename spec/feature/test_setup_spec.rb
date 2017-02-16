@@ -7,7 +7,7 @@ RSpec.feature "Test Setup" do
   end
 
   context "for certification" do
-    let(:test_appeal_id) { ENV["TEST_APPEAL_ID"] }
+    let(:test_appeal_id) { ENV["TEST_APPEAL_IDS"].split(",")[0] }
 
     before do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
@@ -25,7 +25,7 @@ RSpec.feature "Test Setup" do
 
       expect(certification.reload.completed_at).to eq(Time.zone.now)
       visit "test/setup"
-      click_link("Uncertify Appeal")
+      click_link("Uncertify Appeal #{test_appeal_id}")
       expect(Certification.where(id: certification.id).count).to eq(1)
     end
 
@@ -38,8 +38,8 @@ RSpec.feature "Test Setup" do
 
       expect(certification.reload.completed_at).to eq(Time.zone.now)
       visit "test/setup"
-      expect(page).to have_content("Uncertify Appeal")
-      click_link("Uncertify Appeal")
+      expect(page).to have_content("Uncertify Appeal #{test_appeal_id}")
+      click_link("Uncertify Appeal #{test_appeal_id}")
       expect(Certification.where(id: certification.id).count).to eq(0)
     end
   end
@@ -56,6 +56,7 @@ RSpec.feature "Test Setup" do
       task.prepare!
       task.assign!(:assigned, user)
       task.start!
+      task.review!
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
@@ -71,6 +72,7 @@ RSpec.feature "Test Setup" do
       task.prepare!
       task.assign!(:assigned, user)
       task.start!
+      task.review!
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"

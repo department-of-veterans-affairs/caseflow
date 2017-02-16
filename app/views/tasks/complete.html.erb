@@ -1,8 +1,10 @@
 <% content_for :page_title do task.appeal.task_header end %>
+<% checklist = ["Reviewed decision", "EP established"] 
+   checklist.push("Manually Added VBMS Note") if task.appeal.special_issues? %>
 <%= react_component("BaseContainer", props: {
     availableTasks: !!current_user_next_task,
     buttonText: start_text,
-    checklist: ["Reviewed decision", "EP established"],
+    checklist: checklist,
     firstHeader: "Congratulations!",
     page: "EstablishClaimComplete",
     secondHeader: task.appeal.veteran_name + "'s End Product has been created."
