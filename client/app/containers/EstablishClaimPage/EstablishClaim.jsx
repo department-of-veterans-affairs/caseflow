@@ -55,8 +55,6 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-    this.handleFieldChangeForTextBox = this.handleFieldChangeForTextBox.bind(this);
-    this.getModalButtonClassNames = this.getModalButtonClassNames.bind(this);
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -459,25 +457,6 @@ export default class EstablishClaim extends BaseForm {
     return validOutput;
   }
 
-  handleFieldChangeForTextBox = (form, field) => (value) => {
-    this.handleFieldChange(form, field)(value);
-    this.setState({
-      currentTextValue: value
-    });
-  };
-
-  getModalButtonClassNames() {
-    let buttonClassDisabled = ["usa-button", "usa-button-disabled"];
-    let buttonClassEnabled = ["usa-button", "usa-button-secondary"];
-
-    if (this.state.currentTextValue === "") {
-      return buttonClassDisabled;
-    }
-
-    return buttonClassEnabled;
-
-  }
-
   render() {
     let {
       loading,
@@ -550,7 +529,8 @@ export default class EstablishClaim extends BaseForm {
               name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
-            { classNames: this.getModalButtonClassNames(),
+            { classNames: ["usa-button", "usa-button-secondary"],
+              disabled: this.state.cancelModal.cancelFeedback.value === "",
               loading: modalSubmitLoading,
               name: 'Stop Processing Claim',
               onClick: this.handleFinishCancelTask
@@ -565,12 +545,12 @@ export default class EstablishClaim extends BaseForm {
             saved and an EP will not be created for this claim.
           </p>
           <p>
-            Please tell why you have chosen to discontinue processing this claim.
+            Please tell us why you have chosen to discontinue processing this claim.
           </p>
           <TextareaField
             label="Explanation"
             name="Explanation"
-            onChange={this.handleFieldChangeForTextBox('cancelModal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
             {...this.state.cancelModal.cancelFeedback}
           />
