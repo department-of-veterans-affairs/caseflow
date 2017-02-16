@@ -88,56 +88,11 @@ export default class TasksManagerIndex extends React.Component {
     } = this.state;
 
     return <div className="cf-app-segment cf-app-segment--alt">
-      <h1>Work Flow
+      <h1>ARC Workflow
         <span className="cf-associated-header">
-          {completedCountToday} cases processed today, {toCompleteCount} in queue
+          {completedCountToday} out of {(toCompleteCount + completedCountToday)} cases completed today
         </span>
       </h1>
-
-      <div className="usa-grid-full">
-        <div className="usa-width-one-half">
-          <h2>Current</h2>
-        </div>
-      </div>
-
-      <div className="usa-grid-full">
-        <Table
-          headers={TABLE_HEADERS}
-          buildRowValues={this.buildTaskRow}
-          values={currentTasks}
-        />
-      </div>
-      <hr className="cf-section-break" />
-
-      <div className="usa-grid-full">
-        <div className="usa-width-one-half">
-          <h2>Work History</h2>
-        </div>
-      </div>
-
-      <div className="usa-grid-full">
-        <Table
-          headers={TABLE_HEADERS}
-          buildRowValues={this.buildTaskRow}
-          values={completedTasks}
-        />
-      </div>
-      <div className="usa-grid-full">
-        {this.isRemainingTasksToDownload() && <span className="cf-right-side">
-          {isLoadingTasks ?
-            <span>Loading More...</span> :
-            <a
-              href="#"
-              id="fetchCompletedTasks"
-              className="cf-right-side"
-              onClick={this.fetchCompletedTasks}
-            >
-              Show More
-            </a>
-          }
-        </span>}
-      </div>
-
     </div>;
   }
 }
