@@ -23,6 +23,9 @@ export default class StyleGuide extends React.Component {
 
   render() {
     let styleGuideModal = this.state.modal;
+    let {
+      closeHandler
+    } = this.props;
 
     return <div>
       <p><Button
@@ -41,6 +44,7 @@ export default class StyleGuide extends React.Component {
             onClick: this.handleModalClose
           }
         ]}
+        closeHandler={this.handleModalClose}
         title = "This is a modal">
         <p>
           This is your modal text, which explains why the modal was triggered.
