@@ -23,9 +23,6 @@ export default class StyleGuide extends React.Component {
 
   render() {
     let styleGuideModal = this.state.modal;
-    let {
-      closeHandler
-    } = this.props;
 
     return <div>
       <p><Button
