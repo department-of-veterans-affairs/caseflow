@@ -56,7 +56,6 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   'Pension - United States',
   'VAMC',
   'DIC - death, or accrued benefits - United States',
-  'Foreign claim - compensation claims, dual claims, appeals',
   'Education - GI Bill, dependents educational ' +
     'assistance, scholarship, transfer of entitlement',
   'Waiver of Overpayment',
@@ -71,6 +70,22 @@ export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'contaminatedWaterAtCampLejeune',
     stationOfJurisdiction: '327 - Louisville, KY'
+  },
+  {
+    specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
+    stationOfJurisdiction: '311 - Pittsburgh, PA'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPhilippines',
+    stationOfJurisdiction: '358 - Manila, Philippines'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
+    stationOfJurisdiction: '355 - San Juan, Puerto Rico'
+  },
+  {
+    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthernMarianaIslandsRotaSaipanTinian',
+    stationOfJurisdiction: '459 - Honolulu, HI'
   }
 ];
 
