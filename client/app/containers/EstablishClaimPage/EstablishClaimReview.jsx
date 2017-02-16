@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import DropDown from '../../components/DropDown';
+import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
@@ -145,7 +145,6 @@ export default class EstablishClaimReview extends React.Component {
       decisionType,
       handleCancelTask,
       handleCancelTaskForSpecialIssue,
-      handleDecisionTypeChange,
       handleFieldChange,
       handleModalClose,
       handleSubmit,
@@ -250,11 +249,10 @@ export default class EstablishClaimReview extends React.Component {
               onChange={this.onTabSelected}/>
           </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <DropDown
+          <TextField
            label="Decision Type"
            name="decisionType"
-           options={DECISION_TYPE}
-           onChange={handleDecisionTypeChange}
+           readOnly={true}
            {...decisionType}
           />
 
@@ -320,7 +318,6 @@ export default class EstablishClaimReview extends React.Component {
 EstablishClaimReview.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
-  handleDecisionTypeChange: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleModalClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
