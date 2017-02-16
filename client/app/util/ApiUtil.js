@@ -18,7 +18,7 @@ const ApiUtil = {
         let snakeKey = StringUtil.camelCaseToSnakeCase(key);
 
         // assign value to new object
-        result[snakeKey] = ApiUtil.convertToSnakeCase(data[key]);
+        result[snakeKey] = this.convertToSnakeCase(data[key]);
       }
     }
 
