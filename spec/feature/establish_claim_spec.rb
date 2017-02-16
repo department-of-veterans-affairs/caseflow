@@ -415,13 +415,13 @@ RSpec.feature "Dispatch" do
     scenario "An unhandled special issue brings up cancel modal" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#dicDeathOrAccruedBenefits").trigger("click")
+      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
       click_on "Route Claim"
       click_on "Cancel Claim Establishment"
       page.fill_in "Cancel Explanation", with: "Test"
       click_on "Cancel EP Establishment"
       expect(page).to have_content("EP Establishment Canceled")
-      expect(@task.appeal.reload.dic_death_or_accrued_benefits).to be_truthy
+      expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
 
     scenario "A regional office special issue routes correctly" do
