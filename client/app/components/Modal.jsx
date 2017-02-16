@@ -62,6 +62,7 @@ export default class Modal extends React.Component {
           onClick={object.onClick}
           classNames={classNames}
           loading={object.loading}
+          disabled={object.disabled}
           key={i}
           id={this.buttonIdPrefix + i}
         />;
