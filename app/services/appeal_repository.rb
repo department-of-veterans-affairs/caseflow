@@ -179,7 +179,8 @@ class AppealRepository
     location = location_after_dispatch(appeal: appeal,
                                        station: station)
 
-    appeal.case_record.update_vacols_location!(location)
+    appeal.case_record.update_vacols_location!(appeal: appeal,
+                                               location: location)
   end
 
   # Determine VACOLS location desired after dispatching a decision

@@ -155,7 +155,7 @@ class VACOLS::Case < VACOLS::Record
   end
 
   # rubocop:disable Metrics/MethodLength
-  def update_vacols_location!(location)
+  def update_vacols_location!(appeal:, location:)
     return unless location
 
     fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
