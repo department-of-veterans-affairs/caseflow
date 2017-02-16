@@ -49,7 +49,8 @@ export default class AssociatePage extends React.Component {
     });
 
     let data = ApiUtil.convertToSnakeCase({
-      endProductId: endProduct.benefit_claim_id
+      endProductId: endProduct.benefit_claim_id,
+      specialIssues: this.props.specialIssues
     });
 
     return ApiUtil.post(
@@ -148,5 +149,6 @@ AssociatePage.propTypes = {
   handleAlertClear: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
+  specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };

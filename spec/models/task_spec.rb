@@ -146,6 +146,7 @@ describe Task do
         task.prepare!
         task.assign!(:assigned, @user)
         task.start!
+        task.review!
         task.complete!(:completed, status: 0)
       end
 
@@ -213,6 +214,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
       task.complete_and_recreate!(3)
     end
     it "completes and creates a new task" do
@@ -234,6 +236,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
     end
     it "completes the task" do
       task.complete!(:completed, status: 3)
@@ -275,6 +278,14 @@ describe Task do
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
       expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
     end
+
+    it "closes unfinished task in review state" do
+      task.review!
+      task.expire!
+      expect(task.reload.completed?).to be_truthy
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
+    end
   end
 
   context "#cancel!" do
@@ -311,6 +322,12 @@ describe Task do
     end
 
     it "returns true for canceled task" do
+      task.cancel!
+      expect(task.canceled?).to be_truthy
+    end
+
+    it "can be canceled when in review state" do
+      task.review!
       task.cancel!
       expect(task.canceled?).to be_truthy
     end
