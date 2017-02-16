@@ -23,9 +23,7 @@ class ApplicationController < ActionController::Base
   private
 
   def check_out_of_service
-    if Rails.cache.read("out_of_service")
-      render 'out_of_service', layout: "application"
-    end
+    render "out_of_service", layout: "application" if Rails.cache.read("out_of_service")
   end
 
   def ssl_enabled?
