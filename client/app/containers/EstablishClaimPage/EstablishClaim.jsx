@@ -91,7 +91,6 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
-      currentTextValue: "",
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
