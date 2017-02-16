@@ -470,7 +470,7 @@ export default class EstablishClaim extends BaseForm {
     let buttonClassDisabled = ["usa-button", "usa-button-disabled"]
     let buttonClassEnabled = ["usa-button", "usa-button-secondary"]
     if(this.state.currentTextValue === ""
-    || this.state.currentTextValue === undefined) {
+    || typeof this.state.currentTextValue === undefined) {
       return buttonClassDisabled;
     }
     else {
