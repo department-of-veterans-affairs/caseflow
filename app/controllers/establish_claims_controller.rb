@@ -21,7 +21,8 @@ class EstablishClaimsController < TasksController
   end
 
   def assign_existing_end_product
-    task.assign_existing_end_product!(params[:end_product_id])
+    Dispatch.new(task: task)
+            .assign_existing_end_product!(end_product_id: params[:end_product_id])
     render json: {}
   end
 

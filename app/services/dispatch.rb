@@ -67,6 +67,13 @@ class Dispatch
     task.review!(outgoing_reference_id: end_product.claim_id)
   end
 
+  def assign_existing_end_product!(end_product_id:)
+    task.transaction do
+      task.assign_existing_end_product!(end_product_id)
+      Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
+    end
+  end
+
   # Class used for validating the claim object
   class Claim
     include ActiveModel::Validations
