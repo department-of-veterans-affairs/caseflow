@@ -105,6 +105,7 @@ RSpec.feature "Dispatch" do
       @completed_task.prepare!
       @completed_task.assign!(:assigned, current_user)
       @completed_task.start!
+      @completed_task.review!
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
@@ -159,6 +160,11 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(page).to have_content("Congratulations!")
+
+        # We should not have this message on the congratulations page unless a special
+        # issue was checked.
+        expect(page).to_not have_content("Manually Added VBMS Note")
+
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
             benefit_type_code: "1",
@@ -185,6 +191,37 @@ RSpec.feature "Dispatch" do
         # No tasks left
         expect(page).to have_content("No claims to establish right now")
         expect(page).to have_css(".usa-button-disabled")
+      end
+
+      scenario "Establish a new claim with special issues" do
+        visit "/dispatch/establish-claim"
+
+        click_on "Establish Next Claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+        # Select special issues
+        page.find("#riceCompliance").trigger("click")
+        page.find("#privateAttorneyOrAgent").trigger("click")
+
+        # Move on to note page
+        click_on "Route Claim"
+        click_on "Create End Product"
+
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+
+        # Make sure note page contains the special issues
+        expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
+
+        # Ensure that the user stays on the note page on a refresh
+        visit "/dispatch/establish-claim/#{@task.id}"
+        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+        page.find("#confirmNote").trigger("click")
+
+        click_on "Finish Routing Claim"
+
+        expect(page).to have_content("Manually Added VBMS Note")
+        expect(@task.appeal.reload.rice_compliance).to be_truthy
       end
 
       skip "Establish Claim form saves state when going back/forward in browser" do
@@ -390,7 +427,7 @@ RSpec.feature "Dispatch" do
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#privateAttorney").trigger("click")
+      page.find("#privateAttorneyOrAgent").trigger("click")
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
@@ -404,18 +441,6 @@ RSpec.feature "Dispatch" do
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
-    end
-
-    scenario "A special issue is chosen and saved in database" do
-      @task.assign!(:assigned, current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
-      page.select "Remand", from: "decisionType"
-      page.find("#insurance").trigger("click")
-      click_on "Route Claim"
-      click_on "Create New EP"
-      click_on "Create End Product"
-      expect(page).to have_content("Congratulations!")
-      expect(@task.appeal.reload.insurance).to be_truthy
     end
   end
 end
