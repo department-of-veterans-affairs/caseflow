@@ -2,6 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 
 import BaseForm from '../BaseForm';
 
@@ -13,13 +14,15 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
+import EstablishClaimNote from './EstablishClaimNote';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
 
-export const REVIEW_PAGE = 'review';
+export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
+export const NOTE_PAGE = 'review';
 
 
 export const END_PRODUCT_INFO = {
@@ -42,7 +45,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -54,7 +57,6 @@ export default class EstablishClaim extends BaseForm {
     super(props);
 
     let decisionType = this.props.task.appeal.decision_type;
-
     // Set initial state on page render
 
     // The reviewForm decisionType is needed in the state first since
@@ -93,28 +95,62 @@ export default class EstablishClaim extends BaseForm {
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
-      page: REVIEW_PAGE,
+      page: DECISION_PAGE,
+      showNotePageAlert: false,
       specialIssueModalDisplay: false,
       specialIssues: {}
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
+      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
+
+      // Check special issue boxes based on what was sent from the database
+      let snakeCaseIssue = StringUtil.camelCaseToSnakeCase(camelCaseIssue);
+
+      this.state.specialIssues[camelCaseIssue] =
+        new FormField(props.task.appeal[snakeCaseIssue]);
+      this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
 
+  defaultPage() {
+    let numberOfSpecialIssues =
+      Object.keys(this.state.specialIssues).
+        filter((key) => this.state.specialIssues[key].value).length;
+
+    if (numberOfSpecialIssues > 0) {
+      // Force navigate to the note page on initial component mount
+      // when we have special issues. This means that they have
+      // already been saved in the database, but the user navigated
+      // back to the page before the task was complete.
+      return NOTE_PAGE;
+    }
+
+    // Force navigate to the review page on initial component mount
+    // This ensures they are not mid-flow
+    return DECISION_PAGE;
+  }
 
   componentDidMount() {
     let { history } = this.state;
 
     history.listen((location) => {
-      this.setState({
-        page: location.pathname.substring(1) || REVIEW_PAGE
-      });
+      // If we are on the note page and you try to move to
+      // a previous page in the flow then we bump you back
+      // to the note page.
+      if (this.state.page === NOTE_PAGE &&
+        location.pathname.substring(1) !== NOTE_PAGE) {
+        this.handlePageChange(NOTE_PAGE);
+        this.setState({
+          showNotePageAlert: true
+        });
+      } else {
+        this.setState({
+          page: location.pathname.substring(1) || DECISION_PAGE
+        });
+      }
     });
 
-    // Force navigate to the review page on initial component mount
-    // This ensures they are not mid-flow
-    history.replace(REVIEW_PAGE);
+    history.replace(this.defaultPage());
   }
 
   reloadPage = () => {
@@ -139,8 +175,15 @@ export default class EstablishClaim extends BaseForm {
     let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then(() => {
-        this.reloadPage();
+      then((response) => {
+        if (JSON.parse(response.text).require_note) {
+          this.setState({
+            loading: false
+          });
+          this.handlePageChange(NOTE_PAGE);
+        } else {
+          this.reloadPage();
+        }
       }, () => {
         this.setState({
           loading: false
@@ -222,7 +265,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   isReviewPage() {
-    return this.state.page === REVIEW_PAGE;
+    return this.state.page === DECISION_PAGE;
   }
 
   shouldShowAssociatePage() {
@@ -236,6 +279,10 @@ export default class EstablishClaim extends BaseForm {
 
   isFormPage() {
     return this.state.page === FORM_PAGE;
+  }
+
+  isNotePage() {
+    return this.state.page === NOTE_PAGE;
   }
 
   /*
@@ -291,6 +338,33 @@ export default class EstablishClaim extends BaseForm {
     }
   }
 
+  handleFormPageSubmit = () => {
+    this.handleSubmit();
+  }
+
+  handleNotePageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/note-complete`).then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+      );
+      this.setState({
+        loading: false
+      });
+    });
+  }
+
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -332,6 +406,21 @@ export default class EstablishClaim extends BaseForm {
         this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
+  prepareSpecialIssues() {
+    // The database column names must be less than 63 characters
+    // so we shorten all of the keys in our hash before we send
+    // them to the backend.
+    let shortenedObject = {};
+    let formValues = ApiUtil.convertToSnakeCase(
+      this.getFormValues(this.state.specialIssues));
+
+    Object.keys(formValues).forEach((key) => {
+      shortenedObject[key.substring(0, 60)] = formValues[key];
+    });
+
+    return shortenedObject;
+  }
+
   prepareData() {
     let stateObject = this.state;
 
@@ -346,15 +435,13 @@ export default class EstablishClaim extends BaseForm {
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
-
     return {
       claim: ApiUtil.convertToSnakeCase({
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       }),
-      specialIssues: ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues))
+      specialIssues: this.prepareSpecialIssues()
     };
   }
 
@@ -362,7 +449,7 @@ export default class EstablishClaim extends BaseForm {
     let validOutput = true;
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value) {
+      if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
         validOutput = false;
       }
     });
@@ -421,10 +508,18 @@ export default class EstablishClaim extends BaseForm {
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
-            handleSubmit={this.handleSubmit}
+            handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             loading={loading}
             validModifiers={this.validModifiers()}
+          />
+        }
+        { this.isNotePage() &&
+          <EstablishClaimNote
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleNotePageSubmit}
+            showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
           />
         }
 

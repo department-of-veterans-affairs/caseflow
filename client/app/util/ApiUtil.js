@@ -1,24 +1,10 @@
 import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
+import StringUtil from './StringUtil';
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
-
-  // Converts regular language to camelCase
-  // 'VACOLS - 123, User' becomes 'vacolsUser'
-  convertToCamelCase(phrase = '') {
-    // Code courtesy of Stack Overflow, Question 2970525
-    return phrase.toLowerCase().
-        replace(/[^a-zA-Z ]/g, "").
-        replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-          if (Number(match) === 0) {
-            return "";
-          }
-
-          return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
-  },
 
   // Converts camelCase to snake_case
   convertToSnakeCase(data = {}) {
@@ -26,8 +12,7 @@ const ApiUtil = {
 
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
-        // convert key from camelCase to snake_case
-        let snakeKey = key.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
+        let snakeKey = StringUtil.camelCaseToSnakeCase(key);
 
         // assign value to new object
         result[snakeKey] = data[key];
