@@ -55,7 +55,6 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -523,28 +522,29 @@ export default class EstablishClaim extends BaseForm {
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
-              name: '\u00AB Go Back',
+              name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
+              disabled: this.state.cancelModal.cancelFeedback.value === "",
               loading: modalSubmitLoading,
-              name: 'Cancel EP Establishment',
+              name: 'Stop Processing Claim',
               onClick: this.handleFinishCancelTask
             }
           ]}
           visible={true}
           closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Cancel EP Establishment">
+          title="Stop Processing Claim">
           <p>
-            If you click the <b>Cancel EP Establishment </b>
+            If you click the <b>Stop Processing Claim </b>
             button below your work will not be
-            saved and the EP for this claim will not be established.
+            saved and an EP will not be created for this claim.
           </p>
           <p>
-            Please tell why you are canceling the establishment of this EP.
+            Please tell us why you have chosen to discontinue processing this claim.
           </p>
           <TextareaField
-            label="Cancel Explanation"
+            label="Explanation"
             name="Explanation"
             onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}

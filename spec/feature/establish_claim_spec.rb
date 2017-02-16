@@ -393,13 +393,16 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      click_on "Cancel EP Establishment"
+      expect(page).to have_css(".usa-button-disabled")
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
-      expect(page).to have_content("Please enter an explanation")
+
+      # Fill in explanation before modal close but no submit
+      page.fill_in "Explanation", with: "Test"
+      expect(page).to have_css(".usa-button-secondary")
 
       # Close modal
-      click_on "\u00AB Go Back"
+      click_on "Close"
       expect(page).to_not have_css(".cf-modal")
 
       # Open modal
@@ -407,11 +410,11 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Fill in explanation and cancel
-      page.fill_in "Cancel Explanation", with: "Test"
-      click_on "Cancel EP Establishment"
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop Processing Claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-      expect(page).to have_content("EP Establishment Canceled")
+      expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
@@ -426,9 +429,9 @@ RSpec.feature "Dispatch" do
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
       click_on "Route Claim"
       click_on "Cancel Claim Establishment"
-      page.fill_in "Cancel Explanation", with: "Test"
-      click_on "Cancel EP Establishment"
-      expect(page).to have_content("EP Establishment Canceled")
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop Processing Claim"
+      expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
 
