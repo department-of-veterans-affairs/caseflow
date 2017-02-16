@@ -12,23 +12,27 @@ export default class TasksManagerEmployeeCount extends React.Component {
     } = this.props;
 
     return <div>
-        <h3>Enter the number of people working today.</h3>
-        <div className="usa-grid-full">
+      <h3>Enter the number of people working today.</h3>
+      <div className="usa-grid-half cf-push-row">
+        <div className="cf-push-left">
           <TextField
             label="Number of people"
             name="employeeCount"
             readOnly={false}
             onChange={handleFieldChange('employeeCountForm', 'employeeCount')}
-            placeholder={employeeCountForm.employeeCount}
+            placeholder={employeeCountForm.employeeCount.value}
+            type="number"
             {...employeeCountForm.employeeCount}
           />
+        </div>
+        <div className="cf-push-left cf-button-aligned-with-textfield">
           <Button
             name="Update"
-            classNames={[]}
             onClick={handleEmployeeCountUpdate}
           />
         </div>
       </div>
+    </div>
   }
 }
 

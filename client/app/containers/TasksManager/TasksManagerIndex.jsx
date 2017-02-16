@@ -20,7 +20,7 @@ export default class TasksManagerIndex extends BaseForm {
       completedTasksPage: 0,
       isLoadingTasks: false,
       employeeCountForm: {
-        employeeCount: new FormField('0')
+        employeeCount: new FormField(this.props.employeeCount)
       }
     };
   }
@@ -47,9 +47,17 @@ export default class TasksManagerIndex extends BaseForm {
     return _uniqBy(tasks, (task) => task.id);
   }
 
-  handleEmployeeCountUpdate() {
-    console.log('am i in here?');
-  }
+  handleEmployeeCountUpdate = () => {
+    let count = this.state.employeeCountForm.employeeCount.value;
+    return ApiUtil.patch(`/dispatch/employee-count/${count}`, {}).then(() => {
+    }, () => {
+      this.props.handleAlert(
+        'error',
+        'Error',
+        'There was an error while updating the employee count. Please try again later'
+      );
+    });
+  };
 
   fetchCompletedTasks = (event) => {
     let { handleAlert, handleAlertClear } = this.props;
@@ -161,5 +169,6 @@ TasksManagerIndex.propTypes = {
   completedCountTotal: PropTypes.number.isRequired,
   completedTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   currentTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  employeeCount: PropTypes.string.isRequired,
   toCompleteCount: PropTypes.number.isRequired
 };
