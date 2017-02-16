@@ -29,10 +29,11 @@ export default class TasksManagerEmployeeCount extends React.Component {
           <Button
             name="Update"
             onClick={handleEmployeeCountUpdate}
+            disabled={!employeeCountForm.employeeCount.value}
           />
         </div>
       </div>
-    </div>
+    </div>;
   }
 }
 
@@ -40,4 +41,4 @@ TasksManagerEmployeeCount.propTypes = {
   employeeCountForm: PropTypes.object.isRequired,
   handleEmployeeCountUpdate: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired
-}
+};

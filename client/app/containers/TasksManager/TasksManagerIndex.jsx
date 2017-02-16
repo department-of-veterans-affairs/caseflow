@@ -18,10 +18,10 @@ export default class TasksManagerIndex extends BaseForm {
       completedTasks: props.completedTasks,
       // zero-based indexing for pages
       completedTasksPage: 0,
-      isLoadingTasks: false,
       employeeCountForm: {
         employeeCount: new FormField(this.props.employeeCount)
-      }
+      },
+      isLoadingTasks: false
     };
   }
 
@@ -47,9 +47,16 @@ export default class TasksManagerIndex extends BaseForm {
     return _uniqBy(tasks, (task) => task.id);
   }
 
+  reloadPage = () => {
+    window.location.href = window.location.pathname + window.location.search;
+  }
+
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
-    return ApiUtil.patch(`/dispatch/employee-count/${count}`, {}).then(() => {
+
+
+    return ApiUtil.patch(`/dispatch/employee-count/${count}`).then(() => {
+      this.reloadPage();
     }, () => {
       this.props.handleAlert(
         'error',

@@ -79,6 +79,15 @@ RSpec.feature "Dispatch" do
       expect(page).to have_content("Jane Smith", count: 20)
     end
 
+    scenario "Update employee count" do
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("Number of people")
+      fill_in "Number of people", with: "3"
+      click_on "Update"
+      visit "/dispatch/establish-claim"
+      expect(find_field("Number of people").value).to have_content("3")
+    end
+
     scenario "View unprepared tasks page" do
       @unprepared_appeal = Appeal.create(
         vacols_id: "456D",
