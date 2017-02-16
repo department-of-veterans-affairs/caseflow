@@ -4,10 +4,6 @@ RSpec.feature "Out of Service" do
 
   context "Out of service is disabled"  do
 
-    before do
-      Rails.cache.clear
-    end
-
     scenario "Visit root page" do
       visit "/"
       expect(page).not_to have_content("Technical Difficulties")
