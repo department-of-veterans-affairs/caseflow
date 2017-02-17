@@ -166,7 +166,7 @@ class AppealRepository
 
     end_product = Appeal.transaction do
       update_location_after_dispatch!(appeal: appeal,
-                                     station: claim[:station_of_jurisdiction])
+                                      station: claim[:station_of_jurisdiction])
 
       request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
       send_and_log_request(sanitized_id, request)
