@@ -1,6 +1,12 @@
 # VACOLS throttles the rate of new connections, create up front to prevent
 # blocking as pool grows under load
 
+# configure timeouts, in seconds, for underlying socket
+OCI8.properties[:tcp_connect_timeout] = 10
+OCI8.properties[:connect_timeout] = 10
+OCI8.properties[:send_timeout] = 10
+OCI8.properties[:recv_timeout] = 20
+
 WARMUP_TABLES = ["vacols.brieff", "vacols.corres", "vacols.folder"]
 
 ActiveSupport.on_load(:active_record_vacols) do
