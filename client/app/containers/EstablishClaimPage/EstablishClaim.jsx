@@ -113,13 +113,9 @@ export default class EstablishClaim extends BaseForm {
   }
 
   defaultPage() {
-    let numberOfSpecialIssues =
-      Object.keys(this.state.specialIssues).
-        filter((key) => this.state.specialIssues[key].value).length;
-
-    if (numberOfSpecialIssues > 0) {
+    if (this.props.task.reviewed) {
       // Force navigate to the note page on initial component mount
-      // when we have special issues. This means that they have
+      // when the task is in reviewed state. This means that they have
       // already been saved in the database, but the user navigated
       // back to the page before the task was complete.
       return NOTE_PAGE;

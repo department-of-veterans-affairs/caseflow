@@ -184,6 +184,12 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def reset_special_issues
+    SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
+      method("#{special_issue}=").call(false)
+    end
+  end
+
   class << self
     attr_writer :repository
 
