@@ -155,7 +155,7 @@ class VACOLS::Case < VACOLS::Record
   end
 
   # rubocop:disable Metrics/MethodLength
-  def update_vacols_location(location)
+  def update_vacols_location!(location)
     return unless location
 
     fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
@@ -167,7 +167,7 @@ class VACOLS::Case < VACOLS::Record
     user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     case_id = conn.quote(bfkey)
 
-    MetricsService.timer "VACOLS: update_vacols_location #{appeal.vacols_id}" do
+    MetricsService.timer "VACOLS: update_vacols_location! #{bfkey}" do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE BRIEFF
