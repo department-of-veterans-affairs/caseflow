@@ -79,7 +79,7 @@ export default class EstablishClaim extends BaseForm {
       cancelModal: {
         cancelFeedback: new FormField(
           '',
-          requiredValidator('Please enter an explanation.')
+          requiredValidator('Please enter an explanation')
         )
       },
       cancelModalDisplay: false,
