@@ -228,7 +228,7 @@ class Task < ActiveRecord::Base
          :pending_eps,
          :issues,
          :to_hash] }],
-      methods: [:progress_status]
+      methods: [:progress_status, :aasm_state]
     )
   end
 end
