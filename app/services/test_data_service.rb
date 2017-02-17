@@ -15,6 +15,18 @@ end
 class TestDataService
   class WrongEnvironmentError < StandardError; end
 
+  def self.reset_appeal_special_issues
+    return false if ApplicationController.dependencies_faked?
+    fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
+
+    Appeal.find_each do |appeal|
+      Appeal::SPECIAL_ISSUE_COLUMNS.each do |special_issue|
+        appeal.send("#{special_issue}=", false)
+      end
+      appeal.save
+    end
+  end
+
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: "partial")
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
