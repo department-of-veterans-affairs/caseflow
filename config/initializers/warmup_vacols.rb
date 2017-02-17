@@ -49,4 +49,5 @@ def warmup_pool(pool, initial_pool_size)
     conn.indexes(table_name)
     conn.columns(table_name)
   end
+  conn.close
 end
