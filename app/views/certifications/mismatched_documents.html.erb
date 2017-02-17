@@ -1,14 +1,45 @@
 <% content_for :page_title do %>Mismatched Documents<% end %>
 
-<div class="usa-alert usa-alert-error cf-app-segment" role="alert">
-  <div class="usa-alert-body">
-    <h3 class="usa-alert-heading">Cannot find documents in VBMS</h3>
-    <p class="usa-alert-text">Some of the files listed in VACOLS could not be found in VBMS.</p>
-  </div>
-</div>
+
 
 <div class="cf-app-segment cf-app-segment--alt">
-  <h2>Find missing documents</h2>
+  <h2>Check documents</h2>
+
+  <div class="usa-alert usa-alert-error cf-app-segment" role="alert">
+    <div class="usa-alert-body">
+      <h3 class="usa-alert-heading">Cannot find documents in VBMS</h3>
+      <p class="usa-alert-text">Some of the files listed in VACOLS could not be found in VBMS.</p>
+    </div>
+  </div>
+
+   <div class="cf-table-wrap">
+    <table class="usa-table-borderless cf-table-borderless" summary="Each row represents document mismatch">
+      <caption class="usa-sr-only">
+        This table compares received dates for forms stored in VACOLS and VBMS.
+      </caption>
+
+      <thead>
+        <tr>
+          <th><span class="usa-sr-only">Status</span>Found in VBMS?</th>
+          <th>Document</th>
+          <th>VACOLS date</th>
+          <th>VBMS date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <%= render partial: 'document_match', locals: { name: "NOD", match: appeal.nod_match?, date: appeal.nod_date } %>
+        <%= render partial: 'document_match', locals: { name: "SOC", match: appeal.soc_match?, date: appeal.soc_date } %>
+
+        <% appeal.ssoc_dates.each_index do |i| %>
+          <%= render partial: 'document_match',
+                     locals: { name: "SSOC #{i+1}", match: appeal.ssoc_match?(appeal.ssoc_dates[i]), date: appeal.ssoc_dates[i] } %>
+        <% end %>
+
+        <%= render partial: 'document_match', locals: { name: "Form 9", match: appeal.form9_match?, date: appeal.form9_date } %>
+      </tbody>
+    </table>
+  </div>
 
   <p>
     Caseflow could not find the documents marked with an <%= svg_icon(:missing) %>
@@ -26,38 +57,10 @@
   </p>
 
   <p>
-    If you can’t find the document, click the
-    <strong>cancel</strong> link below.
+    If you can’t find the document, <a href="#confirm-cancel-certification" class="cf-action-openmodal cf-btn-link">cancel this certification.</a>
   </p>
 
-  <div class="cf-table-wrap">
-    <table class="usa-table-borderless cf-table-borderless" summary="Each row represents document mismatch">
-      <caption class="usa-sr-only">
-        This table compares received dates for forms stored in VACOLS and VBMS.
-      </caption>
 
-      <thead>
-        <tr>
-          <th><span class="usa-sr-only">Status</span></th>
-          <th>Document</th>
-          <th>VACOLS</th>
-          <th>VBMS</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <%= render partial: 'document_match', locals: { name: "NOD", match: appeal.nod_match?, date: appeal.nod_date } %>
-        <%= render partial: 'document_match', locals: { name: "SOC", match: appeal.soc_match?, date: appeal.soc_date } %>
-
-        <% appeal.ssoc_dates.each_index do |i| %>
-          <%= render partial: 'document_match',
-                     locals: { name: "SSOC #{i+1}", match: appeal.ssoc_match?(appeal.ssoc_dates[i]), date: appeal.ssoc_dates[i] } %>
-        <% end %>
-
-        <%= render partial: 'document_match', locals: { name: "Form 9", match: appeal.form9_match?, date: appeal.form9_date } %>
-      </tbody>
-    </table>
-  </div>
 </div>
 
 <div class="cf-app-segment">

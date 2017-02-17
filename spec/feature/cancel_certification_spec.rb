@@ -24,7 +24,7 @@ RSpec.feature "Cancel certification" do
       }
 
       visit "certifications/new/7777D"
-      expect(page).to have_content("No Matching Document")
+      expect(page).to have_content("Not found")
       click_on "Cancel Certification"
       expect(page).to have_content("Are you sure you can't certify this case?")
       click_on "Yes, I'm sure"
