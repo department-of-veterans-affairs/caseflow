@@ -538,7 +538,6 @@ export default class EstablishClaim extends BaseForm {
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              disabled: this.state.cancelModal.cancelFeedback.value === "",
               loading: modalSubmitLoading,
               name: 'Stop processing claim',
               onClick: this.handleFinishCancelTask

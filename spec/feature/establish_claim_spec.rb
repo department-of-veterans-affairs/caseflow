@@ -407,13 +407,10 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      expect(page).to have_css(".usa-button-disabled")
+      click_on "Stop processing claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
-
-      # Fill in explanation before modal close but no submit
-      page.fill_in "Explanation", with: "Test"
-      expect(page).to have_css(".usa-button-secondary")
+      expect(page).to have_content("Please enter an explanation")
 
       # Close modal
       click_on "Close"
