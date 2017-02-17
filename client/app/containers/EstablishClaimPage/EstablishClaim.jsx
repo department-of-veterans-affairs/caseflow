@@ -91,7 +91,6 @@ export default class EstablishClaim extends BaseForm {
         stationOfJurisdiction: new FormField('397 - AMC'),
         suppressAcknowledgementLetter: new FormField(false)
       },
-      currentTextValue: "",
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
@@ -453,25 +452,6 @@ export default class EstablishClaim extends BaseForm {
     return validOutput;
   }
 
-  handleFieldChangeForTextBox = (form, field) => (value) => {
-    this.handleFieldChange(form, field)(value)
-    this.setState({
-      currentTextValue: value
-    })
-  };
-
-  getModalButtonClassNames() {
-    let buttonClassDisabled = ["usa-button", "usa-button-disabled"]
-    let buttonClassEnabled = ["usa-button", "usa-button-secondary"]
-    if(this.state.currentTextValue === ""
-    || this.state.currentTextValue === undefined) {
-      return buttonClassDisabled;
-    }
-    else {
-      return buttonClassEnabled;
-    }
-  }
-
   render() {
     let {
       loading,
@@ -566,7 +546,7 @@ export default class EstablishClaim extends BaseForm {
           <TextareaField
             label="Explanation"
             name="Explanation"
-            onChange={this.handleFieldChangeForTextBox('cancelModal', 'cancelFeedback')}
+            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
             {...this.state.cancelModal.cancelFeedback}
           />
