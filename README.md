@@ -27,7 +27,7 @@ Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://git
 
 Then run the following:
 
-> $ rbenv install 2.2.4
+> $ rbenv install 2.4.0
 
 > $ gem install bundler
 
@@ -151,7 +151,7 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 Now you'll be able to install the gems required to run the app connected to VBMS and VACOLS:
 `$ bundle install --with staging`
 
-Set the development VACOLS credentials as environment variables.  
+Set the development VACOLS credentials as environment variables.
 (ask a team member for them)
 ```
 export VACOLS_USERNAME=username
