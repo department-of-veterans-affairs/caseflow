@@ -67,8 +67,9 @@ class Dispatch
     task.review!(outgoing_reference_id: end_product.claim_id)
   end
 
-  def assign_existing_end_product!(end_product_id:)
+  def assign_existing_end_product!(end_product_id:, special_issues:)
     task.transaction do
+      task.appeal.update!(special_issues)
       task.assign_existing_end_product!(end_product_id)
       Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
     end
