@@ -2,6 +2,10 @@ require "rails_helper"
 
 RSpec.feature "Dispatch" do
   before do
+    # Set the time zone to the current user's time zone for proper date conversion
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.utc(2017, 1, 1))
+
     @vbms_id = "VBMS_ID1"
 
     BGSService.end_product_data = [
@@ -55,8 +59,6 @@ RSpec.feature "Dispatch" do
     )
     @task2 = EstablishClaim.create(appeal: appeal)
     @task2.prepare!
-
-    Timecop.freeze(Time.utc(2017, 1, 1))
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
   end
@@ -451,6 +453,10 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#privateAttorneyOrAgent").trigger("click")
+
+      # It should also work even if a unsupported special issue is checked
+      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")

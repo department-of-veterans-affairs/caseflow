@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, require-jsdoc */
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
@@ -47,6 +47,12 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 
 const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
+let containsRoutingSpecialIssues = function(specialIssues) {
+  return Boolean(
+    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => specialIssues[issue].value)
+  );
+};
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -80,7 +86,7 @@ export default class EstablishClaim extends BaseForm {
       claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
-          formatDate(this.props.task.appeal.decision_date),
+          formatDate(this.props.task.appeal.serialized_decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
@@ -439,6 +445,12 @@ export default class EstablishClaim extends BaseForm {
   validateReviewPageSubmit() {
     let validOutput = true;
 
+    // If it contains a routed special issue, allow EP creation even if it
+    // contains other unhandled special issues.
+    if (containsRoutingSpecialIssues(this.state.specialIssues)) {
+      return true;
+    }
+
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
         validOutput = false;
@@ -558,4 +570,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-lines */
+/* eslint-enable max-lines, require-jsdoc */
