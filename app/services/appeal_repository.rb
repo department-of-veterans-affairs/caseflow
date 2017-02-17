@@ -273,7 +273,7 @@ class AppealRepository
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::FetchDocumentById.new(document.document_id)
+    request = VBMS::Requests::FetchDocumentById.new(document.vbms_document_id)
     result = @vbms_client.send_request(request)
     result && result.content
   rescue => e
