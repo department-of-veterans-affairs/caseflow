@@ -155,8 +155,13 @@ export default class EstablishClaimReview extends React.Component {
       task
     } = this.props;
 
-    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
-    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
+    let decisionDateStart = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), -3)
+    );
+
+    let decisionDateEnd = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), 3)
+    );
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
