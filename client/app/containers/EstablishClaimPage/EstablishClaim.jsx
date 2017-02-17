@@ -79,7 +79,7 @@ export default class EstablishClaim extends BaseForm {
       cancelModal: {
         cancelFeedback: new FormField(
           '',
-          requiredValidator('Please enter an explanation.')
+          requiredValidator('Please enter an explanation')
         )
       },
       cancelModalDisplay: false,
@@ -534,9 +534,8 @@ export default class EstablishClaim extends BaseForm {
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              disabled: this.state.cancelModal.cancelFeedback.value === "",
               loading: modalSubmitLoading,
-              name: 'Stop Processing Claim',
+              name: 'Stop processing claim',
               onClick: this.handleFinishCancelTask
             }
           ]}
@@ -544,7 +543,7 @@ export default class EstablishClaim extends BaseForm {
           closeHandler={this.handleModalClose('cancelModalDisplay')}
           title="Stop Processing Claim">
           <p>
-            If you click the <b>Stop Processing Claim </b>
+            If you click the <b>Stop processing claim </b>
             button below your work will not be
             saved and an EP will not be created for this claim.
           </p>
