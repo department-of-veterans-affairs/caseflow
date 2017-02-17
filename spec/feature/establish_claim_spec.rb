@@ -351,7 +351,7 @@ RSpec.feature "Dispatch" do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              date: @task.appeal.decision_date.to_date,
+              date: @task2.appeal.decision_date.to_date,
               end_product_modifier: "171",
               end_product_label: "AMC-Partial Grant",
               end_product_code: "170PGAMC",
