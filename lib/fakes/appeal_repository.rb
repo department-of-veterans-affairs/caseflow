@@ -36,7 +36,7 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
-  def self.update_location_after_dispatch!(appeal:, station:)
+  def self.update_location_after_dispatch!(*)
   end
 
   def self.upload_and_clean_document(appeal, form8)

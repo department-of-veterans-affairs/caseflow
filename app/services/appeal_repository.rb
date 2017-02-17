@@ -175,7 +175,7 @@ class AppealRepository
     end_product
   end
 
-  def self.update_location_after_dispatch!(appeal:, station:)
+  def self.update_location_after_dispatch!(appeal:, station: nil)
     location = location_after_dispatch(appeal: appeal,
                                        station: station)
 
