@@ -53,16 +53,6 @@ class AppealRepository
     set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
-  def self.map_issues(issue_records)
-    issue_records.map do |issue|
-      {
-        description: issue[:issdesc],
-        disposition: VACOLS::Issues::DISPOSITION_CODE[issue[:issdc]],
-        program: issue[:issprog]
-      }
-    end
-  end
-
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
@@ -94,15 +84,16 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro],
-      issues: [{
-        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
-        disposition: "Granted",
-        program: "Compensation"
-      }]
+      status: VACOLS::Case::STATUS[case_record.bfmpro]
     )
 
     appeal
+  end
+
+  def self.issues(vacols_id:)
+    VACOLS::Issue.descriptions(vacols_id).map do |issue|
+      VACOLS::Issue.format(issue)
+    end
   end
 
   # :nocov:
@@ -174,16 +165,21 @@ class AppealRepository
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
     end_product = Appeal.transaction do
-      location = location_after_dispatch(appeal: appeal,
-                                         station: claim[:station_of_jurisdiction])
-
-      appeal.case_record.update_vacols_location(location)
+      update_location_after_dispatch!(appeal: appeal,
+                                      station: claim[:station_of_jurisdiction])
 
       request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
       send_and_log_request(sanitized_id, request)
     end
 
     end_product
+  end
+
+  def self.update_location_after_dispatch!(appeal:, station: nil)
+    location = location_after_dispatch(appeal: appeal,
+                                       station: station)
+
+    appeal.case_record.update_vacols_location!(location)
   end
 
   # Determine VACOLS location desired after dispatching a decision

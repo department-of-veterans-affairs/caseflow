@@ -9,8 +9,8 @@ export default class UnpreparedTasksIndex extends React.Component {
   buildUnpreparedTaskRow = (task) => [
     `${task.appeal.veteran_name} (${task.appeal.vbms_id})`,
     task.appeal.decision_type,
-    formatDate(task.appeal.decision_date),
-    `${task.appeal.days_since_decision} days`
+    formatDate(task.appeal.serialized_decision_date),
+    `${task.days_since_creation} days`
   ];
 
   render() {

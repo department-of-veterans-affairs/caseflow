@@ -134,8 +134,9 @@ def create_tasks(count, opts = {})
     task.prepare!
     task.assign!(:assigned, user)
 
-    task.start! if %i(started completed).include?(opts[:initial_state])
-    task.complete!(:completed, status: 0, outgoing_reference_id: "123") if %i(completed).include?(opts[:initial_state])
+    task.start! if %i(started reviewed completed).include?(opts[:initial_state])
+    task.review!(outgoing_reference_id: "123") if %i(reviewed completed).include?(opts[:initial_state])
+    task.complete!(:completed, status: 0) if %i(completed).include?(opts[:initial_state])
     task
   end
 end
@@ -150,7 +151,10 @@ RSpec.configure do |config|
   end
   config.before(:all) { User.unauthenticate! }
 
-  config.after(:each) { Timecop.return }
+  config.after(:each) do
+    Timecop.return
+    Rails.cache.clear
+  end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
