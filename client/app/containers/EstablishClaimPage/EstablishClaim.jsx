@@ -119,7 +119,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   defaultPage() {
-    if (this.props.task.reviewed) {
+    if (this.props.task.aasm_state === 'reviewed') {
       // Force navigate to the note page on initial component mount
       // when the task is in reviewed state. This means that they have
       // already been saved in the database, but the user navigated

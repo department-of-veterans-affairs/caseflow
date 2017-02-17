@@ -202,10 +202,6 @@ class Task < ActiveRecord::Base
     super.merge(type: type)
   end
 
-  def reviewed
-    aasm_state == "reviewed"
-  end
-
   def to_hash
     serializable_hash(
       include: [:user, appeal: { methods:
@@ -232,7 +228,7 @@ class Task < ActiveRecord::Base
          :pending_eps,
          :issues,
          :to_hash] }],
-      methods: [:progress_status, :reviewed]
+      methods: [:progress_status, :aasm_state]
     )
   end
 end
