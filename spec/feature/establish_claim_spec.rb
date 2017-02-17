@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.feature "Dispatch" do
   before do
+    # Set the time zone to the current user's time zone for proper date conversion
+    Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
 
     @vbms_id = "VBMS_ID1"
@@ -123,10 +125,6 @@ RSpec.feature "Dispatch" do
       @other_task.start!
     end
 
-    let(:expected_decision_date) do
-      @task.appeal.decision_date.in_time_zone(current_user.timezone).to_date
-    end
-
     context "Skip the associate EP page" do
       before do
         BGSService.end_product_data = []
@@ -189,7 +187,7 @@ RSpec.feature "Dispatch" do
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
-            date: expected_decision_date,
+            date: @task.appeal.decision_date.to_date,
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
@@ -353,7 +351,7 @@ RSpec.feature "Dispatch" do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              date: expected_decision_date,
+              date: @task.appeal.decision_date.to_date,
               end_product_modifier: "171",
               end_product_label: "AMC-Partial Grant",
               end_product_code: "170PGAMC",

@@ -80,7 +80,7 @@ export default class EstablishClaim extends BaseForm {
       claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
-          formatDate(this.props.task.appeal.decision_date),
+          formatDate(this.props.task.appeal.serialized_decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()

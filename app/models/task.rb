@@ -205,7 +205,7 @@ class Task < ActiveRecord::Base
   def to_hash
     serializable_hash(
       include: [:user, appeal: { methods:
-       [:decision_date,
+       [:serialized_decision_date,
         :veteran_name,
         :decision_type] }],
       methods: [:progress_status, :days_since_creation]
@@ -218,7 +218,7 @@ class Task < ActiveRecord::Base
         include:
           [decisions: { methods: :received_at }],
         methods:
-        [:decision_date,
+        [:serialized_decision_date,
          :decisions_hash,
          :disposition,
          :veteran_name,
