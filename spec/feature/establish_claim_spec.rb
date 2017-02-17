@@ -405,7 +405,6 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      click_on "Stop processing claim"
       expect(page).to have_css(".usa-button-disabled")
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
