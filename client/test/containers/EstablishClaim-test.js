@@ -63,7 +63,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });
@@ -81,7 +81,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });
@@ -110,7 +110,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Cancel-EP-Establishment-button-id-0').simulate('click');
+        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });

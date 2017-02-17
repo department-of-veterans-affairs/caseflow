@@ -55,7 +55,6 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -98,7 +97,8 @@ export default class EstablishClaim extends BaseForm {
       page: DECISION_PAGE,
       showNotePageAlert: false,
       specialIssueModalDisplay: false,
-      specialIssues: {}
+      specialIssues: {},
+      submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
@@ -208,12 +208,15 @@ export default class EstablishClaim extends BaseForm {
 
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
     let data = {
       feedback: this.state.cancelModal.cancelFeedback.value
     };
 
-    handleAlertClear();
+    if (this.state.submitSpecialIssuesOnCancel) {
+      data.specialIssues = this.getFormValues(this.state.specialIssues);
+    }
+
+    this.props.handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
@@ -223,10 +226,12 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: true
     });
 
-    return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
+    data = ApiUtil.convertToSnakeCase(data);
+
+    return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
       this.reloadPage();
     }, () => {
-      handleAlert(
+      this.props.handleAlert(
         'error',
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
@@ -247,14 +252,16 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true
+      cancelModalDisplay: true,
+      submitSpecialIssuesOnCancel: false
     });
   }
 
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: false,
+      submitSpecialIssuesOnCancel: true
     });
   }
 
@@ -311,18 +318,6 @@ export default class EstablishClaim extends BaseForm {
   }
 
   hasAvailableModifers = () => this.validModifiers().length > 0
-
-  handleDecisionTypeChange = (value) => {
-    this.handleFieldChange('reviewForm', 'decisionType')(value);
-
-    let stateObject = {};
-    let modifiers = this.validModifiers();
-
-    stateObject.claimForm = { ...this.state.claimForm };
-    stateObject.claimForm.endProductModifier.value = modifiers[0];
-
-    this.setState(stateObject);
-  }
 
   handleReviewPageSubmit = () => {
     this.setStationState();
@@ -435,14 +430,14 @@ export default class EstablishClaim extends BaseForm {
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
-    return {
-      claim: ApiUtil.convertToSnakeCase({
+    return ApiUtil.convertToSnakeCase({
+      claim: {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      }),
-      specialIssues: this.prepareSpecialIssues()
-    };
+      },
+      specialIssues: this.getFormValues(this.state.specialIssues)
+    });
   }
 
   validateReviewPageSubmit() {
@@ -479,7 +474,6 @@ export default class EstablishClaim extends BaseForm {
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handleSubmit={this.handleReviewPageSubmit}
@@ -501,6 +495,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             history={history}
+            specialIssues={ApiUtil.convertToSnakeCase(
+              this.getFormValues(this.state.specialIssues))}
           />
         }
         { this.isFormPage() &&
@@ -526,28 +522,29 @@ export default class EstablishClaim extends BaseForm {
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
-              name: '\u00AB Go Back',
+              name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
+              disabled: this.state.cancelModal.cancelFeedback.value === "",
               loading: modalSubmitLoading,
-              name: 'Cancel EP Establishment',
+              name: 'Stop Processing Claim',
               onClick: this.handleFinishCancelTask
             }
           ]}
           visible={true}
           closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Cancel EP Establishment">
+          title="Stop Processing Claim">
           <p>
-            If you click the <b>Cancel EP Establishment </b>
+            If you click the <b>Stop Processing Claim </b>
             button below your work will not be
-            saved and the EP for this claim will not be established.
+            saved and an EP will not be created for this claim.
           </p>
           <p>
-            Please tell why you are canceling the establishment of this EP.
+            Please tell us why you have chosen to discontinue processing this claim.
           </p>
           <TextareaField
-            label="Cancel Explanation"
+            label="Explanation"
             name="Explanation"
             onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}

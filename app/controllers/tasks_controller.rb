@@ -59,15 +59,6 @@ class TasksController < ApplicationController
     end
   end
 
-  def cancel
-    task.cancel!(cancel_feedback)
-
-    respond_to do |format|
-      format.html { redirect_to establish_claims_path }
-      format.json { render json: {} }
-    end
-  end
-
   private
 
   def current_user_historical_tasks
