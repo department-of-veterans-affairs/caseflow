@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, require-jsdoc */
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
@@ -46,6 +46,12 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 ];
 
 const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
+
+let containsRoutingSpecialIssues = function(specialIssues) {
+  return Boolean(
+    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => specialIssues[issue].value)
+  );
+};
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -440,18 +446,12 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
-  containsRoutingSpecialIssues(specialIssues)  {
-    return Boolean(Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => {
-      return specialIssues[issue].value;
-    }));
-  }
-
   validateReviewPageSubmit() {
     let validOutput = true;
 
     // If it contains a routed special issue, allow EP creation even if it
     // contains other unhandled special issues.
-    if (this.containsRoutingSpecialIssues(this.state.specialIssues)) {
+    if (containsRoutingSpecialIssues(this.state.specialIssues)) {
       return true;
     }
 
@@ -574,4 +574,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-lines */
+/* eslint-enable max-lines, require-jsdoc */
