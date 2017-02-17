@@ -409,13 +409,10 @@ RSpec.feature "Dispatch" do
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      expect(page).to have_css(".usa-button-disabled")
+      click_on "Stop processing claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
-
-      # Fill in explanation before modal close but no submit
-      page.fill_in "Explanation", with: "Test"
-      expect(page).to have_css(".usa-button-secondary")
+      expect(page).to have_content("Please enter an explanation")
 
       # Close modal
       click_on "Close"
@@ -427,7 +424,7 @@ RSpec.feature "Dispatch" do
 
       # Fill in explanation and cancel
       page.fill_in "Explanation", with: "Test"
-      click_on "Stop Processing Claim"
+      click_on "Stop processing claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Claim Processing Discontinued")
@@ -446,7 +443,7 @@ RSpec.feature "Dispatch" do
       click_on "Route Claim"
       click_on "Cancel Claim Establishment"
       page.fill_in "Explanation", with: "Test"
-      click_on "Stop Processing Claim"
+      click_on "Stop processing claim"
       expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
