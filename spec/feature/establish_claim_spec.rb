@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.feature "Dispatch" do
   before do
+    Timecop.freeze(Time.utc(2017, 1, 1))
+
     @vbms_id = "VBMS_ID1"
 
     BGSService.end_product_data = [
@@ -55,8 +57,6 @@ RSpec.feature "Dispatch" do
     )
     @task2 = EstablishClaim.create(appeal: appeal)
     @task2.prepare!
-
-    Timecop.freeze(Time.utc(2017, 1, 1))
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
   end
@@ -123,6 +123,10 @@ RSpec.feature "Dispatch" do
       @other_task.start!
     end
 
+    let(:expected_decision_date) do
+      @task.appeal.decision_date.in_time_zone(current_user.timezone).to_date
+    end
+
     context "Skip the associate EP page" do
       before do
         BGSService.end_product_data = []
@@ -185,7 +189,7 @@ RSpec.feature "Dispatch" do
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
-            date: @task.appeal.decision_date.to_date,
+            date: expected_decision_date,
             end_product_modifier: "172",
             end_product_label: "BVA Grant",
             end_product_code: "172BVAG",
@@ -349,7 +353,7 @@ RSpec.feature "Dispatch" do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              date: @task2.appeal.decision_date.to_date,
+              date: expected_decision_date,
               end_product_modifier: "171",
               end_product_label: "AMC-Partial Grant",
               end_product_code: "170PGAMC",
