@@ -440,8 +440,20 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  containsRoutingSpecialIssues(specialIssues)  {
+    return Boolean(Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => {
+      return specialIssues[issue].value;
+    }));
+  }
+
   validateReviewPageSubmit() {
     let validOutput = true;
+
+    // If it contains a routed special issue, allow EP creation even if it
+    // contains other unhandled special issues.
+    if (this.containsRoutingSpecialIssues(this.state.specialIssues)) {
+      return true;
+    }
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {

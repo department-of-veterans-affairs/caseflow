@@ -455,6 +455,10 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#privateAttorneyOrAgent").trigger("click")
+
+      # It should also work even if a unsupported special issue is checked
+      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
