@@ -34,7 +34,7 @@ export default class EstablishClaimComplete extends React.Component {
     </div>
     <div className="cf-app-segment">
       <div className="cf-push-left">
-        <a href="/dispatch/establish-claim">View History</a>
+        <a href="/dispatch/establish-claim">View Work History</a>
       </div>
       <div className="cf-push-right">
         { availableTasks &&

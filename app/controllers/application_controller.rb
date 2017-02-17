@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   force_ssl if: :ssl_enabled?
+  before_action :check_out_of_service
   before_action :strict_transport_security
 
   before_action :set_timezone,
@@ -20,6 +21,10 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def check_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("out_of_service")
+  end
 
   def ssl_enabled?
     Rails.env.production? && !(request.path =~ /health-check/)

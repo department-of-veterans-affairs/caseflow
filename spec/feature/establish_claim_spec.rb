@@ -31,8 +31,9 @@ RSpec.feature "Dispatch" do
       }]
 
     Fakes::AppealRepository.records = {
-      "123C" => Fakes::AppealRepository.appeal_remand_decided,
+      "123C" => Fakes::AppealRepository.appeal_full_grant_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
+      "789E" => Fakes::AppealRepository.appeal_partial_grant_decided,
       @vbms_id => { documents: [Document.new(
         received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
         vbms_document_id: "123"
@@ -47,6 +48,13 @@ RSpec.feature "Dispatch" do
     )
     @task = EstablishClaim.create(appeal: appeal)
     @task.prepare!
+
+    appeal = Appeal.create(
+      vacols_id: "789E",
+      vbms_id: "new_vbms_id"
+    )
+    @task2 = EstablishClaim.create(appeal: appeal)
+    @task2.prepare!
 
     Timecop.freeze(Time.utc(2017, 1, 1))
 
@@ -139,8 +147,6 @@ RSpec.feature "Dispatch" do
         expect(@task.reload.user).to eq(current_user)
         expect(@task.started?).to be_truthy
 
-        page.select "Full Grant", from: "decisionType"
-
         click_on "Route Claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -148,10 +154,17 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Establish a new claim page and process pt2" do
+        # Complete last task so that we can ensure there are no remaining tasks
+        @task2.assign!(:assigned, current_user)
+        @task2.start!
+        @task2.review!
+        @task2.complete!(:completed, status: 0)
+
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        page.select "Full Grant", from: "decisionType"
+        # page.select "Full Grant", from: "decisionType"
+
         click_on "Route Claim"
 
         # Test text, radio button, & checkbox inputs
@@ -293,53 +306,60 @@ RSpec.feature "Dispatch" do
           ]
       end
 
-      scenario "Unavailable modifiers" do
-        # Test that the full grant associate page disables the Create New EP button
-        visit "/dispatch/establish-claim"
-        click_on "Establish Next Claim"
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+      context "Unavailable modifiers" do
+        scenario "full grants" do
+          # Test that the full grant associate page disables the Create New EP button
+          visit "/dispatch/establish-claim"
+          click_on "Establish Next Claim"
+          expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-        page.select("Full Grant", from: "decisionType")
+          click_on "Route Claim"
+          expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+          expect(page).to have_content("EP & Claim Label Modifiers in use")
 
-        click_on "Route Claim"
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(page).to have_content("EP & Claim Label Modifiers in use")
+          expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
+        end
 
-        expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
+        scenario "partial grants" do
+          # Complete first task so that we can get partial grant assigned to us
+          @task.assign!(:assigned, current_user)
+          @task.start!
+          @task.review!
+          @task.complete!(:completed, status: 0)
 
-        # Test that for a partial grant, the list of available modifiers is restricted
-        # to unused modifiers.
-        visit "/dispatch/establish-claim"
-        click_on "Establish Next Claim"
-        page.select("Partial Grant", from: "decisionType")
-        click_on "Route Claim"
+          # Test that for a partial grant, the list of available modifiers is restricted
+          # to unused modifiers.
+          visit "/dispatch/establish-claim"
+          click_on "Establish Next Claim"
+          click_on "Route Claim"
 
-        click_on "Create New EP"
+          click_on "Create New EP"
 
-        date = "01/08/2017"
-        page.fill_in "Decision Date", with: date
+          date = "01/08/2017"
+          page.fill_in "Decision Date", with: date
 
-        click_on "Create End Product"
+          click_on "Create End Product"
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(page).to have_content("Congratulations!")
+          expect(page).to have_current_path("/dispatch/establish-claim/#{@task2.id}")
+          expect(page).to have_content("Congratulations!")
 
-        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
-            benefit_type_code: "1",
-            payee_code: "00",
-            predischarge: false,
-            claim_type: "Claim",
-            date: @task.appeal.decision_date.to_date,
-            end_product_modifier: "171",
-            end_product_label: "AMC-Partial Grant",
-            end_product_code: "170PGAMC",
-            station_of_jurisdiction: "397",
-            gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
-          },
-          appeal: @task.appeal
-        )
+          expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+            claim: {
+              benefit_type_code: "1",
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              date: @task2.appeal.decision_date.to_date,
+              end_product_modifier: "171",
+              end_product_label: "AMC-Partial Grant",
+              end_product_code: "170PGAMC",
+              station_of_jurisdiction: "397",
+              gulf_war_registry: false,
+              suppress_acknowledgement_letter: false
+            },
+            appeal: @task2.appeal
+          )
+        end
       end
     end
 
@@ -347,6 +367,9 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim"
       click_on "Establish Next Claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+
+      # set special issue to ensure it is saved in the database
+      page.find("#insurance").trigger("click")
 
       click_on "Route Claim"
 
@@ -360,6 +383,7 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completion_status)
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
+      expect(@task.appeal.reload.insurance).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -373,15 +397,22 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
 
+      # click on special issue
+      page.find("#riceCompliance").trigger("click")
+
       # Open modal
       click_on "Cancel"
       expect(page).to have_css(".cf-modal")
 
       # Try to cancel without explanation
-      click_on "Stop Processing Claim"
+      click_on "Stop processing claim"
+      expect(page).to have_css(".usa-button-disabled")
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_css(".cf-modal")
-      expect(page).to have_content("Please enter an explanation")
+
+      # Fill in explanation before modal close but no submit
+      page.fill_in "Explanation", with: "Test"
+      expect(page).to have_css(".usa-button-secondary")
 
       # Close modal
       click_on "Close"
@@ -393,13 +424,28 @@ RSpec.feature "Dispatch" do
 
       # Fill in explanation and cancel
       page.fill_in "Explanation", with: "Test"
-      click_on "Stop Processing Claim"
+      click_on "Stop processing claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Claim Processing Discontinued")
       expect(@task.reload.completed?).to be_truthy
       expect(@task.appeal.tasks.where(type: :EstablishClaim).to_complete.count).to eq(0)
       expect(@task.comment).to eq("Test")
+
+      # The special issue should not be saved on cancel
+      expect(@task.appeal.reload.rice_compliance).to be_falsey
+    end
+
+    scenario "An unhandled special issue brings up cancel modal" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+      click_on "Route Claim"
+      click_on "Cancel Claim Establishment"
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop processing claim"
+      expect(page).to have_content("Claim Processing Discontinued")
+      expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
     end
 
     scenario "A regional office special issue routes correctly" do
@@ -412,9 +458,8 @@ RSpec.feature "Dispatch" do
     end
 
     scenario "A national office special issue routes correctly" do
-      @task.assign!(:assigned, current_user)
-      visit "/dispatch/establish-claim/#{@task.id}"
-      page.select "Remand", from: "decisionType"
+      @task2.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task2.id}"
       page.find("#mustardGas").trigger("click")
       click_on "Route Claim"
       click_on "Create New EP"

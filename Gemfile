@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "488c712271d84658f8602b1bba4b1c71a5e781bd"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "faecda3443f0e0a0abfb0774106bae320b2c3026"
 
 gem "moment_timezone-rails"
 
@@ -62,7 +62,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0b275309ea58399a79e8ed9d6e99aa703cdd687c"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b5e43ac1ade8e02cfb6658caf13f159710db8b5c"
 
 gem 'redis-rails'
 
