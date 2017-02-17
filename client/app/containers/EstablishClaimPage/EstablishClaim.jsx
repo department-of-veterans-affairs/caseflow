@@ -96,6 +96,7 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
+      specialIssueModalDisplay: false,
       specialIssues: {},
       submitSpecialIssuesOnCancel: null
     };
@@ -259,6 +260,7 @@ export default class EstablishClaim extends BaseForm {
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
+      specialIssueModalDisplay: false,
       submitSpecialIssuesOnCancel: true
     });
   }
@@ -321,7 +323,14 @@ export default class EstablishClaim extends BaseForm {
     this.setStationState();
 
     if (!this.validateReviewPageSubmit()) {
-      this.handlePageChange(NOTE_PAGE);
+      if (this.state.reviewForm.decisionType.value == 'Full Grant') {
+        this.handlePageChange(NOTE_PAGE);
+      }
+      else {
+        this.setState({
+          specialIssueModalDisplay: true
+        });
+      }
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
@@ -440,7 +449,8 @@ export default class EstablishClaim extends BaseForm {
     let validOutput = true;
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        console.log(issue.specialIssue);
         validOutput = false;
       }
     });
@@ -454,6 +464,7 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay,
       history,
       modalSubmitLoading,
+      specialIssueModalDisplay,
       specialIssues
     } = this.state;
 
@@ -474,6 +485,7 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleReviewPageSubmit}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
+            specialIssueModalDisplay={specialIssueModalDisplay}
             specialIssues={specialIssues}
             task={this.props.task}
           />
