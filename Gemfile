@@ -81,6 +81,8 @@ gem 'aasm'
 
 gem 'font-awesome-sass'
 
+gem 'redis-namespace'
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
