@@ -26,7 +26,8 @@ export default class EstablishClaimNote extends BaseForm {
         `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
     }
 
-    let note = `The BVA Full Grant decision date ${formatDate(appeal.decision_date)}` +
+    let note = `The BVA Full Grant decision` +
+      ` date ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
