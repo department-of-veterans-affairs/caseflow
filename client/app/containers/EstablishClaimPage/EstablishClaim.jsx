@@ -15,6 +15,7 @@ import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
+import EstablishClaimEmail from './EstablishClaimEmail';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -23,6 +24,7 @@ export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
+export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
@@ -94,7 +96,7 @@ export default class EstablishClaim extends BaseForm {
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
-      page: DECISION_PAGE,
+      page: EMAIL_PAGE,
       showNotePageAlert: false,
       specialIssueModalDisplay: false,
       specialIssues: {},
@@ -127,7 +129,7 @@ export default class EstablishClaim extends BaseForm {
 
     // Force navigate to the review page on initial component mount
     // This ensures they are not mid-flow
-    return DECISION_PAGE;
+    return EMAIL_PAGE;
   }
 
   componentDidMount() {
@@ -292,6 +294,9 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === NOTE_PAGE;
   }
 
+  isEmailPage() {
+    return this.state.page === EMAIL_PAGE;
+  }
   /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
@@ -521,6 +526,15 @@ export default class EstablishClaim extends BaseForm {
             appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
+          />
+        }
+        { this.isEmailPage() &&
+          <EstablishClaimEmail
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleNotePageSubmit}
+            regionalOffice="RO 81"
+            regionalOfficeEmail={["mark@yadayadayada.com"]}
             specialIssues={specialIssues}
           />
         }
