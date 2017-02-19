@@ -34,7 +34,9 @@ export default class TabWindow extends React.Component {
     } = this.props;
 
     return <div>
-        <div className={`cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`}>
+        <div className={
+          `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
+        }>
           {tabs.map((tab, i) =>
             <div
               className={`cf-tab${i === this.state.currentPage ? " cf-active" : ""}`}

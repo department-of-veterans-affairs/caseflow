@@ -30,7 +30,7 @@ describe('TabWindow', () => {
       pages={[<div id="pageOne">page one</div>, <div id="pageTwo">page two</div>]}
       fullPage={true}/>);
 
-    expect(wrapper.find('.cf-tab-navigation-full-screen')).to.exist;
+    expect(wrapper.find('.cf-tab-navigation-full-screen')).to.be.present();
   });
 
   it('onChange is fired when tab is switched', () => {
