@@ -3,7 +3,7 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
-
+import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -426,6 +426,23 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  getSpecialIssuesEmail() {
+    if (this.state.specialIssuesEmail == 'PMC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION['PMC']);
+    } else if (this.state.specialIssuesEmail == 'COWC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION['COWC']);
+    } else if (this.state.specialIssuesEmail == 'education') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION['EDUCATION']);
+    } else {
+      return this.state.specialIssuesEmail
+    }
+  }
+
+  getEmailFromConstant(constant) {
+    let regionalOfficeKey = this.props.regionalOfficeStations[this.props.task.appeal.station_key];
+    return ROUTING_INFORMATION['codeToEmailMapper'][constant[regionalOfficeKey]];
+  }
+
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
     let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
@@ -562,7 +579,7 @@ export default class EstablishClaim extends BaseForm {
             appeal={this.props.task.appeal}
             handleSubmit={this.handleEmailPageSubmit}
             regionalOffice="RO 81"
-            regionalOfficeEmail={this.state.specialIssuesEmail}
+            regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
           />
         }
