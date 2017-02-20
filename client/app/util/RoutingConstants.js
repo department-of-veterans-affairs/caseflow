@@ -125,7 +125,7 @@ const RoutingConstants = [
     { RO82: 'RO82' },
     { RO83: 'RO83' } ],
 
- education = [
+  education = [
     { RO01: 'RO91' },
     { RO02: 'RO91' },
     { RO04: 'RO91' },
@@ -187,4 +187,20 @@ const RoutingConstants = [
     { RO91: 'RO91' },
     { RO93: 'RO93' },
     { RO94: 'RO94' } ],
+
+  codeToEmailMapper = {
+    RO80: [ 'nancy.encarnado@va.gov' ],
+    RO81: [ 'PMCAPPEALS.VBAPHI@va.gov', 'matthew.wright@va.gov' ],
+    RO82: [ 'PMCAppeals.VBAMIW@va.gov', 'tammy.boggs@va.gov' ],
+    RO83: [ 'PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov' ],
+    RO91: [ 'anthony.mazur@va.gov', 'edu.vbabuf@va.gov' ],
+    RO94: [ 'corey.henry@va.gov', 'edu.vbastl@va.gov' ],
+    RO93: [ 'dawn.arnold@va.gov', 'edu.vbamus@va.gov' ],
+    RO84: [ 'cowc.vbaphi@va.gov', 'Sohail.Atoum@va.gov' ],
+    RO85: [ 'cow.vbamiw@va.gov', 'bryan.carroll@va.gov' ],
+    RO86: [ 'smtpfin.vab.spl@va.gov', 'vernon.anderson@va.gov' ],
+    RO99: [ 'Travis.Richardson@va.gov' ]
+  }
 ];
+
+export default RoutingConstants;

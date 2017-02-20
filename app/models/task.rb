@@ -14,7 +14,8 @@ class Task < ActiveRecord::Base
     canceled: 1,
     expired: 2,
     routed_to_ro: 3,
-    assigned_existing_ep: 4
+    assigned_existing_ep: 4,
+    special_issue_emailed: 5,
   }.freeze
 
   # Use this to define status texts that don't properly titlize
@@ -95,7 +96,7 @@ class Task < ActiveRecord::Base
     end
 
     event :complete do
-      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      transitions from: [:started, :reviewed], to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -166,6 +167,10 @@ class Task < ActiveRecord::Base
 
   def assigned_existing_ep?
     completion_status == self.class.completion_status_code(:assigned_existing_ep)
+  end
+
+  def special_issue_emailed?
+    completion_status == self.class.completion_status_code(:special_issue_emailed)
   end
 
   def days_since_creation

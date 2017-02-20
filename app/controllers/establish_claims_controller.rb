@@ -20,6 +20,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def email_complete
+    task.complete!(status: 5)
+    render json: {}
+  end
+
   def assign_existing_end_product
     Task.transaction do
       task.appeal.update!(special_issues_params)

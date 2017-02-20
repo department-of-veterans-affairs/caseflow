@@ -67,13 +67,13 @@ export default class EstablishClaimEmail extends BaseForm {
           <TextareaField
             label={<b>Message</b>}
             required={true}
-            name="emailMessgae"
+            name="emailMessage"
             onChange={this.handleFieldChange('noteForm', 'noteField')}
             {...this.state.noteForm.noteField}
           />
 
           <Checkbox
-            label="I confirm that I have created a VBMS note to help route this claim"
+            label="I confirm that I have sent an email to route this claim."
             name="confirmNote"
             onChange={this.handleFieldChange('noteForm', 'confirmBox')}
             {...this.state.noteForm.confirmBox}

@@ -96,10 +96,11 @@ export default class EstablishClaim extends BaseForm {
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
-      page: EMAIL_PAGE,
+      page: DECISION_PAGE,
       showNotePageAlert: false,
       specialIssueModalDisplay: false,
       specialIssues: {},
+      specialIssuesEmail: '',
       submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
@@ -129,7 +130,7 @@ export default class EstablishClaim extends BaseForm {
 
     // Force navigate to the review page on initial component mount
     // This ensures they are not mid-flow
-    return EMAIL_PAGE;
+    return DECISION_PAGE;
   }
 
   componentDidMount() {
@@ -329,7 +330,7 @@ export default class EstablishClaim extends BaseForm {
 
     if (!this.validateReviewPageSubmit()) {
       if (this.state.reviewForm.decisionType.value == 'Full Grant') {
-        this.handlePageChange(NOTE_PAGE);
+        this.handlePageChange(EMAIL_PAGE);
       }
       else {
         this.setState({
@@ -369,6 +370,29 @@ export default class EstablishClaim extends BaseForm {
       });
     });
   }
+
+  handleEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+      );
+      this.setState({
+        loading: false
+      });
+    });
+    };
 
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
@@ -455,7 +479,11 @@ export default class EstablishClaim extends BaseForm {
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
-        console.log(issue.specialIssue);
+        this.setState({
+          // If there are multiple unhandled special issues, we'll route
+          // to the email address for the last one.
+          specialIssuesEmail: issue.emailAddress
+        });
         validOutput = false;
       }
     });
@@ -532,9 +560,9 @@ export default class EstablishClaim extends BaseForm {
         { this.isEmailPage() &&
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
-            handleSubmit={this.handleNotePageSubmit}
+            handleSubmit={this.handleEmailPageSubmit}
             regionalOffice="RO 81"
-            regionalOfficeEmail={["mark@yadayadayada.com"]}
+            regionalOfficeEmail={this.state.specialIssuesEmail}
             specialIssues={specialIssues}
           />
         }
