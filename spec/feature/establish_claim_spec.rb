@@ -200,6 +200,8 @@ RSpec.feature "Dispatch" do
         expect(@task.completion_status).to eq(0)
         expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
+        expect(@task.appeal.reload.dispatched_to_station).to eq("397")
+
         click_on "Caseflow Dispatch"
         expect(page).to have_current_path("/dispatch/establish-claim")
 
@@ -457,6 +459,13 @@ RSpec.feature "Dispatch" do
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
+
+      click_on "Create End Product"
+      page.find("#confirmNote").trigger("click")
+      click_on "Finish Routing Claim"
+
+      expect(page).to have_content("Congratulations!")
+      expect(@task.appeal.reload.dispatched_to_station).to eq("313")
     end
 
     scenario "A national office special issue routes correctly" do

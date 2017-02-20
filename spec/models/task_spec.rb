@@ -238,6 +238,7 @@ describe Task do
       task.start!
       task.review!
     end
+
     it "completes the task" do
       task.complete!(:completed, status: 3)
       expect(task.reload.completed_at).to be_truthy
