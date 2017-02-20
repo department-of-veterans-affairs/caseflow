@@ -145,6 +145,10 @@ class Appeal < ActiveRecord::Base
     decisions
   end
 
+  def serialized_decision_date
+    decision_date.to_formatted_s(:json_date)
+  end
+
   def certify!
     Appeal.certify(self)
   end
@@ -272,7 +276,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def issues
-    @issues ||= self.class.repository.issues(vacols_id)
+    @issues ||= self.class.repository.issues(vacols_id: vacols_id)
   end
 
   def sanitized_vbms_id
