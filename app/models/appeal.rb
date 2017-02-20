@@ -85,7 +85,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def task_header
-    "#{veteran_name} (#{vbms_id})"
+    "| #{veteran_name} (#{vbms_id})"
   end
 
   def hearing_pending?
