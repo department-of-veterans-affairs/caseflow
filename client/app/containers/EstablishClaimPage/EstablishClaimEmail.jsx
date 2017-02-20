@@ -7,9 +7,6 @@ import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 
-export const VBMS_NOTE = 'vbms';
-export const VACOLS_NOTE = 'vacols';
-
 export default class EstablishClaimEmail extends BaseForm {
   constructor(props) {
     super(props);
@@ -29,15 +26,15 @@ export default class EstablishClaimEmail extends BaseForm {
         `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
     }
 
-    let note = `The BVA Full Grant decision dated ${formatDate(appeal.decision_date)}` +
+    let email = `The BVA Full Grant decision dated ${formatDate(appeal.decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
     this.state = {
-      noteForm: {
+      emailForm: {
         confirmBox: new FormField(false),
-        noteField: new FormField(note)
+        emailField: new FormField(email)
       }
     };
   }
@@ -65,18 +62,18 @@ export default class EstablishClaimEmail extends BaseForm {
           </div>
 
           <TextareaField
-            label={<b>Message</b>}
+            label='Message'
             required={true}
             name="emailMessage"
-            onChange={this.handleFieldChange('noteForm', 'noteField')}
-            {...this.state.noteForm.noteField}
+            onChange={this.handleFieldChange('emailForm', 'emailField')}
+            {...this.state.emailForm.emailField}
           />
 
           <Checkbox
             label="I confirm that I have sent an email to route this claim."
-            name="confirmNote"
-            onChange={this.handleFieldChange('noteForm', 'confirmBox')}
-            {...this.state.noteForm.confirmBox}
+            name="confirmEmail"
+            onChange={this.handleFieldChange('emailForm', 'confirmBox')}
+            {...this.state.emailForm.confirmBox}
           />
 
         </div>
@@ -91,7 +88,7 @@ export default class EstablishClaimEmail extends BaseForm {
             <Button
                 name="Finish Routing Claim"
                 classNames={["usa-button-primary"]}
-                disabled={!this.state.noteForm.confirmBox.value}
+                disabled={!this.state.emailForm.confirmBox.value}
                 onClick={this.props.handleSubmit}
             />
           </div>

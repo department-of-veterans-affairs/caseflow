@@ -369,7 +369,7 @@ RSpec.feature "Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
       # set special issue to ensure it is saved in the database
-      page.find("#insurance").trigger("click")
+      page.find("#mustardGas").trigger("click")
 
       click_on "Route Claim"
 
@@ -383,7 +383,7 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completion_status)
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
-      expect(@task.appeal.reload.insurance).to be_truthy
+      expect(@task.appeal.reload.mustard_gas).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -435,16 +435,15 @@ RSpec.feature "Dispatch" do
       expect(@task.appeal.reload.rice_compliance).to be_falsey
     end
 
-    scenario "An unhandled special issue brings up cancel modal" do
+    scenario "An unhandled special issue routes to email page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
       click_on "Route Claim"
-      click_on "Cancel Claim Establishment"
-      page.fill_in "Explanation", with: "Test"
-      click_on "Stop Processing Claim"
-      expect(page).to have_content("Claim Processing Discontinued")
-      expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
+      expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
+      page.find("#confirmEmail").trigger("click")
+      click_on "Finish Routing Claim"
+      expect(page).to have_content("Congratulations!")
     end
 
     scenario "A regional office special issue routes correctly" do
