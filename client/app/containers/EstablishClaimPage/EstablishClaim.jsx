@@ -101,6 +101,7 @@ export default class EstablishClaim extends BaseForm {
       specialIssueModalDisplay: false,
       specialIssues: {},
       specialIssuesEmail: '',
+      specialIssuesRegionalOffice: '',
       submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
@@ -443,6 +444,23 @@ export default class EstablishClaim extends BaseForm {
     return ROUTING_INFORMATION['codeToEmailMapper'][constant[regionalOfficeKey]];
   }
 
+  getSpecialIssuesRegionalOffice() {
+    if (this.state.specialIssuesRegionalOffice == 'PMC') {
+        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['PMC']);
+    } else if (this.state.specialIssuesRegionalOffice == 'COWC') {
+        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['COWC']);
+    } else if (this.state.specialIssuesRegionalOffice == 'education') {
+        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['EDUCATION']);
+    } else {
+        return this.state.specialIssuesRegionalOffice
+    }
+  }
+
+  getRegionalOfficeFromConstant(constant) {
+    let regionalOfficeKey = this.props.regionalOfficeStations[this.props.task.appeal.station_key];
+    return constant[regionalOfficeKey];
+  }
+
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
     let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
@@ -499,7 +517,8 @@ export default class EstablishClaim extends BaseForm {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.emailAddress
+          specialIssuesEmail: issue.emailAddress,
+          specialIssuesRegionalOffice: issue.regionalOffice
         });
         validOutput = false;
       }
@@ -578,7 +597,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleSubmit={this.handleEmailPageSubmit}
-            regionalOffice="RO 81"
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
           />

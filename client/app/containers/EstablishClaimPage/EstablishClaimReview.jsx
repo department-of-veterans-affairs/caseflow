@@ -54,49 +54,60 @@ const SPECIAL_ISSUE_NODE_MAP = {
 
 export const UNHANDLED_SPECIAL_ISSUES = [
   {
-    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates',
-    emailAddress: 'PMC'
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates'
   },
   {
+    emailAddress: 'education',
+    regionalOffice: 'education',
     specialIssue: 'educationGiBillDependentsEducational' +
-    'AssistanceScholarshipTransferOfEntitlement',
-    emailAddress: 'education'
+    'AssistanceScholarshipTransferOfEntitlement'
   },
   {
-    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean',
-    emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov']
+    emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
+    regionalOffice: 'RO83',
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean'
   },
   {
+    emailAddess: 'PMC',
+    regionalOffice: 'PMC',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
-    emailAddess: 'PMC'
   },
   {
-    specialIssue: 'homeLoanGuarantee',
     emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'homeLoanGuarantee'
   },
   {
-    specialIssue: 'insurance',
-    emailAddress: ['nancy.encarnado@va.gov']
+    emailAddress: ['nancy.encarnado@va.gov'],
+    regionalOffice: 'RO80',
+    specialIssue: 'insurance'
   },
   {
-    specialIssue: 'nationalCemeteryAdministration',
-    emailAddress: []
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'nationalCemeteryAdministration'
   },
   {
-    specialIssue: 'pensionUnitedStates',
-    emailAddress: 'PMC'
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'pensionUnitedStates'
   },
   {
-    specialIssue: 'vamc',
-    emailAddress: ['Travis.Richardson@va.gov']
+    emailAddress: ['Travis.Richardson@va.gov'],
+    regionalOffice: 'RO99',
+    specialIssue: 'vamc'
   },
   {
-    specialIssue: 'vocationalRehab',
-    emailAddress: []
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'vocationalRehab'
   },
   {
-    specialIssue: 'waiverOfOverpayment',
-    emailAddress: 'COWC'
+    emailAddress: 'COWC',
+    regionalOffice: 'COWC',
+    specialIssue: 'waiverOfOverpayment'
   }
 ];
 
