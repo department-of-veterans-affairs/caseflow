@@ -596,6 +596,7 @@ export default class EstablishClaim extends BaseForm {
         { this.isEmailPage() &&
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
+            handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleEmailPageSubmit}
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}

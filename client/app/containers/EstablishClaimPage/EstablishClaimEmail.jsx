@@ -80,13 +80,19 @@ export default class EstablishClaimEmail extends BaseForm {
           />
 
         </div>
+
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
             <Button
-              name="Finish Routing Claim"
-              classNames={["usa-button-primary"]}
-              disabled={!this.state.noteForm.confirmBox.value}
-              onClick={this.props.handleSubmit}
+                name="Cancel"
+                onClick={this.props.handleCancelTask}
+                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+            />
+            <Button
+                name="Finish Routing Claim"
+                classNames={["usa-button-primary"]}
+                disabled={!this.state.noteForm.confirmBox.value}
+                onClick={this.props.handleSubmit}
             />
           </div>
         </div>
@@ -96,6 +102,7 @@ export default class EstablishClaimEmail extends BaseForm {
 
 EstablishClaimEmail.propTypes = {
   appeal: PropTypes.object.isRequired,
+  handleCancelTask: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   regionalOffice: PropTypes.string.isRequired,
   regionalOfficeEmail: PropTypes.arrayOf(PropTypes.string).isRequired
