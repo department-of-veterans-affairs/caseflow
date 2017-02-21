@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch", focus: true do
+RSpec.feature "Dispatch" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
