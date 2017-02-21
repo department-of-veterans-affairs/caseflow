@@ -189,7 +189,7 @@ class Task < ActiveRecord::Base
   end
 
   def no_review_completion_status(status:)
-    status == 5
+    status == self.class.completion_status_code(:special_issue_emailed)
   end
 
   def save_outgoing_reference(outgoing_reference_id: nil)
