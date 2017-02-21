@@ -17,7 +17,7 @@ class TestDataService
 
   def self.reset_appeal_special_issues
     return false if ApplicationController.dependencies_faked?
-    fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
+    fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
 
     Appeal.find_each do |appeal|
       Appeal::SPECIAL_ISSUE_COLUMNS.each do |special_issue|
