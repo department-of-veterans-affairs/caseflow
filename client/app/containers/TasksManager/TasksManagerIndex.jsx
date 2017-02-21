@@ -113,6 +113,6 @@ export default class TasksManagerIndex extends BaseForm {
 TasksManagerIndex.propTypes = {
   completedCountToday: PropTypes.number.isRequired,
   employeeCount: PropTypes.string.isRequired,
-  tasksCompletedByUsers: PropTypes.number.isRequired,
+  tasksCompletedByUsers: PropTypes.object.isRequired,
   toCompleteCount: PropTypes.number.isRequired
 };
