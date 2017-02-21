@@ -94,7 +94,7 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
   `educationGiBillDependentsEducational` +
     `AssistanceScholarshipTransferOfEntitlement`,
   'hearingIncludingTravelBoardVideoConference',
-  'homeLoanGuarantee',
+  'homeLoanGuaranty',
   'incarceratedVeterans',
   'manlinconCompliance',
   'nonratingIssue',
