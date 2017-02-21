@@ -7,8 +7,10 @@ class TasksController < ApplicationController
   TASKS_PER_PAGE = 10
 
   def index
-    @completed_count_today = Task.completed_today.count
+    tasks_completed_today = Task.completed_today;
+    @completed_count_today = tasks_completed_today.count
     @to_complete_count = Task.to_complete.count
+
     render index_template
   end
 
