@@ -46,7 +46,10 @@ export default class Table extends React.Component {
 
       {footers && <tfoot>
         <tr>
-          {footers.map((foot, i) => <td key={`foot${i}`} className={this.props.columnClasses[i] || ""}>{foot}</td>)}
+          {footers.map((foot, i) =>
+            <td key={`foot${i}`} className={this.props.columnClasses[i] || ""}>
+              {foot}
+            </td>)}
         </tr>
       </tfoot>}
     </table>;

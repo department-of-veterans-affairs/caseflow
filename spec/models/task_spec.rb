@@ -10,7 +10,7 @@ describe Task do
     @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
-    @user = User.create(station_id: "ABC", css_id: "123")
+    @user = User.create(station_id: "ABC", css_id: "123", full_name: "DSUSER")
   end
 
   context ".newest_first" do
@@ -357,6 +357,20 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "returns unprepared tasks" do
       expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#tasks_completed_by_users" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+
+    before do
+      task.prepare!
+      task.assign!(:assigned, @user)
+    end
+
+    it "returns unprepared tasks" do
+      expect(Task.tasks_completed_by_users([task])).to eq("DSUSER" => 1)
     end
   end
 end

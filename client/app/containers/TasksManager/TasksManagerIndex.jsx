@@ -6,7 +6,12 @@ import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
 import FormField from '../../util/FormField';
 
-const TABLE_HEADERS = ['Employee Name', 'Cases Assigned', 'Cases Completed', 'Cases Remaining'];
+const TABLE_HEADERS = [
+  'Employee Name',
+  'Cases Assigned',
+  'Cases Completed',
+  'Cases Remaining'
+];
 const COLUMN_CLASSES = ['cf-txt-l ', 'cf-txt-c', 'cf-txt-c', 'cf-txt-c'];
 
 export default class TasksManagerIndex extends BaseForm {
@@ -14,10 +19,11 @@ export default class TasksManagerIndex extends BaseForm {
     super(props);
 
     let totalCases = this.props.toCompleteCount + this.props.completedCountToday;
-    let assignedCases = this.props.employeeCount > 0 ? Math.ceil( totalCases / this.props.employeeCount) : 0
-    
+    let assignedCases = this.props.employeeCount > 0 ?
+      Math.ceil(totalCases / this.props.employeeCount) : 0;
+
     this.state = {
-      assignedCases: assignedCases,
+      assignedCases,
       employeeCountForm: {
         employeeCount: new FormField(this.props.employeeCount)
       }
@@ -25,7 +31,7 @@ export default class TasksManagerIndex extends BaseForm {
   }
 
   statusFooters = () => {
-    // We return an empty row if there are no users in the table. Otherwsie
+    // We return an empty row if there are no users in the table. Otherwise
     // we use the footer to display the totals.
     if (Object.keys(this.props.tasksCompletedByUsers).length === 0) {
       return [
@@ -34,24 +40,23 @@ export default class TasksManagerIndex extends BaseForm {
         0,
         this.props.toCompleteCount
       ];
-    } else {
-      return [
-        <b>Employee Total</b>,
-        <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>,
-        <b>{this.props.completedCountToday}</b>,
-        <b>{this.props.toCompleteCount}</b>
-      ];
     }
+
+    return [
+      <b>Employee Total</b>,
+      <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>,
+      <b>{this.props.completedCountToday}</b>,
+      <b>{this.props.toCompleteCount}</b>
+    ];
+
   }
 
-  buildUserRow = (taskCompletedByUser) => {
-    return [
-      taskCompletedByUser.name,
-      this.state.assignedCases,
-      taskCompletedByUser.numberOfTasks,
-      this.state.assignedCases - taskCompletedByUser.numberOfTasks
-    ];
-  }
+  buildUserRow = (taskCompletedByUser) => [
+    taskCompletedByUser.name,
+    this.state.assignedCases,
+    taskCompletedByUser.numberOfTasks,
+    Math.max(this.state.assignedCases - taskCompletedByUser.numberOfTasks, 0)
+  ]
 
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
@@ -73,9 +78,9 @@ export default class TasksManagerIndex extends BaseForm {
       toCompleteCount
     } = this.props;
 
-    let tasksCompletedByUsers = Object.keys(this.props.tasksCompletedByUsers).map((name) => {
-      return { name: name, numberOfTasks: this.props.tasksCompletedByUsers[name] };
-    });
+    let tasksCompletedByUsers = Object.keys(this.props.tasksCompletedByUsers).
+      map((name) => ({ name,
+        numberOfTasks: this.props.tasksCompletedByUsers[name] }));
 
     return <div className="cf-app-segment cf-app-segment--alt">
       <h1>ARC Work Assignments

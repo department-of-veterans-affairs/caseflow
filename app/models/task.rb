@@ -67,9 +67,8 @@ class Task < ActiveRecord::Base
     end
 
     def tasks_completed_by_users(tasks)
-      tasks.reduce({}) do |user_numbers, task|
+      tasks.each_with_object({}) do |task, user_numbers|
         user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
-        user_numbers
       end
     end
   end
