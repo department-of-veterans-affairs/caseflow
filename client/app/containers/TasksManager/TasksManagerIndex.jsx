@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import _uniqBy from 'lodash/uniqBy';
 
 import ApiUtil from '../../util/ApiUtil';
 import TasksManagerEmployeeCount from './TasksManagerEmployeeCount';
