@@ -11,6 +11,7 @@ class TasksController < ApplicationController
     @completed_count_today = tasks_completed_today.count
     @to_complete_count = Task.to_complete.count
     @tasks_completed_by_users = Task.tasks_completed_by_users(tasks_completed_today)
+
     render index_template
   end
 
@@ -19,6 +20,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
+    return render "special_issue_emailed" if task.special_issue_emailed?
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors

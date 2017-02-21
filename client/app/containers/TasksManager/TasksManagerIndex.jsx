@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import _uniqBy from 'lodash/uniqBy';
 
 import ApiUtil from '../../util/ApiUtil';
 import TasksManagerEmployeeCount from './TasksManagerEmployeeCount';
@@ -45,9 +44,17 @@ export default class TasksManagerIndex extends BaseForm {
     }
   }
 
+  buildUserRow = (taskCompletedByUser) => {
+    return [
+      taskCompletedByUser.name,
+      this.state.assignedCases,
+      taskCompletedByUser.numberOfTasks,
+      this.state.assignedCases - taskCompletedByUser.numberOfTasks
+    ];
+  }
+
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
-
 
     return ApiUtil.patch(`/dispatch/employee-count/${count}`).then(() => {
       window.location.reload();
@@ -59,15 +66,6 @@ export default class TasksManagerIndex extends BaseForm {
       );
     });
   };
-
-  buildUserRow = (taskCompletedByUser) => {
-    return [
-      taskCompletedByUser.name,
-      this.state.assignedCases,
-      taskCompletedByUser.numberOfTasks,
-      this.state.assignedCases - taskCompletedByUser.numberOfTasks
-    ];
-  }
 
   render() {
     let {
