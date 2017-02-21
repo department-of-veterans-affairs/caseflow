@@ -74,19 +74,7 @@ RSpec.feature "Dispatch" do
     scenario "View landing page" do
       visit "/dispatch/establish-claim"
 
-      # Complete another task while the page is loaded. Verify we do not have it
-      # added on "Show More" click
-      create_tasks(1, initial_stae: :completed, id_prefix: "ZZZ")
-
-      expect(page).to have_content(@vbms_id)
-      expect(page).to have_content("Jane Smith", count: 10)
-      expect(page).to have_content("Complete")
-      click_on "Show More"
-
-      expect(page).to_not have_content("Show More")
-
-      # Verify we got a whole 10 more completed tasks
-      expect(page).to have_content("Jane Smith", count: 20)
+      expect(page).to have_content("ARC Work Assignments")
     end
 
     scenario "Update employee count" do
