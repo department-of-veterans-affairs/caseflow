@@ -44,7 +44,7 @@ class Dispatch
     end
   end
 
-  def initialize(claim:, task:)
+  def initialize(task:, claim: {})
     # TODO(jd): If we permanently keep the decision date a non-editable field,
     # we should instead pass that value from the taks.appeal.decision date, rather
     # than use the value passed from the front end
@@ -65,6 +65,14 @@ class Dispatch
                                                      appeal: task.appeal)
 
     task.review!(outgoing_reference_id: end_product.claim_id)
+  end
+
+  def assign_existing_end_product!(end_product_id:, special_issues:)
+    task.transaction do
+      task.appeal.update!(special_issues)
+      task.assign_existing_end_product!(end_product_id)
+      Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
+    end
   end
 
   # Class used for validating the claim object

@@ -1,14 +1,14 @@
 class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform]
-  before_action :verify_manager_access, only: [:unprepared_tasks]
+  before_action :verify_manager_access, only: [:unprepared_tasks, :update_employee_count]
 
   def perform
     # If we've already created the EP, we want to send the user to the note page
     return render json: { require_note: true } if task.reviewed?
 
     Task.transaction do
-      task.appeal.update!(special_issues_params)
+      task.appeal.update!(appeal_params)
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
       task.complete!(status: 0) unless task.appeal.special_issues?
     end
@@ -21,10 +21,14 @@ class EstablishClaimsController < TasksController
   end
 
   def assign_existing_end_product
-    Task.transaction do
-      task.appeal.update!(special_issues_params)
-      task.assign_existing_end_product!(params[:end_product_id])
-    end
+    Dispatch.new(task: task)
+            .assign_existing_end_product!(end_product_id: params[:end_product_id],
+                                          special_issues: special_issues_params)
+    render json: {}
+  end
+
+  def update_employee_count
+    Rails.cache.write("employee_count", params[:count])
     render json: {}
   end
 
@@ -58,6 +62,10 @@ class EstablishClaimsController < TasksController
   end
 
   private
+
+  def appeal_params
+    special_issues_params.merge(dispatched_to_station: establish_claim_params[:station_of_jurisdiction])
+  end
 
   def establish_claim_params
     params.require(:claim)

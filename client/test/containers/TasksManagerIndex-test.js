@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import TasksManagerIndex from '../../app/containers/TasksManagerIndex';
+import TasksManagerIndex from '../../app/containers/TasksManager/TasksManagerIndex';
 import { createTask } from '../factory';
 
 

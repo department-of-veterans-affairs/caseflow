@@ -165,16 +165,21 @@ class AppealRepository
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
     end_product = Appeal.transaction do
-      location = location_after_dispatch(appeal: appeal,
-                                         station: claim[:station_of_jurisdiction])
-
-      appeal.case_record.update_vacols_location(location)
+      update_location_after_dispatch!(appeal: appeal,
+                                      station: claim[:station_of_jurisdiction])
 
       request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
       send_and_log_request(sanitized_id, request)
     end
 
     end_product
+  end
+
+  def self.update_location_after_dispatch!(appeal:, station: nil)
+    location = location_after_dispatch(appeal: appeal,
+                                       station: station)
+
+    appeal.case_record.update_vacols_location!(location)
   end
 
   # Determine VACOLS location desired after dispatching a decision
@@ -273,7 +278,7 @@ class AppealRepository
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::FetchDocumentById.new(document.document_id)
+    request = VBMS::Requests::FetchDocumentById.new(document.vbms_document_id)
     result = @vbms_client.send_request(request)
     result && result.content
   rescue => e
