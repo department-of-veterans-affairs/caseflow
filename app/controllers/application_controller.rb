@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
   end
 
   def test_user?
-    Rails.deploy_env?(:uat) && current_user.css_id == ENV["TEST_USER_ID"]
+    ( Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod) ) && current_user.css_id == ENV["TEST_USER_ID"]
   end
   helper_method :test_user?
 

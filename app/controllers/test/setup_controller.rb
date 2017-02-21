@@ -1,5 +1,5 @@
 class Test::SetupController < ApplicationController
-  before_action :require_uat_test_user, only: [:certification, :claims_establishment]
+  before_action :require_test_user, only: [:certification, :claims_establishment]
   before_action :require_demo, only: [:set_user]
 
   # Used for resetting data in UAT for certification
@@ -58,7 +58,7 @@ class Test::SetupController < ApplicationController
 
   private
 
-  def require_uat_test_user
+  def require_test_user
     redirect_to "/unauthorized" unless test_user?
   end
 
