@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
   helper_method :logo_path
 
   def certification_header(title)
-    ("&nbsp &gt &nbsp").html_safe + title
+    "&nbsp &gt &nbsp".html_safe + title
   end
   helper_method :certification_header
 
