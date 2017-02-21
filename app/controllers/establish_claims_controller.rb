@@ -8,7 +8,7 @@ class EstablishClaimsController < TasksController
     return render json: { require_note: true } if task.reviewed?
 
     Task.transaction do
-      task.appeal.update!(special_issues_params)
+      task.appeal.update!(appeal_params)
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
       task.complete!(status: 0) unless task.appeal.special_issues?
     end
@@ -26,10 +26,9 @@ class EstablishClaimsController < TasksController
   end
 
   def assign_existing_end_product
-    Task.transaction do
-      task.appeal.update!(special_issues_params)
-      task.assign_existing_end_product!(params[:end_product_id])
-    end
+    Dispatch.new(task: task)
+            .assign_existing_end_product!(end_product_id: params[:end_product_id],
+                                          special_issues: special_issues_params)
     render json: {}
   end
 
@@ -63,6 +62,10 @@ class EstablishClaimsController < TasksController
   end
 
   private
+
+  def appeal_params
+    special_issues_params.merge(dispatched_to_station: establish_claim_params[:station_of_jurisdiction])
+  end
 
   def establish_claim_params
     params.require(:claim)
