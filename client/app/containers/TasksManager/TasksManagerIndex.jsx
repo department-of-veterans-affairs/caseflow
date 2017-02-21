@@ -20,7 +20,6 @@ export default class TasksManagerIndex extends BaseForm {
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
 
-
     return ApiUtil.patch(`/dispatch/employee-count/${count}`).then(() => {
       window.location.reload();
     }, () => {
