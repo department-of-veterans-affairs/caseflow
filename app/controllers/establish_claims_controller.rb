@@ -20,6 +20,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def email_complete
+    task.complete!(status: Task.completion_status_code(:special_issue_emailed))
+    render json: {}
+  end
+
   def assign_existing_end_product
     Dispatch.new(task: task)
             .assign_existing_end_product!(end_product_id: params[:end_product_id],
