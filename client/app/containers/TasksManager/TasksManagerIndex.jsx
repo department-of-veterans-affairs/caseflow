@@ -8,6 +8,7 @@ import Table from '../../components/Table';
 import FormField from '../../util/FormField';
 
 const TABLE_HEADERS = ['Employee Name', 'Cases Assigned', 'Cases Completed', 'Cases Remaining'];
+const COLUMN_CLASSES = ['cf-txt-l ', 'cf-txt-c', 'cf-txt-c', 'cf-txt-c'];
 
 export default class TasksManagerIndex extends BaseForm {
   constructor(props) {
@@ -59,28 +60,24 @@ export default class TasksManagerIndex extends BaseForm {
     });
   };
 
-  buildUserRow = (user) => {
-    let {
-      completedCountToday,
-      tasksCompletedByUsers,
-      toCompleteCount
-    } = this.props;
-
-
+  buildUserRow = (taskCompletedByUser) => {
     return [
-      user,
+      taskCompletedByUser.name,
       this.state.assignedCases,
-      tasksCompletedByUsers[user],
-      this.state.assignedCases - tasksCompletedByUsers[user]
+      taskCompletedByUser.numberOfTasks,
+      this.state.assignedCases - taskCompletedByUser.numberOfTasks
     ];
   }
 
   render() {
     let {
       completedCountToday,
-      tasksCompletedByUsers,
       toCompleteCount
     } = this.props;
+
+    let tasksCompletedByUsers = Object.keys(this.props.tasksCompletedByUsers).map((name) => {
+      return { name: name, numberOfTasks: this.props.tasksCompletedByUsers[name] };
+    });
 
     return <div className="cf-app-segment cf-app-segment--alt">
       <h1>ARC Work Assignments
@@ -103,7 +100,8 @@ export default class TasksManagerIndex extends BaseForm {
         headers={TABLE_HEADERS}
         footers={this.statusFooters()}
         buildRowValues={this.buildUserRow}
-        values={Object.keys(tasksCompletedByUsers)}
+        values={tasksCompletedByUsers}
+        columnClasses={COLUMN_CLASSES}
       />
     </div>;
   }

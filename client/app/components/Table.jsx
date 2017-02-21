@@ -25,7 +25,7 @@ export default class Table extends React.Component {
       <thead>
         <tr>
           {headers.map((header, i) =>
-            <th scope="col" key={i}>
+            <th scope="col" key={i} className={this.props.columnClasses[i] || ""}>
               <h3>{header}</h3>
             </th>
           )}
@@ -37,7 +37,7 @@ export default class Table extends React.Component {
           <tr id={object.id || `table-row-${j}`} key={j}>
 
             {buildRowValues(object).map((value, k) =>
-              <td key={k}>{value}</td>
+              <td key={k} className={this.props.columnClasses[k] || ""}>{value}</td>
             )}
 
           </tr>
@@ -46,16 +46,20 @@ export default class Table extends React.Component {
 
       {footers && <tfoot>
         <tr>
-          {footers.map((foot, i) => <td key={`foot${i}`}>{foot}</td>)}
+          {footers.map((foot, i) => <td key={`foot${i}`} className={this.props.columnClasses[i] || ""}>{foot}</td>)}
         </tr>
       </tfoot>}
     </table>;
   }
 }
 
+Table.defaultProps = {
+  columnClasses: []
+};
 
 Table.propTypes = {
   buildRowValues: PropTypes.func.isRequired,
+  columnClasses: PropTypes.arrayOf(PropTypes.string),
   footers: PropTypes.arrayOf(PropTypes.node),
   headers: PropTypes.arrayOf(PropTypes.node).isRequired,
   values: PropTypes.arrayOf(PropTypes.object).isRequired
