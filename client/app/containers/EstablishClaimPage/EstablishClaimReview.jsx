@@ -72,7 +72,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddess: 'PMC',
     regionalOffice: 'PMC',
-    specialIssue: 'foreignPensionDicAllOtherForeignCountries',
+    specialIssue: 'foreignPensionDicAllOtherForeignCountries'
   },
   {
     emailAddress: [],

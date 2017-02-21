@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch" do
+RSpec.feature "Dispatch", focus: true do
   before do
     @vbms_id = "VBMS_ID1"
 

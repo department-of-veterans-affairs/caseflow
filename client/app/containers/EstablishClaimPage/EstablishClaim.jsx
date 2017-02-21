@@ -299,6 +299,7 @@ export default class EstablishClaim extends BaseForm {
   isEmailPage() {
     return this.state.page === EMAIL_PAGE;
   }
+
   /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
@@ -330,10 +331,9 @@ export default class EstablishClaim extends BaseForm {
     this.setStationState();
 
     if (!this.validateReviewPageSubmit()) {
-      if (this.state.reviewForm.decisionType.value == 'Full Grant') {
+      if (this.state.reviewForm.decisionType.value === 'Full Grant') {
         this.handlePageChange(EMAIL_PAGE);
-      }
-      else {
+      } else {
         this.setState({
           specialIssueModalDisplay: true
         });
@@ -381,19 +381,20 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).then(() => {
-      this.reloadPage();
-    }, () => {
-      handleAlert(
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+        then(() => {
+          this.reloadPage();
+        }, () => {
+          handleAlert(
         'error',
         'Error',
         'There was an error while routing the current claim. Please try again later'
       );
-      this.setState({
-        loading: false
-      });
-    });
-    };
+          this.setState({
+            loading: false
+          });
+        });
+  };
 
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
@@ -428,36 +429,40 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getSpecialIssuesEmail() {
-    if (this.state.specialIssuesEmail == 'PMC') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION['PMC']);
-    } else if (this.state.specialIssuesEmail == 'COWC') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION['COWC']);
-    } else if (this.state.specialIssuesEmail == 'education') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION['EDUCATION']);
-    } else {
-      return this.state.specialIssuesEmail
+    if (this.state.specialIssuesEmail === 'PMC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesEmail === 'COWC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesEmail === 'education') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.EDUCATION);
     }
+
+    return this.state.specialIssuesEmail;
   }
 
   getEmailFromConstant(constant) {
-    let regionalOfficeKey = this.props.regionalOfficeStations[this.props.task.appeal.station_key];
-    return ROUTING_INFORMATION['codeToEmailMapper'][constant[regionalOfficeKey]];
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
+    return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
 
   getSpecialIssuesRegionalOffice() {
-    if (this.state.specialIssuesRegionalOffice == 'PMC') {
-        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['PMC']);
-    } else if (this.state.specialIssuesRegionalOffice == 'COWC') {
-        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['COWC']);
-    } else if (this.state.specialIssuesRegionalOffice == 'education') {
-        return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION['EDUCATION']);
-    } else {
-        return this.state.specialIssuesRegionalOffice
+    if (this.state.specialIssuesRegionalOffice === 'PMC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesRegionalOffice === 'education') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
     }
+
+    return this.state.specialIssuesRegionalOffice;
   }
 
   getRegionalOfficeFromConstant(constant) {
-    let regionalOfficeKey = this.props.regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
     return constant[regionalOfficeKey];
   }
 

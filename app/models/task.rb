@@ -15,7 +15,7 @@ class Task < ActiveRecord::Base
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
-    special_issue_emailed: 5,
+    special_issue_emailed: 5
   }.freeze
 
   # Use this to define status texts that don't properly titlize
