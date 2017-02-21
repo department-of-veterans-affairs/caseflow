@@ -151,7 +151,10 @@ RSpec.configure do |config|
   end
   config.before(:all) { User.unauthenticate! }
 
-  config.after(:each) { Timecop.return }
+  config.after(:each) do
+    Timecop.return
+    Rails.cache.clear
+  end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import DropDown from '../../components/DropDown';
+import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
@@ -56,7 +56,6 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   'Pension - United States',
   'VAMC',
   'DIC - death, or accrued benefits - United States',
-  'Foreign claim - compensation claims, dual claims, appeals',
   'Education - GI Bill, dependents educational ' +
     'assistance, scholarship, transfer of entitlement',
   'Waiver of Overpayment',
@@ -71,6 +70,23 @@ export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'contaminatedWaterAtCampLejeune',
     stationOfJurisdiction: '327 - Louisville, KY'
+  },
+  {
+    specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
+    stationOfJurisdiction: '311 - Pittsburgh, PA'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPhilippines',
+    stationOfJurisdiction: '358 - Manila, Philippines'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
+    stationOfJurisdiction: '355 - San Juan, Puerto Rico'
+  },
+  {
+    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
+      'MarianaIslandsRotaSaipanTinian',
+    stationOfJurisdiction: '459 - Honolulu, HI'
   }
 ];
 
@@ -129,7 +145,6 @@ export default class EstablishClaimReview extends React.Component {
       decisionType,
       handleCancelTask,
       handleCancelTaskForSpecialIssue,
-      handleDecisionTypeChange,
       handleFieldChange,
       handleModalClose,
       handleSubmit,
@@ -140,8 +155,13 @@ export default class EstablishClaimReview extends React.Component {
       task
     } = this.props;
 
-    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
-    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
+    let decisionDateStart = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), -3)
+    );
+
+    let decisionDateEnd = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), 3)
+    );
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
@@ -234,11 +254,10 @@ export default class EstablishClaimReview extends React.Component {
               onChange={this.onTabSelected}/>
           </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <DropDown
+          <TextField
            label="Decision Type"
            name="decisionType"
-           options={DECISION_TYPE}
-           onChange={handleDecisionTypeChange}
+           readOnly={true}
            {...decisionType}
           />
 
@@ -304,7 +323,6 @@ export default class EstablishClaimReview extends React.Component {
 EstablishClaimReview.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
-  handleDecisionTypeChange: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleModalClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,

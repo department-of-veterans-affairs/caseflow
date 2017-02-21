@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, require-jsdoc */
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
@@ -47,6 +47,12 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 
 const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
+let containsRoutingSpecialIssues = function(specialIssues) {
+  return Boolean(
+    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => specialIssues[issue].value)
+  );
+};
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -55,7 +61,6 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -74,14 +79,14 @@ export default class EstablishClaim extends BaseForm {
       cancelModal: {
         cancelFeedback: new FormField(
           '',
-          requiredValidator('Please enter an explanation.')
+          requiredValidator('Please enter an explanation')
         )
       },
       cancelModalDisplay: false,
       claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
-          formatDate(this.props.task.appeal.decision_date),
+          formatDate(this.props.task.appeal.serialized_decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
@@ -114,13 +119,9 @@ export default class EstablishClaim extends BaseForm {
   }
 
   defaultPage() {
-    let numberOfSpecialIssues =
-      Object.keys(this.state.specialIssues).
-        filter((key) => this.state.specialIssues[key].value).length;
-
-    if (numberOfSpecialIssues > 0) {
+    if (this.props.task.aasm_state === 'reviewed') {
       // Force navigate to the note page on initial component mount
-      // when we have special issues. This means that they have
+      // when the task is in reviewed state. This means that they have
       // already been saved in the database, but the user navigated
       // back to the page before the task was complete.
       return NOTE_PAGE;
@@ -320,18 +321,6 @@ export default class EstablishClaim extends BaseForm {
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
-  handleDecisionTypeChange = (value) => {
-    this.handleFieldChange('reviewForm', 'decisionType')(value);
-
-    let stateObject = {};
-    let modifiers = this.validModifiers();
-
-    stateObject.claimForm = { ...this.state.claimForm };
-    stateObject.claimForm.endProductModifier.value = modifiers[0];
-
-    this.setState(stateObject);
-  }
-
   handleReviewPageSubmit = () => {
     this.setStationState();
 
@@ -456,6 +445,12 @@ export default class EstablishClaim extends BaseForm {
   validateReviewPageSubmit() {
     let validOutput = true;
 
+    // If it contains a routed special issue, allow EP creation even if it
+    // contains other unhandled special issues.
+    if (containsRoutingSpecialIssues(this.state.specialIssues)) {
+      return true;
+    }
+
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
         validOutput = false;
@@ -487,7 +482,6 @@ export default class EstablishClaim extends BaseForm {
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handleSubmit={this.handleReviewPageSubmit}
@@ -536,28 +530,28 @@ export default class EstablishClaim extends BaseForm {
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
-              name: '\u00AB Go Back',
+              name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
               loading: modalSubmitLoading,
-              name: 'Cancel EP Establishment',
+              name: 'Stop processing claim',
               onClick: this.handleFinishCancelTask
             }
           ]}
           visible={true}
           closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Cancel EP Establishment">
+          title="Stop Processing Claim">
           <p>
-            If you click the <b>Cancel EP Establishment </b>
+            If you click the <b>Stop processing claim </b>
             button below your work will not be
-            saved and the EP for this claim will not be established.
+            saved and an EP will not be created for this claim.
           </p>
           <p>
-            Please tell why you are canceling the establishment of this EP.
+            Please tell us why you have chosen to discontinue processing this claim.
           </p>
           <TextareaField
-            label="Cancel Explanation"
+            label="Explanation"
             name="Explanation"
             onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
@@ -575,4 +569,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-lines */
+/* eslint-enable max-lines, require-jsdoc */
