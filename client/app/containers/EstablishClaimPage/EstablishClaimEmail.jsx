@@ -10,31 +10,11 @@ import { formatDate } from '../../util/DateUtil';
 export default class EstablishClaimEmail extends BaseForm {
   constructor(props) {
     super(props);
-    let {
-      appeal,
-      specialIssues
-    } = props;
-
-    let selectedSpecialIssue = Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
-
-    // Add an and if there are multiple issues so that the last element
-    // in the list has an and before it.
-    if (selectedSpecialIssue.length > 1) {
-      selectedSpecialIssue[selectedSpecialIssue.length - 1] =
-        `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
-    }
-
-    let email = `The BVA Full Grant decision dated ${formatDate(appeal.decision_date)}` +
-      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
-      ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
-      ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
     this.state = {
       emailForm: {
         confirmBox: new FormField(false),
-        emailField: new FormField(email)
+        emailField: new FormField(this.props.note)
       }
     };
   }
@@ -98,7 +78,7 @@ export default class EstablishClaimEmail extends BaseForm {
 }
 
 EstablishClaimEmail.propTypes = {
-  appeal: PropTypes.object.isRequired,
+  note: PropTypes.string.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   regionalOffice: PropTypes.string.isRequired,

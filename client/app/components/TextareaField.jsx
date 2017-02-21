@@ -41,7 +41,7 @@ export default class TextareaField extends React.Component {
 
 TextareaField.propTypes = {
   characterCount: PropTypes.bool,
-  label: PropTypes.string,
+  label: PropTypes.node,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   type: PropTypes.string,

@@ -16,6 +16,7 @@ import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
+import EstablishClaimDiary from './EstablishClaimDiary';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -25,6 +26,7 @@ export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
+export const DIARY_PAGE = 'diary';
 
 
 export const END_PRODUCT_INFO = {
@@ -298,6 +300,10 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === NOTE_PAGE;
   }
 
+  isDiaryPage() {
+    return this.state.page === DIARY_PAGE;
+  }
+
   isEmailPage() {
     return this.state.page === EMAIL_PAGE;
   }
@@ -336,9 +342,7 @@ export default class EstablishClaim extends BaseForm {
       if (this.state.reviewForm.decisionType.value === 'Full Grant') {
         this.handlePageChange(EMAIL_PAGE);
       } else {
-        this.setState({
-          specialIssueModalDisplay: true
-        });
+        this.handlePageChange(DIARY_PAGE);
       }
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
@@ -398,6 +402,31 @@ export default class EstablishClaim extends BaseForm {
       });
   };
 
+  handleDiaryPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+        );
+        this.setState({
+          loading: false
+        });
+      });
+  };
+
+
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -449,6 +478,12 @@ export default class EstablishClaim extends BaseForm {
     return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
 
+  getSpecialIssuesLocationCode = () => {
+    return Review.UNHANDLED_SPECIAL_ISSUES.filter((issue) => {
+      return this.state.specialIssues[issue.specialIssue];
+    })[0].loationCode;
+  }
+
   getSpecialIssuesRegionalOffice() {
     if (this.state.specialIssuesRegionalOffice === 'PMC') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
@@ -490,6 +525,28 @@ export default class EstablishClaim extends BaseForm {
     });
 
     return shortenedObject;
+  }
+
+  cannotProcessNote() {
+    let { appeal } = this.props.task;
+    let { specialIssues } = this.state
+
+    let selectedSpecialIssue = Object.keys(specialIssues).
+      filter((key) => specialIssues[key].value).
+      map((key) => specialIssues[key].issue);
+
+    // Add an and if there are multiple issues so that the last element
+    // in the list has an and before it.
+    if (selectedSpecialIssue.length > 1) {
+      selectedSpecialIssue[selectedSpecialIssue.length - 1] =
+        `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
+    }
+
+    return `The BVA decision` +
+      ` dated ${formatDate(appeal.serialized_decision_date)}` +
+      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
+      ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
+      ` in your jurisdiction. Please proceed with control and implement this grant.`;
   }
 
   prepareData() {
@@ -600,20 +657,27 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isNotePage() &&
           <EstablishClaimNote
-            appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
-            specialIssues={specialIssues}
+            note={this.cannotProcessNote()}
+          />
+        }
+        { this.isDiaryPage() &&
+          <EstablishClaimDiary
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleDiaryPageSubmit}
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
+            locationCode={this.getSpecialIssuesLocationCode()}
+            note={this.cannotProcessNote()}
           />
         }
         { this.isEmailPage() &&
           <EstablishClaimEmail
-            appeal={this.props.task.appeal}
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleEmailPageSubmit}
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
-            specialIssues={specialIssues}
+            note={this.cannotProcessNote()}
           />
         }
 

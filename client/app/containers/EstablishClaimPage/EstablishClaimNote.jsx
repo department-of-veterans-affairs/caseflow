@@ -10,32 +10,11 @@ import { formatDate } from '../../util/DateUtil';
 export default class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
-    let {
-      appeal,
-      specialIssues
-    } = props;
-
-    let selectedSpecialIssue = Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
-
-    // Add an and if there are multiple issues so that the last element
-    // in the list has an and before it.
-    if (selectedSpecialIssue.length > 1) {
-      selectedSpecialIssue[selectedSpecialIssue.length - 1] =
-        `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
-    }
-
-    let note = `The BVA Full Grant decision` +
-      ` date ${formatDate(appeal.serialized_decision_date)}` +
-      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
-      ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
-      ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
     this.state = {
       noteForm: {
         confirmBox: new FormField(false),
-        noteField: new FormField(note)
+        noteField: new FormField(this.props.note)
       }
     };
   }
@@ -89,6 +68,6 @@ export default class EstablishClaimNote extends BaseForm {
 }
 
 EstablishClaimNote.propTypes = {
-  appeal: PropTypes.object.isRequired,
+  note: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired
 };
