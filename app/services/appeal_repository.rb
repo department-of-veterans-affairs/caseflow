@@ -33,11 +33,21 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.load_vacols_data_by_vbms_id(appeal)
+  def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
+    case_scope = case decision_type
+                 when "Full Grant"
+                   VACOLS::Case.amc_full_grants(decided_after: 5.days.ago)
+                 when "Partial Grant or Remand"
+                   VACOLS::Case.remands_ready_for_claims_establishment
+                 else
+                   fail UnrecognizedDecisionTypeError
+                 end
+
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
-      VACOLS::Case.includes(:folder, :correspondent).where(bfcorlid: appeal.vbms_id).all
+      case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
+    fail ActiveRecord::RecordNotFound if case_records.empty?
     fail MultipleAppealsByVBMSIDError if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey

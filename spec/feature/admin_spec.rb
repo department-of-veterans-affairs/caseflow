@@ -24,13 +24,32 @@ RSpec.feature "Admin" do
     expect(Task.to_complete.count).to eq(0)
     expect(page).to have_css("#task-#{@task.id}")
 
-    # attempt to create a task for an existing vbms_id
-    page.fill_in "VBMS ID", with: "raise_multiple_appeals_error"
+    # attempt to create a task without clicking on a decision
+    page.fill_in "VBMS ID", with: "FULLGRANT_VBMS_ID"
     page.click_on "Create Task"
-    expect(page).to have_content "Multiple appeals detected"
+    expect(page).to have_content "You must select a decision type"
+
+    # attempt to create a task for a file number with multiple appeals
+    page.fill_in "VBMS ID", with: "raise_multiple_appeals_error"
+    within_fieldset("Decision Type") do
+      find("label", text: "Full Grant").click
+    end
+    page.click_on "Create Task"
+    expect(page).to have_content "There were multiple appeals matching this VBMS ID"
+
+    # attempt to create a task for a file number with multiple appeals
+    page.fill_in "VBMS ID", with: "not found waaaah"
+    within_fieldset("Decision Type") do
+      find("label", text: "Full Grant").click
+    end
+    page.click_on "Create Task"
+    expect(page).to have_content "Appeal not found for that decision type."
 
     # create a new task
     page.fill_in "VBMS ID", with: "FULLGRANT_VBMS_ID"
+    within_fieldset("Decision Type") do
+      find("label", text: "Full Grant").click
+    end
     page.click_on "Create Task"
 
     # ensure new task is created

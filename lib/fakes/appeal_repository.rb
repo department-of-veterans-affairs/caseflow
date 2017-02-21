@@ -58,8 +58,11 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record)
   end
 
-  def self.load_vacols_data_by_vbms_id(appeal)
+  def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     return unless @records
+
+    # Require decision type to be set, don't bother with more detailed checks
+    fail UnrecognizedDecisionTypeError unless decision_type
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
@@ -69,6 +72,8 @@ class Fakes::AppealRepository
       # TODO(jd): create a more dynamic setup
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end
+
+    fail ActiveRecord::RecordNotFound unless record
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
