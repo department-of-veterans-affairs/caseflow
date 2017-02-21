@@ -1,13 +1,15 @@
 import React, { PropTypes } from 'react';
 import _uniqBy from 'lodash/uniqBy';
 
-import ApiUtil from '../util/ApiUtil';
-
-import Table from '../components/Table';
+import ApiUtil from '../../util/ApiUtil';
+import Table from '../../components/Table';
+import TasksManagerEmployeeCount from './TasksManagerEmployeeCount';
+import BaseForm from '../BaseForm';
+import FormField from '../../util/FormField';
 
 const TABLE_HEADERS = ['Name', 'Veteran ID', 'Status', 'Worked By'];
 
-export default class TasksManagerIndex extends React.Component {
+export default class TasksManagerIndex extends BaseForm {
   constructor(props) {
     super(props);
 
@@ -16,6 +18,9 @@ export default class TasksManagerIndex extends React.Component {
       completedTasks: props.completedTasks,
       // zero-based indexing for pages
       completedTasksPage: 0,
+      employeeCountForm: {
+        employeeCount: new FormField(this.props.employeeCount)
+      },
       isLoadingTasks: false
     };
   }
@@ -42,6 +47,20 @@ export default class TasksManagerIndex extends React.Component {
     return _uniqBy(tasks, (task) => task.id);
   }
 
+  handleEmployeeCountUpdate = () => {
+    let count = this.state.employeeCountForm.employeeCount.value;
+
+
+    return ApiUtil.patch(`/dispatch/employee-count/${count}`).then(() => {
+      window.location.reload();
+    }, () => {
+      this.props.handleAlert(
+        'error',
+        'Error',
+        'There was an error while updating the employee count. Please try again later'
+      );
+    });
+  };
 
   fetchCompletedTasks = (event) => {
     let { handleAlert, handleAlertClear } = this.props;
@@ -93,6 +112,12 @@ export default class TasksManagerIndex extends React.Component {
           {completedCountToday} cases processed today, {toCompleteCount} in queue
         </span>
       </h1>
+
+      <TasksManagerEmployeeCount
+        employeeCountForm={this.state.employeeCountForm}
+        handleEmployeeCountUpdate={this.handleEmployeeCountUpdate}
+        handleFieldChange={this.handleFieldChange}
+      />
 
       <div className="usa-grid-full">
         <div className="usa-width-one-half">
@@ -147,5 +172,6 @@ TasksManagerIndex.propTypes = {
   completedCountTotal: PropTypes.number.isRequired,
   completedTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   currentTasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  employeeCount: PropTypes.string.isRequired,
   toCompleteCount: PropTypes.number.isRequired
 };
