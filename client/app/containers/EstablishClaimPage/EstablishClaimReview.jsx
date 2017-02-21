@@ -53,13 +53,62 @@ const SPECIAL_ISSUE_NODE_MAP = {
 };
 
 export const UNHANDLED_SPECIAL_ISSUES = [
-  'Pension - United States',
-  'VAMC',
-  'DIC - death, or accrued benefits - United States',
-  'Education - GI Bill, dependents educational ' +
-    'assistance, scholarship, transfer of entitlement',
-  'Waiver of Overpayment',
-  'National Cemetery Administration'
+  {
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates'
+  },
+  {
+    emailAddress: 'education',
+    regionalOffice: 'education',
+    specialIssue: 'educationGiBillDependentsEducational' +
+    'AssistanceScholarshipTransferOfEntitlement'
+  },
+  {
+    emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
+    regionalOffice: 'RO83',
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean'
+  },
+  {
+    emailAddess: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'foreignPensionDicAllOtherForeignCountries'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'homeLoanGuarantee'
+  },
+  {
+    emailAddress: ['nancy.encarnado@va.gov'],
+    regionalOffice: 'RO80',
+    specialIssue: 'insurance'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'nationalCemeteryAdministration'
+  },
+  {
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'pensionUnitedStates'
+  },
+  {
+    emailAddress: ['Travis.Richardson@va.gov'],
+    regionalOffice: 'RO99',
+    specialIssue: 'vamc'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'vocationalRehab'
+  },
+  {
+    emailAddress: 'COWC',
+    regionalOffice: 'COWC',
+    specialIssue: 'waiverOfOverpayment'
+  }
 ];
 
 export const ROUTING_SPECIAL_ISSUES = [

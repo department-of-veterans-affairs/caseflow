@@ -17,6 +17,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
+    return render "special_issue_emailed" if task.special_issue_emailed?
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
