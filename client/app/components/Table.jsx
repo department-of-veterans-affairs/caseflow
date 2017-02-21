@@ -16,6 +16,7 @@ export default class Table extends React.Component {
   render() {
     let {
       buildRowValues,
+      footers,
       headers,
       values
     } = this.props;
@@ -33,7 +34,7 @@ export default class Table extends React.Component {
 
       <tbody>
         {values.map((object, j) =>
-          <tr id={object.id} key={j}>
+          <tr id={object.id || `table-row-${j}`} key={j}>
 
             {buildRowValues(object).map((value, k) =>
               <td key={k}>{value}</td>
@@ -42,6 +43,12 @@ export default class Table extends React.Component {
           </tr>
         )}
       </tbody>
+
+      {footers && <tfoot>
+        <tr>
+          {footers.map((foot, i) => <td key={`foot${i}`}>{foot}</td>)}
+        </tr>
+      </tfoot>}
     </table>;
   }
 }
@@ -49,6 +56,7 @@ export default class Table extends React.Component {
 
 Table.propTypes = {
   buildRowValues: PropTypes.func.isRequired,
-  headers: PropTypes.arrayOf(PropTypes.string).isRequired,
+  footers: PropTypes.arrayOf(PropTypes.node),
+  headers: PropTypes.arrayOf(PropTypes.node).isRequired,
   values: PropTypes.arrayOf(PropTypes.object).isRequired
 };

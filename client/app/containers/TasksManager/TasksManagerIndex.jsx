@@ -24,6 +24,26 @@ export default class TasksManagerIndex extends BaseForm {
     };
   }
 
+  statusFooters = () => {
+    // We return an empty row if there are no users in the table. Otherwsie
+    // we use the footer to display the totals.
+    if (Object.keys(this.props.tasksCompletedByUsers).length === 0) {
+      return [
+        "",
+        0,
+        0,
+        this.props.toCompleteCount
+      ];
+    } else {
+      return [
+        <b>Employee Total</b>,
+        <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>,
+        <b>{this.props.completedCountToday}</b>,
+        <b>{this.props.toCompleteCount}</b>
+      ];
+    }
+  }
+
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
 
@@ -58,6 +78,7 @@ export default class TasksManagerIndex extends BaseForm {
   render() {
     let {
       completedCountToday,
+      tasksCompletedByUsers,
       toCompleteCount
     } = this.props;
 
@@ -73,13 +94,16 @@ export default class TasksManagerIndex extends BaseForm {
         handleEmployeeCountUpdate={this.handleEmployeeCountUpdate}
         handleFieldChange={this.handleFieldChange}
       />
-      <h2>
-        Work Assignments
-      </h2>
+      <div className="cf-right-side">
+        <a>
+          <i className="fa fa-line-chart" aria-hidden="true"></i> View Dashboard
+        </a>
+      </div>
       <Table
         headers={TABLE_HEADERS}
+        footers={this.statusFooters()}
         buildRowValues={this.buildUserRow}
-        values={Object.keys(this.props.tasksCompletedByUsers)}
+        values={Object.keys(tasksCompletedByUsers)}
       />
     </div>;
   }
