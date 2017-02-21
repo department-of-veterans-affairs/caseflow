@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
-import DropDown from '../../components/DropDown';
+import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
+import StringUtil from '../../util/StringUtil';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 
@@ -16,50 +16,99 @@ export const DECISION_TYPE = [
   'Remand'
 ];
 
-export const SPECIAL_ISSUE_FULL = [
-  'Rice Compliance',
-  'Private Attorney',
-  'Waiver of Overpayment',
-  'Pensions',
-  'VAMC',
+export const SPECIAL_ISSUES = [
+  'Contaminated Water at Camp LeJeune',
+  'DIC - death, or accrued benefits - United States',
+  `Education - GI Bill, dependents educational ` +
+    `assistance, scholarship, transfer of entitlement`,
+  'Foreign claim - compensation claims, dual claims, appeals',
+  'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
+  'Foreign pension, DIC - all other foreign countries',
+  'Hearing - including travel board & video conference',
+  'Home Loan Guarantee',
   'Incarcerated Veterans',
-  'DIC - death, or accrued benefits',
-  'Education or Vocational Rehab',
-  'Foreign Claims'
+  'Insurance',
+  'Manlincon Compliance',
+  'Mustard Gas',
+  'National Cemetery Administration',
+  'Non-rating issue',
+  'Pension - United States',
+  'Private Attorney or Agent',
+  'Radiation',
+  'Rice Compliance',
+  'Spina Bifida',
+  `U.S. Territory claim - American Samoa, Guam, Northern ` +
+    `Mariana Islands (Rota, Saipan & Tinian)`,
+  'U.S. Territory claim - Philippines',
+  'U.S. Territory claim - Puerto Rico and Virgin Islands',
+  'VAMC',
+  'Vocational Rehab',
+  'Waiver of Overpayment'
 ];
 
-export const SPECIAL_ISSUE_PARTIAL = [
-  'Manlincon Compliance',
-  'Rice Compliance',
-  'Private Attorney',
-  'Hearings - travel board & video conference',
-  'Contaminated Water at Camp Lejeune',
-  'Home Loan Guaranty',
-  'Waiver of Overpayment',
-  'Education or Vocational Rehab',
-  'VAMC',
-  'Insurance',
-  'National Cemetery Administration',
-  'Spina Bifida',
-  'Radiation',
-  'Non-rating Issues',
-  'Foreign Claims',
-  'Incarcerated Veterans',
-  'Proposed Incompetency',
-  'Manila Remand',
-  'Mustard Gas',
-  'Dependencies',
-  'DIC - death, or accrued benefits'
-];
+
+const SPECIAL_ISSUE_NODE_MAP = {
+  'Manlincon Compliance': <span><i>Manlincon</i> Compliance</span>,
+  'Rice Compliance': <span><i>Rice</i> Compliance</span>
+};
 
 export const UNHANDLED_SPECIAL_ISSUES = [
-  'Pensions',
-  'VAMC',
-  'DIC - death, or accrued benefits',
-  'Foreign Claims',
-  'Education or Vocational Rehab',
-  'Waiver of Overpayment',
-  'National Cemetery Administration'
+  {
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates'
+  },
+  {
+    emailAddress: 'education',
+    regionalOffice: 'education',
+    specialIssue: 'educationGiBillDependentsEducational' +
+    'AssistanceScholarshipTransferOfEntitlement'
+  },
+  {
+    emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
+    regionalOffice: 'RO83',
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean'
+  },
+  {
+    emailAddess: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'foreignPensionDicAllOtherForeignCountries'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'homeLoanGuarantee'
+  },
+  {
+    emailAddress: ['nancy.encarnado@va.gov'],
+    regionalOffice: 'RO80',
+    specialIssue: 'insurance'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'nationalCemeteryAdministration'
+  },
+  {
+    emailAddress: 'PMC',
+    regionalOffice: 'PMC',
+    specialIssue: 'pensionUnitedStates'
+  },
+  {
+    emailAddress: ['Travis.Richardson@va.gov'],
+    regionalOffice: 'RO99',
+    specialIssue: 'vamc'
+  },
+  {
+    emailAddress: [],
+    regionalOffice: '',
+    specialIssue: 'vocationalRehab'
+  },
+  {
+    emailAddress: 'COWC',
+    regionalOffice: 'COWC',
+    specialIssue: 'waiverOfOverpayment'
+  }
 ];
 
 export const ROUTING_SPECIAL_ISSUES = [
@@ -70,20 +119,35 @@ export const ROUTING_SPECIAL_ISSUES = [
   {
     specialIssue: 'contaminatedWaterAtCampLejeune',
     stationOfJurisdiction: '327 - Louisville, KY'
+  },
+  {
+    specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
+    stationOfJurisdiction: '311 - Pittsburgh, PA'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPhilippines',
+    stationOfJurisdiction: '358 - Manila, Philippines'
+  },
+  {
+    specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
+    stationOfJurisdiction: '355 - San Juan, Puerto Rico'
+  },
+  {
+    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
+      'MarianaIslandsRotaSaipanTinian',
+    stationOfJurisdiction: '459 - Honolulu, HI'
   }
 ];
 
 export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
-  'dependencies',
-  'educationOrVocationalRehab',
-  'hearingsTravelBoardVideoConference',
-  'homeLoanGuaranty',
+  `educationGiBillDependentsEducational` +
+    `AssistanceScholarshipTransferOfEntitlement`,
+  'hearingIncludingTravelBoardVideoConference',
+  'homeLoanGuarantee',
   'incarceratedVeterans',
-  'manilaRemand',
   'manlinconCompliance',
-  'nonratingIssues',
-  'privateAttorney',
-  'proposedIncompetency',
+  'nonratingIssue',
+  'privateAttorneyOrAgent',
   'radiation',
   'riceCompliance',
   'spinaBifida'
@@ -95,9 +159,9 @@ export default class EstablishClaimReview extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Create End Product For Decision 1";
+      endProductButtonText = "Route Claim for Decision 1";
     } else {
-      endProductButtonText = "Create End Product";
+      endProductButtonText = "Route Claim";
     }
     this.state = {
       endProductButtonText
@@ -106,7 +170,7 @@ export default class EstablishClaimReview extends React.Component {
 
   onTabSelected = (tabNumber) => {
     this.setState({
-      endProductButtonText: `Create End Product For Decision ${tabNumber + 1}`
+      endProductButtonText: `Route Claim for Decision ${tabNumber + 1}`
     });
   }
 
@@ -130,7 +194,6 @@ export default class EstablishClaimReview extends React.Component {
       decisionType,
       handleCancelTask,
       handleCancelTaskForSpecialIssue,
-      handleDecisionTypeChange,
       handleFieldChange,
       handleModalClose,
       handleSubmit,
@@ -141,16 +204,13 @@ export default class EstablishClaimReview extends React.Component {
       task
     } = this.props;
 
-    let decisionDateStart = formatDate(addDays(new Date(task.appeal.decision_date), -3));
-    let decisionDateEnd = formatDate(addDays(new Date(task.appeal.decision_date), 3));
+    let decisionDateStart = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), -3)
+    );
 
-    let issueType = (() => {
-      if (decisionType.value === 'Remand' || decisionType.value === 'Partial Grant') {
-        return SPECIAL_ISSUE_PARTIAL;
-      }
-
-      return SPECIAL_ISSUE_FULL;
-    })();
+    let decisionDateEnd = formatDate(
+      addDays(new Date(task.appeal.serialized_decision_date), 3)
+    );
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
@@ -243,26 +303,29 @@ export default class EstablishClaimReview extends React.Component {
               onChange={this.onTabSelected}/>
           </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <DropDown
+          <TextField
            label="Decision Type"
            name="decisionType"
-           options={DECISION_TYPE}
-           onChange={handleDecisionTypeChange}
+           readOnly={true}
            {...decisionType}
           />
 
-          <label>Special Issue Categories</label>
+          <label><b>Select Special Issue(s)</b></label>
           <div className="cf-multiple-columns">
-            {issueType.map((issue, index) =>
-              <Checkbox
-                id={ApiUtil.convertToCamelCase(issue)}
-                label={issue}
-                name={ApiUtil.convertToCamelCase(issue)}
-                onChange={handleFieldChange('specialIssues',
-                  ApiUtil.convertToCamelCase(issue))}
-                  key={index}
-                  {...specialIssues[ApiUtil.convertToCamelCase(issue)]}
-              />)
+            {
+              SPECIAL_ISSUES.map((issue, index) => {
+                let issueName = StringUtil.convertToCamelCase(issue);
+                let node = SPECIAL_ISSUE_NODE_MAP[issue] || issue;
+
+                return <Checkbox
+                  id={issueName}
+                  label={node}
+                  name={issueName}
+                  onChange={handleFieldChange('specialIssues', issueName)}
+                    key={index}
+                    {...specialIssues[issueName]}
+                />;
+              })
             }
           </div>
         </div>
@@ -309,7 +372,6 @@ export default class EstablishClaimReview extends React.Component {
 EstablishClaimReview.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
-  handleDecisionTypeChange: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleModalClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,

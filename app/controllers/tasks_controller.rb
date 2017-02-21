@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access, except: [:unprepared_tasks]
+  before_action :verify_access, except: [:unprepared_tasks, :update_employee_count]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
@@ -28,6 +28,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
+    return render "special_issue_emailed" if task.special_issue_emailed?
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
@@ -56,15 +57,6 @@ class TasksController < ApplicationController
       format.json do
         return render json: { next_task_id: next_task.id }
       end
-    end
-  end
-
-  def cancel
-    task.cancel!(cancel_feedback)
-
-    respond_to do |format|
-      format.html { redirect_to establish_claims_path }
-      format.json { render json: {} }
     end
   end
 
