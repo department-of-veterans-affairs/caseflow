@@ -74,7 +74,7 @@ RSpec.feature "Dispatch" do
     scenario "View landing page" do
       visit "/dispatch/establish-claim"
 
-      expect(page).to have_content("ARC Workflow")
+      expect(page).to have_content("ARC Work Assignments")
     end
 
     scenario "Update employee count" do
