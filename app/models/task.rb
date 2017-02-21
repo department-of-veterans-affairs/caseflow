@@ -96,7 +96,10 @@ class Task < ActiveRecord::Base
     end
 
     event :complete do
-      transitions from: [:started, :reviewed], to: :completed, after: proc { |*args| save_completion_status(*args) }
+      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      transitions from: :started, to: :completed,
+                  guard: proc { |*args| no_review_completion_status(*args) },
+                  after: proc { |*args| save_completion_status(*args) }
     end
   end
 
@@ -183,6 +186,10 @@ class Task < ActiveRecord::Base
       completed_at: Time.now.utc,
       completion_status: status
     )
+  end
+
+  def no_review_completion_status(status:)
+    status == 5
   end
 
   def save_outgoing_reference(outgoing_reference_id: nil)

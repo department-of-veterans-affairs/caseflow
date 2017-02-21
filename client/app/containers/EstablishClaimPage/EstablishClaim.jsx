@@ -384,18 +384,18 @@ export default class EstablishClaim extends BaseForm {
     });
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
-        then(() => {
-          this.reloadPage();
-        }, () => {
-          handleAlert(
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
         'error',
         'Error',
         'There was an error while routing the current claim. Please try again later'
-      );
-          this.setState({
-            loading: false
-          });
+        );
+        this.setState({
+          loading: false
         });
+      });
   };
 
   handleAssociatePageSubmit = () => {

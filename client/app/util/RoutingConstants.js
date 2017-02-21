@@ -1,3 +1,12 @@
+/**
+ * These constants are set up for routing tasks that have special issues that
+ * aren't handled by Caseflow. There are different jurisdictions depending on the
+ * kind of special issue. For example, special issues related to education are
+ * routed based on the education jurisdictions. So, an education issue that comes
+ * from RO01 is sent to RO91. The email address for RO91 is found in the last
+ * constant on this page.
+ */
+
 const ROUTING_INFORMATION =
   {
     COWC: {

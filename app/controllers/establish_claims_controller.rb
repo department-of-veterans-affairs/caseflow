@@ -21,7 +21,7 @@ class EstablishClaimsController < TasksController
   end
 
   def email_complete
-    task.complete!(status: 5)
+    task.complete!(status: Task.completion_status_code(:special_issue_emailed))
     render json: {}
   end
 
