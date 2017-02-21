@@ -1,0 +1,13 @@
+<% content_for :page_title do task.appeal.task_header end %>
+<% checklist = ["Reviewed decision", "Sent email notification"]
+   checklist.push("Manually Added VBMS Note") if task.appeal.special_issues? %>
+<%= react_component("BaseContainer", props: {
+    availableTasks: !!current_user_next_task,
+    buttonText: start_text,
+    checklist: checklist,
+    content: 'Way to go! You can now establish the next claim or
+                go back to your Work History.',
+    firstHeader: "Congratulations!",
+    page: "EstablishClaimComplete",
+    secondHeader: task.appeal.veteran_name + "'s claim has been processed."
+}) %>
