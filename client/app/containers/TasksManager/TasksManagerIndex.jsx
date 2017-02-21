@@ -4,13 +4,20 @@ import _uniqBy from 'lodash/uniqBy';
 import ApiUtil from '../../util/ApiUtil';
 import TasksManagerEmployeeCount from './TasksManagerEmployeeCount';
 import BaseForm from '../BaseForm';
+import Table from '../../components/Table';
 import FormField from '../../util/FormField';
+
+const TABLE_HEADERS = ['Employee Name', 'Cases Assigned', 'Cases Completed', 'Cases Remaining'];
 
 export default class TasksManagerIndex extends BaseForm {
   constructor(props) {
     super(props);
 
+    let totalCases = this.props.toCompleteCount + this.props.completedCountToday;
+    let assignedCases = this.props.employeeCount > 0 ? Math.ceil( totalCases / this.props.employeeCount) : 0
+    
     this.state = {
+      assignedCases: assignedCases,
       employeeCountForm: {
         employeeCount: new FormField(this.props.employeeCount)
       }
@@ -32,6 +39,22 @@ export default class TasksManagerIndex extends BaseForm {
     });
   };
 
+  buildUserRow = (user) => {
+    let {
+      completedCountToday,
+      tasksCompletedByUsers,
+      toCompleteCount
+    } = this.props;
+
+
+    return [
+      user,
+      this.state.assignedCases,
+      tasksCompletedByUsers[user],
+      this.state.assignedCases - tasksCompletedByUsers[user]
+    ];
+  }
+
   render() {
     let {
       completedCountToday,
@@ -49,6 +72,14 @@ export default class TasksManagerIndex extends BaseForm {
         employeeCountForm={this.state.employeeCountForm}
         handleEmployeeCountUpdate={this.handleEmployeeCountUpdate}
         handleFieldChange={this.handleFieldChange}
+      />
+      <h2>
+        Work Assignments
+      </h2>
+      <Table
+        headers={TABLE_HEADERS}
+        buildRowValues={this.buildUserRow}
+        values={Object.keys(this.props.tasksCompletedByUsers)}
       />
     </div>;
   }

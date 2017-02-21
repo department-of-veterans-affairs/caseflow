@@ -10,7 +10,7 @@ class TasksController < ApplicationController
     tasks_completed_today = Task.completed_today;
     @completed_count_today = tasks_completed_today.count
     @to_complete_count = Task.to_complete.count
-
+    @tasks_completed_by_users = Task.tasks_completed_by_users(tasks_completed_today)
     render index_template
   end
 

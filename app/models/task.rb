@@ -65,7 +65,7 @@ class Task < ActiveRecord::Base
       COMPLETION_STATUS_MAPPING[text]
     end
 
-    def number_of_tasks_by_users(tasks)
+    def tasks_completed_by_users(tasks)
       tasks.reduce({}) do |user_numbers, task|
         user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
         user_numbers
