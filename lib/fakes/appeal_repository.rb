@@ -1,5 +1,33 @@
 require "ostruct"
 
+class CaseflowLogger
+  def initialize
+    @vbms_errors_counter = init_counter_metric
+  end
+
+  def init_counter_metric
+    # returns a default registry
+    prometheus = Prometheus::Client.registry
+
+    # equivalent helper function
+    vbms_errors = prometheus.counter(:vbms_errors, 'A counter of VBMS errors')
+  end
+
+  def log(event, data)
+    case event
+    when :request
+      if data[:response_code] != 200
+        @vbms_errors_counter.increment
+
+        Rails.logger.error(
+          "VBMS HTTP Error #{data[:response_code]} " \
+          "(#{data[:request].class.name}) #{data[:response_body]}"
+        )
+      end
+    end
+  end
+end
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
@@ -24,8 +52,13 @@ class Fakes::AppealRepository
     appeal
   end
 
+  def self.logger
+    @logger ||= CaseflowLogger.new
+  end
+
   def self.certify(appeal)
     @certified_appeal = appeal
+    logger.log(:request, {response_code: 500})
   end
 
   def self.establish_claim!(claim:, appeal:)
