@@ -447,21 +447,21 @@ RSpec.feature "Dispatch" do
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#privateAttorneyOrAgent").trigger("click")
+      page.find("#mustardGas").trigger("click")
 
       # It should also work even if a unsupported special issue is checked
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
 
       click_on "Route Claim"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
+      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
 
       click_on "Create End Product"
       page.find("#confirmNote").trigger("click")
       click_on "Finish Routing Claim"
 
       expect(page).to have_content("Congratulations!")
-      expect(@task.appeal.reload.dispatched_to_station).to eq("313")
+      expect(@task.appeal.reload.dispatched_to_station).to eq("351")
     end
 
     scenario "A national office special issue routes correctly" do
