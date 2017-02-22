@@ -63,8 +63,7 @@ export default class EstablishClaimEmail extends BaseForm {
           </div>
 
           <TextareaField
-            label="Message"
-            required={true}
+            label="Message:"
             name="emailMessage"
             onChange={this.handleFieldChange('emailForm', 'emailField')}
             {...this.state.emailForm.emailField}
