@@ -45,7 +45,6 @@ RSpec.feature "Test Setup" do
   end
 
   context "for claims establishment" do
-
     let(:appeal) { Appeal.create(vacols_id: "VACOLS123", vbms_id: "VBMS123") }
     let(:user) { User.tester!(roles: ["Establish Claim"]) }
 
