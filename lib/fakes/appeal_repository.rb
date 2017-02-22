@@ -58,8 +58,11 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record)
   end
 
-  def self.load_vacols_data_by_vbms_id(appeal)
+  def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     return unless @records
+
+    p "Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}"
+    p "Decision Type:\n", decision_type
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
@@ -69,6 +72,8 @@ class Fakes::AppealRepository
       # TODO(jd): create a more dynamic setup
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end
+
+    fail ActiveRecord::RecordNotFound unless record
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
@@ -232,9 +237,9 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_partial_grant_decided
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
     {
-      vbms_id: "REMAND_VBMS_ID",
+      vbms_id: vbms_id,
       type: "Original",
       status: "Remand",
       disposition: "Allowed",
@@ -243,7 +248,8 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      documents: missing_decision ? [] : [decision_document]
     }
   end
 
