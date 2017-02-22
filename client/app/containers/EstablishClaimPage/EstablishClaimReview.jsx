@@ -56,15 +56,13 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddress: 'PMC',
     regionalOffice: 'PMC',
-    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates',
-    loationCode: '50'
+    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates'
   },
   {
     emailAddress: 'education',
     regionalOffice: 'education',
     specialIssue: 'educationGiBillDependentsEducational' +
-    'AssistanceScholarshipTransferOfEntitlement',
-    loationCode: '50'
+    'AssistanceScholarshipTransferOfEntitlement'
   },
   {
     emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
@@ -84,8 +82,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddress: ['nancy.encarnado@va.gov'],
     regionalOffice: 'RO80',
-    specialIssue: 'insurance',
-    loationCode: '50'
+    specialIssue: 'insurance'
   },
   {
     emailAddress: [],
@@ -102,7 +99,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
     emailAddress: ['Travis.Richardson@va.gov'],
     regionalOffice: 'RO99',
     specialIssue: 'vamc',
-    loationCode: '51'
+    loationCode: '54'
   },
   {
     emailAddress: [],
@@ -112,8 +109,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddress: 'COWC',
     regionalOffice: 'COWC',
-    specialIssue: 'waiverOfOverpayment',
-    loationCode: '50'
+    specialIssue: 'waiverOfOverpayment'
   }
 ];
 

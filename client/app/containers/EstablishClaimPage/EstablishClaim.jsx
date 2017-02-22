@@ -480,8 +480,8 @@ export default class EstablishClaim extends BaseForm {
 
   getSpecialIssuesLocationCode = () => {
     return Review.UNHANDLED_SPECIAL_ISSUES.filter((issue) => {
-      return this.state.specialIssues[issue.specialIssue];
-    })[0].loationCode;
+      return this.state.specialIssues[issue.specialIssue].value;
+    })[0].loationCode || '50';
   }
 
   getSpecialIssuesRegionalOffice() {

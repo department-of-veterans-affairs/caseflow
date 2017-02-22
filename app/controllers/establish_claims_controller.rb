@@ -25,6 +25,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def update_vacols
+    task.complete!(status: 0)
+    render json: {}
+  end
+
   def assign_existing_end_product
     Dispatch.new(task: task)
             .assign_existing_end_product!(end_product_id: params[:end_product_id],
