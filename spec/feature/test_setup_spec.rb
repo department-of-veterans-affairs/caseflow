@@ -45,11 +45,11 @@ RSpec.feature "Test Setup" do
   end
 
   context "for claims establishment" do
-    
+
     let(:appeal) { Appeal.create(vacols_id: "VACOLS123", vbms_id: "VBMS123") }
     let(:user) { User.tester!(roles: ["Establish Claim"]) }
 
-    scenario "isn't allowed by a non-test user" do 
+    scenario "isn't allowed by a non-test user" do
       User.authenticate!(roles: ["Establish Claim"])
       # Have to prepare tasks separately for each user, hence repeated code
       # Can be a Dispatch helper instead?
