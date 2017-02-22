@@ -71,19 +71,19 @@ RSpec.feature "Dispatch" do
       create_tasks(20, initial_state: :completed)
     end
 
-    scenario "View landing page" do
+    scenario "View manager page" do
       visit "/dispatch/establish-claim"
-
       expect(page).to have_content("ARC Work Assignments")
-    end
 
-    scenario "Update employee count" do
-      visit "/dispatch/establish-claim"
       expect(page).to have_content("Number of people")
       fill_in "Number of people", with: "3"
       click_on "Update"
       visit "/dispatch/establish-claim"
       expect(find_field("Number of people").value).to have_content("3")
+
+      # This looks for the row in the table for the User 'Jane Smith 0' who has
+      # eight tasks assigned to her, has completed one, and has seven remaining.
+      expect(page).to have_content("Jane Smith 0 8 1 7")
     end
 
     scenario "View unprepared tasks page" do
