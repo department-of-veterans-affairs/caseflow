@@ -45,7 +45,7 @@ Rails.application.routes.draw do
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
-    resources :annotation, 
+    resources :annotation,
               path: "/review/annotation",
               only: [:create, :destroy, :update],
               on: :member
@@ -77,8 +77,7 @@ Rails.application.routes.draw do
 
   get 'stats(/:interval)', to: 'stats#show', as: 'stats'
 
-  get "admin/styleguide", to: "admin/styleguide#show"
-  get "admin/styleguide/modals", to: "admin/styleguide#modals"
+  get "styleguide", to: "styleguide#show"
 
   get 'help' => 'help#show'
 
