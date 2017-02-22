@@ -5,7 +5,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.8.rc1'
+gem 'rails', '4.2.8'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', platforms: [:ruby,:mswin,:mingw, :mswin, :x64_mingw]
 gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
