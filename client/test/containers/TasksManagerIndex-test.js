@@ -12,7 +12,9 @@ describe('TasksManagerIndex', () => {
       wrapper = shallow(
         <TasksManagerIndex
           completedCountToday={5}
+          employeeCount={3}
           toCompleteCount={10}
+          tasksCompletedByUsers={{ user: 10 }}
         />
       );
     };
