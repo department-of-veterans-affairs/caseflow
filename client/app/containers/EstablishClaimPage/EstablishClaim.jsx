@@ -51,7 +51,7 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
 let containsRoutingSpecialIssues = function(specialIssues) {
   return Boolean(
-    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => specialIssues[issue].value)
+    Review.ROUTING_SPECIAL_ISSUES.find((issue) => specialIssues[issue.specialIssue].value)
   );
 };
 
