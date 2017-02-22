@@ -34,11 +34,14 @@ class TestDataService
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
 
     # Push the decision date to the current date in vacols
+    # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
     if decision_type == :full
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
+      # Full Grants stay 99
     else
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(300.days.ago))
+      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))
+      vacols_case.update_vacols_location!("97")
     end
 
     # Upload decision document for the appeal if it isn't there
