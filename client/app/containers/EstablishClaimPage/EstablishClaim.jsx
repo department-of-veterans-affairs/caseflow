@@ -411,14 +411,23 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+    let data = ApiUtil.convertToSnakeCase({
+      claim: {
+        ...this.getFormValues(this.state.claimForm),
+        endProductCode: endProductInfo[0],
+        endProductLabel: endProductInfo[1]
+      },
+      specialIssues: this.getFormValues(this.state.specialIssues)
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/update-vacols`, { data }).
       then(() => {
         this.reloadPage();
       }, () => {
         handleAlert(
         'error',
         'Error',
-        'There was an error while routing the current claim. Please try again later'
+        'There was an error while updating the VACOLS entry. Please try again later'
         );
         this.setState({
           loading: false
