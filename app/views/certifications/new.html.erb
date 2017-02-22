@@ -154,9 +154,5 @@
   </div>
 <% end %>
 
+<%= render partial: 'cancel_certification_modal' %>
 
-<% if current_user.admin? %>
-  <%= render partial: 'cancel_certification_modal_new' %>
-<% else %>
-  <%= render partial: 'cancel_certification_modal' %>
-<% end %>
