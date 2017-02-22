@@ -26,7 +26,8 @@ export default class EstablishClaimEmail extends BaseForm {
         `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
     }
 
-    let email = `The BVA Full Grant decision dated ${formatDate(appeal.decision_date)}` +
+    let email = `The BVA Full Grant decision dated` +
+      ` ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
@@ -62,8 +63,7 @@ export default class EstablishClaimEmail extends BaseForm {
           </div>
 
           <TextareaField
-            label="Message"
-            required={true}
+            label="Message:"
             name="emailMessage"
             onChange={this.handleFieldChange('emailForm', 'emailField')}
             {...this.state.emailForm.emailField}
