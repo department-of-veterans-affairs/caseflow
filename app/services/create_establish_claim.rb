@@ -17,22 +17,38 @@ class CreateEstablishClaim
   private
 
   def perform_create_establish_claim
-    establish_claim = EstablishClaim.find_or_create_by(appeal: create_appeal)
+    return unless validate_decision_type
+    return unless validate_establish_claim
 
-    # Admin has to confirm appeal has a decision document
-    if establish_claim.may_prepare?
-      establish_claim.prepare!
-    else
-      @error_message = "This appeal did not have a decision document in VBMS."
-    end
+    establish_claim.prepare!
 
   rescue MultipleAppealsByVBMSIDError
     @error_message = "There were multiple appeals matching this VBMS ID."
   rescue ActiveRecord::RecordNotFound
     @error_message = "Appeal not found for that decision type." \
       "Make sure to add the 'S' or 'C' to the end of the file number."
-  rescue UnrecognizedDecisionTypeError
-    @error_message = "You must select a decision type"
+  end
+
+  def validate_establish_claim
+    if !establish_claim.may_prepare?
+      @error_message = "A task already exists for this appeal."
+    elsif establish_claim.appeal.decisions.empty?
+      @error_message = "This appeal did not have a decision document in VBMS."
+    end
+
+    !error_message
+  end
+
+  def establish_claim
+    @establish_claim ||= EstablishClaim.find_or_create_by(appeal: create_appeal)
+  end
+
+  def validate_decision_type
+    unless DECISION_TYPES.include?(decision_type)
+      @error_message = "You must select a decision type"
+    end
+
+    !error_message
   end
 
   def create_appeal

@@ -10,7 +10,7 @@ class Admin::EstablishClaimsController < ApplicationController
     @create_establish_claim = CreateEstablishClaim.new(create_establish_claim_params)
 
     if @create_establish_claim.perform!
-      flash[:success] = "Task created or already existed"
+      flash[:success] = "Task created 😎"
     else
       flash[:error] = @create_establish_claim.error_message
     end

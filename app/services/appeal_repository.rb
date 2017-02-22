@@ -40,7 +40,7 @@ class AppealRepository
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
-                   fail UnrecognizedDecisionTypeError
+                   VACOLS::Case.includes(:folder, :correspondent)
                  end
 
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
