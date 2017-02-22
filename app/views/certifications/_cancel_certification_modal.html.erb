@@ -5,48 +5,17 @@
 
   <div class="cf-modal-body">
     <!-- Modal box messaging -->
-    <div class="modal-container">
-      <button type="button" class="cf-modal-close cf-action-closemodal">
-        <%=svg_icon(:close)%>
-      </button>
-
-      <h1 class="cf-modal-title" id="<%= modal_id %>-title">Cancel Certification</h1>
-      <p>
-        <div class="cf-modal-segment" id="<%= modal_id %>-desc">
-          Please explain why this case cannot be certified with Caseflow. Once you click <b>Cancel certification</b>, changes made to this case in Caseflow will not be saved.
-        </div>
-      </p>
-
-      <%= form_for certification_cancellation,
-            html: { id: "cancellation-form", class: "cf-form cf-app-segment" },
-            builder: CaseflowFormBuilder do |f| %>
-
-        <%= f.radio_buttons_field :cancellation_reason,
-          values: [
-            "VBMS and VACOLS dates didn't match and couldn't be changed",
-            "Missing document could not be found",
-            "Pending FOIA request",
-            "Other"
-          ],
-          question_name: "cancellationReason",
-          label: "Why can't be this case certified in Caseflow" %>
-
-        <%= f.text_area :other_reason,
-          question_name: "otherReason",
-          label: "Tell us more about your situation." %>
-
-        <%= f.text_field :email,
-          question_name: "email", label: "What's your VA email address?" %>
-
-        <%= f.hidden_field :certification_id, value: certification_cancellation.certification_id  %>
-          <div class="cf-modal-divider"></div>
-          <div class="cf-push-row cf-modal-controls">
-            <a href="#" class="cf-modal-link cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">  &laquo; Go back
-            </a>
-
-            <button type="submit" class="cf-push-right cf-submit usa-button-secondary">Cancel certification</button>
-          </div>
-      <% end %>
+    <button type="button" class="cf-modal-close cf-action-closemodal">
+      <%=svg_icon(:close)%>
+    </button>
+    <h1 class="cf-modal-title" id="<%= modal_id %>-title">Cancel certification?</h1>
+    <p class="cf-modal-normal-text" id="<%= modal_id %>-desc">
+      Are you sure you can't certify this case? Any changes you made in Caseflow will not be saved and the certification date will not be set in VACOLS.
+    </p>
+    <div class="cf-modal-divider"></div>
+    <div class="cf-push-row cf-modal-controls">
+      <button type="button" class="usa-button-outline cf-action-closemodal cf-push-left" data-controls="#<%= modal_id%>">Go back</button>
+      <a href="<%= cancel_certification_path(id: appeal.vacols_id) %>" class="cf-push-right usa-button usa-button-secondary">Yes, I'm sure</a>
     </div>
     <!-- /modal box messaging -->
   </div>
