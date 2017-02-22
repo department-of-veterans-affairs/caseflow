@@ -27,7 +27,7 @@ class TestDataService
     end
   end
 
-  def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: "partial")
+  def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
 
@@ -35,8 +35,8 @@ class TestDataService
 
     # Push the decision date to the current date in vacols
     vacols_case = VACOLS::Case.find(vacols_id)
-    if decision_type == "full"
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(Time.zone.now))
+    if decision_type == :full
+      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
     else
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(300.days.ago))
     end
