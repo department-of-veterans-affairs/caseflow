@@ -199,14 +199,6 @@ class Appeal < ActiveRecord::Base
       appeal
     end
 
-    def find_or_create_by_vbms_id(vbms_id)
-      appeal = find_or_initialize_by(vbms_id: vbms_id)
-      repository.load_vacols_data_by_vbms_id(appeal)
-      appeal.save
-
-      appeal
-    end
-
     def repository
       @repository ||= AppealRepository
     end
