@@ -42,7 +42,7 @@ export default class StyleGuide extends React.Component {
           }
         ]}
         closeHandler={this.handleModalClose}
-        title = "This Is a Modal">
+        title = "This is a modal">
         <p>
           This is your modal text, which explains why the modal was triggered.
           Modal titles are in <b>Title Case</b>, but actions on modal features
