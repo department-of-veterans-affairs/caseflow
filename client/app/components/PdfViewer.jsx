@@ -29,9 +29,6 @@ export default class PdfViewer extends BaseForm {
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
-  
-  selectLabel = () => {
-  }
 
   onCommentChange = () => {
     this.comments = [];
@@ -348,10 +345,10 @@ export default class PdfViewer extends BaseForm {
   }
 
   onColorLabelChange = (label) => () => {
-    if (label === this.props.label.color) {
-      this.props.setLabel({});
+    if (label === this.props.label) {
+      this.props.setLabel('');
     } else {
-      this.props.setLabel({ color: label });  
+      this.props.setLabel(label);  
     }
   }
 
@@ -436,7 +433,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="blue"
                     classNames={
-                      this.props.label.color === 'blue'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'blue'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('blue')}>
                     <i
@@ -447,7 +444,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="orange"
                     classNames={
-                      this.props.label.color === 'orange'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'orange'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('orange')}>
                     <i
@@ -458,7 +455,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="white"
                     classNames={
-                      this.props.label.color === 'white'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'white'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('white')}>
                     <i
@@ -469,7 +466,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="pink"
                     classNames={
-                      this.props.label.color === 'pink'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'pink'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('pink')}>
                     <i
@@ -480,7 +477,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="green"
                     classNames={
-                      this.props.label.color === 'green'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'green'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('green')}>
                     <i
@@ -491,7 +488,7 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="yellow"
                     classNames={
-                      this.props.label.color === 'yellow'? bookmarkClassesSelected: bookmarkClasses
+                      this.props.label === 'yellow'? bookmarkClassesSelected: bookmarkClasses
                     }
                     onClick={this.onColorLabelChange('yellow')}>
                     <i

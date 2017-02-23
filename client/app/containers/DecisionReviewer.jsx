@@ -2,14 +2,15 @@ import React, { PropTypes } from 'react';
 import PdfViewer from '../components/PdfViewer';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
+import ApiUtil from '../util/ApiUtil';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
     let labels = [];
-    for (let index = 0; index < this.props.appealDocuments.length; index++) {
-      labels[index] = {};
-    }
+    this.props.appealDocuments.forEach((doc) => {
+      labels.push(doc.label);
+    });
     this.state = {
       labels: labels,
       pdf: 0
@@ -32,11 +33,20 @@ export default class DecisionReviewer extends React.Component {
   }
 
   setLabel = (pdf) => (label) => {
-    let labels = [...this.state.labels];
-    labels[pdf] = label;
-    this.setState({
-      labels: labels
-    });
+    let data = {label: label};
+    let document_id = this.props.appealDocuments[this.state.pdf].id;
+
+    ApiUtil.patch(`/document/${document_id}/set-label`, { data })
+      .then(() => {
+        let labels = [...this.state.labels];
+        labels[pdf] = label;
+
+        this.setState({
+          labels: labels
+        });
+      }, () => {
+        // Do something with error
+      });
   }
 
   componentDidMount() {
@@ -57,8 +67,8 @@ export default class DecisionReviewer extends React.Component {
       <div>
         <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`review/pdf?vbms_document_id=` +
-            `${appealDocuments[this.state.pdf].vbms_document_id}`}
+          file={`review/pdf?id=` +
+            `${appealDocuments[this.state.pdf].id}`}
           annotations={this.state.annotations}
           id={appealDocuments[this.state.pdf].id}
           receivedAt={appealDocuments[this.state.pdf].received_at}
