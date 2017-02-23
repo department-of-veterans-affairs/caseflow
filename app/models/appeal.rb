@@ -85,7 +85,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def task_header
-    "#{veteran_name} (#{vbms_id})"
+    "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
 
   def hearing_pending?

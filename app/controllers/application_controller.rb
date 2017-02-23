@@ -72,6 +72,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_path
 
+  def certification_header(title)
+    "&nbsp &gt &nbsp".html_safe + title
+  end
+  helper_method :certification_header
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
