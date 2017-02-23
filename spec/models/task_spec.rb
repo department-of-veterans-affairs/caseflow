@@ -10,7 +10,8 @@ describe Task do
     @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
-    @user = User.create(station_id: "ABC", css_id: "123")
+    @user = User.create(station_id: "ABC", css_id: "123", full_name: "Robert Smith")
+    @user2 = User.create(station_id: "ABC", css_id: "456", full_name: "Jane Doe")
   end
 
   context ".newest_first" do
@@ -238,6 +239,7 @@ describe Task do
       task.start!
       task.review!
     end
+
     it "completes the task" do
       task.complete!(:completed, status: 3)
       expect(task.reload.completed_at).to be_truthy
@@ -356,6 +358,35 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "returns unprepared tasks" do
       expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#tasks_completed_by_users" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:tasks) do
+      [
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal)
+      ]
+    end
+
+    before do
+      tasks.each_with_index do |task, index|
+        task.prepare!
+        if index < 2
+          task.assign!(:assigned, @user)
+        else
+          task.assign!(:assigned, @user2)
+        end
+        task.start!
+        task.review!
+        task.complete!(status: 0)
+      end
+    end
+
+    it "returns hash with each user and their completed number of tasks" do
+      expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
     end
   end
 end
