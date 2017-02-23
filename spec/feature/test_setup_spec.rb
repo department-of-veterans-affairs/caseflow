@@ -11,8 +11,9 @@ RSpec.feature "Test Setup" do
 
     before do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
-      test_certification.form8.update_from_appeal(test_certification.appeal)
-      test_certification.form8.save_pdf!
+      form8 = Form8.create!(certification_id: test_certification.id)
+      form8.update_from_appeal(test_certification.appeal)
+      form8.save_pdf!
     end
 
     let(:certification) { Certification.find_or_create_by_vacols_id(test_appeal_id) }

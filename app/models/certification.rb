@@ -11,9 +11,10 @@ class Certification < ActiveRecord::Base
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,
     # refresh it with new data.
-    if form8_started_at.nil? || form8.updated_at < 48.hours.ago
+    if !form8 || form8.updated_at < 48.hours.ago
       # prevent form8 from being created unless populating appeal succeeds (related to #610)
       ActiveRecord::Base.transaction do
+        @form8 = Form8.create!(certification_id: id)
         form8.update_from_appeal(appeal)
       end
     else
@@ -48,7 +49,7 @@ class Certification < ActiveRecord::Base
   end
 
   def form8
-    @form8 ||= Form8.find_or_create_by(certification_id: id)
+    @form8 ||= Form8.find_by(certification_id: id)
   end
 
   def time_to_certify

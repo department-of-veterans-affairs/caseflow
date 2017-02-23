@@ -12,7 +12,8 @@ RSpec.feature "Confirm Certification" do
     }
 
     certification = Certification.create!(vacols_id: "5555C")
-    certification.form8.update_from_appeal(certification.appeal)
+    form8 = Form8.create!(certification_id: certification.id)
+    form8.update_from_appeal(certification.appeal)
     certification.form8.save_pdf!
   end
 
