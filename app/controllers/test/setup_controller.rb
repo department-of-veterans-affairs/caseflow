@@ -19,8 +19,16 @@ class Test::SetupController < ApplicationController
     fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
 
     EstablishClaim.delete_all
-    TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: "full")
-    TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
+    # Reset special issues for all appeals
+    TestDataService.reset_appeal_special_issues
+
+    # Cancel existing EPs and reset the dates
+    full_grant_ids.each do |full_grant_id|
+      TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: :full)
+    end
+    partial_grant_ids.each do |partial_grant_id|
+      TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
+    end
 
     unless ApplicationController.dependencies_faked?
       CreateEstablishClaimTasksJob.perform_now
@@ -66,11 +74,11 @@ class Test::SetupController < ApplicationController
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
 
-  def full_grant_id
-    "2500867"
+  def full_grant_ids
+    ENV["FULL_GRANT_IDS"].split(",")
   end
 
-  def partial_grant_id
-    "2734975"
+  def partial_grant_ids
+    ENV["PART_REMAND_IDS"].split(",")
   end
 end
