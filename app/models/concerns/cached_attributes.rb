@@ -39,7 +39,11 @@ module CachedAttributes
 
       define_method attr_name do
         cached_value = get_cached_value(attr_name)
-        return cached_value if cached_value
+
+        if cached_value
+          Rails.logger.info("Retrieving cached value for #{self.class.name}##{attr_name}")
+          return cached_value
+        end
 
         value = send "#{attr_name}_without_cache"
         set_cached_value(attr_name, value)

@@ -26,7 +26,7 @@ describe CachedAttributes do
       TestThing.example_rating = 10
       model.rating
       model.clear_cached_attrs!
-      TestThing.example_rating = Random.rand
+      TestThing.example_rating = 9
       expect(model.rating).to eq(TestThing.example_rating)
     end
   end
