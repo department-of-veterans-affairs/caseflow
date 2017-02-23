@@ -6,6 +6,12 @@
 module CachedAttributes
   extend ActiveSupport::Concern
 
+  def clear_cached_attrs!
+    Rails.cache.write(cache_id, nil)
+  end
+
+  private
+
   def cached_values
     json_values = Rails.cache.read(cache_id)
     return {} unless json_values
@@ -21,10 +27,6 @@ module CachedAttributes
     new_cached_values = cached_values.merge(attr_name => value)
     Rails.cache.write(cache_id, new_cached_values.to_json)
     value
-  end
-
-  def clear_cached_attrs!
-    Rails.cache.write(cache_id, nil)
   end
 
   def cache_id

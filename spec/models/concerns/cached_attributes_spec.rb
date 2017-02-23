@@ -10,33 +10,43 @@ describe CachedAttributes do
     end
 
     def rating
-      TestThing.rating
+      TestThing.example_rating
     end
     cache_attribute :rating
 
     class << self
-      attr_accessor :rating
+      attr_accessor :example_rating
     end
   end
 
   let(:model) { TestThing.new }
 
-  context ".cache_attribute" do
+  context ".clear_cached_attrs!", focus: true do
+    it "clears the cached attributes" do
+      TestThing.example_rating = 10
+      model.rating
+      model.clear_cached_attrs!
+      TestThing.example_rating = Random.rand
+      expect(model.rating).to eq(TestThing.example_rating)
+    end
+  end
+
+  context ".cache_attribute", focus: true do
     subject { model.rating }
     before do
       model.clear_cached_attrs!
-      TestThing.rating = 10
+      TestThing.example_rating = 10
     end
 
     context "when no cached value" do
-      before { TestThing.rating = 9 }
+      before { TestThing.example_rating = 9 }
       it { is_expected.to eq(9) }
     end
 
     context "when cached value" do
       before do
         model.rating
-        TestThing.rating = 9
+        TestThing.example_rating = 9
       end
 
       it { is_expected.to eq(10) }
