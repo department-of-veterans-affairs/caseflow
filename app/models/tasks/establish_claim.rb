@@ -1,6 +1,8 @@
 class EstablishClaim < Task
   include CachedAttributes
 
+  # Methods pull from VACOLS if not cached.
+  # Prefixed with `cached_` to avoid assuming they were updated
   def cached_decision_type
     appeal.decision_type
   end

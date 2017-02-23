@@ -21,7 +21,7 @@ describe CachedAttributes do
 
   let(:model) { TestThing.new }
 
-  context ".clear_cached_attrs!", focus: true do
+  context ".clear_cached_attrs!" do
     it "clears the cached attributes" do
       TestThing.example_rating = 10
       model.rating
@@ -31,7 +31,7 @@ describe CachedAttributes do
     end
   end
 
-  context ".cache_attribute", focus: true do
+  context ".cache_attribute" do
     subject { model.rating }
     before do
       model.clear_cached_attrs!
