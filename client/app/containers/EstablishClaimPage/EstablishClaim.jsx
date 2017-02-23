@@ -449,6 +449,12 @@ export default class EstablishClaim extends BaseForm {
     return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
 
+  getCityAndState(regionalOfficeKey) {
+    return `${regionalOfficeKey} - ${
+      this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+      this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+  }
+
   getSpecialIssuesRegionalOffice() {
     if (this.state.specialIssuesRegionalOffice === 'PMC') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
@@ -458,14 +464,14 @@ export default class EstablishClaim extends BaseForm {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
     }
 
-    return this.state.specialIssuesRegionalOffice;
+    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
   }
 
   getRegionalOfficeFromConstant(constant) {
     let regionalOfficeKey = this.props.
         regionalOfficeStations[this.props.task.appeal.station_key];
 
-    return constant[regionalOfficeKey];
+    return this.getCityAndState(constant[regionalOfficeKey]);
   }
 
   getStationOfJurisdiction() {
