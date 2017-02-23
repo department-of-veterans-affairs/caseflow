@@ -398,6 +398,30 @@ export default class EstablishClaim extends BaseForm {
       });
   };
 
+  handleNoEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/no-email-complete`).
+    then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+            'error',
+            'Error',
+            'There was an error while routing the current claim. Please try again later'
+        );
+      this.setState({
+        loading: false
+      });
+    });
+  };
+
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -610,7 +634,8 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleCancelTask={this.handleCancelTask}
-            handleSubmit={this.handleEmailPageSubmit}
+            handleEmailSubmit={this.handleEmailPageSubmit}
+            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}

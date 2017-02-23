@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch" do
+RSpec.feature "Dispatch", focus: true do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -441,7 +441,18 @@ RSpec.feature "Dispatch" do
       expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
       page.find("#confirmEmail").trigger("click")
       click_on "Finish Routing Claim"
-      expect(page).to have_content("Congratulations!")
+      expect(page).to have_content("Sent email notification")
+    end
+
+    scenario "An unhandled special issue with no email routes to no email page" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#vocationalRehab").trigger("click")
+      click_on "Route Claim"
+      expect(page).to have_content("Please process this claim manually")
+      page.find("#confirmEmail").trigger("click")
+      click_on "Release Claim"
+      expect(page).to have_content("Processed case outside of Caseflow")
     end
 
     scenario "A regional office special issue routes correctly" do
