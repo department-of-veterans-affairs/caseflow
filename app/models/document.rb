@@ -27,12 +27,22 @@ class Document < ActiveRecord::Base
     (self.type == type) || (alt_types || []).include?(type)
   end
 
-  def self.from_vbms_document(vbms_document)
-    find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
-      t.type = TYPES[vbms_document.doc_type] || :other
-      t.alt_types = (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] }
-      t.received_at = vbms_document.received_at
-      t.filename = vbms_document.filename
+  def self.from_vbms_document(vbms_document, save_record:)
+    if (save_record)
+      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
+        t.type = TYPES[vbms_document.doc_type] || :other
+        t.alt_types = (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] }
+        t.received_at = vbms_document.received_at
+        t.filename = vbms_document.filename
+      end
+    else
+      new(
+        type: TYPES[vbms_document.doc_type] || :other,
+        alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
+        received_at: vbms_document.received_at,
+        vbms_document_id: vbms_document.document_id,
+        filename: vbms_document.filename
+      )
     end
   end
 

@@ -155,7 +155,7 @@ class VACOLS::Case < VACOLS::Record
   end
 
   # rubocop:disable Metrics/MethodLength
-  def update_vacols_location(location)
+  def update_vacols_location!(location)
     return unless location
 
     fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
@@ -167,30 +167,32 @@ class VACOLS::Case < VACOLS::Record
     user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     case_id = conn.quote(bfkey)
 
-    conn.transaction do
-      conn.execute(<<-SQL)
-        UPDATE BRIEFF
-        SET BFDLOCIN = SYSDATE,
-            BFCURLOC = #{location},
-            BFDLOOUT = SYSDATE,
-            BFORGTIC = NULL
-        WHERE BFKEY = #{case_id}
-      SQL
+    MetricsService.timer "VACOLS: update_vacols_location! #{bfkey}" do
+      conn.transaction do
+        conn.execute(<<-SQL)
+          UPDATE BRIEFF
+          SET BFDLOCIN = SYSDATE,
+              BFCURLOC = #{location},
+              BFDLOOUT = SYSDATE,
+              BFORGTIC = NULL
+          WHERE BFKEY = #{case_id}
+        SQL
 
-      conn.execute(<<-SQL)
-        UPDATE PRIORLOC
-        SET LOCDIN = SYSDATE,
-            LOCSTRCV = #{user_db_id},
-            LOCEXCEP = 'Y'
-        WHERE LOCKEY = #{case_id} and LOCDIN is NULL
-      SQL
+        conn.execute(<<-SQL)
+          UPDATE PRIORLOC
+          SET LOCDIN = SYSDATE,
+              LOCSTRCV = #{user_db_id},
+              LOCEXCEP = 'Y'
+          WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+        SQL
 
-      conn.execute(<<-SQL)
-        INSERT into PRIORLOC
-          (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
-        VALUES
-         (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
-      SQL
+        conn.execute(<<-SQL)
+          INSERT into PRIORLOC
+            (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
+          VALUES
+           (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
+        SQL
+      end
     end
   end
 

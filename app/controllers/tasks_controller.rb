@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :verify_access, except: [:unprepared_tasks]
+  before_action :verify_access, except: [:unprepared_tasks, :update_employee_count]
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel]
 
   class TaskTypeMissingError < StandardError; end
@@ -7,20 +7,12 @@ class TasksController < ApplicationController
   TASKS_PER_PAGE = 10
 
   def index
-    respond_to do |format|
-      format.html do
-        @completed_count_today = Task.completed_today.count
-        @to_complete_count = Task.to_complete.count
-        render index_template
-      end
+    tasks_completed_today = Task.completed_today
+    @completed_count_today = tasks_completed_today.count
+    @to_complete_count = Task.to_complete.count
+    @tasks_completed_by_users = Task.tasks_completed_by_users(tasks_completed_today)
 
-      format.json do
-        render json: {
-          completedTasks: completed_tasks.map(&:to_hash),
-          completedCountTotal: completed_count_total
-        }
-      end
-    end
+    render index_template
   end
 
   def show
@@ -28,6 +20,7 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
+    return render "special_issue_emailed" if task.special_issue_emailed?
     return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
@@ -59,15 +52,6 @@ class TasksController < ApplicationController
     end
   end
 
-  def cancel
-    task.cancel!(cancel_feedback)
-
-    respond_to do |format|
-      format.html { redirect_to establish_claims_path }
-      format.json { render json: {} }
-    end
-  end
-
   private
 
   def current_user_historical_tasks
@@ -92,24 +76,6 @@ class TasksController < ApplicationController
     Task.where(type: type).oldest_first
   end
 
-  def offset
-    # When no page param exists, it will cast the nil page to zero
-    # effectively providing no offset on page initial load
-    TASKS_PER_PAGE * params[:page].to_i
-  end
-
-  # This is to account for tasks that have been completed since initial
-  # page load. By calculating the difference between the total completed on initial
-  # page load and at the time of clicking "Show More", we can figure out
-  # the proper offset to use to achieve the "next" 10
-  def completed_tasks_offset_diff
-    expected_total = params[:expectedCompletedTotal].to_i
-    # Return if we don't have a true expected total to diff against
-    return 0 if expected_total.zero?
-
-    completed_count_total - expected_total.to_i
-  end
-
   def type
     params[:task_type] || (task && task.type.to_sym)
   end
@@ -127,28 +93,6 @@ class TasksController < ApplicationController
     @task ||= Task.find(task_id)
   end
   helper_method :task
-
-  def completed_count_total
-    @completed_count_total ||= Task.completed.count
-  end
-  helper_method :completed_count_total
-
-  def completed_tasks
-    @completed_tasks ||= begin
-      computed_offset = completed_tasks_offset_diff + offset
-
-      Task.completed
-          .newest_first(:completed_at)
-          .offset(computed_offset)
-          .limit(TASKS_PER_PAGE)
-    end
-  end
-  helper_method :completed_tasks
-
-  def current_tasks
-    @current_tasks ||= Task.assigned_not_completed.newest_first
-  end
-  helper_method :current_tasks
 
   def index_template
     prefix = manager? ? "manager" : "worker"

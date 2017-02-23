@@ -1,8 +1,9 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, require-jsdoc */
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
-
+import StringUtil from '../../util/StringUtil';
+import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -13,13 +14,17 @@ import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
+import EstablishClaimNote from './EstablishClaimNote';
+import EstablishClaimEmail from './EstablishClaimEmail';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
 
-export const REVIEW_PAGE = 'review';
+export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
+export const NOTE_PAGE = 'review';
+export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
@@ -42,7 +47,13 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PARTIAL);
+const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
+
+let containsRoutingSpecialIssues = function(specialIssues) {
+  return Boolean(
+    Review.ROUTING_SPECIAL_ISSUES.find((issue) => specialIssues[issue.specialIssue].value)
+  );
+};
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -52,9 +63,7 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUE_FULL.concat(Review.SPECIAL_ISSUE_PAR
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-
     let decisionType = this.props.task.appeal.decision_type;
-
     // Set initial state on page render
 
     // The reviewForm decisionType is needed in the state first since
@@ -72,14 +81,14 @@ export default class EstablishClaim extends BaseForm {
       cancelModal: {
         cancelFeedback: new FormField(
           '',
-          requiredValidator('Please enter an explanation.')
+          requiredValidator('Please enter an explanation')
         )
       },
       cancelModalDisplay: false,
       claimForm: {
         // This is the decision date that gets mapped to the claim's creation date
         date: new FormField(
-          formatDate(this.props.task.appeal.decision_date),
+          formatDate(this.props.task.appeal.serialized_decision_date),
           [
             requiredValidator('Please enter the Decision Date.'),
             dateValidator()
@@ -93,28 +102,61 @@ export default class EstablishClaim extends BaseForm {
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
-      page: REVIEW_PAGE,
+      page: DECISION_PAGE,
+      showNotePageAlert: false,
       specialIssueModalDisplay: false,
-      specialIssues: {}
+      specialIssues: {},
+      specialIssuesEmail: '',
+      specialIssuesRegionalOffice: '',
+      submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      this.state.specialIssues[ApiUtil.convertToCamelCase(issue)] = new FormField(false);
+      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
+
+      // Check special issue boxes based on what was sent from the database
+      let snakeCaseIssue = StringUtil.camelCaseToSnakeCase(camelCaseIssue);
+
+      this.state.specialIssues[camelCaseIssue] =
+        new FormField(props.task.appeal[snakeCaseIssue]);
+      this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
 
+  defaultPage() {
+    if (this.props.task.aasm_state === 'reviewed') {
+      // Force navigate to the note page on initial component mount
+      // when the task is in reviewed state. This means that they have
+      // already been saved in the database, but the user navigated
+      // back to the page before the task was complete.
+      return NOTE_PAGE;
+    }
+
+    // Force navigate to the review page on initial component mount
+    // This ensures they are not mid-flow
+    return DECISION_PAGE;
+  }
 
   componentDidMount() {
     let { history } = this.state;
 
     history.listen((location) => {
-      this.setState({
-        page: location.pathname.substring(1) || REVIEW_PAGE
-      });
+      // If we are on the note page and you try to move to
+      // a previous page in the flow then we bump you back
+      // to the note page.
+      if (this.state.page === NOTE_PAGE &&
+        location.pathname.substring(1) !== NOTE_PAGE) {
+        this.handlePageChange(NOTE_PAGE);
+        this.setState({
+          showNotePageAlert: true
+        });
+      } else {
+        this.setState({
+          page: location.pathname.substring(1) || DECISION_PAGE
+        });
+      }
     });
 
-    // Force navigate to the review page on initial component mount
-    // This ensures they are not mid-flow
-    history.replace(REVIEW_PAGE);
+    history.replace(this.defaultPage());
   }
 
   reloadPage = () => {
@@ -139,8 +181,15 @@ export default class EstablishClaim extends BaseForm {
     let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then(() => {
-        this.reloadPage();
+      then((response) => {
+        if (JSON.parse(response.text).require_note) {
+          this.setState({
+            loading: false
+          });
+          this.handlePageChange(NOTE_PAGE);
+        } else {
+          this.reloadPage();
+        }
       }, () => {
         this.setState({
           loading: false
@@ -165,12 +214,15 @@ export default class EstablishClaim extends BaseForm {
 
   handleFinishCancelTask = () => {
     let { id } = this.props.task;
-    let { handleAlert, handleAlertClear } = this.props;
     let data = {
       feedback: this.state.cancelModal.cancelFeedback.value
     };
 
-    handleAlertClear();
+    if (this.state.submitSpecialIssuesOnCancel) {
+      data.specialIssues = this.getFormValues(this.state.specialIssues);
+    }
+
+    this.props.handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
       return;
@@ -180,10 +232,12 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: true
     });
 
-    return ApiUtil.patch(`/tasks/${id}/cancel`, { data }).then(() => {
+    data = ApiUtil.convertToSnakeCase(data);
+
+    return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
       this.reloadPage();
     }, () => {
-      handleAlert(
+      this.props.handleAlert(
         'error',
         'Error',
         'There was an error while cancelling the current claim. Please try again later'
@@ -204,14 +258,16 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true
+      cancelModalDisplay: true,
+      submitSpecialIssuesOnCancel: false
     });
   }
 
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      specialIssueModalDisplay: false
+      specialIssueModalDisplay: false,
+      submitSpecialIssuesOnCancel: true
     });
   }
 
@@ -222,7 +278,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   isReviewPage() {
-    return this.state.page === REVIEW_PAGE;
+    return this.state.page === DECISION_PAGE;
   }
 
   shouldShowAssociatePage() {
@@ -236,6 +292,14 @@ export default class EstablishClaim extends BaseForm {
 
   isFormPage() {
     return this.state.page === FORM_PAGE;
+  }
+
+  isNotePage() {
+    return this.state.page === NOTE_PAGE;
+  }
+
+  isEmailPage() {
+    return this.state.page === EMAIL_PAGE;
   }
 
   /*
@@ -265,31 +329,74 @@ export default class EstablishClaim extends BaseForm {
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
-  handleDecisionTypeChange = (value) => {
-    this.handleFieldChange('reviewForm', 'decisionType')(value);
-
-    let stateObject = {};
-    let modifiers = this.validModifiers();
-
-    stateObject.claimForm = { ...this.state.claimForm };
-    stateObject.claimForm.endProductModifier.value = modifiers[0];
-
-    this.setState(stateObject);
-  }
-
   handleReviewPageSubmit = () => {
     this.setStationState();
 
     if (!this.validateReviewPageSubmit()) {
-      this.setState({
-        specialIssueModalDisplay: true
-      });
+      if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+        this.handlePageChange(EMAIL_PAGE);
+      } else {
+        this.setState({
+          specialIssueModalDisplay: true
+        });
+      }
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
       this.handlePageChange(FORM_PAGE);
     }
   }
+
+  handleFormPageSubmit = () => {
+    this.handleSubmit();
+  }
+
+  handleNotePageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/note-complete`).then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+      );
+      this.setState({
+        loading: false
+      });
+    });
+  }
+
+  handleEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
+        'error',
+        'Error',
+        'There was an error while routing the current claim. Please try again later'
+        );
+        this.setState({
+          loading: false
+        });
+      });
+  };
 
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
@@ -323,6 +430,50 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  getSpecialIssuesEmail() {
+    if (this.state.specialIssuesEmail === 'PMC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesEmail === 'COWC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesEmail === 'education') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.EDUCATION);
+    }
+
+    return this.state.specialIssuesEmail;
+  }
+
+  getEmailFromConstant(constant) {
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
+    return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
+  }
+
+  getCityAndState(regionalOfficeKey) {
+    return `${regionalOfficeKey} - ${
+      this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+      this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+  }
+
+  getSpecialIssuesRegionalOffice() {
+    if (this.state.specialIssuesRegionalOffice === 'PMC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesRegionalOffice === 'education') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
+    }
+
+    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
+  }
+
+  getRegionalOfficeFromConstant(constant) {
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
+    return this.getCityAndState(constant[regionalOfficeKey]);
+  }
+
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
     let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
@@ -330,6 +481,21 @@ export default class EstablishClaim extends BaseForm {
     return `${stationKey} - ${
         this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
         this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+  }
+
+  prepareSpecialIssues() {
+    // The database column names must be less than 63 characters
+    // so we shorten all of the keys in our hash before we send
+    // them to the backend.
+    let shortenedObject = {};
+    let formValues = ApiUtil.convertToSnakeCase(
+      this.getFormValues(this.state.specialIssues));
+
+    Object.keys(formValues).forEach((key) => {
+      shortenedObject[key.substring(0, 60)] = formValues[key];
+    });
+
+    return shortenedObject;
   }
 
   prepareData() {
@@ -346,23 +512,33 @@ export default class EstablishClaim extends BaseForm {
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
-
-    return {
-      claim: ApiUtil.convertToSnakeCase({
+    return ApiUtil.convertToSnakeCase({
+      claim: {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      }),
-      specialIssues: ApiUtil.convertToSnakeCase(
-        this.getFormValues(this.state.specialIssues))
-    };
+      },
+      specialIssues: this.getFormValues(this.state.specialIssues)
+    });
   }
 
   validateReviewPageSubmit() {
     let validOutput = true;
 
+    // If it contains a routed special issue, allow EP creation even if it
+    // contains other unhandled special issues.
+    if (containsRoutingSpecialIssues(this.state.specialIssues)) {
+      return true;
+    }
+
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[ApiUtil.convertToCamelCase(issue)].value) {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        this.setState({
+          // If there are multiple unhandled special issues, we'll route
+          // to the email address for the last one.
+          specialIssuesEmail: issue.emailAddress,
+          specialIssuesRegionalOffice: issue.regionalOffice
+        });
         validOutput = false;
       }
     });
@@ -392,7 +568,6 @@ export default class EstablishClaim extends BaseForm {
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
-            handleDecisionTypeChange={this.handleDecisionTypeChange}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handleSubmit={this.handleReviewPageSubmit}
@@ -414,6 +589,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             history={history}
+            specialIssues={ApiUtil.convertToSnakeCase(
+              this.getFormValues(this.state.specialIssues))}
           />
         }
         { this.isFormPage() &&
@@ -421,38 +598,56 @@ export default class EstablishClaim extends BaseForm {
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
-            handleSubmit={this.handleSubmit}
+            handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             loading={loading}
             validModifiers={this.validModifiers()}
+          />
+        }
+        { this.isNotePage() &&
+          <EstablishClaimNote
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleNotePageSubmit}
+            showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
+          />
+        }
+        { this.isEmailPage() &&
+          <EstablishClaimEmail
+            appeal={this.props.task.appeal}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleEmailPageSubmit}
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
+            regionalOfficeEmail={this.getSpecialIssuesEmail()}
+            specialIssues={specialIssues}
           />
         }
 
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
-              name: '\u00AB Go Back',
+              name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
             { classNames: ["usa-button", "usa-button-secondary"],
               loading: modalSubmitLoading,
-              name: 'Cancel EP Establishment',
+              name: 'Stop processing claim',
               onClick: this.handleFinishCancelTask
             }
           ]}
           visible={true}
           closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Cancel EP Establishment">
+          title="Stop Processing Claim">
           <p>
-            If you click the <b>Cancel EP Establishment </b>
+            If you click the <b>Stop processing claim </b>
             button below your work will not be
-            saved and the EP for this claim will not be established.
+            saved and an EP will not be created for this claim.
           </p>
           <p>
-            Please tell why you are canceling the establishment of this EP.
+            Please tell us why you have chosen to discontinue processing this claim.
           </p>
           <TextareaField
-            label="Cancel Explanation"
+            label="Explanation"
             name="Explanation"
             onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
             required={true}
@@ -470,4 +665,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-lines */
+/* eslint-enable max-lines, require-jsdoc */

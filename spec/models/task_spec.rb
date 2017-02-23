@@ -7,9 +7,11 @@ end
 describe Task do
   # Clear the task from the DB before every test
   before do
+    @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
-    @user = User.create(station_id: "ABC", css_id: "123")
+    @user = User.create(station_id: "ABC", css_id: "123", full_name: "Robert Smith")
+    @user2 = User.create(station_id: "ABC", css_id: "456", full_name: "Jane Doe")
   end
 
   context ".newest_first" do
@@ -145,6 +147,7 @@ describe Task do
         task.prepare!
         task.assign!(:assigned, @user)
         task.start!
+        task.review!
         task.complete!(:completed, status: 0)
       end
 
@@ -212,6 +215,7 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
       task.complete_and_recreate!(3)
     end
     it "completes and creates a new task" do
@@ -233,7 +237,9 @@ describe Task do
       task.prepare!
       task.assign!(:assigned, @user)
       task.start!
+      task.review!
     end
+
     it "completes the task" do
       task.complete!(:completed, status: 3)
       expect(task.reload.completed_at).to be_truthy
@@ -269,6 +275,14 @@ describe Task do
       task.start!
     end
     it "closes unfinished tasks" do
+      task.expire!
+      expect(task.reload.completed?).to be_truthy
+      expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
+    end
+
+    it "closes unfinished task in review state" do
+      task.review!
       task.expire!
       expect(task.reload.completed?).to be_truthy
       expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
@@ -313,6 +327,12 @@ describe Task do
       task.cancel!
       expect(task.canceled?).to be_truthy
     end
+
+    it "can be canceled when in review state" do
+      task.review!
+      task.cancel!
+      expect(task.canceled?).to be_truthy
+    end
   end
 
   context "#assigned_not_completed" do
@@ -323,5 +343,50 @@ describe Task do
       task.assign!(:assigned, @user)
     end
     it { expect { Task.assigned_not_completed.find(task.id) }.not_to raise_error }
+  end
+
+  context "#days_since_creation" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal, created_at: @one_week_ago) }
+    it "returns the correct number of days" do
+      expect(task.days_since_creation).to eq(7)
+    end
+  end
+
+  context "#unprepared" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    it "returns unprepared tasks" do
+      expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#tasks_completed_by_users" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:tasks) do
+      [
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal)
+      ]
+    end
+
+    before do
+      tasks.each_with_index do |task, index|
+        task.prepare!
+        if index < 2
+          task.assign!(:assigned, @user)
+        else
+          task.assign!(:assigned, @user2)
+        end
+        task.start!
+        task.review!
+        task.complete!(status: 0)
+      end
+    end
+
+    it "returns hash with each user and their completed number of tasks" do
+      expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
+    end
   end
 end

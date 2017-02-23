@@ -14,6 +14,7 @@ export default class DecisionReviewer extends React.Component {
       labels: labels,
       pdf: 0
     };
+
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
   }
