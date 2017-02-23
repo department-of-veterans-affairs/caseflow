@@ -151,6 +151,30 @@ class AppealRepository
   end
   # :nocov:
 
+  def self.route_in_vacols!(appeal:, claim:)
+    @vbms_client ||= init_vbms_client
+
+    sanitized_id = appeal.sanitized_vbms_id
+
+    raw_veteran_record = MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
+      BGSService.new.fetch_veteran_info(sanitized_id)
+    end
+
+    # Reduce keys in raw response down to what we specifically need for
+    # establish claim
+    veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
+
+    end_product = Appeal.transaction do
+      update_location_after_dispatch!(appeal: appeal,
+                                      station: claim[:station_of_jurisdiction])
+
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+      send_and_log_request(sanitized_id, request)
+    end
+
+    end_product
+  end
+
   def self.establish_claim!(appeal:, claim:)
     @vbms_client ||= init_vbms_client
 

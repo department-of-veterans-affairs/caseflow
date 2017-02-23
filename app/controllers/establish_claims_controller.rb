@@ -26,7 +26,7 @@ class EstablishClaimsController < TasksController
   end
 
   def update_vacols
-    task.complete!(status: 0)
+    task.complete!(status: Task.completion_status_code(:special_issue_routed_in_vacols))
     render json: {}
   end
 
@@ -75,6 +75,11 @@ class EstablishClaimsController < TasksController
 
   def appeal_params
     special_issues_params.merge(dispatched_to_station: establish_claim_params[:station_of_jurisdiction])
+  end
+
+  def update_vacols_params
+    params.require(:vacols)
+          .permit(:diary, :regional_office, :location)
   end
 
   def establish_claim_params

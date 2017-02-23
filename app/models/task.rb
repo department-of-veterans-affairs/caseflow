@@ -16,7 +16,7 @@ class Task < ActiveRecord::Base
     routed_to_ro: 3,
     assigned_existing_ep: 4,
     special_issue_emailed: 5,
-    routed_in_vacols: 6
+    special_issue_routed_in_vacols: 6
   }.freeze
 
   # Use this to define status texts that don't properly titlize
@@ -191,7 +191,7 @@ class Task < ActiveRecord::Base
 
   def no_review_completion_status(status:)
     status == self.class.completion_status_code(:special_issue_emailed) ||
-    status == self.class.completion_status_code(:routed_in_vacols)
+    status == self.class.completion_status_code(:special_issue_routed_in_vacols)
   end
 
   def save_outgoing_reference(outgoing_reference_id: nil)
