@@ -486,6 +486,8 @@ export default class EstablishClaim extends BaseForm {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
     } else if (this.state.specialIssuesRegionalOffice === 'education') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
+    } else if (!this.state.specialIssuesRegionalOffice) {
+      return null;
     }
 
     return this.getCityAndState(this.state.specialIssuesRegionalOffice);
