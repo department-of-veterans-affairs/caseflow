@@ -27,7 +27,7 @@ class Document < ActiveRecord::Base
     (self.type == type) || (alt_types || []).include?(type)
   end
 
-  def self.from_vbms_document(vbms_document, save_record:)
+  def self.from_vbms_document(vbms_document, save_record = false)
     if (save_record)
       find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
         t.type = TYPES[vbms_document.doc_type] || :other

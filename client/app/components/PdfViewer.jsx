@@ -28,7 +28,8 @@ export default class PdfViewer extends BaseForm {
     };
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
-
+  }
+  
   selectLabel = () => {
   }
 
