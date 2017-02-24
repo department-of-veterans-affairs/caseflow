@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
-import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
 import TextField from '../components/TextField';
@@ -10,28 +9,36 @@ export default class PdfListView extends React.Component {
     super(props);
 
     let sortIcon;
+
     if (this.props.sortDirection === 'ascending') {
-      sortIcon = <i className="fa fa-caret-down" aria-hidden="true"></i>; 
+      sortIcon = <i className="fa fa-caret-down" aria-hidden="true"></i>;
     } else {
-      sortIcon = <i className="fa fa-caret-up" aria-hidden="true"></i>; 
+      sortIcon = <i className="fa fa-caret-up" aria-hidden="true"></i>;
     }
 
     this.state = {
-      sortIcon: sortIcon
+      sortIcon
     };
   }
 
-  getDocumentTableHeaders = () => {
-    return [
-      '',
-      <div onClick={this.props.changeSortState('sortByDate')}>Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}</div>,
-      <div onClick={this.props.changeSortState('sortByType')}>Document Type {this.props.sortBy === 'sortByType' ? this.state.sortIcon : ' '}</div>,
-      <div onClick={this.props.changeSortState('sortByFilename')}>Filename {this.props.sortBy === 'sortByFilename' ? this.state.sortIcon : ' '}</div>
-    ];
-  }
+  getDocumentTableHeaders = () => [
+    '',
+    <div onClick={this.props.changeSortState('sortByDate')}>
+      Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}
+    </div>,
+    <div onClick={this.props.changeSortState('sortByType')}>
+      Document Type {this.props.sortBy === 'sortByType' ? this.state.sortIcon : ' '}
+    </div>,
+    <div onClick={this.props.changeSortState('sortByFilename')}>
+      Filename {this.props.sortBy === 'sortByFilename' ? this.state.sortIcon : ' '}
+    </div>
+  ]
 
   buildDocumentRow = (doc, index) => {
-    let numberOfComments = this.props.annotationStorage.getAnnotationByDocumentId(doc.id).length;
+    let numberOfComments = this.props.annotationStorage
+      .getAnnotationByDocumentId(doc.id).length;
+
+
     return [
       <div><i style={{ color: '#23ABF6' }}
         className="fa fa-bookmark cf-pdf-bookmarks"
@@ -46,7 +53,7 @@ export default class PdfListView extends React.Component {
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
   }
 
-  onLabelClick = (_label) => () => {
+  onLabelClick = () => () => {
     // filtering code will go here when we have labels working
   }
 
@@ -91,6 +98,6 @@ export default class PdfListView extends React.Component {
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   filterBy: PropTypes.string.isRequired,
-  onFilter: PropTypes.func.isRequired,
-  numberOfDocuments: PropTypes.number.isRequired
+  numberOfDocuments: PropTypes.number.isRequired,
+  onFilter: PropTypes.func.isRequired
 };

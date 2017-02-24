@@ -21,7 +21,9 @@ export default class Table extends React.Component {
       values
     } = this.props;
 
-    return <table className="usa-table-borderless cf-table-borderless" summary="list of tasks">
+    return <table
+      className="usa-table-borderless cf-table-borderless"
+      summary="list of tasks">
       <thead>
         <tr>
           {headers.map((header, i) =>

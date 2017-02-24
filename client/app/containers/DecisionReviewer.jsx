@@ -9,14 +9,15 @@ export default class DecisionReviewer extends React.Component {
     super(props);
 
     this.state = {
-      sortBy: 'sortByDate',
       filterBy: '',
-      sortDirection: 'ascending',
       listView: true,
-      pdf: null
+      pdf: null,
+      sortBy: 'sortByDate',
+      sortDirection: 'ascending'
     };
 
-    this.state.documents = this.filterDocuments(this.sortDocuments(this.props.appealDocuments));
+    this.state.documents = this.filterDocuments(
+      this.sortDocuments(this.props.appealDocuments));
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
@@ -37,7 +38,7 @@ export default class DecisionReviewer extends React.Component {
   showPdf = (pdfNumber) => () => {
     this.setState({
       pdf: pdfNumber
-    })
+    });
   }
 
   showList = () => {
@@ -56,6 +57,7 @@ export default class DecisionReviewer extends React.Component {
   sortDocuments = (documents) => {
     let documentCopy = [...documents];
     let multiplier;
+
     if (this.state.sortDirection === 'ascending') {
       multiplier = 1;
     } else if (this.state.sortDirection === 'descending') {
@@ -67,13 +69,14 @@ export default class DecisionReviewer extends React.Component {
     documentCopy.sort((doc1, doc2) => {
       if (this.state.sortBy === 'sortByDate') {
         return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
+      } else if (this.state.sortBy === 'sortByType') {
+        return multiplier * (doc1.type < doc2.type ? -1 : 1);
+      } else if (this.state.sortBy === 'sortByFilename') {
+        return multiplier * (doc1.filename < doc2.filename ? -1 : 1);
       }
-      if (this.state.sortBy === 'sortByType') {
-        return multiplier * ((doc1.type < doc2.type) ? -1 : 1);
-      }
-      if (this.state.sortBy === 'sortByFilename') {
-        return multiplier * ((doc1.filename < doc2.filename) ? -1 : 1);
-      }
+
+      return 0;
+
     });
 
     return documentCopy;
@@ -93,8 +96,8 @@ export default class DecisionReviewer extends React.Component {
     }
 
     this.setState({
-      sortBy: sortBy,
-      sortDirection: sortDirection
+      sortBy,
+      sortDirection
     }, this.sortAndFilter);
   }
 
@@ -107,16 +110,18 @@ export default class DecisionReviewer extends React.Component {
         return true;
       } else if (doc.received_at.toLowerCase().includes(filterBy)) {
         return true;
-      } else {
-        let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).reduce((combined, comment) => {
-          return combined + ' ' + comment.comment.toLowerCase();
-        }, '');
-        if (comments.includes(filterBy)) {
-          return true; 
-        } else {
-          return false;
-        }
       }
+      let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).
+        reduce((combined, comment) =>
+          `${combined} ${comment.comment.toLowerCase()}`, '');
+
+      if (comments.includes(filterBy)) {
+        return true;
+      }
+
+      return false;
+
+
     });
 
     return filteredDocuments;
@@ -124,14 +129,14 @@ export default class DecisionReviewer extends React.Component {
 
   onFilter = (filterBy) => {
     this.setState({
-      filterBy: filterBy
+      filterBy
     }, this.sortAndFilter);
   }
 
   render() {
-    let { 
+    let {
       documents,
-      sortDirection,
+      sortDirection
     } = this.state;
 
     return (

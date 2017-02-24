@@ -209,7 +209,7 @@ export default class PdfViewer extends BaseForm {
 
     // Create a page in the DOM for every page in the PDF
     let viewer = document.getElementById('viewer');
-    
+
     // If the user has switched to the list view and this element doesnt
     // exist then don't try to render the PDF.
     // TODO: look into just hiding the PDFs instead of removing them.
@@ -415,7 +415,8 @@ export default class PdfViewer extends BaseForm {
                     name="backToDocuments"
                     classNames={["cf-pdf-button"]}
                     onClick={this.props.showList}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>&nbsp; View all documents
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
+                    &nbsp; View all documents
                   </Button>
                 </div>
                 <div className="usa-width-one-half cf-pdf-buttons-right">
@@ -510,7 +511,10 @@ export default class PdfViewer extends BaseForm {
                   Page {this.state.currentPage} of {this.state.numPages}
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="download" classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}>
+                  <Button
+                    name="download"
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+                  >
                     <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
                   </Button>
                   <Button

@@ -2,10 +2,6 @@ import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 
 export default class DocumentLabels extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return <span>
       <Button
