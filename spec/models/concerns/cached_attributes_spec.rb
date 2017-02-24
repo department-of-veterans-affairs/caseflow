@@ -9,10 +9,9 @@ describe CachedAttributes do
       "AN_ID"
     end
 
-    def rating
+    cache_attribute :rating do
       TestThing.example_rating
     end
-    cache_attribute :rating
 
     class << self
       attr_accessor :example_rating
@@ -25,7 +24,7 @@ describe CachedAttributes do
     it "clears the cached attributes" do
       TestThing.example_rating = 10
       model.rating
-      model.clear_cached_attrs!
+      model.clear_cached_attr!(:rating)
       TestThing.example_rating = 9
       expect(model.rating).to eq(TestThing.example_rating)
     end
@@ -34,7 +33,7 @@ describe CachedAttributes do
   context ".cache_attribute" do
     subject { model.rating }
     before do
-      model.clear_cached_attrs!
+      model.clear_cached_attr!(:rating)
       TestThing.example_rating = 10
     end
 

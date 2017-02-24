@@ -6,37 +6,26 @@
 module CachedAttributes
   extend ActiveSupport::Concern
 
-  def clear_cached_attrs!
-    Rails.cache.write(cache_id, nil)
+  def clear_cached_attr!(attr_name)
+    Rails.cache.delete(cache_id(attr_name))
   end
 
   private
 
-  def cached_values
-    json_values = Rails.cache.read(cache_id)
-    return {} unless json_values
-
-    JSON.parse(json_values)
-  end
-
   def get_cached_value(attr_name)
-    cached_values[attr_name.to_s]
+    Rails.cache.read(cache_id(attr_name))
   end
 
   def set_cached_value(attr_name, value)
-    new_cached_values = cached_values.merge(attr_name => value)
-    Rails.cache.write(cache_id, new_cached_values.to_json)
-    value
+    Rails.cache.write(cache_id(attr_name), value) && value
   end
 
-  def cache_id
-    "#{self.class.name}-cached-values-#{id}"
+  def cache_id(attr_name)
+    "#{self.class.name}-#{id}-cached-#{attr_name}"
   end
 
   module ClassMethods
-    def cache_attribute(attr_name)
-      alias_method "#{attr_name}_without_cache", attr_name
-
+    def cache_attribute(attr_name, &get_value)
       define_method attr_name do
         cached_value = get_cached_value(attr_name)
 
@@ -45,7 +34,7 @@ module CachedAttributes
           return cached_value
         end
 
-        value = send "#{attr_name}_without_cache"
+        value = get_value.call
         set_cached_value(attr_name, value)
       end
     end
