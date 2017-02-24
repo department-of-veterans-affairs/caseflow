@@ -1,57 +1,9 @@
-<div class="cf-app-segment cf-app-segment--alt usa-grid">
-  <div class="usa-width-one-whole task-start-wrapper">
-    <% if current_user_next_task %>
-      <%= link_to(start_text, assign_establish_claims_path,
-        class: "usa-button-primary", method: 'patch') %>
-      <span class="cf-button-associated-text">
-        <%= @to_complete_count %> claims left
-      </span>
-    <% else %>
-      <button class="usa-button-disabled" disabled>
-        <%= start_text %>
-      </button>
-      <span class="cf-button-associated-text">
-        No claims to establish right now
-      </span>
-    <% end %>
-  </div>
-
-  <div class="usa-width-one-whole">
-    <h2>Work History</h2>
-  </div>
-
-  <div class="usa-width-one-whole">
-    <% if current_user_historical_tasks.empty? %>
-      <p>No previous tasks</p>
-    <% else %>
-      <table class="usa-table-borderless" summary="list of tasks">
-        <thead>
-          <tr>
-            <th scope="col"><h3>Veteran</h3></th>
-            <th scope="col"><h3>Decision Date</h3></th>
-            <th scope="col"><h3>Decision Type</h3></th>
-            <th scope="col"><h3>Action</h3></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% current_user_historical_tasks.each do |task| %>
-            <tr id="task-<%= task.id %>">
-              <td>
-                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
-              </td>
-              <td>
-                <%= task.completed_at.localtime.strftime('%m/%d/%Y') %>
-              </td>
-              <td>
-                <%= task.appeal.decision_type %>
-              </td>
-              <td>
-                <%= task.completion_status_text %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% end %>
-  </div>
-</div>
+<%#= current_user_historical_tasks.map(&:to_hash) %>
+<%= react_component("BaseContainer", props: {
+  page: "CaseWorkerIndex",
+  availableTasks: !!current_user_next_task,
+  buttonText: start_text,
+  completedCountToday: @completed_count_today,
+  currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
+  toCompleteCount: @to_complete_count
+}) %>

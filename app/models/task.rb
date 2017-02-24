@@ -226,7 +226,7 @@ class Task < ActiveRecord::Base
        [:serialized_decision_date,
         :veteran_name,
         :decision_type] }],
-      methods: [:progress_status, :days_since_creation]
+      methods: [:progress_status, :days_since_creation, :completion_status_text]
     )
   end
 
