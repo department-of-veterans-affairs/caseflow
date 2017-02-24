@@ -1,40 +1,9 @@
 require "rails_helper"
 
 RSpec.feature "Cancel certification" do
-  context "Old cancellation modal"  do
+  context "Cancellation certification" do
     scenario "Click cancel link and confirm modal" do
       User.authenticate!
-
-      Fakes::AppealRepository.records = {
-        "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
-      }
-
-      visit "certifications/new/5555C"
-      click_on "Cancel"
-      expect(page).to have_content("Are you sure you can't certify this case?")
-      click_on "Yes, I'm sure"
-      expect(page).to have_content("Case not certified")
-    end
-
-    scenario "Click cancel when certification has mistmatched documents" do
-      User.authenticate!
-
-      Fakes::AppealRepository.records = {
-        "7777D" => Fakes::AppealRepository.appeal_mismatched_docs
-      }
-
-      visit "certifications/new/7777D"
-      expect(page).to have_content("No Matching Document")
-      click_on "Cancel Certification"
-      expect(page).to have_content("Are you sure you can't certify this case?")
-      click_on "Yes, I'm sure"
-      expect(page).to have_content("Case not certified")
-    end
-  end
-
-  context "New cancellation modal" do
-    scenario "Click cancel link and confirm modal" do
-      User.authenticate!(roles: ["Certify Appeal", "System Admin"])
 
       Fakes::AppealRepository.records = {
         "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
@@ -83,6 +52,27 @@ RSpec.feature "Cancel certification" do
       expect(CertificationCancellation.last.cancellation_reason).to eq("Other")
       expect(CertificationCancellation.last.other_reason).to eq("Test")
       expect(CertificationCancellation.last.email).to eq("fk@va.gov")
+    end
+
+    scenario "Click cancel when certification has mistmatched documents" do
+      User.authenticate!
+
+      Fakes::AppealRepository.records = {
+        "7777D" => Fakes::AppealRepository.appeal_mismatched_docs
+      }
+
+      visit "certifications/new/7777D"
+      expect(page).to have_content("No Matching Document")
+      click_on "Cancel Certification"
+      expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
+      within_fieldset("Why can't be this case certified in Caseflow") do
+        find("label", text: "Missing document could not be found").click
+      end
+      fill_in "What's your VA email address?", with: "fk@va.gov"
+      within(".modal-container") do
+        click_on "Cancel certification"
+      end
+      expect(page).to have_content("The certification has been cancelled")
     end
   end
 end

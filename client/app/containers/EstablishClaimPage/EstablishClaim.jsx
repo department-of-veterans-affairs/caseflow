@@ -390,12 +390,36 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'Error',
-        'There was an error while routing the current claim. Please try again later'
+        'There was an error while completing the task. Please try again later'
         );
         this.setState({
           loading: false
         });
       });
+  };
+
+  handleNoEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/no-email-complete`).
+    then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while completing the task. Please try again later'
+        );
+      this.setState({
+        loading: false
+      });
+    });
   };
 
   handleAssociatePageSubmit = () => {
@@ -462,6 +486,8 @@ export default class EstablishClaim extends BaseForm {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
     } else if (this.state.specialIssuesRegionalOffice === 'education') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
+    } else if (!this.state.specialIssuesRegionalOffice) {
+      return null;
     }
 
     return this.getCityAndState(this.state.specialIssuesRegionalOffice);
@@ -616,7 +642,8 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleCancelTask={this.handleCancelTask}
-            handleSubmit={this.handleEmailPageSubmit}
+            handleEmailSubmit={this.handleEmailPageSubmit}
+            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
