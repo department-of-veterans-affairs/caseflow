@@ -75,8 +75,8 @@ export const UNHANDLED_SPECIAL_ISSUES = [
     specialIssue: 'foreignPensionDicAllOtherForeignCountries'
   },
   {
-    emailAddress: [],
-    regionalOffice: '',
+    emailAddress: null,
+    regionalOffice: null,
     specialIssue: 'homeLoanGuarantee'
   },
   {
@@ -85,8 +85,8 @@ export const UNHANDLED_SPECIAL_ISSUES = [
     specialIssue: 'insurance'
   },
   {
-    emailAddress: [],
-    regionalOffice: '',
+    emailAddress: null,
+    regionalOffice: null,
     specialIssue: 'nationalCemeteryAdministration'
   },
   {
@@ -100,8 +100,8 @@ export const UNHANDLED_SPECIAL_ISSUES = [
     specialIssue: 'vamc'
   },
   {
-    emailAddress: [],
-    regionalOffice: '',
+    emailAddress: null,
+    regionalOffice: null,
     specialIssue: 'vocationalRehab'
   },
   {
