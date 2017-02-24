@@ -24,6 +24,15 @@ describe('TabWindow', () => {
     expect(wrapper.find('#pageTwo')).to.have.length(1);
   });
 
+  it('renders full page view if configured so', () => {
+    const wrapper = shallow(<TabWindow
+      tabs={['one', 'two']}
+      pages={[<div id="pageOne">page one</div>, <div id="pageTwo">page two</div>]}
+      fullPage={true}/>);
+
+    expect(wrapper.find('.cf-tab-navigation-full-screen')).to.have.length(1);
+  });
+
   it('onChange is fired when tab is switched', () => {
     let tabSelected = null;
     const onChange = (tabNumber) => {

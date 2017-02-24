@@ -1,4 +1,4 @@
-<% content_for :page_title do %>Complete Electronic Form 8<% end %>
+<% content_for :page_title do certification_header("Complete Electronic Form 8") end %>
 
 <script>
   $(document).ready(function() {
@@ -154,9 +154,5 @@
   </div>
 <% end %>
 
+<%= render partial: 'cancel_certification_modal_new' %>
 
-<% if current_user.admin? %>
-  <%= render partial: 'cancel_certification_modal_new' %>
-<% else %>
-  <%= render partial: 'cancel_certification_modal' %>
-<% end %>

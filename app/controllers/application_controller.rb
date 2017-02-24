@@ -72,6 +72,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_path
 
+  def certification_header(title)
+    "&nbsp &gt &nbsp".html_safe + title
+  end
+  helper_method :certification_header
+
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
       # Raven sends error info to Sentry.
@@ -92,7 +97,7 @@ class ApplicationController < ActionController::Base
   end
 
   def test_user?
-    Rails.deploy_env?(:uat) && current_user.css_id == ENV["TEST_USER_ID"]
+    (Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)) && current_user.css_id == ENV["TEST_USER_ID"]
   end
   helper_method :test_user?
 

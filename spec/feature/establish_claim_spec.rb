@@ -71,22 +71,19 @@ RSpec.feature "Dispatch" do
       create_tasks(20, initial_state: :completed)
     end
 
-    scenario "View landing page" do
+    scenario "View manager page" do
       visit "/dispatch/establish-claim"
+      expect(page).to have_content("ARC Work Assignments")
 
-      # Complete another task while the page is loaded. Verify we do not have it
-      # added on "Show More" click
-      create_tasks(1, initial_stae: :completed, id_prefix: "ZZZ")
+      expect(page).to have_content("Number of people")
+      fill_in "Number of people", with: "3"
+      click_on "Update"
+      visit "/dispatch/establish-claim"
+      expect(find_field("Number of people").value).to have_content("3")
 
-      expect(page).to have_content(@vbms_id)
-      expect(page).to have_content("Jane Smith", count: 10)
-      expect(page).to have_content("Complete")
-      click_on "Show More"
-
-      expect(page).to_not have_content("Show More")
-
-      # Verify we got a whole 10 more completed tasks
-      expect(page).to have_content("Jane Smith", count: 20)
+      # This looks for the row in the table for the User 'Jane Smith 0' who has
+      # eight tasks assigned to her, has completed one, and has seven remaining.
+      expect(page).to have_content("Jane Smith 0 8 1 7")
     end
 
     scenario "View unprepared tasks page" do
@@ -199,6 +196,8 @@ RSpec.feature "Dispatch" do
         expect(@task.reload.completed?).to be_truthy
         expect(@task.completion_status).to eq(0)
         expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
+
+        expect(@task.appeal.reload.dispatched_to_station).to eq("397")
 
         click_on "Caseflow Dispatch"
         expect(page).to have_current_path("/dispatch/establish-claim")
@@ -371,7 +370,7 @@ RSpec.feature "Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
       # set special issue to ensure it is saved in the database
-      page.find("#insurance").trigger("click")
+      page.find("#mustardGas").trigger("click")
 
       click_on "Route Claim"
 
@@ -385,7 +384,7 @@ RSpec.feature "Dispatch" do
       expect(@task.reload.completion_status)
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
-      expect(@task.appeal.reload.insurance).to be_truthy
+      expect(@task.appeal.reload.mustard_gas).to be_truthy
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -434,29 +433,46 @@ RSpec.feature "Dispatch" do
       expect(@task.appeal.reload.rice_compliance).to be_falsey
     end
 
-    scenario "An unhandled special issue brings up cancel modal" do
+    scenario "An unhandled special issue routes to email page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
       click_on "Route Claim"
-      click_on "Cancel Claim Establishment"
-      page.fill_in "Explanation", with: "Test"
-      click_on "Stop processing claim"
-      expect(page).to have_content("Claim Processing Discontinued")
-      expect(@task.appeal.reload.dic_death_or_accrued_benefits_united_states).to be_truthy
+      expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
+      page.find("#confirmEmail").trigger("click")
+      click_on "Finish Routing Claim"
+      expect(page).to have_content("Sent email notification")
+    end
+
+    scenario "An unhandled special issue with no email routes to no email page" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      page.find("#vocationalRehab").trigger("click")
+      click_on "Route Claim"
+      expect(page).to have_content("Please process this claim manually")
+      page.find("#confirmEmail").trigger("click")
+      click_on "Release Claim"
+      expect(page).to have_content("Processed case outside of Caseflow")
     end
 
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#privateAttorneyOrAgent").trigger("click")
+      page.find("#mustardGas").trigger("click")
 
       # It should also work even if a unsupported special issue is checked
       page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
 
       click_on "Route Claim"
       click_on "Create New EP"
-      expect(find_field("Station of Jurisdiction").value).to eq("313 - Baltimore, MD")
+      expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
+
+      click_on "Create End Product"
+      page.find("#confirmNote").trigger("click")
+      click_on "Finish Routing Claim"
+
+      expect(page).to have_content("Congratulations!")
+      expect(@task.appeal.reload.dispatched_to_station).to eq("351")
     end
 
     scenario "A national office special issue routes correctly" do

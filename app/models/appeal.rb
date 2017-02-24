@@ -85,7 +85,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def task_header
-    "#{veteran_name} (#{vbms_id})"
+    "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
 
   def hearing_pending?
@@ -194,14 +194,6 @@ class Appeal < ActiveRecord::Base
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
       repository.load_vacols_data(appeal)
-      appeal.save
-
-      appeal
-    end
-
-    def find_or_create_by_vbms_id(vbms_id)
-      appeal = find_or_initialize_by(vbms_id: vbms_id)
-      repository.load_vacols_data_by_vbms_id(appeal)
       appeal.save
 
       appeal

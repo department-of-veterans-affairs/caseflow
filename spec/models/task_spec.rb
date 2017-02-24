@@ -10,7 +10,8 @@ describe Task do
     @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
 
-    @user = User.create(station_id: "ABC", css_id: "123")
+    @user = User.create(station_id: "ABC", css_id: "123", full_name: "Robert Smith")
+    @user2 = User.create(station_id: "ABC", css_id: "456", full_name: "Jane Doe")
   end
 
   context ".newest_first" do
@@ -190,6 +191,20 @@ describe Task do
     end
   end
 
+  context ".special_issue_not_emailed?" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:completion_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    subject { task }
+    before do
+      task.prepare!
+      task.assign!(:assigned, @user)
+      task.start!
+      task.complete!(status: completion_status)
+    end
+    it { expect(subject.special_issue_not_emailed?).to be_truthy }
+  end
+
   context ".completed?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -238,6 +253,7 @@ describe Task do
       task.start!
       task.review!
     end
+
     it "completes the task" do
       task.complete!(:completed, status: 3)
       expect(task.reload.completed_at).to be_truthy
@@ -356,6 +372,48 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "returns unprepared tasks" do
       expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#no_review_completion_status" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:no_review_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    let!(:review_status) { Task.completion_status_code(:completed) }
+    it "returns true if no_review_status" do
+      expect(task.no_review_completion_status(status: no_review_status)).to eq(true)
+    end
+    it "returns false if status has to be reviewed" do
+      expect(task.no_review_completion_status(status: review_status)).to eq(false)
+    end
+  end
+
+  context "#tasks_completed_by_users" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:tasks) do
+      [
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal),
+        EstablishClaim.create(appeal: appeal)
+      ]
+    end
+
+    before do
+      tasks.each_with_index do |task, index|
+        task.prepare!
+        if index < 2
+          task.assign!(:assigned, @user)
+        else
+          task.assign!(:assigned, @user2)
+        end
+        task.start!
+        task.review!
+        task.complete!(status: 0)
+      end
+    end
+
+    it "returns hash with each user and their completed number of tasks" do
+      expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
     end
   end
 end

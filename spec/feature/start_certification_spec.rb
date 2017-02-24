@@ -149,7 +149,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "1234" => appeal }
 
     visit "certifications/new/1234"
-    expect(find("#page-title")).to have_content "Certification"
+    expect(find("#page-title")).to have_content "Already Certified"
     expect(page).to have_content "Appeal has already been Certified"
   end
 end

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
+    patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -35,6 +36,8 @@ Rails.application.routes.draw do
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
       post 'note-complete', on: :member
+      post 'email-complete', on: :member
+      post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
     end
@@ -43,7 +46,7 @@ Rails.application.routes.draw do
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
-    resources :annotation, 
+    resources :annotation,
               path: "/review/annotation",
               only: [:create, :destroy, :update],
               on: :member
@@ -75,8 +78,7 @@ Rails.application.routes.draw do
 
   get 'stats(/:interval)', to: 'stats#show', as: 'stats'
 
-  get "admin/styleguide", to: "admin/styleguide#show"
-  get "admin/styleguide/modals", to: "admin/styleguide#modals"
+  get "styleguide", to: "styleguide#show"
 
   get 'help' => 'help#show'
 
