@@ -7,7 +7,7 @@ RSpec.feature "Cancel certification" do
 
       Fakes::AppealRepository.records = {
         "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
-      } 
+      }
       certification = Certification.create!(vacols_id: "5555C")
 
       visit "certifications/new/5555C"
