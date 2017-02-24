@@ -8,27 +8,26 @@ import TextField from '../components/TextField';
 export default class PdfListView extends React.Component {
   constructor(props) {
     super(props);
+
+    let sortIcon;
+    if (this.props.sortDirection === 'ascending') {
+      sortIcon = <i className="fa fa-caret-down" aria-hidden="true"></i>; 
+    } else {
+      sortIcon = <i className="fa fa-caret-up" aria-hidden="true"></i>; 
+    }
+
     this.state = {
       numberOfComments: [],
-      filterBy: this.props.filterBy
+      sortIcon: sortIcon
     };
   }
 
   getDocumentTableHeaders = () => {
-    let getSortIcon = (sort) => {
-      if (sort === 'ascending') {
-        return <i className="fa fa-caret-down" aria-hidden="true"></i>; 
-      } else if (sort === 'descending') {
-        return <i className="fa fa-caret-up" aria-hidden="true"></i>; 
-      }
-      return;
-    }
-
     return [
       '',
-      <div onClick={this.props.changeSortState('sortByDate')}>Receipt Date {this.props.sortBy === 'sortByDate' ? getSortIcon(this.props.sortDirection) : ' '}</div>,
-      <div onClick={this.props.changeSortState('sortByType')}>Document Type {this.props.sortBy === 'sortByType' ? getSortIcon(this.props.sortDirection) : ' '}</div>,
-      <div onClick={this.props.changeSortState('sortByFilename')}>Filename {this.props.sortBy === 'sortByFilename' ? getSortIcon(this.props.sortDirection) : ' '}</div>
+      <div onClick={this.props.changeSortState('sortByDate')}>Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}</div>,
+      <div onClick={this.props.changeSortState('sortByType')}>Document Type {this.props.sortBy === 'sortByType' ? this.state.sortIcon : ' '}</div>,
+      <div onClick={this.props.changeSortState('sortByFilename')}>Filename {this.props.sortBy === 'sortByFilename' ? this.state.sortIcon : ' '}</div>
     ];
   }
 
@@ -48,15 +47,11 @@ export default class PdfListView extends React.Component {
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
   }
 
-  onLabelClick = (label) => (event) => {
-    console.log(label);
+  onLabelClick = (_label) => () => {
+    // filtering code will go here when we have labels working
   }
 
   onFilter = (value) => {
-    this.setState({
-      filterBy: value
-    });
-
     this.props.onFilter(value);
   }
 
@@ -76,7 +71,7 @@ export default class PdfListView extends React.Component {
               <TextField
                label="Search"
                name="Filter By"
-               value={this.state.filterBy}
+               value={this.props.filterBy}
                onChange={this.onFilter}
               />
             </div>

@@ -210,7 +210,8 @@ export default class PdfViewer extends BaseForm {
     // Create a page in the DOM for every page in the PDF
     let viewer = document.getElementById('viewer');
     
-    // If the user has switched pages, don't try to render the PDF.
+    // If the user has switched to the list view and this element doesnt
+    // exist then don't try to render the PDF.
     // TODO: look into just hiding the PDFs instead of removing them.
     if (!viewer) {
       return;
