@@ -118,10 +118,7 @@ export default class DecisionReviewer extends React.Component {
       if (comments.includes(filterBy)) {
         return true;
       }
-
       return false;
-
-
     });
 
     return filteredDocuments;
