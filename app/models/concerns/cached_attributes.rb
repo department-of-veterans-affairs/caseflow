@@ -34,7 +34,7 @@ module CachedAttributes
           return cached_value
         end
 
-        value = get_value.call
+        value = instance_eval(&get_value)
         set_cached_value(attr_name, value)
       end
     end
