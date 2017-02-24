@@ -380,8 +380,10 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     let!(:no_review_status) { Task.completion_status_code(:special_issue_not_emailed) }
     let!(:review_status) { Task.completion_status_code(:completed) }
-    it "returns true or false based on completion status" do
+    it "returns true if no_review_status" do
       expect(task.no_review_completion_status(status: no_review_status)).to eq(true)
+    end
+    it "returns false if status has to be reviewed" do
       expect(task.no_review_completion_status(status: review_status)).to eq(false)
     end
   end
