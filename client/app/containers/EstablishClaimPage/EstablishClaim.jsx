@@ -390,7 +390,7 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'Error',
-        'There was an error while routing the current claim. Please try again later'
+        'There was an error while completing the task. Please try again later'
         );
         this.setState({
           loading: false
@@ -412,9 +412,9 @@ export default class EstablishClaim extends BaseForm {
       this.reloadPage();
     }, () => {
       handleAlert(
-            'error',
-            'Error',
-            'There was an error while routing the current claim. Please try again later'
+        'error',
+        'Error',
+        'There was an error while completing the task. Please try again later'
         );
       this.setState({
         loading: false

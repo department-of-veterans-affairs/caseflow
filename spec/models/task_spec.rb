@@ -191,6 +191,20 @@ describe Task do
     end
   end
 
+  context ".special_issue_not_emailed?" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:completion_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    subject { task }
+    before do
+      task.prepare!
+      task.assign!(:assigned, @user)
+      task.start!
+      task.complete!(status: completion_status)
+    end
+    it { expect(subject.special_issue_not_emailed?).to be_truthy }
+  end
+
   context ".completed?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -358,6 +372,17 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "returns unprepared tasks" do
       expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#no_review_completion_status" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:no_review_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    let!(:review_status) { Task.completion_status_code(:completed) }
+    it "returns true or false based on completion status" do
+      expect(task.no_review_completion_status(status: no_review_status)).to eq(true)
+      expect(task.no_review_completion_status(status: review_status)).to eq(false)
     end
   end
 
