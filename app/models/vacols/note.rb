@@ -1,13 +1,12 @@
 class VACOLS::Note < VACOLS::Record
   self.table_name = "vacols.assign"
   self.primary_key = "tasknum"
-  self.sequence_name = "vacols.tasknumseq"
 
   class InvalidNoteCode < StandardError; end
 
   CODE_ACTKEY_MAPPING = {
-    remand: 'R'
-  }
+    other: "BVA30"
+  }.freeze
 
   # VACOLS does not auto-generate primary keys. Instead we must manually create one.
   # Below is the logic currently used by VACOLS apps to generate note IDs
@@ -30,9 +29,10 @@ class VACOLS::Note < VACOLS::Record
     "#{bfkey}D#{count + 1}"
   end
 
-  def self.create!(case_record:, text:, note_code:, days_to_complete: 30, days_til_due: 30)
+  # rubocop:disable Metrics/MethodLength
+  def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
     return unless text
-    unless note_code = CODE_ACTKEY_MAPPING[note_code]
+    unless (note_code = CODE_ACTKEY_MAPPING[note_code])
       fail InvalidNoteCode
     end
 
@@ -42,8 +42,7 @@ class VACOLS::Note < VACOLS::Record
     case_id = conn.quote(case_record.bfkey)
     regional_office_key = conn.quote(case_record.bfregoff)
     days_to_complete = conn.quote(days_to_complete)
-    note_class = conn.quote(note_class)
-    due_date = conn.quote(Time.now + days_til_due.days)
+    due_date = conn.quote(Time.zone.now + days_til_due.days)
     note_code = conn.quote(note_code)
     user_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     primary_key = generate_primary_key(case_record.bfkey)

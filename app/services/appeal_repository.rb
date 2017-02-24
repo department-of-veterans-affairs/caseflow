@@ -170,8 +170,7 @@ class AppealRepository
 
       # Create VACOLS diary note to help the user in handling the EP
       VACOLS::Note.create!(case_record: appeal.case_record,
-                           text: diary_note_text,
-                           note_code: :remand)
+                           text: diary_note_text)
 
       request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
       send_and_log_request(sanitized_id, request)
