@@ -179,10 +179,6 @@ class AppealRepository
     end_product
   end
 
-  def self.create_dispatch_diary_note!(case_record:, text:)
-    VACOLS::Note.create!(case_record, text)
-  end
-
   def self.update_location_after_dispatch!(appeal:, station: nil)
     location = location_after_dispatch(appeal: appeal,
                                        station: station)
