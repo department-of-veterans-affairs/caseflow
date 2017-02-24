@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from '../components/PdfViewer';
+import PdfListView from '../components/PdfListView';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
@@ -7,15 +8,29 @@ import ApiUtil from '../util/ApiUtil';
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
+
     let labels = [];
     this.props.appealDocuments.forEach((doc) => {
       labels.push(doc.label);
     });
     this.state = {
-      labels: labels,
+      
       pdf: 0
     };
 
+    this.state = {
+      filterBy: '',
+      labels: labels,
+      listView: true,
+      pdf: null,
+      sortBy: 'sortByDate',
+      sortDirection: 'ascending'
+    };
+
+    this.state.documents = this.filterDocuments(
+      this.sortDocuments(this.props.appealDocuments));
+
+>>>>>>> mdbenjam-kavi-crazy
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
   }
@@ -28,8 +43,74 @@ export default class DecisionReviewer extends React.Component {
 
   nextPdf = () => {
     this.setState({
-      pdf: Math.min(this.state.pdf + 1, this.props.appealDocuments.length - 1)
+      pdf: Math.min(this.state.pdf + 1, this.state.documents.length - 1)
     });
+  }
+
+  showPdf = (pdfNumber) => () => {
+    this.setState({
+      pdf: pdfNumber
+    });
+  }
+
+  showList = () => {
+    this.setState({
+      pdf: null
+    });
+  }
+
+  sortAndFilter = () => {
+    this.setState({
+      documents: this.filterDocuments(
+        this.sortDocuments(this.props.appealDocuments))
+    });
+  }
+
+  sortDocuments = (documents) => {
+    let documentCopy = [...documents];
+    let multiplier;
+
+    if (this.state.sortDirection === 'ascending') {
+      multiplier = 1;
+    } else if (this.state.sortDirection === 'descending') {
+      multiplier = -1;
+    } else {
+      return;
+    }
+
+    documentCopy.sort((doc1, doc2) => {
+      if (this.state.sortBy === 'sortByDate') {
+        return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
+      } else if (this.state.sortBy === 'sortByType') {
+        return multiplier * (doc1.type < doc2.type ? -1 : 1);
+      } else if (this.state.sortBy === 'sortByFilename') {
+        return multiplier * (doc1.filename < doc2.filename ? -1 : 1);
+      }
+
+      return 0;
+
+    });
+
+    return documentCopy;
+  }
+
+  changeSortState = (sortBy) => () => {
+    let sortDirection = this.state.sortDirection;
+
+    if (this.state.sortBy === sortBy) {
+      if (sortDirection === 'ascending') {
+        sortDirection = 'descending';
+      } else {
+        sortDirection = 'ascending';
+      }
+    } else {
+      sortDirection = 'ascending';
+    }
+
+    this.setState({
+      sortBy,
+      sortDirection
+    }, this.sortAndFilter);
   }
 
   setLabel = (pdf) => (label) => {
@@ -49,36 +130,69 @@ export default class DecisionReviewer extends React.Component {
       });
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft') {
-        this.previousPdf();
+  filterDocuments = (documents) => {
+    let filterBy = this.state.filterBy.toLowerCase();
+    let filteredDocuments = documents.filter((doc) => {
+      if (doc.type.toLowerCase().includes(filterBy)) {
+        return true;
+      } else if (doc.filename.toLowerCase().includes(filterBy)) {
+        return true;
+      } else if (doc.received_at.toLowerCase().includes(filterBy)) {
+        return true;
       }
-      if (event.key === 'ArrowRight') {
-        this.nextPdf();
+      let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).
+        reduce((combined, comment) =>
+          `${combined} ${comment.comment.toLowerCase()}`, '');
+
+      if (comments.includes(filterBy)) {
+        return true;
       }
+      return false;
     });
+
+    return filteredDocuments;
+  }
+
+  onFilter = (filterBy) => {
+    this.setState({
+      filterBy
+    }, this.sortAndFilter);
   }
 
   render() {
-    let { appealDocuments } = this.props;
+    let {
+      documents,
+      sortDirection
+    } = this.state;
 
     return (
       <div>
-        <PdfViewer
+        {this.state.pdf === null && <PdfListView
+          annotationStorage={this.annotationStorage}
+          documents={documents}
+          changeSortState={this.changeSortState}
+          showPdf={this.showPdf}
+          sortDirection={sortDirection}
+          numberOfDocuments={this.props.appealDocuments.length}
+          onFilter={this.onFilter}
+          filterBy={this.state.filterBy}
+          sortBy={this.state.sortBy} />}
+        {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?id=` +
-            `${appealDocuments[this.state.pdf].id}`}
+            `${documents[this.state.pdf].id}`}
           annotations={this.state.annotations}
-          id={appealDocuments[this.state.pdf].id}
-          receivedAt={appealDocuments[this.state.pdf].received_at}
-          type={appealDocuments[this.state.pdf].type}
-          name={appealDocuments[this.state.pdf].filename}
+          id={documents[this.state.pdf].id}
+          receivedAt={documents[this.state.pdf].received_at}
+          type={documents[this.state.pdf].type}
+          name={documents[this.state.pdf].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
           pdfWorker={this.props.pdfWorker}
+          showList={this.showList}
+          pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.pdf)}
-          label={this.state.labels[this.state.pdf]} />
+          label={this.state.labels[this.state.pdf]} />}
       </div>
     );
   }
