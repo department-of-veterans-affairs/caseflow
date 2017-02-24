@@ -17,7 +17,6 @@ export default class PdfListView extends React.Component {
     }
 
     this.state = {
-      numberOfComments: [],
       sortIcon: sortIcon
     };
   }
