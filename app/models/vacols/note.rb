@@ -3,6 +3,7 @@ class VACOLS::Note < VACOLS::Record
   self.primary_key = "tasknum"
 
   class InvalidNoteCode < StandardError; end
+  class InvalidNotelength < StandardError; end
 
   CODE_ACTKEY_MAPPING = {
     other: "BVA30"
@@ -32,6 +33,9 @@ class VACOLS::Note < VACOLS::Record
   # rubocop:disable Metrics/MethodLength
   def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
     return unless text
+
+    fail(InvalidNotelength) if text.length > 280
+
     unless (note_code = CODE_ACTKEY_MAPPING[note_code])
       fail InvalidNoteCode
     end
