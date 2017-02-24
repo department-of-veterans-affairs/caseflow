@@ -33,11 +33,21 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.load_vacols_data_by_vbms_id(appeal)
+  def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
+    case_scope = case decision_type
+                 when "Full Grant"
+                   VACOLS::Case.amc_full_grants(decided_after: 5.days.ago)
+                 when "Partial Grant or Remand"
+                   VACOLS::Case.remands_ready_for_claims_establishment
+                 else
+                   VACOLS::Case.includes(:folder, :correspondent)
+                 end
+
     case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
-      VACOLS::Case.includes(:folder, :correspondent).where(bfcorlid: appeal.vbms_id).all
+      case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
+    fail ActiveRecord::RecordNotFound if case_records.empty?
     fail MultipleAppealsByVBMSIDError if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
@@ -51,16 +61,6 @@ class AppealRepository
   def self.build_appeal(case_record)
     appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
     set_vacols_values(appeal: appeal, case_record: case_record)
-  end
-
-  def self.map_issues(issue_records)
-    issue_records.map do |issue|
-      {
-        description: issue[:issdesc],
-        disposition: VACOLS::Issues::DISPOSITION_CODE[issue[:issdc]],
-        program: issue[:issprog]
-      }
-    end
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -94,15 +94,16 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro],
-      issues: [{
-        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
-        disposition: "Granted",
-        program: "Compensation"
-      }]
+      status: VACOLS::Case::STATUS[case_record.bfmpro]
     )
 
     appeal
+  end
+
+  def self.issues(vacols_id:)
+    VACOLS::Issue.descriptions(vacols_id).map do |issue|
+      VACOLS::Issue.format(issue)
+    end
   end
 
   # :nocov:
@@ -164,23 +165,31 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
-    raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
+
+    raw_veteran_record = MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
+      BGSService.new.fetch_veteran_info(sanitized_id)
+    end
 
     # Reduce keys in raw response down to what we specifically need for
     # establish claim
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
     end_product = Appeal.transaction do
-      location = location_after_dispatch(appeal: appeal,
-                                         station: claim[:station_of_jurisdiction])
-
-      appeal.case_record.update_vacols_location(location)
+      update_location_after_dispatch!(appeal: appeal,
+                                      station: claim[:station_of_jurisdiction])
 
       request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
       send_and_log_request(sanitized_id, request)
     end
 
     end_product
+  end
+
+  def self.update_location_after_dispatch!(appeal:, station: nil)
+    location = location_after_dispatch(appeal: appeal,
+                                       station: station)
+
+    appeal.case_record.update_vacols_location!(location)
   end
 
   # Determine VACOLS location desired after dispatching a decision
@@ -279,7 +288,7 @@ class AppealRepository
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::FetchDocumentById.new(document.document_id)
+    request = VBMS::Requests::FetchDocumentById.new(document.vbms_document_id)
     result = @vbms_client.send_request(request)
     result && result.content
   rescue => e

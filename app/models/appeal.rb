@@ -22,16 +22,23 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
-  vacols_attr_accessor :issues
   vacols_attr_accessor :case_record
 
-  SPECIAL_ISSUE_COLUMNS = %i(rice_compliance private_attorney waiver_of_overpayment
-                             pensions vamc incarcerated_veterans dic_death_or_accrued_benefits
-                             education_or_vocational_rehab foreign_claims manlincon_compliance
-                             hearings_travel_board_video_conference home_loan_guaranty insurance
-                             national_cemetery_administration spina_bifida radiation
-                             nonrating_issues proposed_incompetency manila_remand
-                             contaminated_water_at_camp_lejeune mustard_gas dependencies).freeze
+  SPECIAL_ISSUE_COLUMNS = %i(contaminated_water_at_camp_lejeune
+                             dic_death_or_accrued_benefits_united_states
+                             education_gi_bill_dependents_educational_assistance_scholars
+                             foreign_claim_compensation_claims_dual_claims_appeals
+                             foreign_pension_dic_all_other_foreign_countries
+                             foreign_pension_dic_mexico_central_and_south_american_caribb
+                             hearing_including_travel_board_video_conference
+                             home_loan_guarantee incarcerated_veterans insurance
+                             manlincon_compliance mustard_gas national_cemetery_administration
+                             nonrating_issue pension_united_states private_attorney_or_agent
+                             radiation rice_compliance spina_bifida
+                             us_territory_claim_american_samoa_guam_northern_mariana_isla
+                             us_territory_claim_philippines
+                             us_territory_claim_puerto_rico_and_virgin_islands
+                             vamc vocational_rehab waiver_of_overpayment).freeze
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -40,7 +47,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents || fetch_documents!
+    @documents ||= fetch_documents!
   end
 
   def annotations_on_documents
@@ -78,7 +85,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def task_header
-    "#{veteran_name} (#{vbms_id})"
+    "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
 
   def hearing_pending?
@@ -138,6 +145,10 @@ class Appeal < ActiveRecord::Base
     decisions
   end
 
+  def serialized_decision_date
+    decision_date.to_formatted_s(:json_date)
+  end
+
   def certify!
     Appeal.certify(self)
   end
@@ -170,10 +181,6 @@ class Appeal < ActiveRecord::Base
     return "Remand" if remand?
   end
 
-  def days_since_decision
-    (Time.zone.now - decision_date).to_i / 1.day
-  end
-
   # Does this appeal have any special issues
   def special_issues?
     SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
@@ -187,14 +194,6 @@ class Appeal < ActiveRecord::Base
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
       repository.load_vacols_data(appeal)
-      appeal.save
-
-      appeal
-    end
-
-    def find_or_create_by_vbms_id(vbms_id)
-      appeal = find_or_initialize_by(vbms_id: vbms_id)
-      repository.load_vacols_data_by_vbms_id(appeal)
       appeal.save
 
       appeal
@@ -266,6 +265,10 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(sanitized_vbms_id))
 
     Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
+  end
+
+  def issues
+    @issues ||= self.class.repository.issues(vacols_id: vacols_id)
   end
 
   def sanitized_vbms_id

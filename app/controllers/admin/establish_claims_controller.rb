@@ -2,22 +2,23 @@ class Admin::EstablishClaimsController < ApplicationController
   before_action :verify_system_admin
 
   def show
-    @appeal = Appeal.new
+    @create_establish_claim = CreateEstablishClaim.new
     @existing_tasks = EstablishClaim.newest_first.limit(100)
   end
 
   def create
-    vbms_id = params[:appeal][:vbms_id]
-    appeal = Appeal.find_or_create_by_vbms_id(vbms_id)
-    establish_claim = EstablishClaim.find_or_create_by(appeal: appeal)
-    # Admin has to confirm appeal has a decision document
-    establish_claim.prepare! if establish_claim.may_prepare?
+    @create_establish_claim = CreateEstablishClaim.new(create_establish_claim_params)
 
-    flash[:success] = "Task created or already existed"
-    redirect_to admin_establish_claim_path
+    if @create_establish_claim.perform!
+      flash[:success] = "Task created 😎"
+    else
+      flash[:error] = @create_establish_claim.error_message
+    end
 
-  rescue MultipleAppealsByVBMSIDError
-    flash[:error] = "Multiple appeals detected. Please try another VBMS ID"
     redirect_to admin_establish_claim_path
+  end
+
+  def create_establish_claim_params
+    params.require(:create_establish_claim).permit(:vbms_id, :decision_type)
   end
 end

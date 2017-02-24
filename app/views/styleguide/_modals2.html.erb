@@ -1,0 +1,30 @@
+&lt;p&gt;&lt;Button<br />
+    name="Launch Modal"<br />
+    onClick={this.handleModalOpen}<br />
+    classNames={["usa-button", "usa-button-outline"]}<br />
+/&gt;&lt;/p&gt;<br />
+{ styleGuideModal &amp;&amp; &lt;Modal<br />
+  buttons = {[<br />
+    { classNames: ["cf-modal-link", "cf-btn-link"],<br />
+      name: '\u00AB Close',<br />
+      onClick: this.handleModalClose<br />
+    },<br />
+    { classNames: ["usa-button", "usa-button-secondary"],<br />
+      name: 'Proceed with action',<br />
+      onClick: this.handleModalClose<br />
+    }<br />
+  ]}<br />
+  title = "This is a modal"&gt;<br />
+  &lt;p&gt;<br />
+    This is your modal text, which explains why the modal was triggered.
+    Modal titles are in &lt;b&gt;Title Case&lt;/b&gt;, but actions on modal features
+    such as text explanations, action buttons, fields, etc. are
+    &lt;b&gt;Sentence case&lt;/b&gt;.
+  &lt;/p&gt;<br />
+  &lt;TextareaField<br />
+    label="This is a text box for the modal."<br />
+    name="Text Box"<br />
+    onChange={this.handleModalOpen}<br />
+  /&gt;<br />
+&lt;/Modal&gt;<br />
+}<br />

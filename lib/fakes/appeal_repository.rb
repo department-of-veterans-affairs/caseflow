@@ -36,6 +36,9 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
+  def self.update_location_after_dispatch!(*)
+  end
+
   def self.upload_and_clean_document(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
@@ -55,8 +58,11 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record)
   end
 
-  def self.load_vacols_data_by_vbms_id(appeal)
+  def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     return unless @records
+
+    p "Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}"
+    p "Decision Type:\n", decision_type
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
@@ -66,6 +72,8 @@ class Fakes::AppealRepository
       # TODO(jd): create a more dynamic setup
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end
+
+    fail ActiveRecord::RecordNotFound unless record
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
@@ -225,18 +233,13 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      issues: [{
-        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
-        disposition: "Granted",
-        program: "Compensation"
-      }]
+      regional_office_key: "RO13"
     }
   end
 
-  def self.appeal_partial_grant_decided
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
     {
-      vbms_id: "REMAND_VBMS_ID",
+      vbms_id: vbms_id,
       type: "Original",
       status: "Remand",
       disposition: "Allowed",
@@ -245,7 +248,8 @@ class Fakes::AppealRepository
       veteran_last_name: "Crockett",
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter"
+      appellant_relationship: "Daughter",
+      documents: missing_decision ? [] : [decision_document]
     }
   end
 
@@ -262,13 +266,26 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "RO13",
-      issues: [{
-        description: "Service Connection New & Material 5062 Arthritis and Rheumatoid",
-        disposition: "Granted",
-        program: "Compensation"
-      }],
       documents: [nod_document, soc_document, form9_document, decision_document]
     }
+  end
+
+  def self.issues(_vacols_id)
+    [
+      VACOLS::Issue.format(
+        "issprog" => "2",
+        "issprog_label" => "Compensation",
+        "isscode" => "10",
+        "isscode_label" => "Service connection",
+        "isslev1" => "20",
+        "isslev1_label" => "All Others",
+        "isslev2" => "30",
+        "isslev2_label" => "Post-traumatic stress disorder",
+        "isslev3" => nil,
+        "isslev3_label" => nil,
+        "issdc" => "Allowed"
+      )
+    ]
   end
 
   def self.first_names

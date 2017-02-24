@@ -6,20 +6,27 @@ class ExternalApi::BGSService
 
   def initialize
     @client = init_client
+
+    # These instance variables are used for caching their
+    # respective requests
+    @end_products = {}
+    @veteran_info = {}
   end
 
   # :nocov:
 
   def get_end_products(vbms_id)
-    client.claims.find_by_vbms_file_number(vbms_id.strip)
+    @end_products[vbms_id] ||=
+      MetricsService.timer "get end products for vbms id: #{vbms_id}" do
+        client.claims.find_by_vbms_file_number(vbms_id.strip)
+      end
   end
 
   def fetch_veteran_info(vbms_id)
-    client.veteran.find_by_file_number(vbms_id)
-  end
-
-  def client
-    @client ||= init_client
+    @veteran_info[vbms_id] ||=
+      MetricsService.timer "fetch veteran info for vbms id: #{vbms_id}" do
+        client.veteran.find_by_file_number(vbms_id)
+      end
   end
 
   private
