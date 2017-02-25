@@ -8,7 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
-    debugger;
+
     let selectedLabels = {
       blue: false,
       orange: false,
@@ -47,10 +47,15 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  showPdf = (pdfNumber) => () => {
-    this.setState({
-      pdf: pdfNumber
-    });
+  showPdf = (pdfNumber) => (event) => {
+    if (event.metaKey) {
+      let id = this.state.documents[pdfNumber].id;
+      window.open(`review/show?id=${id}`, '_blank');
+    } else {
+      this.setState({
+        pdf: pdfNumber
+      });
+    }
   }
 
   showList = () => {
@@ -213,7 +218,7 @@ export default class DecisionReviewer extends React.Component {
           selectLabel={this.onLabelSelected} />}
         {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`${this.props.pdf_url}?id=` +
+          file={`${this.props.url}?id=` +
             `${documents[this.state.pdf].id}`}
           annotations={this.state.annotations}
           id={documents[this.state.pdf].id}
@@ -226,7 +231,8 @@ export default class DecisionReviewer extends React.Component {
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.pdf)}
-          label={documents[this.state.pdf].label} />}
+          label={documents[this.state.pdf].label}
+          hideNavigation={documents.length === 1}/>}
       </div>
     );
   }

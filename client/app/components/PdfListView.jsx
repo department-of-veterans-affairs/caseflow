@@ -43,7 +43,7 @@ export default class PdfListView extends React.Component {
 
     return [
       <div>
-        { doc.label && <i style={{ color: Labels.LABEL_COLOR_MAPPING[doc.label] }}
+        { doc.label && <i style={{ color: Labels.LABEL_COLOR_MAPPING[doc.label].color }}
         className="fa fa-bookmark cf-pdf-bookmarks"
         aria-hidden="true"></i> }
       </div>,

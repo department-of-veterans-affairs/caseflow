@@ -56,7 +56,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def annotations_on_documents
-    @annotations = saved_documents.map(&:annotations).map(&:to_hash)
+    @annotations = saved_documents.map(&:annotations).flatten.map(&:to_hash)
   end
 
   def veteran_name
