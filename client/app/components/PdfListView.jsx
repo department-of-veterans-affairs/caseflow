@@ -5,34 +5,29 @@ import { formatDate } from '../util/DateUtil';
 import TextField from '../components/TextField';
 
 export default class PdfListView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    let sortIcon;
-
+  
+  getDocumentTableHeaders = () => {
+    let className;
     if (this.props.sortDirection === 'ascending') {
-      sortIcon = <i className="fa fa-caret-down" aria-hidden="true"></i>;
+      className = "fa-caret-down";
     } else {
-      sortIcon = <i className="fa fa-caret-up" aria-hidden="true"></i>;
+      className = "fa-caret-up";
     }
-
-    this.state = {
-      sortIcon
-    };
+    
+    let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
+    return [
+      '',
+      <div onClick={this.props.changeSortState('date')}>
+        Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+      </div>,
+      <div onClick={this.props.changeSortState('type')}>
+        Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
+      </div>,
+      <div onClick={this.props.changeSortState('filename')}>
+        Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
+      </div>
+    ];
   }
-
-  getDocumentTableHeaders = () => [
-    '',
-    <div onClick={this.props.changeSortState('sortByDate')}>
-      Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}
-    </div>,
-    <div onClick={this.props.changeSortState('sortByType')}>
-      Document Type {this.props.sortBy === 'sortByType' ? this.state.sortIcon : ' '}
-    </div>,
-    <div onClick={this.props.changeSortState('sortByFilename')}>
-      Filename {this.props.sortBy === 'sortByFilename' ? this.state.sortIcon : ' '}
-    </div>
-  ]
 
   buildDocumentRow = (doc, index) => {
     let numberOfComments = this.props.annotationStorage
@@ -56,10 +51,6 @@ export default class PdfListView extends React.Component {
     // filtering code will go here when we have labels working
   }
 
-  onFilter = (value) => {
-    this.props.onFilter(value);
-  }
-
   render() {
     return <div>
       <div className="usa-grid">
@@ -77,7 +68,7 @@ export default class PdfListView extends React.Component {
                label="Search"
                name="Filter By"
                value={this.props.filterBy}
-               onChange={this.onFilter}
+               onChange={this.props.onFilter}
               />
             </div>
             <div>

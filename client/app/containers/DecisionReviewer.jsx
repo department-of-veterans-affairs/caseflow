@@ -10,9 +10,8 @@ export default class DecisionReviewer extends React.Component {
 
     this.state = {
       filterBy: '',
-      listView: true,
       pdf: null,
-      sortBy: 'sortByDate',
+      sortBy: 'date',
       sortDirection: 'ascending'
     };
 
@@ -67,11 +66,11 @@ export default class DecisionReviewer extends React.Component {
     }
 
     documentCopy.sort((doc1, doc2) => {
-      if (this.state.sortBy === 'sortByDate') {
+      if (this.state.sortBy === 'date') {
         return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
-      } else if (this.state.sortBy === 'sortByType') {
+      } else if (this.state.sortBy === 'type') {
         return multiplier * (doc1.type < doc2.type ? -1 : 1);
-      } else if (this.state.sortBy === 'sortByFilename') {
+      } else if (this.state.sortBy === 'filename') {
         return multiplier * (doc1.filename < doc2.filename ? -1 : 1);
       }
 
@@ -85,6 +84,9 @@ export default class DecisionReviewer extends React.Component {
   changeSortState = (sortBy) => () => {
     let sortDirection = this.state.sortDirection;
 
+    // if you click the same label then we want to
+    // flip the sort type. Otherwise if you're clicking
+    // a new label, we want this to sort ascending.
     if (this.state.sortBy === sortBy) {
       if (sortDirection === 'ascending') {
         sortDirection = 'descending';
@@ -101,6 +103,9 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  // This filters documents to those that contain the search text
+  // in either the metadata (type, filename, date) or in the comments
+  // on the document.
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();
     let filteredDocuments = documents.filter((doc) => {
@@ -111,13 +116,14 @@ export default class DecisionReviewer extends React.Component {
       } else if (doc.received_at.toLowerCase().includes(filterBy)) {
         return true;
       }
-      let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).
-        reduce((combined, comment) =>
-          `${combined} ${comment.comment.toLowerCase()}`, '');
+      let containsText = false;
 
-      if (comments.includes(filterBy)) {
-        return true;
-      }
+      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((comment) => {
+        if (comment.toLowerCase().includes(filterBy)) {
+          return true;
+        }
+      });
+
       return false;
     });
 

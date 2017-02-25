@@ -293,10 +293,16 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
+  // Returns true if the user is doing some action. i.e.
+  // editing a note, adding a note, or placing a comment.
+  isUserActive = () => {
+    return this.state.editingComment !== null ||
+      this.state.isAddingComment ||
+      this.state.isPlacingNote;
+  }
+
   keyListener = (event) => {
-    if (this.state.editingComment === null &&
-        !this.state.isAddingComment &&
-        !this.state.isPlacingNote) {
+    if (!this.isUserActive()) {
       if (event.key === 'ArrowLeft') {
         this.props.previousPdf();
       }
