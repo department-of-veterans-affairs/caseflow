@@ -9,26 +9,27 @@ export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
 
-    let labels = [];
-    this.props.appealDocuments.forEach((doc) => {
-      labels.push(doc.label);
-    });
-    this.state = {
-      
-      pdf: 0
-    };
+    let selectedLabels = {
+      blue: false,
+      orange: false,
+      white: false,
+      pink: false,
+      green: false,
+      yellow: false
+    }
 
     this.state = {
       filterBy: '',
-      labels: labels,
       listView: true,
       pdf: null,
+      selectedLabels: selectedLabels,
       sortBy: 'sortByDate',
-      sortDirection: 'ascending'
+      sortDirection: 'ascending',
+      unsortedDocuments: [...this.props.appealDocuments]
     };
 
     this.state.documents = this.filterDocuments(
-      this.sortDocuments(this.props.appealDocuments));
+      this.sortDocuments(this.state.unsortedDocuments));
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
@@ -55,13 +56,13 @@ export default class DecisionReviewer extends React.Component {
   showList = () => {
     this.setState({
       pdf: null
-    });
+    }, this.sortAndFilter);
   }
 
   sortAndFilter = () => {
     this.setState({
       documents: this.filterDocuments(
-        this.sortDocuments(this.props.appealDocuments))
+        this.sortDocuments(this.state.unsortedDocuments))
     });
   }
 
@@ -114,15 +115,26 @@ export default class DecisionReviewer extends React.Component {
 
   setLabel = (pdf) => (label) => {
     let data = {label: label};
-    let document_id = this.props.appealDocuments[this.state.pdf].id;
+    let document_id = this.state.documents[pdf].id;
 
     ApiUtil.patch(`/document/${document_id}/set-label`, { data })
       .then(() => {
-        let labels = [...this.state.labels];
-        labels[pdf] = label;
+        let unsortedDocs = [...this.state.unsortedDocuments];
+
+        // We need to update the label in both the unsorted
+        // and sorted list of documents.
+        unsortedDocs.forEach((doc) => {
+          if (doc.id === document_id) {
+            doc.label = label;
+          }
+        });
+
+        let docs = [...this.state.documents];
+        docs[pdf].label = label;
 
         this.setState({
-          labels: labels
+          documents: docs,
+          unsortedDocuments: unsortedDocs
         });
       }, () => {
         // Do something with error
@@ -131,7 +143,16 @@ export default class DecisionReviewer extends React.Component {
 
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();
+    let labelsSelected = Object.keys(this.state.selectedLabels).reduce((anySelected, label) => {
+      return anySelected || this.state.selectedLabels[label];
+    }, false);
+
     let filteredDocuments = documents.filter((doc) => {
+      // if there is a label selected, we filter on that.
+      if (labelsSelected && !this.state.selectedLabels[doc.label]) {
+        return false;
+      }
+
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {
@@ -158,6 +179,14 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  onLabelSelected = (label) => () => {
+    let selectedLabels = {...this.state.selectedLabels};
+    selectedLabels[label] = !selectedLabels[label];
+    this.setState({
+      selectedLabels: selectedLabels
+    }, this.sortAndFilter);
+  }
+
   render() {
     let {
       documents,
@@ -175,7 +204,9 @@ export default class DecisionReviewer extends React.Component {
           numberOfDocuments={this.props.appealDocuments.length}
           onFilter={this.onFilter}
           filterBy={this.state.filterBy}
-          sortBy={this.state.sortBy} />}
+          sortBy={this.state.sortBy}
+          selectedLabels={this.state.selectedLabels}
+          selectLabel={this.onLabelSelected} />}
         {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?id=` +
@@ -191,7 +222,7 @@ export default class DecisionReviewer extends React.Component {
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.pdf)}
-          label={this.state.labels[this.state.pdf]} />}
+          label={documents[this.state.pdf].label} />}
       </div>
     );
   }

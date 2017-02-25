@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
-import DocumentLabels from '../components/DocumentLabels';
+import DocumentLabels, * as Labels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
 import TextField from '../components/TextField';
+import SearchBar from '../components/SearchBar';
 
 export default class PdfListView extends React.Component {
   constructor(props) {
@@ -17,11 +18,13 @@ export default class PdfListView extends React.Component {
     }
 
     this.state = {
+      selectedLabels: [],
       sortIcon
     };
   }
 
   getDocumentTableHeaders = () => [
+    '',
     '',
     <div onClick={this.props.changeSortState('sortByDate')}>
       Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}
@@ -39,21 +42,18 @@ export default class PdfListView extends React.Component {
       .getAnnotationByDocumentId(doc.id).length;
 
     return [
-      <div><i style={{ color: '#23ABF6' }}
+      <div>
+        { doc.label && <i style={{ color: Labels.LABEL_COLOR_MAPPING[doc.label] }}
         className="fa fa-bookmark cf-pdf-bookmarks"
-        aria-hidden="true"></i>
-        <span className="fa-stack fa-3x cf-pdf-comment-indicator">
-          <i className="fa fa-comment-o fa-stack-2x"></i>
-          <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
-        </span>
+        aria-hidden="true"></i> }
       </div>,
+      <span className="fa-stack fa-3x cf-pdf-comment-indicator">
+        <i className="fa fa-comment-o fa-stack-2x"></i>
+        <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
+      </span>,
       formatDate(doc.received_at),
       doc.type,
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
-  }
-
-  onLabelClick = () => () => {
-    // filtering code will go here when we have labels working
   }
 
   onFilter = (value) => {
@@ -61,32 +61,34 @@ export default class PdfListView extends React.Component {
   }
 
   render() {
-    return <div>
-      <div className="usa-grid">
-        <div className="cf-app">
-          <div className="cf-app-segment cf-app-segment--alt">
-            <span>
-              Show only: <DocumentLabels onClick={this.onLabelClick} />
-            </span>
-            <span className="cf-right-side">
-              Showing {`${this.props.documents.length} out of ` +
-              `${this.props.numberOfDocuments}`} documents
-            </span>
-            <div>
-              <TextField
-               label="Search"
-               name="Filter By"
-               value={this.props.filterBy}
-               onChange={this.onFilter}
-              />
+    return <div className="usa-grid">
+      <div className="cf-app">
+        <div className="cf-app-segment cf-app-segment--alt">
+          <div className="usa-grid-full">
+            <div className="usa-width-one-third">
+              <SearchBar onChange={this.props.onFilter} value={this.props.filterBy} />
             </div>
-            <div>
-              <Table
-                headers={this.getDocumentTableHeaders()}
-                buildRowValues={this.buildDocumentRow}
-                values={this.props.documents}
-              />
+            <div className="usa-width-one-third">
+              <span>
+                Show only:
+                <DocumentLabels
+                  onClick={this.props.selectLabel}
+                  selectedLabels={this.props.selectedLabels} />
+              </span>
             </div>
+            <div className="usa-width-one-third">
+              <span className="cf-right-side">
+                Showing {`${this.props.documents.length} out of ` +
+                `${this.props.numberOfDocuments}`} documents
+              </span>
+            </div>
+          </div>
+          <div>
+            <Table
+              headers={this.getDocumentTableHeaders()}
+              buildRowValues={this.buildDocumentRow}
+              values={this.props.documents}
+            />
           </div>
         </div>
       </div>
