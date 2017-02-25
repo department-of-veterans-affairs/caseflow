@@ -447,10 +447,10 @@ RSpec.feature "Dispatch" do
     scenario "An unhandled special issue with no email routes to no email page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#vocationalRehab").trigger("click")
+      find_label_for("vocationalRehab").click
       click_on "Route Claim"
       expect(page).to have_content("Please process this claim manually")
-      page.find("#confirmEmail").trigger("click")
+      find_label_for("confirmEmail").click
       click_on "Release Claim"
       expect(page).to have_content("Processed case outside of Caseflow")
     end
