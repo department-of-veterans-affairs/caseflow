@@ -1,4 +1,6 @@
 class Document < ActiveRecord::Base
+  has_many :annotations
+
   TYPES = {
     "34" => "Correspondence",
     "73" => "NOD",

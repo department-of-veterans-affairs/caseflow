@@ -8,7 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
-
+    debugger;
     let selectedLabels = {
       blue: false,
       orange: false,
@@ -21,7 +21,7 @@ export default class DecisionReviewer extends React.Component {
     this.state = {
       filterBy: '',
       listView: true,
-      pdf: null,
+      pdf: this.props.appealDocuments.length > 1 ? null : 0,
       selectedLabels: selectedLabels,
       sortBy: 'sortByDate',
       sortDirection: 'ascending',
@@ -153,6 +153,10 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
+      if (filterBy === '') {
+        return true;
+      }
+
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {
@@ -209,7 +213,7 @@ export default class DecisionReviewer extends React.Component {
           selectLabel={this.onLabelSelected} />}
         {this.state.pdf !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`review/pdf?id=` +
+          file={`${this.props.pdf_url}?id=` +
             `${documents[this.state.pdf].id}`}
           annotations={this.state.annotations}
           id={documents[this.state.pdf].id}

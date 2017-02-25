@@ -10,6 +10,10 @@ class ReviewController < ApplicationController
     "Decision"
   end
 
+  def show
+    @document = Document.find(params[:id])
+  end
+
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
