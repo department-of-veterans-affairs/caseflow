@@ -116,7 +116,6 @@ export default class DecisionReviewer extends React.Component {
       } else if (doc.received_at.toLowerCase().includes(filterBy)) {
         return true;
       }
-      let containsText = false;
 
       this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((comment) => {
         if (comment.toLowerCase().includes(filterBy)) {

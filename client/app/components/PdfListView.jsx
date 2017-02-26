@@ -5,16 +5,19 @@ import { formatDate } from '../util/DateUtil';
 import TextField from '../components/TextField';
 
 export default class PdfListView extends React.Component {
-  
+
   getDocumentTableHeaders = () => {
     let className;
+
     if (this.props.sortDirection === 'ascending') {
       className = "fa-caret-down";
     } else {
       className = "fa-caret-up";
     }
-    
+
     let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
+
+
     return [
       '',
       <div onClick={this.props.changeSortState('date')}>
@@ -30,8 +33,8 @@ export default class PdfListView extends React.Component {
   }
 
   buildDocumentRow = (doc, index) => {
-    let numberOfComments = this.props.annotationStorage
-      .getAnnotationByDocumentId(doc.id).length;
+    let numberOfComments = this.props.annotationStorage.
+      getAnnotationByDocumentId(doc.id).length;
 
     return [
       <div><i style={{ color: '#23ABF6' }}
