@@ -98,7 +98,7 @@ class VACOLS::Case < VACOLS::Record
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w(50 51 53 98).freeze
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 98 97).freeze
 
   JOIN_ISSUE_CNT_REMAND = "
     inner join
