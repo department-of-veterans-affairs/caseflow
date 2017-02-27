@@ -13,14 +13,16 @@
     uploaded before creating a task.
   </div>
 
-  <%= form_for @appeal, url: admin_establish_claim_path, method: "POST",
+  <%= form_for @create_establish_claim, url: admin_establish_claim_path, method: "POST",
     html: { id: "establish-claim-form", class: "cf-form" },
     builder: CaseflowFormBuilder do |f| %>
-
       <%= f.text_field :vbms_id, label: "VBMS ID", question_name: "vbms_id" %>
+      <%= f.radio_buttons_field :decision_type, label: "Decision Type", question_name: "decision_type",
+            values: CreateEstablishClaim::DECISION_TYPES, inline: true %>
 
       <button type="submit" class="cf-submit">Create Task</button>
   <% end %>
+
   <hr class="cf-section-break"/>
   <h2>Existing Tasks</h2>
   <div class="usa-width-one-whole">
@@ -39,10 +41,10 @@
           <% @existing_tasks.each do |task| %>
             <tr id="task-<%= task.id %>">
               <td>
-                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
+                <%= "#{task.cached_veteran_name} (#{task.appeal.vacols_id})" %>
               </td>
               <td>
-                <%= task.appeal.decision_type %>
+                <%= task.cached_decision_type %>
               </td>
               <td>
                 <%= task.progress_status %>

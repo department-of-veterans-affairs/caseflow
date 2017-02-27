@@ -29,18 +29,25 @@ export default class TabWindow extends React.Component {
   render() {
     let {
       tabs,
-      pages
+      pages,
+      fullPage
     } = this.props;
 
     return <div>
-        <div className="cf-tab-navigation cf-tab-navigation-full-screen">
+        <div className={
+          `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
+        }>
           {tabs.map((tab, i) =>
             <div
               className={`cf-tab${i === this.state.currentPage ? " cf-active" : ""}`}
               key={i}
               id={`tab-${i}`}
               onClick={this.onTabClick(i)}>
-              {tab}
+              <span>
+                <span>
+                  {tab}
+                </span>
+              </span>
             </div>
           )}
         </div>

@@ -50,9 +50,10 @@
 }
 
 .cf-associated-header {
-  color: $color-primary;
-  font-size: 20px;
+  color: $color-gray;
+  font-size: 24px;
   margin-left: 20px;
+  font-weight: normal;
 }
 
 .cf-right-side {
@@ -99,6 +100,11 @@
 
 .cf-loading-button-symbol {
   display: inline-block;
+}
+
+.cf-button-aligned-with-textfield {
+  padding-left: 10px;
+  padding-top: 30px;
 }
 
 .cf-button-associated-text {
@@ -188,4 +194,16 @@ select {
   display: inline-block;
 
   svg { vertical-align: middle; }
+}
+
+.cf-form-radio-options {
+  input {
+    left: -999em;
+  }
+}
+
+.cf-form-checkbox {
+  input {
+    left: -999em;
+  }
 }

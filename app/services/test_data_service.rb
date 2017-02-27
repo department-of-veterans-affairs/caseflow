@@ -17,7 +17,7 @@ class TestDataService
 
   def self.reset_appeal_special_issues
     return false if ApplicationController.dependencies_faked?
-    fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
+    fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
 
     Appeal.find_each do |appeal|
       Appeal::SPECIAL_ISSUE_COLUMNS.each do |special_issue|
@@ -27,18 +27,21 @@ class TestDataService
     end
   end
 
-  def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: "partial")
+  def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
 
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
 
     # Push the decision date to the current date in vacols
+    # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
-    if decision_type == "full"
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(Time.zone.now))
+    if decision_type == :full
+      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
+      # Full Grants stay 99
     else
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(300.days.ago))
+      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))
+      vacols_case.update_vacols_location!("97")
     end
 
     # Upload decision document for the appeal if it isn't there

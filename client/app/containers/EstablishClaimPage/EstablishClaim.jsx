@@ -3,7 +3,7 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
-
+import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -15,6 +15,7 @@ import { formatDate } from '../../util/DateUtil';
 import EstablishClaimReview, * as Review from './EstablishClaimReview';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
+import EstablishClaimEmail from './EstablishClaimEmail';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -23,6 +24,7 @@ export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
+export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
@@ -49,7 +51,7 @@ const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
 
 let containsRoutingSpecialIssues = function(specialIssues) {
   return Boolean(
-    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.find((issue) => specialIssues[issue].value)
+    Review.ROUTING_SPECIAL_ISSUES.find((issue) => specialIssues[issue.specialIssue].value)
   );
 };
 
@@ -104,6 +106,8 @@ export default class EstablishClaim extends BaseForm {
       showNotePageAlert: false,
       specialIssueModalDisplay: false,
       specialIssues: {},
+      specialIssuesEmail: '',
+      specialIssuesRegionalOffice: '',
       submitSpecialIssuesOnCancel: null
     };
     SPECIAL_ISSUES.forEach((issue) => {
@@ -294,6 +298,10 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === NOTE_PAGE;
   }
 
+  isEmailPage() {
+    return this.state.page === EMAIL_PAGE;
+  }
+
   /*
    * This function gets the set of unused modifiers. For a full grant, only one
    * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
@@ -325,9 +333,13 @@ export default class EstablishClaim extends BaseForm {
     this.setStationState();
 
     if (!this.validateReviewPageSubmit()) {
-      this.setState({
-        specialIssueModalDisplay: true
-      });
+      if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+        this.handlePageChange(EMAIL_PAGE);
+      } else {
+        this.setState({
+          specialIssueModalDisplay: true
+        });
+      }
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
@@ -362,6 +374,54 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  handleEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
+        'error',
+        'Error',
+        'There was an error while completing the task. Please try again later'
+        );
+        this.setState({
+          loading: false
+        });
+      });
+  };
+
+  handleNoEmailPageSubmit = () => {
+    let { handleAlert, handleAlertClear, task } = this.props;
+
+    handleAlertClear();
+
+    this.setState({
+      loading: true
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/no-email-complete`).
+    then(() => {
+      this.reloadPage();
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while completing the task. Please try again later'
+        );
+      this.setState({
+        loading: false
+      });
+    });
+  };
+
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -392,6 +452,52 @@ export default class EstablishClaim extends BaseForm {
     this.setState({
       stateObject
     });
+  }
+
+  getSpecialIssuesEmail() {
+    if (this.state.specialIssuesEmail === 'PMC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesEmail === 'COWC') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesEmail === 'education') {
+      return this.getEmailFromConstant(ROUTING_INFORMATION.EDUCATION);
+    }
+
+    return this.state.specialIssuesEmail;
+  }
+
+  getEmailFromConstant(constant) {
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
+    return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
+  }
+
+  getCityAndState(regionalOfficeKey) {
+    return `${regionalOfficeKey} - ${
+      this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+      this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+  }
+
+  getSpecialIssuesRegionalOffice() {
+    if (this.state.specialIssuesRegionalOffice === 'PMC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
+    } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
+    } else if (this.state.specialIssuesRegionalOffice === 'education') {
+      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
+    } else if (!this.state.specialIssuesRegionalOffice) {
+      return null;
+    }
+
+    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
+  }
+
+  getRegionalOfficeFromConstant(constant) {
+    let regionalOfficeKey = this.props.
+        regionalOfficeStations[this.props.task.appeal.station_key];
+
+    return this.getCityAndState(constant[regionalOfficeKey]);
   }
 
   getStationOfJurisdiction() {
@@ -452,7 +558,13 @@ export default class EstablishClaim extends BaseForm {
     }
 
     Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[StringUtil.convertToCamelCase(issue)].value) {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        this.setState({
+          // If there are multiple unhandled special issues, we'll route
+          // to the email address for the last one.
+          specialIssuesEmail: issue.emailAddress,
+          specialIssuesRegionalOffice: issue.regionalOffice
+        });
         validOutput = false;
       }
     });
@@ -523,6 +635,17 @@ export default class EstablishClaim extends BaseForm {
             appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
+          />
+        }
+        { this.isEmailPage() &&
+          <EstablishClaimEmail
+            appeal={this.props.task.appeal}
+            handleCancelTask={this.handleCancelTask}
+            handleEmailSubmit={this.handleEmailPageSubmit}
+            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
+            regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
           />
         }
