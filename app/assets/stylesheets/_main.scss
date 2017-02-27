@@ -201,3 +201,15 @@ select {
 
   svg { vertical-align: middle; }
 }
+
+.cf-form-radio-options {
+  input {
+    left: -999em;
+  }
+}
+
+.cf-form-checkbox {
+  input {
+    left: -999em;
+  }
+}
