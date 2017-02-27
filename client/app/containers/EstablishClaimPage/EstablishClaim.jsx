@@ -530,21 +530,17 @@ export default class EstablishClaim extends BaseForm {
     stateObject.claimForm.stationOfJurisdiction.value =
         stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
 
-    this.setState({
-      stateObject
-    });
-
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
     let endProductInfo = this.getClaimTypeFromDecision();
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...this.getFormValues(this.state.claimForm),
+        ...this.getFormValues(stateObject.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       },
-      specialIssues: this.getFormValues(this.state.specialIssues)
+      specialIssues: this.getFormValues(stateObject.specialIssues)
     });
   }
 
