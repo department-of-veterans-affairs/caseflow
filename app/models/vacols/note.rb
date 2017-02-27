@@ -37,11 +37,7 @@ class VACOLS::Note < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
-    fail(TextRequiredError) unless text
-    fail(InvalidNotelengthError) if text.length > 280
-    unless (note_code = CODE_ACTKEY_MAPPING[note_code])
-      fail InvalidNoteCodeError
-    end
+    validate!(text: text, note_code: note_code)
 
     text = conn.quote(text)
     case_id = conn.quote(case_record.bfkey)
@@ -67,5 +63,14 @@ class VACOLS::Note < VACOLS::Record
     end
 
     primary_key
+  end
+
+  def self.validate!(text:, note_code:)
+    fail(TextRequiredError) unless text
+    fail(InvalidNotelengthError) if text.length > 280
+
+    unless (note_code = CODE_ACTKEY_MAPPING[note_code])
+      fail InvalidNoteCodeError
+    end
   end
 end
