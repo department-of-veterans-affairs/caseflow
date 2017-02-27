@@ -35,7 +35,7 @@ class VACOLS::Note < VACOLS::Record
     "#{bfkey}D#{count + 1}"
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/MethodLength
   def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
     validate!(text: text, note_code: note_code)
 
@@ -44,7 +44,7 @@ class VACOLS::Note < VACOLS::Record
     regional_office_key = conn.quote(case_record.bfregoff)
     days_to_complete = conn.quote(days_to_complete)
     due_date = conn.quote(Time.zone.now + days_til_due.days)
-    note_code = conn.quote(note_code)
+    note_code = conn.quote(CODE_ACTKEY_MAPPING[note_code])
     user_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     primary_key = generate_primary_key(case_record.bfkey)
     quoted_primary_key = conn.quote(primary_key)
@@ -68,9 +68,6 @@ class VACOLS::Note < VACOLS::Record
   def self.validate!(text:, note_code:)
     fail(TextRequiredError) unless text
     fail(InvalidNotelengthError) if text.length > 280
-
-    unless (note_code = CODE_ACTKEY_MAPPING[note_code])
-      fail InvalidNoteCodeError
-    end
+    fail InvalidNoteCodeError unless CODE_ACTKEY_MAPPING[note_code]
   end
 end
