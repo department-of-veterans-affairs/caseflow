@@ -457,7 +457,10 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <DocumentLabels onClick={() => {}} />
+                  <DocumentLabels onClick={() => {
+
+                    /* Place Holder */
+                  }} />
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   Page {this.state.currentPage} of {this.state.numPages}

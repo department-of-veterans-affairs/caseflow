@@ -9,8 +9,8 @@ export default class DecisionReviewer extends React.Component {
     super(props);
 
     this.state = {
+      currentPdfIndex: null,
       filterBy: '',
-      pdf: null,
       sortBy: 'date',
       sortDirection: 'ascending'
     };
@@ -24,25 +24,26 @@ export default class DecisionReviewer extends React.Component {
 
   previousPdf = () => {
     this.setState({
-      pdf: Math.max(this.state.pdf - 1, 0)
+      currentPdfIndex: Math.max(this.state.currentPdfIndex - 1, 0)
     });
   }
 
   nextPdf = () => {
     this.setState({
-      pdf: Math.min(this.state.pdf + 1, this.state.documents.length - 1)
+      currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
+        this.state.documents.length - 1)
     });
   }
 
   showPdf = (pdfNumber) => () => {
     this.setState({
-      pdf: pdfNumber
+      currentPdfIndex: pdfNumber
     });
   }
 
   showList = () => {
     this.setState({
-      pdf: null
+      currentPdfIndex: null
     });
   }
 
@@ -143,7 +144,7 @@ export default class DecisionReviewer extends React.Component {
 
     return (
       <div>
-        {this.state.pdf === null && <PdfListView
+        {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}
           changeSortState={this.changeSortState}
@@ -153,18 +154,18 @@ export default class DecisionReviewer extends React.Component {
           onFilter={this.onFilter}
           filterBy={this.state.filterBy}
           sortBy={this.state.sortBy} />}
-        {this.state.pdf !== null && <PdfViewer
+        {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?vbms_document_id=` +
-            `${documents[this.state.pdf].vbms_document_id}`}
-          receivedAt={documents[this.state.pdf].received_at}
-          type={documents[this.state.pdf].type}
-          name={documents[this.state.pdf].filename}
+            `${documents[this.state.currentPdfIndex].vbms_document_id}`}
+          receivedAt={documents[this.state.currentPdfIndex].received_at}
+          type={documents[this.state.currentPdfIndex].type}
+          name={documents[this.state.currentPdfIndex].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
-          id={documents[this.state.pdf].id} />}
+          id={documents[this.state.currentPdfIndex].id} />}
       </div>
     );
   }

@@ -3,6 +3,13 @@
 @import 'font-awesome';
 
 $caseflow-background: #f9f9f9;
+$bookmark-blue: #23ABF6;
+$bookmark-orange: #F6A623;
+$bookmark-white: #FFFFFF;
+$bookmark-white-outline: #5B616B;
+$bookmark-pink: #F772E7;
+$bookmark-green: #3FCD65;
+$bookmark-yellow: #EFDF1A;
 
 .cf-nav-full-screen {
   padding: 10px 30px;
@@ -242,29 +249,29 @@ svg[aria-hidden=true],
 }
 
 .cf-pdf-bookmark-blue {
-  color: #23ABF6;
+  color: $bookmark-blue;
 }
 
 .cf-pdf-bookmark-orange {
-  color: #F6A623;
+  color: $bookmark-orange;
 }
 
 .cf-pdf-bookmark-white {
-  color: #FFFFFF;
+  color: $bookmark-white;
 }
 
 .cf-pdf-bookmark-white-outline {
-  color: #5B616B;
+  color: $bookmark-white-outline;
 }
 
 .cf-pdf-bookmark-pink {
-  color: #F772E7;
+  color: $bookmark-pink;
 }
 
 .cf-pdf-bookmark-green {
-  color: #3FCD65;
+  color: $bookmark-green;
 }
 
 .cf-pdf-bookmark-yellow {
-  color: #EFDF1A;
+  color: $bookmark-yellow;
 }
