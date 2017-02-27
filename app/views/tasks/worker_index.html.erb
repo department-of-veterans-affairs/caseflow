@@ -1,9 +1,9 @@
-<%#= current_user_historical_tasks.map(&:to_hash) %>
 <%= react_component("BaseContainer", props: {
   page: "CaseWorkerIndex",
   availableTasks: !!current_user_next_task,
   buttonText: start_text,
   completedCountToday: @completed_count_today,
   currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
-  toCompleteCount: @to_complete_count
+  toCompleteCount: @to_complete_count,
+  totalAssignedIssues: total_assigned_issues
 }) %>
