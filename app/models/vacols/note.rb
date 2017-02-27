@@ -35,7 +35,7 @@ class VACOLS::Note < VACOLS::Record
     "#{bfkey}D#{count + 1}"
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
     validate!(text: text, note_code: note_code)
 
