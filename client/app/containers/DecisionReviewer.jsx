@@ -19,11 +19,10 @@ export default class DecisionReviewer extends React.Component {
     }
 
     this.state = {
+      currentPdfIndex: null,
       filterBy: '',
-      listView: true,
-      pdf: null,
       selectedLabels: selectedLabels,
-      sortBy: 'sortByDate',
+      sortBy: 'date',
       sortDirection: 'ascending',
       unsortedDocuments: [...this.props.appealDocuments]
     };
@@ -37,25 +36,26 @@ export default class DecisionReviewer extends React.Component {
 
   previousPdf = () => {
     this.setState({
-      pdf: Math.max(this.state.pdf - 1, 0)
+      currentPdfIndex: Math.max(this.state.currentPdfIndex - 1, 0)
     });
   }
 
   nextPdf = () => {
     this.setState({
-      pdf: Math.min(this.state.pdf + 1, this.state.documents.length - 1)
+      currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
+        this.state.documents.length - 1)
     });
   }
 
   showPdf = (pdfNumber) => () => {
     this.setState({
-      pdf: pdfNumber
+      currentPdfIndex: pdfNumber
     });
   }
 
   showList = () => {
     this.setState({
-      pdf: null
+      currentPdfIndex: null
     }, this.sortAndFilter);
   }
 
@@ -79,11 +79,11 @@ export default class DecisionReviewer extends React.Component {
     }
 
     documentCopy.sort((doc1, doc2) => {
-      if (this.state.sortBy === 'sortByDate') {
+      if (this.state.sortBy === 'date') {
         return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
-      } else if (this.state.sortBy === 'sortByType') {
+      } else if (this.state.sortBy === 'type') {
         return multiplier * (doc1.type < doc2.type ? -1 : 1);
-      } else if (this.state.sortBy === 'sortByFilename') {
+      } else if (this.state.sortBy === 'filename') {
         return multiplier * (doc1.filename < doc2.filename ? -1 : 1);
       }
 
@@ -97,6 +97,9 @@ export default class DecisionReviewer extends React.Component {
   changeSortState = (sortBy) => () => {
     let sortDirection = this.state.sortDirection;
 
+    // if you click the same label then we want to
+    // flip the sort type. Otherwise if you're clicking
+    // a new label, we want this to sort ascending.
     if (this.state.sortBy === sortBy) {
       if (sortDirection === 'ascending') {
         sortDirection = 'descending';
@@ -113,46 +116,12 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
-  setLabel = (pdf) => (label) => {
-    let data = {label: label};
-    let document_id = this.state.documents[pdf].id;
-
-    ApiUtil.patch(`/document/${document_id}/set-label`, { data })
-      .then(() => {
-        let unsortedDocs = [...this.state.unsortedDocuments];
-
-        // We need to update the label in both the unsorted
-        // and sorted list of documents.
-        unsortedDocs.forEach((doc) => {
-          if (doc.id === document_id) {
-            doc.label = label;
-          }
-        });
-
-        let docs = [...this.state.documents];
-        docs[pdf].label = label;
-
-        this.setState({
-          documents: docs,
-          unsortedDocuments: unsortedDocs
-        });
-      }, () => {
-        // Do something with error
-      });
-  }
-
+  // This filters documents to those that contain the search text
+  // in either the metadata (type, filename, date) or in the comments
+  // on the document.
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();
-    let labelsSelected = Object.keys(this.state.selectedLabels).reduce((anySelected, label) => {
-      return anySelected || this.state.selectedLabels[label];
-    }, false);
-
     let filteredDocuments = documents.filter((doc) => {
-      // if there is a label selected, we filter on that.
-      if (labelsSelected && !this.state.selectedLabels[doc.label]) {
-        return false;
-      }
-
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {
@@ -160,13 +129,12 @@ export default class DecisionReviewer extends React.Component {
       } else if (doc.received_at.toLowerCase().includes(filterBy)) {
         return true;
       }
-      let comments = this.annotationStorage.getAnnotationByDocumentId(doc.id).
-        reduce((combined, comment) =>
-          `${combined} ${comment.comment.toLowerCase()}`, '');
 
-      if (comments.includes(filterBy)) {
-        return true;
-      }
+      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((comment) => {
+        if (comment.toLowerCase().includes(filterBy)) {
+          return true;
+        }
+      });
       return false;
     });
 
@@ -195,7 +163,7 @@ export default class DecisionReviewer extends React.Component {
 
     return (
       <div>
-        {this.state.pdf === null && <PdfListView
+        {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}
           changeSortState={this.changeSortState}
@@ -207,22 +175,21 @@ export default class DecisionReviewer extends React.Component {
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
           selectLabel={this.onLabelSelected} />}
-        {this.state.pdf !== null && <PdfViewer
+        {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?id=` +
-            `${documents[this.state.pdf].id}`}
-          annotations={this.state.annotations}
-          id={documents[this.state.pdf].id}
-          receivedAt={documents[this.state.pdf].received_at}
-          type={documents[this.state.pdf].type}
-          name={documents[this.state.pdf].filename}
+            `${documents[this.state.currentPdfIndex].id}`}
+          id={documents[this.state.currentPdfIndex].id}
+          receivedAt={documents[this.state.currentPdfIndex].received_at}
+          type={documents[this.state.currentPdfIndex].type}
+          name={documents[this.state.currentPdfIndex].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
           pdfWorker={this.props.pdfWorker}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
-          setLabel={this.setLabel(this.state.pdf)}
-          label={documents[this.state.pdf].label} />}
+          setLabel={this.setLabel(this.state.currentPdfIndex)}
+          label={documents[this.state.currentPdfIndex].label} />}
       </div>
     );
   }

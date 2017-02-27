@@ -7,6 +7,7 @@ import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
+import DocumentLabels from '../components/DocumentLabels';
 
 export default class PdfViewer extends BaseForm {
   constructor(props) {
@@ -293,10 +294,14 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
+  // Returns true if the user is doing some action. i.e.
+  // editing a note, adding a note, or placing a comment.
+  isUserActive = () => this.state.editingComment !== null ||
+      this.state.isAddingComment ||
+      this.state.isPlacingNote
+
   keyListener = (event) => {
-    if (this.state.editingComment === null &&
-        !this.state.isAddingComment &&
-        !this.state.isPlacingNote) {
+    if (!this.isUserActive()) {
       if (event.key === 'ArrowLeft') {
         this.props.previousPdf();
       }
@@ -378,6 +383,9 @@ export default class PdfViewer extends BaseForm {
     let comments = [];
     let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
     let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
+
+    let selectedLabels = {};
+    selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -462,72 +470,9 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button
-                    name="blue"
-                    classNames={
-                      this.props.label === 'blue'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('blue')}>
-                    <i
-                      style={{ color: '#23ABF6' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="orange"
-                    classNames={
-                      this.props.label === 'orange'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('orange')}>
-                    <i
-                      style={{ color: '#F6A623' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="white"
-                    classNames={
-                      this.props.label === 'white'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('white')}>
-                    <i
-                      style={{ color: '#FFFFFF' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="pink"
-                    classNames={
-                      this.props.label === 'pink'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('pink')}>
-                    <i
-                      style={{ color: '#F772E7' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="green"
-                    classNames={
-                      this.props.label === 'green'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('green')}>
-                    <i
-                      style={{ color: '#3FCD65' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="yellow"
-                    classNames={
-                      this.props.label === 'yellow'? bookmarkClassesSelected: bookmarkClasses
-                    }
-                    onClick={this.onColorLabelChange('yellow')}>
-                    <i
-                      style={{ color: '#EFDF1A' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
+                  <DocumentLabels
+                    onClick={this.onColorLabelChange}
+                    selectedLabels={selectedLabels}/>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   Page {this.state.currentPage} of {this.state.numPages}

@@ -16,7 +16,7 @@
   <div class="cf-stats">
     <ul class="cf-tab-navigation">
       <% Stats::INTERVALS.each do |interval| %>
-        <li class="cf-tab <%= (@stats[0].interval == interval) && "cf-active" %>">>
+        <li class="cf-tab <%= (@stats[0].interval == interval) && "cf-active" %>">
           <span>
             <span>
               <%= link_to interval.to_s.capitalize, stats_path(interval) %>

@@ -23,19 +23,32 @@ export default class PdfListView extends React.Component {
     };
   }
 
-  getDocumentTableHeaders = () => [
-    '',
-    '',
-    <div onClick={this.props.changeSortState('sortByDate')}>
-      Receipt Date {this.props.sortBy === 'sortByDate' ? this.state.sortIcon : ' '}
-    </div>,
-    <div onClick={this.props.changeSortState('sortByType')}>
-      Document Type {this.props.sortBy === 'sortByType' ? this.state.sortIcon : ' '}
-    </div>,
-    <div onClick={this.props.changeSortState('sortByFilename')}>
-      Filename {this.props.sortBy === 'sortByFilename' ? this.state.sortIcon : ' '}
-    </div>
-  ]
+  getDocumentTableHeaders = () => {
+    let className;
+
+    if (this.props.sortDirection === 'ascending') {
+      className = "fa-caret-down";
+    } else {
+      className = "fa-caret-up";
+    }
+
+    let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
+
+
+    return [
+      '',
+      '',
+      <div onClick={this.props.changeSortState('date')}>
+        Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+      </div>,
+      <div onClick={this.props.changeSortState('type')}>
+        Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
+      </div>,
+      <div onClick={this.props.changeSortState('filename')}>
+        Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
+      </div>
+    ];
+  }
 
   buildDocumentRow = (doc, index) => {
     let numberOfComments = this.props.annotationStorage
@@ -43,8 +56,8 @@ export default class PdfListView extends React.Component {
 
     return [
       <div>
-        { doc.label && <i style={{ color: Labels.LABEL_COLOR_MAPPING[doc.label] }}
-        className="fa fa-bookmark cf-pdf-bookmarks"
+        { doc.label && <i
+        className={`fa fa-bookmark cf-pdf-bookmarks cf-pdf-bookmark-${doc.label}`}
         aria-hidden="true"></i> }
       </div>,
       <span className="fa-stack fa-3x cf-pdf-comment-indicator">
@@ -54,10 +67,6 @@ export default class PdfListView extends React.Component {
       formatDate(doc.received_at),
       doc.type,
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
-  }
-
-  onFilter = (value) => {
-    this.props.onFilter(value);
   }
 
   render() {
