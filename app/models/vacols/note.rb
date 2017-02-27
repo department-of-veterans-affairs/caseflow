@@ -10,7 +10,10 @@ class VACOLS::Note < VACOLS::Record
     other: "BVA30"
   }.freeze
 
-  alias_method :conn, :connection
+  # simple alias for more concise code
+  def self.conn
+    connection
+  end
 
   # VACOLS does not auto-generate primary keys. Instead we must manually create one.
   # Below is the logic currently used by VACOLS apps to generate note IDs
