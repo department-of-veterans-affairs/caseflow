@@ -9,5 +9,5 @@
   <td> <%= match ? svg_icon(:found) : svg_icon(:missing) %> </td>
   <td> <%= name %> </td>
   <td> <%= date.to_formatted_s(:short_date) %> </td>
-  <td> <%= match ? date.to_formatted_s(:short_date) : "No Matching Document" %> </td>
+  <td> <%= match ? date.to_formatted_s(:short_date) : "Not found" %> </td>
 </tr>
