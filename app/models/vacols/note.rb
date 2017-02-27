@@ -2,18 +2,20 @@ class VACOLS::Note < VACOLS::Record
   self.table_name = "vacols.assign"
   self.primary_key = "tasknum"
 
-  class InvalidNoteCode < StandardError; end
-  class InvalidNotelength < StandardError; end
+  class InvalidNoteCodeError < StandardError; end
+  class InvalidNotelengthError < StandardError; end
+  class TextRequiredError < StandardError; end
 
   CODE_ACTKEY_MAPPING = {
     other: "BVA30"
   }.freeze
 
+  alias_method :conn, :connection
+
   # VACOLS does not auto-generate primary keys. Instead we must manually create one.
   # Below is the logic currently used by VACOLS apps to generate note IDs
   # NOTE: For consistency, we should keep this logic in sync with the VACOLS applets
   def self.generate_primary_key(bfkey)
-    conn = connection
     case_id = conn.quote(bfkey)
 
     query = <<-SQL
@@ -22,7 +24,7 @@ class VACOLS::Note < VACOLS::Record
       WHERE TSKTKNM = #{case_id}
     SQL
 
-    count_res = MetricsService.timer "VACOLS: Note.create! #{bfkey}: count" do
+    count_res = MetricsService.timer "VACOLS: Note.generate_primary_key #{bfkey}" do
       conn.exec_query(query)
     end
     count = count_res.to_a.first["count"]
@@ -32,15 +34,11 @@ class VACOLS::Note < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def self.create!(case_record:, text:, note_code: :other, days_to_complete: 30, days_til_due: 30)
-    return unless text
-
-    fail(InvalidNotelength) if text.length > 280
-
+    fail(TextRequiredError) unless text
+    fail(InvalidNotelengthError) if text.length > 280
     unless (note_code = CODE_ACTKEY_MAPPING[note_code])
-      fail InvalidNoteCode
+      fail InvalidNoteCodeError
     end
-
-    conn = connection
 
     text = conn.quote(text)
     case_id = conn.quote(case_record.bfkey)
@@ -61,7 +59,7 @@ class VACOLS::Note < VACOLS::Record
          #{due_date}, #{case_id}, #{regional_office_key}, #{user_id}, #{user_id}, SYSDATE)
     SQL
 
-    MetricsService.timer "VACOLS: Note.create! #{case_id}: insert" do
+    MetricsService.timer "VACOLS: Note.create! #{case_id}" do
       conn.execute(query)
     end
 
