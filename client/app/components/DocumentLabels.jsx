@@ -9,17 +9,15 @@ export default class DocumentLabels extends React.Component {
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('blue')}>
         <i
-          style={{ color: '#23ABF6' }}
-          className="fa fa-bookmark"
+          className="fa fa-bookmark cf-pdf-bookmark-blue"
           aria-hidden="true"></i>
       </Button>
       <Button
-        name="orangeLbel"
+        name="orangeLabel"
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('orange')}>
         <i
-          style={{ color: '#F6A623' }}
-          className="fa fa-bookmark"
+          className="fa fa-bookmark cf-pdf-bookmark-orange"
           aria-hidden="true"></i>
       </Button>
       <Button
@@ -27,8 +25,7 @@ export default class DocumentLabels extends React.Component {
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('white')}>
         <i
-          style={{ color: '#5B616B' }}
-          className="fa fa-bookmark-o"
+          className="fa fa-bookmark-o cf-pdf-bookmark-white-outline"
           aria-hidden="true"></i>
       </Button>
       <Button
@@ -36,8 +33,7 @@ export default class DocumentLabels extends React.Component {
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('pink')}>
         <i
-          style={{ color: '#F772E7' }}
-          className="fa fa-bookmark"
+          className="fa fa-bookmark cf-pdf-bookmark-pink"
           aria-hidden="true"></i>
       </Button>
       <Button
@@ -45,8 +41,7 @@ export default class DocumentLabels extends React.Component {
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('green')}>
         <i
-          style={{ color: '#3FCD65' }}
-          className="fa fa-bookmark"
+          className="fa fa-bookmark cf-pdf-bookmark-green"
           aria-hidden="true"></i>
       </Button>
       <Button
@@ -54,8 +49,7 @@ export default class DocumentLabels extends React.Component {
         classNames={["cf-pdf-bookmarks cf-pdf-button"]}
         onClick={this.props.onClick('yellow')}>
         <i
-          style={{ color: '#EFDF1A' }}
-          className="fa fa-bookmark"
+          className="fa fa-bookmark cf-pdf-bookmark-yellow"
           aria-hidden="true"></i>
       </Button>
     </span>;

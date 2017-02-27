@@ -37,8 +37,8 @@ export default class PdfListView extends React.Component {
       getAnnotationByDocumentId(doc.id).length;
 
     return [
-      <div><i style={{ color: '#23ABF6' }}
-        className="fa fa-bookmark cf-pdf-bookmarks"
+      <div><i
+        className="fa fa-bookmark cf-pdf-bookmarks cf-pdf-bookmark-blue"
         aria-hidden="true"></i>
         <span className="fa-stack fa-3x cf-pdf-comment-indicator">
           <i className="fa fa-comment-o fa-stack-2x"></i>

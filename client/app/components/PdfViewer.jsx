@@ -7,6 +7,7 @@ import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
+import DocumentLabels from '../components/DocumentLabels';
 
 export default class PdfViewer extends BaseForm {
   constructor(props) {
@@ -456,60 +457,7 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#23ABF6' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#F6A623' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#FFFFFF' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#F772E7' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#3FCD65' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#EFDF1A' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
+                  <DocumentLabels onClick={() => {}} />
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   Page {this.state.currentPage} of {this.state.numPages}
