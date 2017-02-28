@@ -58,7 +58,10 @@ Rails.application.configure do
       end
       require "rails/console/app"
       require "rails/console/helpers"
+      require_relative "../../lib/helpers/console_methods"
+
       TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
+      TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
     rescue LoadError
     end
   end
