@@ -61,11 +61,11 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
     end
 
     scenario "is allowed by a test user" do
@@ -77,7 +77,7 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"
