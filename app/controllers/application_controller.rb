@@ -55,6 +55,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def feature_enabled?(feature)
+    FeatureToggle.enabled?(feature, current_user)
+  end
+  helper_method :feature_enabled?
+
   def logo_class
     return "cf-logo-image-default" if logo_name.nil?
     "cf-logo-image-#{logo_name.downcase.tr(' ', '-')}"
