@@ -108,7 +108,6 @@ describe FeatureToggle do
   end
 
   context ".features" do
-
     context "when features exist" do
       before do
         FeatureToggle.enable!(:test)
@@ -128,7 +127,6 @@ describe FeatureToggle do
   end
 
   context ".details_for" do
-
     subject { FeatureToggle.details_for(:banana) }
 
     context "when enabled globally" do
