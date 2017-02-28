@@ -547,7 +547,7 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired,
-  label: PropTypes.object,
+  label: PropTypes.string,
   pdfWorker: PropTypes.string,
   setLabel: PropTypes.func.isRequired
 };

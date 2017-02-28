@@ -10,9 +10,6 @@ export default class DocumentLabels extends React.Component {
 
     let bookmarks = LABELS.map((label) => {
       let className = `fa fa-bookmark cf-pdf-bookmark-${label}`;
-      if (label === 'white') {
-        className = `fa fa-bookmark-o cf-pdf-bookmark-white-outline`;
-      }
       return <Button
         key={label}
         name={label}
@@ -32,5 +29,5 @@ export default class DocumentLabels extends React.Component {
 
 DocumentLabels.propTypes = {
   onClick: PropTypes.func.isRequired,
-  selectedLabels: PropTypes.array
+  selectedLabels: PropTypes.object
 };

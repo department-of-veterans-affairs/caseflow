@@ -267,10 +267,16 @@ svg[aria-hidden=true],
 
 .cf-pdf-bookmark-white {
   color: $bookmark-white;
+  position: relative;
 }
 
-.cf-pdf-bookmark-white-outline {
+// This is to give the white bookmark a gray outline
+.cf-pdf-bookmark-white:after {
+  // This is the unicode for the fa-bookmark-o icon
+  content: "\f097";
   color: $bookmark-white-outline;
+  position: absolute;
+  left: 0;    
 }
 
 .cf-pdf-bookmark-pink {

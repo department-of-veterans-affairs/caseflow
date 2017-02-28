@@ -121,7 +121,16 @@ export default class DecisionReviewer extends React.Component {
   // on the document.
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();
+    let labelsSelected = Object.keys(this.state.selectedLabels).reduce((anySelected, label) => {
+      return anySelected || this.state.selectedLabels[label];
+    }, false);
+
     let filteredDocuments = documents.filter((doc) => {
+      // if there is a label selected, we filter on that.
+      if (labelsSelected && !this.state.selectedLabels[doc.label]) {
+        return false;
+      }
+
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {
@@ -130,8 +139,8 @@ export default class DecisionReviewer extends React.Component {
         return true;
       }
 
-      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((comment) => {
-        if (comment.toLowerCase().includes(filterBy)) {
+      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((annotation) => {
+        if (annotation.comment.toLowerCase().includes(filterBy)) {
           return true;
         }
       });
@@ -139,6 +148,34 @@ export default class DecisionReviewer extends React.Component {
     });
 
     return filteredDocuments;
+  }
+
+  setLabel = (pdf) => (label) => {
+    let data = {label: label};
+    let document_id = this.state.documents[pdf].id;
+
+    ApiUtil.patch(`/document/${document_id}/set-label`, { data })
+      .then(() => {
+        let unsortedDocs = [...this.state.unsortedDocuments];
+
+        // We need to update the label in both the unsorted
+        // and sorted list of documents.
+        unsortedDocs.forEach((doc) => {
+          if (doc.id === document_id) {
+            doc.label = label;
+          }
+        });
+
+        let docs = [...this.state.documents];
+        docs[pdf].label = label;
+
+        this.setState({
+          documents: docs,
+          unsortedDocuments: unsortedDocs
+        });
+      }, () => {
+        // Do something with error
+      });
   }
 
   onFilter = (filterBy) => {

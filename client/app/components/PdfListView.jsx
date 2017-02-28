@@ -18,7 +18,6 @@ export default class PdfListView extends React.Component {
     }
 
     this.state = {
-      selectedLabels: [],
       sortIcon
     };
   }
@@ -55,11 +54,11 @@ export default class PdfListView extends React.Component {
       .getAnnotationByDocumentId(doc.id).length;
 
     return [
-      <div>
+      <span>
         { doc.label && <i
-        className={`fa fa-bookmark cf-pdf-bookmarks cf-pdf-bookmark-${doc.label}`}
+        className={`fa fa-bookmark cf-pdf-bookmark-${doc.label}`}
         aria-hidden="true"></i> }
-      </div>,
+      </span>,
       <span className="fa-stack fa-3x cf-pdf-comment-indicator">
         <i className="fa fa-comment-o fa-stack-2x"></i>
         <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
@@ -92,12 +91,14 @@ export default class PdfListView extends React.Component {
               </span>
             </div>
           </div>
-          <div>
-            <Table
-              headers={this.getDocumentTableHeaders()}
-              buildRowValues={this.buildDocumentRow}
-              values={this.props.documents}
-            />
+          <div className="usa-grid-full">
+            <div className="usa-width-one-whole">
+              <Table
+                headers={this.getDocumentTableHeaders()}
+                buildRowValues={this.buildDocumentRow}
+                values={this.props.documents}
+              />
+            </div>
           </div>
         </div>
       </div>
