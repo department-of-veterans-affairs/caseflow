@@ -184,7 +184,7 @@ For parallelized tests:
 
 ### Feature Toggle
 
-You can turn on and turn off features using `rails c`. Example usage:
+To enable and disable features using `rails c`. Example usage:
 
 ```
 # users
