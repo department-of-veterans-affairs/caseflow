@@ -375,16 +375,14 @@ export default class PdfViewer extends BaseForm {
     if (label === this.props.label) {
       this.props.setLabel('');
     } else {
-      this.props.setLabel(label);  
+      this.props.setLabel(label);
     }
   }
 
   render() {
     let comments = [];
-    let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
-    let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
-
     let selectedLabels = {};
+
     selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {

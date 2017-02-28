@@ -11,17 +11,17 @@ export default class DecisionReviewer extends React.Component {
 
     let selectedLabels = {
       blue: false,
-      orange: false,
-      white: false,
-      pink: false,
       green: false,
+      orange: false,
+      pink: false,
+      white: false,
       yellow: false
-    }
+    };
 
     this.state = {
       currentPdfIndex: null,
       filterBy: '',
-      selectedLabels: selectedLabels,
+      selectedLabels,
       sortBy: 'date',
       sortDirection: 'ascending',
       unsortedDocuments: [...this.props.appealDocuments]
@@ -121,9 +121,9 @@ export default class DecisionReviewer extends React.Component {
   // on the document.
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();
-    let labelsSelected = Object.keys(this.state.selectedLabels).reduce((anySelected, label) => {
-      return anySelected || this.state.selectedLabels[label];
-    }, false);
+    let labelsSelected = Object.keys(this.state.selectedLabels).
+      reduce((anySelected, label) =>
+        anySelected || this.state.selectedLabels[label], false);
 
     let filteredDocuments = documents.filter((doc) => {
       // if there is a label selected, we filter on that.
@@ -144,6 +144,7 @@ export default class DecisionReviewer extends React.Component {
           return true;
         }
       });
+
       return false;
     });
 
@@ -151,22 +152,23 @@ export default class DecisionReviewer extends React.Component {
   }
 
   setLabel = (pdf) => (label) => {
-    let data = {label: label};
-    let document_id = this.state.documents[pdf].id;
+    let data = { label };
+    let documentId = this.state.documents[pdf].id;
 
-    ApiUtil.patch(`/document/${document_id}/set-label`, { data })
-      .then(() => {
+    ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
+      then(() => {
         let unsortedDocs = [...this.state.unsortedDocuments];
 
         // We need to update the label in both the unsorted
         // and sorted list of documents.
         unsortedDocs.forEach((doc) => {
-          if (doc.id === document_id) {
+          if (doc.id === documentId) {
             doc.label = label;
           }
         });
 
         let docs = [...this.state.documents];
+
         docs[pdf].label = label;
 
         this.setState({
@@ -185,10 +187,11 @@ export default class DecisionReviewer extends React.Component {
   }
 
   onLabelSelected = (label) => () => {
-    let selectedLabels = {...this.state.selectedLabels};
+    let selectedLabels = { ...this.state.selectedLabels };
+
     selectedLabels[label] = !selectedLabels[label];
     this.setState({
-      selectedLabels: selectedLabels
+      selectedLabels
     }, this.sortAndFilter);
   }
 

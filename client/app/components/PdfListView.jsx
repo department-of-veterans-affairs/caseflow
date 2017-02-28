@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
-import DocumentLabels, * as Labels from '../components/DocumentLabels';
+import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
-import TextField from '../components/TextField';
 import SearchBar from '../components/SearchBar';
 
 export default class PdfListView extends React.Component {
@@ -50,8 +49,8 @@ export default class PdfListView extends React.Component {
   }
 
   buildDocumentRow = (doc, index) => {
-    let numberOfComments = this.props.annotationStorage
-      .getAnnotationByDocumentId(doc.id).length;
+    let numberOfComments = this.props.annotationStorage.
+      getAnnotationByDocumentId(doc.id).length;
 
     return [
       <span>
