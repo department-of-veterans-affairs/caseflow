@@ -5,7 +5,6 @@ import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
-import _ from 'lodash';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -526,10 +525,9 @@ export default class EstablishClaim extends BaseForm {
   }
 
   prepareData() {
-    let stateObject = _.cloneDeep(this.state);
+    let claim = this.getFormValues(this.state.claimForm);
 
-    stateObject.claimForm.stationOfJurisdiction.value =
-        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
+    claim.stationOfJurisdiction = claim.stationOfJurisdiction.substring(0, 3);
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -537,11 +535,11 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...this.getFormValues(stateObject.claimForm),
+        ...claim,
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       },
-      specialIssues: this.getFormValues(stateObject.specialIssues)
+      specialIssues: this.getFormValues(this.state.specialIssues)
     });
   }
 
