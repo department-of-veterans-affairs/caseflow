@@ -9,9 +9,6 @@ export default class DocumentLabels extends React.Component {
     let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
 
     let bookmarks = LABELS.map((label) => {
-      let className = `fa fa-bookmark cf-pdf-bookmark-${label}`;
-
-
       return <Button
         key={label}
         name={label}
@@ -19,7 +16,7 @@ export default class DocumentLabels extends React.Component {
           bookmarkClassesSelected : bookmarkClasses}
         onClick={this.props.onClick(label)}>
         <i
-          className={className}
+          className={`fa fa-bookmark cf-pdf-bookmark-${label}`}
           aria-hidden="true"></i>
       </Button>;
     });

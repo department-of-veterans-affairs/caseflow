@@ -5,22 +5,6 @@ import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 
 export default class PdfListView extends React.Component {
-  constructor(props) {
-    super(props);
-
-    let sortIcon;
-
-    if (this.props.sortDirection === 'ascending') {
-      sortIcon = <i className="fa fa-caret-down" aria-hidden="true"></i>;
-    } else {
-      sortIcon = <i className="fa fa-caret-up" aria-hidden="true"></i>;
-    }
-
-    this.state = {
-      sortIcon
-    };
-  }
-
   getDocumentTableHeaders = () => {
     let className;
 
@@ -90,14 +74,12 @@ export default class PdfListView extends React.Component {
               </span>
             </div>
           </div>
-          <div className="usa-grid-full">
-            <div className="usa-width-one-whole">
-              <Table
-                headers={this.getDocumentTableHeaders()}
-                buildRowValues={this.buildDocumentRow}
-                values={this.props.documents}
-              />
-            </div>
+          <div>
+            <Table
+              headers={this.getDocumentTableHeaders()}
+              buildRowValues={this.buildDocumentRow}
+              values={this.props.documents}
+            />
           </div>
         </div>
       </div>

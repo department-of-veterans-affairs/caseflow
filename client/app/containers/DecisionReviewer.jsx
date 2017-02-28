@@ -151,16 +151,18 @@ export default class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  setLabel = (pdf) => (label) => {
+  setLabel = (pdfIndex) => (label) => {
     let data = { label };
-    let documentId = this.state.documents[pdf].id;
+    let documentId = this.state.documents[pdfIndex].id;
 
     ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
       then(() => {
         let unsortedDocs = [...this.state.unsortedDocuments];
 
         // We need to update the label in both the unsorted
-        // and sorted list of documents.
+        // and sorted list of documents. PdfIndex refers to the
+        // sorted list. For the unsorted list, we need to look
+        // it up by documentId.
         unsortedDocs.forEach((doc) => {
           if (doc.id === documentId) {
             doc.label = label;
@@ -168,8 +170,7 @@ export default class DecisionReviewer extends React.Component {
         });
 
         let docs = [...this.state.documents];
-
-        docs[pdf].label = label;
+        docs[pdfIndex].label = label;
 
         this.setState({
           documents: docs,
@@ -225,7 +226,6 @@ export default class DecisionReviewer extends React.Component {
           name={documents[this.state.currentPdfIndex].filename}
           previousPdf={this.previousPdf}
           nextPdf={this.nextPdf}
-          pdfWorker={this.props.pdfWorker}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.currentPdfIndex)}
