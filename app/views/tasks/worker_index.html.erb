@@ -1,3 +1,4 @@
+<%= current_user_historical_tasks.map(&:to_hash) %>
 <%= react_component("BaseContainer", props: {
   page: "CaseWorkerIndex",
   availableTasks: !!current_user_next_task,

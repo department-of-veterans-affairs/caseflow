@@ -125,6 +125,9 @@ RSpec.feature "Dispatch" do
     context "Skip the associate EP page" do
       before do
         BGSService.end_product_data = []
+
+        @file_number ||=
+          Fakes::AppealRepository.records[@completed_task.appeal.vacols_id][:vbms_id]
       end
 
       scenario "Establish a new claim page and process pt1" do
@@ -132,7 +135,9 @@ RSpec.feature "Dispatch" do
 
         # View history
         expect(page).to have_content("Establish Next Claim")
-        expect(page).to have_css("thead")
+        # expect(page).to have_css("thead")
+        expect(page).to have_css("tr#task-#{@completed_task.id}")
+        expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
