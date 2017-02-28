@@ -37,7 +37,7 @@
           <% current_user_historical_tasks.each do |task| %>
             <tr id="task-<%= task.id %>">
               <td>
-                <%= "#{task.cached_veteran_name} (#{task.appeal.vacols_id})" %>
+                <%= "#{task.cached_veteran_name} (#{task.appeal.vbms_id})" %>
               </td>
               <td>
                 <%= task.completed_at.localtime.strftime('%m/%d/%Y') %>
