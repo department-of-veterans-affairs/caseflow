@@ -5,6 +5,7 @@ import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
+import _ from 'lodash';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -525,7 +526,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   prepareData() {
-    let stateObject = this.state;
+    let stateObject = _.cloneDeep(this.state);
 
     stateObject.claimForm.stationOfJurisdiction.value =
         stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
