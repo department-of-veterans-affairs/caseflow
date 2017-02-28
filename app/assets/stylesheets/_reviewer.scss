@@ -4,6 +4,13 @@
 @import 'font-awesome';
 
 $caseflow-background: #f9f9f9;
+$bookmark-blue: #23abf6;
+$bookmark-orange: #f6a623;
+$bookmark-white: #ffffff;
+$bookmark-white-outline: #5b616b;
+$bookmark-pink: #f772e7;
+$bookmark-green: #3fcd65;
+$bookmark-yellow: #efdf1a;
 
 .cf-nav-full-screen {
   padding: 10px 30px;
@@ -86,6 +93,7 @@ svg[aria-hidden=true],
   position: absolute;
   text-align: left;
   background: $caseflow-background;
+  border-top: 1px solid $color-gray-lighter;
 }
 
 .cf-document-info-wrapper {
@@ -95,7 +103,7 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 240px;
+  top: 225px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
@@ -160,12 +168,12 @@ svg[aria-hidden=true],
 }
 
 .cf-pdf-bookmarks {
-  transform: scale(2, 2.6);
+  transform: scale(1.5, 2);
 }
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 15px !important;
+  margin: 0 8px !important;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -179,6 +187,10 @@ svg[aria-hidden=true],
   &:focus {
     box-shadow: none;
   }
+}
+
+[type="button"].cf-pdf-spaced-buttons {
+  padding: 0 15px;
 }
 
 .cf-pdf-edit-comment {
@@ -195,6 +207,10 @@ svg[aria-hidden=true],
   margin: auto;
   padding: 10px;
   background-color: $color-white;
+
+  &:hover {
+    box-shadow: 1px 1px 5px 0 $color-gray;
+  }
 }
 
 .cf-heading-alt {
@@ -219,4 +235,44 @@ svg[aria-hidden=true],
 
 .pdfViewer.singlePageView .page {
   margin: auto;
+}
+
+.cf-pdf-comment-indicator {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.cf-pdf-navigation {
+  position: absolute;
+  bottom: 50%;
+  z-index: 200;
+  width: 100%;
+}
+
+.cf-pdf-bookmark-blue {
+  color: $bookmark-blue;
+}
+
+.cf-pdf-bookmark-orange {
+  color: $bookmark-orange;
+}
+
+.cf-pdf-bookmark-white {
+  color: $bookmark-white;
+}
+
+.cf-pdf-bookmark-white-outline {
+  color: $bookmark-white-outline;
+}
+
+.cf-pdf-bookmark-pink {
+  color: $bookmark-pink;
+}
+
+.cf-pdf-bookmark-green {
+  color: $bookmark-green;
+}
+
+.cf-pdf-bookmark-yellow {
+  color: $bookmark-yellow;
 }
