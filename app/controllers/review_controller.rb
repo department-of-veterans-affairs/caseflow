@@ -11,7 +11,11 @@ class ReviewController < ApplicationController
   end
 
   def show
-    @document = Document.find(params[:id])
+    @document = Document.find(params[:id]).tap do |t|
+      t.filename = params[:filename]
+      t.type = params[:type]
+      t.received_at = params[:received_at]
+    end
   end
 
   # TODO: Scope this down so that users can only see documents

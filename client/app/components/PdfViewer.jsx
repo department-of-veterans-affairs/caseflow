@@ -419,8 +419,8 @@ export default class PdfViewer extends BaseForm {
         <div className="cf-pdf-page-container">
           <div className="cf-pdf-container">
             <div className="cf-pdf-header cf-pdf-toolbar">
-              <div className="usa-grid-full">
-                <div className="usa-width-one-half cf-pdf-buttons-left">
+              <div>
+                <span className="cf-pdf-buttons-left">
                   { !this.props.hideNavigation &&
                     <Button
                       name="backToDocuments"
@@ -429,10 +429,10 @@ export default class PdfViewer extends BaseForm {
                       <i className="fa fa-chevron-left" aria-hidden="true"></i>
                       &nbsp; View all documents
                     </Button> }
-                </div>
-                <div className="usa-width-one-half cf-pdf-buttons-right">
+                </span>
+                <span className="cf-right-side">
                   {this.props.name}
-                </div>
+                </span>
               </div>
             </div>
             { !this.props.hideNavigation &&
