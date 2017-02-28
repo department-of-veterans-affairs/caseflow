@@ -16,7 +16,7 @@ export default class PdfListView extends React.Component {
 
     let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
 
-
+    // We have blank headers for the comment indicator and label indicator columns
     return [
       '',
       '',

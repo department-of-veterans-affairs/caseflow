@@ -170,6 +170,7 @@ export default class DecisionReviewer extends React.Component {
         });
 
         let docs = [...this.state.documents];
+
         docs[pdfIndex].label = label;
 
         this.setState({

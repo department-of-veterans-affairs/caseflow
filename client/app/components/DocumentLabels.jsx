@@ -8,8 +8,7 @@ export default class DocumentLabels extends React.Component {
     let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
     let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
 
-    let bookmarks = LABELS.map((label) => {
-      return <Button
+    let bookmarks = LABELS.map((label) => <Button
         key={label}
         name={label}
         classNames={this.props.selectedLabels[label] ?
@@ -18,8 +17,7 @@ export default class DocumentLabels extends React.Component {
         <i
           className={`fa fa-bookmark cf-pdf-bookmark-${label}`}
           aria-hidden="true"></i>
-      </Button>;
-    });
+      </Button>);
 
     return <span>
       {bookmarks}
