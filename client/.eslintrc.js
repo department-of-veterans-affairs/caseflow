@@ -51,7 +51,7 @@ module.exports = {
     "guard-for-in": "error",
     "handle-callback-err": "error",
     "id-blacklist": "error",
-    "id-length": ["error", { "exceptions": ["i", "j", "k", "_"] }],
+    "id-length": ["error", { "exceptions": ["i", "j", "k"] }],
     "id-match": "error",
     "indent": ["error", 2],
     "react/jsx-uses-react": "error",
