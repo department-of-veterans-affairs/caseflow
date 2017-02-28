@@ -484,6 +484,7 @@ DEPENDENCIES
   rainbow
   rb-readline
   react_on_rails (~> 6)
+  redis-namespace
   redis-rails
   request_store
   rspec
