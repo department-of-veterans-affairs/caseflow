@@ -502,7 +502,7 @@ export default class EstablishClaim extends BaseForm {
 
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
-    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return `${stationKey} - ${
         this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
