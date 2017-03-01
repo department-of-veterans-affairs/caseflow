@@ -234,7 +234,7 @@ class Task < ActiveRecord::Base
        [:serialized_decision_date,
         :veteran_name,
         :decision_type,
-        :sanitized_vbms_id] }],
+        :vbms_id] }],
       methods: [:progress_status, :days_since_creation, :completion_status_text]
     )
   end
