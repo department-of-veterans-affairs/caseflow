@@ -467,8 +467,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getEmailFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
@@ -494,8 +493,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRegionalOfficeFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return this.getCityAndState(constant[regionalOfficeKey]);
   }
@@ -683,7 +681,6 @@ export default class EstablishClaim extends BaseForm {
 
 EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
-  regionalOfficeStations: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
 
