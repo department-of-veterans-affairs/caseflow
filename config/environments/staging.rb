@@ -42,4 +42,22 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # configure pry
+  silence_warnings do
+    begin
+      require 'pry'
+      config.console = Pry
+      unless defined? Pry::ExtendCommandBundle
+        Pry::ExtendCommandBundle = Module.new
+      end
+      require "rails/console/app"
+      require "rails/console/helpers"
+      require_relative "../../lib/helpers/console_methods"
+
+      TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
+      TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
+    rescue LoadError => e
+    end
+  end
 end

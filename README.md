@@ -151,7 +151,7 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 Now you'll be able to install the gems required to run the app connected to VBMS and VACOLS:
 `$ bundle install --with staging`
 
-Set the development VACOLS credentials as environment variables.  
+Set the development VACOLS credentials as environment variables.
 (ask a team member for them)
 ```
 export VACOLS_USERNAME=username
@@ -181,3 +181,44 @@ For parallelized tests:
 `$ rake parallel:setup[4]`
 
 `$ rake ci:all`
+
+### Feature Toggle
+
+To enable and disable features using `rails c`. Example usage:
+
+```
+# users
+user1 = User.new(regional_office: "RO03")
+user2 = User.new(regional_office: "RO04")
+
+# enable for everyone
+FeatureToggle.enable!(:apple)
+=> true
+FeatureToggle.enabled?(:apple, user1)
+=> true
+
+# enable for a list of regional offices
+FeatureToggle.enable!(:apple, regional_offices: ["RO03", "RO08"])
+=> true
+
+# add more regional offices to the same feature
+FeatureToggle.enable!(:apple, regional_offices: ["RO03", "RO09"])
+=> true
+
+# view the details
+FeatureToggle.details_for(:apple)
+=> { :regional_offices => ["RO03", "RO08", "RO09"] }
+
+# check if the feature is enabled for a given user
+FeatureToggle.enabled?(:apple, user1)
+=> true
+FeatureToggle.enabled?(:apple, user2)
+=> false
+
+# disable a few regional offices
+FeatureToggle.disable!(:apple, regional_offices: ["RO03", "RO09"])
+=> true
+FeatureToggle.details_for(:apple)
+=> { :regional_offices =>["RO08"] }
+```
+

@@ -145,7 +145,7 @@ describe Certification do
         it "populates a form8 with appeal data when form8 data is not present" do
           cert = Certification.new(vacols_id: "4949")
           form = double
-          allow(cert).to receive(:form8).and_return(form)
+          allow(cert).to receive(:form8).and_return(nil, form)
           allow(form).to receive(:update_from_appeal)
 
           cert.start!
@@ -159,7 +159,7 @@ describe Certification do
           cert = Certification.new(vacols_id: "4949")
           form = double
           # TODO(alex): these tests are too mocked out. refactor them to be more realistic!
-          allow(cert).to receive(:form8).and_return(form)
+          allow(cert).to receive(:form8).and_return(nil, form)
           allow(form).to receive(:update_from_appeal)
           allow(form).to receive(:update_certification_date)
           allow(form).to receive(:updated_at).and_return(Time.zone.now)
@@ -207,6 +207,7 @@ describe Certification do
       it "returns a new form8" do
         cert = Certification.create!
         expect(Form8.exists?(certification_id: cert.id)).to eq(false)
+        cert.start!
         expect(cert.form8.class).to eq(Form8)
       end
     end
