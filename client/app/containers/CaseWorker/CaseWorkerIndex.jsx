@@ -5,7 +5,6 @@ import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
-import TasksManagerIndex from '../TasksManager/TasksManagerIndex';
 
 const TABLE_HEADERS = [
   'Veteran',
@@ -16,17 +15,14 @@ const TABLE_HEADERS = [
 const COLUMN_CLASSES = ['cf-txt-l ', 'cf-txt-c', 'cf-txt-c', 'cf-txt-c'];
 
 export default class CaseWorkerIndex extends BaseForm {
-  constructor(props) {
-    super(props);
-  }
 
   buildUserRow = (caseInformation) =>
-  [
-    caseInformation.appeal.veteran_name + " (" + caseInformation.appeal.vbms_id + ")",
-    formatDate(caseInformation.appeal.serialized_decision_date),
-    caseInformation.appeal.decision_type,
-    caseInformation.completion_status_text
-  ]
+    [
+      `${caseInformation.appeal.veteran_name} (${caseInformation.appeal.vbms_id})`,
+      formatDate(caseInformation.completed_at),
+      caseInformation.appeal.decision_type,
+      caseInformation.completion_status_text
+    ]
 
   onClick = () => {
     ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
@@ -43,19 +39,16 @@ export default class CaseWorkerIndex extends BaseForm {
   render() {
     let {
       availableTasks,
-      buttonText,
-      completedCountToday,
-      currentUserHistoricalTasks,
-      totalAssignedIssues
+      buttonText
     } = this.props;
 
-        return <div className="cf-app-segment cf-app-segment--alt">
+    return <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-width-one-whole task-start-wrapper">
             <div className="cf-right-side">
               <span className="cf-button-associated-text-right">
                 { availableTasks &&
-                  this.props.totalAssignedIssues + " cases assigned, " +
-                this.props.completedCountToday + " completed"
+                  `${this.props.totalAssignedIssues} cases assigned, ${
+                this.props.completedCountToday} completed`
                 }
                 { !availableTasks &&
                   "There are no more claims in your queue."
@@ -92,5 +85,5 @@ export default class CaseWorkerIndex extends BaseForm {
 }
 
 CaseWorkerIndex.propTypes = {
-  currentUserHistoricalTasks: PropTypes.array,
+  currentUserHistoricalTasks: PropTypes.array
 };

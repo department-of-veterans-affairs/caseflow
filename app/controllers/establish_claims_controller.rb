@@ -43,16 +43,14 @@ class EstablishClaimsController < TasksController
   end
 
   def total_assigned_issues
-    if (Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count") == nil)
-      employee_total = 0
+    if Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count").nil?
       per_employee_quota = 0
     else
       employee_total = Rails.cache.read("employee_count").to_i
       per_employee_quota = (@completed_count_today + @remaining_count_today) /
-      employee_total
+                           employee_total
     end
-    users_remaining_assigned = per_employee_quota - @completed_count_today
-    return per_employee_quota
+    per_employee_quota
   end
   helper_method :total_assigned_issues
 

@@ -135,8 +135,7 @@ RSpec.feature "Dispatch" do
 
         # View history
         expect(page).to have_content("Establish Next Claim")
-        # expect(page).to have_css("thead")
-        expect(page).to have_css("tr#task-#{@completed_task.id}")
+        expect(page).to have_css("thead")
         expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish Next Claim"
