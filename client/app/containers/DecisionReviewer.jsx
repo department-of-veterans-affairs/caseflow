@@ -23,6 +23,7 @@ export default class DecisionReviewer extends React.Component {
       currentPdfIndex: null,
       filterBy: '',
       selectedLabels,
+      isCommentLabelSelected: false,
       sortBy: 'date',
       sortDirection: 'ascending',
       unsortedDocuments: this.props.appealDocuments.map((doc) => {
@@ -32,11 +33,11 @@ export default class DecisionReviewer extends React.Component {
       })
     };
 
-    this.state.documents = this.filterDocuments(
-      this.sortDocuments(this.state.unsortedDocuments));
-
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
+
+    this.state.documents = this.filterDocuments(
+      this.sortDocuments(this.state.unsortedDocuments));
   }
 
   previousPdf = () => {
@@ -136,6 +137,13 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
+      let annotations = this.annotationStorage.getAnnotationByDocumentId(doc.id);
+
+      if (this.state.isCommentLabelSelected && annotations.length === 0) {
+        return false;
+      }
+
+
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {
@@ -144,7 +152,7 @@ export default class DecisionReviewer extends React.Component {
         return true;
       }
 
-      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((annotation) => {
+      annotations.forEach((annotation) => {
         if (annotation.comment.toLowerCase().includes(filterBy)) {
           return true;
         }
@@ -206,6 +214,12 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  selectComments = () => {
+    this.setState({
+      isCommentLabelSelected: !this.state.isCommentLabelSelected
+    }, this.sortAndFilter);
+  }
+
   render() {
     let {
       documents,
@@ -225,7 +239,9 @@ export default class DecisionReviewer extends React.Component {
           filterBy={this.state.filterBy}
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
-          selectLabel={this.onLabelSelected} />}
+          selectLabel={this.onLabelSelected}
+          selectComments={this.selectComments}
+          isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`review/pdf?id=` +

@@ -4,6 +4,7 @@ import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
+import Button from '../components/Button';
 
 export default class PdfListView extends React.Component {
   getDocumentTableHeaders = () => {
@@ -67,6 +68,15 @@ export default class PdfListView extends React.Component {
                 <DocumentLabels
                   onClick={this.props.selectLabel}
                   selectedLabels={this.props.selectedLabels} />
+              </span>
+              
+              <span>
+                <Button
+                  name='comment-selector'
+                  onClick={this.props.selectComments}
+                  classNames={['cf-pdf-button', `cf-${this.props.isCommentLabelSelected? 'selected-' : ''}label`]}>
+                  <i className="fa fa-comment-o fa-lg"></i>
+                </Button>
               </span>
             </div>
             <div className="usa-width-one-third">
