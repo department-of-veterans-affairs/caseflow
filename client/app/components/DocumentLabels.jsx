@@ -1,7 +1,15 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
+import StringUtil from '../util/StringUtil';
 
-const LABELS = ['blue', 'orange', 'white', 'pink', 'green', 'yellow'];
+const LABELS = [
+  'decisions',
+  'veteranSubmitted',
+  'procedural',
+  'vaMedial',
+  'layperson',
+  'privateMedical'
+];
 
 export default class DocumentLabels extends React.Component {
   render() {
@@ -15,7 +23,8 @@ export default class DocumentLabels extends React.Component {
           bookmarkClassesSelected : bookmarkClasses}
         onClick={this.props.onClick(label)}>
         <i
-          className={`fa fa-bookmark cf-pdf-bookmark-${label}`}
+          className={`fa fa-bookmark cf-pdf-bookmark-` +
+            `${StringUtil.camelCaseToDashCase(label)}`}
           aria-hidden="true"></i>
       </Button>);
 

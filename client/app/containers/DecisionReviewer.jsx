@@ -4,18 +4,19 @@ import PdfListView from '../components/PdfListView';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
+import StringUtil from '../util/StringUtil';
 
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
 
     let selectedLabels = {
-      blue: false,
-      green: false,
-      orange: false,
-      pink: false,
-      white: false,
-      yellow: false
+      decisions: false,
+      layperson: false,
+      privateMedical: false,
+      procedural: false,
+      vaMedial: false,
+      veteranSubmitted: false
     };
 
     this.state = {
@@ -24,7 +25,11 @@ export default class DecisionReviewer extends React.Component {
       selectedLabels,
       sortBy: 'date',
       sortDirection: 'ascending',
-      unsortedDocuments: [...this.props.appealDocuments]
+      unsortedDocuments: this.props.appealDocuments.map((doc) => {
+        doc.label = doc.label ? StringUtil.snakeCaseToCamelCase(doc.label) : null;
+
+        return doc;
+      })
     };
 
     this.state.documents = this.filterDocuments(
@@ -152,7 +157,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   setLabel = (pdfIndex) => (label) => {
-    let data = { label };
+    let data = { label: StringUtil.camelCaseToSnakeCase(label) };
     let documentId = this.state.documents[pdfIndex].id;
 
     ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
@@ -178,7 +183,11 @@ export default class DecisionReviewer extends React.Component {
           unsortedDocuments: unsortedDocs
         });
       }, () => {
-        // Do something with error
+
+        /* eslint-disable no-console */
+        console.log('Error setting label');
+
+        /* eslint-enable no-console */
       });
   }
 

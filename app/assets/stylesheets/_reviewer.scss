@@ -257,21 +257,21 @@ svg[aria-hidden=true],
   width: 100%;
 }
 
-.cf-pdf-bookmark-blue {
+.cf-pdf-bookmark-decisions {
   color: $bookmark-blue;
 }
 
-.cf-pdf-bookmark-orange {
+.cf-pdf-bookmark-veteran-submitted {
   color: $bookmark-orange;
 }
 
-.cf-pdf-bookmark-white {
+.cf-pdf-bookmark-procedural {
   color: $bookmark-white;
   position: relative;
 }
 
 // This is to give the white bookmark a gray outline
-.cf-pdf-bookmark-white::after {
+.cf-pdf-bookmark-procedural::after {
   // This is the unicode for the fa-bookmark-o icon
   content: '\f097';
   color: $bookmark-white-outline;
@@ -279,14 +279,14 @@ svg[aria-hidden=true],
   left: 0;
 }
 
-.cf-pdf-bookmark-pink {
+.cf-pdf-bookmark-va-medial {
   color: $bookmark-pink;
 }
 
-.cf-pdf-bookmark-green {
+.cf-pdf-bookmark-layperson {
   color: $bookmark-green;
 }
 
-.cf-pdf-bookmark-yellow {
+.cf-pdf-bookmark-private-medical {
   color: $bookmark-yellow;
 }

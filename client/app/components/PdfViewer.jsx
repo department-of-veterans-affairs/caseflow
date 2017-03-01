@@ -91,10 +91,18 @@ export default class PdfViewer extends BaseForm {
             ).
             catch(() => {
               // TODO: Add error case if comment can't be added
+              /* eslint-disable no-console */
+              console.log('Error editing annotation in saveEdit');
+
+              /* eslint-enable no-console */
             });
         }).
           catch(() => {
-            // TODO: Add error case if comment can't be added
+
+            /* eslint-disable no-console */
+            console.log('Error getting annotation in saveEdit');
+
+            /* eslint-enable no-console */
           });
 
       this.setState({

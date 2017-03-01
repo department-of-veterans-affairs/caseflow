@@ -3,6 +3,7 @@ import Table from '../components/Table';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
+import StringUtil from '../util/StringUtil';
 
 export default class PdfListView extends React.Component {
   getDocumentTableHeaders = () => {
@@ -39,7 +40,8 @@ export default class PdfListView extends React.Component {
     return [
       <span>
         { doc.label && <i
-        className={`fa fa-bookmark cf-pdf-bookmark-${doc.label}`}
+        className={`fa fa-bookmark cf-pdf-bookmark-` +
+          `${StringUtil.camelCaseToDashCase(doc.label)}`}
         aria-hidden="true"></i> }
       </span>,
       <span className="fa-stack fa-3x cf-pdf-comment-indicator">

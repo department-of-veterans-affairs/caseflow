@@ -21,6 +21,15 @@ class Document < ActiveRecord::Base
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
+  enum label: {
+    decisions: 0,
+    veteran_submitted: 1,
+    procedural: 2,
+    va_medial: 3,
+    layperson: 4,
+    private_medical: 5
+  }
+
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 
   def type?(type)
@@ -28,21 +37,21 @@ class Document < ActiveRecord::Base
   end
 
   def self.from_vbms_document(vbms_document, save_record = false)
-    if save_record
-      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
-        t.type = TYPES[vbms_document.doc_type] || :other
-        t.alt_types = (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] }
-        t.received_at = vbms_document.received_at
-        t.filename = vbms_document.filename
-      end
-    else
-      new(
+    attributes =
+      {
         type: TYPES[vbms_document.doc_type] || :other,
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
         filename: vbms_document.filename
-      )
+      }
+
+    if save_record
+      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
+        t.assign_attributes(attributes)
+      end
+    else
+      new(attributes)
     end
   end
 

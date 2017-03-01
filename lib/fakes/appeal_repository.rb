@@ -79,7 +79,8 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  def self.fetch_documents_for(appeal, _save_document)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def self.fetch_documents_for(appeal, save:)
     vbms_record = @records[appeal.vbms_id]
     if vbms_record
       appeal.documents = vbms_record[:documents]
@@ -87,6 +88,7 @@ class Fakes::AppealRepository
     end
     appeal.documents = @documents || []
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.fetch_document_file(document)
     path =
@@ -422,4 +424,5 @@ class Fakes::AppealRepository
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
