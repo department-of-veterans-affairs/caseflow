@@ -125,6 +125,9 @@ RSpec.feature "Dispatch" do
     context "Skip the associate EP page" do
       before do
         BGSService.end_product_data = []
+
+        @file_number ||=
+          Fakes::AppealRepository.records[@completed_task.appeal.vacols_id][:vbms_id]
       end
 
       scenario "Establish a new claim page and process pt1" do
@@ -133,6 +136,7 @@ RSpec.feature "Dispatch" do
         # View history
         expect(page).to have_content("Establish Next Claim")
         expect(page).to have_css("tr#task-#{@completed_task.id}")
+        expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish Next Claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -167,7 +171,7 @@ RSpec.feature "Dispatch" do
         click_on "Route Claim"
 
         # Test text, radio button, & checkbox inputs
-        page.find("#gulfWarRegistry").trigger("click")
+        find_label_for("gulfWarRegistry").click
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -214,8 +218,8 @@ RSpec.feature "Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
         # Select special issues
-        page.find("#riceCompliance").trigger("click")
-        page.find("#privateAttorneyOrAgent").trigger("click")
+        find_label_for("riceCompliance").click
+        find_label_for("privateAttorneyOrAgent").click
 
         # Move on to note page
         click_on "Route Claim"
@@ -230,7 +234,7 @@ RSpec.feature "Dispatch" do
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{@task.id}"
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
-        page.find("#confirmNote").trigger("click")
+        find_label_for("confirmNote").click
 
         click_on "Finish Routing Claim"
 
@@ -370,7 +374,7 @@ RSpec.feature "Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
       # set special issue to ensure it is saved in the database
-      page.find("#mustardGas").trigger("click")
+      find_label_for("mustardGas").click
 
       click_on "Route Claim"
 
@@ -399,7 +403,7 @@ RSpec.feature "Dispatch" do
       visit "/dispatch/establish-claim/#{@task.id}"
 
       # click on special issue
-      page.find("#riceCompliance").trigger("click")
+      find_label_for("riceCompliance").click
 
       # Open modal
       click_on "Cancel"
@@ -436,28 +440,39 @@ RSpec.feature "Dispatch" do
     scenario "An unhandled special issue routes to email page" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+      find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
       click_on "Route Claim"
       expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
-      page.find("#confirmEmail").trigger("click")
+      find_label_for("confirmEmail").click
       click_on "Finish Routing Claim"
-      expect(page).to have_content("Congratulations!")
+      expect(page).to have_content("Sent email notification")
+    end
+
+    scenario "An unhandled special issue with no email routes to no email page" do
+      @task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{@task.id}"
+      find_label_for("vocationalRehab").click
+      click_on "Route Claim"
+      expect(page).to have_content("Please process this claim manually")
+      find_label_for("confirmEmail").click
+      click_on "Release Claim"
+      expect(page).to have_content("Processed case outside of Caseflow")
     end
 
     scenario "A regional office special issue routes correctly" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
-      page.find("#mustardGas").trigger("click")
+      find_label_for("mustardGas").click
 
       # It should also work even if a unsupported special issue is checked
-      page.find("#dicDeathOrAccruedBenefitsUnitedStates").trigger("click")
+      find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
 
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
 
       click_on "Create End Product"
-      page.find("#confirmNote").trigger("click")
+      find_label_for("confirmNote").click
       click_on "Finish Routing Claim"
 
       expect(page).to have_content("Congratulations!")
@@ -467,7 +482,7 @@ RSpec.feature "Dispatch" do
     scenario "A national office special issue routes correctly" do
       @task2.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task2.id}"
-      page.find("#mustardGas").trigger("click")
+      find_label_for("mustardGas").click
       click_on "Route Claim"
       click_on "Create New EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")

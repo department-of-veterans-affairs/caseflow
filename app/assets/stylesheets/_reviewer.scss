@@ -1,8 +1,16 @@
-@import 'core/variables';
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
 
 $caseflow-background: #f9f9f9;
+$bookmark-blue: #23abf6;
+$bookmark-orange: #f6a623;
+$bookmark-white: #ffffff;
+$bookmark-white-outline: #5b616b;
+$bookmark-pink: #f772e7;
+$bookmark-green: #3fcd65;
+$bookmark-yellow: #efdf1a;
 
 .cf-nav-full-screen {
   padding: 10px 30px;
@@ -247,4 +255,38 @@ svg[aria-hidden=true],
   bottom: 50%;
   z-index: 200;
   width: 100%;
+}
+
+.cf-pdf-bookmark-decisions {
+  color: $bookmark-blue;
+}
+
+.cf-pdf-bookmark-veteran-submitted {
+  color: $bookmark-orange;
+}
+
+.cf-pdf-bookmark-procedural {
+  color: $bookmark-white;
+  position: relative;
+}
+
+// This is to give the white bookmark a gray outline
+.cf-pdf-bookmark-procedural::after {
+  // This is the unicode for the fa-bookmark-o icon
+  content: '\f097';
+  color: $bookmark-white-outline;
+  position: absolute;
+  left: 0;
+}
+
+.cf-pdf-bookmark-va-medial {
+  color: $bookmark-pink;
+}
+
+.cf-pdf-bookmark-layperson {
+  color: $bookmark-green;
+}
+
+.cf-pdf-bookmark-private-medical {
+  color: $bookmark-yellow;
 }

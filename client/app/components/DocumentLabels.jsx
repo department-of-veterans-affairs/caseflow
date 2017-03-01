@@ -1,36 +1,32 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
+import StringUtil from '../util/StringUtil';
 
-export const LABEL_COLOR_MAPPING = {
-  blue: {color: '#23ABF6'},
-  orange: {color: '#F6A623'},
-  white: {color: '#5B616B', outline: true},
-  pink: {color: '#F772E7'},
-  green: {color: '#3FCD65'},
-  yellow: {color: '#EFDF1A'}
-};
+const LABELS = [
+  'decisions',
+  'veteranSubmitted',
+  'procedural',
+  'vaMedial',
+  'layperson',
+  'privateMedical'
+];
 
 export default class DocumentLabels extends React.Component {
   render() {
     let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
     let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
 
-    let bookmarks = Object.keys(LABEL_COLOR_MAPPING).map((label) => {
-      let className = 'fa fa-bookmark';
-      if (LABEL_COLOR_MAPPING[label].outline) {
-        className = 'fa fa-bookmark-o';
-      }
-      return <Button
+    let bookmarks = LABELS.map((label) => <Button
         key={label}
         name={label}
-        classNames={this.props.selectedLabels[label] ? bookmarkClassesSelected : bookmarkClasses}
+        classNames={this.props.selectedLabels[label] ?
+          bookmarkClassesSelected : bookmarkClasses}
         onClick={this.props.onClick(label)}>
         <i
-          style={{ color: LABEL_COLOR_MAPPING[label].color }}
-          className={className}
+          className={`fa fa-bookmark cf-pdf-bookmark-` +
+            `${StringUtil.camelCaseToDashCase(label)}`}
           aria-hidden="true"></i>
-      </Button>
-    });
+      </Button>);
 
     return <span>
       {bookmarks}
@@ -39,5 +35,6 @@ export default class DocumentLabels extends React.Component {
 }
 
 DocumentLabels.propTypes = {
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
+  selectedLabels: PropTypes.object
 };

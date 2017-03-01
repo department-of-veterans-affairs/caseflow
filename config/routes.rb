@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       post 'assign-existing-end-product', on: :member
       post 'note-complete', on: :member
       post 'email-complete', on: :member
+      post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
     end

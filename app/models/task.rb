@@ -15,7 +15,8 @@ class Task < ActiveRecord::Base
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
-    special_issue_emailed: 5
+    special_issue_emailed: 5,
+    special_issue_not_emailed: 6
   }.freeze
 
   # Use this to define status texts that don't properly titlize
@@ -182,6 +183,10 @@ class Task < ActiveRecord::Base
     completion_status == self.class.completion_status_code(:special_issue_emailed)
   end
 
+  def special_issue_not_emailed?
+    completion_status == self.class.completion_status_code(:special_issue_not_emailed)
+  end
+
   def days_since_creation
     (Time.zone.now - created_at).to_i / 1.day
   end
@@ -195,7 +200,10 @@ class Task < ActiveRecord::Base
   end
 
   def no_review_completion_status(status:)
-    status == self.class.completion_status_code(:special_issue_emailed)
+    [
+      self.class.completion_status_code(:special_issue_emailed),
+      self.class.completion_status_code(:special_issue_not_emailed)
+    ].include? status
   end
 
   def save_outgoing_reference(outgoing_reference_id: nil)

@@ -47,12 +47,12 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= fetch_documents!(false)
+    @documents ||= fetch_documents!(save: false)
   end
 
   attr_writer :saved_documents
   def saved_documents
-    @saved_documents ||= fetch_documents!(true)
+    @saved_documents ||= fetch_documents!(save: true)
   end
 
   def annotations_on_documents
@@ -162,8 +162,8 @@ class Appeal < ActiveRecord::Base
     Appeal.uncertify(self)
   end
 
-  def fetch_documents!(save_documents)
-    self.class.repository.fetch_documents_for(self, save_documents)
+  def fetch_documents!(save:)
+    self.class.repository.fetch_documents_for(self, save: save)
     @documents
   end
 

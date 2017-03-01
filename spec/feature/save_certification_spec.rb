@@ -129,7 +129,7 @@ RSpec.feature "Save Certification" do
 
     expect(find_field("17A Name of certifying official").value).to eq("Gieuseppe")
     within_fieldset("17B Title of certifying official") do
-      expect(find_field("Decision Review Officer")).to be_checked
+      expect(find_field("Decision Review Officer", visible: false)).to be_checked
     end
 
     click_on "Preview Completed Form 8"
