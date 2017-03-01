@@ -1,8 +1,16 @@
-@import 'core/variables';
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
 
 $caseflow-background: #f9f9f9;
+$bookmark-blue: #23abf6;
+$bookmark-orange: #f6a623;
+$bookmark-white: #ffffff;
+$bookmark-white-outline: #5b616b;
+$bookmark-pink: #f772e7;
+$bookmark-green: #3fcd65;
+$bookmark-yellow: #efdf1a;
 
 .cf-nav-full-screen {
   padding: 10px 30px;
@@ -41,7 +49,7 @@ $caseflow-background: #f9f9f9;
   overflow-y: scroll;
   overflow-x: visible;
   text-align: center;
-  padding: 10px 0;
+  padding: 30px 0;
   float: left;
 }
 
@@ -85,6 +93,7 @@ svg[aria-hidden=true],
   position: absolute;
   text-align: left;
   background: $caseflow-background;
+  border-top: 1px solid $color-gray-lighter;
 }
 
 .cf-document-info-wrapper {
@@ -94,7 +103,7 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 240px;
+  top: 225px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
@@ -127,14 +136,14 @@ svg[aria-hidden=true],
 .cf-pdf-header {
   position: absolute;
   z-index: 10;
-  opacity: .9;
+  opacity: 1;
   padding: 15px 20px;
 }
 
 .cf-pdf-footer {
   position: absolute;
   z-index: 10;
-  opacity: .9;
+  opacity: 1;
   bottom: 0;
   padding: 0 20px;
   line-height: 50px;
@@ -159,12 +168,12 @@ svg[aria-hidden=true],
 }
 
 .cf-pdf-bookmarks {
-  transform: scale(2, 2.6);
+  transform: scale(1.5, 2);
 }
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 15px !important;
+  margin: 0 8px !important;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -178,6 +187,10 @@ svg[aria-hidden=true],
   &:focus {
     box-shadow: none;
   }
+}
+
+[type="button"].cf-pdf-spaced-buttons {
+  padding: 0 15px;
 }
 
 .cf-pdf-edit-comment {
@@ -194,6 +207,10 @@ svg[aria-hidden=true],
   margin: auto;
   padding: 10px;
   background-color: $color-white;
+
+  &:hover {
+    box-shadow: 1px 1px 5px 0 $color-gray;
+  }
 }
 
 .cf-heading-alt {
@@ -218,4 +235,58 @@ svg[aria-hidden=true],
 
 .pdfViewer.singlePageView .page {
   margin: auto;
+}
+
+.cf-label {
+  opacity: .3;
+}
+
+.cf-selected-label {
+  opacity: 1;
+}
+
+.cf-pdf-comment-indicator {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.cf-pdf-navigation {
+  position: absolute;
+  bottom: 50%;
+  z-index: 200;
+  width: 100%;
+}
+
+.cf-pdf-bookmark-decisions {
+  color: $bookmark-blue;
+}
+
+.cf-pdf-bookmark-veteran-submitted {
+  color: $bookmark-orange;
+}
+
+.cf-pdf-bookmark-procedural {
+  color: $bookmark-white;
+  position: relative;
+}
+
+// This is to give the white bookmark a gray outline
+.cf-pdf-bookmark-procedural::after {
+  // This is the unicode for the fa-bookmark-o icon
+  content: '\f097';
+  color: $bookmark-white-outline;
+  position: absolute;
+  left: 0;
+}
+
+.cf-pdf-bookmark-va-medial {
+  color: $bookmark-pink;
+}
+
+.cf-pdf-bookmark-layperson {
+  color: $bookmark-green;
+}
+
+.cf-pdf-bookmark-private-medical {
+  color: $bookmark-yellow;
 }

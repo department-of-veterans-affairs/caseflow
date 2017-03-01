@@ -7,6 +7,7 @@ import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
+import DocumentLabels from '../components/DocumentLabels';
 
 export default class PdfViewer extends BaseForm {
   constructor(props) {
@@ -90,10 +91,18 @@ export default class PdfViewer extends BaseForm {
             ).
             catch(() => {
               // TODO: Add error case if comment can't be added
+              /* eslint-disable no-console */
+              console.log('Error editing annotation in saveEdit');
+
+              /* eslint-enable no-console */
             });
         }).
           catch(() => {
-            // TODO: Add error case if comment can't be added
+
+            /* eslint-disable no-console */
+            console.log('Error getting annotation in saveEdit');
+
+            /* eslint-enable no-console */
           });
 
       this.setState({
@@ -210,6 +219,13 @@ export default class PdfViewer extends BaseForm {
     // Create a page in the DOM for every page in the PDF
     let viewer = document.getElementById('viewer');
 
+    // If the user has switched to the list view and this element doesnt
+    // exist then don't try to render the PDF.
+    // TODO: look into just hiding the PDFs instead of removing them.
+    if (!viewer) {
+      return;
+    }
+
     viewer.innerHTML = '';
 
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
@@ -286,6 +302,23 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
+  // Returns true if the user is doing some action. i.e.
+  // editing a note, adding a note, or placing a comment.
+  isUserActive = () => this.state.editingComment !== null ||
+      this.state.isAddingComment ||
+      this.state.isPlacingNote
+
+  keyListener = (event) => {
+    if (!this.isUserActive()) {
+      if (event.key === 'ArrowLeft') {
+        this.props.previousPdf();
+      }
+      if (event.key === 'ArrowRight') {
+        this.props.nextPdf();
+      }
+    }
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
@@ -309,6 +342,8 @@ export default class PdfViewer extends BaseForm {
 
     });
 
+    window.addEventListener('keydown', this.keyListener);
+
     this.draw(this.props.file);
 
     // Scroll event to render pages as they come into view
@@ -319,7 +354,7 @@ export default class PdfViewer extends BaseForm {
   }
 
   componentWillUnmount = () => {
-    this.removeEventListeners();
+    window.removeEventListener('keydown', this.keyListener);
   }
 
   componentDidUpdate = () => {
@@ -344,8 +379,19 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
+  onColorLabelChange = (label) => () => {
+    if (label === this.props.label) {
+      this.props.setLabel('');
+    } else {
+      this.props.setLabel(label);
+    }
+  }
+
   render() {
     let comments = [];
+    let selectedLabels = {};
+
+    selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -388,26 +434,36 @@ export default class PdfViewer extends BaseForm {
           <div className="cf-pdf-container">
             <div className="cf-pdf-header cf-pdf-toolbar">
               <div className="usa-grid-full">
-                <div className="usa-width-one-third cf-pdf-buttons-left">
+                <div className="usa-width-one-half cf-pdf-buttons-left">
+                  <Button
+                    name="backToDocuments"
+                    classNames={["cf-pdf-button"]}
+                    onClick={this.props.showList}>
+                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
+                    &nbsp; View all documents
+                  </Button>
+                </div>
+                <div className="usa-width-one-half cf-pdf-buttons-right">
                   {this.props.name}
                 </div>
-                <div className="usa-width-one-third cf-pdf-buttons-center">
-                  {this.state.currentPage} / {this.state.numPages}
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-button"]}
-                    onClick={this.props.previousPdf}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>Previous
-                  </Button>
-                  <Button
-                    name="next"
-                    classNames={["cf-pdf-button"]}
-                    onClick={this.props.nextPdf}>
-                    Next<i className="fa fa-chevron-right" aria-hidden="true"></i>
-                  </Button>
-                </div>
+              </div>
+            </div>
+            <div className="usa-grid-full cf-pdf-navigation">
+              <div className="usa-width-one-half cf-pdf-buttons-left">
+                <Button
+                  name="previous"
+                  classNames={["cf-pdf-button"]}
+                  onClick={this.props.previousPdf}>
+                  <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
+                </Button>
+              </div>
+              <div className="usa-width-one-half cf-pdf-buttons-right">
+                <Button
+                  name="next"
+                  classNames={["cf-pdf-button cf-right-side"]}
+                  onClick={this.props.nextPdf}>
+                  <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
+                </Button>
               </div>
             </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
@@ -420,87 +476,37 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#23ABF6' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#F6A623' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#FFFFFF' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#F772E7' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#3FCD65' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i
-                      style={{ color: '#EFDF1A' }}
-                      className="fa fa-bookmark"
-                      aria-hidden="true"></i>
-                  </Button>
+                  <DocumentLabels
+                    onClick={this.onColorLabelChange}
+                    selectedLabels={selectedLabels}/>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
+                  Page {this.state.currentPage} of {this.state.numPages}
+                </div>
+                <div className="usa-width-one-third cf-pdf-buttons-right">
+                  <Button
+                    name="download"
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+                  >
+                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+                  </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(-0.3)}>
                     <i className="fa fa-minus" aria-hidden="true"></i>
                   </Button>
                   <Button
                     name="fit"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(1)}>
-                    <i className="cf-pdf-button fa fa-arrows-alt" aria-hidden="true"></i>
+                    <i className="fa fa-arrows-alt" aria-hidden="true"></i>
                   </Button>
                   <Button
                     name="previous"
-                    classNames={["cf-pdf-button"]}
+                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(0.3)}>
                     <i className="fa fa-plus" aria-hidden="true"></i>
-                  </Button>
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button name="download" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                  <Button name="print" classNames={["cf-pdf-button"]}>
-                    <i className="cf-pdf-button fa fa-print" aria-hidden="true"></i>
                   </Button>
                 </div>
               </div>
@@ -547,7 +553,9 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string
+  label: PropTypes.string,
+  pdfWorker: PropTypes.string,
+  setLabel: PropTypes.func.isRequired
 };
 
 /* eslint-enable max-lines */

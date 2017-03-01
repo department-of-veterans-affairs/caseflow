@@ -43,6 +43,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :document, only: [] do
+    patch 'set-label', on: :member
+  end
+
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
