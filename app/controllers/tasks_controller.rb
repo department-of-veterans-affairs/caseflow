@@ -114,7 +114,7 @@ class TasksController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles(task_roles[:employee])
+    manager? || verify_authorized_roles(task_roles[:employee])
   end
 
   def verify_assigned_to_current_user
