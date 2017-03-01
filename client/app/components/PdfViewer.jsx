@@ -91,10 +91,18 @@ export default class PdfViewer extends BaseForm {
             ).
             catch(() => {
               // TODO: Add error case if comment can't be added
+              /* eslint-disable no-console */
+              console.log('Error editing annotation in saveEdit');
+
+              /* eslint-enable no-console */
             });
         }).
           catch(() => {
-            // TODO: Add error case if comment can't be added
+
+            /* eslint-disable no-console */
+            console.log('Error getting annotation in saveEdit');
+
+            /* eslint-enable no-console */
           });
 
       this.setState({
@@ -371,8 +379,19 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
+  onColorLabelChange = (label) => () => {
+    if (label === this.props.label) {
+      this.props.setLabel('');
+    } else {
+      this.props.setLabel(label);
+    }
+  }
+
   render() {
     let comments = [];
+    let selectedLabels = {};
+
+    selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -457,10 +476,9 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <DocumentLabels onClick={() => {
-
-                    /* Place Holder */
-                  }} />
+                  <DocumentLabels
+                    onClick={this.onColorLabelChange}
+                    selectedLabels={selectedLabels}/>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   Page {this.state.currentPage} of {this.state.numPages}
@@ -535,7 +553,9 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string
+  label: PropTypes.string,
+  pdfWorker: PropTypes.string,
+  setLabel: PropTypes.func.isRequired
 };
 
 /* eslint-enable max-lines */
