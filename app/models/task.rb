@@ -52,9 +52,8 @@ class Task < ActiveRecord::Base
     end
 
     def completed_today_by_user(user_id)
-      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc, 
-        user_id: user_id
-      )
+      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc,
+            user_id: user_id)
     end
 
     def to_complete

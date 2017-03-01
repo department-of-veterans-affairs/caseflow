@@ -3,9 +3,16 @@ import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 
+const PARSE_INT_RADIX = 10;
+
 export default class EstablishClaimComplete extends React.Component {
 
   render() {
+
+    /*
+      NOTE: Do not provide 'content' as a prop if stats need to be shown
+      as feedback message.
+    */
     let {
       availableTasks,
       buttonText,
@@ -18,17 +25,26 @@ export default class EstablishClaimComplete extends React.Component {
       employeeCount
     } = this.props;
 
-    let noCasesLeft = totalCasesToComplete === totalCasesCompleted,
+    let casesAssigned, employeeCountInt,
+      noCasesLeft, todayfeedbackText, totalCases;
+
+    const noMoreCasesMessage = `There are no more cases to work today.
+      <a href="/dispatch/establish-claim">Return to homepage</a> to view your \
+      work history.`;
+
+
+    // there are certain containers using this component without these
+    // stats being specified.
+    if (totalCasesCompleted && totalCasesToComplete && employeeCount) {
+      noCasesLeft = totalCasesToComplete === totalCasesCompleted;
       totalCases = totalCasesToComplete + totalCasesCompleted;
-    
-    let casesAssigned = employeeCount > 0 ?
-      Math.ceil(totalCases / employeeCount) : 0;
+      employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
-    const homepageLink = `There are no more cases to work today.
-     <a href=\"/dispatch/establish-claim\">Return to homepage</a> to view your \
-     work history.`;
+      casesAssigned = employeeCountInt > 0 ?
+        Math.ceil(totalCases / employeeCountInt) : 0;
 
-     const todayfeedbackText = noCasesLeft ? '' : ' today';
+      todayfeedbackText = noCasesLeft ? '' : ' today';
+    }
 
     return <div>
       <div
@@ -41,15 +57,16 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
-      { content &&
-        <ul className="cf-list-checklist eastablish-claim-feedback">
+      { <ul className="cf-list-checklist eastablish-claim-feedback">
         <div>
-         <div>{`Way to go! You have completed ${totalCasesCompleted} out of the
+         <div>{content ?
+          content :
+          `Way to go! You have completed ${totalCasesCompleted} out of the
           ${casesAssigned} cases assigned to you${todayfeedbackText}.`}</div>
-         <div>{noCasesLeft ?
-          <div dangerouslySetInnerHTML={{ __html: homepageLink }}></div> :
-          `You can now establish the next claim or go back to your work history.`
-         }</div>
+          {noCasesLeft ?
+            <div dangerouslySetInnerHTML={{ __html: noMoreCasesMessage }}></div> :
+            `You can now establish the next claim or go back to your work history.`
+          }
          </div>
         </ul>
       }
@@ -92,8 +109,9 @@ EstablishClaimComplete.propTypes = {
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
   content: PropTypes.string,
+  employeeCount: PropTypes.string,
   firstHeader: PropTypes.string,
   secondHeader: PropTypes.string,
-  totalCasesAssigned: PropTypes.string,
-  totalCasesCompleted: PropTypes.string
+  totalCasesAssigned: PropTypes.number,
+  totalCasesCompleted: PropTypes.number
 };
