@@ -11,6 +11,7 @@ Rails.application.config.assets.version = '1.0'
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
 Rails.application.config.assets.precompile += %w( favicon.ico )
+Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # Add client/assets/ folders to asset pipeline's search path.
 # If you do not want to move existing images and fonts from your Rails app
 # you could also consider creating symlinks there that point to the original
