@@ -235,6 +235,8 @@ svg[aria-hidden=true],
 
 .pdfViewer.singlePageView .page {
   margin: auto;
+  // Move the pages in front of the .cf-pdf-navigation class
+  z-index: 5;
 }
 
 .cf-pdf-comment-indicator {
@@ -245,7 +247,7 @@ svg[aria-hidden=true],
 .cf-pdf-navigation {
   position: absolute;
   bottom: 50%;
-  z-index: 200;
+  z-index: 2;
   width: 100%;
 }
 
