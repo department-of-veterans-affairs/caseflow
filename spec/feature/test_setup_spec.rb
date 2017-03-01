@@ -11,8 +11,9 @@ RSpec.feature "Test Setup" do
 
     before do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
-      test_certification.form8.update_from_appeal(test_certification.appeal)
-      test_certification.form8.save_pdf!
+      form8 = Form8.create!(certification_id: test_certification.id)
+      form8.update_from_appeal(test_certification.appeal)
+      form8.save_pdf!
     end
 
     let(:certification) { Certification.find_or_create_by_vacols_id(test_appeal_id) }
@@ -60,11 +61,11 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
     end
 
     scenario "is allowed by a test user" do
@@ -76,7 +77,7 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VACOLS123")
+      expect(page).to have_content("VBMS123")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"

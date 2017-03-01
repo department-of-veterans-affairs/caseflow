@@ -35,6 +35,7 @@ module CaseflowCertification
     config.google_analytics_account = nil
     config.google_analytics_host = nil
 
-     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
+    config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
+
   end
 end
