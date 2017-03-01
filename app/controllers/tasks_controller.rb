@@ -20,8 +20,17 @@ class TasksController < ApplicationController
 
     return render "canceled" if task.canceled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
-    return render "complete" if task.completed?
 
+    if(task.completed?)
+      @to_complete_count = Task.to_complete.count
+      
+      #getting the number of completed tasks for that partiular user
+      @completed_count_today = current_user ?
+        Task.completed_today_by_user(current_user.id).count : 0
+
+      return render "complete"
+    end
+    
     # TODO: Reassess the best way to handle decision errors
     return render "no_decisions" if task.appeal.decisions.nil?
   end

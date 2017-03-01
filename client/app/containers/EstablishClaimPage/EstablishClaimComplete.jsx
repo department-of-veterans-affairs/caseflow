@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import ApiUtil from '../../util/ApiUtil';
 
+import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 
 export default class EstablishClaimComplete extends React.Component {
@@ -12,8 +12,23 @@ export default class EstablishClaimComplete extends React.Component {
       checklist,
       content,
       firstHeader,
-      secondHeader
+      secondHeader,
+      totalCasesCompleted,
+      totalCasesToComplete,
+      employeeCount
     } = this.props;
+
+    let noCasesLeft = totalCasesToComplete === totalCasesCompleted,
+      totalCases = totalCasesToComplete + totalCasesCompleted;
+    
+    let casesAssigned = employeeCount > 0 ?
+      Math.ceil(totalCases / employeeCount) : 0;
+
+    const homepageLink = `There are no more cases to work today.
+     <a href=\"/dispatch/establish-claim\">Return to homepage</a> to view your \
+     work history.`;
+
+     const todayfeedbackText = noCasesLeft ? '' : ' today';
 
     return <div>
       <div
@@ -27,8 +42,15 @@ export default class EstablishClaimComplete extends React.Component {
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
       { content &&
-        <ul className="cf-list-checklist">
-            {content}
+        <ul className="cf-list-checklist eastablish-claim-feedback">
+        <div>
+         <div>{`Way to go! You have completed ${totalCasesCompleted} out of the
+          ${casesAssigned} cases assigned to you${todayfeedbackText}.`}</div>
+         <div>{noCasesLeft ?
+          <div dangerouslySetInnerHTML={{ __html: homepageLink }}></div> :
+          `You can now establish the next claim or go back to your work history.`
+         }</div>
+         </div>
         </ul>
       }
     </div>
@@ -71,5 +93,7 @@ EstablishClaimComplete.propTypes = {
   checklist: PropTypes.array,
   content: PropTypes.string,
   firstHeader: PropTypes.string,
-  secondHeader: PropTypes.string
+  secondHeader: PropTypes.string,
+  totalCasesAssigned: PropTypes.string,
+  totalCasesCompleted: PropTypes.string
 };
