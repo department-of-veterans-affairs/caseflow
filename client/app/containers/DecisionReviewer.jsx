@@ -20,6 +20,9 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.state = {
+      // We want to show the list view (currentPdfIndex null), unless
+      // there is just a single pdf in which case we want to just show
+      // the first pdf.
       currentPdfIndex: this.props.appealDocuments.length > 1 ? null : 0,
       filterBy: '',
       selectedLabels,
