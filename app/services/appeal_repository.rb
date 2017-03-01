@@ -36,7 +36,7 @@ class AppealRepository
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
-                   VACOLS::Case.amc_full_grants(decided_after: 5.days.ago)
+                   VACOLS::Case.amc_full_grants(outcoded_after: 5.days.ago)
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
@@ -115,9 +115,9 @@ class AppealRepository
     remands.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.amc_full_grants(decided_after:)
-    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::Case.amc_full_grants(decided_after: decided_after)
+  def self.amc_full_grants(outcoded_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants outcoded after #{outcoded_after} from VACOLS" do
+      VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
