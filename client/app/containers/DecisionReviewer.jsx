@@ -145,10 +145,13 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
+<<<<<<< HEAD
       if (filterBy === '') {
         return true;
       }
 
+=======
+>>>>>>> master
       if (doc.type.toLowerCase().includes(filterBy)) {
         return true;
       } else if (doc.filename.toLowerCase().includes(filterBy)) {

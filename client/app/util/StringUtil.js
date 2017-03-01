@@ -39,6 +39,12 @@ const StringUtil = {
     }
 
     return (padded + string).slice(-width);
+  },
+
+  // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase
+  snakeCaseToCamelCase(variable) {
+    // convert key from camelCase to snake_case
+    return variable.replace(/(_\w)/g, (found) => found[1].toUpperCase());
   }
 };
 
