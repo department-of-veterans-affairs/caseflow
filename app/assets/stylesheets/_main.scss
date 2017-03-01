@@ -207,3 +207,10 @@ select {
     left: -999em;
   }
 }
+
+.cf-push-left {
+  .cf-btn-link {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

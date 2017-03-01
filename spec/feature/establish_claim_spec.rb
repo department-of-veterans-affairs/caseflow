@@ -287,6 +287,16 @@ RSpec.feature "Dispatch" do
 
           expect(page).to have_content("Benefit Type")
         end
+
+        scenario "the EP creation page has a link back to decision review" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish Next Claim"
+
+          expect(page).to have_content("Multiple Decision Documents")
+          click_on "Route Claim for Decision 1"
+          click_on "Back to Decision Review"
+          expect(page).to have_content("Multiple Decision Documents")
+        end
       end
     end
 
@@ -389,6 +399,16 @@ RSpec.feature "Dispatch" do
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
       expect(@task.appeal.reload.mustard_gas).to be_truthy
+    end
+
+    scenario "the existing EP page has a link back to decision review" do
+      visit "/dispatch/establish-claim"
+      click_on "Establish Next Claim"
+
+      expect(page).to have_content("Review Decision")
+      click_on "Route Claim"
+      click_on "Back to Decision Review"
+      expect(page).to have_content("Review Decision")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do

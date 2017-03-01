@@ -5,6 +5,8 @@ import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
+import BackButton from '../../components/BackButton';
+
 
 export const MODIFIER_OPTIONS = [
   '170',
@@ -82,6 +84,9 @@ export default class EstablishClaimForm extends React.Component {
         </div>
       </form>
       <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-left">
+          <BackButton name="< Back to Decision Review" />
+        </div>
         <div className="cf-push-right">
           <Button
             name="Cancel"
