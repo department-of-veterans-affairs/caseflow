@@ -109,8 +109,10 @@ class Fakes::AppealRepository
     [@records["321C"]]
   end
 
-  def self.amc_full_grants(decided_after:)
-    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
+  def self.amc_full_grants(outcoded_after:)
+    # Technically we reference the outcoding date in this method, but for the sake
+    # of testing we can just compare to the appeal.decision_date
+    [@records["654C"]].select { |appeal| appeal.decision_date > outcoded_after }
   end
 
   def self.uncertify(_appeal)
@@ -251,6 +253,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
       documents: missing_decision ? [] : [decision_document]
     }
   end

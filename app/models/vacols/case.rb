@@ -127,7 +127,7 @@ class VACOLS::Case < VACOLS::Record
     BFDC = '1'
     -- Cases marked with the disposition Allowed, which have at least one grant.
 
-    and BFDDEC >= to_date(?, 'YYYY-MM-DD HH24:MI')
+    and TIOCTIME >= to_date(?, 'YYYY-MM-DD HH24:MI')
     -- As all full grants are in HIS status, we must time bracket our requests.
 
     and TIVBMS = 'Y'
@@ -148,9 +148,9 @@ class VACOLS::Case < VACOLS::Record
                 .order("BFDDEC ASC")
   end
 
-  def self.amc_full_grants(decided_after:)
+  def self.amc_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_REMAND)
-                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, decided_after.strftime("%Y-%m-%d %H:%M"))
+                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.strftime("%Y-%m-%d %H:%M"))
                 .order("BFDDEC ASC")
   end
 

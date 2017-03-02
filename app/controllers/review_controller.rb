@@ -10,6 +10,18 @@ class ReviewController < ApplicationController
     "Decision"
   end
 
+  def show
+    @document = Document.find(document_param).tap do |t|
+      t.filename = params[:filename]
+      t.type = params[:type]
+      t.received_at = params[:received_at]
+    end
+  end
+
+  def document_param
+    params.require(:id)
+  end
+
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
