@@ -20,7 +20,10 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.state = {
-      currentPdfIndex: null,
+      // We want to show the list view (currentPdfIndex null), unless
+      // there is just a single pdf in which case we want to just show
+      // the first pdf.
+      currentPdfIndex: this.props.appealDocuments.length > 1 ? null : 0,
       filterBy: '',
       selectedLabels,
       sortBy: 'date',
@@ -52,10 +55,23 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  showPdf = (pdfNumber) => () => {
-    this.setState({
-      currentPdfIndex: pdfNumber
-    });
+  // TODO: Changes these buttons to links and override the behavior on
+  // click and keep the behavior on command click so that we aren't
+  // trying to reimplement browser functionatlity.
+  showPdf = (pdfNumber) => (event) => {
+    if (event.metaKey) {
+      let id = this.state.documents[pdfNumber].id;
+      let filename = this.state.documents[pdfNumber].filename;
+      let type = this.state.documents[pdfNumber].type;
+      let receivedAt = this.state.documents[pdfNumber].received_at;
+
+      window.open(`review/show?id=${id}&type=${type}` +
+        `&received_at=${receivedAt}&filename=${filename}`, '_blank');
+    } else {
+      this.setState({
+        currentPdfIndex: pdfNumber
+      });
+    }
   }
 
   showList = () => {
@@ -134,6 +150,10 @@ export default class DecisionReviewer extends React.Component {
       // if there is a label selected, we filter on that.
       if (labelsSelected && !this.state.selectedLabels[doc.label]) {
         return false;
+      }
+
+      if (filterBy === '') {
+        return true;
       }
 
       if (doc.type.toLowerCase().includes(filterBy)) {
@@ -228,7 +248,7 @@ export default class DecisionReviewer extends React.Component {
           selectLabel={this.onLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`review/pdf?id=` +
+          file={`${this.props.url}?id=` +
             `${documents[this.state.currentPdfIndex].id}`}
           id={documents[this.state.currentPdfIndex].id}
           receivedAt={documents[this.state.currentPdfIndex].received_at}
@@ -239,7 +259,8 @@ export default class DecisionReviewer extends React.Component {
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.currentPdfIndex)}
-          label={documents[this.state.currentPdfIndex].label} />}
+          label={documents[this.state.currentPdfIndex].label}
+          hideNavigation={documents.length === 1} />}
       </div>
     );
   }
