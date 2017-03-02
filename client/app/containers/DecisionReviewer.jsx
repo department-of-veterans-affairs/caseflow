@@ -55,13 +55,17 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
+  // TODO: Changes these buttons to links and override the behavior on
+  // click and keep the behavior on command click so that we aren't
+  // trying to reimplement browser functionatlity.
   showPdf = (pdfNumber) => (event) => {
     if (event.metaKey) {
       let id = this.state.documents[pdfNumber].id;
       let filename = this.state.documents[pdfNumber].filename;
       let type = this.state.documents[pdfNumber].type;
       let receivedAt = this.state.documents[pdfNumber].received_at;
-      window.open(`review/show?id=${id}&type=${type}`+
+
+      window.open(`review/show?id=${id}&type=${type}` +
         `&received_at=${receivedAt}&filename=${filename}`, '_blank');
     } else {
       this.setState({

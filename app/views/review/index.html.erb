@@ -2,7 +2,7 @@
   <%= react_component("BaseContainer", props: {
     page: "DecisionReviewer",
     appealDocuments: @appeal.saved_documents.map(&:to_hash),
-    annotations: @appeal.annotations_on_documents,
+    annotations: @appeal.saved_documents.map(&:annotations).flatten.map(&:to_hash),
     pdfWorker: asset_path('pdf.worker.js'),
     url: pdf_review_index_path
   }) %>

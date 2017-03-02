@@ -55,10 +55,6 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
-  def annotations_on_documents
-    @annotations = saved_documents.map(&:annotations).flatten.map(&:to_hash)
-  end
-
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
