@@ -47,12 +47,12 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= fetch_documents!
+    @documents ||= fetch_documents!(save: false)
   end
 
-  def annotations_on_documents
-    ids = documents.map(&:id)
-    @annotations = Annotation.where(document_id: ids).map(&:to_hash)
+  attr_writer :saved_documents
+  def saved_documents
+    @saved_documents ||= fetch_documents!(save: true)
   end
 
   def veteran_name
@@ -158,8 +158,8 @@ class Appeal < ActiveRecord::Base
     Appeal.uncertify(self)
   end
 
-  def fetch_documents!
-    self.class.repository.fetch_documents_for(self)
+  def fetch_documents!(save:)
+    self.class.repository.fetch_documents_for(self, save: save)
     @documents
   end
 

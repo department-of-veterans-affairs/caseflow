@@ -2,10 +2,11 @@ import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
-import TextField from '../components/TextField';
+import SearchBar from '../components/SearchBar';
+import StringUtil from '../util/StringUtil';
+import Button from '../components/Button';
 
 export default class PdfListView extends React.Component {
-
   getDocumentTableHeaders = () => {
     let className;
 
@@ -17,8 +18,9 @@ export default class PdfListView extends React.Component {
 
     let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
 
-
+    // We have blank headers for the comment indicator and label indicator columns
     return [
+      '',
       '',
       <div onClick={this.props.changeSortState('date')}>
         Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
@@ -37,50 +39,66 @@ export default class PdfListView extends React.Component {
       getAnnotationByDocumentId(doc.id).length;
 
     return [
-      <div><i
-        className="fa fa-bookmark cf-pdf-bookmarks cf-pdf-bookmark-blue"
-        aria-hidden="true"></i>
-        <span className="fa-stack fa-3x cf-pdf-comment-indicator">
-          <i className="fa fa-comment-o fa-stack-2x"></i>
-          <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
-        </span>
-      </div>,
+      <span>
+        { doc.label && <i
+        className={`fa fa-bookmark cf-pdf-bookmark-` +
+          `${StringUtil.camelCaseToDashCase(doc.label)}`}
+        aria-hidden="true"></i> }
+      </span>,
+      <span className="fa-stack fa-3x cf-pdf-comment-indicator">
+        <i className="fa fa-comment-o fa-stack-2x"></i>
+        <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
+      </span>,
       formatDate(doc.received_at),
       doc.type,
       <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
   }
 
-  onLabelClick = () => () => {
-    // filtering code will go here when we have labels working
-  }
-
   render() {
-    return <div>
-      <div className="usa-grid">
-        <div className="cf-app">
-          <div className="cf-app-segment cf-app-segment--alt">
-            <span>
-              Show only: <DocumentLabels onClick={this.onLabelClick} />
-            </span>
-            <span className="cf-right-side">
-              Showing {`${this.props.documents.length} out of ` +
-              `${this.props.numberOfDocuments}`} documents
-            </span>
-            <div>
-              <TextField
-               label="Search"
-               name="Filter By"
-               value={this.props.filterBy}
-               onChange={this.props.onFilter}
-              />
+    let commentSelectorClassNames = ['cf-pdf-button'];
+
+    if (this.props.isCommentLabelSelected) {
+      commentSelectorClassNames.push('cf-selected-label');
+    } else {
+      commentSelectorClassNames.push('cf-label');
+    }
+
+    return <div className="usa-grid">
+      <div className="cf-app">
+        <div className="cf-app-segment cf-app-segment--alt">
+          <div className="usa-grid-full">
+            <div className="usa-width-one-third">
+              <SearchBar onChange={this.props.onFilter} value={this.props.filterBy} />
             </div>
-            <div>
-              <Table
-                headers={this.getDocumentTableHeaders()}
-                buildRowValues={this.buildDocumentRow}
-                values={this.props.documents}
-              />
+            <div className="usa-width-one-third">
+              <span>
+                Show only:
+                <DocumentLabels
+                  onClick={this.props.selectLabel}
+                  selectedLabels={this.props.selectedLabels} />
+              </span>
+              <span>
+                <Button
+                  name="comment-selector"
+                  onClick={this.props.selectComments}
+                  classNames={commentSelectorClassNames}>
+                  <i className="fa fa-comment-o fa-lg"></i>
+                </Button>
+              </span>
             </div>
+            <div className="usa-width-one-third">
+              <span className="cf-right-side">
+                Showing {`${this.props.documents.length} out of ` +
+                `${this.props.numberOfDocuments}`} documents
+              </span>
+            </div>
+          </div>
+          <div>
+            <Table
+              headers={this.getDocumentTableHeaders()}
+              buildRowValues={this.buildDocumentRow}
+              values={this.props.documents}
+            />
           </div>
         </div>
       </div>

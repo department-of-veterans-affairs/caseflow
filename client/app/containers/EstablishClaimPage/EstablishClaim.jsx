@@ -467,8 +467,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getEmailFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
@@ -494,15 +493,14 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRegionalOfficeFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return this.getCityAndState(constant[regionalOfficeKey]);
   }
 
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
-    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return `${stationKey} - ${
         this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
@@ -525,14 +523,9 @@ export default class EstablishClaim extends BaseForm {
   }
 
   prepareData() {
-    let stateObject = this.state;
+    let claim = this.getFormValues(this.state.claimForm);
 
-    stateObject.claimForm.stationOfJurisdiction.value =
-        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
-
-    this.setState({
-      stateObject
-    });
+    claim.stationOfJurisdiction = claim.stationOfJurisdiction.substring(0, 3);
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -540,7 +533,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...this.getFormValues(this.state.claimForm),
+        ...claim,
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       },
@@ -688,7 +681,6 @@ export default class EstablishClaim extends BaseForm {
 
 EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
-  regionalOfficeStations: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
 

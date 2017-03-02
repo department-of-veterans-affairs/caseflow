@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170217164117) do
+ActiveRecord::Schema.define(version: 20170228191800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,8 +87,8 @@ ActiveRecord::Schema.define(version: 20170217164117) do
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string "vbms_document_id", null: false
-    t.string "label"
+    t.string  "vbms_document_id", null: false
+    t.integer "label"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree

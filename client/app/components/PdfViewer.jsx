@@ -91,10 +91,18 @@ export default class PdfViewer extends BaseForm {
             ).
             catch(() => {
               // TODO: Add error case if comment can't be added
+              /* eslint-disable no-console */
+              console.log('Error editing annotation in saveEdit');
+
+              /* eslint-enable no-console */
             });
         }).
           catch(() => {
-            // TODO: Add error case if comment can't be added
+
+            /* eslint-disable no-console */
+            console.log('Error getting annotation in saveEdit');
+
+            /* eslint-enable no-console */
           });
 
       this.setState({
@@ -371,8 +379,19 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
+  onColorLabelChange = (label) => () => {
+    if (label === this.props.label) {
+      this.props.setLabel('');
+    } else {
+      this.props.setLabel(label);
+    }
+  }
+
   render() {
     let comments = [];
+    let selectedLabels = {};
+
+    selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -414,39 +433,41 @@ export default class PdfViewer extends BaseForm {
         <div className="cf-pdf-page-container">
           <div className="cf-pdf-container">
             <div className="cf-pdf-header cf-pdf-toolbar">
-              <div className="usa-grid-full">
+              <div>
+                <span className="cf-pdf-buttons-left">
+                  { !this.props.hideNavigation &&
+                    <Button
+                      name="backToDocuments"
+                      classNames={["cf-pdf-button"]}
+                      onClick={this.props.showList}>
+                      <i className="fa fa-chevron-left" aria-hidden="true"></i>
+                      &nbsp; View all documents
+                    </Button> }
+                </span>
+                <span className="cf-right-side">
+                  {this.props.name}
+                </span>
+              </div>
+            </div>
+            { !this.props.hideNavigation &&
+              <div className="usa-grid-full cf-pdf-navigation">
                 <div className="usa-width-one-half cf-pdf-buttons-left">
                   <Button
-                    name="backToDocuments"
+                    name="previous"
                     classNames={["cf-pdf-button"]}
-                    onClick={this.props.showList}>
-                    <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                    &nbsp; View all documents
+                    onClick={this.props.previousPdf}>
+                    <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
                   </Button>
                 </div>
                 <div className="usa-width-one-half cf-pdf-buttons-right">
-                  {this.props.name}
+                  <Button
+                    name="next"
+                    classNames={["cf-pdf-button cf-right-side"]}
+                    onClick={this.props.nextPdf}>
+                    <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
+                  </Button>
                 </div>
-              </div>
-            </div>
-            <div className="usa-grid-full cf-pdf-navigation">
-              <div className="usa-width-one-half cf-pdf-buttons-left">
-                <Button
-                  name="previous"
-                  classNames={["cf-pdf-button"]}
-                  onClick={this.props.previousPdf}>
-                  <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
-                </Button>
-              </div>
-              <div className="usa-width-one-half cf-pdf-buttons-right">
-                <Button
-                  name="next"
-                  classNames={["cf-pdf-button cf-right-side"]}
-                  onClick={this.props.nextPdf}>
-                  <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
-                </Button>
-              </div>
-            </div>
+              </div> }
             <div id="scrollWindow" className="cf-pdf-scroll-view">
               <div
                 id="viewer"
@@ -457,10 +478,9 @@ export default class PdfViewer extends BaseForm {
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <DocumentLabels onClick={() => {
-
-                    /* Place Holder */
-                  }} />
+                  <DocumentLabels
+                    onClick={this.onColorLabelChange}
+                    selectedLabels={selectedLabels}/>
                 </div>
                 <div className="usa-width-one-third cf-pdf-buttons-center">
                   Page {this.state.currentPage} of {this.state.numPages}
@@ -473,7 +493,7 @@ export default class PdfViewer extends BaseForm {
                     <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
+                    name="zoomOut"
                     classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(-0.3)}>
                     <i className="fa fa-minus" aria-hidden="true"></i>
@@ -485,7 +505,7 @@ export default class PdfViewer extends BaseForm {
                     <i className="fa fa-arrows-alt" aria-hidden="true"></i>
                   </Button>
                   <Button
-                    name="previous"
+                    name="zoomIn"
                     classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
                     onClick={this.zoom(0.3)}>
                     <i className="fa fa-plus" aria-hidden="true"></i>
@@ -535,7 +555,10 @@ export default class PdfViewer extends BaseForm {
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string
+  hideNavigation: PropTypes.bool,
+  label: PropTypes.string,
+  pdfWorker: PropTypes.string,
+  setLabel: PropTypes.func.isRequired
 };
 
 /* eslint-enable max-lines */
