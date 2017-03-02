@@ -25,6 +25,7 @@ export default class DecisionReviewer extends React.Component {
       // the first pdf.
       currentPdfIndex: this.props.appealDocuments.length > 1 ? null : 0,
       filterBy: '',
+      isCommentLabelSelected: false,
       selectedLabels,
       sortBy: 'date',
       sortDirection: 'ascending',
@@ -35,11 +36,11 @@ export default class DecisionReviewer extends React.Component {
       })
     };
 
-    this.state.documents = this.filterDocuments(
-      this.sortDocuments(this.state.unsortedDocuments));
-
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
+
+    this.state.documents = this.filterDocuments(
+      this.sortDocuments(this.state.unsortedDocuments));
   }
 
   previousPdf = () => {
@@ -137,6 +138,16 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  metadataContainsString = (doc, searchString) => {
+    if (doc.type.toLowerCase().includes(searchString)) {
+      return true;
+    } else if (doc.filename.toLowerCase().includes(searchString)) {
+      return true;
+    } else if (doc.received_at.toLowerCase().includes(searchString)) {
+      return true;
+    }
+  }
+
   // This filters documents to those that contain the search text
   // in either the metadata (type, filename, date) or in the comments
   // on the document.
@@ -152,23 +163,20 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
-      if (filterBy === '') {
+      let annotations = this.annotationStorage.getAnnotationByDocumentId(doc.id);
+
+      if (this.state.isCommentLabelSelected && annotations.length === 0) {
+        return false;
+      }
+
+      if (this.metadataContainsString(doc, filterBy)) {
         return true;
       }
 
-      if (doc.type.toLowerCase().includes(filterBy)) {
-        return true;
-      } else if (doc.filename.toLowerCase().includes(filterBy)) {
-        return true;
-      } else if (doc.received_at.toLowerCase().includes(filterBy)) {
+      if (annotations.some((annotation) => annotation.comment.
+        toLowerCase().includes(filterBy))) {
         return true;
       }
-
-      this.annotationStorage.getAnnotationByDocumentId(doc.id).forEach((annotation) => {
-        if (annotation.comment.toLowerCase().includes(filterBy)) {
-          return true;
-        }
-      });
 
       return false;
     });
@@ -226,6 +234,12 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  selectComments = () => {
+    this.setState({
+      isCommentLabelSelected: !this.state.isCommentLabelSelected
+    }, this.sortAndFilter);
+  }
+
   render() {
     let {
       documents,
@@ -245,7 +259,9 @@ export default class DecisionReviewer extends React.Component {
           filterBy={this.state.filterBy}
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
-          selectLabel={this.onLabelSelected} />}
+          selectLabel={this.onLabelSelected}
+          selectComments={this.selectComments}
+          isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={`${this.props.url}?id=` +
