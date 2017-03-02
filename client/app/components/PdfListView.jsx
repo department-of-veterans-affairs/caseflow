@@ -55,6 +55,14 @@ export default class PdfListView extends React.Component {
   }
 
   render() {
+    let commentSelectorClassNames = ['cf-pdf-button'];
+
+    if (this.props.isCommentLabelSelected) {
+      commentSelectorClassNames.push('cf-selected-label');
+    } else {
+      commentSelectorClassNames.push('cf-label');
+    }
+
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
@@ -69,12 +77,11 @@ export default class PdfListView extends React.Component {
                   onClick={this.props.selectLabel}
                   selectedLabels={this.props.selectedLabels} />
               </span>
-              
               <span>
                 <Button
-                  name='comment-selector'
+                  name="comment-selector"
                   onClick={this.props.selectComments}
-                  classNames={['cf-pdf-button', `cf-${this.props.isCommentLabelSelected? 'selected-' : ''}label`]}>
+                  classNames={commentSelectorClassNames}>
                   <i className="fa fa-comment-o fa-lg"></i>
                 </Button>
               </span>

@@ -22,8 +22,8 @@ export default class DecisionReviewer extends React.Component {
     this.state = {
       currentPdfIndex: null,
       filterBy: '',
-      selectedLabels,
       isCommentLabelSelected: false,
+      selectedLabels,
       sortBy: 'date',
       sortDirection: 'ascending',
       unsortedDocuments: this.props.appealDocuments.map((doc) => {
@@ -122,6 +122,16 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  metadataContainsString = (doc, searchString) => {
+    if (doc.type.toLowerCase().includes(searchString)) {
+      return true;
+    } else if (doc.filename.toLowerCase().includes(searchString)) {
+      return true;
+    } else if (doc.received_at.toLowerCase().includes(searchString)) {
+      return true;
+    }
+  }
+
   // This filters documents to those that contain the search text
   // in either the metadata (type, filename, date) or in the comments
   // on the document.
@@ -143,20 +153,14 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
-
-      if (doc.type.toLowerCase().includes(filterBy)) {
-        return true;
-      } else if (doc.filename.toLowerCase().includes(filterBy)) {
-        return true;
-      } else if (doc.received_at.toLowerCase().includes(filterBy)) {
+      if (this.metadataContainsString(doc, filterBy)) {
         return true;
       }
 
-      annotations.forEach((annotation) => {
-        if (annotation.comment.toLowerCase().includes(filterBy)) {
-          return true;
-        }
-      });
+      if (annotations.some((annotation) => annotation.comment.
+        toLowerCase().includes(filterBy))) {
+        return true;
+      }
 
       return false;
     });
