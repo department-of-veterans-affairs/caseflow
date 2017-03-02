@@ -79,7 +79,8 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  def self.fetch_documents_for(appeal)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def self.fetch_documents_for(appeal, save:)
     vbms_record = @records[appeal.vbms_id]
     if vbms_record
       appeal.documents = vbms_record[:documents]
@@ -87,6 +88,7 @@ class Fakes::AppealRepository
     end
     appeal.documents = @documents || []
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.fetch_document_file(document)
     path =
@@ -251,6 +253,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
       documents: missing_decision ? [] : [decision_document]
     }
   end
@@ -324,7 +327,8 @@ class Fakes::AppealRepository
         received_at: 3.days.ago,
         document_id: "1",
         filename: "My_NOD"
-      )
+      ),
+      true
     )
   end
 
@@ -335,7 +339,8 @@ class Fakes::AppealRepository
         received_at: Date.new(1987, 9, 6),
         document_id: "2",
         filename: "My_SOC"
-      )
+      ),
+      true
     )
   end
 
@@ -346,7 +351,8 @@ class Fakes::AppealRepository
         received_at: 1.day.ago,
         document_id: "3",
         filename: "My_Form_9"
-      )
+      ),
+      true
     )
   end
 
@@ -357,7 +363,8 @@ class Fakes::AppealRepository
         received_at: 7.days.ago,
         document_id: "4",
         filename: "My_Decision"
-      )
+      ),
+      true
     )
   end
 
@@ -368,7 +375,8 @@ class Fakes::AppealRepository
         received_at: 8.days.ago,
         document_id: "5",
         filename: "My_Decision2"
-      )
+      ),
+      true
     )
   end
 
@@ -419,4 +427,5 @@ class Fakes::AppealRepository
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

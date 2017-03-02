@@ -1,61 +1,40 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
+import StringUtil from '../util/StringUtil';
+
+const LABELS = [
+  'decisions',
+  'veteranSubmitted',
+  'procedural',
+  'vaMedial',
+  'layperson',
+  'privateMedical'
+];
 
 export default class DocumentLabels extends React.Component {
   render() {
+    let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
+    let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
+
+    let bookmarks = LABELS.map((label) => <Button
+        key={label}
+        name={label}
+        classNames={this.props.selectedLabels[label] ?
+          bookmarkClassesSelected : bookmarkClasses}
+        onClick={this.props.onClick(label)}>
+        <i
+          className={`fa fa-bookmark cf-pdf-bookmark-` +
+            `${StringUtil.camelCaseToDashCase(label)}`}
+          aria-hidden="true"></i>
+      </Button>);
+
     return <span>
-      <Button
-        name="blueLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('blue')}>
-        <i
-          className="fa fa-bookmark cf-pdf-bookmark-blue"
-          aria-hidden="true"></i>
-      </Button>
-      <Button
-        name="orangeLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('orange')}>
-        <i
-          className="fa fa-bookmark cf-pdf-bookmark-orange"
-          aria-hidden="true"></i>
-      </Button>
-      <Button
-        name="whiteLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('white')}>
-        <i
-          className="fa fa-bookmark-o cf-pdf-bookmark-white-outline"
-          aria-hidden="true"></i>
-      </Button>
-      <Button
-        name="pinkLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('pink')}>
-        <i
-          className="fa fa-bookmark cf-pdf-bookmark-pink"
-          aria-hidden="true"></i>
-      </Button>
-      <Button
-        name="greenLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('green')}>
-        <i
-          className="fa fa-bookmark cf-pdf-bookmark-green"
-          aria-hidden="true"></i>
-      </Button>
-      <Button
-        name="yellowLabel"
-        classNames={["cf-pdf-bookmarks cf-pdf-button"]}
-        onClick={this.props.onClick('yellow')}>
-        <i
-          className="fa fa-bookmark cf-pdf-bookmark-yellow"
-          aria-hidden="true"></i>
-      </Button>
+      {bookmarks}
     </span>;
   }
 }
 
 DocumentLabels.propTypes = {
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
+  selectedLabels: PropTypes.object
 };
