@@ -10,10 +10,23 @@ class ReviewController < ApplicationController
     "Decision"
   end
 
+  def show
+    @document = Document.find(document_param).tap do |t|
+      t.filename = params[:filename]
+      t.type = params[:type]
+      t.received_at = params[:received_at]
+    end
+  end
+
+  def document_param
+    params.require(:id)
+  end
+
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
-    document = Document.find_by(vbms_document_id: params[:vbms_document_id])
+    document = Document.find(params[:id])
+
     # The line below enables document caching for 12 hours. It's best to disable
     # this while we're still developing.
     # expires_in 12.hours, :public => true

@@ -36,7 +36,7 @@ class AppealRepository
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
-                   VACOLS::Case.amc_full_grants(decided_after: 5.days.ago)
+                   VACOLS::Case.amc_full_grants(outcoded_after: 5.days.ago)
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
@@ -115,9 +115,9 @@ class AppealRepository
     remands.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.amc_full_grants(decided_after:)
-    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::Case.amc_full_grants(decided_after: decided_after)
+  def self.amc_full_grants(outcoded_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants outcoded after #{outcoded_after} from VACOLS" do
+      VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
@@ -277,7 +277,7 @@ class AppealRepository
     raise VBMSError
   end
 
-  def self.fetch_documents_for(appeal)
+  def self.fetch_documents_for(appeal, save:)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
@@ -285,7 +285,7 @@ class AppealRepository
     documents = send_and_log_request(sanitized_id, request)
 
     appeal.documents = documents.map do |vbms_document|
-      Document.from_vbms_document(vbms_document)
+      Document.from_vbms_document(vbms_document, save)
     end
 
     appeal
