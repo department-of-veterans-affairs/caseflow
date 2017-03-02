@@ -251,6 +251,7 @@ class Task < ActiveRecord::Base
          :veteran_name,
          :decision_type,
          :station_key,
+         :regional_office_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
          :issues,
