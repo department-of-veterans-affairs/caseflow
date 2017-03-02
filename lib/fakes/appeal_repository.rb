@@ -251,6 +251,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
       documents: missing_decision ? [] : [decision_document]
     }
   end
