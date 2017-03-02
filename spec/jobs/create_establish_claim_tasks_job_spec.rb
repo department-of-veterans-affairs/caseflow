@@ -23,8 +23,8 @@ describe CreateEstablishClaimTasksJob do
     end
   end
 
-  context ".full_grant_decided_after" do
-    subject { CreateEstablishClaimTasksJob.new.full_grant_decided_after }
+  context ".full_grant_outcoded_after" do
+    subject { CreateEstablishClaimTasksJob.new.full_grant_outcoded_after }
     it "returns a date 3 days earlier at midnight" do
       is_expected.to eq(Time.zone.local(2015, 1, 29, 0))
     end
