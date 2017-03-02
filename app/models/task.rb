@@ -110,10 +110,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def initial_action
-    fail MustImplementInSubclassError
-  end
-
   def before_assign
     # Test hook for testing race conditions
   end
