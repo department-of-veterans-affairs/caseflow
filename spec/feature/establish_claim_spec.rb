@@ -294,7 +294,7 @@ RSpec.feature "Dispatch" do
 
           expect(page).to have_content("Multiple Decision Documents")
           click_on "Route Claim for Decision 1"
-          click_on "Back to Decision Review"
+          click_on "< Back to Decision Review"
           expect(page).to have_content("Multiple Decision Documents")
         end
       end
@@ -407,7 +407,7 @@ RSpec.feature "Dispatch" do
 
       expect(page).to have_content("Review Decision")
       click_on "Route Claim"
-      click_on "Back to Decision Review"
+      click_on "< Back to Decision Review"
       expect(page).to have_content("Review Decision")
     end
 
