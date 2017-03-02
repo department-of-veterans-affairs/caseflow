@@ -4,7 +4,6 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import BackButton from '../../components/BackButton';
 
 const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
 
@@ -81,6 +80,7 @@ export default class AssociatePage extends React.Component {
     let {
       handleCancelTask,
       handleSubmit,
+      handlePageChange,
       hasAvailableModifers
     } = this.props;
 
@@ -127,7 +127,11 @@ export default class AssociatePage extends React.Component {
       </div>
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-left">
-          <BackButton name="< Back to Decision Review" />
+          <Button
+            name="< Back To Decision Review"
+            onClick={handleBackToDecisionReview}
+            classNames={["cf-btn-link"]}
+          />
         </div>
         <div className="cf-push-right">
           <Button
@@ -152,6 +156,7 @@ AssociatePage.propTypes = {
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  handleBackToDecisionReview: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired

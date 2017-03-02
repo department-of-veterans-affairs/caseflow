@@ -5,8 +5,6 @@ import TextField from '../../components/TextField';
 import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
-import BackButton from '../../components/BackButton';
-
 
 export const MODIFIER_OPTIONS = [
   '170',
@@ -21,6 +19,7 @@ export default class EstablishClaimForm extends React.Component {
       handleCancelTask,
       handleFieldChange,
       handleSubmit,
+      handleBackToDecisionReview,
       loading,
       validModifiers
     } = this.props;
@@ -85,7 +84,11 @@ export default class EstablishClaimForm extends React.Component {
       </form>
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-left">
-          <BackButton name="< Back to Decision Review" />
+          <Button
+            name="< Back To Decision Review"
+            onClick={handleBackToDecisionReview}
+            classNames={["cf-btn-link"]}
+          />
         </div>
         <div className="cf-push-right">
           <Button
@@ -109,5 +112,6 @@ EstablishClaimForm.propTypes = {
   claimLabelValue: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  handleBackToDecisionReview: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
