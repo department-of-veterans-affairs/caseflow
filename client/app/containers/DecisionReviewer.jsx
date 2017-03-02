@@ -169,10 +169,6 @@ export default class DecisionReviewer extends React.Component {
         return false;
       }
 
-      if (filterBy === '') {
-        return true;
-      }
-
       if (this.metadataContainsString(doc, filterBy)) {
         return true;
       }
