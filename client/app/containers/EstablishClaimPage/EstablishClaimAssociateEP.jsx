@@ -79,6 +79,7 @@ export default class AssociatePage extends React.Component {
   render() {
     let {
       handleCancelTask,
+      handleBackToDecisionReview,
       handleSubmit,
       hasAvailableModifers
     } = this.props;
@@ -125,6 +126,13 @@ export default class AssociatePage extends React.Component {
         </div>
       </div>
       <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-left">
+          <Button
+            name="< Back to Decision Review"
+            onClick={handleBackToDecisionReview}
+            classNames={["cf-btn-link"]}
+          />
+        </div>
         <div className="cf-push-right">
           <Button
             name="Cancel"
@@ -147,6 +155,7 @@ AssociatePage.propTypes = {
   endProducts: PropTypes.arrayOf(PropTypes.object).isRequired,
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
+  handleBackToDecisionReview: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,
