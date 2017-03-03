@@ -255,7 +255,8 @@ svg[aria-hidden=true],
 .cf-pdf-navigation {
   position: absolute;
   bottom: 50%;
-  z-index: 2;
+  z-index: 10;
+  pointer-events:none;
   width: 100%;
 }
 
