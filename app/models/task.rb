@@ -110,10 +110,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def initial_action
-    fail MustImplementInSubclassError
-  end
-
   def before_assign
     # Test hook for testing race conditions
   end
@@ -233,8 +229,9 @@ class Task < ActiveRecord::Base
       include: [:user, appeal: { methods:
        [:serialized_decision_date,
         :veteran_name,
-        :decision_type] }],
-      methods: [:progress_status, :days_since_creation]
+        :decision_type,
+        :vbms_id] }],
+      methods: [:progress_status, :days_since_creation, :completion_status_text]
     )
   end
 

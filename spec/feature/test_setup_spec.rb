@@ -46,10 +46,13 @@ RSpec.feature "Test Setup" do
   end
 
   context "for claims establishment" do
-    let(:appeal) { Appeal.create(vacols_id: "VACOLS123", vbms_id: "VBMS123") }
+    let(:appeal) { Appeal.create(vacols_id: "VACOLS123", vbms_id: "FULLGRANT_VBMS_ID") }
     let(:user) { User.tester!(roles: ["Establish Claim"]) }
 
     scenario "isn't allowed by a non-test user" do
+      Fakes::AppealRepository.records = {
+        "VACOLS123" => Fakes::AppealRepository.appeal_full_grant_decided
+      }
       User.authenticate!(roles: ["Establish Claim"])
       # Have to prepare tasks separately for each user, hence repeated code
       # Can be a Dispatch helper instead?
@@ -61,14 +64,17 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VBMS123")
+      expect(page).to have_content("FULLGRANT_VBMS_ID")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VBMS123")
+      expect(page).to have_content("FULLGRANT_VBMS_ID")
     end
 
     scenario "is allowed by a test user" do
+      Fakes::AppealRepository.records = {
+        "VACOLS123" => Fakes::AppealRepository.appeal_full_grant_decided
+      }
       task = EstablishClaim.create(appeal: appeal)
       task.prepare!
       task.assign!(:assigned, user)
@@ -77,11 +83,11 @@ RSpec.feature "Test Setup" do
       task.complete!(:completed, status: 0)
 
       visit "dispatch/establish-claim"
-      expect(page).to have_content("VBMS123")
+      expect(page).to have_content("FULLGRANT_VBMS_ID")
       visit "test/setup"
       click_link("Reset Claims Establishment Tasks")
       visit "dispatch/establish-claim"
-      expect(page).to have_content("No previous tasks")
+      expect(page).to have_content("There are no more claims in your queue")
     end
   end
 end
