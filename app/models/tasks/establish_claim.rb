@@ -8,8 +8,4 @@ class EstablishClaim < Task
   cache_attribute :cached_veteran_name do
     appeal.veteran_name
   end
-
-  def initial_action
-    "show"
-  end
 end

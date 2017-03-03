@@ -27,7 +27,7 @@ export default class EstablishClaimComplete extends React.Component {
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
       { content &&
-        <ul className="cf-list-checklist">
+        <ul className="cf-msg-screen-deck">
             {content}
         </ul>
       }
