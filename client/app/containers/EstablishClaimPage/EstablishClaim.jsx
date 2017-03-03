@@ -197,7 +197,7 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'System Error',
-        'Something went wrong with on our end. We were not able to create an End Product. Please try again later.'
+        'Something went wrong on our end. We were not able to create an End Product. Please try again later.'
       );
       });
   }
