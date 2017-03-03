@@ -1,0 +1,11 @@
+/*
+ * We want our react components to be plug and play. The styles should be baked
+ * into the component. This way a button is a button no matter where it's placed
+ * and you don't have to look for the right css to pair with a given component.
+ * To that end, we're putting react specific css in the following files.
+ * If you add a component, add a corresponding css file here. Name all
+ * styles with .react-<component_name>-<style_name>
+ *
+ *= require ./_loading_content.scss
+ */
+

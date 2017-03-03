@@ -5,16 +5,17 @@ import React from 'react';
 /**
  * @returns {string} The HTML for the loading symbol.
  */
-export let loadingSymbolHtml = function() {
+export let loadingSymbolHtml = function(text = 'Loading', size = 30) {
+  let style = {'marginLeft': '-'+size};
   return (
       <span>
         <div className="cf-loading-button-text">
-          Loading
+          {text}
         </div>
         <div className="cf-loading-button-symbol">
           <svg
-            width="30"
-            height="30"
+            width={size}
+            height={size}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-front">
             <path
@@ -38,8 +39,9 @@ export let loadingSymbolHtml = function() {
             </path>
           </svg>
           <svg
-            width="30"
-            height="30"
+            width={size}
+            height={size}
+            style={style}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-back">
             <path

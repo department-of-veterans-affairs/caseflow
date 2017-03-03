@@ -7,6 +7,7 @@ import { formatDate, addDays } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
+import LoadingContainer from '../../components/LoadingContainer';
 
 const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
 
@@ -243,15 +244,18 @@ export default class EstablishClaimReview extends React.Component {
             PDF, click this link to skip past the browser PDF viewer to the
             establish-claim buttons.
           </a>
-
-          <iframe
-            aria-label="The PDF embedded here is not accessible. Please use the above
-              link to download the PDF and view it in a PDF reader. Then use the buttons
-              below to go back and make edits or upload and certify the document."
-            className="cf-doc-embed"
-            title="Form8 PDF"
-            src={`${pdfjsLink}&decision_number=${index}`}>
-          </iframe>
+          <div>
+            <LoadingContainer>
+              <iframe
+                aria-label="The PDF embedded here is not accessible. Please use the above
+                  link to download the PDF and view it in a PDF reader. Then use the buttons
+                  below to go back and make edits or upload and certify the document."
+                className="cf-doc-embed cf-iframe-with-loading"
+                title="Form8 PDF"
+                src={`${pdfjsLink}&decision_number=${index}`}>
+              </iframe>
+            </LoadingContainer>
+          </div>
         </div>);
 
 
