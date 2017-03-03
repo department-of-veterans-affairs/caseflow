@@ -3,10 +3,15 @@ import React from 'react';
 /* eslint-disable max-len */
 
 /**
+ * @param {string} text The text to associate with the spinning loading symbol.
+ * defaults to 'Loading'.
+ * @param {number} size The width and height of the loading symbol.
  * @returns {string} The HTML for the loading symbol.
  */
 export let loadingSymbolHtml = function(text = 'Loading', size = 30) {
-  let style = {'marginLeft': '-'+size};
+  let style = { 'marginLeft': `-${size}` };
+
+
   return (
       <span>
         <div className="cf-loading-button-text">

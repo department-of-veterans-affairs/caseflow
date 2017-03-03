@@ -248,8 +248,9 @@ export default class EstablishClaimReview extends React.Component {
             <LoadingContainer>
               <iframe
                 aria-label="The PDF embedded here is not accessible. Please use the above
-                  link to download the PDF and view it in a PDF reader. Then use the buttons
-                  below to go back and make edits or upload and certify the document."
+                  link to download the PDF and view it in a PDF reader. Then use the
+                  buttons below to go back and make edits or upload and certify
+                  the document."
                 className="cf-doc-embed cf-iframe-with-loading"
                 title="Form8 PDF"
                 src={`${pdfjsLink}&decision_number=${index}`}>
