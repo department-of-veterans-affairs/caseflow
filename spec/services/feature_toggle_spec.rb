@@ -12,8 +12,8 @@ describe FeatureToggle do
 
       it "feature is enabled for everyone" do
         subject
-        expect(FeatureToggle.enabled?(:search, user1)).to eq true
-        expect(FeatureToggle.enabled?(:search, user2)).to eq true
+        expect(FeatureToggle.enabled?(:search, user: user1)).to eq true
+        expect(FeatureToggle.enabled?(:search, user: user2)).to eq true
       end
     end
 
@@ -22,15 +22,15 @@ describe FeatureToggle do
 
       it "feature is enabled for users who belong to the regional offices" do
         subject
-        expect(FeatureToggle.enabled?(:test, user1)).to eq true
-        expect(FeatureToggle.enabled?(:test, user2)).to eq false
+        expect(FeatureToggle.enabled?(:test, user: user1)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user2)).to eq false
       end
 
       it "enable for more users" do
         subject
         FeatureToggle.enable!(:test, regional_offices: ["RO07"])
-        expect(FeatureToggle.enabled?(:test, user1)).to eq true
-        expect(FeatureToggle.enabled?(:test, user2)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user1)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user2)).to eq true
       end
     end
   end
@@ -44,8 +44,8 @@ describe FeatureToggle do
 
       it "feature is disabled for everyone" do
         subject
-        expect(FeatureToggle.enabled?(:search, user1)).to eq false
-        expect(FeatureToggle.enabled?(:search, user2)).to eq false
+        expect(FeatureToggle.enabled?(:search, user: user1)).to eq false
+        expect(FeatureToggle.enabled?(:search, user: user2)).to eq false
       end
     end
 
@@ -57,8 +57,8 @@ describe FeatureToggle do
 
       it "users who belong to the regional offices can no longer access the feature" do
         subject
-        expect(FeatureToggle.enabled?(:test, user1)).to eq false
-        expect(FeatureToggle.enabled?(:test, user2)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user1)).to eq false
+        expect(FeatureToggle.enabled?(:test, user: user2)).to eq true
       end
     end
 
@@ -70,15 +70,15 @@ describe FeatureToggle do
 
       it "feature becomes enabled for everyone" do
         subject
-        expect(FeatureToggle.enabled?(:test, user1)).to eq true
-        expect(FeatureToggle.enabled?(:test, user2)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user1)).to eq true
+        expect(FeatureToggle.enabled?(:test, user: user2)).to eq true
       end
 
       it "feature can be disabled globally" do
         subject
         FeatureToggle.disable!(:test)
-        expect(FeatureToggle.enabled?(:test, user1)).to eq false
-        expect(FeatureToggle.enabled?(:test, user2)).to eq false
+        expect(FeatureToggle.enabled?(:test, user: user1)).to eq false
+        expect(FeatureToggle.enabled?(:test, user: user2)).to eq false
       end
     end
 
@@ -153,19 +153,19 @@ describe FeatureToggle do
       before do
         FeatureToggle.enable!(:search)
       end
-      subject { FeatureToggle.enabled?(:search, user1) }
+      subject { FeatureToggle.enabled?(:search, user: user1) }
 
       it { is_expected.to eq true }
     end
 
     context "when a feature does not exist in redis" do
-      subject { FeatureToggle.enabled?(:foo, user1) }
+      subject { FeatureToggle.enabled?(:foo, user: user1) }
 
       it { is_expected.to eq false }
     end
 
     context "when enabled for a set of regional_offices" do
-      subject { FeatureToggle.enabled?(:search, user) }
+      subject { FeatureToggle.enabled?(:search, user: user) }
 
       before do
         FeatureToggle.enable!(:search, regional_offices: %w(RO01 RO02 RO03))
