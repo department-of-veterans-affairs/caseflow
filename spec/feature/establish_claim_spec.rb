@@ -135,7 +135,7 @@ RSpec.feature "Dispatch" do
 
         # View history
         expect(page).to have_content("Establish Next Claim")
-        expect(page).to have_css("tr#task-#{@completed_task.id}")
+        expect(page).to have_css("#table-row-#{@task.id}")
         expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish Next Claim"
@@ -207,7 +207,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim")
 
         # No tasks left
-        expect(page).to have_content("No claims to establish right now")
+        expect(page).to have_content("There are no more claims in your queue")
         expect(page).to have_css(".usa-button-disabled")
       end
 
