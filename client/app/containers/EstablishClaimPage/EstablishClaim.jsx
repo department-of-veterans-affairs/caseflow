@@ -196,8 +196,9 @@ export default class EstablishClaim extends BaseForm {
         });
         handleAlert(
         'error',
-        'Error',
-        'There was an error while submitting the current claim. Please try again later'
+        'System Error',
+        'Something went wrong on our end. We were not able to create an End Product.'
+        + ' Please try again later.'
       );
       });
   }
@@ -426,6 +427,10 @@ export default class EstablishClaim extends BaseForm {
     this.handlePageChange(FORM_PAGE);
   }
 
+  handleBackToDecisionReview = () => {
+    this.handlePageChange(DECISION_PAGE);
+  }
+
   /*
    * This function takes the special issues from the review page and sets the station
    * of jurisdiction in the form page. Special issues that all go to the same spot are
@@ -523,9 +528,14 @@ export default class EstablishClaim extends BaseForm {
   }
 
   prepareData() {
-    let claim = this.getFormValues(this.state.claimForm);
+    let stateObject = this.state;
 
-    claim.stationOfJurisdiction = claim.stationOfJurisdiction.substring(0, 3);
+    stateObject.claimForm.stationOfJurisdiction.value =
+        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
+
+    this.setState({
+      stateObject
+    });
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -533,7 +543,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...claim,
+        ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       },
@@ -607,6 +617,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
             history={history}
             specialIssues={ApiUtil.convertToSnakeCase(
               this.getFormValues(this.state.specialIssues))}
@@ -619,6 +630,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
             loading={loading}
             validModifiers={this.validModifiers()}
           />

@@ -44,12 +44,15 @@ class FeatureToggle
   end
 
   # Method to check if a given feature is enabled for a user
-  def self.enabled?(feature, current_user)
+  def self.enabled?(feature, user: nil)
     return false unless features.include?(feature)
     regional_offices = get_subkey(feature, :regional_offices)
-    # if regional_offices key is set, check if the feature is enabled for the user's ro
-    # otherwise, it is enabled globally
-    return false if regional_offices.present? && !regional_offices.include?(current_user.regional_office)
+    # if regional_offices key is set and a user is passed, check if the feature
+    # is enabled for the user's ro. Otherwise, it is enabled globally
+    if user && regional_offices.present? && !regional_offices.include?(user.regional_office)
+      return false
+    end
+
     true
   end
 

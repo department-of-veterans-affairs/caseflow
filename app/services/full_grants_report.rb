@@ -26,7 +26,7 @@ class FullGrantsReport < Report
   end
 
   def find_records
-    VACOLS::Case.amc_full_grants(decided_after: 7.days.ago)
+    VACOLS::Case.amc_full_grants(outcoded_after: 7.days.ago)
   end
 
   def load_record(case_record)
