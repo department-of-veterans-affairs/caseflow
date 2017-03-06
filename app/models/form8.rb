@@ -48,8 +48,8 @@ class Form8 < ActiveRecord::Base
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def update_from_appeal(appeal)
-    update_attributes!(
+  def assign_attributes_from_appeal(appeal)
+    assign_attributes(
       vacols_id: appeal.vacols_id,
       appellant_name: appeal.appellant_name,
       appellant_relationship: appeal.appellant_relationship,
