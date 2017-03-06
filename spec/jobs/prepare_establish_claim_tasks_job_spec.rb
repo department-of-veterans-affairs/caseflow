@@ -20,14 +20,21 @@ describe PrepareEstablishClaimTasksJob do
     }
     @task_one = EstablishClaim.create(appeal: @appeal_one)
     @task_two = EstablishClaim.create(appeal: @appeal_two)
+
+    expect(Appeal.repository).to receive(:fetch_document_file) { "the decision file" }
   end
 
   context ".perform" do
+    let(:filename) { @task_one.appeal.decisions.first.file_name }
+
     it "prepares the correct tasks" do
       expect(EstablishClaim.where(aasm_state: "unprepared").count).to eq(2)
       PrepareEstablishClaimTasksJob.perform_now
       expect(@task_one.reload.unassigned?).to be_truthy
       expect(@task_two.reload.unprepared?).to be_truthy
+
+      # Validate that the decision content is cached in S3
+      expect(S3Service.files[filename]).to eq("the decision file")
     end
   end
 end
