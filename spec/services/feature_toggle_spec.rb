@@ -180,6 +180,14 @@ describe FeatureToggle do
         let(:user) { User.new(regional_office: "RO09") }
         it { is_expected.to eq false }
       end
+
+      context "when user is not passed" do
+        let(:user) { nil }
+
+        it "throws an error" do
+          expect { subject }.to raise_error(FeatureToggle::UserIsRequired)
+        end
+      end
     end
   end
 end
