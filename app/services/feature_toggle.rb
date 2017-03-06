@@ -1,5 +1,4 @@
 class FeatureToggle
-
   class UserIsRequiredError < StandardError
     def message
       "User is required when regional offices are set on the feature"
