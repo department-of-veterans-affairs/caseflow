@@ -110,7 +110,7 @@ export default class EstablishClaimNote extends BaseForm {
           <ol>
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
-              this.vacolsNote()
+              {this.vacolsNote()}
             </li>}  
             {this.props.displayVbmsNote &&
             <li>{this.vbmsNote()}</li>}
