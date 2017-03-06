@@ -25,7 +25,7 @@ export const SPECIAL_ISSUES = [
   'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
   'Foreign pension, DIC - all other foreign countries',
   'Hearing - including travel board & video conference',
-  'Home Loan Guarantee',
+  'Home Loan Guaranty',
   'Incarcerated Veterans',
   'Insurance',
   'Manlincon Compliance',
@@ -143,7 +143,7 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
   `educationGiBillDependentsEducational` +
     `AssistanceScholarshipTransferOfEntitlement`,
   'hearingIncludingTravelBoardVideoConference',
-  'homeLoanGuarantee',
+  'homeLoanGuaranty',
   'incarceratedVeterans',
   'manlinconCompliance',
   'nonratingIssue',
