@@ -185,7 +185,7 @@ describe FeatureToggle do
         let(:user) { nil }
 
         it "throws an error" do
-          expect { subject }.to raise_error(FeatureToggle::UserIsRequired)
+          expect { subject }.to raise_error(FeatureToggle::UserIsRequiredError)
         end
       end
     end
