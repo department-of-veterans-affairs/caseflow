@@ -9,15 +9,10 @@ export default class EstablishClaimComplete extends React.Component {
 
   render() {
 
-    /*
-      NOTE: Do not provide 'content' as a prop if stats need to be shown
-      as feedback message.
-    */
     let {
       availableTasks,
       buttonText,
       checklist,
-      content,
       firstHeader,
       secondHeader,
       totalCasesCompleted,
@@ -28,23 +23,22 @@ export default class EstablishClaimComplete extends React.Component {
     let casesAssigned, employeeCountInt,
       noCasesLeft, todayfeedbackText, totalCases;
 
-    const noMoreCasesMessage = `There are no more cases to work today.
-      <a href="/dispatch/establish-claim">Return to homepage</a> to view your \
-      work history.`;
+    const noMoreCasesMessage = <div>There are no more cases to work today.
+    <a href="/dispatch/establish-claim"> Return to homepage</a> to view your work history.
+    </div>;
 
 
     // there are certain containers using this component without these
     // stats being specified.
-    if (totalCasesCompleted && totalCasesToComplete && employeeCount) {
-      noCasesLeft = totalCasesToComplete === totalCasesCompleted;
-      totalCases = totalCasesToComplete + totalCasesCompleted;
-      employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
+    noCasesLeft = totalCasesToComplete === totalCasesCompleted;
+    totalCases = totalCasesToComplete + totalCasesCompleted;
+    employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
-      casesAssigned = employeeCountInt > 0 ?
-        Math.ceil(totalCases / employeeCountInt) : 0;
+    noCasesLeft = true;
+    casesAssigned = employeeCountInt > 0 ?
+      Math.ceil(totalCases / employeeCountInt) : 0;
 
-      todayfeedbackText = noCasesLeft ? '' : ' today';
-    }
+    todayfeedbackText = noCasesLeft ? '' : ' today';
 
     return <div>
       <div
@@ -57,14 +51,13 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
-      { <ul className="cf-list-checklist eastablish-claim-feedback">
+      { <ul className="cf-list-checklist establish-claim-feedback">
         <div>
-         <div>{content ?
-          content :
+         <div>{
           `Way to go! You have completed ${totalCasesCompleted} out of the
           ${casesAssigned} cases assigned to you${todayfeedbackText}.`}</div>
           {noCasesLeft ?
-            <div dangerouslySetInnerHTML={{ __html: noMoreCasesMessage }}></div> :
+            noMoreCasesMessage :
             `You can now establish the next claim or go back to your work history.`
           }
          </div>
@@ -108,7 +101,6 @@ EstablishClaimComplete.propTypes = {
   availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
-  content: PropTypes.string,
   employeeCount: PropTypes.string,
   firstHeader: PropTypes.string,
   secondHeader: PropTypes.string,
