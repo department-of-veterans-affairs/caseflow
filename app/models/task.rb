@@ -126,6 +126,14 @@ class Task < ActiveRecord::Base
     update!(started_at: Time.now.utc)
   end
 
+  def prepare_with_decision!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
+  end
+
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
