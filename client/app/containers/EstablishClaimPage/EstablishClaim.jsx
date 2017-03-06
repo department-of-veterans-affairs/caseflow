@@ -133,7 +133,7 @@ export default class EstablishClaim extends BaseForm {
 
     // Force navigate to the review page on initial component mount
     // This ensures they are not mid-flow
-    return DECISION_PAGE;
+    return NOTE_PAGE;
   }
 
   componentDidMount() {
@@ -151,7 +151,7 @@ export default class EstablishClaim extends BaseForm {
         });
       } else {
         this.setState({
-          page: location.pathname.substring(1) || DECISION_PAGE
+          page: location.pathname.substring(1) || NOTE_PAGE
         });
       }
     });
@@ -641,6 +641,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
+            displayVacolsNote={false}
+            displayVbmsNote={true}
           />
         }
         { this.isEmailPage() &&
