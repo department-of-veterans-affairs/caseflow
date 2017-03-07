@@ -6,6 +6,7 @@ import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
 
+import ProgressBar from '../../components/ProgressBar';
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
@@ -575,6 +576,14 @@ export default class EstablishClaim extends BaseForm {
     return validOutput;
   }
 
+  getProgressBarSections() {
+    return [
+      { 'title' : '1. Review Decision', 'activated' : true },
+      { 'title' : '2. Route Claim', 'activated' : !this.isReviewPage() },
+      { 'title' : '3. Confirmation', 'activated' : false }
+    ];
+  }
+
   render() {
     let {
       loading,
@@ -592,6 +601,9 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <div>
+        <ProgressBar
+          sections={this.getProgressBarSections()}
+        />
         { this.isReviewPage() &&
           <EstablishClaimReview
             decisionType={this.state.reviewForm.decisionType}

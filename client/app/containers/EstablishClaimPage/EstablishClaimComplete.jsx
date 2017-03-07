@@ -1,9 +1,18 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
+import ProgressBar from '../../components/ProgressBar';
 
 import Button from '../../components/Button';
 
 export default class EstablishClaimComplete extends React.Component {
+
+  getProgressBarSections() {
+    return [
+      { 'title' : '1. Review Decision', 'activated' : true },
+      { 'title' : '2. Route Claim', 'activated' : true },
+      { 'title' : '3. Confirmation', 'activated' : true }
+    ];
+  }
 
   render() {
     let {
@@ -16,6 +25,9 @@ export default class EstablishClaimComplete extends React.Component {
     } = this.props;
 
     return <div>
+      <ProgressBar
+          sections={this.getProgressBarSections()}
+      />
       <div
         id="certifications-generate"
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
