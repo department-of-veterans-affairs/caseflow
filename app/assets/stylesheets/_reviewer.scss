@@ -257,7 +257,8 @@ svg[aria-hidden=true],
   bottom: 50%;
   z-index: 10;
   pointer-events: none;
-  width: 100%;
+  left: 15px;
+  right: 15px;
 }
 
 .cf-pdf-bookmark-decisions {

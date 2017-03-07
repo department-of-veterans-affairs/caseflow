@@ -3,11 +3,7 @@ class DocumentController < ApplicationController
 
   def set_label
     document = Document.find(params[:id])
-    document.update!(label: label_params)
+    document.update!(label: params[:label] || nil)
     render json: {}
-  end
-
-  def label_params
-    params.require(:label)
   end
 end

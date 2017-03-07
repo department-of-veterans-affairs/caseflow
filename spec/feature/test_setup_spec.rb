@@ -12,7 +12,8 @@ RSpec.feature "Test Setup" do
     before do
       test_certification = Certification.create!(vacols_id: test_appeal_id)
       form8 = Form8.create!(certification_id: test_certification.id)
-      form8.update_from_appeal(test_certification.appeal)
+      form8.assign_attributes_from_appeal(test_certification.appeal)
+      form8.save
       form8.save_pdf!
     end
 
