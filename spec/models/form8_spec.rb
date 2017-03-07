@@ -40,7 +40,7 @@ describe Form8 do
     appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
 
     it "populates _initial_ fields with the same values as their counterparts" do
-      form8.update_from_appeal(appeal)
+      form8.assign_attributes_from_appeal(appeal)
 
       initial_fields.each do |initial_field|
         f = initial_field.to_s.sub "_initial_", ""
@@ -55,7 +55,7 @@ describe Form8 do
     appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
 
     it "does not return initial attributes" do
-      form8.update_from_appeal(appeal)
+      form8.assign_attributes_from_appeal(appeal)
       attributes = form8.attributes
 
       initial_fields.each do |initial_field|
@@ -286,7 +286,7 @@ describe Form8 do
 
     it "creates new form8 with values copied over correctly" do
       form8 = Form8.new
-      form8.update_from_appeal(appeal)
+      form8.assign_attributes_from_appeal(appeal)
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
