@@ -57,7 +57,7 @@ class FeatureToggle
     # if regional_offices key is set, check if the feature
     # is enabled for the user's ro. Otherwise, it is enabled globally
     if regional_offices.present?
-      raise UserIsRequiredError unless user
+      fail UserIsRequiredError unless user
       return false unless regional_offices.include?(user.regional_office)
     end
     true
