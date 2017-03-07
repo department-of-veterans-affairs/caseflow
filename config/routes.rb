@@ -59,6 +59,7 @@ Rails.application.routes.draw do
               path: "/review",
               only: [:index] do
       get 'pdf', on: :collection
+      get 'show', on: :collection
     end
   end
 

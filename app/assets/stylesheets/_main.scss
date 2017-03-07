@@ -111,6 +111,12 @@
   color: $color-gray;
 }
 
+.cf-button-associated-text-right {
+  color: $color-gray;
+  margin-right: 10px;
+  line-height: 35px;
+}
+
 .cf-form-textarea--full-width {
   width: 100%;
   max-width: 100%;
@@ -205,5 +211,12 @@ select {
 .cf-form-checkbox {
   input {
     left: -999em;
+  }
+}
+
+.cf-push-left {
+  .cf-btn-link {
+    padding-left: 0;
+    padding-right: 0;
   }
 }

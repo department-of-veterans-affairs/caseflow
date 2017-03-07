@@ -42,6 +42,18 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  def total_assigned_issues
+    if Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count").nil?
+      per_employee_quota = 0
+    else
+      employee_total = Rails.cache.read("employee_count").to_i
+      per_employee_quota = (@completed_count_today + @remaining_count_today) /
+                           employee_total
+    end
+    per_employee_quota
+  end
+  helper_method :total_assigned_issues
+
   def cancel
     Task.transaction do
       task.appeal.update!(special_issues_params) if params[:special_issues]
@@ -60,7 +72,7 @@ class EstablishClaimsController < TasksController
   end
 
   def start_text
-    "Establish Next Claim"
+    "Establish next claim"
   end
 
   def logo_name

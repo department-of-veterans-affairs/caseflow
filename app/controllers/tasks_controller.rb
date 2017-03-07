@@ -7,10 +7,11 @@ class TasksController < ApplicationController
   TASKS_PER_PAGE = 10
 
   def index
-    tasks_completed_today = Task.completed_today
-    @completed_count_today = tasks_completed_today.count
+    @tasks_completed_today = Task.completed_today
+    @remaining_count_today = Task.to_complete.count
+    @completed_count_today = @tasks_completed_today.count
     @to_complete_count = Task.to_complete.count
-    @tasks_completed_by_users = Task.tasks_completed_by_users(tasks_completed_today)
+    @tasks_completed_by_users = Task.tasks_completed_by_users(@tasks_completed_today)
 
     render index_template
   end
@@ -49,14 +50,7 @@ class TasksController < ApplicationController
 
     next_task.assign!(:assigned, current_user) if next_task.may_assign?
 
-    respond_to do |format|
-      format.html do
-        return redirect_to url_for(action: next_task.initial_action, id: next_task.id)
-      end
-      format.json do
-        return render json: { next_task_id: next_task.id }
-      end
-    end
+    render json: { next_task_id: next_task.id }
   end
 
   private

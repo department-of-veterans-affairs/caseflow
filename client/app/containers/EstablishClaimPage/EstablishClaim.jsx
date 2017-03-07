@@ -196,8 +196,9 @@ export default class EstablishClaim extends BaseForm {
         });
         handleAlert(
         'error',
-        'Error',
-        'There was an error while submitting the current claim. Please try again later'
+        'System Error',
+        'Something went wrong on our end. We were not able to create an End Product.' +
+        ' Please try again later.'
       );
       });
   }
@@ -426,6 +427,10 @@ export default class EstablishClaim extends BaseForm {
     this.handlePageChange(FORM_PAGE);
   }
 
+  handleBackToDecisionReview = () => {
+    this.handlePageChange(DECISION_PAGE);
+  }
+
   /*
    * This function takes the special issues from the review page and sets the station
    * of jurisdiction in the form page. Special issues that all go to the same spot are
@@ -467,8 +472,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getEmailFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
   }
@@ -494,15 +498,14 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRegionalOfficeFromConstant(constant) {
-    let regionalOfficeKey = this.props.
-        regionalOfficeStations[this.props.task.appeal.station_key];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return this.getCityAndState(constant[regionalOfficeKey]);
   }
 
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
-    let regionalOfficeKey = this.props.regionalOfficeStations[stationKey];
+    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
     return `${stationKey} - ${
         this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
@@ -609,6 +612,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
             history={history}
             specialIssues={ApiUtil.convertToSnakeCase(
               this.getFormValues(this.state.specialIssues))}
@@ -621,6 +625,7 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
             loading={loading}
             validModifiers={this.validModifiers()}
           />
@@ -683,7 +688,6 @@ export default class EstablishClaim extends BaseForm {
 
 EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
-  regionalOfficeStations: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
 

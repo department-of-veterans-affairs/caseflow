@@ -178,6 +178,7 @@ svg[aria-hidden=true],
   padding: 0;
   background-color: transparent;
   font-size: inherit;
+  pointer-events: all;
 
   &:hover {
     text-decoration: none;
@@ -235,6 +236,7 @@ svg[aria-hidden=true],
 
 .pdfViewer.singlePageView .page {
   margin: auto;
+  z-index: 5;
 }
 
 .cf-label {
@@ -253,7 +255,8 @@ svg[aria-hidden=true],
 .cf-pdf-navigation {
   position: absolute;
   bottom: 50%;
-  z-index: 200;
+  z-index: 10;
+  pointer-events: none;
   width: 100%;
 }
 

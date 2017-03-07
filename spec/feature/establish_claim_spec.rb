@@ -134,16 +134,16 @@ RSpec.feature "Dispatch" do
         visit "/dispatch/establish-claim"
 
         # View history
-        expect(page).to have_content("Establish Next Claim")
-        expect(page).to have_css("tr#task-#{@completed_task.id}")
+        expect(page).to have_content("Establish next claim")
+        expect(page).to have_css("#table-row-#{@task.id}")
         expect(page).to have_content("(#{@file_number})")
 
-        click_on "Establish Next Claim"
+        click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
         # Can't start new task til current task is complete
         visit "/dispatch/establish-claim"
-        click_on "Establish Next Claim"
+        click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
         expect(page).to have_content("Review Decision")
@@ -164,7 +164,7 @@ RSpec.feature "Dispatch" do
         @task2.complete!(:completed, status: 0)
 
         visit "/dispatch/establish-claim"
-        click_on "Establish Next Claim"
+        click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         # page.select "Full Grant", from: "decisionType"
 
@@ -207,14 +207,14 @@ RSpec.feature "Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim")
 
         # No tasks left
-        expect(page).to have_content("No claims to establish right now")
+        expect(page).to have_content("There are no more claims in your queue")
         expect(page).to have_css(".usa-button-disabled")
       end
 
       scenario "Establish a new claim with special issues" do
         visit "/dispatch/establish-claim"
 
-        click_on "Establish Next Claim"
+        click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
         # Select special issues
@@ -274,7 +274,7 @@ RSpec.feature "Dispatch" do
 
         scenario "review page lets users choose which to use" do
           visit "/dispatch/establish-claim"
-          click_on "Establish Next Claim"
+          click_on "Establish next claim"
 
           # View history
           expect(page).to have_content("Multiple Decision Documents")
@@ -286,6 +286,16 @@ RSpec.feature "Dispatch" do
           click_on "Route Claim for Decision 2"
 
           expect(page).to have_content("Benefit Type")
+        end
+
+        scenario "the EP creation page has a link back to decision review" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish next claim"
+
+          expect(page).to have_content("Multiple Decision Documents")
+          click_on "Route Claim for Decision 1"
+          click_on "< Back to Decision Review"
+          expect(page).to have_content("Multiple Decision Documents")
         end
       end
     end
@@ -315,7 +325,7 @@ RSpec.feature "Dispatch" do
         scenario "full grants" do
           # Test that the full grant associate page disables the Create New EP button
           visit "/dispatch/establish-claim"
-          click_on "Establish Next Claim"
+          click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
           click_on "Route Claim"
@@ -335,7 +345,7 @@ RSpec.feature "Dispatch" do
           # Test that for a partial grant, the list of available modifiers is restricted
           # to unused modifiers.
           visit "/dispatch/establish-claim"
-          click_on "Establish Next Claim"
+          click_on "Establish next claim"
           click_on "Route Claim"
 
           click_on "Create New EP"
@@ -370,7 +380,7 @@ RSpec.feature "Dispatch" do
 
     scenario "Associate existing claim with decision" do
       visit "/dispatch/establish-claim"
-      click_on "Establish Next Claim"
+      click_on "Establish next claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
       # set special issue to ensure it is saved in the database
@@ -389,6 +399,16 @@ RSpec.feature "Dispatch" do
         .to eq(Task.completion_status_code(:assigned_existing_ep))
       expect(@task.reload.outgoing_reference_id).to eq("1")
       expect(@task.appeal.reload.mustard_gas).to be_truthy
+    end
+
+    scenario "the existing EP page has a link back to decision review" do
+      visit "/dispatch/establish-claim"
+      click_on "Establish next claim"
+
+      expect(page).to have_content("Review Decision")
+      click_on "Route Claim"
+      click_on "< Back to Decision Review"
+      expect(page).to have_content("Review Decision")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do

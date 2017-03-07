@@ -115,10 +115,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def initial_action
-    fail MustImplementInSubclassError
-  end
-
   def before_assign
     # Test hook for testing race conditions
   end
@@ -133,6 +129,14 @@ class Task < ActiveRecord::Base
 
   def start_time
     update!(started_at: Time.now.utc)
+  end
+
+  def prepare_with_decision!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
   end
 
   def cancel!(feedback = nil)
@@ -238,8 +242,9 @@ class Task < ActiveRecord::Base
       include: [:user, appeal: { methods:
        [:serialized_decision_date,
         :veteran_name,
-        :decision_type] }],
-      methods: [:progress_status, :days_since_creation]
+        :decision_type,
+        :vbms_id] }],
+      methods: [:progress_status, :days_since_creation, :completion_status_text]
     )
   end
 
@@ -255,6 +260,7 @@ class Task < ActiveRecord::Base
          :veteran_name,
          :decision_type,
          :station_key,
+         :regional_office_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
          :issues,
