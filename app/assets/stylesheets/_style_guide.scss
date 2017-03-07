@@ -23,6 +23,9 @@
 }
 
 .cf-help-divider {
-  color: $color-gray-lighter;
-  border-bottom: 1px;
+  border-bottom: 1px solid $color-gray-lighter;
+}
+
+.usa-accordion-content {
+  font-size: 1.4rem;
 }
