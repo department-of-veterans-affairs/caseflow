@@ -39,17 +39,17 @@ export default class StyleGuideTabs extends React.Component {
     ]
 
     tabPages = [
-      "This is an \'Active\' Tab.",
-      "This is an \'Enabled\' Tab.",
-      "This is a \'Disabled\' Tab"
+      "This is an 'Active' Tab.",
+      "This is an 'Enabled' Tab.",
+      "This is a 'Disabled' Tab"
     ];
 
     tabPagesWithIcons = [
-      "This tab uses the \'Suggested Questions\' icon.",
-      "This tab uses the \'All Questions\' icon.",
-      "This tab uses the \'In Progress\' icon.",
-      "This tab uses the \'Completed\' icon.",
-      "This tab uses the \'Errors\' icon."
+      "This tab uses the 'Suggested Questions' icon.",
+      "This tab uses the 'All Questions' icon.",
+      "This tab uses the 'In Progress' icon.",
+      "This tab uses the 'Completed' icon.",
+      "This tab uses the 'Errors' icon."
     ];
 
     return <div>

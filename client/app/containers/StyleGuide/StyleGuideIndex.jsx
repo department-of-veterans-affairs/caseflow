@@ -3,12 +3,10 @@ import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 
 export default class StyleGuideIndex extends React.Component {
-  constructor(props) {
-    super(props);
-
-  }
 
   render() {
+
+/* eslint-disable max-len */
 
     return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <div className="cf-push-left cf-sg-nav">
@@ -48,3 +46,4 @@ export default class StyleGuideIndex extends React.Component {
     </div>;
   }
 }
+/* eslint-enable max-len */

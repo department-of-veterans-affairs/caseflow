@@ -4,7 +4,7 @@ import React from 'react';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import { ModalCode } from './StyleGuideCode';
+// import { ModalCode } from './StyleGuideCode'; //will be used for code samples
 
 export default class StyleGuideModal extends React.Component {
   constructor(props) {
@@ -24,13 +24,6 @@ export default class StyleGuideModal extends React.Component {
 
   render() {
     let styleGuideModal = this.state.modal;
-
-    let options = {
-     theme: 'monokai',
-     mode: {name: "javascript", jsx: true},
-     readOnly: true,
-     lineNumbers: true
-    };
 
     return <div>
       <h2 id="modals">Modals</h2>
