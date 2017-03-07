@@ -351,7 +351,7 @@ export default class EstablishClaim extends BaseForm {
     this.handleSubmit();
   }
 
-  handleNotePageSubmit = () => {
+  handleNotePageSubmit = (vacolsNote) => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
@@ -360,7 +360,11 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/note-complete`).then(() => {
+    let data = ApiUtil.convertToSnakeCase({
+      vacolsNote
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).then(() => {
       this.reloadPage();
     }, () => {
       handleAlert(

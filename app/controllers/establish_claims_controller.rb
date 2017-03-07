@@ -93,7 +93,7 @@ class EstablishClaimsController < TasksController
   end
 
   def vacols_note_params
-    params.require(:diary_note)
+    params.permit(:vacols_note)
   end
 
   def establish_claim_params

@@ -90,7 +90,7 @@ export default class EstablishClaimNote extends BaseForm {
       ` in your jurisdiction.`;
   }
 
-  vacolsNote() {
+  vacolsSection() {
     return <div>
       <p>To ensure this claim is routed correctly, we will take the following
       steps in VACOLS:</p>
@@ -104,7 +104,7 @@ export default class EstablishClaimNote extends BaseForm {
     </div>;
   }
 
-  vbmsNote() {
+  vbmsSection() {
     return <div>
       {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
         <div className="usa-alert-body">
@@ -131,6 +131,7 @@ export default class EstablishClaimNote extends BaseForm {
 
       <Checkbox
         label="I confirm that I have created a VBMS note to help route this claim"
+        fullWidth={true}
         name="confirmNote"
         onChange={this.handleFieldChange('noteForm', 'confirmBox')}
         {...this.state.noteForm.confirmBox}
@@ -139,6 +140,9 @@ export default class EstablishClaimNote extends BaseForm {
     </div>;
   }
 
+  handleSubmit = () => {
+    this.props.handleSubmit(this.vacolsNoteText());
+  }
 
   render() {
     return <div>
@@ -147,10 +151,10 @@ export default class EstablishClaimNote extends BaseForm {
           <ol>
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
-              {this.vacolsNote()}
+              {this.vacolsSection()}
             </li>}
             {this.props.displayVbmsNote &&
-            <li>{this.vbmsNote()}</li>}
+            <li>{this.vbmsSection()}</li>}
           </ol>
 
         </div>
@@ -160,7 +164,7 @@ export default class EstablishClaimNote extends BaseForm {
               name="Finish Routing Claim"
               classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
-              onClick={this.props.handleSubmit}
+              onClick={this.handleSubmit}
             />
           </div>
         </div>

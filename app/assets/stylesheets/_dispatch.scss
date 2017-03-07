@@ -1,0 +1,10 @@
+// TODO(jd): Remove this dispatch-specific overrides and unify the styling
+.checkbox-wrapper-confirmNote {
+  .question-label {
+    max-width: 100%;
+  }
+  .cf-required {
+    float: none;
+  }
+}
+

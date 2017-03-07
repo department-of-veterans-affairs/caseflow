@@ -36,6 +36,9 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
+  def self.update_vacols_after_dispatch(appeal:, vacols_note: nil)
+  end
+
   def self.update_location_after_dispatch!(*)
   end
 

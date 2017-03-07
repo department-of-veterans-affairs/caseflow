@@ -14,7 +14,7 @@ export default class Checkbox extends React.Component {
     } = this.props;
 
     let className = `question-label `
-    return <div className="cf-form-checkboxes">
+    return <div className={`cf-form-checkboxes checkbox-wrapper-${name}`}>
       <div className="cf-form-checkbox">
 
       <input
@@ -24,7 +24,7 @@ export default class Checkbox extends React.Component {
         id={name}
         checked={value}
       />
-      <label className="question-label ${" htmlFor={name}>
+      <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       </div>
