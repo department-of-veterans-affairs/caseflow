@@ -1,6 +1,12 @@
 import React, { PropTypes } from 'react';
 import ProgressBarSection from './ProgressBarSection';
 
+/**
+ * Sections must be passed as a prop in this format:
+ *    [
+ *      { 'title' : string, 'activated' : boolean }
+ *    ]
+ */
 export default class ProgressBar extends React.Component {
   render() {
     let {

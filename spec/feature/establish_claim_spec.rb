@@ -218,6 +218,18 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
+      scenario "Progress bar matches path of establishing a claim" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
+        expect(page).to have_css(".cf-progress-bar")
+        expect(page).to have_css(".cf-progress-bar-activated")
+        expect(page).to have_css(".cf-progress-bar-not-activated")
+
+        click_on "Route Claim"
+        click_on "Create End Product"
+        expect(page).to_not have_css(".cf-progress-bar-not-activated")
+      end
+
       scenario "Establish a new claim with special issues" do
         # Establish claim for partial grant to test EP label logic
         Fakes::AppealRepository.records["123C"] = partial_grant_appeal
