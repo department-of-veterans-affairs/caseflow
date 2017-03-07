@@ -29,9 +29,16 @@ export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
-  'Full Grant': ['172BVAG', 'BVA Grant'],
-  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
-  'Remand': ['170RMDAMC', 'AMC-Remand']
+  'ARC': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170PGAMC', 'ARC-Partial Grant'],
+    'Remand': ['170RMDAMC', 'ARC-Remand']
+  },
+  'Routed': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170RBVAG', 'Remand with BVA Grant'],
+    'Remand': ['170RMD', 'Remand']
+  }
 };
 
 const FULL_GRANT_MODIFIER_OPTIONS = [
@@ -198,17 +205,24 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'System Error',
-        'Something went wrong on our end. We were not able to create an End Product.'
-        + ' Please try again later.'
+        'Something went wrong on our end. We were not able to create an End Product.' +
+        ' Please try again later.'
       );
       });
   }
 
+  getRoutingType = () => {
+    let stationOfJurisdiction = this.state.claimForm.stationOfJurisdiction.value;
+
+    return stationOfJurisdiction === '397 - ARC' ? "ARC" : "Routed";
+  }
+
   getClaimTypeFromDecision = () => {
-    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+    let decisionType = this.state.reviewForm.decisionType.value;
+    let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
-      throw new RangeError("Invalid deicion type value");
+      throw new RangeError("Invalid decision type value");
     }
 
     return values;
@@ -442,7 +456,7 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = this.state;
 
     // default needs to be reset in case the user has navigated back in the form
-    stateObject.claimForm.stationOfJurisdiction.value = '397 - AMC';
+    stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {

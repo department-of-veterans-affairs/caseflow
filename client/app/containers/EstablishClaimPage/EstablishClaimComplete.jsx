@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
-import ApiUtil from '../../util/ApiUtil';
 import ProgressBar from '../../components/ProgressBar';
 
+import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+
+const PARSE_INT_RADIX = 10;
 
 export default class EstablishClaimComplete extends React.Component {
 
@@ -15,14 +17,36 @@ export default class EstablishClaimComplete extends React.Component {
   }
 
   render() {
+
     let {
       availableTasks,
       buttonText,
       checklist,
-      content,
       firstHeader,
-      secondHeader
+      secondHeader,
+      totalCasesCompleted,
+      totalCasesToComplete,
+      employeeCount
     } = this.props;
+
+    let casesAssigned, employeeCountInt,
+      noCasesLeft, todayfeedbackText, totalCases;
+
+    const noMoreCasesMessage = <div>There are no more cases to work today.
+    <a href="/dispatch/establish-claim"> Return to homepage</a> to view your work history.
+    </div>;
+
+
+    // there are certain containers using this component without these
+    // stats being specified.
+    noCasesLeft = totalCasesToComplete === totalCasesCompleted;
+    totalCases = totalCasesToComplete + totalCasesCompleted;
+    employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
+
+    casesAssigned = employeeCountInt > 0 ?
+      Math.ceil(totalCases / employeeCountInt) : 0;
+
+    todayfeedbackText = noCasesLeft ? '' : ' today';
 
     return <div>
       <ProgressBar
@@ -38,9 +62,16 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
-      { content &&
-        <ul className="cf-msg-screen-deck">
-            {content}
+      { <ul className="cf-list-checklist establish-claim-feedback">
+        <div>
+         <div>{
+          `Way to go! You have completed ${totalCasesCompleted} out of the
+          ${casesAssigned} cases assigned to you${todayfeedbackText}.`}</div>
+          {noCasesLeft ?
+            noMoreCasesMessage :
+            `You can now establish the next claim or go back to your work history.`
+          }
+         </div>
         </ul>
       }
     </div>
@@ -81,7 +112,9 @@ EstablishClaimComplete.propTypes = {
   availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
   checklist: PropTypes.array,
-  content: PropTypes.string,
+  employeeCount: PropTypes.string,
   firstHeader: PropTypes.string,
-  secondHeader: PropTypes.string
+  secondHeader: PropTypes.string,
+  totalCasesAssigned: PropTypes.number,
+  totalCasesCompleted: PropTypes.number
 };
