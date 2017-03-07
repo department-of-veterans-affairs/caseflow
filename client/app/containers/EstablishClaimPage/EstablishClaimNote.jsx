@@ -43,24 +43,22 @@ export default class EstablishClaimNote extends BaseForm {
   // NOTE: We must keep these two methods in sync
   updatedVacolsLocationCode() {
     let specialIssues = this.props.specialIssues;
-    let station = this.props.stationofJurisdiction;
 
     if (specialIssues.vamc.value) {
       return "51";
     } else if (specialIssues.nationalCemeteryAdministration.value) {
       return "53";
-    } else if (station === "397" && !this.hasSelectedSpecialIssues()) {
+    } else if (!this.hasSelectedSpecialIssues()) {
       return "98";
-    } else if (station !== "397" && this.hasSelectedSpecialIssues()) {
-      return "50";
     }
 
-    return "N/A";
+    return "50";
+
 
   }
 
   hasSelectedSpecialIssues() {
-    return this.selectedSpecialIssues().length;
+    return Boolean(this.selectedSpecialIssues().length);
   }
 
   selectedSpecialIssues() {
@@ -85,6 +83,10 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   vacolsNoteText() {
+    if (!this.hasSelectedSpecialIssues()) {
+      return;
+    }
+
     return `The BVA Full Grant decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
       ` is being transfered from ARC as it contains: ` +
@@ -96,50 +98,46 @@ export default class EstablishClaimNote extends BaseForm {
       <p>To ensure this claim is routed correctly, we will take the following
       steps in VACOLS:</p>
 
-      <p>
-        <span>A. Change location to: </span>
-        <span>{this.updatedVacolsLocationCode()}</span>
-      </p>
-      <p>
-        <span>B. Add the diary note: </span>
-        <span>{this.vacolsNoteText()}</span>
-      </p>
+      <ol>
+        <li type="A">
+          <div>
+            <span className="inline-label">Change location to: </span>
+            <span className="inline-value">{this.updatedVacolsLocationCode()}</span>
+          </div>
+        </li>
+        {this.hasSelectedSpecialIssues() && <li type="A">
+          <div>
+            <span className="inline-label">Add the diary note: </span>
+            <span className="inline-value">{this.vacolsNoteText()}</span>
+          </div>
+        </li>}
+      </ol>
     </div>;
   }
 
   vbmsSection() {
     return <div>
-      {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
-        <div className="usa-alert-body">
-          <div>
-            <h3 className="usa-alert-heading">Cannot edit end product</h3>
-            <p className="usa-alert-text">
-              You cannot navigate to the previous page because the end
-              product has already been created and cannot be edited.
-              Please proceed with adding the note below in VBMS.
-            </p>
-          </div>
-        </div>
-      </div>}
 
       <p>To better route this claim, please open VBMS and
       attach the following note to the EP you just created.</p>
 
       <TextareaField
-        label="VBMS Note"
+        label="VBMS Note:"
         name="vbmsNote"
         onChange={this.handleFieldChange('noteForm', 'noteField')}
         {...this.state.noteForm.noteField}
       />
 
-      <Checkbox
-        label="I confirm that I have created a VBMS note to help route this claim"
-        fullWidth={true}
-        name="confirmNote"
-        onChange={this.handleFieldChange('noteForm', 'confirmBox')}
-        {...this.state.noteForm.confirmBox}
-        required={true}
-      />
+      <div className="route-claim-confirmNote-wrapper">
+        <Checkbox
+          label="I confirm that I have created a VBMS note to help route this claim"
+          fullWidth={true}
+          name="confirmNote"
+          onChange={this.handleFieldChange('noteForm', 'confirmBox')}
+          {...this.state.noteForm.confirmBox}
+          required={true}
+        />
+      </div>
     </div>;
   }
 
@@ -151,6 +149,19 @@ export default class EstablishClaimNote extends BaseForm {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>{this.headerText()}</h2>
+
+          {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
+            <div className="usa-alert-body">
+              <div>
+                <h3 className="usa-alert-heading">Cannot edit end product</h3>
+                <p className="usa-alert-text">
+                  You cannot navigate to the previous page because the end
+                  product has already been created and cannot be edited.
+                  Please proceed with adding the note below in VBMS.
+                </p>
+              </div>
+            </div>
+          </div>}
           <ol>
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>

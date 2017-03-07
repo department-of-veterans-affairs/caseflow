@@ -198,17 +198,15 @@ class AppealRepository
   end
 
   # Determine VACOLS location desired after dispatching a decision
-  # using information about the appeal and the newly assigned station
-  #
-  # rubocop:disable PerceivedComplexity, CyclomaticComplexity
-  def self.location_after_dispatch(appeal:, station:)
+  def self.location_after_dispatch(appeal:)
     return if appeal.full_grant?
 
     return "51" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
+    return "98" if appeal.special_issues?
 
-    return "98" if station == "397" && !appeal.special_issues?
-    return "50" if station != "397" && appeal.special_issues?
+    # If nothing else matches, we route the appeal to 50
+    "50"
   end
 
   def self.parse_veteran_establish_claim_info(veteran_record)

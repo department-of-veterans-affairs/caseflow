@@ -117,7 +117,7 @@ RSpec.feature "Dispatch" do
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
-      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdaf"))
       @other_task.prepare!
       @other_task.assign!(:assigned, other_user)
       @other_task.start!
@@ -310,6 +310,38 @@ RSpec.feature "Dispatch" do
           click_on "< Back to Decision Review"
           expect(page).to have_content("Multiple Decision Documents")
         end
+      end
+
+      scenario "Create partial grant EP with special issues and VACOLS note page" do
+        @task2.assign!(:assigned, current_user)
+        visit "/dispatch/establish-claim/#{@task2.id}"
+        find_label_for("vamc").click
+        click_on "Route Claim"
+
+        click_on "Create End Product"
+
+        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        # test special issue text within vacols note
+        expect(page).to have_content("VAMC")
+        # test correct vacols location
+        expect(page).to have_content("51")
+        # test special issue text within vbms note
+        expect(find_field("VBMS Note").value).to have_content("VAMC")
+      end
+
+      scenario "Partial grant, no EP, unhandled special issue" do
+        @task2.assign!(:assigned, current_user)
+        visit "/dispatch/establish-claim/#{@task2.id}"
+        find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        click_on "Route Claim"
+
+        expect(page).to have_content("Route Claim: Update VACOLS")
+        # test special issue text within vacols note
+        expect(page).to have_content("DIC - death, or accrued benefits")
+        # test no VBMS-related content
+        expect(page).to_not have_content("Update VACOLS and VBMS")
+        # test correct vacols location
+        expect(page).to have_content("50")
       end
     end
 

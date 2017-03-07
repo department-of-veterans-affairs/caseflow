@@ -22,7 +22,6 @@ module.exports = {
     "accessor-pairs": "error",
     "array-bracket-spacing": "error",
     "array-callback-return": "error",
-    "arrow-body-style": "error",
     "arrow-parens": "error",
     "arrow-spacing": "error",
     "block-scoped-var": "error",

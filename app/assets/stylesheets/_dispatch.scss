@@ -1,9 +1,22 @@
 // TODO(jd): Remove this dispatch-specific overrides and unify the styling
-.checkbox-wrapper-confirmNote {
+.route-claim-confirmNote-wrapper {
   .question-label {
     max-width: 100%;
   }
+
   .cf-required {
     float: none;
   }
+}
+
+.inline-label {
+  display: inline-block;
+  width: 18%;
+  vertical-align: top;
+}
+
+.inline-value {
+  display: inline-block;
+  width: 55%;
+  vertical-align: top;
 }

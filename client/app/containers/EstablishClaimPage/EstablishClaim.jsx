@@ -134,11 +134,11 @@ export default class EstablishClaim extends BaseForm {
     return DECISION_PAGE;
   }
 
-  containsRoutedSpecialIssues = () => [
-    Decision.ROUTING_SPECIAL_ISSUES.some((issue) => [
-      this.state.specialIssues[issue.specialIssue].value
-    ])
-  ]
+  containsRoutedSpecialIssues = () => {
+    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => {
+      return this.state.specialIssues[issue.specialIssue].value;
+    });
+  }
 
   componentDidMount() {
     let { history } = this.state;
@@ -338,9 +338,7 @@ export default class EstablishClaim extends BaseForm {
         this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
         this.handlePageChange(EMAIL_PAGE);
       } else {
-        this.setState({
-          specialIssueModalDisplay: true
-        });
+        this.handlePageChange(NOTE_PAGE);
       }
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
@@ -591,12 +589,6 @@ export default class EstablishClaim extends BaseForm {
 
     Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
-        this.setState({
-          // If there are multiple unhandled special issues, we'll route
-          // to the email address for the last one.
-          specialIssuesEmail: issue.emailAddress,
-          specialIssuesRegionalOffice: issue.regionalOffice
-        });
         willCreateEndProduct = false;
       }
     });
@@ -670,7 +662,6 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
-            stationofJurisdiction={this.stationOfJurisdictionCode()}
             displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
             displayVbmsNote={this.willCreateEndProduct()}
           />
