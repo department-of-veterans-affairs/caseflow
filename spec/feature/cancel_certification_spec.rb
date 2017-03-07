@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.feature "Cancel certification" do
   context "Cancellation certification" do
-
     before do
       User.authenticate!
 
@@ -44,7 +43,6 @@ RSpec.feature "Cancel certification" do
         click_on "Cancel certification"
       end
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
-
 
       within_fieldset("Why can't be this case certified in Caseflow") do
         find("label", text: "Other").click
