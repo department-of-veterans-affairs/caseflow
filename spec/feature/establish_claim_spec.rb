@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.feature "Dispatch" do
+  let(:partial_grant_appeal) { Fakes::AppealRepository.appeal_partial_grant_decided }
+
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -37,7 +39,7 @@ RSpec.feature "Dispatch" do
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_full_grant_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
-      "789E" => Fakes::AppealRepository.appeal_partial_grant_decided,
+      "789E" => partial_grant_appeal,
       @vbms_id => { documents: [Document.new(
         received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
         vbms_document_id: "123"
@@ -157,6 +159,9 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Establish a new claim page and process pt2" do
+        # Establish claim for partial grant to test EP label logic
+        Fakes::AppealRepository.records["123C"] = partial_grant_appeal
+
         # Complete last task so that we can ensure there are no remaining tasks
         @task2.assign!(:assigned, current_user)
         @task2.start!
@@ -169,6 +174,8 @@ RSpec.feature "Dispatch" do
         # page.select "Full Grant", from: "decisionType"
 
         click_on "Route Claim"
+
+        expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
@@ -189,9 +196,9 @@ RSpec.feature "Dispatch" do
             claim_type: "Claim",
             station_of_jurisdiction: "397",
             date: @task.appeal.decision_date.to_date,
-            end_product_modifier: "172",
-            end_product_label: "BVA Grant",
-            end_product_code: "172BVAG",
+            end_product_modifier: "170",
+            end_product_label: "ARC-Partial Grant",
+            end_product_code: "170PGAMC",
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
@@ -212,6 +219,9 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Establish a new claim with special issues" do
+        # Establish claim for partial grant to test EP label logic
+        Fakes::AppealRepository.records["123C"] = partial_grant_appeal
+
         visit "/dispatch/establish-claim"
 
         click_on "Establish next claim"
@@ -240,6 +250,23 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_content("Manually Added VBMS Note")
         expect(@task.appeal.reload.rice_compliance).to be_truthy
+
+        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+          claim: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "313",
+            date: @task.appeal.decision_date.to_date,
+            end_product_modifier: "170",
+            end_product_label: "Remand with BVA Grant",
+            end_product_code: "170RBVAG",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          appeal: @task.appeal
+        )
       end
 
       skip "Establish Claim form saves state when going back/forward in browser" do
@@ -366,7 +393,7 @@ RSpec.feature "Dispatch" do
               claim_type: "Claim",
               date: @task2.appeal.decision_date.to_date,
               end_product_modifier: "171",
-              end_product_label: "AMC-Partial Grant",
+              end_product_label: "ARC-Partial Grant",
               end_product_code: "170PGAMC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
