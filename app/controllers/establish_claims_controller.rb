@@ -5,18 +5,21 @@ class EstablishClaimsController < TasksController
 
   def perform
     # If we've already created the EP, we want to send the user to the note page
-    return render json: { require_note: true } if task.reviewed?
+    return render json: {} if task.reviewed?
 
     Task.transaction do
       task.appeal.update!(appeal_params)
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
-      task.complete!(status: 0) unless task.appeal.special_issues?
     end
-    render json: { require_note: task.appeal.special_issues? }
+    render json: {}
   end
 
-  def note_complete
-    task.complete!(status: 0)
+  # This POST updates VACOLS & VBMS Note
+  def review_complete
+    Task.transaction do
+      Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
+      task.complete!(status: 0)
+    end
     render json: {}
   end
 
@@ -87,6 +90,10 @@ class EstablishClaimsController < TasksController
 
   def appeal_params
     special_issues_params.merge(dispatched_to_station: establish_claim_params[:station_of_jurisdiction])
+  end
+
+  def vacols_note_params
+    params.require(:diary_note)
   end
 
   def establish_claim_params

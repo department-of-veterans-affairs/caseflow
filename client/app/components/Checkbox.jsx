@@ -9,9 +9,11 @@ export default class Checkbox extends React.Component {
     let {
       label,
       name,
+      required,
       value
     } = this.props;
 
+    let className = `question-label `
     return <div className="cf-form-checkboxes">
       <div className="cf-form-checkbox">
 
@@ -22,15 +24,23 @@ export default class Checkbox extends React.Component {
         id={name}
         checked={value}
       />
-      <label className="question-label" htmlFor={name}>{label || name}</label>
+      <label className="question-label ${" htmlFor={name}>
+        {label || name} {required && <span className="cf-required">Required</span>}
+      </label>
       </div>
     </div>;
   }
 }
+Checkbox.defaultProps = {
+  required: false,
+  fullWidth: false
+};
 
 Checkbox.propTypes = {
   label: PropTypes.node,
+  fullWidth: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  required: PropTypes.bool.isRequired,
   onChange: PropTypes.func,
   value: PropTypes.bool
 };

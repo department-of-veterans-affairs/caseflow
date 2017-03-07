@@ -301,8 +301,18 @@ class Fakes::AppealRepository
     %w(Washington Adams Jefferson Madison Jackson VanBuren)
   end
 
+  def self.appeals_for_tasks_types
+    [
+      appeal_full_grant_decided,
+      appeal_partial_grant_decided,
+      appeal_remand_decided
+    ]
+  end
+
   def self.appeals_for_tasks(index)
-    appeal_full_grant_decided.merge(
+    appeal = appeals_for_tasks_types[index % 3]
+
+    appeal.merge(
       veteran_last_name: last_names[index % last_names.length],
       veteran_first_name: first_names[index % first_names.length]
     )

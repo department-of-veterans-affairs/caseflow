@@ -15,29 +15,63 @@ export default class EstablishClaimNote extends BaseForm {
       specialIssues
     } = props;
 
-    let selectedSpecialIssue = Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
-
     // Add an and if there are multiple issues so that the last element
     // in the list has an and before it.
-    if (selectedSpecialIssue.length > 1) {
-      selectedSpecialIssue[selectedSpecialIssue.length - 1] =
-        `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
+    let selectedSpecialIssues = this.selectedSpecialIssues();
+
+    if (selectedSpecialIssues.length > 1) {
+      selectedSpecialIssues[selectedSpecialIssues.length - 1] =
+        `and ${selectedSpecialIssues[selectedSpecialIssues.length - 1]}`;
     }
 
     let vbmsNote = `The BVA Full Grant decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
-      ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
+      ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
-    let vacolsNote = `The BVA Full Grant decision` +
-      ` dated ${formatDate(appeal.serialized_decision_date)}` +
-      ` is being transfered from ARC as it contains: ${selectedSpecialIssue.join(', ')}` +
-      ` in your jurisdiction.`;
 
+    this.state = {
+      noteForm: {
+        confirmBox: new FormField(false),
+        noteField: new FormField(vbmsNote)
+      }
+    };
+  }
 
+  // This is a copy of the logic from
+  // AppealRepository.update_location_after_dispatch!
+  // NOTE: We must keep these two methods in sync
+  updatedVacolsLocationCode() {
+    let specialIssues = this.props.specialIssues;
+    let station = this.props.stationofJurisdiction;
+
+    if (specialIssues.vamc.value) {
+      return "51";
+    } else if (specialIssues.nationalCemeteryAdministration.value) {
+      return "53";
+    } else if (station === "397" && !this.hasSelectedSpecialIssues()) {
+      return "98";
+    } else if (station !== "397" && this.hasSelectedSpecialIssues()) {
+      return "50";
+    } else {
+      return "N/A";
+    }
+  }
+
+  hasSelectedSpecialIssues() {
+    return this.selectedSpecialIssues().length;
+  }
+
+  selectedSpecialIssues() {
+    let specialIssues = this.props.specialIssues;
+
+    return Object.keys(specialIssues).
+      filter((key) => specialIssues[key].value).
+      map((key) => specialIssues[key].issue);
+  }
+
+  headerText() {
     let noteFor = [];
     if (this.props.displayVacolsNote) {
       noteFor.push('VACOLS');
@@ -45,16 +79,29 @@ export default class EstablishClaimNote extends BaseForm {
     if (this.props.displayVbmsNote) {
       noteFor.push('VBMS');
     }
-    let noteHeader = 'Route Claim: Update ' + noteFor.join(' and ');
 
-    this.state = {
-      noteForm: {
-        confirmBox: new FormField(false),
-        noteField: new FormField(vbmsNote)
-      },
-      noteHeader,
-      vacolsNote
-    };
+    return 'Route Claim: Update ' + noteFor.join(' and ');
+  }
+
+  vacolsNoteText() {
+    return `The BVA Full Grant decision` +
+      ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
+      ` is being transfered from ARC as it contains: ${this.selectedSpecialIssues().join(', ')}` +
+      ` in your jurisdiction.`;
+  }
+
+  vacolsNote() {
+    return <div>
+      <p>To ensure this claim is routed correctly, we will take the following
+      steps in VACOLS:</p>
+
+      <p>
+        <span>A. Change location to: </span><span>{this.updatedVacolsLocationCode()}</span>
+      </p>
+      <p>
+        <span>B. Add the diary note: </span><span>{this.vacolsNoteText()}</span>
+      </p>
+    </div>;
   }
 
   vbmsNote() {
@@ -87,31 +134,21 @@ export default class EstablishClaimNote extends BaseForm {
         name="confirmNote"
         onChange={this.handleFieldChange('noteForm', 'confirmBox')}
         {...this.state.noteForm.confirmBox}
+        required={true}
       />
     </div>;
   }
 
-  vacolsNote() {
-    return <div>
-      <p>To ensure this claim is routed correctly, we will take the following
-      steps in VACOLS:</p>
-
-      <p>A. Change location to: [location code]</p>
-      <p>B. Add the diary note: {this.state.vacolsNote}</p>
-      <p>C. Change the ROJ to: [ROJ]</p>
-    </div>;
-  }
 
   render() {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h2>{this.state.noteHeader}</h2>
-          
+          <h2>{this.headerText()}</h2>
           <ol>
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
               {this.vacolsNote()}
-            </li>}  
+            </li>}
             {this.props.displayVbmsNote &&
             <li>{this.vbmsNote()}</li>}
           </ol>

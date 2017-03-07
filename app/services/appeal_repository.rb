@@ -161,7 +161,7 @@ class AppealRepository
   end
   # :nocov:
 
-  def self.establish_claim!(appeal:, claim:, diary_note_text: nil)
+  def self.establish_claim!(appeal:, claim:)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
@@ -174,21 +174,20 @@ class AppealRepository
     # establish claim
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
-    end_product = Appeal.transaction do
+    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+    send_and_log_request(sanitized_id, request)
+  end
+
+  def self.update_vacols_after_dispatch!(appeal:, vacols_note: nil)
+    VACOLS::Case.transaction do
       update_location_after_dispatch!(appeal: appeal,
-                                      station: claim[:station_of_jurisdiction])
+                                      station: appeal.dispatched_to_station)
 
-      # Create VACOLS diary note to help the user in handling the EP
-      if diary_note_text
+      if vacols_note
         VACOLS::Note.create!(case_record: appeal.case_record,
-                             text: diary_note_text)
+                             text: vacols_note)
       end
-
-      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
-      send_and_log_request(sanitized_id, request)
     end
-
-    end_product
   end
 
   def self.update_location_after_dispatch!(appeal:, station: nil)
