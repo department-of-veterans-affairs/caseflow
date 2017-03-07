@@ -34,7 +34,6 @@ export default class EstablishClaimComplete extends React.Component {
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
-    noCasesLeft = true;
     casesAssigned = employeeCountInt > 0 ?
       Math.ceil(totalCases / employeeCountInt) : 0;
 
