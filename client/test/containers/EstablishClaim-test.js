@@ -155,22 +155,56 @@ describe('EstablishClaim', () => {
       wrapper = mount(<EstablishClaim task={task}/>);
     });
 
-    it('returns 170RMDAMC - AMC-Remand for remand', () => {
-      wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
-      expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        eql(['170RMDAMC', 'AMC-Remand']);
+    context("when ARC EP", () => {
+      beforeEach(() => {
+        wrapper.setState({
+          claimForm: { stationOfJurisdiction: { value: "397 - ARC" } }
+        })
+      });
+
+      it('returns 170RMDAMC - ARC-Remand for remand', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['170RMDAMC', 'ARC-Remand']);
+      });
+
+      it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['170PGAMC', 'ARC-Partial Grant']);
+      });
+
+      it('returns 172BVAG - BVA Grant for full', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['172BVAG', 'BVA Grant']);
+      });
     });
 
-    it('returns 170PGAMC - AMC-Partial Grant for partial', () => {
-      wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
-      expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        eql(['170PGAMC', 'AMC-Partial Grant']);
-    });
+    context("when Routed EP", () => {
+      beforeEach(() => {
+        wrapper.setState({
+          claimForm: { stationOfJurisdiction: { value: "322 - Montgomery, AL" } }
+        })
+      });
 
-    it('returns 172BVAG - BVA Grant for full', () => {
-      wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
-      expect(wrapper.instance().getClaimTypeFromDecision()).to.
-        eql(['172BVAG', 'BVA Grant']);
+      it('returns 170RMDAMC - ARC-Remand for remand', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['170RMD', 'Remand']);
+      });
+
+      it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['170RBVAG', 'Remand with BVA Grant']);
+      });
+
+      it('returns 172BVAG - BVA Grant for full', () => {
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        expect(wrapper.instance().getClaimTypeFromDecision()).to.
+          eql(['172BVAG', 'BVA Grant']);
+      });
     });
   });
 });
