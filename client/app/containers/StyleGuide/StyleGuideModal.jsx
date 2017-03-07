@@ -1,11 +1,12 @@
 import React from 'react';
 
 // components
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
+import Modal from '../../components/Modal';
+import Button from '../../components/Button';
+import TextareaField from '../../components/TextareaField';
+import { ModalCode } from './StyleGuideCode';
 
-export default class StyleGuide extends React.Component {
+export default class StyleGuideModal extends React.Component {
   constructor(props) {
     super(props);
     window.jqueryOn = false;
@@ -24,7 +25,20 @@ export default class StyleGuide extends React.Component {
   render() {
     let styleGuideModal = this.state.modal;
 
+    let options = {
+     theme: 'monokai',
+     mode: {name: "javascript", jsx: true},
+     readOnly: true,
+     lineNumbers: true
+    };
+
     return <div>
+      <h2 id="modals">Modals</h2>
+        <p>Modals are 490 pixels in width with 30px padding around the border and
+        contain the following: a title, explanation text, a divider,
+        and action buttons. There are modal-specific classes that must be included
+        in your modal (see below code snippets).
+        Whenever possible, use a close link as the left action.</p>
       <p><Button
           name="Launch Modal"
           onClick={this.handleModalOpen}
