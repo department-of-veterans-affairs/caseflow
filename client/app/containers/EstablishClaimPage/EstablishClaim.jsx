@@ -134,9 +134,11 @@ export default class EstablishClaim extends BaseForm {
     return DECISION_PAGE;
   }
 
-  containsRoutedSpecialIssues = (specialIssues) => {
-    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => this.state.specialIssues[issue.specialIssue].value)
-  }
+  containsRoutedSpecialIssues = () => [
+    Decision.ROUTING_SPECIAL_ISSUES.some((issue) => [
+      this.state.specialIssues[issue.specialIssue].value
+    ])
+  ]
 
   componentDidMount() {
     let { history } = this.state;
@@ -183,7 +185,7 @@ export default class EstablishClaim extends BaseForm {
     let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then((response) => {
+      then(() => {
         this.setState({
           loading: false
         });
@@ -195,8 +197,8 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'System Error',
-        'Something went wrong on our end. We were not able to create an End Product.'
-        + ' Please try again later.'
+        'Something went wrong on our end. We were not able to create an End Product.' +
+        ' Please try again later.'
       );
       });
   }
@@ -364,18 +366,19 @@ export default class EstablishClaim extends BaseForm {
       vacolsNote
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).then(() => {
-      this.reloadPage();
-    }, () => {
-      handleAlert(
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
         'error',
         'Error',
         'There was an error while routing the current claim. Please try again later'
       );
-      this.setState({
-        loading: false
+        this.setState({
+          loading: false
+        });
       });
-    });
   }
 
   handleEmailPageSubmit = () => {
@@ -531,9 +534,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   stationOfJurisdictionCode() {
-    let val = this.state.claimForm.stationOfJurisdiction.value.substring(0, 3);
-    console.log(val);
-    return val;
+    return this.state.claimForm.stationOfJurisdiction.value.substring(0, 3);
   }
 
   prepareData() {

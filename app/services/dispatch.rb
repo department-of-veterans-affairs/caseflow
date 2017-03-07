@@ -69,8 +69,8 @@ class Dispatch
   end
 
   def update_vacols!
-    Appeal.repository.update_vacols_after_dispatch(appeal: task.appeal,
-                                                   vacols_note: vacols_note)
+    Appeal.repository.update_vacols_after_dispatch!(appeal: task.appeal,
+                                                    vacols_note: vacols_note)
   end
 
   def assign_existing_end_product!(end_product_id:, special_issues:)

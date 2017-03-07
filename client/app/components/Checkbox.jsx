@@ -13,7 +13,6 @@ export default class Checkbox extends React.Component {
       value
     } = this.props;
 
-    let className = `question-label `
     return <div className={`cf-form-checkboxes checkbox-wrapper-${name}`}>
       <div className="cf-form-checkbox">
 
@@ -32,15 +31,13 @@ export default class Checkbox extends React.Component {
   }
 }
 Checkbox.defaultProps = {
-  required: false,
-  fullWidth: false
+  required: false
 };
 
 Checkbox.propTypes = {
   label: PropTypes.node,
-  fullWidth: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   required: PropTypes.bool.isRequired,
-  onChange: PropTypes.func,
   value: PropTypes.bool
 };

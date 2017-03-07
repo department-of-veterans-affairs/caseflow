@@ -11,8 +11,7 @@ export default class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
     let {
-      appeal,
-      specialIssues
+      appeal
     } = props;
 
     // Add an and if there are multiple issues so that the last element
@@ -54,9 +53,10 @@ export default class EstablishClaimNote extends BaseForm {
       return "98";
     } else if (station !== "397" && this.hasSelectedSpecialIssues()) {
       return "50";
-    } else {
-      return "N/A";
     }
+
+    return "N/A";
+
   }
 
   hasSelectedSpecialIssues() {
@@ -73,6 +73,7 @@ export default class EstablishClaimNote extends BaseForm {
 
   headerText() {
     let noteFor = [];
+
     if (this.props.displayVacolsNote) {
       noteFor.push('VACOLS');
     }
@@ -80,14 +81,14 @@ export default class EstablishClaimNote extends BaseForm {
       noteFor.push('VBMS');
     }
 
-    return 'Route Claim: Update ' + noteFor.join(' and ');
+    return `Route Claim: Update ${noteFor.join(' and ')}`;
   }
 
   vacolsNoteText() {
     return `The BVA Full Grant decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
-      ` is being transfered from ARC as it contains: ${this.selectedSpecialIssues().join(', ')}` +
-      ` in your jurisdiction.`;
+      ` is being transfered from ARC as it contains: ` +
+      `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
   }
 
   vacolsSection() {
@@ -96,10 +97,12 @@ export default class EstablishClaimNote extends BaseForm {
       steps in VACOLS:</p>
 
       <p>
-        <span>A. Change location to: </span><span>{this.updatedVacolsLocationCode()}</span>
+        <span>A. Change location to: </span>
+        <span>{this.updatedVacolsLocationCode()}</span>
       </p>
       <p>
-        <span>B. Add the diary note: </span><span>{this.vacolsNoteText()}</span>
+        <span>B. Add the diary note: </span>
+        <span>{this.vacolsNoteText()}</span>
       </p>
     </div>;
   }
@@ -174,7 +177,7 @@ export default class EstablishClaimNote extends BaseForm {
 
 EstablishClaimNote.propTypes = {
   appeal: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
   displayVacolsNote: PropTypes.bool.isRequired,
-  displayVbmsNote: PropTypes.bool.isRequired
+  displayVbmsNote: PropTypes.bool.isRequired,
+  handleSubmit: PropTypes.func.isRequired
 };

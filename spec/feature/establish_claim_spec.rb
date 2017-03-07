@@ -61,6 +61,7 @@ RSpec.feature "Dispatch" do
     @task2.prepare!
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
+    allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
   context "As a manager" do
@@ -163,23 +164,20 @@ RSpec.feature "Dispatch" do
         @task2.review!
         @task2.complete!(:completed, status: 0)
 
+        expect(@task.appeal.full_grant?).to be_truthy
+
         visit "/dispatch/establish-claim"
         click_on "Establish Next Claim"
+
+        # Decision Page
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        # page.select "Full Grant", from: "decisionType"
 
         click_on "Route Claim"
 
+        # EP Form Page
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
         click_on "Create End Product"
-
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(page).to have_content("Congratulations!")
-
-        # We should not have this message on the congratulations page unless a special
-        # issue was checked.
-        expect(page).to_not have_content("Manually Added VBMS Note")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
@@ -197,6 +195,21 @@ RSpec.feature "Dispatch" do
           },
           appeal: @task.appeal
         )
+
+        # Review Page
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        expect(page).to have_content("Route Claim: Update VBMS")
+        expect(page).to_not have_content("VACOLS")
+
+        find_label_for("confirmNote").click
+        click_on "Finish Routing Claim"
+
+        # Confirmation Page
+        expect(page).to have_content("Congratulations!")
+        expect(page).to have_content("Manually Added VBMS Note")
+
+        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+
         expect(@task.reload.completed?).to be_truthy
         expect(@task.completion_status).to eq(0)
         expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
@@ -355,8 +368,7 @@ RSpec.feature "Dispatch" do
 
           click_on "Create End Product"
 
-          expect(page).to have_current_path("/dispatch/establish-claim/#{@task2.id}")
-          expect(page).to have_content("Congratulations!")
+          expect(page).to have_content("Route Claim:")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
             claim: {
@@ -365,6 +377,7 @@ RSpec.feature "Dispatch" do
               predischarge: false,
               claim_type: "Claim",
               date: @task2.appeal.decision_date.to_date,
+              # Testing that the modifier is now 171 since 170 was taken
               end_product_modifier: "171",
               end_product_label: "AMC-Partial Grant",
               end_product_code: "170PGAMC",

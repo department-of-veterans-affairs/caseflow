@@ -41,8 +41,8 @@ export default class TextField extends React.Component {
 }
 
 TextField.defaultProps = {
-  type: 'text',
-  required: false
+  required: false,
+  type: 'text'
 };
 
 TextField.propTypes = {

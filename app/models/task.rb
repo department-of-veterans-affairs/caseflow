@@ -242,7 +242,6 @@ class Task < ActiveRecord::Base
           [decisions: { methods: :received_at }],
         methods:
         [:serialized_decision_date,
-         :decisions_hash,
          :disposition,
          :veteran_name,
          :decision_type,
@@ -250,8 +249,7 @@ class Task < ActiveRecord::Base
          :regional_office_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
-         :issues,
-         :to_hash] }],
+         :issues] }],
       methods: [:progress_status, :aasm_state]
     )
   end
