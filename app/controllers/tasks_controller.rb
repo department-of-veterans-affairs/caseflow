@@ -54,9 +54,10 @@ class TasksController < ApplicationController
   end
 
   private
+
   def populate_completed_stats
     @to_complete_count = Task.to_complete.count
-    
+
     # getting the number of completed tasks for that particular user
     @completed_count_today = current_user ? Task.completed_today_by_user(current_user.id).count : 0
   end
