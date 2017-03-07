@@ -2,10 +2,10 @@ import React from 'react';
 
 // components
 import TabWindow from '../../components/TabWindow';
-//import RenderFunctions from '../../components/RenderFunctions';
+// import RenderFunctions from '../../components/RenderFunctions';
 import { closeSymbolHtml, missingSymbolHtml } from '../../components/RenderFunctions.jsx';
 
-export const tabIconFunctions = [closeSymbolHtml(), missingSymbolHtml()]
+export const tabIconFunctions = [closeSymbolHtml(), missingSymbolHtml()];
 
 export default class StyleGuideTabs extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ export default class StyleGuideTabs extends React.Component {
 
     this.state = {
       tabText: "HI"
-    }
+    };
 
   }
 
@@ -30,13 +30,13 @@ export default class StyleGuideTabs extends React.Component {
       "Tab 1",
       "Tab 2",
       "Tab 3"
-    ]
+    ];
 
     tabHeadersWithIcons = [
       " Active Tab",
       "Enabled Tab",
       "Disabled Tab"
-    ]
+    ];
 
     tabPages = [
       "This is an 'Active' Tab.",

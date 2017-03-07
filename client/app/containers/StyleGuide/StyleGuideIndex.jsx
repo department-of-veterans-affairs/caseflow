@@ -4,6 +4,7 @@ import StyleGuideTabs from './StyleGuideTabs';
 
 export default class StyleGuideIndex extends React.Component {
 
+/*eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
   render() {
 
 /* eslint-disable max-len */
@@ -23,7 +24,7 @@ export default class StyleGuideIndex extends React.Component {
           </ul>
       </div>
       <div className="cf-push-right cf-sg-content">
-      <h1 id="commons">Caseflow React Style Guide</h1>
+      <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.
           The goal is to maintain consistent styling across Caseflow applications and to keep our interface predictable and familiar to the user.

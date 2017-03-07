@@ -1,13 +1,13 @@
 import React from 'react';
 
-export default class Accordion extends React.Component{
+export default class Accordion extends React.Component {
   constructor(props) {
     super(props);
     this.state = { toggle: true };
   }
 
   toggleButton() {
-    this.setState({toggle: !this.state.toggle})
+    this.setState({ toggle: !this.state.toggle });
   }
 
   render() {
@@ -31,6 +31,6 @@ export default class Accordion extends React.Component{
           {content}
         </div>
       </div>
-    )
+    );
   }
 }

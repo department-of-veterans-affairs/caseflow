@@ -91,7 +91,7 @@ export let successSymbolHtml = function() {
        2.6z"/>
     </svg>
   );
-}
+};
 
 export let missingSymbolHtml = function() {
   return (
@@ -105,7 +105,7 @@ export let missingSymbolHtml = function() {
       1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"/>
     </svg>
   );
-}
+};
 
 
 /* eslint-enable max-len */
