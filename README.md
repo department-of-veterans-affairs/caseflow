@@ -27,7 +27,7 @@ Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://git
 
 Then run the following:
 
-> $ rbenv install 2.2.4
+> $ rbenv install 2.4.0
 
 > $ gem install bundler
 
