@@ -72,7 +72,7 @@ class EstablishClaimsController < TasksController
   end
 
   def start_text
-    "Establish Next Claim"
+    "Establish next claim"
   end
 
   def logo_name
