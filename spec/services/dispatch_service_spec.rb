@@ -23,7 +23,9 @@ describe Dispatch do
       station_of_jurisdiction: "499"
     }
   end
-  let(:dispatch) { Dispatch.new(claim: claim, task: task) }
+
+  let(:vacols_note) { nil }
+  let(:dispatch) { Dispatch.new(claim: claim, task: task, vacols_note: vacols_note) }
 
   describe Dispatch::Claim do
     context "#valid?" do
@@ -141,6 +143,22 @@ describe Dispatch do
 
     it "filters out non-dispatch end products" do
       is_expected.to eq(end_products)
+    end
+  end
+
+  context ".new" do
+    context "when vacols_note is > 280" do
+      let(:vacols_note) { "abc" * 100 } # 300 length
+      it "truncates vacols_note to 280" do
+        expect(dispatch.vacols_note.length).to eq(280)
+      end
+    end
+
+    context "when vacols_note is nil" do
+      let(:vacols_note) { nil }
+      it "is still nil" do
+        expect(dispatch.vacols_note).to eq(nil)
+      end
     end
   end
 end
