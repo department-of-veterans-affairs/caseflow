@@ -2,15 +2,15 @@ import React, { PropTypes } from 'react';
 import { loadingSymbolHtml } from './RenderFunctions.jsx';
 export default class LoadingContainer extends React.Component {
   render() {
-    return <div className="react-loading-container-container">
-        <div className="react-loading-container-positioning">
-          <div className="react-loading-container-table">
-            <div className="react-loading-container-table-cell">
+    return <div className="loadingContainer-container">
+        <div className="loadingContainer-positioning">
+          <div className="loadingContainer-table">
+            <div className="loadingContainer-table-cell">
               {loadingSymbolHtml('', '50%')}
             </div>
           </div>
         </div>
-        <div className="react-loading-container-content">
+        <div className="loadingContainer-content">
           {this.props.children}
         </div>
       </div>;

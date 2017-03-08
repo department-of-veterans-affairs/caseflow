@@ -6,6 +6,6 @@
  * If you add a component, add a corresponding css file here. Name all
  * styles with .react-<component_name>-<style_name>
  *
- *= require ./_loading_content.scss
+ *= require ./_loading_container.scss
  */
 
