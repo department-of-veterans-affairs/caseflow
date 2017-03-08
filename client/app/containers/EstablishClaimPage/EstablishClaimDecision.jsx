@@ -343,7 +343,8 @@ export default class EstablishClaimReview extends React.Component {
           </div>
         </div>
 
-      {specialIssueModalDisplay && <Modal
+      {// TODO: Remove this code. It should be dead.
+        specialIssueModalDisplay && <Modal
         buttons={[
           { classNames: ["cf-modal-link", "cf-btn-link"],
             name: '\u00AB Close',

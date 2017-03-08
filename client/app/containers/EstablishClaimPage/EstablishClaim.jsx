@@ -186,10 +186,20 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
       then(() => {
-        this.setState({
-          loading: false
-        });
-        this.handlePageChange(NOTE_PAGE);
+        // Hold on to your hats... We want to show the note page if we either
+        // have a VBMS note, VACOLS note, or both. We have a VBMS note whenever
+        // there are routable special issues. We have a VACOLS note whenever
+        // the grant is not a full grant. This checks for both of those, and
+        // if no note needs to be shown, submits from the note page.
+        if (this.state.reviewForm.decisionType.value === FULL_GRANT &&
+          !this.containsRoutedSpecialIssues()) {
+          this.handleNotePageSubmit(null);
+        } else {
+          this.setState({
+            loading: false
+          });
+          this.handlePageChange(NOTE_PAGE);
+        }
       }, () => {
         this.setState({
           loading: false
@@ -339,7 +349,7 @@ export default class EstablishClaim extends BaseForm {
         this.handlePageChange(EMAIL_PAGE);
       } else {
         this.handlePageChange(NOTE_PAGE);
-      }
+      } 
     } else if (this.shouldShowAssociatePage()) {
       this.handlePageChange(ASSOCIATE_PAGE);
     } else {
@@ -663,7 +673,7 @@ export default class EstablishClaim extends BaseForm {
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
             displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
-            displayVbmsNote={this.willCreateEndProduct()}
+            displayVbmsNote={this.containsRoutedSpecialIssues()}
           />
         }
         { this.isEmailPage() &&

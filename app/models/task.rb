@@ -16,7 +16,8 @@ class Task < ActiveRecord::Base
     routed_to_ro: 3,
     assigned_existing_ep: 4,
     special_issue_emailed: 5,
-    special_issue_not_emailed: 6
+    special_issue_not_emailed: 6,
+    special_issue_vacols_routed: 7
   }.freeze
 
   # Use this to define status texts that don't properly titlize
@@ -183,6 +184,10 @@ class Task < ActiveRecord::Base
     completion_status == self.class.completion_status_code(:special_issue_not_emailed)
   end
 
+  def dispatched_to_arc?
+    appeal.dispatched_to_station == '397'
+  end
+
   def days_since_creation
     (Time.zone.now - created_at).to_i / 1.day
   end
@@ -198,7 +203,8 @@ class Task < ActiveRecord::Base
   def no_review_completion_status(status:)
     [
       self.class.completion_status_code(:special_issue_emailed),
-      self.class.completion_status_code(:special_issue_not_emailed)
+      self.class.completion_status_code(:special_issue_not_emailed),
+      self.class.completion_status_code(:special_issue_vacols_routed)
     ].include? status
   end
 

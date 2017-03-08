@@ -29,10 +29,9 @@ export default class EstablishClaimNote extends BaseForm {
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
-
     this.state = {
       noteForm: {
-        confirmBox: new FormField(false),
+        confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
       }
     };
