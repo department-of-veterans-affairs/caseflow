@@ -387,6 +387,7 @@ RSpec.feature "Dispatch" do
           click_on "Establish Next Claim"
           click_on "Route Claim"
 
+
           click_on "Create New EP"
 
           date = "01/08/2017"
@@ -394,7 +395,7 @@ RSpec.feature "Dispatch" do
 
           click_on "Create End Product"
 
-          expect(page).to have_content("Route Claim:")
+          expect(page).to have_content("Congratulations!")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
             claim: {

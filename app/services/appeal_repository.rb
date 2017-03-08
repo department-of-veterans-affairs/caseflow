@@ -203,10 +203,10 @@ class AppealRepository
 
     return "51" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
-    return "98" if appeal.special_issues?
+    return "50" if appeal.special_issues?
 
-    # If nothing else matches, we route the appeal to 50
-    "50"
+    # By default, we route the appeal to ARC
+    "98"
   end
 
   def self.parse_veteran_establish_claim_info(veteran_record)
