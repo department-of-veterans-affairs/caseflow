@@ -112,10 +112,12 @@ export default class EstablishClaim extends BaseForm {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
       // Check special issue boxes based on what was sent from the database
-      let snakeCaseIssue = StringUtil.camelCaseToSnakeCase(camelCaseIssue);
+      let snakeCaseIssueSubstring =
+        StringUtil.camelCaseToSnakeCase(camelCaseIssue).substring(0, 60);
 
       this.state.specialIssues[camelCaseIssue] =
-        new FormField(props.task.appeal[snakeCaseIssue]);
+        new FormField(props.task.appeal[snakeCaseIssueSubstring]);
+
       this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
@@ -140,8 +142,13 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  supportedSpecialIssues = () => {
+    return [...Decision.ROUTING_SPECIAL_ISSUES,
+      ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES];
+  }
+
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return [...Decision.ROUTING_SPECIAL_ISSUES, ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES].some((issue) => {
+    return this.supportedSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue || issue].value;
     });
   }
@@ -352,20 +359,34 @@ export default class EstablishClaim extends BaseForm {
   handleDecisionPageSubmit = () => {
     this.setStationState();
 
-    if (!this.willCreateEndProduct()) {
-      if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
-        this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
-        this.handlePageChange(EMAIL_PAGE);
-      } else {
-        this.handlePageChange(NOTE_PAGE);
-      } 
-    } else { 
-      if (this.shouldShowAssociatePage()) {
-        this.handlePageChange(ASSOCIATE_PAGE);
-      } else {
-        this.handlePageChange(FORM_PAGE);
-      }
-    }
+    this.setState({
+      loading: true
+    });
+
+    let data = ApiUtil.convertToSnakeCase({
+      specialIssues: this.prepareSpecialIssues()
+    });
+
+    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update_appeal`,
+      { data }).then(() => {
+
+        this.setState({
+          loading: false
+        });
+
+        if (!this.willCreateEndProduct()) {
+          if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
+            this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
+            this.handlePageChange(EMAIL_PAGE);
+          } else {
+            this.handlePageChange(NOTE_PAGE);
+          }
+        } else if (this.shouldShowAssociatePage()) {
+          this.handlePageChange(ASSOCIATE_PAGE);
+        } else {
+          this.handlePageChange(FORM_PAGE);
+        }
+      });
   }
 
   handleFormPageSubmit = () => {
@@ -543,7 +564,8 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.state.specialIssues));
+      this.getFormValues(this.state.specialIssues)
+    );
 
     Object.keys(formValues).forEach((key) => {
       shortenedObject[key.substring(0, 60)] = formValues[key];
@@ -575,8 +597,7 @@ export default class EstablishClaim extends BaseForm {
         ...this.getFormValues(this.state.claimForm),
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      },
-      specialIssues: this.getFormValues(this.state.specialIssues)
+      }
     });
   }
 
@@ -642,6 +663,7 @@ export default class EstablishClaim extends BaseForm {
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
             handleSubmit={this.handleDecisionPageSubmit}
+            loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}

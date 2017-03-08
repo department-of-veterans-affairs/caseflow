@@ -228,10 +228,15 @@ RSpec.feature "Dispatch" do
 
         # Move on to note page
         click_on "Route Claim"
+
+        expect(page).to have_content("Create End Product")
+        # Test that special issues were saved
+        expect(@task.appeal.reload.rice_compliance).to be_truthy
+
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        
+
         expect(page).to have_content("Route Claim: Update VBMS")
         expect(page).to_not have_content("Route Claim: Update VACOLS")
         # Make sure note page contains the special issues
@@ -246,7 +251,6 @@ RSpec.feature "Dispatch" do
         click_on "Finish Routing Claim"
 
         expect(page).to have_content("Manually Added VBMS Note")
-        expect(@task.appeal.reload.rice_compliance).to be_truthy
       end
 
       skip "Establish Claim form saves state when going back/forward in browser" do
@@ -386,7 +390,6 @@ RSpec.feature "Dispatch" do
           visit "/dispatch/establish-claim"
           click_on "Establish Next Claim"
           click_on "Route Claim"
-
 
           click_on "Create New EP"
 

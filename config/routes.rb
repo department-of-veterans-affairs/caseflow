@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
+      put 'update_appeal', on: :member
     end
   end
 

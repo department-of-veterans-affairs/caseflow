@@ -109,7 +109,6 @@ module.exports = {
     "no-implicit-coercion": "error",
     "no-implicit-globals": "error",
     "no-implied-eval": "error",
-    "no-inline-comments": "error",
     "no-iterator": "error",
     "no-label-var": "error",
     "no-labels": "error",

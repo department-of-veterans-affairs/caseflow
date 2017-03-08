@@ -183,7 +183,7 @@ class Task < ActiveRecord::Base
   end
 
   def dispatched_to_arc?
-    appeal.dispatched_to_station == '397'
+    appeal.dispatched_to_station == "397"
   end
 
   def days_since_creation

@@ -50,7 +50,7 @@ class Dispatch
     # than use the value passed from the front end
     @claim = Claim.new(claim)
     @task = task
-    @vacols_note = vacols_note
+    @vacols_note = vacols_note && vacols_note[0...280]
   end
   attr_accessor :task, :claim, :vacols_note
 

@@ -197,6 +197,7 @@ export default class EstablishClaimReview extends React.Component {
       handleFieldChange,
       handleModalClose,
       handleSubmit,
+      loading,
       pdfLink,
       pdfjsLink,
       specialIssueModalDisplay,
@@ -339,11 +340,13 @@ export default class EstablishClaimReview extends React.Component {
             <Button
               name={this.state.endProductButtonText}
               onClick={handleSubmit}
+              loading={loading}
             />
           </div>
         </div>
 
-      {// TODO: Remove this code. It should be dead.
+        {
+        // TODO: Remove this code. It should be dead.
         specialIssueModalDisplay && <Modal
         buttons={[
           { classNames: ["cf-modal-link", "cf-btn-link"],

@@ -196,7 +196,7 @@ describe AppealRepository do
 
       it "handles vamc special issue" do
         expect(appeal.partial_grant?).to eq(true)
-        appeal.vamc =  true
+        appeal.vamc = true
         expect(subject).to eq("51")
       end
 
