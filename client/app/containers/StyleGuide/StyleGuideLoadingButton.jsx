@@ -18,6 +18,12 @@ export default class StyleGuideLoadingButton extends React.Component {
     });
   }
 
+  reset = () => {
+    this.setState({
+      loading: false
+    });
+  }
+
   render() {
     return <div>
       <h2 id="loading_button">Loading Button</h2>
@@ -32,6 +38,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         classNames={["usa-button-primary"]}
         loading={this.state.loading}
       />
+      <a href="javascript:void(0)" onClick={this.reset} style={{marginLeft: '1em'}}>Reset</a>
     </div>;
   }
 }
