@@ -32,7 +32,7 @@
           label: "Why can't be this case certified in Caseflow" %>
 
         <%= f.text_area :other_reason,
-          question_name: "otherReason",
+          question_name: "otherReason", maxlength: 2000,
           label: "Tell us more about your situation." %>
 
         <%= f.text_field :email,
