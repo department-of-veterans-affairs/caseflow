@@ -1,26 +1,29 @@
-.react-loading-container-positioning {
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+.loadingContainer-positioning {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-.react-loading-container-table {
+.loadingContainer-table {
   width: 100%;
   height: 100%;
   display: table;
 }
 
-.react-loading-container-table-cell {
+.loadingContainer-table-cell {
   text-align: center;
   display: table-cell;
   vertical-align: middle;
 }
 
-.react-loading-container-content {
+.loadingContainer-content {
   position: relative;
   z-index: 1;
 }
 
-.react-loading-container-container {
+.loadingContainer-container {
   position: relative;
 }
