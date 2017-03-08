@@ -140,6 +140,12 @@ export default class EstablishClaim extends BaseForm {
     });
   }
 
+  containsRoutedOrRegionalOfficeSpecialIssues = () => {
+    return [...Decision.ROUTING_SPECIAL_ISSUES, ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES].some((issue) => {
+      return this.state.specialIssues[issue.specialIssue || issue].value;
+    });
+  }
+
   componentDidMount() {
     let { history } = this.state;
 
@@ -167,6 +173,10 @@ export default class EstablishClaim extends BaseForm {
     window.location.href = window.location.pathname + window.location.search;
   }
 
+  shouldReviewAfterEndProductCreate = () => {
+    return this.containsRoutedOrRegionalOfficeSpecialIssues();
+  }
+
   handleSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
@@ -191,14 +201,13 @@ export default class EstablishClaim extends BaseForm {
         // there are routable special issues. We have a VACOLS note whenever
         // the grant is not a full grant. This checks for both of those, and
         // if no note needs to be shown, submits from the note page.
-        if (this.state.reviewForm.decisionType.value === FULL_GRANT &&
-          !this.containsRoutedSpecialIssues()) {
-          this.handleNotePageSubmit(null);
-        } else {
+        if (this.shouldReviewAfterEndProductCreate()) {
           this.setState({
             loading: false
           });
           this.handlePageChange(NOTE_PAGE);
+        } else {
+          this.handleNotePageSubmit(null);
         }
       }, () => {
         this.setState({
@@ -350,10 +359,12 @@ export default class EstablishClaim extends BaseForm {
       } else {
         this.handlePageChange(NOTE_PAGE);
       } 
-    } else if (this.shouldShowAssociatePage()) {
-      this.handlePageChange(ASSOCIATE_PAGE);
-    } else {
-      this.handlePageChange(FORM_PAGE);
+    } else { 
+      if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);
+      }
     }
   }
 
@@ -673,7 +684,7 @@ export default class EstablishClaim extends BaseForm {
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
             displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
-            displayVbmsNote={this.containsRoutedSpecialIssues()}
+            displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
         }
         { this.isEmailPage() &&

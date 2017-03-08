@@ -179,6 +179,10 @@ RSpec.feature "Dispatch" do
         find_label_for("gulfWarRegistry").click
         click_on "Create End Product"
 
+        # Confirmation Page
+        expect(page).to have_content("Congratulations!")
+        expect(page).to_not have_content("Manually Added VBMS Note")
+
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
             benefit_type_code: "1",
@@ -195,18 +199,6 @@ RSpec.feature "Dispatch" do
           },
           appeal: @task.appeal
         )
-
-        # Review Page
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(page).to have_content("Route Claim: Update VBMS")
-        expect(page).to_not have_content("VACOLS")
-
-        find_label_for("confirmNote").click
-        click_on "Finish Routing Claim"
-
-        # Confirmation Page
-        expect(page).to have_content("Congratulations!")
-        expect(page).to have_content("Manually Added VBMS Note")
 
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
@@ -239,13 +231,15 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
-
+        
+        expect(page).to have_content("Route Claim: Update VBMS")
+        expect(page).to_not have_content("Route Claim: Update VACOLS")
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{@task.id}"
+
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
         find_label_for("confirmNote").click
 
@@ -315,18 +309,18 @@ RSpec.feature "Dispatch" do
       scenario "Create partial grant EP with special issues and VACOLS note page" do
         @task2.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task2.id}"
-        find_label_for("vamc").click
+        find_label_for("mustardGas").click
         click_on "Route Claim"
 
         click_on "Create End Product"
 
         expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
         # test special issue text within vacols note
-        expect(page).to have_content("VAMC")
+        expect(page).to have_content("Mustard Gas")
         # test correct vacols location
-        expect(page).to have_content("51")
+        expect(page).to have_content("50")
         # test special issue text within vbms note
-        expect(find_field("VBMS Note").value).to have_content("VAMC")
+        expect(find_field("VBMS Note").value).to have_content("Mustard Gas")
       end
 
       scenario "Partial grant, no EP, unhandled special issue" do

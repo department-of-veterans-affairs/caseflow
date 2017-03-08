@@ -105,9 +105,7 @@ class Task < ActiveRecord::Base
 
     event :complete do
       transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
-      transitions from: :started, to: :completed,
-                  guard: proc { |*args| no_review_completion_status(*args) },
-                  after: proc { |*args| save_completion_status(*args) }
+      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
   end
 
