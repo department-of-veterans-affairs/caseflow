@@ -28,9 +28,16 @@ export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
-  'Full Grant': ['172BVAG', 'BVA Grant'],
-  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
-  'Remand': ['170RMDAMC', 'AMC-Remand']
+  'ARC': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170PGAMC', 'ARC-Partial Grant'],
+    'Remand': ['170RMDAMC', 'ARC-Remand']
+  },
+  'Routed': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170RBVAG', 'Remand with BVA Grant'],
+    'Remand': ['170RMD', 'Remand']
+  }
 };
 
 const FULL_GRANT_MODIFIER_OPTIONS = [
@@ -203,11 +210,18 @@ export default class EstablishClaim extends BaseForm {
       });
   }
 
+  getRoutingType = () => {
+    let stationOfJurisdiction = this.state.claimForm.stationOfJurisdiction.value;
+
+    return stationOfJurisdiction === '397 - ARC' ? "ARC" : "Routed";
+  }
+
   getClaimTypeFromDecision = () => {
-    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+    let decisionType = this.state.reviewForm.decisionType.value;
+    let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
-      throw new RangeError("Invalid deicion type value");
+      throw new RangeError("Invalid decision type value");
     }
 
     return values;
@@ -441,7 +455,7 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = this.state;
 
     // default needs to be reset in case the user has navigated back in the form
-    stateObject.claimForm.stationOfJurisdiction.value = '397 - AMC';
+    stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
     Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
@@ -528,14 +542,9 @@ export default class EstablishClaim extends BaseForm {
   }
 
   prepareData() {
-    let stateObject = this.state;
+    let claim = this.getFormValues(this.state.claimForm);
 
-    stateObject.claimForm.stationOfJurisdiction.value =
-        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
-
-    this.setState({
-      stateObject
-    });
+    claim.stationOfJurisdiction = claim.stationOfJurisdiction.substring(0, 3);
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -543,7 +552,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...this.getFormValues(this.state.claimForm),
+        ...claim,
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
       },

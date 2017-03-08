@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 9737959bc1f8d2e3fae7769d88b4dea11d352dad
-  ref: 9737959
+  revision: 9ebf199b71448f7205427883e36f50080ce34cad
+  ref: 9ebf199
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -139,7 +139,7 @@ GEM
     colorize (0.7.7)
     concurrent-ruby (1.0.4)
     connection_pool (2.2.1)
-    d3-rails (4.3.0)
+    d3-rails (4.7.0)
       railties (>= 3.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
