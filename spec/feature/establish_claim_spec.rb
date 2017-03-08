@@ -169,8 +169,6 @@ RSpec.feature "Dispatch" do
         @task2.review!
         @task2.complete!(:completed, status: 0)
 
-        expect(@task.appeal.full_grant?).to be_truthy
-
         visit "/dispatch/establish-claim"
         # Decision Page
         click_on "Establish next claim"
