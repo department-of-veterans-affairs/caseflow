@@ -175,7 +175,7 @@ export default class EstablishClaim extends BaseForm {
         });
       } else {
         this.setState({
-          page: location.pathname.substring(1) || NOTE_PAGE
+          page: location.pathname.substring(1) || DECISION_PAGE
         });
       }
     });
