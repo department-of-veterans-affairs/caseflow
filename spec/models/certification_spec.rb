@@ -142,15 +142,16 @@ describe Certification do
       end
 
       context "when fetching form8 data for a new certification" do
+        let(:appeal_hash) { { vacols_id: "4949" } }
+
         it "populates a form8 with appeal data when form8 data is not present" do
-          cert = Certification.new(vacols_id: "4949")
-          form = double
-          allow(cert).to receive(:form8).and_return(nil, form)
-          allow(form).to receive(:update_from_appeal)
+          cert = Certification.create(vacols_id: "4949")
+          allow(cert).to receive(:form8).and_return(nil)
 
           cert.start!
 
-          expect(form).to have_received(:update_from_appeal).once
+          form = Form8.find_by(certification_id: cert.id)
+          expect(form.vacols_id).to eq(cert.vacols_id)
         end
       end
 
@@ -160,28 +161,27 @@ describe Certification do
           form = double
           # TODO(alex): these tests are too mocked out. refactor them to be more realistic!
           allow(cert).to receive(:form8).and_return(nil, form)
-          allow(form).to receive(:update_from_appeal)
           allow(form).to receive(:update_certification_date)
           allow(form).to receive(:updated_at).and_return(Time.zone.now)
 
           cert.start!
           cert.start!
 
-          expect(form).to have_received(:update_from_appeal).once
-          expect(form).to have_received(:update_from_appeal).at_most(:once)
+          expect(form).to have_received(:update_certification_date).once
+          expect(form).to have_received(:update_certification_date).at_most(:once)
         end
 
         it "updates a form8's appeal data if form8 has been updated more than 48 hours ago" do
           cert = Certification.new(vacols_id: "4949")
           form = double
           allow(cert).to receive(:form8).and_return(form)
-          allow(form).to receive(:update_from_appeal)
+          allow(form).to receive(:update_certification_date)
           allow(form).to receive(:updated_at).and_return(49.hours.ago)
 
           cert.start!
           cert.start!
 
-          expect(form).to have_received(:update_from_appeal).twice
+          expect(form).to have_received(:update_certification_date).at_most(0).times
         end
 
         it "updates the certification_date on the form8 to the current day" do

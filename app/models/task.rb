@@ -52,6 +52,11 @@ class Task < ActiveRecord::Base
       where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
     end
 
+    def completed_today_by_user(user_id)
+      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc,
+            user_id: user_id)
+    end
+
     def to_complete
       where.not(aasm_state: "completed").where.not(aasm_state: "unprepared")
     end
@@ -123,6 +128,14 @@ class Task < ActiveRecord::Base
 
   def start_time
     update!(started_at: Time.now.utc)
+  end
+
+  def prepare_with_decision!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
   end
 
   def cancel!(feedback = nil)
