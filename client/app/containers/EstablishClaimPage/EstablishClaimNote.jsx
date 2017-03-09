@@ -52,8 +52,6 @@ export default class EstablishClaimNote extends BaseForm {
     }
 
     return "50";
-
-
   }
 
   hasSelectedSpecialIssues() {

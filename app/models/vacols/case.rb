@@ -6,6 +6,7 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,        foreign_key: :ticknum
   belongs_to :correspondent, foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :issues,        foreign_key: :isskey
+  has_many   :notes,         foreign_key: :tsktknm
 
   class InvalidLocationError < StandardError; end
 
