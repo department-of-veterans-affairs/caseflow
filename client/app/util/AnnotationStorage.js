@@ -21,6 +21,14 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
     this.onCommentChange = onCommentChange;
   }
 
+  sortAnnotations = (firstAnnotation, secondAnnotation) => {
+    if (firstAnnotation.page === secondAnnotation.page) {
+      return firstAnnotation.y - secondAnnotation.y;
+    } else {
+      return firstAnnotation.page - secondAnnotation.page;
+    }
+  }
+
   constructor(annotations) {
     super({
       addAnnotation: (documentId, pageNumber, annotation) =>
@@ -32,7 +40,9 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           let allAnnotations = this.getAnnotationByDocumentId(documentId);
 
           allAnnotations.push(annotation);
-          this.storedAnnotations[documentId] = allAnnotations;
+
+          // Keep the array sorted
+          this.storedAnnotations[documentId] = allAnnotations.sort(this.sortAnnotations);
           let data = ApiUtil.convertToSnakeCase({ annotation });
 
           ApiUtil.post(`/decision/review/annotation`, { data }).
@@ -87,6 +97,9 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           }
           this.storedAnnotations[documentId][index] = annotation;
 
+          // Keep the array sorted
+          this.storedAnnotations[documentId].sort(this.sortAnnotations);
+
           let data = ApiUtil.convertToSnakeCase({ annotation });
 
           ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
@@ -137,6 +150,12 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
       }
       this.storedAnnotations[annotation.documentId].push(annotation);
     });
+
+    // On our initial load we go through all the documents in our
+    // object, and sort each document's comments.
+    Object.keys(this.storedAnnotations).forEach((key) => {
+      this.storedAnnotations[key].sort(this.sortAnnotations);
+    })
 
     this.onCommentChange = () => {
       // do nothing
