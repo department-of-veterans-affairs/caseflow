@@ -191,8 +191,7 @@ class AppealRepository
   end
 
   def self.update_location_after_dispatch!(appeal:, station: nil)
-    location = location_after_dispatch(appeal: appeal,
-                                       station: station)
+    location = location_after_dispatch(appeal: appeal)
 
     appeal.case_record.update_vacols_location!(location)
   end
