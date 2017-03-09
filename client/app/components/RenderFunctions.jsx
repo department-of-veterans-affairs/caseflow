@@ -5,6 +5,7 @@ import React from 'react';
 /**
  * @returns {string} The HTML for the loading symbol.
  */
+
 export let loadingSymbolHtml = function() {
   return (
       <span>
@@ -69,7 +70,7 @@ export let loadingSymbolHtml = function() {
 
 export let closeSymbolHtml = function() {
   return (
-    <svg style={{ pointerEvents: "none" }} width="55" height="55" className="cf-icon-close"
+    <svg width="55" height="55" className="cf-icon-close"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
       <title>close</title>
       <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3
@@ -97,7 +98,7 @@ export let missingSymbolHtml = function() {
   return (
     <svg width="55" height="55" class="cf-icon-missing"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
-      <title>missing icon</title>
+      <title>failed</title>
       <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13
       13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2
       1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2

@@ -63,6 +63,8 @@ export default class StyleGuideModal extends React.Component {
         />
       </Modal>
     }
+    <p><a href="">View the modal code sample in ERB.</a></p>
+    <p><a href="https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/StyleGuideModal.jsx">View the modal code sample in React.</a></p>
     </div>;
   }
 }

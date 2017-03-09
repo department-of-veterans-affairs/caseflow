@@ -29,3 +29,12 @@
 .usa-accordion-content {
   font-size: 1.4rem;
 }
+
+.cf-modal.active {
+    z-index: 3;
+}
+
+.cf-tab svg {
+    width: 17px;
+    height: 17px;
+}

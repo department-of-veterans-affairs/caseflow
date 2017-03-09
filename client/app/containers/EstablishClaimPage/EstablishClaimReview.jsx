@@ -216,8 +216,11 @@ export default class EstablishClaimReview extends React.Component {
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
       new Date(decision2.received_at) - new Date(decision1.received_at));
 
-    let tabHeaders = decisions.map((decision, index) =>
-      `Decision ${(index + 1)} (${formatDate(decision.received_at)})`);
+    let tabHeaders = decisions.map((decision, index) => {
+      return {
+        label: `Decision ${(index + 1)} (${formatDate(decision.received_at)})`
+      }
+    })
 
     let pdfViews = decisions.map((decision, index) =>
 

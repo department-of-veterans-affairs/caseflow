@@ -3,9 +3,7 @@ import React from 'react';
 // components
 import TabWindow from '../../components/TabWindow';
 // import RenderFunctions from '../../components/RenderFunctions';
-import { closeSymbolHtml, missingSymbolHtml } from '../../components/RenderFunctions.jsx';
-
-export const tabIconFunctions = [closeSymbolHtml(), missingSymbolHtml()];
+import { closeSymbolHtml, successSymbolHtml, missingSymbolHtml } from '../../components/RenderFunctions.jsx';
 
 export default class StyleGuideTabs extends React.Component {
   constructor(props) {
@@ -27,29 +25,34 @@ export default class StyleGuideTabs extends React.Component {
     } = this.props;
 
     tabHeaders = [
-      "Tab 1",
-      "Tab 2",
-      "Tab 3"
+      {label: "Tab 1"},
+      {label: "Tab 2"},
+      {label: "Tab 3"}
     ];
 
-    tabHeadersWithIcons = [
-      " Active Tab",
-      "Enabled Tab",
-      "Disabled Tab"
+    tabHeadersWithIcons = [{
+        label: "Active Tab",
+        icon: successSymbolHtml()
+      },{
+        label: "Enabled Tab",
+        icon: successSymbolHtml()
+      },{
+        label: "Disabled Tab",
+        icon: missingSymbolHtml(),
+        disable: true
+      }
     ];
 
     tabPages = [
-      "This is an 'Active' Tab.",
-      "This is an 'Enabled' Tab.",
-      "This is a 'Disabled' Tab"
+      "1",
+      "2",
+      "3"
     ];
 
     tabPagesWithIcons = [
-      "This tab uses the 'Suggested Questions' icon.",
-      "This tab uses the 'All Questions' icon.",
-      "This tab uses the 'In Progress' icon.",
-      "This tab uses the 'Completed' icon.",
-      "This tab uses the 'Errors' icon."
+      "This is an 'Active' Tab.",
+      "This is an 'Enabled' Tab.",
+      "This is a 'Disabled' Tab"
     ];
 
     return <div>
