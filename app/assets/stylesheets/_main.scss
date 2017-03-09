@@ -222,11 +222,13 @@ select {
 }
 
 .cf-progress-bar {
-  display: flex;
+  width: 100%;
+  display: table;
+  table-layout: fixed;
 }
 
 .cf-progress-bar-section {
-  flex: 1;
+  display: table-cell;
   padding: 4px;
 }
 

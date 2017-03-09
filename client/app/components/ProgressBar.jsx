@@ -13,7 +13,8 @@ export default class ProgressBar extends React.Component {
       sections
     } = this.props;
 
-    return <div className="cf-progress-bar cf-app-segment">
+    return <div className="cf-app-segment">
+      <div className="cf-progress-bar">
         {sections.map(function(section, i){
           return <ProgressBarSection
             activated={section.activated}
@@ -21,7 +22,8 @@ export default class ProgressBar extends React.Component {
             title={section.title}
           />
         })}
-      </div>;
+      </div>
+    </div>;
   }
 }
 
