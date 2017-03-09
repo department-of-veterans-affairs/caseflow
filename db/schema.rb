@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170228191800) do
+ActiveRecord::Schema.define(version: 20170309203602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 20170228191800) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
+    t.boolean "home_loan_guaranty",                                           default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb",  default: false
   end
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
