@@ -11,39 +11,142 @@ export default class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
     let {
-      appeal,
-      specialIssues
+      appeal
     } = props;
-
-    let selectedSpecialIssue = Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
 
     // Add an and if there are multiple issues so that the last element
     // in the list has an and before it.
-    if (selectedSpecialIssue.length > 1) {
-      selectedSpecialIssue[selectedSpecialIssue.length - 1] =
-        `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
+    let selectedSpecialIssues = this.selectedSpecialIssues();
+
+    if (selectedSpecialIssues.length > 1) {
+      selectedSpecialIssues[selectedSpecialIssues.length - 1] =
+        `and ${selectedSpecialIssues[selectedSpecialIssues.length - 1]}`;
     }
 
-    let note = `The BVA Full Grant decision` +
-      ` date ${formatDate(appeal.serialized_decision_date)}` +
+    let vbmsNote = `The BVA Full Grant decision` +
+      ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
-      ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
+      ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
     this.state = {
       noteForm: {
-        confirmBox: new FormField(false),
-        noteField: new FormField(note)
+        confirmBox: new FormField(!this.props.displayVbmsNote),
+        noteField: new FormField(vbmsNote)
       }
     };
+  }
+
+  // This is a copy of the logic from
+  // AppealRepository.update_location_after_dispatch!
+  // NOTE: We must keep these two methods in sync
+  updatedVacolsLocationCode() {
+    let specialIssues = this.props.specialIssues;
+
+    if (specialIssues.vamc.value) {
+      return "51";
+    } else if (specialIssues.nationalCemeteryAdministration.value) {
+      return "53";
+    } else if (!this.hasSelectedSpecialIssues()) {
+      return "98";
+    }
+
+    return "50";
+  }
+
+  hasSelectedSpecialIssues() {
+    return Boolean(this.selectedSpecialIssues().length);
+  }
+
+  selectedSpecialIssues() {
+    let specialIssues = this.props.specialIssues;
+
+    return Object.keys(specialIssues).
+      filter((key) => specialIssues[key].value).
+      map((key) => specialIssues[key].issue);
+  }
+
+  headerText() {
+    let noteFor = [];
+
+    if (this.props.displayVacolsNote) {
+      noteFor.push('VACOLS');
+    }
+    if (this.props.displayVbmsNote) {
+      noteFor.push('VBMS');
+    }
+
+    return `Route Claim: Update ${noteFor.join(' and ')}`;
+  }
+
+  vacolsNoteText() {
+    if (!this.hasSelectedSpecialIssues()) {
+      return;
+    }
+
+    return `The BVA Full Grant decision` +
+      ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
+      ` is being transfered from ARC as it contains: ` +
+      `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
+  }
+
+  vacolsSection() {
+    return <div>
+      <p>To ensure this claim is routed correctly, we will take the following
+      steps in VACOLS:</p>
+
+      <ol>
+        <li type="A">
+          <div>
+            <span className="inline-label">Change location to: </span>
+            <span className="inline-value">{this.updatedVacolsLocationCode()}</span>
+          </div>
+        </li>
+        {this.hasSelectedSpecialIssues() && <li type="A">
+          <div>
+            <span className="inline-label">Add the diary note: </span>
+            <span className="inline-value">{this.vacolsNoteText()}</span>
+          </div>
+        </li>}
+      </ol>
+    </div>;
+  }
+
+  vbmsSection() {
+    return <div>
+
+      <p>To better route this claim, please open VBMS and
+      attach the following note to the EP you just created.</p>
+
+      <TextareaField
+        label="VBMS Note:"
+        name="vbmsNote"
+        onChange={this.handleFieldChange('noteForm', 'noteField')}
+        {...this.state.noteForm.noteField}
+      />
+
+      <div className="route-claim-confirmNote-wrapper">
+        <Checkbox
+          label="I confirm that I have created a VBMS note to help route this claim"
+          fullWidth={true}
+          name="confirmNote"
+          onChange={this.handleFieldChange('noteForm', 'confirmBox')}
+          {...this.state.noteForm.confirmBox}
+          required={true}
+        />
+      </div>
+    </div>;
+  }
+
+  handleSubmit = () => {
+    this.props.handleSubmit(this.vacolsNoteText());
   }
 
   render() {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Route Claim</h2>
+          <h2>{this.headerText()}</h2>
+
           {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
               <div>
@@ -56,23 +159,15 @@ export default class EstablishClaimNote extends BaseForm {
               </div>
             </div>
           </div>}
+          <ol>
+            {this.props.displayVacolsNote &&
+            <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
+              {this.vacolsSection()}
+            </li>}
+            {this.props.displayVbmsNote &&
+            <li>{this.vbmsSection()}</li>}
+          </ol>
 
-          <p>To better route this claim, please open VBMS and
-          attach the following note to the EP you just created.</p>
-
-          <TextareaField
-            label="VBMS Note"
-            name="vbmsNote"
-            onChange={this.handleFieldChange('noteForm', 'noteField')}
-            {...this.state.noteForm.noteField}
-          />
-
-          <Checkbox
-            label="I confirm that I have created a VBMS note to help route this claim"
-            name="confirmNote"
-            onChange={this.handleFieldChange('noteForm', 'confirmBox')}
-            {...this.state.noteForm.confirmBox}
-          />
         </div>
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
@@ -80,7 +175,7 @@ export default class EstablishClaimNote extends BaseForm {
               name="Finish Routing Claim"
               classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
-              onClick={this.props.handleSubmit}
+              onClick={this.handleSubmit}
             />
           </div>
         </div>
@@ -90,5 +185,7 @@ export default class EstablishClaimNote extends BaseForm {
 
 EstablishClaimNote.propTypes = {
   appeal: PropTypes.object.isRequired,
+  displayVacolsNote: PropTypes.bool.isRequired,
+  displayVbmsNote: PropTypes.bool.isRequired,
   handleSubmit: PropTypes.func.isRequired
 };

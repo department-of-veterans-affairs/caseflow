@@ -8,5 +8,5 @@
     totalCasesCompleted: @completed_count_today,
     employeeCount: Rails.cache.read('employee_count') || '0',
     totalCasesToComplete: @to_complete_count,
-    secondHeader: task.appeal.veteran_name + "'s claim has been assigned an EP."
+    secondHeader: task.appeal.veteran_full_name + "'s claim (" + task.appeal.vbms_id + ') has been assigned an EP.'
 }) %>
