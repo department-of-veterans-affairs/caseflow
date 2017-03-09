@@ -14,18 +14,28 @@ class Test::SetupController < ApplicationController
   end
 
   # Used for resetting data in UAT for claims establishment
-  def claims_establishment
+  def claims_establishment(appeal_id: nil, cancel_eps: false)
     # Cancel existing EPs and reset the dates
-    if full_grant_ids.include?(params[:appeal_id])
-      TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id,
-                                                    cancel_eps: params[:cancel_eps],
+    if full_grant_ids.include?(appeal_id)
+      TestDataService.prepare_claims_establishment!(vacols_id: appeal_id,
+                                                    cancel_eps: cancel_eps,
                                                     decision_type: :full)
-    elsif partial_grant_ids.include?(params[:appeal_id])
-      TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id,
-                                                    cancel_eps: params[:cancel_eps])
+    elsif partial_grant_ids.include?(appeal_id)
+      TestDataService.prepare_claims_establishment!(vacols_id: appeal_id,
+                                                    cancel_eps: cancel_eps)
     end
 
     redirect_to establish_claims_path
+  end
+
+  def delete_test_data
+    TestDataService.delete_test_data
+    if Appeal.all.nil?
+      flash[:success] = "Data cleared"
+    else
+      flash[:error] = "Data not cleared"
+    end
+    redirect_to "test/setup"
   end
 
   # Set current user in DEMO

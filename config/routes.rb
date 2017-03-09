@@ -106,6 +106,7 @@ Rails.application.routes.draw do
       resources :setup, only: [:index]
       post "setup_certification" => "setup#certification"
       post "setup_claims_establishment" => "setup#claims_establishment"
+      get "setup_delete_test_data" => "setup#delete_test_data"
     end
 
     if ApplicationController.dependencies_faked?

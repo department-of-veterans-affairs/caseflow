@@ -1,5 +1,12 @@
 <div class="cf-app-segment cf-app-segment--alt">
   <div class="usa-grid-full">
+    <% flash.each do |key,value| %>
+      <div class="<%= "usa-alert usa-alert-#{key} cf-app-segment" %>" role="alert">
+        <div class="usa-alert-body">
+          <h3 class="usa-alert-heading"><%= value %></h3>
+        </div>
+      </div>
+    <% end %>
     <div class="usa-width-one-half">
       <p><a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a></p>
         <% if ENV["TEST_APPEAL_IDS"] %>
@@ -7,7 +14,8 @@
            <p><%= link_to "Uncertify Appeal #{appeal_id}", test_setup_certification_path(appeal_id: appeal_id), method: :post %></p>
           <% end %>
         <% end %>
-      <p><%= link_to "Reset Claims Establishment Tasks", test_setup_claims_establishment_path, method: :post %></p>
+      <p><%= link_to "Reset Claims Establishment Tasks", test_setup_claims_establishment_path(appeal_id: "dank"), method: :post %></p>
+      <p><%= link_to "Clear Data", test_setup_delete_test_data_path %></p>
       <p><%= link_to "Create Tasks", admin_establish_claim_path %></p>
     </div>
   </div>

@@ -66,19 +66,19 @@ class TestDataService
   end
 
   def self.reset_outcoding_date(vacols_case)
-    conn = self.class.connection
+    conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
-    MetricsService.timer "VACOLS: reset decision date for #{bfkey}" do
+    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
-          SET TIOCTIME = (SYSDATE-2),
+          SET TIOCTIME = (SYSDATE-2)
           WHERE TICKNUM = #{case_id}
         SQL
         conn.execute(<<-SQL)
           UPDATE BRIEFF
-          SET BFDDEC = (SYSDATE-2),
+          SET BFDDEC = (SYSDATE-2)
           WHERE BFKEY = #{case_id}
         SQL
       end
@@ -88,10 +88,9 @@ class TestDataService
   def self.delete_test_data
     # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
     fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
-    TestDataService.delete_test_data
-    EstablishClaim.delete_all
     # Reset special issues for all appeals
     TestDataService.reset_appeal_special_issues
+    EstablishClaim.delete_all
     Task.delete_all
     Appeal.delete_all
   end
