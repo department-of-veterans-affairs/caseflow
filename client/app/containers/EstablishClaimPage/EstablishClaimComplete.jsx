@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -38,6 +39,11 @@ export default class EstablishClaimComplete extends React.Component {
     hasQuotaReached = totalCasesCompleted >= casesAssigned;
 
     return <div>
+      <EstablishClaimProgressBar
+        isConfirmation={true}
+        isReviewDecision={true}
+        isRouteClaim={true}
+      />
       <div
         id="certifications-generate"
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
