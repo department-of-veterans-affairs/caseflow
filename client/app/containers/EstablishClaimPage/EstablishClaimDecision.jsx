@@ -220,9 +220,11 @@ export default class EstablishClaimReview extends React.Component {
 
     let tabHeaders = decisions.map((decision, index) => {
       return {
+        disabled: false,
+        icon: "",
         label: `Decision ${(index + 1)} (${formatDate(decision.received_at)})`
-      }
-    })
+      };
+    });
 
     let pdfViews = decisions.map((decision, index) =>
 

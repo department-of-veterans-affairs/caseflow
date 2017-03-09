@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import RenderFunctions from './RenderFunctions.jsx';
 
 /*
  * This component can be used to easily build tabs.
@@ -13,7 +12,8 @@ export default class TabWindow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 0
+      currentPage: 0,
+      disabled: false
     };
   }
 
@@ -27,22 +27,26 @@ export default class TabWindow extends React.Component {
     }
   }
 
-  onDisabledTabClick = (tabNumber) => () => {
-    console.log(`${tabNumber} disabled`);
+  onDisabledTabClick = (tab) => () => {
+    if (Boolean(tab.disable) === true) {
+      this.setState({
+        disabled: true
+      });
+    }
   }
 
   getTabHeaderWithSVG = (tab) => {
     return <span>
       {tab.icon ? tab.icon : ''}
       <span>{tab.label}</span>
-    </span>
+    </span>;
   }
 
-  getTabClassName = (index, currentPage, isDisabled) => {
+  getTabClassName = (index, currentPage, isTabDisabled) => {
     let className = "";
 
-    className = `cf-tab${index === currentPage ? " cf-active" : ""}`
-    className += isDisabled ? ' disabled' : '';
+    className = `cf-tab${index === currentPage ? " cf-active" : ""}`;
+    className += isTabDisabled ? ' disabled' : '';
 
     return className;
   }
@@ -56,8 +60,12 @@ export default class TabWindow extends React.Component {
 
     let newTabs = [];
 
+
     tabs.map((tab) => {
-      newTabs.push({element: this.getTabHeaderWithSVG(tab), disable: tab.disable})
+      newTabs.push({ disable: tab.disable,
+        element: this.getTabHeaderWithSVG(tab) });
+
+      return newTabs;
     });
 
     return <div>
@@ -69,7 +77,8 @@ export default class TabWindow extends React.Component {
               className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
               id={`tab-${i}`}
-              onClick={tab.disable ? this.onDisabledTabClick(i) : this.onTabClick(i)}>
+              onClick={tab.disable ? this.onDisabledTabClick(i) : this.onTabClick(i)}
+              disabled={Boolean(tab.disable)}>
               <span>
                 {tab.element}
               </span>
@@ -86,7 +95,5 @@ export default class TabWindow extends React.Component {
 TabWindow.propTypes = {
   onChange: PropTypes.func,
   pages: PropTypes.arrayOf(PropTypes.node).isRequired,
-  tabs: PropTypes.shape({
-    label: PropTypes.string.isRequired
-  })
+  tabs: PropTypes.arrayOf(PropTypes.object)
 };

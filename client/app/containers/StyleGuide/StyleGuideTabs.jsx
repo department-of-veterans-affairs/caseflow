@@ -3,7 +3,8 @@ import React from 'react';
 // components
 import TabWindow from '../../components/TabWindow';
 // import RenderFunctions from '../../components/RenderFunctions';
-import { closeSymbolHtml, successSymbolHtml, missingSymbolHtml } from '../../components/RenderFunctions.jsx';
+import { successSymbolHtml, missingSymbolHtml }
+from '../../components/RenderFunctions.jsx';
 
 export default class StyleGuideTabs extends React.Component {
   constructor(props) {
@@ -25,22 +26,24 @@ export default class StyleGuideTabs extends React.Component {
     } = this.props;
 
     tabHeaders = [
-      {label: "Tab 1"},
-      {label: "Tab 2"},
-      {label: "Tab 3"}
+      { label: "Tab 1" },
+      { label: "Tab 2" },
+      { label: "Tab 3" }
     ];
 
     tabHeadersWithIcons = [{
-        label: "Active Tab",
-        icon: successSymbolHtml()
-      },{
-        label: "Enabled Tab",
-        icon: successSymbolHtml()
-      },{
-        label: "Disabled Tab",
-        icon: missingSymbolHtml(),
-        disable: true
-      }
+      disable: false,
+      icon: successSymbolHtml(),
+      label: "Active Tab"
+    }, {
+      disable: false,
+      icon: successSymbolHtml(),
+      label: "Enabled Tab"
+    }, {
+      disable: true,
+      icon: missingSymbolHtml(),
+      label: "Disabled Tab"
+    }
     ];
 
     tabPages = [
@@ -78,6 +81,8 @@ export default class StyleGuideTabs extends React.Component {
         tabs={tabHeadersWithIcons}
         pages={tabPagesWithIcons}
         onChange={this.onTabSelected}/>
-    </div>;
+      <p><a href="#">View the tab code sample in React.</a></p>
+
+  </div>;
   }
 }
