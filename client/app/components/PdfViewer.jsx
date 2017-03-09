@@ -39,7 +39,9 @@ export default class PdfViewer extends BaseForm {
     for (let i = 1; i <= this.state.numPages; i++) {
       this.props.annotationStorage.getAnnotations(this.props.id, i).
         then((annotations) => {
-          annotations.annotations.forEach((annotation) => {
+          annotations.annotations.sort((first, second) => {
+            return first.y - second.y;
+          }).forEach((annotation) => {
             this.comments.push({
               content: annotation.comment,
               uuid: annotation.uuid
