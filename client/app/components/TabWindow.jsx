@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Button from './Button';
 
 /*
  * This component can be used to easily build tabs.
@@ -73,7 +74,7 @@ export default class TabWindow extends React.Component {
           `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
         }>
           {newTabs.map((tab, i) =>
-            <div
+            <button
               className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
               id={`tab-${i}`}
@@ -82,7 +83,7 @@ export default class TabWindow extends React.Component {
               <span>
                 {tab.element}
               </span>
-            </div>
+            </button>
           )}
         </div>
         <div className="cf-tab-window-body-full-screen">
