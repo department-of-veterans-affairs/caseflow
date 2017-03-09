@@ -181,8 +181,7 @@ describe AppealRepository do
       # Clear the mock set for Appeal used in all the other AppealRepository tests
       allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_call_original
     end
-    let(:station) { "397" }
-    subject { AppealRepository.location_after_dispatch(appeal: appeal, station: station) }
+    subject { AppealRepository.location_after_dispatch(appeal: appeal) }
 
     context "full grant" do
       let(:appeal) { Appeal.create(vacols_id: "789") }
@@ -197,7 +196,7 @@ describe AppealRepository do
 
       it "handles vamc special issue" do
         expect(appeal.partial_grant?).to eq(true)
-        appeal.update!(vamc: true)
+        appeal.vamc = true
         expect(subject).to eq("51")
       end
 
@@ -210,18 +209,13 @@ describe AppealRepository do
       it "handles no special issue" do
         expect(appeal.partial_grant?).to eq(true)
         expect(appeal.special_issues?).to eq(false)
-        expect(station).to eq("397")
         expect(subject).to eq("98")
       end
 
-      context "another station" do
-        let(:station) { "499" }
-
-        it "handles other station" do
-          expect(appeal.partial_grant?).to eq(true)
-          appeal.update!(radiation: true)
-          expect(subject).to eq "50"
-        end
+      it "handles special issues" do
+        expect(appeal.partial_grant?).to eq(true)
+        appeal.radiation = true
+        expect(subject).to eq "50"
       end
     end
 
@@ -231,7 +225,6 @@ describe AppealRepository do
       it "mirrors partial grant" do
         expect(appeal.remand?).to eq(true)
         expect(appeal.special_issues?).to eq(false)
-        expect(station).to eq("397")
         expect(subject).to eq("98")
       end
     end
