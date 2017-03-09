@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.feature "Dispatch" do
+  let(:partial_grant_appeal) { Fakes::AppealRepository.appeal_partial_grant_decided }
+
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -37,7 +39,7 @@ RSpec.feature "Dispatch" do
     Fakes::AppealRepository.records = {
       "123C" => Fakes::AppealRepository.appeal_full_grant_decided,
       "456D" => Fakes::AppealRepository.appeal_remand_decided,
-      "789E" => Fakes::AppealRepository.appeal_partial_grant_decided,
+      "789E" => partial_grant_appeal,
       @vbms_id => { documents: [Document.new(
         received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
         vbms_document_id: "123"
@@ -61,6 +63,7 @@ RSpec.feature "Dispatch" do
     @task2.prepare!
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
+    allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
   context "As a manager" do
@@ -116,7 +119,7 @@ RSpec.feature "Dispatch" do
       @completed_task.complete!(:completed, status: 0)
 
       other_user = User.create(css_id: "some", station_id: "stuff")
-      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdf"))
+      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdaf"))
       @other_task.prepare!
       @other_task.assign!(:assigned, other_user)
       @other_task.start!
@@ -157,6 +160,9 @@ RSpec.feature "Dispatch" do
       end
 
       scenario "Establish a new claim page and process pt2" do
+        # Establish claim for partial grant to test EP label logic
+        Fakes::AppealRepository.records["123C"] = partial_grant_appeal
+
         # Complete last task so that we can ensure there are no remaining tasks
         @task2.assign!(:assigned, current_user)
         @task2.start!
@@ -164,21 +170,20 @@ RSpec.feature "Dispatch" do
         @task2.complete!(:completed, status: 0)
 
         visit "/dispatch/establish-claim"
+        # Decision Page
         click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        # page.select "Full Grant", from: "decisionType"
-
         click_on "Route Claim"
+
+        # EP Form Page
+        expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
         click_on "Create End Product"
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        # Confirmation Page
         expect(page).to have_content("Congratulations!")
-
-        # We should not have this message on the congratulations page unless a special
-        # issue was checked.
         expect(page).to_not have_content("Manually Added VBMS Note")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
@@ -189,14 +194,17 @@ RSpec.feature "Dispatch" do
             claim_type: "Claim",
             station_of_jurisdiction: "397",
             date: @task.appeal.decision_date.to_date,
-            end_product_modifier: "172",
-            end_product_label: "BVA Grant",
-            end_product_code: "172BVAG",
+            end_product_modifier: "170",
+            end_product_label: "ARC-Partial Grant",
+            end_product_code: "170PGAMC",
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
           appeal: @task.appeal
         )
+
+        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+
         expect(@task.reload.completed?).to be_truthy
         expect(@task.completion_status).to eq(0)
         expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
@@ -211,7 +219,34 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
+      scenario "Establish full grant with special issue" do
+        expect(@task.appeal.full_grant?).to be_truthy
+
+        visit "/dispatch/establish-claim"
+        # Decision Page
+        click_on "Establish next claim"
+        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        find_label_for("riceCompliance").click
+        click_on "Route Claim"
+
+        # Form Page
+        click_on "Create End Product"
+
+        expect(page).to have_content("Route Claim: Update VBMS")
+        expect(page).to_not have_content("Route Claim: Update VACOLS")
+        expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
+        find_label_for("confirmNote").click
+        click_on "Finish Routing Claim"
+
+        # Confirmation Page
+        expect(page).to have_content("Congratulations!")
+        expect(page).to have_content("Manually Added VBMS Note")
+      end
+
       scenario "Establish a new claim with special issues" do
+        # Establish claim for partial grant to test EP label logic
+        Fakes::AppealRepository.records["123C"] = partial_grant_appeal
+
         visit "/dispatch/establish-claim"
 
         click_on "Establish next claim"
@@ -223,16 +258,22 @@ RSpec.feature "Dispatch" do
 
         # Move on to note page
         click_on "Route Claim"
+
+        expect(page).to have_content("Create End Product")
+        # Test that special issues were saved
+        expect(@task.appeal.reload.rice_compliance).to be_truthy
+
         click_on "Create End Product"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
 
+        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{@task.id}"
+
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
         find_label_for("confirmNote").click
 
@@ -240,6 +281,23 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_content("Manually Added VBMS Note")
         expect(@task.appeal.reload.rice_compliance).to be_truthy
+
+        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+          claim: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "313",
+            date: @task.appeal.decision_date.to_date,
+            end_product_modifier: "170",
+            end_product_label: "Remand with BVA Grant",
+            end_product_code: "170RBVAG",
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          appeal: @task.appeal
+        )
       end
 
       skip "Establish Claim form saves state when going back/forward in browser" do
@@ -298,6 +356,38 @@ RSpec.feature "Dispatch" do
           expect(page).to have_content("Multiple Decision Documents")
         end
       end
+
+      scenario "Create partial grant EP with special issues and VACOLS note page" do
+        @task2.assign!(:assigned, current_user)
+        visit "/dispatch/establish-claim/#{@task2.id}"
+        find_label_for("mustardGas").click
+        click_on "Route Claim"
+
+        click_on "Create End Product"
+
+        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        # test special issue text within vacols note
+        expect(page).to have_content("Mustard Gas")
+        # test correct vacols location
+        expect(page).to have_content("50")
+        # test special issue text within vbms note
+        expect(find_field("VBMS Note").value).to have_content("Mustard Gas")
+      end
+
+      scenario "Partial grant, no EP, unhandled special issue" do
+        @task2.assign!(:assigned, current_user)
+        visit "/dispatch/establish-claim/#{@task2.id}"
+        find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        click_on "Route Claim"
+
+        expect(page).to have_content("Route Claim: Update VACOLS")
+        # test special issue text within vacols note
+        expect(page).to have_content("DIC - death, or accrued benefits")
+        # test no VBMS-related content
+        expect(page).to_not have_content("Update VACOLS and VBMS")
+        # test correct vacols location
+        expect(page).to have_content("50")
+      end
     end
 
     context "Add existing Full Grant & Partial Grant EPs" do
@@ -355,7 +445,6 @@ RSpec.feature "Dispatch" do
 
           click_on "Create End Product"
 
-          expect(page).to have_current_path("/dispatch/establish-claim/#{@task2.id}")
           expect(page).to have_content("Congratulations!")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
@@ -365,8 +454,9 @@ RSpec.feature "Dispatch" do
               predischarge: false,
               claim_type: "Claim",
               date: @task2.appeal.decision_date.to_date,
+              # Testing that the modifier is now 171 since 170 was taken
               end_product_modifier: "171",
-              end_product_label: "AMC-Partial Grant",
+              end_product_label: "ARC-Partial Grant",
               end_product_code: "170PGAMC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,

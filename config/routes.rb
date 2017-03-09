@@ -35,11 +35,12 @@ Rails.application.routes.draw do
       patch 'assign', on: :collection
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
-      post 'note-complete', on: :member
+      post 'review-complete', on: :member
       post 'email-complete', on: :member
       post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
+      put 'update_appeal', on: :member
     end
   end
 

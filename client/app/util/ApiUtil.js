@@ -70,6 +70,14 @@ const ApiUtil = {
       set(this.headers(options.headers)).
       send(options.data).
       use(nocache);
+  },
+
+  put(url, options = {}) {
+    return request.
+      put(url).
+      set(this.headers(options.headers)).
+      send(options.data).
+      use(nocache);
   }
 };
 

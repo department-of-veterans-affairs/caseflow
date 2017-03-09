@@ -44,7 +44,7 @@ export default class EstablishClaimComplete extends React.Component {
       <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
       <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
 
-      <ul className="cf-list-checklist">
+      <ul className="cf-list-checklist cf-left-padding">
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
