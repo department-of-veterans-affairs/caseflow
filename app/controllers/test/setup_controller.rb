@@ -15,24 +15,14 @@ class Test::SetupController < ApplicationController
 
   # Used for resetting data in UAT for claims establishment
   def claims_establishment
-    # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
-
-    EstablishClaim.delete_all
-    # Reset special issues for all appeals
-    TestDataService.reset_appeal_special_issues
-
     # Cancel existing EPs and reset the dates
-    full_grant_ids.each do |full_grant_id|
-      TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: :full)
-    end
-    partial_grant_ids.each do |partial_grant_id|
-      TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
-    end
-
-    unless ApplicationController.dependencies_faked?
-      CreateEstablishClaimTasksJob.perform_now
-      PrepareEstablishClaimTasksJob.perform_now
+    if full_grant_ids.include?(params[:appeal_id])
+      TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id,
+                                                    cancel_eps: params[:cancel_eps],
+                                                    decision_type: :full)
+    elsif partial_grant_ids.include?(params[:appeal_id])
+      TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id,
+                                                    cancel_eps: params[:cancel_eps])
     end
 
     redirect_to establish_claims_path
