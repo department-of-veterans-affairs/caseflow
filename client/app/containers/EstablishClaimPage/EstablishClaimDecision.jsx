@@ -154,7 +154,7 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
   'spinaBifida'
 ];
 
-export default class EstablishClaimReview extends React.Component {
+export default class EstablishClaimDecision extends React.Component {
   constructor(props) {
     super(props);
     let endProductButtonText;
@@ -201,7 +201,6 @@ export default class EstablishClaimReview extends React.Component {
       loading,
       pdfLink,
       pdfjsLink,
-      specialIssueModalDisplay,
       specialIssues,
       task
     } = this.props;
@@ -349,36 +348,12 @@ export default class EstablishClaimReview extends React.Component {
             />
           </div>
         </div>
-
-        {
-        // TODO: Remove this code. It should be dead.
-        specialIssueModalDisplay && <Modal
-        buttons={[
-          { classNames: ["cf-modal-link", "cf-btn-link"],
-            name: '\u00AB Close',
-            onClick: handleModalClose('specialIssueModalDisplay')
-          },
-          { classNames: ["usa-button", "usa-button-secondary"],
-            name: 'Cancel Claim Establishment',
-            onClick: handleCancelTaskForSpecialIssue
-          }
-        ]}
-        visible={true}
-        closeHandler={handleModalClose('specialIssueModalDisplay')}
-        title="Special Issue Grant">
-        <p>
-          You selected a special issue category not handled by AMO. Special
-          issue cases cannot be processed in caseflow at this time. Please
-          select <b>Cancel Claim Establishment</b> and proceed to process
-          this case manually in VBMS.
-        </p>
-      </Modal>}
     </div>
     );
   }
 }
 
-EstablishClaimReview.propTypes = {
+EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
@@ -386,7 +361,6 @@ EstablishClaimReview.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
-  specialIssueModalDisplay: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };

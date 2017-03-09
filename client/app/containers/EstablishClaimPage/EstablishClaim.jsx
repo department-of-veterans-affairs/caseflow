@@ -109,7 +109,6 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
-      specialIssueModalDisplay: false,
       specialIssues: {},
       specialIssuesEmail: '',
       specialIssuesRegionalOffice: '',
@@ -307,7 +306,6 @@ export default class EstablishClaim extends BaseForm {
   handleCancelTaskForSpecialIssue = () => {
     this.setState({
       cancelModalDisplay: true,
-      specialIssueModalDisplay: false,
       submitSpecialIssuesOnCancel: true
     });
   }
@@ -653,7 +651,6 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay,
       history,
       modalSubmitLoading,
-      specialIssueModalDisplay,
       specialIssues
     } = this.state;
 
@@ -675,7 +672,6 @@ export default class EstablishClaim extends BaseForm {
             loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
-            specialIssueModalDisplay={specialIssueModalDisplay}
             specialIssues={specialIssues}
             task={this.props.task}
           />
