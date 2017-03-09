@@ -117,7 +117,7 @@
   line-height: 35px;
 }
 
-.cf-form-textarea--full-width {
+.cf-form--full-width {
   width: 100%;
   max-width: 100%;
 }
@@ -189,7 +189,6 @@ select {
 
 .cf-react-icon-loading-back {
   @include animation(spin 9s linear infinite);
-  margin-left: -30px;
 }
 
 .cf-react-loading-indicator {
@@ -214,9 +213,17 @@ select {
   }
 }
 
+.cf-left-padding {
+  padding-left: 75px;
+}
+
 .cf-push-left {
   .cf-btn-link {
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.cf-bottom-border {
+  border-bottom: 1px solid $color-gray-light;
 }

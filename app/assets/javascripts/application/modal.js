@@ -14,6 +14,8 @@ window.Modal = (function($) {
   function init() {
     initState();
 
+    new window.CharacterCounter($question("otherReason"));
+
     $("#cancellation-form input, #cancellation-form textarea").on("change keyup paste mouseup", function() {
       return reevalulate();
     });
@@ -34,7 +36,8 @@ window.Modal = (function($) {
   }
 
   function questionValue(questionName) {
-    return $question(questionName).find("input[type='text'], textarea, input[type='radio']:checked").val();
+    var value = $question(questionName).find("input[type='text'], textarea, input[type='radio']:checked").val();
+    if (value !== undefined) { return value.trim(); }
   }
 
   function fetchState() {
