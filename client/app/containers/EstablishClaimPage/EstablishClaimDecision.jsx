@@ -23,10 +23,10 @@ export const SPECIAL_ISSUES = [
   `Education - GI Bill, dependents educational ` +
     `assistance, scholarship, transfer of entitlement`,
   'Foreign claim - compensation claims, dual claims, appeals',
-  'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
+  'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
   'Foreign pension, DIC - all other foreign countries',
   'Hearing - including travel board & video conference',
-  'Home Loan Guarantee',
+  'Home Loan Guaranty',
   'Incarcerated Veterans',
   'Insurance',
   'Manlincon Compliance',
@@ -68,7 +68,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
     regionalOffice: 'RO83',
-    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean'
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribbean'
   },
   {
     emailAddess: 'PMC',
@@ -78,7 +78,7 @@ export const UNHANDLED_SPECIAL_ISSUES = [
   {
     emailAddress: null,
     regionalOffice: null,
-    specialIssue: 'homeLoanGuarantee'
+    specialIssue: 'homeLoanGuaranty'
   },
   {
     emailAddress: ['nancy.encarnado@va.gov'],
@@ -144,7 +144,7 @@ export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
   `educationGiBillDependentsEducational` +
     `AssistanceScholarshipTransferOfEntitlement`,
   'hearingIncludingTravelBoardVideoConference',
-  'homeLoanGuarantee',
+  'homeLoanGuaranty',
   'incarceratedVeterans',
   'manlinconCompliance',
   'nonratingIssue',
