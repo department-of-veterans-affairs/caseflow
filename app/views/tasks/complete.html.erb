@@ -1,6 +1,6 @@
 <% content_for :page_title do task.appeal.task_header end %>
-<% checklist = ["Reviewed decision", "EP established"] 
-   checklist = ["Reviewed decision", "EP established", "Manually Added VBMS Note"] if task.appeal.special_issues?
+<% checklist = ["Reviewed decision", "EP established"]
+   checklist = ["Reviewed decision", "EP established", "Manually Added VBMS Note"] if !task.dispatched_to_arc?
    checklist = ["Reviewed decision", "Processed case outside of Caseflow"] if task.special_issue_not_emailed?
    checklist = ["Reviewed decision", "Sent email notification"] if task.special_issue_emailed?
    second_header = task.appeal.veteran_full_name + "'s End Product (" + task.appeal.vbms_id + ') has been created.'
