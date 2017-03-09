@@ -151,6 +151,8 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
       this.storedAnnotations[annotation.documentId].push(annotation);
     });
 
+    // On our initial load we go through all the documents in our
+    // object, and sort each document's comments.
     Object.keys(this.storedAnnotations).forEach((key) => {
       this.storedAnnotations[key].sort(this.sortAnnotations);
     })
