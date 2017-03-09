@@ -10,9 +10,18 @@ export default class EstablishClaimComplete extends React.Component {
 
   getProgressBarSections() {
     return [
-      { 'title' : '1. Review Decision', 'activated' : true },
-      { 'title' : '2. Route Claim', 'activated' : true },
-      { 'title' : '3. Confirmation', 'activated' : true }
+      {
+        'activated': true ,
+        'title': '1. Review Decision'
+      },
+      {
+        'activated': true,
+        'title': '2. Route Claim'
+      },
+      {
+        'activated': true,
+        'title': '3. Confirmation'
+      }
     ];
   }
 
@@ -48,7 +57,20 @@ export default class EstablishClaimComplete extends React.Component {
 
     return <div>
       <ProgressBar
-          sections={this.getProgressBarSections()}
+          sections={[
+            {
+              'activated': true ,
+              'title': '1. Review Decision'
+            },
+            {
+              'activated': true,
+              'title': '2. Route Claim'
+            },
+            {
+              'activated': true,
+              'title': '3. Confirmation'
+            }
+          ]}
       />
       <div
         id="certifications-generate"

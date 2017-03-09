@@ -650,9 +650,18 @@ export default class EstablishClaim extends BaseForm {
 
   getProgressBarSections() {
     return [
-      { 'title' : '1. Review Decision', 'activated' : true },
-      { 'title' : '2. Route Claim', 'activated' : !this.isReviewPage() },
-      { 'title' : '3. Confirmation', 'activated' : false }
+      {
+        'activated': true ,
+        'title': '1. Review Decision'
+      },
+      {
+        'activated': !this.isDecisionPage(),
+        'title': '2. Route Claim'
+      },
+      {
+        'activated': false,
+        'title': '3. Confirmation'
+      }
     ];
   }
 
