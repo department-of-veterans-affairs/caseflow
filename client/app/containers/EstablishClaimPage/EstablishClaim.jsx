@@ -12,7 +12,7 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import EstablishClaimReview, * as Review from './EstablishClaimReview';
+import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
@@ -26,11 +26,22 @@ export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
 
+export const FULL_GRANT = 'Full Grant';
+export const PARTIAL_GRANT = 'Partial Grant';
+export const REMAND = 'Remand';
+
 
 export const END_PRODUCT_INFO = {
-  'Full Grant': ['172BVAG', 'BVA Grant'],
-  'Partial Grant': ['170PGAMC', 'AMC-Partial Grant'],
-  'Remand': ['170RMDAMC', 'AMC-Remand']
+  'ARC': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170PGAMC', 'ARC-Partial Grant'],
+    'Remand': ['170RMDAMC', 'ARC-Remand']
+  },
+  'Routed': {
+    'Full Grant': ['172BVAG', 'BVA Grant'],
+    'Partial Grant': ['170RBVAG', 'Remand with BVA Grant'],
+    'Remand': ['170RMD', 'Remand']
+  }
 };
 
 const FULL_GRANT_MODIFIER_OPTIONS = [
@@ -47,13 +58,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const SPECIAL_ISSUES = Review.SPECIAL_ISSUES;
-
-let containsRoutingSpecialIssues = function(specialIssues) {
-  return Boolean(
-    Review.ROUTING_SPECIAL_ISSUES.find((issue) => specialIssues[issue.specialIssue].value)
-  );
-};
+const SPECIAL_ISSUES = Decision.SPECIAL_ISSUES;
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -114,10 +119,12 @@ export default class EstablishClaim extends BaseForm {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
       // Check special issue boxes based on what was sent from the database
-      let snakeCaseIssue = StringUtil.camelCaseToSnakeCase(camelCaseIssue);
+      let snakeCaseIssueSubstring =
+        StringUtil.camelCaseToSnakeCase(camelCaseIssue).substring(0, 60);
 
       this.state.specialIssues[camelCaseIssue] =
-        new FormField(props.task.appeal[snakeCaseIssue]);
+        new FormField(props.task.appeal[snakeCaseIssueSubstring]);
+
       this.state.specialIssues[camelCaseIssue].issue = issue;
     });
   }
@@ -134,6 +141,23 @@ export default class EstablishClaim extends BaseForm {
     // Force navigate to the review page on initial component mount
     // This ensures they are not mid-flow
     return DECISION_PAGE;
+  }
+
+  containsRoutedSpecialIssues = () => {
+    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => {
+      return this.state.specialIssues[issue.specialIssue].value;
+    });
+  }
+
+  supportedSpecialIssues = () => {
+    return [...Decision.ROUTING_SPECIAL_ISSUES,
+      ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES];
+  }
+
+  containsRoutedOrRegionalOfficeSpecialIssues = () => {
+    return this.supportedSpecialIssues().some((issue) => {
+      return this.state.specialIssues[issue.specialIssue || issue].value;
+    });
   }
 
   componentDidMount() {
@@ -163,6 +187,10 @@ export default class EstablishClaim extends BaseForm {
     window.location.href = window.location.pathname + window.location.search;
   }
 
+  shouldReviewAfterEndProductCreate = () => {
+    return this.containsRoutedOrRegionalOfficeSpecialIssues();
+  }
+
   handleSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
@@ -181,14 +209,19 @@ export default class EstablishClaim extends BaseForm {
     let data = this.prepareData();
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then((response) => {
-        if (JSON.parse(response.text).require_note) {
+      then(() => {
+        // Hold on to your hats... We want to show the note page if we either
+        // have a VBMS note, VACOLS note, or both. We have a VBMS note whenever
+        // there are routable special issues. We have a VACOLS note whenever
+        // the grant is not a full grant. This checks for both of those, and
+        // if no note needs to be shown, submits from the note page.
+        if (this.shouldReviewAfterEndProductCreate()) {
           this.setState({
             loading: false
           });
           this.handlePageChange(NOTE_PAGE);
         } else {
-          this.reloadPage();
+          this.handleNotePageSubmit(null);
         }
       }, () => {
         this.setState({
@@ -197,17 +230,24 @@ export default class EstablishClaim extends BaseForm {
         handleAlert(
         'error',
         'System Error',
-        'Something went wrong on our end. We were not able to create an End Product.'
-        + ' Please try again later.'
+        'Something went wrong on our end. We were not able to create an End Product.' +
+        ' Please try again later.'
       );
       });
   }
 
+  getRoutingType = () => {
+    let stationOfJurisdiction = this.state.claimForm.stationOfJurisdiction.value;
+
+    return stationOfJurisdiction === '397 - ARC' ? "ARC" : "Routed";
+  }
+
   getClaimTypeFromDecision = () => {
-    let values = END_PRODUCT_INFO[this.state.reviewForm.decisionType.value];
+    let decisionType = this.state.reviewForm.decisionType.value;
+    let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
-      throw new RangeError("Invalid deicion type value");
+      throw new RangeError("Invalid decision type value");
     }
 
     return values;
@@ -278,7 +318,7 @@ export default class EstablishClaim extends BaseForm {
     window.scrollTo(0, 0);
   }
 
-  isReviewPage() {
+  isDecisionPage() {
     return this.state.page === DECISION_PAGE;
   }
 
@@ -313,7 +353,7 @@ export default class EstablishClaim extends BaseForm {
     let modifiers = [];
     let endProducts = this.props.task.appeal.pending_eps;
 
-    if (this.state.reviewForm.decisionType.value === 'Full Grant') {
+    if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
       modifiers = FULL_GRANT_MODIFIER_OPTIONS;
     } else {
       modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
@@ -330,29 +370,44 @@ export default class EstablishClaim extends BaseForm {
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
-  handleReviewPageSubmit = () => {
+  handleDecisionPageSubmit = () => {
     this.setStationState();
 
-    if (!this.validateReviewPageSubmit()) {
-      if (this.state.reviewForm.decisionType.value === 'Full Grant') {
-        this.handlePageChange(EMAIL_PAGE);
-      } else {
+    this.setState({
+      loading: true
+    });
+
+    let data = ApiUtil.convertToSnakeCase({
+      specialIssues: this.prepareSpecialIssues()
+    });
+
+    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update_appeal`,
+      { data }).then(() => {
+
         this.setState({
-          specialIssueModalDisplay: true
+          loading: false
         });
-      }
-    } else if (this.shouldShowAssociatePage()) {
-      this.handlePageChange(ASSOCIATE_PAGE);
-    } else {
-      this.handlePageChange(FORM_PAGE);
-    }
+
+        if (!this.willCreateEndProduct()) {
+          if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
+            this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
+            this.handlePageChange(EMAIL_PAGE);
+          } else {
+            this.handlePageChange(NOTE_PAGE);
+          }
+        } else if (this.shouldShowAssociatePage()) {
+          this.handlePageChange(ASSOCIATE_PAGE);
+        } else {
+          this.handlePageChange(FORM_PAGE);
+        }
+      });
   }
 
   handleFormPageSubmit = () => {
     this.handleSubmit();
   }
 
-  handleNotePageSubmit = () => {
+  handleNotePageSubmit = (vacolsNote) => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
@@ -361,18 +416,23 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/note-complete`).then(() => {
-      this.reloadPage();
-    }, () => {
-      handleAlert(
+    let data = ApiUtil.convertToSnakeCase({
+      vacolsNote
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).
+      then(() => {
+        this.reloadPage();
+      }, () => {
+        handleAlert(
         'error',
         'Error',
         'There was an error while routing the current claim. Please try again later'
       );
-      this.setState({
-        loading: false
+        this.setState({
+          loading: false
+        });
       });
-    });
   }
 
   handleEmailPageSubmit = () => {
@@ -441,15 +501,15 @@ export default class EstablishClaim extends BaseForm {
     let stateObject = this.state;
 
     // default needs to be reset in case the user has navigated back in the form
-    stateObject.claimForm.stationOfJurisdiction.value = '397 - AMC';
+    stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
-    Review.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
+    Decision.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
-    Review.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
+    Decision.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
@@ -518,7 +578,8 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.state.specialIssues));
+      this.getFormValues(this.state.specialIssues)
+    );
 
     Object.keys(formValues).forEach((key) => {
       shortenedObject[key.substring(0, 60)] = formValues[key];
@@ -527,15 +588,14 @@ export default class EstablishClaim extends BaseForm {
     return shortenedObject;
   }
 
+  stationOfJurisdictionCode() {
+    return this.state.claimForm.stationOfJurisdiction.value.substring(0, 3);
+  }
+
   prepareData() {
-    let stateObject = this.state;
+    let claim = this.getFormValues(this.state.claimForm);
 
-    stateObject.claimForm.stationOfJurisdiction.value =
-        stateObject.claimForm.stationOfJurisdiction.value.substring(0, 3);
-
-    this.setState({
-      stateObject
-    });
+    claim.stationOfJurisdiction = this.stationOfJurisdictionCode();
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -543,24 +603,20 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.convertToSnakeCase({
       claim: {
-        ...this.getFormValues(this.state.claimForm),
+        ...claim,
         endProductCode: endProductInfo[0],
         endProductLabel: endProductInfo[1]
-      },
-      specialIssues: this.getFormValues(this.state.specialIssues)
+      }
     });
   }
 
-  validateReviewPageSubmit() {
-    let validOutput = true;
 
-    // If it contains a routed special issue, allow EP creation even if it
-    // contains other unhandled special issues.
-    if (containsRoutingSpecialIssues(this.state.specialIssues)) {
-      return true;
+  setUnhandledSpecialIssuesEmailAndRegionalOffice = () => {
+    if (this.containsRoutedSpecialIssues()) {
+      return;
     }
 
-    Review.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
@@ -568,11 +624,27 @@ export default class EstablishClaim extends BaseForm {
           specialIssuesEmail: issue.emailAddress,
           specialIssuesRegionalOffice: issue.regionalOffice
         });
-        validOutput = false;
+      }
+    });
+  }
+
+  // This returns true if the flow will create an EP or assign to an existing EP
+  willCreateEndProduct() {
+    let willCreateEndProduct = true;
+
+    // If it contains a routed special issue, allow EP creation even if it
+    // contains other unhandled special issues.
+    if (this.containsRoutedSpecialIssues()) {
+      return true;
+    }
+
+    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
+        willCreateEndProduct = false;
       }
     });
 
-    return validOutput;
+    return willCreateEndProduct;
   }
 
   render() {
@@ -592,14 +664,15 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <div>
-        { this.isReviewPage() &&
-          <EstablishClaimReview
+        { this.isDecisionPage() &&
+          <EstablishClaimDecision
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
             handleFieldChange={this.handleFieldChange}
             handleModalClose={this.handleModalClose}
-            handleSubmit={this.handleReviewPageSubmit}
+            handleSubmit={this.handleDecisionPageSubmit}
+            loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssueModalDisplay={specialIssueModalDisplay}
@@ -641,6 +714,8 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
+            displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
+            displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
         }
         { this.isEmailPage() &&
