@@ -6,7 +6,6 @@ import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import BaseForm from '../BaseForm';
 
-import ProgressBar from '../../components/ProgressBar';
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
@@ -17,6 +16,7 @@ import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
+import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -648,23 +648,6 @@ export default class EstablishClaim extends BaseForm {
     return willCreateEndProduct;
   }
 
-  getProgressBarSections() {
-    return [
-      {
-        'activated': true ,
-        'title': '1. Review Decision'
-      },
-      {
-        'activated': !this.isDecisionPage(),
-        'title': '2. Route Claim'
-      },
-      {
-        'activated': false,
-        'title': '3. Confirmation'
-      }
-    ];
-  }
-
   render() {
     let {
       loading,
@@ -682,8 +665,10 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <div>
-        <ProgressBar
-          sections={this.getProgressBarSections()}
+        <EstablishClaimProgressBar
+          isConfirmation={false}
+          isReviewDecision={true}
+          isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
           <EstablishClaimDecision

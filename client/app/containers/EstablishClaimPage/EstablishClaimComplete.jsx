@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ProgressBar from '../../components/ProgressBar';
+import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -7,23 +7,6 @@ import Button from '../../components/Button';
 const PARSE_INT_RADIX = 10;
 
 export default class EstablishClaimComplete extends React.Component {
-
-  getProgressBarSections() {
-    return [
-      {
-        'activated': true ,
-        'title': '1. Review Decision'
-      },
-      {
-        'activated': true,
-        'title': '2. Route Claim'
-      },
-      {
-        'activated': true,
-        'title': '3. Confirmation'
-      }
-    ];
-  }
 
   render() {
 
@@ -56,21 +39,10 @@ export default class EstablishClaimComplete extends React.Component {
     hasQuotaReached = totalCasesCompleted >= casesAssigned;
 
     return <div>
-      <ProgressBar
-          sections={[
-            {
-              'activated': true ,
-              'title': '1. Review Decision'
-            },
-            {
-              'activated': true,
-              'title': '2. Route Claim'
-            },
-            {
-              'activated': true,
-              'title': '3. Confirmation'
-            }
-          ]}
+      <EstablishClaimProgressBar
+        isConfirmation={true}
+        isReviewDecision={true}
+        isRouteClaim={true}
       />
       <div
         id="certifications-generate"
