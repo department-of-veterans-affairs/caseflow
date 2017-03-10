@@ -183,10 +183,7 @@ describe FeatureToggle do
 
       context "when user is not passed" do
         let(:user) { nil }
-
-        it "throws an error" do
-          expect { subject }.to raise_error(FeatureToggle::UserIsRequiredError)
-        end
+        it { is_expected.to eq false }
       end
     end
   end
