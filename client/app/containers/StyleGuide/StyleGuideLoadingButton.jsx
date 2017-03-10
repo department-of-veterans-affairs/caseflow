@@ -4,13 +4,6 @@ import React from 'react';
 import Button from '../../components/Button';
 
 export default class StyleGuideLoadingButton extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loading: false
-    };
-  }
 
   startLoading = () => {
     this.setState({
@@ -35,7 +28,7 @@ export default class StyleGuideLoadingButton extends React.Component {
       <Button
         name={"See It In Action"}
         onClick={this.startLoading}
-        loading={this.state.loading}
+        loading={this.state && this.state.loading}
       />
       <Button
         name={"Reset"}
