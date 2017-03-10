@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -21,25 +22,28 @@ export default class EstablishClaimComplete extends React.Component {
     } = this.props;
 
     let casesAssigned, employeeCountInt,
-      noCasesLeft, todayfeedbackText, totalCases;
+      hasQuotaReached, quotaReachedMessage, totalCases;
 
     const noMoreCasesMessage = <div>There are no more cases to work today.
     <a href="/dispatch/establish-claim"> Return to homepage</a> to view your work history.
     </div>;
 
+    quotaReachedMessage = `Way to go! You have completed all of the total cases
+      assigned to you today.`;
 
-    // there are certain containers using this component without these
-    // stats being specified.
-    noCasesLeft = totalCasesToComplete === totalCasesCompleted;
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
     casesAssigned = employeeCountInt > 0 ?
       Math.ceil(totalCases / employeeCountInt) : 0;
-
-    todayfeedbackText = noCasesLeft ? '' : ' today';
+    hasQuotaReached = totalCasesCompleted >= casesAssigned;
 
     return <div>
+      <EstablishClaimProgressBar
+        isConfirmation={true}
+        isReviewDecision={true}
+        isRouteClaim={true}
+      />
       <div
         id="certifications-generate"
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
@@ -52,12 +56,13 @@ export default class EstablishClaimComplete extends React.Component {
       </ul>
       { <ul className="cf-list-checklist establish-claim-feedback">
         <div>
-         <div>{
+         <div>{hasQuotaReached ?
+          quotaReachedMessage :
           `Way to go! You have completed ${totalCasesCompleted} out of the
-          ${casesAssigned} cases assigned to you${todayfeedbackText}.`}</div>
-          {noCasesLeft ?
-            noMoreCasesMessage :
-            `You can now establish the next claim or go back to your work history.`
+          ${casesAssigned} cases assigned to you today.`}</div>
+          {availableTasks ?
+            `You can now establish the next claim or go back to your work history.` :
+            noMoreCasesMessage
           }
          </div>
         </ul>
@@ -77,11 +82,16 @@ export default class EstablishClaimComplete extends React.Component {
         />
         }
         { !availableTasks &&
-        <Button
+        <div>
+          <span className="cf-button-associated-text-right">
+            { "There are no more claims in your queue" }
+          </span>
+          <Button
             name={buttonText}
             classNames={["usa-button-disabled", "cf-push-right"]}
             disabled={true}
         />
+        </div>
         }
       </div>
     </div>
