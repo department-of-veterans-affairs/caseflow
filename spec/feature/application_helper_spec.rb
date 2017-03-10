@@ -6,5 +6,11 @@ RSpec.describe ApplicationHelper, type: :helper do
       helper.request.env["PATH_INFO"] = "/certifications/new/123C"
       expect(helper.current_ga_path).to eq "/certifications/new"
     end
+
+    it "returns route's path when method is POST" do
+      helper.request.env["PATH_INFO"] = "/certifications/123C/confirm"
+      helper.request.env["REQUEST_METHOD"] = "POST"
+      expect(helper.current_ga_path).to eq "/certifications/confirm"
+    end
   end
 end
