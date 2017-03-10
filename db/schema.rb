@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170309210853) do
+ActiveRecord::Schema.define(version: 20170309235647) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,6 @@ ActiveRecord::Schema.define(version: 20170309210853) do
     t.boolean "foreign_claim_compensation_claims_dual_claims_appeals",        default: false
     t.boolean "manlincon_compliance",                                         default: false
     t.boolean "hearing_including_travel_board_video_conference",              default: false
-    t.boolean "home_loan_guarantee",                                          default: false
     t.boolean "insurance",                                                    default: false
     t.boolean "national_cemetery_administration",                             default: false
     t.boolean "spina_bifida",                                                 default: false
@@ -51,7 +50,6 @@ ActiveRecord::Schema.define(version: 20170309210853) do
     t.boolean "mustard_gas",                                                  default: false
     t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
     t.boolean "foreign_pension_dic_all_other_foreign_countries",              default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_american_caribb", default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
