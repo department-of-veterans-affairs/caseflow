@@ -16,6 +16,7 @@ import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
+import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
@@ -664,6 +665,11 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <div>
+        <EstablishClaimProgressBar
+          isConfirmation={false}
+          isReviewDecision={true}
+          isRouteClaim={!this.isDecisionPage()}
+        />
         { this.isDecisionPage() &&
           <EstablishClaimDecision
             decisionType={this.state.reviewForm.decisionType}

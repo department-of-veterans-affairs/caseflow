@@ -4,7 +4,7 @@ import StyleGuideTabs from './StyleGuideTabs';
 
 export default class StyleGuideIndex extends React.Component {
 
-/*eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
   render() {
 
 /* eslint-disable max-len */
@@ -47,4 +47,5 @@ export default class StyleGuideIndex extends React.Component {
     </div>;
   }
 }
+
 /* eslint-enable max-len */
