@@ -7,8 +7,13 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
+<<<<<<< HEAD
   revision: 255b47eb8c434230b2f090b427156db62d8e4b14
   ref: 255b47e
+=======
+  revision: 179fcdb919ce50b35a2b66a239f865aab1784a63
+  ref: 179fcdb
+>>>>>>> 0ea53e9f333de7ff3fbc04140ced6ef206d4ecbe
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -510,4 +515,4 @@ DEPENDENCIES
   where-or
 
 BUNDLED WITH
-   1.14.3
+   1.14.5
