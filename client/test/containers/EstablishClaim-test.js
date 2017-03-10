@@ -86,7 +86,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('EstablishClaimReview', () => {
+    context('EstablishClaimDecision', () => {
       beforeEach(() => {
         wrapper.setState({ page: DECISION_PAGE });
       });
@@ -150,7 +150,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.setState({
           claimForm: { stationOfJurisdiction: { value: "397 - ARC" } }
-        })
+        });
       });
 
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
@@ -176,7 +176,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.setState({
           claimForm: { stationOfJurisdiction: { value: "322 - Montgomery, AL" } }
-        })
+        });
       });
 
       it('returns 170RMDAMC - ARC-Remand for remand', () => {

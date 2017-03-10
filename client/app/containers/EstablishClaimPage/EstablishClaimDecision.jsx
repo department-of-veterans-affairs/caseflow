@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
-import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
@@ -194,9 +193,7 @@ export default class EstablishClaimDecision extends React.Component {
     let {
       decisionType,
       handleCancelTask,
-      handleCancelTaskForSpecialIssue,
       handleFieldChange,
-      handleModalClose,
       handleSubmit,
       loading,
       pdfLink,
@@ -355,9 +352,8 @@ export default class EstablishClaimDecision extends React.Component {
 
 EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.object.isRequired,
-  handleCancelTaskForSpecialIssue: PropTypes.func.isRequired,
+  handleCancelTask: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
-  handleModalClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
