@@ -6,6 +6,7 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,        foreign_key: :ticknum
   belongs_to :correspondent, foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :issues,        foreign_key: :isskey
+  has_many   :notes,         foreign_key: :tsktknm
 
   class InvalidLocationError < StandardError; end
 
@@ -150,7 +151,7 @@ class VACOLS::Case < VACOLS::Record
 
   def self.amc_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_REMAND)
-                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.strftime("%Y-%m-%d %H:%M"))
+                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
                 .order("BFDDEC ASC")
   end
 
