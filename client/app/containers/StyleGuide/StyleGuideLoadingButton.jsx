@@ -12,7 +12,7 @@ export default class StyleGuideLoadingButton extends React.Component {
     };
   }
 
-  onClick = () => {
+  startLoading = () => {
     this.setState({
       loading: true
     });
@@ -34,13 +34,14 @@ export default class StyleGuideLoadingButton extends React.Component {
       </p>
       <Button
         name={"See It In Action"}
-        onClick={this.onClick}
-        classNames={["usa-button-primary"]}
+        onClick={this.startLoading}
         loading={this.state.loading}
       />
-      <a href="javascript:void(0)" onClick={this.reset} style={{marginLeft: '1em'}}>
-        Reset
-      </a>
+      <Button
+        name={"Reset"}
+        onClick={this.reset}
+        classNames={["cf-btn-link"]}
+      />
     </div>;
   }
 }
