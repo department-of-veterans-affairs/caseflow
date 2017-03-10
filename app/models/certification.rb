@@ -87,12 +87,6 @@ class Certification < ActiveRecord::Base
     where(ssocs_required: true)
   end
 
-  # Only for TEST_USER
-  def uncertify!(user_id)
-    return unless user_id == ENV["TEST_USER_ID"]
-    appeal.uncertify!(user_id)
-  end
-
   private
 
   def now
@@ -102,7 +96,7 @@ class Certification < ActiveRecord::Base
   def calculate_form9_matching_at
     appeal.form9_match? ? (form9_matching_at || now) : nil
   end
-
+  
   def calculate_already_certified
     already_certified || appeal.certified?
   end
