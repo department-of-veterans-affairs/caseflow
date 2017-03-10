@@ -15,7 +15,6 @@ class ReviewController < ApplicationController
       t.filename = params[:filename]
       t.type = params[:type]
       t.received_at = params[:received_at]
-    end
   end
 
   def document_param
