@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Dispatch"  do
+RSpec.feature "Dispatch" do
   let(:partial_grant_appeal) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
   before do
