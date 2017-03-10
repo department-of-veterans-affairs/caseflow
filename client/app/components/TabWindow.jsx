@@ -58,21 +58,11 @@ export default class TabWindow extends React.Component {
       fullPage
     } = this.props;
 
-    let newTabs = [];
-
-
-    tabs.map((tab) => {
-      newTabs.push({ disable: tab.disable,
-        element: this.getTabHeaderWithSVG(tab) });
-
-      return newTabs;
-    });
-
     return <div>
         <div className={
           `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
         }>
-          {newTabs.map((tab, i) =>
+          {tabs.map((tab, i) =>
             <button
               className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
@@ -80,7 +70,7 @@ export default class TabWindow extends React.Component {
               onClick={tab.disable ? this.onDisabledTabClick(i) : this.onTabClick(i)}
               disabled={Boolean(tab.disable)}>
               <span>
-                {tab.element}
+                {this.getTabHeaderWithSVG(tab)}
               </span>
             </button>
           )}

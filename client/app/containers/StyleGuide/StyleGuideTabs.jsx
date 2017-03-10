@@ -3,17 +3,11 @@ import React from 'react';
 // components
 import TabWindow from '../../components/TabWindow';
 // import RenderFunctions from '../../components/RenderFunctions';
-import { successSymbolHtml, missingSymbolHtml }
-from '../../components/RenderFunctions.jsx';
+import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      tabText: "HI"
-    };
-
   }
 
   render() {
@@ -33,15 +27,15 @@ export default class StyleGuideTabs extends React.Component {
 
     tabHeadersWithIcons = [{
       disable: false,
-      icon: successSymbolHtml(),
+      icon: checkSymbolHtml(),
       label: "Active Tab"
     }, {
       disable: false,
-      icon: successSymbolHtml(),
+      icon: checkSymbolHtml(),
       label: "Enabled Tab"
     }, {
       disable: true,
-      icon: missingSymbolHtml(),
+      icon: crossSymbolHtml(),
       label: "Disabled Tab"
     }
     ];
