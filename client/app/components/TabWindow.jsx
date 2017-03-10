@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import Button from './Button';
 
 /*
  * This component can be used to easily build tabs.
