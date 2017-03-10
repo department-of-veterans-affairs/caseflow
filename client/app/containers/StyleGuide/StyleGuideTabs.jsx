@@ -6,10 +6,6 @@ import TabWindow from '../../components/TabWindow';
 import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
 
     let {

@@ -114,7 +114,7 @@ export let missingSymbolHtml = function() {
   );
 };
 
-export let checkSymbolHtml = function(){
+export let checkSymbolHtml = function() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" className="cf-tab-check">
       <title>Check</title>
@@ -130,10 +130,10 @@ export let checkSymbolHtml = function(){
         4.84481355 15.9999999,4.61557527 15.9999999,4.34587587 C16.0001266,4.07630059
         15.9035815,3.84706231 15.7109982,3.65828514 L14.3071671,2.28310369 Z" id="Shape"></path>
   </svg>
-  )
-}
+  );
+};
 
-export let crossSymbolHtml = function(){
+export let crossSymbolHtml = function() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" className="cf-tab-cross">
       <title>Cross</title>
@@ -153,8 +153,8 @@ export let crossSymbolHtml = function(){
         12.1550383 14,11.9260453 14,11.6566345 C14,11.3872238 13.9057744,11.1583548
         13.7171993,10.9697796 L10.7474816,8.00006199 L13.7171993,5.03034436 Z" id="Shape"></path>
   </svg>
-)
-}
+  );
+};
 
 
 /* eslint-enable max-len */
