@@ -38,3 +38,14 @@
   width: 17px;
   height: 17px;
 }
+
+.cf-sg-progess-bar {
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+}
+
+.cf-sg-progress-bar-section {
+  display: table-cell;
+  padding: 4px;
+}

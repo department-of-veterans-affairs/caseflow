@@ -1,6 +1,7 @@
 import React from 'react';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
+// import StyleGuideProgressBar from './StyleGuideProgressBar';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -43,6 +44,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideModal />
         <div className="cf-help-divider"></div>
         <StyleGuideTabs />
+        <div className="cf-help-divider"></div>
+        // <StyleGuideProgressBar />
     </div>
     </div>;
   }
