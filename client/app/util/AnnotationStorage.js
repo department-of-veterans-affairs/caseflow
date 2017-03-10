@@ -24,9 +24,10 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
   sortAnnotations = (firstAnnotation, secondAnnotation) => {
     if (firstAnnotation.page === secondAnnotation.page) {
       return firstAnnotation.y - secondAnnotation.y;
-    } else {
-      return firstAnnotation.page - secondAnnotation.page;
     }
+
+    return firstAnnotation.page - secondAnnotation.page;
+
   }
 
   constructor(annotations) {

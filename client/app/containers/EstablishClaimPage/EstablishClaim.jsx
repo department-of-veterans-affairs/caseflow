@@ -293,7 +293,7 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true,
+      cancelModalDisplay: true
     });
   }
 
