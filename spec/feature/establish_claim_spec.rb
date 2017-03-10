@@ -219,6 +219,18 @@ RSpec.feature "Dispatch"  do
         expect(page).to have_css(".usa-button-disabled")
       end
 
+      scenario "Progress bar matches path of establishing a claim" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
+        expect(page).to have_css(".cf-progress-bar")
+        expect(page).to have_css(".cf-progress-bar-activated")
+        expect(page).to have_css(".cf-progress-bar-not-activated")
+
+        click_on "Route Claim"
+        click_on "Create End Product"
+        expect(page).to_not have_css(".cf-progress-bar-not-activated")
+      end
+
       scenario "Establish full grant with special issue" do
         expect(@task.appeal.full_grant?).to be_truthy
 
