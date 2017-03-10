@@ -91,17 +91,6 @@ describe('EstablishClaim', () => {
         wrapper.setState({ page: DECISION_PAGE });
       });
 
-      it('shows special issues modal if special issue selected', () => {
-        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
-
-        // Click VAMC special issue checkbox
-        wrapper.find('#vamc').simulate('change', { target: { checked: true } });
-
-        // Click to create end product
-        wrapper.find('#button-Route-Claim').simulate('click');
-        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
-      });
-
       it('shows cancel model', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
 
@@ -117,6 +106,8 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimNote', () => {
       beforeEach(() => {
+        wrapper.getNode().handleFieldChange('specialIssues', 'mustardGas')(true);
+        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
         wrapper.setState({ page: NOTE_PAGE });
       });
 
@@ -159,7 +150,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.setState({
           claimForm: { stationOfJurisdiction: { value: "397 - ARC" } }
-        })
+        });
       });
 
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
@@ -185,7 +176,7 @@ describe('EstablishClaim', () => {
       beforeEach(() => {
         wrapper.setState({
           claimForm: { stationOfJurisdiction: { value: "322 - Montgomery, AL" } }
-        })
+        });
       });
 
       it('returns 170RMDAMC - ARC-Remand for remand', () => {

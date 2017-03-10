@@ -41,6 +41,7 @@ export default class TextField extends React.Component {
 }
 
 TextField.defaultProps = {
+  required: false,
   type: 'text'
 };
 
@@ -58,6 +59,7 @@ TextField.propTypes = {
   },
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
+  required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
   value: PropTypes.string
