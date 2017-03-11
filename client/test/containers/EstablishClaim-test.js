@@ -86,7 +86,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('EstablishClaimReview', () => {
+    context('EstablishClaimDecision', () => {
       beforeEach(() => {
         wrapper.setState({ page: DECISION_PAGE });
       });

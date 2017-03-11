@@ -312,18 +312,21 @@ RSpec.feature "Dispatch" do
         )
       end
 
-      skip "Establish Claim form saves state when going back/forward in browser" do
+      scenario "Establish Claim form saves state when going back/forward in browser" do
         @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
-        click_on "Create End Product"
-        expect(page).to have_content("Benefit Type") # React works
+        click_on "Route Claim"
+        expect(page).to have_content("Create End Product")
 
-        # page.go_back_in_browser (pseudocode)
+        find_label_for("gulfWarRegistry").click
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        page.go_back
+
         expect(page).to have_content("Review Decision")
+        click_on "Route Claim"
 
-        click_on "Create End Product"
+        expect(page).to have_content("Create End Product")
+        expect(find("#gulfWarRegistry", visible: false)).to be_checked
       end
 
       context "Multiple decisions in VBMS" do
