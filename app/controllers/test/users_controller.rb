@@ -1,4 +1,6 @@
 class Test::UsersController < ApplicationController
+  before_action :require_demo, only: [:set_user, :set_end_products]
+  
   def index
     @users = User.all
     render "index"

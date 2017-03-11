@@ -1,6 +1,5 @@
 class Test::SetupController < ApplicationController
   before_action :require_uat, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
-  before_action :require_demo, only: [:set_user, :set_end_products]
 
   def index
     @certification_appeal = "UNCERTIFY_ME"
