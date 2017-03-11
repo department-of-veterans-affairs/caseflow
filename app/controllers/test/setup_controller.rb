@@ -1,6 +1,6 @@
 class Test::SetupController < ApplicationController
-  # before_action :require_uat, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
-  # before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_uat, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
+  before_action :require_demo, only: [:set_user, :set_end_products]
 
   def index
     @certification_appeal = "UNCERTIFY_ME"
@@ -43,7 +43,6 @@ class Test::SetupController < ApplicationController
     TestDataService.prepare_claims_establishment!(vacols_id: @dispatch_appeal.vacols_id,
                                                   cancel_eps: cancel_eps,
                                                   decision_type: decision_type)
-    TestDataService.reset_outcoding_date(@dispatch_appeal)
     redirect_to establish_claims_path
   end
 
@@ -57,34 +56,9 @@ class Test::SetupController < ApplicationController
     redirect_to action: "index"
   end
 
-  # Set current user in DEMO
-  def set_user
-    User.before_set_user # for testing only
-
-    session["user"] = User.authentication_service.get_user_session(params[:id])
-    redirect_to "/test/users"
-  end
-
-  # Set end products in DEMO
-  # :nocov:
-  def set_end_products
-    case params[:type]
-    when "full"
-      BGSService.end_product_data = BGSService.existing_full_grants
-    when "partial"
-      BGSService.end_product_data = BGSService.existing_partial_grants
-    when "none"
-      BGSService.end_product_data = BGSService.no_grants
-    when "all"
-      BGSService.end_product_data = BGSService.all_grants
-    end
-
-    redirect_to "/test/users"
-  end
-  # :nocov:
-
   private
 
+  # :nocov:
   def require_uat
     redirect_to "/unauthorized" unless test_user?
   end
@@ -104,4 +78,5 @@ class Test::SetupController < ApplicationController
   def part_remand_ids
     ENV["PART_REMAND_IDS"].split(",")
   end
+  # :nocov"
 end

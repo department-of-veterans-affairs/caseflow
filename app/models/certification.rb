@@ -96,7 +96,7 @@ class Certification < ActiveRecord::Base
   def calculate_form9_matching_at
     appeal.form9_match? ? (form9_matching_at || now) : nil
   end
-  
+
   def calculate_already_certified
     already_certified || appeal.certified?
   end

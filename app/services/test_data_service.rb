@@ -39,7 +39,7 @@ class TestDataService
     vacols_case = VACOLS::Case.find(vacols_id)
     if decision_type == :full
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
-      # Full Grants stay 99
+      # Full Grants stay 99 but need to be moved up to at least -3 days
       reset_outcoding_date(vacols_case)
     else
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))

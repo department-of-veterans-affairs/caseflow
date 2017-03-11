@@ -1,20 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Test Setup" do
-  # before do
-  #  Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  # end
-  # let(:test_appeal_id) { ENV["TEST_APPEAL_IDS"].split(",")[0] }
-  # before do
-  #  test_certification = Certification.create!(vacols_id: test_appeal_id)
-  #  form8 = Form8.create!(certification_id: test_certification.id)
-  #  form8.assign_attributes_from_appeal(test_certification.appeal)
-  #  form8.save
-  #  form8.save_pdf!
-  # end
-
-  # let(:certification) { Certification.find_or_create_by_vacols_id(test_appeal_id) }
-
   context "Access control" do
     scenario "non-Test User unable to access" do
       allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
@@ -35,7 +21,7 @@ RSpec.feature "Test Setup" do
   end
 
   context "Data Reset" do
-    before do
+    before(:each) do
       ENV["TEST_APPEAL_IDS"].split(",").each_with_index do |appeal_id, i|
         appeal = Appeal.create(
           vacols_id: appeal_id,
@@ -50,12 +36,12 @@ RSpec.feature "Test Setup" do
         task2 = EstablishClaim.create(appeal: appeal)
         task2.prepare!
       end
+      User.tester!
     end
 
     scenario "Deletes all tasks" do
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
-      User.tester!
 
       visit "test/setup"
       expect(page).to have_content("Clear Data")
@@ -69,10 +55,9 @@ RSpec.feature "Test Setup" do
       expect(Task.all).to be_empty
     end
 
-    scenario "Uncertifies an Appeal" do
+    scenario "Uncertifies an appeal" do
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
-      User.tester!
 
       visit "test/setup"
       expect(page).to have_content("Uncertify Appeal")
@@ -81,16 +66,58 @@ RSpec.feature "Test Setup" do
       click_button("Uncertify Appeal")
     end
 
-    scenario "Resets date and location for a Full Grant" do
+    scenario "Fails to uncertify an appeal" do
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
-      User.tester!
 
       visit "test/setup"
       expect(page).to have_content("Uncertify Appeal")
-      fill_in("UNCERTIFY_ME_vacols_id", with: "123C")
-      expect(AppealRepository).to receive(:uncertify).with(Appeal.first)
+      fill_in("UNCERTIFY_ME_vacols_id", with: "DANK")
       click_button("Uncertify Appeal")
+      expect(page).to have_content("uncertifiable")
+    end
+
+    scenario "Resets date and location for a Full Grant" do
+      # this has to be repeated because mocks are not allowed in before clause
+      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
+
+      visit "test/setup"
+      expect(page).to have_content("Reset Date and Location")
+      fill_in("DISPATCH_ME_vacols_id", with: "VACOLS123")
+      expect(TestDataService).to receive(:prepare_claims_establishment!).with(vacols_id: "VACOLS123",
+                                                                              cancel_eps: true,
+                                                                              decision_type: :full)
+      page.find(:xpath, "//label[@for='DISPATCH_ME_cancel_eps_yes']").click
+      click_button("Reset Date and Location")
+    end
+
+    scenario "Resets date and location for a Partial Grant" do
+      # this has to be repeated because mocks are not allowed in before clause
+      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
+
+      visit "test/setup"
+      expect(page).to have_content("Reset Date and Location")
+      fill_in("DISPATCH_ME_vacols_id", with: "VACOLS321")
+      expect(TestDataService).to receive(:prepare_claims_establishment!).with(vacols_id: "VACOLS321",
+                                                                              cancel_eps: true,
+                                                                              decision_type: :partial)
+      page.find(:xpath, "//label[@for='DISPATCH_ME_cancel_eps_yes']").click
+      click_button("Reset Date and Location")
+    end
+
+    scenario "Fails to reset date and location" do
+      # this has to be repeated because mocks are not allowed in before clause
+      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
+
+      visit "test/setup"
+      expect(page).to have_content("Reset Date and Location")
+      fill_in("DISPATCH_ME_vacols_id", with: "DANK")
+      page.find(:xpath, "//label[@for='DISPATCH_ME_cancel_eps_yes']").click
+      click_button("Reset Date and Location")
+      expect(page).to have_content("not a testable appeal")
     end
   end
 end
