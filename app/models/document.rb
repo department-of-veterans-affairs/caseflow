@@ -84,7 +84,6 @@ class Document < ActiveRecord::Base
   end
 
   def serve
-    sleep 4
     File.binwrite(default_path, content) unless File.exist?(default_path)
     default_path
   end

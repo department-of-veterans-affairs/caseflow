@@ -5,18 +5,15 @@ const devBuild = process.env.NODE_ENV !== 'production';
 const nodeEnv = devBuild ? 'development' : 'production';
 
 const config = {
-  entry: { 
-    application: [
-      'es5-shim/es5-shim',
-      'es5-shim/es5-sham',
-      'babel-polyfill',
-      './app/index'
-    ],
-    documentDownload: './app/workers/documentDownload.worker.js'
-  },
+  entry: [
+    'es5-shim/es5-shim',
+    'es5-shim/es5-sham',
+    'babel-polyfill',
+    './app/index'
+  ],
 
   output: {
-    filename: '[name]-bundle.js',
+    filename: 'webpack-bundle.js',
     path: '../app/assets/webpack'
   },
 

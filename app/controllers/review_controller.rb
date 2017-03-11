@@ -29,7 +29,7 @@ class ReviewController < ApplicationController
 
     # The line below enables document caching for 12 hours. It's best to disable
     # this while we're still developing.
-    expires_in 12.hours, :public => true
+    # expires_in 12.hours, :public => true
     send_file(
       document.serve,
       type: "application/pdf",
