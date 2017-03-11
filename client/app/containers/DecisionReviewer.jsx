@@ -49,6 +49,10 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
+  documentUrl = (doc) => {
+    return `${this.props.url}?id=${doc.id}`;
+  }
+
   nextPdf = () => {
     this.setState({
       currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
@@ -117,13 +121,22 @@ export default class DecisionReviewer extends React.Component {
   }
 
   componentDidMount = () => {
-    if(this.props.documentWorker && typeof(Worker) !== "undefined") {
-        if(typeof(w) == "undefined") {
-            w = new Worker(this.props.documentWorker);
-        }
-        w.onmessage = function(event) {
-            console.log(event.data);
-        };
+    const PARALLEL_THREADS = 3;
+
+    let downloadDocuments = (documents, index) => {
+      if (index < documents.length) {
+        console.log(documents[index]);
+        ApiUtil.get(documents[index])
+          .then(() => {
+            downloadDocuments(documents, index + PARALLEL_THREADS);
+          });
+      }
+    }
+
+    for (let i = 0; i < PARALLEL_THREADS; i++){
+      downloadDocuments(this.props.appealDocuments.map((doc) => {
+          return this.documentUrl(doc);
+      }), i);
     }
   }
 
@@ -275,8 +288,7 @@ export default class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`${this.props.url}?id=` +
-            `${documents[this.state.currentPdfIndex].id}`}
+          file={this.documentUrl(documents[this.state.currentPdfIndex])}
           id={documents[this.state.currentPdfIndex].id}
           receivedAt={documents[this.state.currentPdfIndex].received_at}
           type={documents[this.state.currentPdfIndex].type}

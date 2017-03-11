@@ -3,7 +3,7 @@
     page: "DecisionReviewer",
     appealDocuments: @appeal.saved_documents.map(&:to_hash),
     annotations: @appeal.saved_documents.map(&:annotations).flatten.map(&:to_hash),
-    documentWorker: asset_path('workers/document_download.worker.js'),
+    documentWorker: asset_path('documentDownload-bundle.js'),
     pdfWorker: asset_path('pdf.worker.js'),
     url: pdf_review_index_path
   }) %>
