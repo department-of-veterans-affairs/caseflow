@@ -62,10 +62,6 @@ class Test::SetupController < ApplicationController
     redirect_to "/unauthorized" unless test_user?
   end
 
-  def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
-  end
-
   def certification_ids
     ENV["TEST_APPEAL_IDS"].split(",")
   end

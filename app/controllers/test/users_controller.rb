@@ -1,6 +1,7 @@
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products]
-  
+
+  # :nocov:
   def index
     @users = User.all
     render "index"
@@ -15,7 +16,6 @@ class Test::UsersController < ApplicationController
   end
 
   # Set end products in DEMO
-  # :nocov:
   def set_end_products
     case params[:type]
     when "full"
@@ -29,6 +29,10 @@ class Test::UsersController < ApplicationController
     end
 
     redirect_to "/test/users"
+  end
+
+  def require_demo
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
   # :nocov:
 end
