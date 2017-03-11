@@ -10,12 +10,13 @@ class Dispatch
   END_PRODUCT_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
-    "170PGAMC" => "AMC-Partial Grant",
+    "170PGAMC" => "ARC-Partial Grant",
     "170RMD" => "Remand",
-    "170RMDAMC" => "AMC-Remand",
+    "170RMDAMC" => "ARC-Remand",
     "170RMDPMC" => "PMC-Remand",
     "172GRANT" => "Grant of Benefits",
     "172BVAG" => "BVA Grant",
+    "170RBVAG" => "Remand with BVA Grant",
     "172BVAGPMC" => "PMC-BVA Grant",
     "400CORRC" => "Correspondence",
     "400CORRCPMC" => "PMC-Correspondence",
@@ -44,14 +45,15 @@ class Dispatch
     end
   end
 
-  def initialize(task:, claim: {})
+  def initialize(task:, claim: {}, vacols_note: nil)
     # TODO(jd): If we permanently keep the decision date a non-editable field,
     # we should instead pass that value from the taks.appeal.decision date, rather
     # than use the value passed from the front end
     @claim = Claim.new(claim)
     @task = task
+    @vacols_note = vacols_note && vacols_note[0...280]
   end
-  attr_accessor :task, :claim
+  attr_accessor :task, :claim, :vacols_note
 
   def validate_claim!
     fail InvalidClaimError unless claim.valid?
@@ -65,6 +67,11 @@ class Dispatch
                                                      appeal: task.appeal)
 
     task.review!(outgoing_reference_id: end_product.claim_id)
+  end
+
+  def update_vacols!
+    Appeal.repository.update_vacols_after_dispatch!(appeal: task.appeal,
+                                                    vacols_note: vacols_note)
   end
 
   def assign_existing_end_product!(end_product_id:, special_issues:)

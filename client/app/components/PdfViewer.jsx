@@ -39,7 +39,9 @@ export default class PdfViewer extends BaseForm {
     for (let i = 1; i <= this.state.numPages; i++) {
       this.props.annotationStorage.getAnnotations(this.props.id, i).
         then((annotations) => {
-          annotations.annotations.forEach((annotation) => {
+          annotations.annotations.sort((first, second) => {
+            return first.y - second.y;
+          }).forEach((annotation) => {
             this.comments.push({
               content: annotation.comment,
               uuid: annotation.uuid
@@ -450,23 +452,23 @@ export default class PdfViewer extends BaseForm {
               </div>
             </div>
             { !this.props.hideNavigation &&
-              <div className="usa-grid-full cf-pdf-navigation">
-                <div className="usa-width-one-half cf-pdf-buttons-left">
+              <div className="cf-pdf-navigation">
+                <span className="cf-pdf-buttons-left">
                   <Button
                     name="previous"
                     classNames={["cf-pdf-button"]}
                     onClick={this.props.previousPdf}>
                     <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
                   </Button>
-                </div>
-                <div className="usa-width-one-half cf-pdf-buttons-right">
+                </span>
+                <span className="cf-pdf-buttons-right">
                   <Button
                     name="next"
                     classNames={["cf-pdf-button cf-right-side"]}
                     onClick={this.props.nextPdf}>
                     <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
                   </Button>
-                </div>
+                </span>
               </div> }
             <div id="scrollWindow" className="cf-pdf-scroll-view">
               <div

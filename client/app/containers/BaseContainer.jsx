@@ -5,7 +5,10 @@ import Alert from '../components/Alert';
 
 // container components
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
-import StyleGuide from './StyleGuide';
+import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
+import StyleGuideModal from './StyleGuide/StyleGuideModal';
+import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
+import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionReviewer from './DecisionReviewer';
@@ -13,10 +16,13 @@ import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete'
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
+  CaseWorkerIndex,
   DecisionReviewer,
   EstablishClaim,
   EstablishClaimComplete,
-  StyleGuide,
+  StyleGuideIndex,
+  StyleGuideModal,
+  StyleGuideTabs,
   TasksManagerIndex,
   TestPage,
   UnpreparedTasksIndex

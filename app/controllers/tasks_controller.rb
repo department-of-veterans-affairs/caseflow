@@ -7,20 +7,34 @@ class TasksController < ApplicationController
   TASKS_PER_PAGE = 10
 
   def index
-    tasks_completed_today = Task.completed_today
-    @completed_count_today = tasks_completed_today.count
+    @tasks_completed_today = Task.completed_today
+    @remaining_count_today = Task.to_complete.count
+    @completed_count_today = @tasks_completed_today.count
     @to_complete_count = Task.to_complete.count
-    @tasks_completed_by_users = Task.tasks_completed_by_users(tasks_completed_today)
+    @tasks_completed_by_users = Task.tasks_completed_by_users(@tasks_completed_today)
 
     render index_template
+  end
+
+  def update_appeal
+    task.appeal.update!(special_issues_params)
+    render json: {}
   end
 
   def show
     start_task!
 
     return render "canceled" if task.canceled?
-    return render "assigned_existing_ep" if task.assigned_existing_ep?
-    return render "complete" if task.completed?
+
+    if task.assigned_existing_ep?
+      populate_completed_stats
+      return render "assigned_existing_ep"
+    end
+
+    if task.completed?
+      populate_completed_stats
+      return render "complete"
+    end
 
     # TODO: Reassess the best way to handle decision errors
     return render "no_decisions" if task.appeal.decisions.nil?
@@ -41,17 +55,17 @@ class TasksController < ApplicationController
 
     next_task.assign!(:assigned, current_user) if next_task.may_assign?
 
-    respond_to do |format|
-      format.html do
-        return redirect_to url_for(action: next_task.initial_action, id: next_task.id)
-      end
-      format.json do
-        return render json: { next_task_id: next_task.id }
-      end
-    end
+    render json: { next_task_id: next_task.id }
   end
 
   private
+
+  def populate_completed_stats
+    @to_complete_count = Task.to_complete.count
+
+    # getting the number of completed tasks for that particular user
+    @completed_count_today = current_user ? Task.completed_today_by_user(current_user.id).count : 0
+  end
 
   def current_user_historical_tasks
     current_user.tasks.completed.newest_first.limit(10)
@@ -132,5 +146,23 @@ class TasksController < ApplicationController
     # Future safeguard for when we give managers a show view
     # for a given task
     task.start! if current_user == task.user && task.may_start?
+  end
+
+  def special_issues_params
+    params.require(:special_issues).permit(:contaminated_water_at_camp_lejeune,
+                                           :dic_death_or_accrued_benefits_united_states,
+                                           :education_gi_bill_dependents_educational_assistance_scholars,
+                                           :foreign_claim_compensation_claims_dual_claims_appeals,
+                                           :foreign_pension_dic_all_other_foreign_countries,
+                                           :foreign_pension_dic_mexico_central_and_south_american_caribb,
+                                           :hearing_including_travel_board_video_conference,
+                                           :home_loan_guarantee, :incarcerated_veterans, :insurance,
+                                           :manlincon_compliance, :mustard_gas, :national_cemetery_administration,
+                                           :nonrating_issue, :pension_united_states, :private_attorney_or_agent,
+                                           :radiation, :rice_compliance, :spina_bifida,
+                                           :us_territory_claim_american_samoa_guam_northern_mariana_isla,
+                                           :us_territory_claim_philippines,
+                                           :us_territory_claim_puerto_rico_and_virgin_islands,
+                                           :vamc, :vocational_rehab, :waiver_of_overpayment)
   end
 end

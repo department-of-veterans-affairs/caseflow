@@ -2,6 +2,8 @@ require "rails_helper"
 
 describe CreateEstablishClaimTasksJob do
   before do
+    FeatureToggle.enable!(:dispatch_full_grants)
+    FeatureToggle.enable!(:dispatch_partial_grants_remands)
     @partial_grant = Fakes::AppealRepository.new("123C", :appeal_remand_decided)
     @full_grant = Fakes::AppealRepository.new("456D", :appeal_full_grant_decided, decision_date: 1.day.ago)
 
@@ -21,10 +23,17 @@ describe CreateEstablishClaimTasksJob do
       CreateEstablishClaimTasksJob.perform_now
       expect(EstablishClaim.count).to eq(2)
     end
+
+    it "skips partial grants if they are disabled" do
+      FeatureToggle.disable!(:dispatch_partial_grants_remands)
+      expect(EstablishClaim.count).to eq(0)
+      CreateEstablishClaimTasksJob.perform_now
+      expect(EstablishClaim.count).to eq(1)
+    end
   end
 
-  context ".full_grant_decided_after" do
-    subject { CreateEstablishClaimTasksJob.new.full_grant_decided_after }
+  context ".full_grant_outcoded_after" do
+    subject { CreateEstablishClaimTasksJob.new.full_grant_outcoded_after }
     it "returns a date 3 days earlier at midnight" do
       is_expected.to eq(Time.zone.local(2015, 1, 29, 0))
     end

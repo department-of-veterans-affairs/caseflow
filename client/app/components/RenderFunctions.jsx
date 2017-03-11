@@ -3,18 +3,24 @@ import React from 'react';
 /* eslint-disable max-len */
 
 /**
+ * @param {string} text The text to associate with the spinning loading symbol.
+ * defaults to 'Loading'.
+ * @param {number} size The width and height of the loading symbol.
  * @returns {string} The HTML for the loading symbol.
  */
-export let loadingSymbolHtml = function() {
+export let loadingSymbolHtml = function(text = 'Loading', size = 30) {
+  let style = { 'marginLeft': `-${size}` };
+
+
   return (
       <span>
         <div className="cf-loading-button-text">
-          Loading
+          {text}
         </div>
         <div className="cf-loading-button-symbol">
           <svg
-            width="30"
-            height="30"
+            width={size}
+            height={size}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-front">
             <path
@@ -38,8 +44,9 @@ export let loadingSymbolHtml = function() {
             </path>
           </svg>
           <svg
-            width="30"
-            height="30"
+            width={size}
+            height={size}
+            style={style}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-back">
             <path
@@ -76,6 +83,33 @@ export let closeSymbolHtml = function() {
         1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2
         1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8
         1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"/>
+    </svg>
+  );
+};
+
+export let successSymbolHtml = function() {
+  return (
+    <svg width="55" height="55" class="cf-icon-found"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50">
+      <title>success</title>
+      <path d="M57 13.3L29.9 41.7 24.8 47c-.7.7-1.6 1.1-2.5 1.1-.9 0-1.9-.4-2.5-1.1l-5.1-5.3L1
+       27.5c-.7-.7-1-1.7-1-2.7s.4-2 1-2.7l5.1-5.3c.7-.7 1.6-1.1 2.5-1.1.9 0 1.9.4 2.5 1.1l11
+       11.6L46.8 2.7c.7-.7 1.6-1.1 2.5-1.1.9 0 1.9.4 2.5 1.1L57 8c.7.7 1 1.7 1 2.7 0 1-.4 1.9-1
+       2.6z"/>
+    </svg>
+  );
+};
+
+export let missingSymbolHtml = function() {
+  return (
+    <svg width="55" height="55" class="cf-icon-missing"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
+      <title>missing icon</title>
+      <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13
+      13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2
+      1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2
+      3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8
+      1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"/>
     </svg>
   );
 };
