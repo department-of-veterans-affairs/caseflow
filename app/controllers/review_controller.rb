@@ -28,7 +28,7 @@ class ReviewController < ApplicationController
     document = Document.find(params[:id])
 
     # The line below enables document caching for 48 hours.
-    expires_in 48.hours, :public => true
+    expires_in 30.days, :public => true
     send_file(
       document.serve,
       type: "application/pdf",
