@@ -116,6 +116,17 @@ export default class DecisionReviewer extends React.Component {
     return documentCopy;
   }
 
+  componentDidMount = () => {
+    if(this.props.documentWorker && typeof(Worker) !== "undefined") {
+        if(typeof(w) == "undefined") {
+            w = new Worker(this.props.documentWorker);
+        }
+        w.onmessage = function(event) {
+            console.log(event.data);
+        };
+    }
+  }
+
   changeSortState = (sortBy) => () => {
     let sortDirection = this.state.sortDirection;
 

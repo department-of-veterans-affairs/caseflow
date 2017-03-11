@@ -10,6 +10,7 @@ Rails.application.config.assets.version = '1.0'
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 Rails.application.config.assets.precompile += %w( stats.js )
 Rails.application.config.assets.precompile += %w( pdf.worker.js )
+Rails.application.config.assets.precompile += %w( workers/document_download.worker.js )
 Rails.application.config.assets.precompile += %w( favicon.ico )
 Rails.application.config.assets.precompile << %w( *.woff *.woff2 *.eot *.ttf )
 # Add client/assets/ folders to asset pipeline's search path.
