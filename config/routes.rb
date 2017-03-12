@@ -46,6 +46,7 @@ Rails.application.routes.draw do
 
   resources :document, only: [] do
     patch 'set-label', on: :member
+    patch 'mark-as-read', on: :member
   end
 
   scope path: "/decision" do

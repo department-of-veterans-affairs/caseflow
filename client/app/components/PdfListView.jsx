@@ -22,6 +22,7 @@ export default class PdfListView extends React.Component {
     return [
       '',
       '',
+      'Opened',
       <div onClick={this.props.changeSortState('date')}>
         Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
       </div>,
@@ -48,6 +49,10 @@ export default class PdfListView extends React.Component {
       <span className="fa-stack fa-3x cf-pdf-comment-indicator">
         <i className="fa fa-comment-o fa-stack-2x"></i>
         <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
+      </span>,
+      <span>
+        { doc.opened_by_current_user &&
+          <i className="fa fa-check" aria-hidden="true"></i>}
       </span>,
       formatDate(doc.received_at),
       doc.type,

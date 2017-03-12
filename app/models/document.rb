@@ -1,5 +1,6 @@
 class Document < ActiveRecord::Base
   has_many :annotations
+  has_many :document_users
 
   TYPES = {
     "34" => "Correspondence",
@@ -96,9 +97,14 @@ class Document < ActiveRecord::Base
     File.join(Rails.root, "tmp", "pdfs", file_name)
   end
 
+  def opened_by_current_user
+    document_user = document_users.first
+    !!(document_user && document_user.viewed_at)
+  end
+
   def to_hash
     serializable_hash(
-      methods: [:vbms_document_id, :type, :received_at, :filename, :label]
+      methods: [:vbms_document_id, :type, :received_at, :filename, :label, :opened_by_current_user]
     )
   end
 end
