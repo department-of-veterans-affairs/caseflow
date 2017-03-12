@@ -6,6 +6,8 @@ import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
 
+const PARALLEL_DOCUMENT_REQUESTS = 3;
+
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
@@ -121,19 +123,18 @@ export default class DecisionReviewer extends React.Component {
   }
 
   componentDidMount = () => {
-    const PARALLEL_THREADS = 3;
-
-    let downloadDocuments = (documents, index) => {
-      if (index < documents.length) {
-        console.log(documents[index]);
-        ApiUtil.get(documents[index])
-          .then(() => {
-            downloadDocuments(documents, index + PARALLEL_THREADS);
-          });
+    let downloadDocuments = (documentUrls, index) => {
+      if (index >= documentUrls.length) {
+        return;
       }
+
+      ApiUtil.get(documentUrls[index])
+        .then(() => {
+          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
+        });
     }
 
-    for (let i = 0; i < PARALLEL_THREADS; i++){
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++){
       downloadDocuments(this.props.appealDocuments.map((doc) => {
           return this.documentUrl(doc);
       }), i);
