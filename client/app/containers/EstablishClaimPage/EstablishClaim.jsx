@@ -110,11 +110,9 @@ export default class EstablishClaim extends BaseForm {
       modalSubmitLoading: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
-      specialIssueModalDisplay: false,
       specialIssues: {},
       specialIssuesEmail: '',
-      specialIssuesRegionalOffice: '',
-      submitSpecialIssuesOnCancel: null
+      specialIssuesRegionalOffice: ''
     };
     SPECIAL_ISSUES.forEach((issue) => {
       let camelCaseIssue = StringUtil.convertToCamelCase(issue);
@@ -260,10 +258,6 @@ export default class EstablishClaim extends BaseForm {
       feedback: this.state.cancelModal.cancelFeedback.value
     };
 
-    if (this.state.submitSpecialIssuesOnCancel) {
-      data.specialIssues = this.getFormValues(this.state.specialIssues);
-    }
-
     this.props.handleAlertClear();
 
     if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
@@ -300,16 +294,7 @@ export default class EstablishClaim extends BaseForm {
 
   handleCancelTask = () => {
     this.setState({
-      cancelModalDisplay: true,
-      submitSpecialIssuesOnCancel: false
-    });
-  }
-
-  handleCancelTaskForSpecialIssue = () => {
-    this.setState({
-      cancelModalDisplay: true,
-      specialIssueModalDisplay: false,
-      submitSpecialIssuesOnCancel: true
+      cancelModalDisplay: true
     });
   }
 
@@ -654,7 +639,6 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay,
       history,
       modalSubmitLoading,
-      specialIssueModalDisplay,
       specialIssues
     } = this.state;
 
@@ -674,14 +658,11 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimDecision
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
-            handleCancelTaskForSpecialIssue={this.handleCancelTaskForSpecialIssue}
             handleFieldChange={this.handleFieldChange}
-            handleModalClose={this.handleModalClose}
             handleSubmit={this.handleDecisionPageSubmit}
             loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
-            specialIssueModalDisplay={specialIssueModalDisplay}
             specialIssues={specialIssues}
             task={this.props.task}
           />

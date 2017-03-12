@@ -24,9 +24,10 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
   sortAnnotations = (firstAnnotation, secondAnnotation) => {
     if (firstAnnotation.page === secondAnnotation.page) {
       return firstAnnotation.y - secondAnnotation.y;
-    } else {
-      return firstAnnotation.page - secondAnnotation.page;
     }
+
+    return firstAnnotation.page - secondAnnotation.page;
+
   }
 
   constructor(annotations) {
@@ -155,7 +156,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
     // object, and sort each document's comments.
     Object.keys(this.storedAnnotations).forEach((key) => {
       this.storedAnnotations[key].sort(this.sortAnnotations);
-    })
+    });
 
     this.onCommentChange = () => {
       // do nothing
