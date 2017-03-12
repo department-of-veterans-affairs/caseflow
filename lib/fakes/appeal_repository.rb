@@ -36,6 +36,9 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
+  def self.update_vacols_after_dispatch!(*)
+  end
+
   def self.update_location_after_dispatch!(*)
   end
 
@@ -109,8 +112,10 @@ class Fakes::AppealRepository
     [@records["321C"]]
   end
 
-  def self.amc_full_grants(decided_after:)
-    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
+  def self.amc_full_grants(outcoded_after:)
+    # Technically we reference the outcoding date in this method, but for the sake
+    # of testing we can just compare to the appeal.decision_date
+    [@records["654C"]].select { |appeal| appeal.decision_date > outcoded_after }
   end
 
   def self.uncertify(_appeal)
@@ -299,8 +304,18 @@ class Fakes::AppealRepository
     %w(Washington Adams Jefferson Madison Jackson VanBuren)
   end
 
+  def self.appeals_for_tasks_types
+    [
+      appeal_full_grant_decided,
+      appeal_partial_grant_decided,
+      appeal_remand_decided
+    ]
+  end
+
   def self.appeals_for_tasks(index)
-    appeal_full_grant_decided.merge(
+    appeal = appeals_for_tasks_types[index % 3]
+
+    appeal.merge(
       veteran_last_name: last_names[index % last_names.length],
       veteran_first_name: first_names[index % first_names.length]
     )
@@ -338,7 +353,7 @@ class Fakes::AppealRepository
         document_id: "2",
         filename: "My_SOC"
       ),
-      true
+      false
     )
   end
 
@@ -350,7 +365,7 @@ class Fakes::AppealRepository
         document_id: "3",
         filename: "My_Form_9"
       ),
-      true
+      false
     )
   end
 
@@ -362,7 +377,7 @@ class Fakes::AppealRepository
         document_id: "4",
         filename: "My_Decision"
       ),
-      true
+      false
     )
   end
 
@@ -374,7 +389,7 @@ class Fakes::AppealRepository
         document_id: "5",
         filename: "My_Decision2"
       ),
-      true
+      false
     )
   end
 

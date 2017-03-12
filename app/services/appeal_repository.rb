@@ -36,7 +36,7 @@ class AppealRepository
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
-                   VACOLS::Case.amc_full_grants(decided_after: 5.days.ago)
+                   VACOLS::Case.amc_full_grants(outcoded_after: 5.days.ago)
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
@@ -115,9 +115,9 @@ class AppealRepository
     remands.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.amc_full_grants(decided_after:)
-    full_grants = MetricsService.timer "loaded AMC full grants decided after #{decided_after} from VACOLS" do
-      VACOLS::Case.amc_full_grants(decided_after: decided_after)
+  def self.amc_full_grants(outcoded_after:)
+    full_grants = MetricsService.timer "loaded AMC full grants outcoded after #{outcoded_after} from VACOLS" do
+      VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }
@@ -161,7 +161,7 @@ class AppealRepository
   end
   # :nocov:
 
-  def self.establish_claim!(appeal:, claim:, diary_note_text: nil)
+  def self.establish_claim!(appeal:, claim:)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
@@ -174,42 +174,37 @@ class AppealRepository
     # establish claim
     veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
 
-    end_product = Appeal.transaction do
-      update_location_after_dispatch!(appeal: appeal,
-                                      station: claim[:station_of_jurisdiction])
-
-      # Create VACOLS diary note to help the user in handling the EP
-      if diary_note_text
-        VACOLS::Note.create!(case_record: appeal.case_record,
-                             text: diary_note_text)
-      end
-
-      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
-      send_and_log_request(sanitized_id, request)
-    end
-
-    end_product
+    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+    send_and_log_request(sanitized_id, request)
   end
 
-  def self.update_location_after_dispatch!(appeal:, station: nil)
-    location = location_after_dispatch(appeal: appeal,
-                                       station: station)
+  def self.update_vacols_after_dispatch!(appeal:, vacols_note: nil)
+    VACOLS::Case.transaction do
+      update_location_after_dispatch!(appeal)
+
+      if vacols_note
+        VACOLS::Note.create!(case_record: appeal.case_record,
+                             text: vacols_note)
+      end
+    end
+  end
+
+  def self.update_location_after_dispatch!(appeal)
+    location = location_after_dispatch(appeal)
 
     appeal.case_record.update_vacols_location!(location)
   end
 
   # Determine VACOLS location desired after dispatching a decision
-  # using information about the appeal and the newly assigned station
-  #
-  # rubocop:disable PerceivedComplexity, CyclomaticComplexity
-  def self.location_after_dispatch(appeal:, station:)
+  def self.location_after_dispatch(appeal)
     return if appeal.full_grant?
 
     return "51" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
+    return "50" if appeal.special_issues?
 
-    return "98" if station == "397" && !appeal.special_issues?
-    return "50" if station != "397" && appeal.special_issues?
+    # By default, we route the appeal to ARC
+    "98"
   end
 
   def self.parse_veteran_establish_claim_info(veteran_record)
