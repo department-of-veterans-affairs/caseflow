@@ -6,6 +6,8 @@ From now, if you want to add a label, you need to run it by the team, so everyon
 - **starter-task** - An issue that would be good for a new developer to work on. Because it's easy.
 - **tech-improvement** - An issue that has to do with removing technical debt, or improving a technical issue with the application (e.g. upgrading the version of Ruby), and may not have a visible effect in the UX.
 - **feature-definition** - An issue that needs more definition before it can be developed.
+- **requirements-incorrect** - Acceptance criteria are unclear/outdated/require additional definition.
+- **validation-failed** - Implementation does not follow acceptance criteria.
 - **icebox** - An issue that has been deprioritized. Left to die at the bottom of the backlog.
 - **blocked** - The issue cannot be completed because of an issue that needs to be resolved outside of your control. Leave blocked issues on the "In Progress" column so we can review them during standup.
 - **feature labels (caseflow-certification, caseflow-dispatch)** - Used to determine which feature of the application the issue has to do with. Only applicable for the `caseflow` repo.
