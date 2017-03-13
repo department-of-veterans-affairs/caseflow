@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Stats Dashboard" do
+RSpec.feature "Certification Stats Dashboard" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
 
@@ -47,14 +47,14 @@ RSpec.feature "Stats Dashboard" do
       created_at:          45.minutes.ago,
       completed_at:        30.minutes.ago
     )
-    Stats.calculate_all!
+    CertificationStats.calculate_all!
 
-    # Necessary role to view stats page
+    # Necessary role to view certification_stats page
     User.authenticate!(roles: ["System Admin"])
   end
 
   scenario "Switching tab intervals" do
-    visit "/stats"
+    visit "/certification/stats"
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
     expect(page).to have_content("Certifications Started 1")
     expect(page).to have_content("Certifications Completed 1")
@@ -101,8 +101,8 @@ RSpec.feature "Stats Dashboard" do
       created_at:          45.minutes.ago,
       completed_at:        nil
     )
-    Stats.calculate_all!
-    visit "/stats/daily"
+    CertificationStats.calculate_all!
+    visit "/certification/stats/daily"
     expect(page).to have_content("Activity for January 1 (so far)")
     expect(page).to have_content("Certifications Started 6")
     expect(page).to have_content("Certifications Completed 3")
@@ -119,7 +119,7 @@ RSpec.feature "Stats Dashboard" do
   end
 
   scenario "Toggle median to 95th percentile" do
-    visit "/stats"
+    visit "/certification/stats"
     click_on "Daily"
 
     find('*[role="button"]', text: "Overall (median)").trigger("click")
@@ -131,7 +131,7 @@ RSpec.feature "Stats Dashboard" do
   scenario "Navigate to past periods with arrow keys" do
     leftarrow = "d3.select(window).dispatch('keydown', { detail: { keyCode: 37 } })"
 
-    visit "/stats"
+    visit "/certification/stats"
     click_on "Monthly"
     expect(page).to have_content("Activity for January (so far)")
 
@@ -145,7 +145,7 @@ RSpec.feature "Stats Dashboard" do
   scenario "Unauthorized user access" do
     # Unauthenticated access
     User.unauthenticate!
-    visit "/stats"
+    visit "/certification/stats"
     expect(page).not_to have_content("Activity for")
     expect(page).not_to have_content("Certification Rate")
     expect(page).not_to have_content("Time to Certify")
@@ -153,7 +153,7 @@ RSpec.feature "Stats Dashboard" do
 
     # Authenticated access without System Admin role
     User.authenticate!
-    visit "/stats"
+    visit "/certification/stats"
     expect(page).not_to have_content("Activity for")
     expect(page).not_to have_content("Certification Rate")
     expect(page).not_to have_content("Time to Certify")
