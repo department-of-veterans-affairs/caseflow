@@ -244,8 +244,8 @@ RSpec.feature "Dispatch" do
         # Form Page
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VBMS")
-        expect(page).to_not have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: Add VBMS Note")
+        expect(page).to_not have_content("Route Claim: VACOLS Updated")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
         find_label_for("confirmNote").click
         click_on "Finish Routing Claim"
@@ -279,7 +279,7 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
@@ -380,7 +380,7 @@ RSpec.feature "Dispatch" do
 
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # test special issue text within vacols note
         expect(page).to have_content("Mustard Gas")
         # test correct vacols location
@@ -395,7 +395,7 @@ RSpec.feature "Dispatch" do
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
         click_on "Route Claim"
 
-        expect(page).to have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: VACOLS Updated")
         # test special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
         # test no VBMS-related content
