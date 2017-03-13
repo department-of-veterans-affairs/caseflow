@@ -219,7 +219,7 @@ class AppealRepository
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
-    appeal.case_record.bftbind = "X" if appeal.hearing_requested == "2"
+    appeal.case_record.bftbind = "X" if appeal.case_record.bfhr == "2"
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
