@@ -6,6 +6,8 @@ import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
 
+const PARALLEL_DOCUMENT_REQUESTS = 3;
+
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
@@ -47,6 +49,10 @@ export default class DecisionReviewer extends React.Component {
     this.setState({
       currentPdfIndex: Math.max(this.state.currentPdfIndex - 1, 0)
     });
+  }
+
+  documentUrl = (doc) => {
+    return `${this.props.url}?id=${doc.id}`;
   }
 
   nextPdf = () => {
@@ -114,6 +120,25 @@ export default class DecisionReviewer extends React.Component {
     });
 
     return documentCopy;
+  }
+
+  componentDidMount = () => {
+    let downloadDocuments = (documentUrls, index) => {
+      if (index >= documentUrls.length) {
+        return;
+      }
+
+      ApiUtil.get(documentUrls[index])
+        .then(() => {
+          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
+        });
+    }
+
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++){
+      downloadDocuments(this.props.appealDocuments.map((doc) => {
+          return this.documentUrl(doc);
+      }), i);
+    }
   }
 
   changeSortState = (sortBy) => () => {
@@ -264,8 +289,7 @@ export default class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`${this.props.url}?id=` +
-            `${documents[this.state.currentPdfIndex].id}`}
+          file={this.documentUrl(documents[this.state.currentPdfIndex])}
           id={documents[this.state.currentPdfIndex].id}
           receivedAt={documents[this.state.currentPdfIndex].received_at}
           type={documents[this.state.currentPdfIndex].type}
