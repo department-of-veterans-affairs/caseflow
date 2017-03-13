@@ -15,11 +15,11 @@
 <div class="cf-app-segment cf-app-segment--alt">
   <div class="cf-stats">
     <ul class="cf-tab-navigation">
-      <% Stats::INTERVALS.each do |interval| %>
+      <% CertificationStats::INTERVALS.each do |interval| %>
         <li class="cf-tab <%= (@stats[0].interval == interval) && "cf-active" %>">
           <span>
             <span>
-              <%= link_to interval.to_s.capitalize, stats_path(interval) %>
+              <%= link_to interval.to_s.capitalize, certification_stats_path(interval) %>
             </span>
           </span>
         </li>

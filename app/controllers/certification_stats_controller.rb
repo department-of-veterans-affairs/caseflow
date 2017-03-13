@@ -1,6 +1,6 @@
 require "json"
 
-class StatsController < ApplicationController
+class CertificationStatsController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
 
@@ -10,7 +10,7 @@ class StatsController < ApplicationController
       daily: 0...30,
       weekly: 0...26,
       monthly: 0...24
-    }[interval].map { |i| Stats.offset(time: Stats.now, interval: interval, offset: i) }
+    }[interval].map { |i| CertificationStats.offset(time: CertificationStats.now, interval: interval, offset: i) }
   end
 
   private
@@ -25,7 +25,7 @@ class StatsController < ApplicationController
   helper_method :json
 
   def interval
-    @interval ||= Stats::INTERVALS.find { |i| i.to_s == params[:interval] } || :hourly
+    @interval ||= CertificationStats::INTERVALS.find { |i| i.to_s == params[:interval] } || :hourly
   end
   helper_method :interval
 

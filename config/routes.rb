@@ -82,7 +82,7 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'stats(/:interval)', to: 'stats#show', as: 'stats'
+  get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
 
   get "styleguide", to: "styleguide#show"
 
