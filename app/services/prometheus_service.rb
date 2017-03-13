@@ -4,7 +4,7 @@ class PrometheusService
       @completed_vbms_requests ||=
         find_or_register_metric(:counter,
                                 :completed_vbms_requests,
-                                'A counter of completed VBMS requests')
+                                "A counter of completed VBMS requests")
     end
 
     private

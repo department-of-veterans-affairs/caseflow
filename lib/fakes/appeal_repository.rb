@@ -6,7 +6,7 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       if status != 200
-        PrometheusService.completed_vbms_requests.increment({ status: status })
+        PrometheusService.completed_vbms_requests.increment(status: status)
 
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
@@ -43,7 +43,7 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
-    VBMSCaseflowLogger.log(:request, {response_code: 500})
+    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.establish_claim!(claim:, appeal:)
