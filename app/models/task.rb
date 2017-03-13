@@ -15,7 +15,9 @@ class Task < ActiveRecord::Base
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
-    special_issue_emailed: 5
+    special_issue_emailed: 5,
+    special_issue_not_emailed: 6,
+    special_issue_vacols_routed: 7
   }.freeze
 
   # Use this to define status texts that don't properly titlize
@@ -48,6 +50,11 @@ class Task < ActiveRecord::Base
 
     def completed_today
       where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
+    end
+
+    def completed_today_by_user(user_id)
+      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc,
+            user_id: user_id)
     end
 
     def to_complete
@@ -103,14 +110,8 @@ class Task < ActiveRecord::Base
 
     event :complete do
       transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
-      transitions from: :started, to: :completed,
-                  guard: proc { |*args| no_review_completion_status(*args) },
-                  after: proc { |*args| save_completion_status(*args) }
+      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
-  end
-
-  def initial_action
-    fail MustImplementInSubclassError
   end
 
   def before_assign
@@ -127,6 +128,14 @@ class Task < ActiveRecord::Base
 
   def start_time
     update!(started_at: Time.now.utc)
+  end
+
+  def prepare_with_decision!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
   end
 
   def cancel!(feedback = nil)
@@ -182,6 +191,14 @@ class Task < ActiveRecord::Base
     completion_status == self.class.completion_status_code(:special_issue_emailed)
   end
 
+  def special_issue_not_emailed?
+    completion_status == self.class.completion_status_code(:special_issue_not_emailed)
+  end
+
+  def dispatched_to_arc?
+    appeal.dispatched_to_station == "397"
+  end
+
   def days_since_creation
     (Time.zone.now - created_at).to_i / 1.day
   end
@@ -195,7 +212,11 @@ class Task < ActiveRecord::Base
   end
 
   def no_review_completion_status(status:)
-    status == self.class.completion_status_code(:special_issue_emailed)
+    [
+      self.class.completion_status_code(:special_issue_emailed),
+      self.class.completion_status_code(:special_issue_not_emailed),
+      self.class.completion_status_code(:special_issue_vacols_routed)
+    ].include? status
   end
 
   def save_outgoing_reference(outgoing_reference_id: nil)
@@ -225,8 +246,9 @@ class Task < ActiveRecord::Base
       include: [:user, appeal: { methods:
        [:serialized_decision_date,
         :veteran_name,
-        :decision_type] }],
-      methods: [:progress_status, :days_since_creation]
+        :decision_type,
+        :vbms_id] }],
+      methods: [:progress_status, :days_since_creation, :completion_status_text]
     )
   end
 
@@ -237,15 +259,14 @@ class Task < ActiveRecord::Base
           [decisions: { methods: :received_at }],
         methods:
         [:serialized_decision_date,
-         :decisions_hash,
          :disposition,
          :veteran_name,
          :decision_type,
          :station_key,
+         :regional_office_key,
          :non_canceled_end_products_within_30_days,
          :pending_eps,
-         :issues,
-         :to_hash] }],
+         :issues] }],
       methods: [:progress_status, :aasm_state]
     )
   end

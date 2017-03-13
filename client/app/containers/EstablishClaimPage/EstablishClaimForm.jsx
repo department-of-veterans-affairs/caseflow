@@ -19,6 +19,7 @@ export default class EstablishClaimForm extends React.Component {
       handleCancelTask,
       handleFieldChange,
       handleSubmit,
+      handleBackToDecisionReview,
       loading,
       validModifiers
     } = this.props;
@@ -82,6 +83,13 @@ export default class EstablishClaimForm extends React.Component {
         </div>
       </form>
       <div className="cf-app-segment" id="establish-claim-buttons">
+        <div className="cf-push-left">
+          <Button
+            name="< Back to Decision Review"
+            onClick={handleBackToDecisionReview}
+            classNames={["cf-btn-link"]}
+          />
+        </div>
         <div className="cf-push-right">
           <Button
             name="Cancel"
@@ -102,6 +110,7 @@ export default class EstablishClaimForm extends React.Component {
 EstablishClaimForm.propTypes = {
   claimForm: PropTypes.object.isRequired,
   claimLabelValue: PropTypes.string.isRequired,
+  handleBackToDecisionReview: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired

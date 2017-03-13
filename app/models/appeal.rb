@@ -47,12 +47,12 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :documents
   def documents
-    @documents ||= fetch_documents!
+    @documents ||= fetch_documents!(save: false)
   end
 
-  def annotations_on_documents
-    ids = documents.map(&:id)
-    @annotations = Annotation.where(document_id: ids).map(&:to_hash)
+  attr_writer :saved_documents
+  def saved_documents
+    @saved_documents ||= fetch_documents!(save: true)
   end
 
   def veteran_name
@@ -60,7 +60,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def veteran_full_name
-    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ")
+    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ").titleize
   end
 
   def appellant_name
@@ -85,7 +85,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def task_header
-    "#{veteran_name} (#{vbms_id})"
+    "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
 
   def hearing_pending?
@@ -158,8 +158,8 @@ class Appeal < ActiveRecord::Base
     Appeal.uncertify(self)
   end
 
-  def fetch_documents!
-    self.class.repository.fetch_documents_for(self)
+  def fetch_documents!(save:)
+    self.class.repository.fetch_documents_for(self, save: save)
     @documents
   end
 

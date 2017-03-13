@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "faecda3443f0e0a0abfb0774106bae320b2c3026"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3e29aac"
 
 gem "moment_timezone-rails"
 
@@ -38,7 +38,7 @@ gem "puma", "~> 2.16.0"
 gem 'wannabe_bool'
 
 # Style
-gem 'us_web_design_standards', git: 'https://github.com/harrisj/us_web_design_standards_gem.git', branch: 'rails-assets-fixes'
+gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
 gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '68f7431a3e642ed41da5ff6568aa9d45c11e6aca'
@@ -80,6 +80,8 @@ gem 'request_store'
 gem 'aasm'
 
 gem 'font-awesome-sass'
+
+gem 'redis-namespace'
 
 group :production, :staging do
   # Oracle DB

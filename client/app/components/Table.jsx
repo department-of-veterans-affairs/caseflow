@@ -21,7 +21,9 @@ export default class Table extends React.Component {
       values
     } = this.props;
 
-    return <table className="usa-table-borderless" summary="list of tasks">
+    return <table
+      className="usa-table-borderless cf-table-borderless"
+      summary="list of tasks">
       <thead>
         <tr>
           {headers.map((header, i) =>
@@ -34,9 +36,8 @@ export default class Table extends React.Component {
 
       <tbody>
         {values.map((object, j) =>
-          <tr id={object.id || `table-row-${j}`} key={j}>
-
-            {buildRowValues(object).map((value, k) =>
+          <tr id={`table-row-${j + 1}`} key={j}>
+            {buildRowValues(object, j).map((value, k) =>
               <td key={k} className={this.props.columnClasses[k] || ""}>{value}</td>
             )}
 

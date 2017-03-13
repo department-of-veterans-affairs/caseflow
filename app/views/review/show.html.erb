@@ -1,0 +1,9 @@
+<% content_for :full_page_content do %>
+  <%= react_component("BaseContainer", props: {
+    page: "DecisionReviewer",
+    appealDocuments: [@document.to_hash],
+    annotations: @document.annotations.map(&:to_hash),
+    pdfWorker: asset_path('pdf.worker.js'),
+    url: pdf_review_index_path
+  }) %>
+<% end %>

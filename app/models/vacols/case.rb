@@ -6,6 +6,7 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,        foreign_key: :ticknum
   belongs_to :correspondent, foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :issues,        foreign_key: :isskey
+  has_many   :notes,         foreign_key: :tsktknm
 
   class InvalidLocationError < StandardError; end
 
@@ -98,7 +99,7 @@ class VACOLS::Case < VACOLS::Record
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w(50 51 53 98).freeze
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 98 97).freeze
 
   JOIN_ISSUE_CNT_REMAND = "
     inner join
@@ -127,7 +128,7 @@ class VACOLS::Case < VACOLS::Record
     BFDC = '1'
     -- Cases marked with the disposition Allowed, which have at least one grant.
 
-    and BFDDEC >= to_date(?, 'YYYY-MM-DD HH24:MI')
+    and TIOCTIME >= to_date(?, 'YYYY-MM-DD HH24:MI')
     -- As all full grants are in HIS status, we must time bracket our requests.
 
     and TIVBMS = 'Y'
@@ -148,9 +149,9 @@ class VACOLS::Case < VACOLS::Record
                 .order("BFDDEC ASC")
   end
 
-  def self.amc_full_grants(decided_after:)
+  def self.amc_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_REMAND)
-                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, decided_after.strftime("%Y-%m-%d %H:%M"))
+                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
                 .order("BFDDEC ASC")
   end
 

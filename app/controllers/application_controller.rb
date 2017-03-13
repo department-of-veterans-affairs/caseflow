@@ -55,6 +55,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def feature_enabled?(feature)
+    FeatureToggle.enabled?(feature, current_user)
+  end
+  helper_method :feature_enabled?
+
   def logo_class
     return "cf-logo-image-default" if logo_name.nil?
     "cf-logo-image-#{logo_name.downcase.tr(' ', '-')}"
@@ -71,6 +76,11 @@ class ApplicationController < ActionController::Base
     root_path
   end
   helper_method :logo_path
+
+  def certification_header(title)
+    "&nbsp &gt &nbsp".html_safe + title
+  end
+  helper_method :certification_header
 
   def set_raven_user
     if current_user && ENV["SENTRY_DSN"]
@@ -111,6 +121,8 @@ class ApplicationController < ActionController::Base
 
   def verify_authorized_roles(*roles)
     return true if current_user && roles.all? { |r| current_user.can?(r) }
+    Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
+      "couldn't access #{request.original_url}")
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end

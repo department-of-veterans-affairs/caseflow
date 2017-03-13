@@ -41,10 +41,10 @@
           <% @existing_tasks.each do |task| %>
             <tr id="task-<%= task.id %>">
               <td>
-                <%= "#{task.appeal.veteran_name} (#{task.appeal.vacols_id})" %>
+                <%= "#{task.cached_veteran_name} (#{task.appeal.vacols_id})" %>
               </td>
               <td>
-                <%= task.appeal.decision_type %>
+                <%= task.cached_decision_type %>
               </td>
               <td>
                 <%= task.progress_status %>

@@ -191,6 +191,20 @@ describe Task do
     end
   end
 
+  context ".special_issue_not_emailed?" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:completion_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    subject { task }
+    before do
+      task.prepare!
+      task.assign!(:assigned, @user)
+      task.start!
+      task.complete!(status: completion_status)
+    end
+    it { expect(subject.special_issue_not_emailed?).to be_truthy }
+  end
+
   context ".completed?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -311,6 +325,51 @@ describe Task do
     end
   end
 
+  context "#prepare_with_decision!" do
+    subject { task.prepare_with_decision! }
+    let(:task) { EstablishClaim.create(appeal: appeal) }
+    let(:appeal) { Appeal.create(vacols_id: "222SHANE", vbms_id: "222SHANE") }
+    let(:appeal_data) { Fakes::AppealRepository.appeal_partial_grant_decided(missing_decision: missing_decision) }
+
+    before do
+      Fakes::AppealRepository.records = { "222SHANE" => appeal_data }
+    end
+
+    context "if the task's appeal has no decisions" do
+      let(:missing_decision) { true }
+      it { is_expected.to be_falsey }
+    end
+
+    context "if the task's appeal has decisions" do
+      let(:missing_decision) { false }
+      let(:filename) { appeal.decisions.first.file_name }
+
+      context "if the task's appeal errors out on decision content load" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
+        end
+
+        it "propogates exception and does not prepare" do
+          expect { subject }.to raise_error("VBMS 500")
+          expect(task.reload).to_not be_unassigned
+        end
+      end
+
+      context "if the task caches decision content successfully" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
+        end
+
+        it "prepares task and caches decision document content" do
+          expect(subject).to be_truthy
+
+          expect(task.reload).to be_unassigned
+          expect(S3Service.files[filename]).to eq("yay content!")
+        end
+      end
+    end
+  end
+
   context ".canceled?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -358,6 +417,19 @@ describe Task do
     let!(:task) { EstablishClaim.create(appeal: appeal) }
     it "returns unprepared tasks" do
       expect(Task.unprepared.first).to eq(task)
+    end
+  end
+
+  context "#no_review_completion_status" do
+    let!(:appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:task) { EstablishClaim.create(appeal: appeal) }
+    let!(:no_review_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    let!(:review_status) { Task.completion_status_code(:completed) }
+    it "returns true if no_review_status" do
+      expect(task.no_review_completion_status(status: no_review_status)).to eq(true)
+    end
+    it "returns false if status has to be reviewed" do
+      expect(task.no_review_completion_status(status: review_status)).to eq(false)
     end
   end
 

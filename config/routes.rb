@@ -35,17 +35,23 @@ Rails.application.routes.draw do
       patch 'assign', on: :collection
       post 'perform', on: :member
       post 'assign-existing-end-product', on: :member
-      post 'note-complete', on: :member
+      post 'review-complete', on: :member
       post 'email-complete', on: :member
+      post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
+      put 'update_appeal', on: :member
     end
+  end
+
+  resources :document, only: [] do
+    patch 'set-label', on: :member
   end
 
   scope path: "/decision" do
     get "/", to: redirect("/decision/review")
 
-    resources :annotation, 
+    resources :annotation,
               path: "/review/annotation",
               only: [:create, :destroy, :update],
               on: :member
@@ -54,6 +60,7 @@ Rails.application.routes.draw do
               path: "/review",
               only: [:index] do
       get 'pdf', on: :collection
+      get 'show', on: :collection
     end
   end
 
@@ -75,10 +82,11 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'stats(/:interval)', to: 'stats#show', as: 'stats'
+  get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
+  get 'dispatch/stats', to: 'dispatch_stats#show', as: 'dispatch_stats'
+  get 'stats', to: 'stats#show'
 
-  get "admin/styleguide", to: "admin/styleguide#show"
-  get "admin/styleguide/modals", to: "admin/styleguide#modals"
+  get "styleguide", to: "styleguide#show"
 
   get 'help' => 'help#show'
 

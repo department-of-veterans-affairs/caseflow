@@ -3,9 +3,10 @@
     availableTasks: !!current_user_next_task,
     buttonText: start_text,
     checklist: ['Reviewed decision', 'Assigned existing EP to claim'],
-    content: 'Way to go! You can now establish the next claim or
-                go back to your Work History.',
     firstHeader: 'Congratulations!',
     page: 'EstablishClaimComplete',
-    secondHeader: task.appeal.veteran_name + "'s claim has been assigned an EP."
+    totalCasesCompleted: @completed_count_today,
+    employeeCount: Rails.cache.read('employee_count') || '0',
+    totalCasesToComplete: @to_complete_count,
+    secondHeader: task.appeal.veteran_full_name + "'s claim (" + task.appeal.vbms_id + ') has been assigned an EP.'
 }) %>

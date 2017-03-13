@@ -62,6 +62,7 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "372" => "RO72",
     "373" => "RO73",
     "377" => "RO77",
+    "397" => "RO97",
     "283" => "DSUSER"
   }.freeze
 
@@ -151,6 +152,7 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "RO92" => { city: "Atlanta Education Center", state: "GA", timezone: "America/New_York" },
     "RO93" => { city: "Muskogee Education Center", state: "OK", timezone: "America/Chicago" },
     "RO94" => { city: "St. Louis Education Center", state: "MO", timezone: "America/Chicago" },
+    "RO97" => { city: "ARC", state: "DC", timezone: "America/New_York" },
     "RO98" => { city: "NCA", state: "DC", timezone: "America/New_York" },
     "RO99" => { city: "VHA CO", state: "DC", timezone: "America/New_York" },
     "DSUSER" => { city: "Digital Service HQ", state: "DC", timezone: "America/New_York" }

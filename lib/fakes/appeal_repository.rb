@@ -54,6 +54,9 @@ class Fakes::AppealRepository
     OpenStruct.new(claim_id: @end_product_claim_id)
   end
 
+  def self.update_vacols_after_dispatch!(*)
+  end
+
   def self.update_location_after_dispatch!(*)
   end
 
@@ -97,7 +100,8 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  def self.fetch_documents_for(appeal)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def self.fetch_documents_for(appeal, save:)
     vbms_record = @records[appeal.vbms_id]
     if vbms_record
       appeal.documents = vbms_record[:documents]
@@ -105,6 +109,7 @@ class Fakes::AppealRepository
     end
     appeal.documents = @documents || []
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.fetch_document_file(document)
     path =
@@ -125,8 +130,10 @@ class Fakes::AppealRepository
     [@records["321C"]]
   end
 
-  def self.amc_full_grants(decided_after:)
-    [@records["654C"]].select { |appeal| appeal.decision_date > decided_after }
+  def self.amc_full_grants(outcoded_after:)
+    # Technically we reference the outcoding date in this method, but for the sake
+    # of testing we can just compare to the appeal.decision_date
+    [@records["654C"]].select { |appeal| appeal.decision_date > outcoded_after }
   end
 
   def self.uncertify(_appeal)
@@ -267,6 +274,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
+      regional_office_key: "RO13",
       documents: missing_decision ? [] : [decision_document]
     }
   end
@@ -314,8 +322,18 @@ class Fakes::AppealRepository
     %w(Washington Adams Jefferson Madison Jackson VanBuren)
   end
 
+  def self.appeals_for_tasks_types
+    [
+      appeal_full_grant_decided,
+      appeal_partial_grant_decided,
+      appeal_remand_decided
+    ]
+  end
+
   def self.appeals_for_tasks(index)
-    appeal_full_grant_decided.merge(
+    appeal = appeals_for_tasks_types[index % 3]
+
+    appeal.merge(
       veteran_last_name: last_names[index % last_names.length],
       veteran_first_name: first_names[index % first_names.length]
     )
@@ -340,7 +358,8 @@ class Fakes::AppealRepository
         received_at: 3.days.ago,
         document_id: "1",
         filename: "My_NOD"
-      )
+      ),
+      true
     )
   end
 
@@ -351,7 +370,8 @@ class Fakes::AppealRepository
         received_at: Date.new(1987, 9, 6),
         document_id: "2",
         filename: "My_SOC"
-      )
+      ),
+      false
     )
   end
 
@@ -362,7 +382,8 @@ class Fakes::AppealRepository
         received_at: 1.day.ago,
         document_id: "3",
         filename: "My_Form_9"
-      )
+      ),
+      false
     )
   end
 
@@ -373,7 +394,8 @@ class Fakes::AppealRepository
         received_at: 7.days.ago,
         document_id: "4",
         filename: "My_Decision"
-      )
+      ),
+      false
     )
   end
 
@@ -384,7 +406,8 @@ class Fakes::AppealRepository
         received_at: 8.days.ago,
         document_id: "5",
         filename: "My_Decision2"
-      )
+      ),
+      false
     )
   end
 
@@ -435,4 +458,5 @@ class Fakes::AppealRepository
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

@@ -45,13 +45,13 @@ RSpec.feature "Start Certification" do
     expect(find("#vso-header")).to have_content("The American Legion")
 
     expect(find("#page-title")).to have_content "Mismatched Documents"
-    expect(find("#nod-match")).to have_content "No Matching Document"
-    expect(find("#soc-match")).to_not have_content "No Matching Document"
+    expect(find("#nod-match")).to have_content "Not found"
+    expect(find("#soc-match")).to_not have_content "Not found"
     expect(find("#soc-match")).to have_content "09/06/1987"
-    expect(find("#form-9-match")).to have_content "No Matching Document"
-    expect(find("#ssoc-1-match")).to have_content "No Matching Document"
+    expect(find("#form-9-match")).to have_content "Not found"
+    expect(find("#ssoc-1-match")).to have_content "Not found"
     expect(find("#ssoc-2-match")).to have_content "SSOC 2"
-    expect(find("#ssoc-2-match")).to have_content "No Matching Document"
+    expect(find("#ssoc-2-match")).to have_content "Not found"
 
     certification = Certification.last
     expect(certification.vacols_id).to eq("1234C")
@@ -149,7 +149,7 @@ RSpec.feature "Start Certification" do
     Fakes::AppealRepository.records = { "1234" => appeal }
 
     visit "certifications/new/1234"
-    expect(find("#page-title")).to have_content "Certification"
+    expect(find("#page-title")).to have_content "Already Certified"
     expect(page).to have_content "Appeal has already been Certified"
   end
 end

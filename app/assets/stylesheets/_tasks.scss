@@ -1,8 +1,9 @@
-@import 'core/variables';
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
 
 .task-start-wrapper {
   padding: 0 0 20px;
-  border-bottom: 2px solid $color-gray-lighter;
+  border-bottom: 1px solid $color-gray-lighter;
   margin-bottom: 20px;
 }
 

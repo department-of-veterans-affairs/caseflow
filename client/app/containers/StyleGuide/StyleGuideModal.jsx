@@ -1,11 +1,12 @@
 import React from 'react';
 
 // components
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
+import Modal from '../../components/Modal';
+import Button from '../../components/Button';
+import TextareaField from '../../components/TextareaField';
+// import { ModalCode } from './StyleGuideCode'; //will be used for code samples
 
-export default class StyleGuide extends React.Component {
+export default class StyleGuideModal extends React.Component {
   constructor(props) {
     super(props);
     window.jqueryOn = false;
@@ -25,6 +26,12 @@ export default class StyleGuide extends React.Component {
     let styleGuideModal = this.state.modal;
 
     return <div>
+      <h2 id="modals">Modals</h2>
+        <p>Modals are 490 pixels in width with 30px padding around the border and
+        contain the following: a title, explanation text, a divider,
+        and action buttons. There are modal-specific classes that must be included
+        in your modal (see below code snippets).
+        Whenever possible, use a close link as the left action.</p>
       <p><Button
           name="Launch Modal"
           onClick={this.handleModalOpen}
@@ -33,11 +40,11 @@ export default class StyleGuide extends React.Component {
       { styleGuideModal && <Modal
         buttons = {[
           { classNames: ["cf-modal-link", "cf-btn-link"],
-            name: '\u00AB Close',
+            name: 'Close',
             onClick: this.handleModalClose
           },
           { classNames: ["usa-button", "usa-button-secondary"],
-            name: 'Proceed with Action',
+            name: 'Proceed with action',
             onClick: this.handleModalClose
           }
         ]}
@@ -45,6 +52,9 @@ export default class StyleGuide extends React.Component {
         title = "This is a modal">
         <p>
           This is your modal text, which explains why the modal was triggered.
+          Modal titles are in <b>Title Case</b>, but actions on modal features
+          such as text explanations, action buttons, fields, etc. are
+          <b> Sentence case</b>.
         </p>
         <TextareaField
           label="This is a text box for the modal."

@@ -1,7 +1,14 @@
 GIT
+  remote: https://github.com/18F/uswds-rails-gem.git
+  revision: aa12ddd314209ef9e75bb2f2bfcf1454336df049
+  specs:
+    uswds-rails (1.0.0)
+      sass
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: faecda3443f0e0a0abfb0774106bae320b2c3026
-  ref: faecda3443f0e0a0abfb0774106bae320b2c3026
+  revision: 3e29aac95420d023f0d5c0f76c4d899f131ee9bb
+  ref: 3e29aac
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -10,8 +17,7 @@ GIT
       jquery-rails
       momentjs-rails
       neat
-      rails (~> 4.2)
-      us_web_design_standards
+      rails (= 4.2.7.1)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
@@ -44,15 +50,6 @@ GIT
       poltergeist
       rainbow
       selenium-webdriver
-
-GIT
-  remote: https://github.com/harrisj/us_web_design_standards_gem.git
-  revision: a789c0a7b55d13f378fb3a0da675bcc687079ea3
-  branch: rails-assets-fixes
-  specs:
-    us_web_design_standards (0.0.2)
-      railties
-      sass (~> 3.4)
 
 GIT
   remote: https://github.com/senny/pdfjs_viewer-rails.git
@@ -109,13 +106,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.7.9)
-      aws-sdk-resources (= 2.7.9)
-    aws-sdk-core (2.7.9)
+    aws-sdk (2.8.5)
+      aws-sdk-resources (= 2.8.5)
+    aws-sdk-core (2.8.5)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.7.9)
-      aws-sdk-core (= 2.7.9)
+    aws-sdk-resources (2.8.5)
+      aws-sdk-core (= 2.8.5)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -142,7 +139,7 @@ GEM
     colorize (0.7.7)
     concurrent-ruby (1.0.4)
     connection_pool (2.2.1)
-    d3-rails (4.3.0)
+    d3-rails (4.7.0)
       railties (>= 3.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
@@ -226,8 +223,8 @@ GEM
       railties (>= 3.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
-    neat (1.8.0)
-      sass (>= 3.3)
+    neat (2.0.0)
+      sass (~> 3.4)
       thor (~> 0.19)
     nenv (0.3.0)
     nokogiri (1.6.8.1)
@@ -357,7 +354,7 @@ GEM
     ruby-oci8 (2.2.2-x64-mingw32)
     ruby-progressbar (1.8.1)
     ruby_dep (1.3.1)
-    rubyzip (1.2.0)
+    rubyzip (1.2.1)
     rufus-scheduler (3.2.2)
     safe_shell (1.0.3)
     sass (3.4.23)
@@ -487,6 +484,7 @@ DEPENDENCIES
   rainbow
   rb-readline
   react_on_rails (~> 6)
+  redis-namespace
   redis-rails
   request_store
   rspec
@@ -506,10 +504,10 @@ DEPENDENCIES
   timecop
   tzinfo-data
   uglifier (>= 1.3.0)
-  us_web_design_standards!
+  uswds-rails!
   wannabe_bool
   web-console (~> 2.0)
   where-or
 
 BUNDLED WITH
-   1.14.3
+   1.14.6
