@@ -76,20 +76,13 @@ class TestDataService
           SET TIOCTIME = (SYSDATE-2)
           WHERE TICKNUM = #{case_id}
         SQL
-        conn.execute(<<-SQL)
-          UPDATE BRIEFF
-          SET BFDDEC = (SYSDATE-2)
-          WHERE BFKEY = #{case_id}
-        SQL
       end
     end
   end
 
   def self.delete_test_data
     # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    # fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
-    # Reset special issues for all appeals
-    # TestDataService.reset_appeal_special_issues
+    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50 || !test_user?
     EstablishClaim.delete_all
     Task.delete_all
     Appeal.delete_all

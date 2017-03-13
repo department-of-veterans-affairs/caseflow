@@ -28,7 +28,7 @@ class Test::SetupController < ApplicationController
     test_appeal_id = params["DISPATCH_ME"][:vacols_id]
     if full_grant_ids.include?(test_appeal_id)
       decision_type = :full
-    elsif part_remand_ids.include?(test_appeal_id)
+    elsif partial_and_remand_ids.include?(test_appeal_id)
       decision_type = :partial
     else
       flash[:error] = "#{test_appeal_id} is not a testable appeal!"
@@ -70,8 +70,8 @@ class Test::SetupController < ApplicationController
     ENV["FULL_GRANT_IDS"].split(",")
   end
 
-  def part_remand_ids
-    ENV["PART_REMAND_IDS"].split(",")
+  def partial_and_remand_ids
+    ENV["PARTIAL_AND_REMAND_IDS"].split(",")
   end
   # :nocov"
 end
