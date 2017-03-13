@@ -1,5 +1,13 @@
 class PrometheusService
   class << self
+    def vbms_errors
+      @vbms_errors ||=
+        find_or_register_metric(:counter,
+                                :vbms_errors,
+                                "A counter of VBMS errored requests")
+
+    end
+
     def completed_vbms_requests
       @completed_vbms_requests ||=
         find_or_register_metric(:counter,
