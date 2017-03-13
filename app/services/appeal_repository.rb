@@ -1,7 +1,7 @@
 require "vbms"
 
 # :nocov:
-class CaseflowLogger
+class VBMSCaseflowLogger
   def log(event, data)
     case event
     when :request
@@ -320,7 +320,7 @@ class AppealRepository
 
   def self.init_vbms_client
     VBMS::Client.from_env_vars(
-      logger: CaseflowLogger.new,
+      logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
