@@ -245,7 +245,6 @@ RSpec.feature "Dispatch" do
         click_on "Create End Product"
 
         expect(page).to have_content("Route Claim: Add VBMS Note")
-        expect(page).to_not have_content("Route Claim: VACOLS Updated")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
         find_label_for("confirmNote").click
         click_on "Finish Routing Claim"
