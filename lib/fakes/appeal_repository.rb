@@ -1,14 +1,15 @@
 require "ostruct"
 
-class CaseflowLogger
+class VBMSCaseflowLogger
   def self.log(event, data)
     case event
     when :request
-      if data[:response_code] != 200
-        ::PrometheusService.vbms_errors_counter.increment
+      status = data[:response_code]
+      if status != 200
+        PrometheusService.completed_vbms_requests.increment(status: status)
 
         Rails.logger.error(
-          "VBMS HTTP Error #{data[:response_code]} " \
+          "VBMS HTTP Error #{status} " \
           "(#{data[:request].class.name}) #{data[:response_body]}"
         )
       end
@@ -42,7 +43,7 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
-    CaseflowLogger.log(:request, {response_code: 500})
+    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.establish_claim!(claim:, appeal:)
