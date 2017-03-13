@@ -5,11 +5,12 @@ class CaseflowLogger
   def log(event, data)
     case event
     when :request
-      if data[:response_code] != 200
-        PrometheusService.vbms_errors_counter.increment
+      status = data[:response_code]
+      PrometheusService.completed_vbms_requests.increment({ status: status })
 
+      if status != 200
         Rails.logger.error(
-          "VBMS HTTP Error #{data[:response_code]} " \
+          "VBMS HTTP Error #{status} " \
           "(#{data[:request].class.name}) #{data[:response_body]}"
         )
       end
