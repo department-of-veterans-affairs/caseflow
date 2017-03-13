@@ -64,7 +64,6 @@ class Fakes::AppealRepository
 
   def self.load_vacols_data(appeal)
     return unless @records
-    VBMSCaseflowLogger.log(:request, {response_code: 500})
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
