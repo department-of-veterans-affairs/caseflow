@@ -10,7 +10,8 @@
   "scripts": {
     "test": "mocha test/setup.js test/* --compilers js:babel-core/register",
     "test:watch": "mocha test/setup.js test/* --watch --compilers js:babel-core/register",
-    "lint": "eslint . --fix --ext .jsx --ext .js",
+    "lint": "eslint . --ext .jsx --ext .js",
+    "lint:fix": "eslint . --fix --ext .jsx --ext .js",
     "build:test": "webpack --config webpack.config.js",
     "build:production": "NODE_ENV=production webpack --config webpack.config.js",
     "build:development": "webpack -w --config webpack.config.js"
