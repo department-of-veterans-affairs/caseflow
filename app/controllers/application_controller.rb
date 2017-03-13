@@ -139,12 +139,6 @@ class ApplicationController < ActionController::Base
     verify_authorized_roles("System Admin")
   end
 
-  # Use this function if checking for multiple user roles and don't want to
-  # redirect after user doesn't have the system admin role.
-  def system_admin?
-    current_user.can?("System Admin")
-  end
-
   def on_vbms_error
     respond_to do |format|
       format.html do
