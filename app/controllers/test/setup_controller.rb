@@ -1,84 +1,77 @@
 class Test::SetupController < ApplicationController
-  before_action :require_test_user, only: [:certification, :claims_establishment]
-  before_action :require_demo, only: [:set_user]
+  before_action :require_uat, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
+
+  def index
+    @certification_appeal = "UNCERTIFY_ME"
+    @dispatch_appeal = "DISPATCH_ME"
+  end
 
   # Used for resetting data in UAT for certification
-  def certification
-    test_appeal_id = params[:appeal_id]
-
+  def uncertify_appeal
+    test_appeal_id = params["UNCERTIFY_ME"][:vacols_id]
+    unless certification_ids.include?(test_appeal_id)
+      flash[:error] = "#{test_appeal_id} is not uncertifiable!"
+      redirect_to action: "index"
+      return
+    end
     @certification = Certification.find_by(vacols_id: test_appeal_id)
-    @certification.uncertify!(current_user.css_id)
+    Form8.delete_all(vacols_id: test_appeal_id)
+    appeal = Appeal.find_by(vacols_id: test_appeal_id)
+    AppealRepository.uncertify(appeal)
     Certification.delete_all(vacols_id: test_appeal_id)
 
     redirect_to new_certification_path(vacols_id: test_appeal_id)
   end
 
   # Used for resetting data in UAT for claims establishment
-  def claims_establishment
-    # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 20
-
-    EstablishClaim.delete_all
-    # Reset special issues for all appeals
-    TestDataService.reset_appeal_special_issues
+  def appeal_location_date_reset
+    test_appeal_id = params["DISPATCH_ME"][:vacols_id]
+    if full_grant_ids.include?(test_appeal_id)
+      decision_type = :full
+    elsif partial_and_remand_ids.include?(test_appeal_id)
+      decision_type = :partial
+    else
+      flash[:error] = "#{test_appeal_id} is not a testable appeal!"
+      redirect_to action: "index"
+      return
+    end
 
     # Cancel existing EPs and reset the dates
-    full_grant_ids.each do |full_grant_id|
-      TestDataService.prepare_claims_establishment!(vacols_id: full_grant_id, cancel_eps: true, decision_type: :full)
-    end
-    partial_grant_ids.each do |partial_grant_id|
-      TestDataService.prepare_claims_establishment!(vacols_id: partial_grant_id, cancel_eps: true)
-    end
-
-    unless ApplicationController.dependencies_faked?
-      CreateEstablishClaimTasksJob.perform_now
-      PrepareEstablishClaimTasksJob.perform_now
-    end
-
+    cancel_eps = params["DISPATCH_ME"][:cancel_eps] == "Yes" ? true : false
+    @dispatch_appeal = Appeal.find_or_create_by_vacols_id(test_appeal_id)
+    TestDataService.prepare_claims_establishment!(vacols_id: @dispatch_appeal.vacols_id,
+                                                  cancel_eps: cancel_eps,
+                                                  decision_type: decision_type)
     redirect_to establish_claims_path
   end
 
-  # Set current user in DEMO
-  def set_user
-    User.before_set_user # for testing only
-
-    session["user"] = User.authentication_service.get_user_session(params[:id])
-    redirect_to "/test/users"
-  end
-
-  # Set end products in DEMO
-  # :nocov:
-  def set_end_products
-    case params[:type]
-    when "full"
-      BGSService.end_product_data = BGSService.existing_full_grants
-    when "partial"
-      BGSService.end_product_data = BGSService.existing_partial_grants
-    when "none"
-      BGSService.end_product_data = BGSService.no_grants
-    when "all"
-      BGSService.end_product_data = BGSService.all_grants
+  def delete_test_data
+    TestDataService.delete_test_data
+    if Appeal.all.empty?
+      flash[:success] = "Data cleared"
+    else
+      flash[:error] = "Data not cleared"
     end
-
-    redirect_to "/test/users"
+    redirect_to action: "index"
   end
-  # :nocov:
 
   private
 
-  def require_test_user
+  # :nocov:
+  def require_uat
     redirect_to "/unauthorized" unless test_user?
   end
 
-  def require_demo
-    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  def certification_ids
+    ENV["TEST_APPEAL_IDS"].split(",")
   end
 
   def full_grant_ids
     ENV["FULL_GRANT_IDS"].split(",")
   end
 
-  def partial_grant_ids
-    ENV["PART_REMAND_IDS"].split(",")
+  def partial_and_remand_ids
+    ENV["PARTIAL_AND_REMAND_IDS"].split(",")
   end
+  # :nocov"
 end
