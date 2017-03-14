@@ -9,6 +9,8 @@ default: &default
   encoding: unicode
   pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
   timeout: 5000
+  variables:
+    statement_timeout: 30_000 # 30 seconds
 
 development:
   <<: *default
