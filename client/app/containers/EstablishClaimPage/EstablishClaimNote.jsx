@@ -96,13 +96,13 @@ export default class EstablishClaimNote extends BaseForm {
       steps in VACOLS:</p>
 
       <ol>
-        <li type="A">
+        <li>
           <div>
             <span className="inline-label">Change location to: </span>
             <span className="inline-value">{this.updatedVacolsLocationCode()}</span>
           </div>
         </li>
-        {this.hasSelectedSpecialIssues() && <li type="A">
+        {this.hasSelectedSpecialIssues() && <li>
           <div>
             <span className="inline-label">Add the diary note: </span>
             <span className="inline-value">{this.vacolsNoteText()}</span>
