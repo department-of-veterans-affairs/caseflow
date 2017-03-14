@@ -1,1 +1,4 @@
-<div>Certification v2</div>
+<%= react_component("Certification", props: {
+  certification: @certification.to_json,
+  form8: @form8.to_json
+}) %>
