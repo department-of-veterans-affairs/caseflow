@@ -1,10 +1,4 @@
 class FeatureToggle
-  class UserIsRequiredError < StandardError
-    def message
-      "User is required when regional offices are set on the feature"
-    end
-  end
-
   # Keeps track of all enabled features
   FEATURE_LIST_KEY = :feature_list_key
 
@@ -57,8 +51,7 @@ class FeatureToggle
     # if regional_offices key is set, check if the feature
     # is enabled for the user's ro. Otherwise, it is enabled globally
     if regional_offices.present?
-      fail UserIsRequiredError unless user
-      return false unless regional_offices.include?(user.regional_office)
+      return false unless user && regional_offices.include?(user.regional_office)
     end
     true
   end

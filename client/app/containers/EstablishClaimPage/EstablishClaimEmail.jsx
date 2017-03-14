@@ -50,7 +50,7 @@ export default class EstablishClaimEmail extends BaseForm {
       { this.props.regionalOfficeEmail &&
         <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Route Claim</h2>
+          <h2>Route Claim: Send Email Notification</h2>
           <div>
             <div className="usa-alert usa-alert-info">
               <div className="usa-alert-body">
@@ -105,7 +105,7 @@ export default class EstablishClaimEmail extends BaseForm {
       { !this.props.regionalOfficeEmail &&
         <div>
           <div className="cf-app-segment cf-app-segment--alt">
-            <h2>Route Claim</h2>
+            <h2>Route Claim: Process Outside of Caseflow</h2>
             <div>
               <div className="usa-alert usa-alert-warning">
                 <div className="usa-alert-body">

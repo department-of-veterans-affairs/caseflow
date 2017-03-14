@@ -10,7 +10,8 @@
     "postinstall": "cd client && npm install --no-optional",
     "dev": "rm app/assets/webpack/* || true && cd client && npm run build:development",
     "test": "cd client && npm test",
-    "lint": "cd client && npm run lint"
+    "lint": "cd client && npm run lint",
+    "lint:fix": "cd client && npm run lint:fix"
   },
   "devDependencies": {
   }
