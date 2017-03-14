@@ -52,8 +52,6 @@ export default class EstablishClaimNote extends BaseForm {
     }
 
     return "50";
-
-
   }
 
   hasSelectedSpecialIssues() {
@@ -72,13 +70,13 @@ export default class EstablishClaimNote extends BaseForm {
     let noteFor = [];
 
     if (this.props.displayVacolsNote) {
-      noteFor.push('VACOLS');
+      noteFor.push('VACOLS Updated');
     }
     if (this.props.displayVbmsNote) {
-      noteFor.push('VBMS');
+      noteFor.push('Add VBMS Note');
     }
 
-    return `Route Claim: Update ${noteFor.join(' and ')}`;
+    return `Route Claim: ${noteFor.join(', ')}`;
   }
 
   vacolsNoteText() {

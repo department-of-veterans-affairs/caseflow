@@ -1,8 +1,8 @@
 ##
-# Stats is an interface to quickly access statistics for Caseflow Certification
+# CertificationStats is an interface to quickly access statistics for Caseflow Certification
 # it is responsible for aggregating and caching statistics.
 #
-class Stats < Caseflow::Stats
+class CertificationStats < Caseflow::Stats
   CALCULATIONS = {
     certifications_started: lambda do |range|
       Certification.where(created_at: range).count
@@ -21,19 +21,19 @@ class Stats < Caseflow::Stats
     end,
 
     time_to_certify: lambda do |range|
-      Stats.percentile(:time_to_certify, Certification.where(completed_at: range), 95)
+      CertificationStats.percentile(:time_to_certify, Certification.where(completed_at: range), 95)
     end,
 
     missing_doc_time_to_certify: lambda do |range|
-      Stats.percentile(:time_to_certify, Certification.was_missing_doc.where(created_at: range), 95)
+      CertificationStats.percentile(:time_to_certify, Certification.was_missing_doc.where(created_at: range), 95)
     end,
 
     median_time_to_certify: lambda do |range|
-      Stats.percentile(:time_to_certify, Certification.where(completed_at: range), 50)
+      CertificationStats.percentile(:time_to_certify, Certification.where(completed_at: range), 50)
     end,
 
     median_missing_doc_time_to_certify: lambda do |range|
-      Stats.percentile(:time_to_certify, Certification.was_missing_doc.where(created_at: range), 50)
+      CertificationStats.percentile(:time_to_certify, Certification.was_missing_doc.where(created_at: range), 50)
     end,
 
     missing_doc: lambda do |range|
