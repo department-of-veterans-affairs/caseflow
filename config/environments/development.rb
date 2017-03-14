@@ -47,6 +47,7 @@ Rails.application.configure do
 
   ENV["METRICS_USERNAME"] = "caseflow"
   ENV["METRICS_PASSWORD"] = "caseflow"
+  ENV["ENABLE_CERTIFICATION_V2"] = "true"
 
   # configure pry
   silence_warnings do
