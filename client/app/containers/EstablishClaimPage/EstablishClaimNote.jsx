@@ -115,8 +115,8 @@ export default class EstablishClaimNote extends BaseForm {
   vbmsSection() {
     return <div>
 
-      <p>To better route this claim, please open VBMS and
-      attach the following note to the EP you just created.</p>
+      <p>To help better identify this claim, please copy the following note, 
+      then open VBMS and attach it to the EP you just created.</p>
 
       <TextareaField
         label="VBMS Note:"
