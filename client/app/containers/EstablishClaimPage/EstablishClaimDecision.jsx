@@ -159,9 +159,9 @@ export default class EstablishClaimDecision extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Route Claim for Decision 1";
+      endProductButtonText = "Route claim for Decision 1";
     } else {
-      endProductButtonText = "Route Claim";
+      endProductButtonText = "Route claim";
     }
     this.state = {
       endProductButtonText
@@ -170,7 +170,7 @@ export default class EstablishClaimDecision extends React.Component {
 
   onTabSelected = (tabNumber) => {
     this.setState({
-      endProductButtonText: `Route Claim for Decision ${tabNumber + 1}`
+      endProductButtonText: `Route claim for Decision ${tabNumber + 1}`
     });
   }
 
