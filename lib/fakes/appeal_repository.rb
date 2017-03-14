@@ -371,7 +371,7 @@ class Fakes::AppealRepository
         document_id: "2",
         filename: "My_SOC"
       ),
-      false
+      true
     )
   end
 
@@ -383,7 +383,7 @@ class Fakes::AppealRepository
         document_id: "3",
         filename: "My_Form_9"
       ),
-      false
+      true
     )
   end
 
@@ -395,7 +395,7 @@ class Fakes::AppealRepository
         document_id: "4",
         filename: "My_Decision"
       ),
-      false
+      true
     )
   end
 
@@ -407,7 +407,7 @@ class Fakes::AppealRepository
         document_id: "5",
         filename: "My_Decision2"
       ),
-      false
+      true
     )
   end
 

@@ -9,6 +9,17 @@ import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 import DocumentLabels from '../components/DocumentLabels';
 
+export const linkToSingleDocumentView = (doc) => {
+  let id = doc.id;
+  let filename = doc.filename;
+  let type = doc.type;
+  let receivedAt = doc.received_at;
+
+  return `review/show?id=${id}&type=${type}` +
+    `&received_at=${receivedAt}&filename=${filename}`;
+}
+
+
 export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
