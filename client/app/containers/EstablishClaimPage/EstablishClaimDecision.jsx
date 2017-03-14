@@ -305,12 +305,15 @@ export default class EstablishClaimDecision extends React.Component {
               onChange={this.onTabSelected}/>
           </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <TextField
-           label="Decision Type"
-           name="decisionType"
-           readOnly={true}
-           {...decisionType}
-          />
+
+          <div className="usa-width-one-half">
+            <TextField
+             label="Decision type"
+             name="decisionType"
+             readOnly={true}
+             {...decisionType}
+            />
+          </div>
 
           <label><b>Select Special Issue(s)</b></label>
           <div className="cf-multiple-columns">
