@@ -9,7 +9,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if (ENV["ENABLE_CERTIFICATION_V2"] == "true" )
+    if (ENV["ENABLE_CERTIFICATION_V2"] == "true" && status == :started )
       render "v2", layout: "application"
       return
     end
