@@ -119,7 +119,7 @@ describe AppealRepository do
           AppealRepository.normalize_vacols_date(7.days.ago),
           AppealRepository.normalize_vacols_date(6.days.ago)
         ],
-        hearing_type: :video_hearing,
+        hearing_type: :central_office,
         hearing_requested: true,
         hearing_held: true,
         regional_office_key: "DSUSER",
