@@ -28,7 +28,6 @@ class TestDataService
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
@@ -96,7 +95,6 @@ class TestDataService
               BFORGTIC = NULL
           WHERE BFKEY = #{case_id}
         SQL
-
         conn.execute(<<-SQL)
           UPDATE PRIORLOC
           SET LOCDIN = SYSDATE,
@@ -104,7 +102,6 @@ class TestDataService
               LOCEXCEP = 'Y'
           WHERE LOCKEY = #{case_id} and LOCDIN is NULL
         SQL
-
         conn.execute(<<-SQL)
           INSERT into PRIORLOC
             (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
