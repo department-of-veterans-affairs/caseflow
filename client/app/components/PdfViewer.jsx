@@ -48,7 +48,7 @@ export default class PdfViewer extends BaseForm {
     this.setState({ comments: this.comments });
     // TODO: Change the interface in which we query all the comments.
     for (let i = 1; i <= this.state.numPages; i++) {
-      this.props.annotationStorage.getAnnotations(this.props.id, i).
+      this.props.annotationStorage.getAnnotations(this.props.doc.id, i).
         then((annotations) => {
           annotations.annotations.sort((first, second) => {
             return first.y - second.y;
@@ -93,12 +93,12 @@ export default class PdfViewer extends BaseForm {
       let commentToAdd = this.state.commentForm.editComment.value;
 
       this.props.annotationStorage.getAnnotation(
-          this.props.id,
+          this.props.doc.id,
           comment.uuid,
         ).then((annotation) => {
           annotation.comment = commentToAdd;
           this.props.annotationStorage.editAnnotation(
-            this.props.id,
+            this.props.doc.id,
             annotation.uuid,
             annotation
             ).
@@ -189,11 +189,11 @@ export default class PdfViewer extends BaseForm {
   saveNote = (annotation, viewport, pageNumber) => (content) => {
     annotation.comment = content;
     this.props.annotationStorage.addAnnotation(
-        this.props.id,
+        this.props.doc.id,
         pageNumber,
         annotation
       ).then(() => {
-        this.props.annotationStorage.getAnnotations(this.props.id, pageNumber).
+        this.props.annotationStorage.getAnnotations(this.props.doc.id, pageNumber).
           then((annotations) => {
             // Redraw all the annotations on the page to show the new one.
             let svg = document.getElementById(`pageContainer${pageNumber}`).
@@ -208,7 +208,7 @@ export default class PdfViewer extends BaseForm {
     const { UI } = PDFJSAnnotate;
 
     let RENDER_OPTIONS = {
-      documentId: this.props.id,
+      documentId: this.props.doc.id,
       pdfDocument: this.state.pdfDocument,
       rotate: 0,
       scale: this.state.scale
@@ -381,7 +381,7 @@ export default class PdfViewer extends BaseForm {
   scrollToAnnotation = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
-      getAnnotation(this.props.id, uuid).
+      getAnnotation(this.props.doc.id, uuid).
       then((annotation) => {
         let page = document.getElementsByClassName('page');
         let scrollWindow = document.getElementById('scrollWindow');
@@ -458,12 +458,17 @@ export default class PdfViewer extends BaseForm {
                     </Button> }
                 </span>
                 <span className="cf-right-side">
-                  {this.props.name}
+                  <Button
+                    name="newTab"
+                    classNames={["cf-pdf-button"]}
+                    onClick={() => window.open(linkToSingleDocumentView(this.props.doc), '_blank')}>
+                    {this.props.doc.filename}
+                  </Button>
                 </span>
               </div>
             </div>
-            { !this.props.hideNavigation &&
-              <div className="cf-pdf-navigation">
+            <div className="cf-pdf-navigation">
+              { this.props.previousPdf &&
                 <span className="cf-pdf-buttons-left">
                   <Button
                     name="previous"
@@ -471,7 +476,8 @@ export default class PdfViewer extends BaseForm {
                     onClick={this.props.previousPdf}>
                     <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
                   </Button>
-                </span>
+                </span> }
+              { this.props.nextPdf &&
                 <span className="cf-pdf-buttons-right">
                   <Button
                     name="next"
@@ -479,8 +485,8 @@ export default class PdfViewer extends BaseForm {
                     onClick={this.props.nextPdf}>
                     <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
                   </Button>
-                </span>
-              </div> }
+                </span> }
+            </div>
             <div id="scrollWindow" className="cf-pdf-scroll-view">
               <div
                 id="viewer"
@@ -530,10 +536,10 @@ export default class PdfViewer extends BaseForm {
           <div className="cf-sidebar-wrapper">
             <div className="cf-document-info-wrapper">
               <div className="cf-heading-alt">Document</div>
-              <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.name}</p>
-              <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.type}</p>
+              <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.doc.filename}</p>
+              <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.doc.type}</p>
               <p className="cf-pdf-meta-title">
-                <b>Receipt Date:</b> {formatDate(this.props.receivedAt)}
+                <b>Receipt Date:</b> {formatDate(this.props.doc.received_at)}
               </p>
               <div className="cf-heading-alt">
                 Notes

@@ -62,14 +62,14 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  // TODO: Changes these buttons to links and override the behavior on
-  // click and keep the behavior on command click so that we aren't
-  // trying to reimplement browser functionatlity.
   showPdf = (pdfNumber) => (event) => {
-    if (event.ctrlKey || 
-        event.shiftKey || 
-        event.metaKey || // apple
-        (event.button && event.button == 1)) {
+    // If the user is trying to open the link in a new tab/window
+    // then follow the link. Otherwise if they just clicked the link
+    // keep them contained within the SPA.
+    if (event.ctrlKey || // new tab on Windows
+        event.shiftKey || // open in new window
+        event.metaKey || // new tab on Macs
+        (event.button && event.button == 1)) { // middle click (9 new tab) 
       return true;
     } else {
       event.preventDefault();
@@ -263,6 +263,14 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  shouldShowNextButton = () => {
+    return this.state.currentPdfIndex + 1 < this.state.documents.length;
+  }
+
+  shouldShowPreviousButton = () => {
+    return this.state.currentPdfIndex > 0;
+  }
+
   render() {
     let {
       documents,
@@ -288,17 +296,14 @@ export default class DecisionReviewer extends React.Component {
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
-          id={documents[this.state.currentPdfIndex].id}
-          receivedAt={documents[this.state.currentPdfIndex].received_at}
-          type={documents[this.state.currentPdfIndex].type}
-          name={documents[this.state.currentPdfIndex].filename}
-          previousPdf={this.previousPdf}
-          nextPdf={this.nextPdf}
+          doc={documents[this.state.currentPdfIndex]}
+          previousPdf={this.shouldShowPreviousButton() && this.previousPdf}
+          nextPdf={this.shouldShowNextButton() && this.nextPdf}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label}
-          hideNavigation={documents.length === 1} />}
+          hideNavigation={this.props.appealDocuments.length === 1} />}
       </div>
     );
   }
