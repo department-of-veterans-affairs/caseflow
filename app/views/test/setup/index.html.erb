@@ -23,7 +23,7 @@
             <button type="submit" class="cf-submit">Uncertify Appeal</button>
         <% end %>
       <% end %>
-      <% if ENV["FULL_GRANT_IDS"] && ENV["PART_REMAND_IDS"] %>
+      <% if ENV["FULL_GRANT_IDS"] && ENV["PARTIAL_AND_REMAND_IDS"] %>
       <h2>Dispatch</h2>
         <%= form_for @dispatch_appeal, url: test_setup_appeal_location_date_reset_path, method: "POST",
           html: { id: "appeal-location-date-reset-form", class: "cf-form" },

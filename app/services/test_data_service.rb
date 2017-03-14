@@ -82,7 +82,7 @@ class TestDataService
 
   def self.delete_test_data
     # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50 || !test_user?
+    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50
     EstablishClaim.delete_all
     Task.delete_all
     Appeal.delete_all
