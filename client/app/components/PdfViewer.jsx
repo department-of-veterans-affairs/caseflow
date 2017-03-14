@@ -15,7 +15,7 @@ export const linkToSingleDocumentView = (doc) => {
   let type = doc.type;
   let receivedAt = doc.received_at;
 
-  return `review/show?id=${id}&type=${type}` +
+  return `/decision/review/show?id=${id}&type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
 }
 

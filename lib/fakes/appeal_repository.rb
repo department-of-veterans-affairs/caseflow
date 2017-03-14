@@ -456,6 +456,11 @@ class Fakes::AppealRepository
         documents: documents_multiple_decisions,
         vbms_id: "FULLGRANT_VBMS_ID"
       }
+
+      @records["REMAND_VBMS_ID"] = {
+        documents: documents_multiple_decisions,
+        vbms_id: "REMAND_VBMS_ID"
+      }
     end
   end
   # rubocop:enable Metrics/MethodLength
