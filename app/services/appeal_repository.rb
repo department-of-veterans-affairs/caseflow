@@ -219,7 +219,9 @@ class AppealRepository
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
-    appeal.case_record.bftbind = "X" if appeal.case_record.bfhr == "2"
+    if VACOLS::Case::HEARING_REQUEST_STATUS[appeal.case_record.bfhr] == :travel_board
+      appeal.case_record.bftbind = "X"
+    end
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
