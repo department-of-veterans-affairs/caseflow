@@ -66,13 +66,16 @@ export default class DecisionReviewer extends React.Component {
   // click and keep the behavior on command click so that we aren't
   // trying to reimplement browser functionatlity.
   showPdf = (pdfNumber) => (event) => {
-    if (event.metaKey) {
-      
+    if (event.ctrlKey || 
+        event.shiftKey || 
+        event.metaKey || // apple
+        (event.button && event.button == 1)) {
+      return true;
     } else {
+      event.preventDefault();
       this.setState({
         currentPdfIndex: pdfNumber
       });
-      return false;
     }
   }
 
