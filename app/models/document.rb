@@ -1,23 +1,19 @@
 class Document < ActiveRecord::Base
   has_many :annotations
 
-  # These mappings hold documents that are important to Caseflow
-  # some of the names have been changed from original VBMS mappings.
-  # They all also exist in the Caseflow::DocumentTypes::TYPES mapping
-  # from CaseflowCommons. We redefine them here for clarity.
-  TYPES = {
-    "34" => "Correspondence",
+  # Document types are defined in the following file in
+  # caseflow commons: /app/models/caseflow/document_types.rb
+  # some of these names are confusing and are overriden
+  # in the following table.
+  TYPES_OVERRIDE = {
     "73" => "NOD",
     "95" => "SOC",
     "97" => "SSOC",
-    "115" => "VA 21-4138 Statement In Support of Claim",
     "178" => "Form 8",
     "179" => "Form 9",
-    "475" => "Third Party Correspondence",
     "713" => "NOD",
     "856" => "NOD",
-    "857" => "Form 9",
-    "27"  => "BVA Decision"
+    "857" => "Form 9"
   }.freeze
 
   ALT_TYPES = {
@@ -42,7 +38,7 @@ class Document < ActiveRecord::Base
   end
 
   def self.type_from_vbms_type(vbms_type)
-    TYPES[vbms_type] ||
+    TYPES_OVERRIDE[vbms_type] ||
     Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
     :other
   end
