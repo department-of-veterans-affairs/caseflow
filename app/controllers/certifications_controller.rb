@@ -10,7 +10,7 @@ class CertificationsController < ApplicationController
     @form8 = certification.form8
 
     if (ENV["ENABLE_CERTIFICATION_V2"] == "true" )
-      render "v2"
+      render "v2", layout: "application"
       return
     end
 
