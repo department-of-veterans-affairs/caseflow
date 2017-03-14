@@ -69,7 +69,7 @@ describe Certification do
         expect(certification.form8_started_at).to be_nil
       end
 
-      it "is included in the relevant stats" do
+      it "is included in the relevant certification_stats" do
         subject
 
         expect(Certification.was_missing_doc.count).to eq(1)
@@ -83,7 +83,7 @@ describe Certification do
     context "when ssocs are mismatched" do
       let(:appeal_hash) { Fakes::AppealRepository.appeal_mismatched_ssoc }
 
-      it "is included in the relevant stats" do
+      it "is included in the relevant certification_stats" do
         subject
 
         expect(Certification.was_missing_doc.count).to eq(1)
@@ -97,7 +97,7 @@ describe Certification do
     context "when multiple docs are mismatched" do
       let(:appeal_hash) { Fakes::AppealRepository.appeal_mismatched_docs }
 
-      it "is included in the relevant stats" do
+      it "is included in the relevant certification_stats" do
         subject
 
         expect(Certification.was_missing_doc.count).to eq(1)
