@@ -86,7 +86,7 @@ class AppealRepository
       soc_date: normalize_vacols_date(case_record.bfdsoc),
       form9_date: normalize_vacols_date(case_record.bfd19),
       ssoc_dates: ssoc_dates_from(case_record),
-      hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
+      hearing_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
       hearing_held: !case_record.bfha.nil?,
       regional_office_key: case_record.bfregoff,
@@ -219,9 +219,7 @@ class AppealRepository
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
-    if VACOLS::Case::HEARING_REQUEST_STATUS[appeal.case_record.bfhr] == :travel_board
-      appeal.case_record.bftbind = "X"
-    end
+    appeal.case_record.bftbind = "X" if appeal.hearing_type == :travel_board
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!

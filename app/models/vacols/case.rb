@@ -90,18 +90,12 @@ class VACOLS::Case < VACOLS::Record
     nil => { full_name: nil, short: nil }
   }.freeze
 
-  HEARING_REQUEST_STATUS = {
+  HEARING_REQUEST_TYPES = {
     "1" => :central_office,
     "2" => :travel_board,
     "3" => :confirmation_needed,
     "4" => :clarification_needed,
     "5" => :none
-  }.freeze
-
-  HEARING_TYPES = {
-    "1" => :central_office,
-    "2" => :travel_board,
-    "6" => :video_hearing
   }.freeze
 
   # NOTE(jd): This is a list of the valid locations that Caseflow
