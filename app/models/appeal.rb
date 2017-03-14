@@ -153,11 +153,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def uncertify!(user_id)
-    return unless user_id == ENV["TEST_USER_ID"]
-    Appeal.uncertify(self)
-  end
-
   def fetch_documents!(save:)
     self.class.repository.fetch_documents_for(self, save: save)
     @documents
@@ -210,12 +205,6 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal)
       repository.upload_and_clean_document(appeal, form8)
-    end
-
-    # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify(appeal)
-      Form8.delete_all(vacols_id: appeal.vacols_id)
-      repository.uncertify(appeal)
     end
 
     def map_end_product_value(code, mapping)
