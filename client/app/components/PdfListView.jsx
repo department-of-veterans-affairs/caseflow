@@ -52,7 +52,7 @@ export default class PdfListView extends React.Component {
       </span>,
       formatDate(doc.received_at),
       doc.type,
-      <a 
+      <a
         href={linkToSingleDocumentView(doc)}
         onClick={this.props.showPdf(index)}>
         {doc.filename}

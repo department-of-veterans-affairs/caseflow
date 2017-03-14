@@ -66,10 +66,15 @@ export default class DecisionReviewer extends React.Component {
     // If the user is trying to open the link in a new tab/window
     // then follow the link. Otherwise if they just clicked the link
     // keep them contained within the SPA.
-    if (event.ctrlKey || // new tab on Windows
-        event.shiftKey || // open in new window
-        event.metaKey || // new tab on Macs
-        (event.button && event.button == 1)) { // middle click (9 new tab) 
+    // ctrlKey for windows
+    // shift key for opening in new window
+    // metaKey for Macs
+    // button for middle click
+    if (event.ctrlKey ||
+        event.shiftKey ||
+        event.metaKey ||
+        (event.button &&
+        event.button === 1)) {
       return true;
     } else {
       event.preventDefault();

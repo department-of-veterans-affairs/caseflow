@@ -17,7 +17,7 @@ export const linkToSingleDocumentView = (doc) => {
 
   return `/decision/review/show?id=${id}&type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
-}
+};
 
 
 export default class PdfViewer extends BaseForm {
@@ -461,7 +461,8 @@ export default class PdfViewer extends BaseForm {
                   <Button
                     name="newTab"
                     classNames={["cf-pdf-button"]}
-                    onClick={() => window.open(linkToSingleDocumentView(this.props.doc), '_blank')}>
+                    onClick={() => window.open(
+                      linkToSingleDocumentView(this.props.doc), '_blank')}>
                     {this.props.doc.filename}
                   </Button>
                 </span>
@@ -536,8 +537,12 @@ export default class PdfViewer extends BaseForm {
           <div className="cf-sidebar-wrapper">
             <div className="cf-document-info-wrapper">
               <div className="cf-heading-alt">Document</div>
-              <p className="cf-pdf-meta-title"><b>Filename:</b> {this.props.doc.filename}</p>
-              <p className="cf-pdf-meta-title"><b>Document Type:</b> {this.props.doc.type}</p>
+              <p className="cf-pdf-meta-title">
+                <b>Filename:</b> {this.props.doc.filename}
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Document Type:</b> {this.props.doc.type}
+              </p>
               <p className="cf-pdf-meta-title">
                 <b>Receipt Date:</b> {formatDate(this.props.doc.received_at)}
               </p>
