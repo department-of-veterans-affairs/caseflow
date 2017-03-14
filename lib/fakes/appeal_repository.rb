@@ -1,5 +1,22 @@
 require "ostruct"
 
+class VBMSCaseflowLogger
+  def self.log(event, data)
+    case event
+    when :request
+      status = data[:response_code]
+      PrometheusService.completed_vbms_requests.increment(status: status)
+      if status != 200
+        PrometheusService.vbms_errors.increment
+        Rails.logger.error(
+          "VBMS HTTP Error #{status} " \
+          "(#{data[:request].class.name}) #{data[:response_body]}"
+        )
+      end
+    end
+  end
+end
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
@@ -26,6 +43,7 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
+    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.establish_claim!(claim:, appeal:)
@@ -353,7 +371,7 @@ class Fakes::AppealRepository
         document_id: "2",
         filename: "My_SOC"
       ),
-      true
+      false
     )
   end
 
@@ -365,7 +383,7 @@ class Fakes::AppealRepository
         document_id: "3",
         filename: "My_Form_9"
       ),
-      true
+      false
     )
   end
 
@@ -377,7 +395,7 @@ class Fakes::AppealRepository
         document_id: "4",
         filename: "My_Decision"
       ),
-      true
+      false
     )
   end
 
@@ -389,7 +407,7 @@ class Fakes::AppealRepository
         document_id: "5",
         filename: "My_Decision2"
       ),
-      true
+      false
     )
   end
 
@@ -437,11 +455,6 @@ class Fakes::AppealRepository
       @records["FULLGRANT_VBMS_ID"] = {
         documents: documents_multiple_decisions,
         vbms_id: "FULLGRANT_VBMS_ID"
-      }
-
-      @records["REMAND_VBMS_ID"] = {
-        documents: documents_multiple_decisions,
-        vbms_id: "REMAND_VBMS_ID"
       }
     end
   end
