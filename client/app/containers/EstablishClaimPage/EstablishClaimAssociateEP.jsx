@@ -84,9 +84,10 @@ export default class AssociatePage extends React.Component {
       hasAvailableModifers
     } = this.props;
 
-    let alert;
+    let alert, title;
 
     if (this.props.hasAvailableModifers) {
+      title = <h1>Route Claim: Existing End Product(s)</h1>;
       alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
         <p className="usa-alert-text">We found one or more existing EP(s)
           created within 30 days of this decision date.
@@ -95,6 +96,7 @@ export default class AssociatePage extends React.Component {
         </p>
       </div>;
     } else {
+      title = <h1>Route Claim: Create End Product</h1>;
       alert = <div><h3 className="usa-alert-heading">
           Existing EP, all EP & Claim Label Modifiers in use
         </h3>
@@ -111,7 +113,7 @@ export default class AssociatePage extends React.Component {
 
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
-        <h1>Create End Product</h1>
+        {title}
         <div className="usa-alert usa-alert-warning">
           <div className="usa-alert-body">
             {alert}

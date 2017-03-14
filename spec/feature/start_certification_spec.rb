@@ -70,7 +70,7 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/1234C"
 
     Fakes::AppealRepository.records = { "1234C" => Fakes::AppealRepository.appeal_ready_to_certify }
-    click_on "Refresh Page"
+    click_on "Refresh page"
     expect(page).to have_content "Complete Electronic Form 8"
   end
 

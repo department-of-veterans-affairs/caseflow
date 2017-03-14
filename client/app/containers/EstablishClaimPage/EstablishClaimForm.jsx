@@ -28,7 +28,7 @@ export default class EstablishClaimForm extends React.Component {
     return <div>
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Create End Product</h1>
+          <h1>Route Claim: Create End Product</h1>
           <TextField
            label="Benefit Type"
            name="BenefitType"

@@ -4,10 +4,11 @@ require "benchmark"
 class MetricsService
   def self.timer(description)
     return_value = nil
+    Rails.logger.info("STARTED #{description}")
     stopwatch = Benchmark.measure do
       return_value = yield
     end
-    Rails.logger.info("#{description}: #{stopwatch}")
+    Rails.logger.info("FINISHED #{description}: #{stopwatch}")
     return_value
   end
 end
