@@ -2,6 +2,7 @@ require "open3"
 require "rainbow"
 
 desc "shortcut to run all linting tools, at the same time."
+task(:lint).clear
 task :lint do
   puts "running scss-lint..."
   scss_result = ShellCommand.run("scss-lint --color")
@@ -19,7 +20,8 @@ task :lint do
   end
 
   puts "\nrunning eslint..."
-  eslint_result = ShellCommand.run("npm run lint")
+  eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
+  eslint_result = ShellCommand.run("npm run #{eslint_cmd}")
 
   puts "\n"
   if scss_result && rubocop_result && jshint_result && eslint_result

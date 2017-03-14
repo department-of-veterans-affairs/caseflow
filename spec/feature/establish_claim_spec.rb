@@ -219,6 +219,18 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
+      scenario "Progress bar matches path of establishing a claim" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
+        expect(page).to have_css(".cf-progress-bar")
+        expect(page).to have_css(".cf-progress-bar-activated")
+        expect(page).to have_css(".cf-progress-bar-not-activated")
+
+        click_on "Route Claim"
+        click_on "Create End Product"
+        expect(page).to_not have_css(".cf-progress-bar-not-activated")
+      end
+
       scenario "Establish full grant with special issue" do
         expect(@task.appeal.full_grant?).to be_truthy
 
@@ -232,8 +244,7 @@ RSpec.feature "Dispatch" do
         # Form Page
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VBMS")
-        expect(page).to_not have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: Add VBMS Note")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
         find_label_for("confirmNote").click
         click_on "Finish Routing Claim"
@@ -267,7 +278,7 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
@@ -300,18 +311,21 @@ RSpec.feature "Dispatch" do
         )
       end
 
-      skip "Establish Claim form saves state when going back/forward in browser" do
+      scenario "Establish Claim form saves state when going back/forward in browser" do
         @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
-        click_on "Create End Product"
-        expect(page).to have_content("Benefit Type") # React works
+        click_on "Route Claim"
+        expect(page).to have_content("Create End Product")
 
-        # page.go_back_in_browser (pseudocode)
+        find_label_for("gulfWarRegistry").click
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
+        page.go_back
+
         expect(page).to have_content("Review Decision")
+        click_on "Route Claim"
 
-        click_on "Create End Product"
+        expect(page).to have_content("Create End Product")
+        expect(find("#gulfWarRegistry", visible: false)).to be_checked
       end
 
       context "Multiple decisions in VBMS" do
@@ -365,7 +379,7 @@ RSpec.feature "Dispatch" do
 
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # test special issue text within vacols note
         expect(page).to have_content("Mustard Gas")
         # test correct vacols location
@@ -380,7 +394,7 @@ RSpec.feature "Dispatch" do
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
         click_on "Route Claim"
 
-        expect(page).to have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: VACOLS Updated")
         # test special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
         # test no VBMS-related content
