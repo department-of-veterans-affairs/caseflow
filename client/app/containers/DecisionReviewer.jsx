@@ -76,12 +76,12 @@ export default class DecisionReviewer extends React.Component {
         (event.button &&
         event.button === 1)) {
       return true;
-    } else {
-      event.preventDefault();
-      this.setState({
-        currentPdfIndex: pdfNumber
-      });
     }
+
+    event.preventDefault();
+    this.setState({
+      currentPdfIndex: pdfNumber
+    });
   }
 
   showList = () => {
