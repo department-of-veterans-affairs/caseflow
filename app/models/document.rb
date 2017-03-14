@@ -1,6 +1,25 @@
 class Document < ActiveRecord::Base
   has_many :annotations
 
+  # These mappings hold documents that are important to Caseflow
+  # some of the names have been changed from original VBMS mappings.
+  # They all also exist in the Caseflow::DocumentTypes::TYPES mapping
+  # from CaseflowCommons. We redefine them here for clarity.
+  TYPES = {
+    "34" => "Correspondence",
+    "73" => "NOD",
+    "95" => "SOC",
+    "97" => "SSOC",
+    "115" => "VA 21-4138 Statement In Support of Claim",
+    "178" => "Form 8",
+    "179" => "Form 9",
+    "475" => "Third Party Correspondence",
+    "713" => "NOD",
+    "856" => "NOD",
+    "857" => "Form 9",
+    "27"  => "BVA Decision"
+  }.freeze
+
   ALT_TYPES = {
     "Appeals - Notice of Disagreement (NOD)" => "NOD",
     "Appeals - Statement of the Case (SOC)" => "SOC",
@@ -16,17 +35,22 @@ class Document < ActiveRecord::Base
     layperson: 4,
     private_medical: 5
   }
-
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
   end
 
+  def self.type_from_vbms_type(vbms_type)
+    TYPES[vbms_type] ||
+    Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
+    :other
+  end
+
   def self.from_vbms_document(vbms_document, save_record = false)
     attributes =
       {
-        type: Constants::VBMS::DOCUMENT_TYPES[vbms_document.doc_type] || :other,
+        type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
