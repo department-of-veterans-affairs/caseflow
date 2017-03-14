@@ -5,7 +5,6 @@ class PrometheusService
         find_or_register_metric(:counter,
                                 :vbms_errors,
                                 "A counter of VBMS errored requests")
-
     end
 
     def completed_vbms_requests
