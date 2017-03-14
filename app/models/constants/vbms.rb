@@ -1,5 +1,6 @@
+# rubocop:disable Metrics/ClassLength
 class Constants::VBMS
-
+  # rubocop:disable Metrics/LineLength
   DOCUMENT_TYPES = {
     # These first mappings hold documents that are important to Caseflow
     # some of the names have been changed from original VBMS mappings.
@@ -511,5 +512,6 @@ class Constants::VBMS
     "99" => "VA 10-1000 Hospital Summary and/or the Compensation and Pension Exam Report",
     "999981" => "C&P Exam XML"
   }.freeze
-
+  # rubocop:enable Metrics/LineLength
 end
+# rubocop:enable Metrics/ClassLength
