@@ -163,7 +163,7 @@ class VACOLS::Case < VACOLS::Record
 
     conn = self.class.connection
 
-    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    # Note: we use conn.quote here from ActiveRecord to deter SQL injection
     location = conn.quote(location)
     user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     case_id = conn.quote(bfkey)

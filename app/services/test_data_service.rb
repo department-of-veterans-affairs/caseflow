@@ -28,12 +28,12 @@ class TestDataService
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
 
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
-
     # Push the decision date to the current date in vacols
     # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
@@ -81,6 +81,7 @@ class TestDataService
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.reset_location(vacols_case)
     conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
