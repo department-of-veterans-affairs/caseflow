@@ -19,7 +19,7 @@ gem "rack-timeout"
 gem 'jquery-rails'
 
 # React
-gem "react_on_rails", "~> 6"
+gem "react_on_rails", "~> 6.8.0"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
