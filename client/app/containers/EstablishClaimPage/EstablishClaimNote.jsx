@@ -95,7 +95,7 @@ export default class EstablishClaimNote extends BaseForm {
       <p>To ensure this claim is routed correctly, we will take the following
       steps in VACOLS:</p>
 
-      <ol className="cf-bold-ordered-list-alpha">
+      <ol className="cf-bold-ordered-list">
         <li type="A">
           <div>
             <span className="inline-label">Change location to: </span>
