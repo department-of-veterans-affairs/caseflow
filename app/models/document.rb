@@ -39,8 +39,8 @@ class Document < ActiveRecord::Base
 
   def self.type_from_vbms_type(vbms_type)
     TYPES_OVERRIDE[vbms_type] ||
-    Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
-    :other
+      Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
+      :other
   end
 
   def self.from_vbms_document(vbms_document, save_record = false)
@@ -63,7 +63,8 @@ class Document < ActiveRecord::Base
   end
 
   def self.type_id(type)
-    TYPES.key(type)
+    TYPES_OVERRIDE.key(type) ||
+      Caseflow::DocumentTypes::TYPES.key(type)
   end
 
   # Currently three levels of caching. Try to serve content
