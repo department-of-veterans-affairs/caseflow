@@ -3,13 +3,13 @@ import _ from 'lodash';
 
 /**
  * This component can be used to easily build tables.
- * There required props are:
+ * The required props are:
  * - @columns {array[string]} array of objects that define the properties
  *   of the columns. Possible attributes for each column include:
  *   - @header {string} header cell value for the column
  *   - @align {sting} alignment of the column ("left", "right", or "center")
  *   - @valueFunction {function(rowObject)} function that takes `rowObject` as
- *     an arguement and returns the value of the cell for that column.
+ *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
  *   - @footer {string} footer cell value for the column

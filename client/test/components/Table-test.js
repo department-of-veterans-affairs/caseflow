@@ -26,7 +26,7 @@ describe('Table', () => {
   context('renders', () => {
     it('works', () => {
       wrapper = shallow(
-        <Table columns={columns} rowObjects={rowObjects}/>
+        <Table columns={columns} rowObjects={rowObjects} summary="test table"/>
       );
       let headerCount = 3;
       let rowCount = 4;
