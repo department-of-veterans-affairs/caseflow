@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 
+// Not used yet. TODO: use it.
 export default const AlreadyCertified = ({}) => {
   return <div>
     <div className="usa-alert usa-alert-info cf-app-segment" role="alert">

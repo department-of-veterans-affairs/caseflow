@@ -5,6 +5,7 @@ import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
 import DocumentsCheckTable from './DocumentsCheckTable';
 
+//TODO: refactor to use shared components where helpful
 export default class DocumentsCheckSuccess extends React.Component {
   render() {
     return <div>

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import NotFoundIcon from '../components/NotFoundIcon';
 
+//TODO: refactor to use shared components where helpful
 export default class DocumentsCheckTable extends React.Component {
   render() {
     return <div className="cf-table-wrap">
