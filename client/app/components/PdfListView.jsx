@@ -35,6 +35,7 @@ export default class PdfListView extends React.Component {
         valueFunction: (doc) => {
           let numberOfComments = this.props.annotationStorage.
             getAnnotationByDocumentId(doc.id).length;
+
           return <span className="fa-stack fa-3x cf-pdf-comment-indicator">
             { numberOfComments > 0 &&
                 <span>
