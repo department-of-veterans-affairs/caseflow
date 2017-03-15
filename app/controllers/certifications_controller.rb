@@ -10,7 +10,7 @@ class CertificationsController < ApplicationController
     @form8 = certification.form8
 
     # TODO: change this to use the feature flag or roles
-    if (ENV["ENABLE_CERTIFICATION_V2"] == "true" && status == :started )
+    if ENV["ENABLE_CERTIFICATION_V2"] == "true" && status == :started
       render "v2", layout: "application"
       return
     end
@@ -88,4 +88,3 @@ class CertificationsController < ApplicationController
     "Certification"
   end
 end
-

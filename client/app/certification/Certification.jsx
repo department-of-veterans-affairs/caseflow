@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import DocumentsCheckTable from './DocumentsCheckTable'
-import DocumentsCheckSuccess from './DocumentsCheckSuccess'
+import DocumentsCheckTable from './DocumentsCheckTable';
+import DocumentsCheckSuccess from './DocumentsCheckSuccess';
 
 export default class Certification extends React.Component {
   constructor(props) {
@@ -9,9 +9,9 @@ export default class Certification extends React.Component {
   }
 
   render() {
-    //TODO: install a router
+    // TODO: install a router
     return <div>
       <DocumentsCheckSuccess/>
-    </div>
+    </div>;
   }
 }

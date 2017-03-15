@@ -5,7 +5,7 @@ import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
 import DocumentsCheckTable from './DocumentsCheckTable';
 
-//TODO: refactor to use shared components where helpful
+// TODO: refactor to use shared components where helpful
 export default class DocumentsCheckSuccess extends React.Component {
   render() {
     return <div>
@@ -19,6 +19,6 @@ export default class DocumentsCheckSuccess extends React.Component {
         <a href="#confirm-cancel-certification" className="cf-action-openmodal cf-btn-link">Cancel Certification</a>
         <button type="button" className="cf-push-right">Continue</button>
       </div>
-    </div>
+    </div>;
   }
 }

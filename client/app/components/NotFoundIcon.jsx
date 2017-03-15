@@ -11,7 +11,7 @@ const NotFoundIcon = ({}) => {
       3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8
       1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"/>
     </svg>
-  </span>
-}
+  </span>;
+};
 
-export default NotFoundIcon
+export default NotFoundIcon;

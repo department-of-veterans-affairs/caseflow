@@ -10,7 +10,7 @@ const FoundIcon = ({}) => {
        11.6L46.8 2.7c.7-.7 1.6-1.1 2.5-1.1.9 0 1.9.4 2.5 1.1L57 8c.7.7 1 1.7 1 2.7 0 1-.4 1.9-1
        2.6z"/>
     </svg>
-  </span>
-}
+  </span>;
+};
 
-export default FoundIcon
+export default FoundIcon;
