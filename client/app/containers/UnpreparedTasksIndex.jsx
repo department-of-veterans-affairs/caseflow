@@ -35,7 +35,7 @@ export default class UnpreparedTasksIndex extends React.Component {
       <div className="usa-grid-full">
         <Table
           columns={tableColumns}
-          values={unpreparedTasks}
+          rowObjects={unpreparedTasks}
           summary="Appeals missing decisions" />
       </div>
     </div>;
