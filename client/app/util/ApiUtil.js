@@ -34,12 +34,20 @@ const ApiUtil = {
   },
 
   get(url, options = {}) {
-    return request.
+    let promise = request.
       get(url).
       set(this.headers(options.headers)).
-      query(options.query).
-      use(nocache);
+      query(options.query);
+
+    if (options.cache) {
+      return promise;
+    } else {
+      return promise.
+        use(nocache);
+    }
   },
+
+
 
   // Default headers needed to talk with rails server.
   // Including rail's authenticity token
