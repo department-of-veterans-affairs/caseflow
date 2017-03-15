@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import FoundIcon from '../components/FoundIcon';
-import NotFoundIcon from '..  /components/NotFoundIcon';
+import NotFoundIcon from '../components/NotFoundIcon';
 import DocumentsCheckTable from './DocumentsCheckTable';
 
 export default class DocumentsCheckSuccess extends React.Component {

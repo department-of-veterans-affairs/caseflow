@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import DocumentsCheckTable from './DocumentsCheckTable'
+import DocumentsCheckSuccess from './DocumentsCheckSuccess'
 
 export default class Certification extends React.Component {
   constructor(props) {
