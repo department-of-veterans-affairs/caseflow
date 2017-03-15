@@ -47,8 +47,8 @@ export default class PdfListView extends React.Component {
         aria-hidden="true"></i> }
       </span>,
       <span className="fa-stack fa-3x cf-pdf-comment-indicator">
-        <i className="fa fa-comment-o fa-stack-2x"></i>
-        <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
+        { numberOfComments > 0 && <span><i className="fa fa-comment-o fa-stack-2x"></i>
+        <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong></span> }
       </span>,
       <span>
         { doc.opened_by_current_user &&
