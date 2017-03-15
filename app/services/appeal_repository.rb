@@ -1,13 +1,17 @@
 require "vbms"
 
 # :nocov:
-class CaseflowLogger
+class VBMSCaseflowLogger
   def log(event, data)
     case event
     when :request
-      if data[:response_code] != 200
+      status = data[:response_code]
+      PrometheusService.completed_vbms_requests.increment(status: status)
+
+      if status != 200
+        PrometheusService.vbms_errors.increment
         Rails.logger.error(
-          "VBMS HTTP Error #{data[:response_code]} " \
+          "VBMS HTTP Error #{status} " \
           "(#{data[:request].class.name}) #{data[:response_body]}"
         )
       end
@@ -318,7 +322,7 @@ class AppealRepository
 
   def self.init_vbms_client
     VBMS::Client.from_env_vars(
-      logger: CaseflowLogger.new,
+      logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
