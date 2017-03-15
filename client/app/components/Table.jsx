@@ -23,7 +23,8 @@ export default class Table extends React.Component {
     let {
       columns,
       rowObjects,
-      summary
+      summary,
+      id
     } = this.props;
 
     let alignmentClasses = {
@@ -93,10 +94,14 @@ export default class Table extends React.Component {
       </tfoot>;
     };
 
-    return <table className="usa-table-borderless cf-table-borderless" summary={summary}>
-      <HeaderRow columns={columns} />
-      <BodyRows columns={columns} rowObjects={rowObjects} />
-      <FooterRow columns={columns} />
+    return <table
+              id={id}
+              className="usa-table-borderless cf-table-borderless"
+              summary={summary} >
+
+        <HeaderRow columns={columns} />
+        <BodyRows columns={columns} rowObjects={rowObjects} />
+        <FooterRow columns={columns} />
     </table>;
   }
 }
@@ -104,5 +109,6 @@ export default class Table extends React.Component {
 Table.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
-  summary: PropTypes.string.isRequired
+  summary: PropTypes.string.isRequired,
+  id: PropTypes.string
 };

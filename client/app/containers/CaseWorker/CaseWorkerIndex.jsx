@@ -80,6 +80,7 @@ export default class CaseWorkerIndex extends BaseForm {
           <Table
             columns={workHistoryColumns}
             rowObjects={this.props.currentUserHistoricalTasks}
+            id="work-history-table"
             summary="History of issues you've worked"
           />
         </div>;
