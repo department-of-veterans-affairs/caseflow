@@ -136,9 +136,8 @@ RSpec.feature "Dispatch" do
       scenario "Establish a new claim page and process pt1" do
         visit "/dispatch/establish-claim"
 
-        # View history
-        expect(page).to have_content("Establish next claim")
-        expect(page).to have_css("#table-row-#{@task.id}")
+        # View history should have a header and 1 task in it
+        expect(page).to have_selector('#work-history-table tr', count: 2)
         expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish next claim"
