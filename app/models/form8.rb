@@ -62,7 +62,7 @@ class Form8 < ActiveRecord::Base
       soc_date: appeal.soc_date,
       representative_name: appeal.representative_name,
       representative_type: appeal.representative_type,
-      hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      hearing_requested: appeal.hearing_requested ? "Yes" : "No",
       hearing_held: appeal.hearing_held ? "Yes" : "No",
       ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished",
       certifying_office: appeal.regional_office_name,
@@ -77,7 +77,7 @@ class Form8 < ActiveRecord::Base
       _initial_other_notification_date: appeal.notification_date,
       _initial_representative_name: appeal.representative_name,
       _initial_representative_type: appeal.representative_type,
-      _initial_hearing_requested: appeal.hearing_type ? "Yes" : "No",
+      _initial_hearing_requested: appeal.hearing_requested ? "Yes" : "No",
       _initial_ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished"
     )
   end

@@ -13,7 +13,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship
   vacols_attr_accessor :representative
-  vacols_attr_accessor :hearing_type
+  vacols_attr_accessor :hearing_request_type
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number

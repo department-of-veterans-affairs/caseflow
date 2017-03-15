@@ -93,7 +93,7 @@ export default class EstablishClaimEmail extends BaseForm {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
             />
             <Button
-            name="Finish Routing Claim"
+            name="Finish routing claim"
             classNames={["usa-button-primary"]}
             disabled={!this.state.emailForm.confirmBox.value}
             onClick={this.props.handleEmailSubmit}
@@ -134,7 +134,7 @@ export default class EstablishClaimEmail extends BaseForm {
                   classNames={["cf-btn-link", "cf-adjacent-buttons"]}
               />
               <Button
-                  name="Release Claim"
+                  name="Release claim"
                   classNames={["usa-button-secondary"]}
                   disabled={!this.state.emailForm.confirmBox.value}
                   onClick={this.props.handleNoEmailSubmit}
