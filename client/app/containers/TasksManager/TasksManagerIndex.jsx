@@ -91,7 +91,7 @@ export default class TasksManagerIndex extends BaseForm {
         handleFieldChange={this.handleFieldChange}
       />
       <div className="cf-right-side">
-        <a>
+        <a href="/dispatch/stats">
           <i className="fa fa-line-chart" aria-hidden="true"></i> View Dashboard
         </a>
       </div>
