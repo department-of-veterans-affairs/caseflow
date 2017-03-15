@@ -168,15 +168,15 @@ export default class DecisionReviewer extends React.Component {
         return;
       }
 
-      ApiUtil.get(documentUrls[index])
-        .then(() => {
+      ApiUtil.get(documentUrls[index]).
+        then(() => {
           downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
         });
-    }
+    };
 
-    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++){
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
       downloadDocuments(this.props.appealDocuments.map((doc) => {
-          return this.documentUrl(doc);
+        return this.documentUrl(doc);
       }), i);
     }
   }
