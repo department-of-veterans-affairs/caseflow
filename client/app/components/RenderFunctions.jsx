@@ -6,6 +6,7 @@ import React from 'react';
  * @param {string} text The text to associate with the spinning loading symbol.
  * defaults to 'Loading'.
  * @param {number} size The width and height of the loading symbol.
+ * @param {string} color The color of the non-gray part of the caseflow logo.
  * @returns {string} The HTML for the loading symbol.
  */
 export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#844E9F') {
