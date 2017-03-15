@@ -41,13 +41,11 @@ const ApiUtil = {
 
     if (options.cache) {
       return promise;
-    } else {
-      return promise.
-        use(nocache);
     }
+
+    return promise.
+      use(nocache);
   },
-
-
 
   // Default headers needed to talk with rails server.
   // Including rail's authenticity token
