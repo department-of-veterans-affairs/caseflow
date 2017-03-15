@@ -13,7 +13,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship
   vacols_attr_accessor :representative
-  vacols_attr_accessor :hearing_type
+  vacols_attr_accessor :hearing_request_type
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
@@ -153,11 +153,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def uncertify!(user_id)
-    return unless user_id == ENV["TEST_USER_ID"]
-    Appeal.uncertify(self)
-  end
-
   def fetch_documents!(save:)
     self.class.repository.fetch_documents_for(self, save: save)
     @documents
@@ -210,12 +205,6 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal)
       repository.upload_and_clean_document(appeal, form8)
-    end
-
-    # ONLY FOR TEST USER and for TEST_APPEAL_ID
-    def uncertify(appeal)
-      Form8.delete_all(vacols_id: appeal.vacols_id)
-      repository.uncertify(appeal)
     end
 
     def map_end_product_value(code, mapping)

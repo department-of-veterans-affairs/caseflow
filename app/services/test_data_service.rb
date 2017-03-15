@@ -17,6 +17,7 @@ class TestDataService
 
   def self.reset_appeal_special_issues
     return false if ApplicationController.dependencies_faked?
+
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
 
     Appeal.find_each do |appeal|
@@ -32,16 +33,16 @@ class TestDataService
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
 
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
-
     # Push the decision date to the current date in vacols
     # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
     if decision_type == :full
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
-      # Full Grants stay 99
+      # Full Grants stay 99 but need to be moved up to at least -3 days
+      reset_outcoding_date(vacols_case)
     else
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))
-      vacols_case.update_vacols_location!("97")
+      reset_location(vacols_case)
     end
 
     # Upload decision document for the appeal if it isn't there
@@ -62,6 +63,61 @@ class TestDataService
         modifier: end_product[:end_product_type_code]
       )
     end
+  end
+
+  def self.reset_outcoding_date(vacols_case)
+    conn = vacols_case.class.connection
+    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    case_id = conn.quote(vacols_case)
+    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
+      conn.transaction do
+        conn.execute(<<-SQL)
+          UPDATE FOLDER
+          SET TIOCTIME = (SYSDATE-2)
+          WHERE TICKNUM = #{case_id}
+        SQL
+      end
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def self.reset_location(vacols_case)
+    conn = vacols_case.class.connection
+    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    case_id = conn.quote(vacols_case)
+    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
+      conn.transaction do
+        conn.execute(<<-SQL)
+          UPDATE BRIEFF
+          SET BFDLOCIN = SYSDATE,
+              BFCURLOC = '97',
+              BFDLOOUT = SYSDATE,
+              BFORGTIC = NULL
+          WHERE BFKEY = #{case_id}
+        SQL
+        conn.execute(<<-SQL)
+          UPDATE PRIORLOC
+          SET LOCDIN = SYSDATE,
+              LOCSTRCV = 'DSUSER',
+              LOCEXCEP = 'Y'
+          WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+        SQL
+        conn.execute(<<-SQL)
+          INSERT into PRIORLOC
+            (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
+          VALUES
+           (SYSDATE, SYSDATE, '97', 'DSUSER', #{case_id})
+        SQL
+      end
+    end
+  end
+
+  def self.delete_test_data
+    # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
+    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50
+    EstablishClaim.delete_all
+    Task.delete_all
+    Appeal.delete_all
   end
 
   def self.log(message)
