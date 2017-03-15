@@ -142,7 +142,7 @@ export default class AssociatePage extends React.Component {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
-            name="Create New EP"
+            name="Create new EP"
             onClick={handleSubmit}
             disabled={!hasAvailableModifers}
           />

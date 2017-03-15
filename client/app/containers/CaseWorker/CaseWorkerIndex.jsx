@@ -44,11 +44,11 @@ export default class CaseWorkerIndex extends BaseForm {
 
     return <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-width-one-whole task-start-wrapper">
-            <div className="cf-right-side">
+            <div className="cf-left-side">
               <span className="cf-button-associated-text-right">
                 { availableTasks &&
-                  `${this.props.totalAssignedIssues} cases assigned, ${
-                this.props.completedCountToday} completed`
+                  `${this.props.totalAssignedIssues} claims in your queue, ${
+                this.props.completedCountToday} claims completed`
                 }
                 { !availableTasks &&
                   "There are no more claims in your queue."

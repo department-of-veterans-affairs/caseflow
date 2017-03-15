@@ -33,7 +33,6 @@ class TestDataService
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
 
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
-
     # Push the decision date to the current date in vacols
     # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
@@ -43,6 +42,7 @@ class TestDataService
       reset_outcoding_date(vacols_case)
     else
       vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))
+      reset_location(vacols_case)
     end
 
     # Upload decision document for the appeal if it isn't there
@@ -75,6 +75,38 @@ class TestDataService
           UPDATE FOLDER
           SET TIOCTIME = (SYSDATE-2)
           WHERE TICKNUM = #{case_id}
+        SQL
+      end
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def self.reset_location(vacols_case)
+    conn = vacols_case.class.connection
+    # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
+    case_id = conn.quote(vacols_case)
+    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
+      conn.transaction do
+        conn.execute(<<-SQL)
+          UPDATE BRIEFF
+          SET BFDLOCIN = SYSDATE,
+              BFCURLOC = '97',
+              BFDLOOUT = SYSDATE,
+              BFORGTIC = NULL
+          WHERE BFKEY = #{case_id}
+        SQL
+        conn.execute(<<-SQL)
+          UPDATE PRIORLOC
+          SET LOCDIN = SYSDATE,
+              LOCSTRCV = 'DSUSER',
+              LOCEXCEP = 'Y'
+          WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+        SQL
+        conn.execute(<<-SQL)
+          INSERT into PRIORLOC
+            (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
+          VALUES
+           (SYSDATE, SYSDATE, '97', 'DSUSER', #{case_id})
         SQL
       end
     end
