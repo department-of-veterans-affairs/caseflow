@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3e29aac"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fd406fe"
 
 gem "moment_timezone-rails"
 
@@ -41,7 +41,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '68f7431a3e642ed41da5ff6568aa9d45c11e6aca'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'db4d02611d7cf07e6c9610cd323b8dd4ee487d76'
 
 # PDF Tools
 gem 'pdf-forms'
