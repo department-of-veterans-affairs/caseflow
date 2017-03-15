@@ -371,7 +371,7 @@ class Fakes::AppealRepository
         document_id: "2",
         filename: "My_SOC"
       ),
-      true
+      false
     )
   end
 
@@ -383,7 +383,7 @@ class Fakes::AppealRepository
         document_id: "3",
         filename: "My_Form_9"
       ),
-      true
+      false
     )
   end
 
@@ -395,7 +395,7 @@ class Fakes::AppealRepository
         document_id: "4",
         filename: "My_Decision"
       ),
-      true
+      false
     )
   end
 
@@ -407,7 +407,7 @@ class Fakes::AppealRepository
         document_id: "5",
         filename: "My_Decision2"
       ),
-      true
+      false
     )
   end
 
@@ -455,11 +455,6 @@ class Fakes::AppealRepository
       @records["FULLGRANT_VBMS_ID"] = {
         documents: documents_multiple_decisions,
         vbms_id: "FULLGRANT_VBMS_ID"
-      }
-
-      @records["REMAND_VBMS_ID"] = {
-        documents: documents_multiple_decisions,
-        vbms_id: "REMAND_VBMS_ID"
       }
     end
   end

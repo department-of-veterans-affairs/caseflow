@@ -58,12 +58,15 @@ export default class DecisionReviewer extends React.Component {
         this.state.documents.length - 1));
   }
 
+  // This method is used for updating attributes of documents.
+  // Since we maintain a sorted and unsorted list of documents
+  // when we update one, we need to update the other.
   setDocumentAttribute = (pdfNumber, field, value) => {
     let unsortedDocs = [...this.state.unsortedDocuments];
     let documentId = this.state.documents[pdfNumber].id;
 
-    // We need to update the label in both the unsorted
-    // and sorted list of documents. PdfIndex refers to the
+    // We need to update the attribute in both the unsorted
+    // and sorted list of documents. PdfNumber refers to the
     // sorted list. For the unsorted list, we need to look
     // it up by documentId.
     unsortedDocs.forEach((doc) => {
@@ -102,6 +105,7 @@ export default class DecisionReviewer extends React.Component {
 
   markAsRead = (pdfNumber) => {
     let documentId = this.state.documents[pdfNumber].id;
+
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).
       then(() => {
         this.setDocumentAttribute(pdfNumber, 'opened_by_current_user', true);
@@ -115,7 +119,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   setPage = (pdfNumber) => {
-    this.markAsRead(pdfNumber);    
+    this.markAsRead(pdfNumber);
     this.setState({
       currentPdfIndex: pdfNumber
     });
