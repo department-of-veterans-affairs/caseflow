@@ -160,7 +160,7 @@ class Fakes::AppealRepository
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
-      hearing_type: VACOLS::Case::HEARING_TYPES["1"], # Central office
+      hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES["1"], # Central office
       regional_office_key: "DSUSER",
       documents: [nod_document, soc_document, form9_document],
       disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
