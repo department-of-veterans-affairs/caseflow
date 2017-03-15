@@ -1,12 +1,16 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 // Not used yet. TODO: use it.
-export default const AlreadyCertified = ({}) => {
+const AlreadyCertified = () => {
   return <div>
     <div className="usa-alert usa-alert-info cf-app-segment" role="alert">
       <div className="usa-alert-body">
-        <h3 className="usa-alert-heading">Appeal has already been Certified</h3>
-        <p className="usa-alert-text">This case has already been certified to the Board.</p>
+        <h3 className="usa-alert-heading">
+          Appeal has already been Certified
+        </h3>
+        <p className="usa-alert-text">
+          This case has already been certified to the Board.
+        </p>
       </div>
     </div>
 
@@ -19,5 +23,7 @@ export default const AlreadyCertified = ({}) => {
         process remand cases.
       </p>
     </div>
-  </div>
-}
+  </div>;
+};
+
+export default AlreadyCertified;

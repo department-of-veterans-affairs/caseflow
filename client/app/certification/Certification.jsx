@@ -1,17 +1,11 @@
-import React, { PropTypes } from 'react';
-import DocumentsCheckTable from './DocumentsCheckTable';
+import React from 'react';
 import DocumentsCheckSuccess from './DocumentsCheckSuccess';
 
-export default class Certification extends React.Component {
-  constructor(props) {
-    super(props);
-    this.certification = JSON.stringify(this.props.certification);
-  }
+const Certification = () => {
+  // TODO: install a router
+  return <div>
+    <DocumentsCheckSuccess/>
+  </div>;
+};
 
-  render() {
-    // TODO: install a router
-    return <div>
-      <DocumentsCheckSuccess/>
-    </div>;
-  }
-}
+export default Certification;
