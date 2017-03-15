@@ -45,8 +45,8 @@ Rails.application.configure do
   #
   ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
 
-  ENV["METRICS_USERNAME"] = "caseflow"
-  ENV["METRICS_PASSWORD"] = "caseflow"
+  ENV["METRICS_USERNAME"] ||= "caseflow"
+  ENV["METRICS_PASSWORD"] ||= "caseflow"
 
   # configure pry
   silence_warnings do
