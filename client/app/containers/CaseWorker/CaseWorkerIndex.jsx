@@ -6,24 +6,7 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 
-const TABLE_HEADERS = [
-  'Veteran',
-  'Decision Date',
-  'Decision Type',
-  'Action'
-];
-const COLUMN_CLASSES = ['cf-txt-l ', 'cf-txt-c', 'cf-txt-c', 'cf-txt-c'];
-
 export default class CaseWorkerIndex extends BaseForm {
-
-  buildUserRow = (caseInformation) =>
-    [
-      `${caseInformation.appeal.veteran_name} (${caseInformation.appeal.vbms_id})`,
-      formatDate(caseInformation.completed_at),
-      caseInformation.appeal.decision_type,
-      caseInformation.completion_status_text
-    ]
-
   onClick = () => {
     ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
       window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
@@ -42,13 +25,33 @@ export default class CaseWorkerIndex extends BaseForm {
       buttonText
     } = this.props;
 
+    let workHistoryColumns = [
+      {
+        header: 'Veteran',
+        valueFunction: (task) =>
+          `${task.appeal.veteran_name} (${task.appeal.vbms_id})`
+      },
+      {
+        header: 'Decision Date',
+        valueFunction: (task) => formatDate(task.completed_at)
+      },
+      {
+        header: 'Decision Type',
+        valueFunction: (task) => task.appeal.decision_type
+      },
+      {
+        header: 'Action',
+        valueName: 'completion_status_text'
+      }
+    ];
+
     return <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-width-one-whole task-start-wrapper">
-            <div className="cf-right-side">
+            <div className="cf-left-side">
               <span className="cf-button-associated-text-right">
                 { availableTasks &&
-                  `${this.props.totalAssignedIssues} cases assigned, ${
-                this.props.completedCountToday} completed`
+                  `${this.props.totalAssignedIssues} claims in your queue, ${
+                this.props.completedCountToday} claims completed`
                 }
                 { !availableTasks &&
                   "There are no more claims in your queue."
@@ -75,10 +78,10 @@ export default class CaseWorkerIndex extends BaseForm {
           </div>
           <h1>Work History</h1>
           <Table
-            headers={TABLE_HEADERS}
-            buildRowValues={this.buildUserRow}
-            values={this.props.currentUserHistoricalTasks}
-            columnClasses={COLUMN_CLASSES}
+            columns={workHistoryColumns}
+            rowObjects={this.props.currentUserHistoricalTasks}
+            id="work-history-table"
+            summary="History of issues you've worked"
           />
         </div>;
   }
