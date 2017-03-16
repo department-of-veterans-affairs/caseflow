@@ -136,9 +136,8 @@ RSpec.feature "Dispatch" do
       scenario "Establish a new claim page and process pt1" do
         visit "/dispatch/establish-claim"
 
-        # View history
-        expect(page).to have_content("Establish next claim")
-        expect(page).to have_css("#table-row-#{@task.id}")
+        # View history should have a header and 1 task in it
+        expect(page).to have_selector('#work-history-table tr', count: 2)
         expect(page).to have_content("(#{@file_number})")
 
         click_on "Establish next claim"
@@ -153,7 +152,7 @@ RSpec.feature "Dispatch" do
         expect(@task.reload.user).to eq(current_user)
         expect(@task.started?).to be_truthy
 
-        click_on "Route Claim"
+        click_on "Route claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
@@ -173,7 +172,7 @@ RSpec.feature "Dispatch" do
         # Decision Page
         click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        click_on "Route Claim"
+        click_on "Route claim"
 
         # EP Form Page
         expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
@@ -226,7 +225,7 @@ RSpec.feature "Dispatch" do
         expect(page).to have_css(".cf-progress-bar-activated")
         expect(page).to have_css(".cf-progress-bar-not-activated")
 
-        click_on "Route Claim"
+        click_on "Route claim"
         click_on "Create End Product"
         expect(page).to_not have_css(".cf-progress-bar-not-activated")
       end
@@ -239,16 +238,15 @@ RSpec.feature "Dispatch" do
         click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
         find_label_for("riceCompliance").click
-        click_on "Route Claim"
+        click_on "Route claim"
 
         # Form Page
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VBMS")
-        expect(page).to_not have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: Add VBMS Note")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
         find_label_for("confirmNote").click
-        click_on "Finish Routing Claim"
+        click_on "Finish routing claim"
 
         # Confirmation Page
         expect(page).to have_content("Congratulations!")
@@ -269,7 +267,7 @@ RSpec.feature "Dispatch" do
         find_label_for("privateAttorneyOrAgent").click
 
         # Move on to note page
-        click_on "Route Claim"
+        click_on "Route claim"
 
         expect(page).to have_content("Create End Product")
         # Test that special issues were saved
@@ -279,7 +277,7 @@ RSpec.feature "Dispatch" do
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
@@ -289,7 +287,7 @@ RSpec.feature "Dispatch" do
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
         find_label_for("confirmNote").click
 
-        click_on "Finish Routing Claim"
+        click_on "Finish routing claim"
 
         expect(page).to have_content("Manually Added VBMS Note")
         expect(@task.appeal.reload.rice_compliance).to be_truthy
@@ -315,7 +313,7 @@ RSpec.feature "Dispatch" do
       scenario "Establish Claim form saves state when going back/forward in browser" do
         @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
-        click_on "Route Claim"
+        click_on "Route claim"
         expect(page).to have_content("Create End Product")
 
         find_label_for("gulfWarRegistry").click
@@ -323,7 +321,7 @@ RSpec.feature "Dispatch" do
         page.go_back
 
         expect(page).to have_content("Review Decision")
-        click_on "Route Claim"
+        click_on "Route claim"
 
         expect(page).to have_content("Create End Product")
         expect(find("#gulfWarRegistry", visible: false)).to be_checked
@@ -355,8 +353,8 @@ RSpec.feature "Dispatch" do
           # Text on the tab
           expect(page).to have_content("Decision 1 (")
           find("#tab-1").click
-          expect(page).to have_content("Route Claim for Decision 2")
-          click_on "Route Claim for Decision 2"
+          expect(page).to have_content("Route claim for Decision 2")
+          click_on "Route claim for Decision 2"
 
           expect(page).to have_content("Benefit Type")
         end
@@ -366,7 +364,7 @@ RSpec.feature "Dispatch" do
           click_on "Establish next claim"
 
           expect(page).to have_content("Multiple Decision Documents")
-          click_on "Route Claim for Decision 1"
+          click_on "Route claim for Decision 1"
           click_on "< Back to Decision Review"
           expect(page).to have_content("Multiple Decision Documents")
         end
@@ -376,11 +374,11 @@ RSpec.feature "Dispatch" do
         @task2.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task2.id}"
         find_label_for("mustardGas").click
-        click_on "Route Claim"
+        click_on "Route claim"
 
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Update VACOLS and VBMS")
+        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
         # test special issue text within vacols note
         expect(page).to have_content("Mustard Gas")
         # test correct vacols location
@@ -393,9 +391,9 @@ RSpec.feature "Dispatch" do
         @task2.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task2.id}"
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-        click_on "Route Claim"
+        click_on "Route claim"
 
-        expect(page).to have_content("Route Claim: Update VACOLS")
+        expect(page).to have_content("Route Claim: VACOLS Updated")
         # test special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
         # test no VBMS-related content
@@ -428,16 +426,16 @@ RSpec.feature "Dispatch" do
 
       context "Unavailable modifiers" do
         scenario "full grants" do
-          # Test that the full grant associate page disables the Create New EP button
+          # Test that the full grant associate page disables the Create new EP button
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
 
-          click_on "Route Claim"
+          click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
           expect(page).to have_content("EP & Claim Label Modifiers in use")
 
-          expect(page.find("#button-Create-New-EP")[:class]).to include("usa-button-disabled")
+          expect(page.find("#button-Create-new-EP")[:class]).to include("usa-button-disabled")
         end
 
         scenario "partial grants" do
@@ -451,9 +449,9 @@ RSpec.feature "Dispatch" do
           # to unused modifiers.
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
-          click_on "Route Claim"
+          click_on "Route claim"
 
-          click_on "Create New EP"
+          click_on "Create new EP"
 
           date = "01/08/2017"
           page.fill_in "Decision Date", with: date
@@ -491,7 +489,7 @@ RSpec.feature "Dispatch" do
       # set special issue to ensure it is saved in the database
       find_label_for("mustardGas").click
 
-      click_on "Route Claim"
+      click_on "Route claim"
 
       expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
       expect(page).to have_content("Existing EP")
@@ -511,7 +509,7 @@ RSpec.feature "Dispatch" do
       click_on "Establish next claim"
 
       expect(page).to have_content("Review Decision")
-      click_on "Route Claim"
+      click_on "Route claim"
       click_on "< Back to Decision Review"
       expect(page).to have_content("Review Decision")
     end
@@ -566,10 +564,10 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-      click_on "Route Claim"
+      click_on "Route claim"
       expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
       find_label_for("confirmEmail").click
-      click_on "Finish Routing Claim"
+      click_on "Finish routing claim"
       expect(page).to have_content("Sent email notification")
     end
 
@@ -577,10 +575,10 @@ RSpec.feature "Dispatch" do
       @task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task.id}"
       find_label_for("vocationalRehab").click
-      click_on "Route Claim"
+      click_on "Route claim"
       expect(page).to have_content("Please process this claim manually")
       find_label_for("confirmEmail").click
-      click_on "Release Claim"
+      click_on "Release claim"
       expect(page).to have_content("Processed case outside of Caseflow")
     end
 
@@ -592,13 +590,13 @@ RSpec.feature "Dispatch" do
       # It should also work even if a unsupported special issue is checked
       find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
 
-      click_on "Route Claim"
-      click_on "Create New EP"
+      click_on "Route claim"
+      click_on "Create new EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
 
       click_on "Create End Product"
       find_label_for("confirmNote").click
-      click_on "Finish Routing Claim"
+      click_on "Finish routing claim"
 
       expect(page).to have_content("Congratulations!")
       expect(@task.appeal.reload.dispatched_to_station).to eq("351")
@@ -608,8 +606,8 @@ RSpec.feature "Dispatch" do
       @task2.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{@task2.id}"
       find_label_for("mustardGas").click
-      click_on "Route Claim"
-      click_on "Create New EP"
+      click_on "Route claim"
+      click_on "Create new EP"
       expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
     end
   end

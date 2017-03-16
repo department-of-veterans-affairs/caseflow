@@ -70,13 +70,13 @@ export default class EstablishClaimNote extends BaseForm {
     let noteFor = [];
 
     if (this.props.displayVacolsNote) {
-      noteFor.push('VACOLS');
+      noteFor.push('VACOLS Updated');
     }
     if (this.props.displayVbmsNote) {
-      noteFor.push('VBMS');
+      noteFor.push('Add VBMS Note');
     }
 
-    return `Route Claim: Update ${noteFor.join(' and ')}`;
+    return `Route Claim: ${noteFor.join(', ')}`;
   }
 
   vacolsNoteText() {
@@ -115,8 +115,8 @@ export default class EstablishClaimNote extends BaseForm {
   vbmsSection() {
     return <div>
 
-      <p>To better route this claim, please open VBMS and
-      attach the following note to the EP you just created.</p>
+      <p>To help better identify this claim, please copy the following note,
+      then open VBMS and attach it to the EP you just created.</p>
 
       <TextareaField
         label="VBMS Note:"
@@ -172,7 +172,7 @@ export default class EstablishClaimNote extends BaseForm {
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
             <Button
-              name="Finish Routing Claim"
+              name="Finish routing claim"
               classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
               onClick={this.handleSubmit}

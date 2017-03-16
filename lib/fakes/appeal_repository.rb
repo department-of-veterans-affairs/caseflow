@@ -1,5 +1,22 @@
 require "ostruct"
 
+class VBMSCaseflowLogger
+  def self.log(event, data)
+    case event
+    when :request
+      status = data[:response_code]
+      PrometheusService.completed_vbms_requests.increment(status: status)
+      if status != 200
+        PrometheusService.vbms_errors.increment
+        Rails.logger.error(
+          "VBMS HTTP Error #{status} " \
+          "(#{data[:request].class.name}) #{data[:response_body]}"
+        )
+      end
+    end
+  end
+end
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
@@ -26,6 +43,7 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
+    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.establish_claim!(claim:, appeal:)
@@ -82,16 +100,12 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
-  def self.fetch_documents_for(appeal, save:)
+  def self.fetch_documents_for(appeal)
     vbms_record = @records[appeal.vbms_id]
-    if vbms_record
-      appeal.documents = vbms_record[:documents]
-      return
-    end
-    appeal.documents = @documents || []
+
+    # @documents seems to be defaults. Do we need this?
+    vbms_record ? vbms_record[:documents] : (@documents || [])
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.fetch_document_file(document)
     path =
@@ -142,7 +156,7 @@ class Fakes::AppealRepository
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
-      hearing_type: VACOLS::Case::HEARING_TYPES["1"], # Central office
+      hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES["1"], # Central office
       regional_office_key: "DSUSER",
       documents: [nod_document, soc_document, form9_document],
       disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
@@ -340,8 +354,7 @@ class Fakes::AppealRepository
         received_at: 3.days.ago,
         document_id: "1",
         filename: "My_NOD"
-      ),
-      true
+      )
     )
   end
 
@@ -352,8 +365,7 @@ class Fakes::AppealRepository
         received_at: Date.new(1987, 9, 6),
         document_id: "2",
         filename: "My_SOC"
-      ),
-      false
+      )
     )
   end
 
@@ -364,8 +376,7 @@ class Fakes::AppealRepository
         received_at: 1.day.ago,
         document_id: "3",
         filename: "My_Form_9"
-      ),
-      false
+      )
     )
   end
 
@@ -376,8 +387,7 @@ class Fakes::AppealRepository
         received_at: 7.days.ago,
         document_id: "4",
         filename: "My_Decision"
-      ),
-      false
+      )
     )
   end
 
@@ -388,8 +398,7 @@ class Fakes::AppealRepository
         received_at: 8.days.ago,
         document_id: "5",
         filename: "My_Decision2"
-      ),
-      false
+      )
     )
   end
 

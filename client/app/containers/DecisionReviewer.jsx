@@ -6,6 +6,8 @@ import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
 
+const PARALLEL_DOCUMENT_REQUESTS = 3;
+
 export default class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
@@ -49,6 +51,10 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
+  documentUrl = (doc) => {
+    return `${this.props.url}?id=${doc.id}`;
+  }
+
   nextPdf = () => {
     this.setState({
       currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
@@ -56,23 +62,26 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  // TODO: Changes these buttons to links and override the behavior on
-  // click and keep the behavior on command click so that we aren't
-  // trying to reimplement browser functionatlity.
   showPdf = (pdfNumber) => (event) => {
-    if (event.metaKey) {
-      let id = this.state.documents[pdfNumber].id;
-      let filename = this.state.documents[pdfNumber].filename;
-      let type = this.state.documents[pdfNumber].type;
-      let receivedAt = this.state.documents[pdfNumber].received_at;
-
-      window.open(`review/show?id=${id}&type=${type}` +
-        `&received_at=${receivedAt}&filename=${filename}`, '_blank');
-    } else {
-      this.setState({
-        currentPdfIndex: pdfNumber
-      });
+    // If the user is trying to open the link in a new tab/window
+    // then follow the link. Otherwise if they just clicked the link
+    // keep them contained within the SPA.
+    // ctrlKey for windows
+    // shift key for opening in new window
+    // metaKey for Macs
+    // button for middle click
+    if (event.ctrlKey ||
+        event.shiftKey ||
+        event.metaKey ||
+        (event.button &&
+        event.button === 1)) {
+      return true;
     }
+
+    event.preventDefault();
+    this.setState({
+      currentPdfIndex: pdfNumber
+    });
   }
 
   showList = () => {
@@ -114,6 +123,25 @@ export default class DecisionReviewer extends React.Component {
     });
 
     return documentCopy;
+  }
+
+  componentDidMount = () => {
+    let downloadDocuments = (documentUrls, index) => {
+      if (index >= documentUrls.length) {
+        return;
+      }
+
+      ApiUtil.get(documentUrls[index]).
+        then(() => {
+          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
+        });
+    };
+
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+      downloadDocuments(this.props.appealDocuments.map((doc) => {
+        return this.documentUrl(doc);
+      }), i);
+    }
   }
 
   changeSortState = (sortBy) => () => {
@@ -240,6 +268,14 @@ export default class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
+  shouldShowNextButton = () => {
+    return this.state.currentPdfIndex + 1 < this.state.documents.length;
+  }
+
+  shouldShowPreviousButton = () => {
+    return this.state.currentPdfIndex > 0;
+  }
+
   render() {
     let {
       documents,
@@ -264,19 +300,15 @@ export default class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           annotationStorage={this.annotationStorage}
-          file={`${this.props.url}?id=` +
-            `${documents[this.state.currentPdfIndex].id}`}
-          id={documents[this.state.currentPdfIndex].id}
-          receivedAt={documents[this.state.currentPdfIndex].received_at}
-          type={documents[this.state.currentPdfIndex].type}
-          name={documents[this.state.currentPdfIndex].filename}
-          previousPdf={this.previousPdf}
-          nextPdf={this.nextPdf}
+          file={this.documentUrl(documents[this.state.currentPdfIndex])}
+          doc={documents[this.state.currentPdfIndex]}
+          previousPdf={this.shouldShowPreviousButton() && this.previousPdf}
+          nextPdf={this.shouldShowNextButton() && this.nextPdf}
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label}
-          hideNavigation={documents.length === 1} />}
+          hideNavigation={this.props.appealDocuments.length === 1} />}
       </div>
     );
   }

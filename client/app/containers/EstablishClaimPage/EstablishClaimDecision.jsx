@@ -8,8 +8,6 @@ import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
 
-const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
-
 export const DECISION_TYPE = [
   'Full Grant',
   'Partial Grant',
@@ -159,9 +157,9 @@ export default class EstablishClaimDecision extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Route Claim for Decision 1";
+      endProductButtonText = "Route claim for Decision 1";
     } else {
-      endProductButtonText = "Route Claim";
+      endProductButtonText = "Route claim";
     }
     this.state = {
       endProductButtonText
@@ -170,23 +168,12 @@ export default class EstablishClaimDecision extends React.Component {
 
   onTabSelected = (tabNumber) => {
     this.setState({
-      endProductButtonText: `Route Claim for Decision ${tabNumber + 1}`
+      endProductButtonText: `Route claim for Decision ${tabNumber + 1}`
     });
   }
 
   hasMultipleDecisions() {
     return this.props.task.appeal.decisions.length > 1;
-  }
-
-  buildIssueRow = (issue, index) => {
-    let description = issue.description.map((descriptor) =>
-      <div key={`${descriptor}-${index}`}>{descriptor}</div>, null);
-
-    return [
-      issue.program,
-      <div>{description}</div>,
-      issue.disposition
-    ];
   }
 
   render() {
@@ -201,6 +188,25 @@ export default class EstablishClaimDecision extends React.Component {
       specialIssues,
       task
     } = this.props;
+
+    let issueColumns = [
+      {
+        header: 'Program',
+        valueName: 'program'
+      },
+      {
+        header: 'VACOLS Issue(s)',
+        valueFunction: (issue, index) => {
+          return issue.description.map((descriptor) =>
+            <div key={`${descriptor}-${index}`}>{descriptor}</div>, null
+          );
+        }
+      },
+      {
+        header: 'Disposition',
+        valueName: 'disposition'
+      }
+    ];
 
     let decisionDateStart = formatDate(
       addDays(new Date(task.appeal.serialized_decision_date), -3)
@@ -285,9 +291,9 @@ export default class EstablishClaimDecision extends React.Component {
           <div className="cf-app-segment cf-app-segment--alt">
             <h3>VACOLS Decision Criteria</h3>
             <Table
-              headers={TABLE_HEADERS}
-              buildRowValues={this.buildIssueRow}
-              values={task.appeal.issues}
+              columns={issueColumns}
+              rowObjects={task.appeal.issues}
+              summary="VACOLS decision criteria issues"
             />
           </div>}
         {
@@ -310,12 +316,15 @@ export default class EstablishClaimDecision extends React.Component {
               onChange={this.onTabSelected}/>
           </div>}
           {!this.hasMultipleDecisions() && pdfViews[0]}
-          <TextField
-           label="Decision Type"
-           name="decisionType"
-           readOnly={true}
-           {...decisionType}
-          />
+
+          <div className="usa-width-one-half">
+            <TextField
+             label="Decision type"
+             name="decisionType"
+             readOnly={true}
+             {...decisionType}
+            />
+          </div>
 
           <label><b>Select Special Issue(s)</b></label>
           <div className="cf-multiple-columns">

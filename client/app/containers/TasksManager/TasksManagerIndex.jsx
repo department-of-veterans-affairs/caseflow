@@ -6,14 +6,6 @@ import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
 import FormField from '../../util/FormField';
 
-const TABLE_HEADERS = [
-  'Employee Name',
-  'Cases Assigned',
-  'Cases Completed',
-  'Cases Remaining'
-];
-const COLUMN_CLASSES = ['cf-txt-l ', 'cf-txt-c', 'cf-txt-c', 'cf-txt-c'];
-
 export default class TasksManagerIndex extends BaseForm {
   constructor(props) {
     super(props);
@@ -30,33 +22,37 @@ export default class TasksManagerIndex extends BaseForm {
     };
   }
 
-  statusFooters = () => {
+  getUserColumns = () => {
     // We return an empty row if there are no users in the table. Otherwise
     // we use the footer to display the totals.
-    if (Object.keys(this.props.tasksCompletedByUsers).length === 0) {
-      return [
-        "",
-        0,
-        0,
-        this.props.toCompleteCount
-      ];
-    }
+    let noUsers = Object.keys(this.props.tasksCompletedByUsers).length === 0;
 
     return [
-      <b>Employee Total</b>,
-      <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>,
-      <b>{this.props.completedCountToday}</b>,
-      <b>{this.props.toCompleteCount}</b>
+      {
+        header: 'Employee Name',
+        valueName: 'name',
+        footer: noUsers ? "" : <b>Employee Total</b>
+      },
+      {
+        header: 'Cases Assigned',
+        valueFunction: () => this.state.assignedCases,
+        footer: noUsers ?
+          "0" :
+          <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>
+      },
+      {
+        header: 'Cases Completed',
+        valueName: 'numberOfTasks',
+        footer: noUsers ? "0" : <b>{this.props.completedCountToday}</b>
+      },
+      {
+        header: 'Cases Remaining',
+        valueFunction: (user) =>
+          Math.max(this.state.assignedCases - user.numberOfTasks, 0),
+        footer: this.props.toCompleteCount
+      }
     ];
-
   }
-
-  buildUserRow = (taskCompletedByUser) => [
-    taskCompletedByUser.name,
-    this.state.assignedCases,
-    taskCompletedByUser.numberOfTasks,
-    Math.max(this.state.assignedCases - taskCompletedByUser.numberOfTasks, 0)
-  ]
 
   handleEmployeeCountUpdate = () => {
     let count = this.state.employeeCountForm.employeeCount.value;
@@ -95,16 +91,14 @@ export default class TasksManagerIndex extends BaseForm {
         handleFieldChange={this.handleFieldChange}
       />
       <div className="cf-right-side">
-        <a>
+        <a href="/dispatch/stats">
           <i className="fa fa-line-chart" aria-hidden="true"></i> View Dashboard
         </a>
       </div>
       <Table
-        headers={TABLE_HEADERS}
-        footers={this.statusFooters()}
-        buildRowValues={this.buildUserRow}
-        values={tasksCompletedByUsers}
-        columnClasses={COLUMN_CLASSES}
+        columns={this.getUserColumns()}
+        rowObjects={tasksCompletedByUsers}
+        summary="Appeals worked by user"
       />
     </div>;
   }

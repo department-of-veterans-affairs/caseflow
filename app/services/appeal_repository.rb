@@ -1,13 +1,17 @@
 require "vbms"
 
 # :nocov:
-class CaseflowLogger
+class VBMSCaseflowLogger
   def log(event, data)
     case event
     when :request
-      if data[:response_code] != 200
+      status = data[:response_code]
+      PrometheusService.completed_vbms_requests.increment(status: status)
+
+      if status != 200
+        PrometheusService.vbms_errors.increment
         Rails.logger.error(
-          "VBMS HTTP Error #{data[:response_code]} " \
+          "VBMS HTTP Error #{status} " \
           "(#{data[:request].class.name}) #{data[:response_body]}"
         )
       end
@@ -86,7 +90,7 @@ class AppealRepository
       soc_date: normalize_vacols_date(case_record.bfdsoc),
       form9_date: normalize_vacols_date(case_record.bfd19),
       ssoc_dates: ssoc_dates_from(case_record),
-      hearing_type: VACOLS::Case::HEARING_TYPES[case_record.bfha],
+      hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
       hearing_held: !case_record.bfha.nil?,
       regional_office_key: case_record.bfregoff,
@@ -219,7 +223,7 @@ class AppealRepository
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
-    appeal.case_record.bftbind = "X" if appeal.hearing_type == :travel_board
+    appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
 
     MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
       appeal.case_record.save!
@@ -272,18 +276,16 @@ class AppealRepository
     raise VBMSError
   end
 
-  def self.fetch_documents_for(appeal, save:)
+  def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::ListDocuments.new(sanitized_id)
     documents = send_and_log_request(sanitized_id, request)
 
-    appeal.documents = documents.map do |vbms_document|
-      Document.from_vbms_document(vbms_document, save)
+    documents.map do |vbms_document|
+      Document.from_vbms_document(vbms_document)
     end
-
-    appeal
   end
 
   def self.fetch_document_file(document)
@@ -318,7 +320,7 @@ class AppealRepository
 
   def self.init_vbms_client
     VBMS::Client.from_env_vars(
-      logger: CaseflowLogger.new,
+      logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
