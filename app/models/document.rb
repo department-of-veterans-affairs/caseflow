@@ -43,23 +43,12 @@ class Document < ActiveRecord::Base
       :other
   end
 
-  def self.from_vbms_document(vbms_document, save_record = false)
-    attributes =
-      {
-        type: type_from_vbms_type(vbms_document.doc_type),
+  def self.from_vbms_document(vbms_document)
+    new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename
-      }
-
-    if save_record
-      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
-        t.assign_attributes(attributes)
-      end
-    else
-      new(attributes)
-    end
+        filename: vbms_document.filename)
   end
 
   def self.type_id(type)
