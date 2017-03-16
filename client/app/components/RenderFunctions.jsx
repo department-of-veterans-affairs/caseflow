@@ -10,7 +10,7 @@ import React from 'react';
  * @returns {string} The HTML for the loading symbol.
  */
 export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#844E9F') {
-  let style = { 'marginLeft': `-${size}` };
+  let style = { 'marginLeft': parseInt(`-${size}`,10) };
 
 
   return (
