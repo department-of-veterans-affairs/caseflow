@@ -1,4 +1,5 @@
 import React from 'react';
+import NotFoundIcon from '../components/NotFoundIcon';
 
 // TODO: refactor to use shared components where helpful
 const DocumentsCheckTable = () => {
