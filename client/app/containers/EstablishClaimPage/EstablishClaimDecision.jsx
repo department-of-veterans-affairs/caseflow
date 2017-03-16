@@ -10,12 +10,6 @@ import LoadingContainer from '../../components/LoadingContainer';
 
 const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
 
-export const DECISION_TYPE = [
-  'Full Grant',
-  'Partial Grant',
-  'Remand'
-];
-
 export const SPECIAL_ISSUES = [
   'Contaminated Water at Camp LeJeune',
   'DIC - death, or accrued benefits - United States',
