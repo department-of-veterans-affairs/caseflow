@@ -154,8 +154,9 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!(save:)
-    self.class.repository.fetch_documents_for(self, save: save)
-    @documents
+    self.class.repository.fetch_documents_for(self).tap do |documents|
+      documents.map(&:save!) if save
+    end
   end
 
   def partial_grant?

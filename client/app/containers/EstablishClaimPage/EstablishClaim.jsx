@@ -1,4 +1,4 @@
-/* eslint-disable max-lines, require-jsdoc */
+/* eslint-disable max-lines */
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
@@ -758,4 +758,4 @@ EstablishClaim.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/* eslint-enable max-lines, require-jsdoc */
+/* eslint-enable max-lines */

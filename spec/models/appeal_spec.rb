@@ -72,6 +72,36 @@ describe Appeal do
     end
   end
 
+  context "#fetch_documents!" do
+    let(:documents) do
+      [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document]
+    end
+
+    let(:appeal) do
+      Appeal.new(vbms_id: "123")
+    end
+
+    before do
+      Fakes::AppealRepository.records = { appeal.vbms_id => { documents: documents } }
+    end
+
+    let(:result) { appeal.fetch_documents!(save: save) }
+
+    context "when save is false" do
+      let(:save) { false }
+      it "should return documents not saved in the database" do
+        expect(result.first).to_not be_persisted
+      end
+    end
+
+    context "when save is true" do
+      let(:save) { true }
+      it "should return documents saved in the database" do
+        expect(result.first).to be_persisted
+      end
+    end
+  end
+
   context ".find_or_create_by_vacols_id" do
     before do
       allow(Appeal.repository).to receive(:load_vacols_data).and_return(nil)
