@@ -13,6 +13,7 @@ require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
+require_relative "support/appeal_generator"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -122,24 +123,6 @@ end
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
 User.authentication_service = Fakes::AuthenticationService
-
-def create_tasks(count, opts = {})
-  Array.new(count) do |i|
-    vacols_id = "#{opts[:id_prefix] || 'ABC'}-#{i}"
-    appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
-    Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
-
-    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}", full_name: "Jane Smith #{i}")
-    task = EstablishClaim.create(appeal: appeal)
-    task.prepare!
-    task.assign!(:assigned, user)
-
-    task.start! if %i(started reviewed completed).include?(opts[:initial_state])
-    task.review!(outgoing_reference_id: "123") if %i(reviewed completed).include?(opts[:initial_state])
-    task.complete!(:completed, status: 0) if %i(completed).include?(opts[:initial_state])
-    task
-  end
-end
 
 RSpec.configure do |config|
   # This checks whether compiled webpack assets already exist
