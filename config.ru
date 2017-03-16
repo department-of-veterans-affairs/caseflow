@@ -31,7 +31,7 @@ module PumaThreadLogger
   def initialize *args
     Thread.new do
       loop do
-        sleep 30
+        sleep 5
 
         thread_count = 0
         backlog = 0
@@ -44,6 +44,10 @@ module PumaThreadLogger
           backlog = @todo.size
           waiting = @waiting
         }
+
+        thread_metric = PrometheusService.app_server_threads
+        thread_metric.set({ type: 'waiting' }, waiting)
+        thread_metric.set({ type: 'active' }, thread_count - waiting)
 
         # For some reason, even a single Puma server (not clustered) has two booted ThreadPools.
         # One of them is empty, and the other is actually doing work.
@@ -61,6 +65,7 @@ module PumaThreadLogger
            "Live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
           Rails.logger.info(msg)
         end
+
       end
     end
     super *args
