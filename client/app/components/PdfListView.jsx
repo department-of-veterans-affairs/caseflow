@@ -5,6 +5,7 @@ import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
+import { linkToSingleDocumentView } from './PdfViewer';
 
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {
@@ -64,7 +65,11 @@ export default class PdfListView extends React.Component {
           Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc, index) =>
-          <a onClick={this.props.showPdf(index)}>{doc.filename}</a>
+          <a
+            href={linkToSingleDocumentView(doc)}
+            onClick={this.props.showPdf(index)}>
+            {doc.filename}
+          </a>
       }
     ];
   }
