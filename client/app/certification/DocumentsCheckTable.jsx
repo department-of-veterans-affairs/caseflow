@@ -24,19 +24,19 @@ const DocumentsCheckTable = () => {
           <td> <FoundIcon/> </td>
           <td> Form 9 </td>
           <td> 09/31/2099 </td>
-          <td> Not found </td>
+          <td> 09/31/2099 </td>
         </tr>
         <tr id="nod-match">
           <td> <FoundIcon/> </td>
           <td> NOD </td>
           <td> 04/10/2010 </td>
-          <td> Not found </td>
+          <td> 04/10/2010 </td>
         </tr>
         <tr id="soc-match">
           <td> <FoundIcon/> </td>
           <td> SOC </td>
           <td> 03/19/2007 </td>
-          <td> Not found </td>
+          <td> 03/19/2007 </td>
         </tr>
       </tbody>
     </table>
