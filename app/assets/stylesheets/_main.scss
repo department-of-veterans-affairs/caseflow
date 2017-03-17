@@ -1,9 +1,11 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
 
-// TODO: move to caseflow-commons
+// TODO: move to caseflow-commons.
+// This is here because sometimes with React-router
+// we nest a link inside a button.
 [type="button"] {
-  a:visited {
+  a, a:visited {
     color: $color-white;
   }
 }

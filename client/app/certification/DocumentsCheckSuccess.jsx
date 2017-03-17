@@ -19,6 +19,9 @@ const DocumentsCheckSuccess = ({ match }) => {
         Cancel Certification
       </a>
       <button type="button" className="cf-push-right">
+        {/* TODO: since this is nested inside the button,
+         you need to click the text inside the button to have the link work.
+         Sad! Pleasefix. */}
         <Link className="cf-white-text"
           to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
           Continue
