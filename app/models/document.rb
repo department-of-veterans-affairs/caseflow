@@ -96,4 +96,23 @@ class Document < ActiveRecord::Base
       methods: [:vbms_document_id, :type, :received_at, :filename, :label]
     )
   end
+
+  def load_or_save!
+    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
+    return fill_in(existing_document) if existing_document
+    save! && self
+  end
+
+  private
+
+  def fill_in(persisted_document)
+    persisted_document.assign_attributes(
+      type: type,
+      alt_types: alt_types,
+      vbms_doc_type: vbms_doc_type,
+      received_at: received_at,
+      filename: filename
+    )
+    persisted_document
+  end
 end
