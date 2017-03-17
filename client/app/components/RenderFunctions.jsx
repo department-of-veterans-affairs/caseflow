@@ -11,7 +11,7 @@ import React from 'react';
  */
 
 export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#844E9F') {
-  let style = { 'marginLeft': `-${size}` };
+  let style = { 'marginLeft': parseInt(`-${size}`, 10) };
 
   return (
       <span>
