@@ -27,14 +27,6 @@ export default class TabWindow extends React.Component {
     }
   }
 
-  onDisabledTabClick = (tab) => () => {
-    if (Boolean(tab.disable) === true) {
-      this.setState({
-        disabled: true
-      });
-    }
-  }
-
   getTabHeaderWithSVG = (tab) => {
     return <span>
       {tab.icon ? tab.icon : ''}
@@ -67,7 +59,7 @@ export default class TabWindow extends React.Component {
               className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
               id={`tab-${i}`}
-              onClick={tab.disable ? this.onDisabledTabClick(i) : this.onTabClick(i)}
+              onClick={this.onTabClick(i)}
               disabled={Boolean(tab.disable)}>
               <span>
                 {this.getTabHeaderWithSVG(tab)}
