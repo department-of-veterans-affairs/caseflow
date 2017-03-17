@@ -276,18 +276,16 @@ class AppealRepository
     raise VBMSError
   end
 
-  def self.fetch_documents_for(appeal, save:)
+  def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
     request = VBMS::Requests::ListDocuments.new(sanitized_id)
     documents = send_and_log_request(sanitized_id, request)
 
-    appeal.documents = documents.map do |vbms_document|
-      Document.from_vbms_document(vbms_document, save)
+    documents.map do |vbms_document|
+      Document.from_vbms_document(vbms_document)
     end
-
-    appeal
   end
 
   def self.fetch_document_file(document)
