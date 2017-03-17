@@ -241,8 +241,8 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  private 
-  
+  private
+
   def fetched_documents
     @fetched_documents ||= self.class.repository.fetch_documents_for(self)
   end
