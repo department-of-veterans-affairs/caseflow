@@ -1,3 +1,4 @@
+# :nocov:
 class PrometheusService
   class << self
     def vbms_errors
@@ -66,3 +67,4 @@ class PrometheusGaugeSummary
     summary.observe(label, value)
   end
 end
+# :nocov:
