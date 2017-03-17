@@ -18,19 +18,19 @@ class PrometheusService
     def app_server_threads
       @app_server_threads ||=
         find_or_register_gauge_and_summary(:app_server_threads,
-                                          "app server threads snapshot")
+                                           "app server threads snapshot")
     end
 
     def postgres_db_connections
       @postgres_db_connections ||=
         find_or_register_gauge_and_summary(:postgres_db_connections,
-                                          "postgres db connection snapshot")
+                                           "postgres db connection snapshot")
     end
 
     def vacols_db_connections
       @vacols_db_connections ||=
         find_or_register_gauge_and_summary(:vacols_db_connections,
-                                          "vacols db connection snapshot")
+                                           "vacols db connection snapshot")
     end
 
     private
@@ -67,4 +67,3 @@ class PrometheusGaugeSummary
     summary.observe(label, value)
   end
 end
-# :nocov:
