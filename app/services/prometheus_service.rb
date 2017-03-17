@@ -21,13 +21,13 @@ class PrometheusService
     end
 
     def postgres_db_connections
-      @app_server_threads ||=
+      @postgres_db_connections ||=
         find_or_register_gauge_and_summary(:postgres_db_connections,
                                           "postgres db connection snapshot")
     end
 
     def vacols_db_connections
-      @app_server_threads ||=
+      @vacols_db_connections ||=
         find_or_register_gauge_and_summary(:vacols_db_connections,
                                           "vacols db connection snapshot")
     end
