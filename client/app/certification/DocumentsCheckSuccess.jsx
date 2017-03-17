@@ -1,11 +1,11 @@
 import React from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
-import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 // TODO: refactor to use shared components where helpful
-const DocumentsCheckSuccess = () => {
+const DocumentsCheckSuccess = ({ match }) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Check Documents</h2>
@@ -19,7 +19,10 @@ const DocumentsCheckSuccess = () => {
         Cancel Certification
       </a>
       <button type="button" className="cf-push-right">
-        Continue
+        <Link className="cf-white-text"
+          to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
+          Continue
+        </Link>
       </button>
     </div>
   </div>;

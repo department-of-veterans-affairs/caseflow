@@ -1,6 +1,13 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
 
+// TODO: move to caseflow-commons
+[type="button"] {
+  a:visited {
+    color: $color-white;
+  }
+}
+
 .cf-logo-image-default {
   background-image: url(asset-path('caseflow-default-logo.svg'));
   width: 32px;

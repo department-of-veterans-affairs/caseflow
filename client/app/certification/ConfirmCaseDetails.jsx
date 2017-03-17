@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 // TODO: refactor to use shared components where helpful
-const ConfirmCaseDetails = () => {
+const ConfirmCaseDetails = ({ match }) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Confirm Case Details</h2>
@@ -18,7 +20,9 @@ const ConfirmCaseDetails = () => {
         Cancel Certification
       </a>
       <button type="button" className="cf-push-right">
-        Continue
+        <Link to={`/certifications/${match.params.vacols_id}/sign_and_certify`}>
+          Continue
+        </Link>
       </button>
     </div>
   </div>;
