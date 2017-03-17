@@ -1,6 +1,8 @@
 import React from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
+import { Redirect } from 'react-router-dom';
+
 
 // TODO: refactor to use shared components where helpful
 const DocumentsCheckSuccess = () => {
