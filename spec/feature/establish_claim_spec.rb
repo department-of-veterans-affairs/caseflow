@@ -1,7 +1,28 @@
 require "rails_helper"
 
+class EstablishClaimGenerator
+  class << self
+    def create(attrs = {})
+      attrs[:appeal_id] ||= AppealGenerator.create.id
+      EstablishClaim.create(attrs)
+    end
+  end
+end
+
 RSpec.feature "Dispatch" do
   let(:partial_grant_appeal) { Fakes::AppealRepository.appeal_partial_grant_decided }
+
+  let(:appeal) do
+    AppealGenerator.create(vacols_record: vacols_record)
+  end
+
+  let(:vacols_record) do
+    Fakes::AppealRepository.appeal_remand_decided
+  end
+
+  let(:case_worker) do
+    User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
+  end
 
   before do
     # Set the time zone to the current user's time zone for proper date conversion
@@ -46,13 +67,13 @@ RSpec.feature "Dispatch" do
       )]
       }
     }
-    Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
+    
+    myappeal = Appeal.create(
+       vacols_id: "123C",
+       vbms_id: @vbms_id
+     )
 
-    appeal = Appeal.create(
-      vacols_id: "123C",
-      vbms_id: @vbms_id
-    )
-    @task = EstablishClaim.create(appeal: appeal)
+    @task = EstablishClaim.create(appeal: myappeal)
     @task.prepare!
 
     appeal = Appeal.create(
@@ -69,76 +90,63 @@ RSpec.feature "Dispatch" do
   context "As a manager" do
     before do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
-      @task.assign!(:assigned, User.create(station_id: "123", css_id: "ABC"))
-
-      create_tasks(20, initial_state: :completed)
     end
 
     scenario "View manager page" do
+      # Create 4 incomplete tasks and one completed today
+      4.times { EstablishClaimGenerator.create }
+      EstablishClaimGenerator.create(user_id: case_worker.id, completed_at: Time.zone.now)
+
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
-      expect(page).to have_content("Number of people")
-      fill_in "Number of people", with: "3"
+      fill_in "Number of people", with: "2"
       click_on "Update"
       visit "/dispatch/establish-claim"
-      expect(find_field("Number of people").value).to have_content("3")
+      expect(find_field("Number of people").value).to have_content("2")
 
-      # This looks for the row in the table for the User 'Jane Smith 0' who has
-      # eight tasks assigned to her, has completed one, and has seven remaining.
-      expect(page).to have_content("Jane Smith 0 8 1 7")
+      # This looks for the row in the table for the User 'Jane Smith' who has
+      # two tasks assigned to her, has completed one, and has one remaining.
+      expect(page).to have_content("Jane Smith 2 1 1")
     end
 
     scenario "View unprepared tasks page" do
-      @unprepared_appeal = Appeal.create(
-        vacols_id: "456D",
-        vbms_id: "VBMS_ID2"
-      )
-      @unprepared_task = EstablishClaim.create(appeal: @unprepared_appeal)
+      unprepared_task = EstablishClaimGenerator.create
 
       visit "/dispatch/missing-decision"
 
       # should see the unprepared task
       expect(page).to have_content("Claims Missing Decisions")
-      expect(page).to have_content(@unprepared_task.appeal.veteran_name)
+      expect(page).to have_content(unprepared_task.appeal.veteran_name)
     end
   end
 
   context "As a caseworker" do
+    let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
     before do
-      User.authenticate!(roles: ["Establish Claim"])
-
-      # completed by user task
-      appeal = Appeal.create(vacols_id: "456D")
-
-      @completed_task = EstablishClaim.create(appeal: appeal)
-      @completed_task.prepare!
-      @completed_task.assign!(:assigned, current_user)
-      @completed_task.start!
-      @completed_task.review!
-      @completed_task.complete!(:completed, status: 0)
-
-      other_user = User.create(css_id: "some", station_id: "stuff")
-      @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdaf"))
-      @other_task.prepare!
-      @other_task.assign!(:assigned, other_user)
-      @other_task.start!
+      # other_user = User.create(css_id: "some", station_id: "stuff")
+      # @other_task = EstablishClaim.create(appeal: Appeal.new(vacols_id: "asdaf"))
+      # @other_task.prepare!
+      # @other_task.assign!(:assigned, other_user)
+      # @other_task.start!
     end
 
     context "Skip the associate EP page" do
       before do
         BGSService.end_product_data = []
-
-        @file_number ||=
-          Fakes::AppealRepository.records[@completed_task.appeal.vacols_id][:vbms_id]
       end
 
       scenario "Establish a new claim page and process pt1" do
+        completed_task = EstablishClaimGenerator.create(
+          user_id: current_user.id,
+          aasm_state: "completed"
+        )
+
         visit "/dispatch/establish-claim"
 
         # View history should have a header and 1 task in it
         expect(page).to have_selector('#work-history-table tr', count: 2)
-        expect(page).to have_content("(#{@file_number})")
+        expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
 
         click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
@@ -158,64 +166,68 @@ RSpec.feature "Dispatch" do
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
       end
 
-      scenario "Establish a new claim page and process pt2" do
-        # Establish claim for partial grant to test EP label logic
-        Fakes::AppealRepository.records["123C"] = partial_grant_appeal
+      context "partial grants" do
+        let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
+        
+        scenario "Establish a new claim page and process pt2", focus: true do
+          # Mock the claim_id returned by VBMS's create end product
+          Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
 
-        # Complete last task so that we can ensure there are no remaining tasks
-        @task2.assign!(:assigned, current_user)
-        @task2.start!
-        @task2.review!
-        @task2.complete!(:completed, status: 0)
+          # Establish claim for partial grant to test EP label logic
+          task = EstablishClaimGenerator.create(
+            appeal_id: appeal.id,
+            aasm_state: "unassigned"
+          )
 
-        visit "/dispatch/establish-claim"
-        # Decision Page
-        click_on "Establish next claim"
-        expect(page).to have_current_path("/dispatch/establish-claim/#{@task.id}")
-        click_on "Route claim"
+          visit "/dispatch/establish-claim"
+          # Decision Page
+          click_on "Establish next claim"
+          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+          click_on "Route claim"
 
-        # EP Form Page
-        expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
+          # EP Form Page
+          expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
-        # Test text, radio button, & checkbox inputs
-        find_label_for("gulfWarRegistry").click
-        click_on "Create End Product"
+          # Test text, radio button, & checkbox inputs
+          find_label_for("gulfWarRegistry").click
+          click_on "Create End Product"
 
-        # Confirmation Page
-        expect(page).to have_content("Congratulations!")
-        expect(page).to_not have_content("Manually Added VBMS Note")
+          # Confirmation Page
+          expect(page).to have_content("Congratulations!")
+          expect(page).to_not have_content("Manually Added VBMS Note")
 
-        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
-            benefit_type_code: "1",
-            payee_code: "00",
-            predischarge: false,
-            claim_type: "Claim",
-            station_of_jurisdiction: "397",
-            date: @task.appeal.decision_date.to_date,
-            end_product_modifier: "170",
-            end_product_label: "ARC-Partial Grant",
-            end_product_code: "170PGAMC",
-            gulf_war_registry: true,
-            suppress_acknowledgement_letter: false
-          },
-          appeal: @task.appeal
-        )
+          expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+            claim: {
+              benefit_type_code: "1",
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              station_of_jurisdiction: "397",
+              date: task.appeal.decision_date.to_date,
+              end_product_modifier: "170",
+              end_product_label: "ARC-Partial Grant",
+              end_product_code: "170PGAMC",
+              gulf_war_registry: true,
+              suppress_acknowledgement_letter: false
+            },
+            appeal: task.appeal
+          )
 
-        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+          expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
-        expect(@task.reload.completed?).to be_truthy
-        expect(@task.completion_status).to eq(0)
-        expect(@task.outgoing_reference_id).to eq("CLAIM_ID_123")
+          expect(task.reload.completed?).to be_truthy
+          expect(task.completion_status).to eq(0)
+          expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
-        expect(@task.appeal.reload.dispatched_to_station).to eq("397")
+          expect(task.appeal.reload.dispatched_to_station).to eq("397")
 
-        click_on "Caseflow Dispatch"
-        expect(page).to have_current_path("/dispatch/establish-claim")
+          click_on "Caseflow Dispatch"
+          expect(page).to have_current_path("/dispatch/establish-claim")
 
-        # No tasks left
-        expect(page).to have_content("There are no more claims in your queue")
-        expect(page).to have_css(".usa-button-disabled")
+          # No tasks left
+          expect(page).to have_content("There are no more claims in your queue")
+          expect(page).to have_css(".usa-button-disabled")
+        end
       end
 
       scenario "Progress bar matches path of establishing a claim" do
@@ -310,7 +322,7 @@ RSpec.feature "Dispatch" do
         )
       end
 
-      scenario "Establish Claim form saves state when going back/forward in browser" do
+      scenario "Establish Claim form saves state when going back/forward in browser", focus: true do
         @task.assign!(:assigned, current_user)
         visit "/dispatch/establish-claim/#{@task.id}"
         click_on "Route claim"
