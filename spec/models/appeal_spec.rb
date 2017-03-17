@@ -72,6 +72,21 @@ describe Appeal do
     end
   end
 
+  context "#serialized_decision_date" do
+    let(:appeal) { Appeal.new(decision_date: decision_date) }
+    subject { appeal.serialized_decision_date }
+
+    context "when decision date is nil" do
+      let(:decision_date) { nil }
+      it { is_expected.to eq("") }
+    end
+
+    context "when decision date exists" do
+      let(:decision_date) { Time.zone.local(2016, 9, 6) }
+      it { is_expected.to eq("2016/09/06") }
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document]
