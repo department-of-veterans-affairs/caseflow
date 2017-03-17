@@ -6,13 +6,17 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      PrometheusService.completed_vbms_requests.increment(status: status)
+      name = data[:request].class.name.split("::").last
+      application = RequestStore[:application] || "other"
+      PrometheusService.completed_vbms_requests.increment(status: status,
+                                                          application: application,
+                                                          name: name)
 
       if status != 200
         PrometheusService.vbms_errors.increment
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
-          "(#{data[:request].class.name}) #{data[:response_body]}"
+          "(#{name}) #{data[:response_body]}"
         )
       end
     end
@@ -267,12 +271,17 @@ class AppealRepository
   end
 
   def self.send_and_log_request(vbms_id, request)
-    MetricsService.timer "sent VBMS request #{request.class} for #{vbms_id}" do
+    name = request.class.name.split('::').last
+    MetricsService.timer("sent VBMS request #{request.class} for #{vbms_id}",
+                         service: :vbms,
+                         name: name) do
       @vbms_client.send_request(request)
     end
 
   # rethrow as application-level error
-  rescue VBMS::ClientError
+  rescue VBMS::ClientError => e
+    Raven.capture_exception(e)
+    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
     raise VBMSError
   end
 
@@ -291,12 +300,10 @@ class AppealRepository
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
-    request = VBMS::Requests::FetchDocumentById.new(document.vbms_document_id)
-    result = @vbms_client.send_request(request)
+    vbms_id = document.vbms_document_id
+    request = VBMS::Requests::FetchDocumentById.new(vbms_id)
+    result = send_and_log_request(vbms_id, request)
     result && result.content
-  rescue => e
-    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
-    raise VBMS::ClientError
   end
 
   def self.vbms_config

@@ -19,6 +19,7 @@ class MetricsCollector
   def perform
     collect_postgres_metrics
     collect_vacols_metrics
+    collect_background_jobs_metrics
   end
 
   def collect_postgres_metrics
@@ -42,5 +43,14 @@ class MetricsCollector
     PrometheusService.vacols_db_connections.set({ type: "active" }, active)
     PrometheusService.vacols_db_connections.set({ type: "dead" }, dead)
     PrometheusService.vacols_db_connections.set({ type: "idle" }, idle)
+  end
+
+  def collect_background_jobs_metrics
+    stats = Sidekiq::Stats.new
+
+    PrometheusService.background_jobs.set({ type: "processed" }, stats.processed)
+    PrometheusService.background_jobs.set({ type: "enqueued" }, stats.enqueued)
+    PrometheusService.background_jobs.set({ type: "failed" }, stats.failed)
+    PrometheusService.background_jobs.set({ type: "default_queue_latency" }, stats.defaut_queue_latency)
   end
 end
