@@ -8,7 +8,8 @@ const SignAndCertify = () => {
     </div>
 
     {/*
-      Here, we'll add the name/organization/title/date questions and finalize the certification.
+      Here, we'll add the name/organization/title/date questions
+      and finalize the certification.
     */}
 
     <div className="cf-app-segment">
