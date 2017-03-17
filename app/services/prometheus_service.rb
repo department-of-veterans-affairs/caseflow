@@ -1,5 +1,5 @@
-# :nocov:
 class PrometheusService
+  # :nocov:
   class << self
     def vbms_errors
       @vbms_errors ||=
@@ -49,6 +49,7 @@ class PrometheusService
       find_metric(name) || Prometheus::Client.registry.send(type, name, description)
     end
   end
+  # :nocov:
 end
 
 # This class is a wrapper for gauge & summary metrics.
