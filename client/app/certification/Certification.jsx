@@ -21,7 +21,7 @@ const Certification = () => {
       <Route path="/certifications/:vacols_id/check_documents" component={DocumentsCheckSuccess}/>
       <Route path="/certifications/:vacols_id/confirm_case_details" component={ConfirmCaseDetails}/>
       <Route path="/certifications/:vacols_id/sign_and_certify" component={SignAndCertify}/>
-    {/* TODO: should we add the cancel certification link and continue links here, or keep them on their own page? */}
+      {/* TODO: should we add the cancel certification link and continue links here, or keep them on their own page? */}
     </div>
   </BrowserRouter>;
 };

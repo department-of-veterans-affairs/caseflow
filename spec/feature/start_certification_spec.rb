@@ -19,6 +19,19 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path("/unauthorized")
   end
 
+  scenario "Starting a Certification v2", {focus: true} do
+    ENV["ENABLE_CERTIFICATION_V2"] = "true"
+
+    User.authenticate!(roles: ["Certify Appeal"])
+    Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
+
+    visit "certifications/new/ABCD"
+    expect(page).to have_current_path("/certifications/ABCD/check_documents")
+    expect(page).to have_content("All documents detected!")
+
+    ENV["ENABLE_CERTIFICATION_V2"] = nil
+  end
+
   scenario "Starting a certification with missing documents" do
     User.authenticate!(roles: ["Certify Appeal"])
 
