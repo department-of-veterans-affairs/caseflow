@@ -10,7 +10,17 @@ class EstablishClaimGenerator
 end
 
 RSpec.feature "Dispatch" do
-  let(:partial_grant_appeal) { Fakes::AppealRepository.appeal_partial_grant_decided }
+  let(:appeal) do
+    AppealGenerator.create(vacols_record: vacols_record)
+  end
+
+  let(:vacols_record) do
+    Fakes::AppealRepository.appeal_remand_decided
+  end
+
+  let(:case_worker) do
+    User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
+  end
 
   let(:appeal) do
     AppealGenerator.create(vacols_record: vacols_record)
@@ -57,31 +67,27 @@ RSpec.feature "Dispatch" do
         status_type_code: "CLR"
       }]
 
-    Fakes::AppealRepository.records = {
-      "123C" => Fakes::AppealRepository.appeal_full_grant_decided,
-      "456D" => Fakes::AppealRepository.appeal_remand_decided,
-      "789E" => partial_grant_appeal,
-      @vbms_id => { documents: [Document.new(
-        received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
-        vbms_document_id: "123"
-      )]
-      }
-    }
+    # Fakes::AppealRepository.records = {
+    #   "123C" => Fakes::AppealRepository.appeal_full_grant_decided,
+    #   "456D" => Fakes::AppealRepository.appeal_remand_decided,
+    #   "789E" => partial_grant_appeal,
+    #   @vbms_id => { documents: [Document.new(
+    #     received_at: (Time.current - 7.days).to_date, type: "BVA Decision",
+    #     vbms_document_id: "123"
+    #   )]
+    #   }
+    # }
     
-    myappeal = Appeal.create(
-       vacols_id: "123C",
-       vbms_id: @vbms_id
-     )
 
-    @task = EstablishClaim.create(appeal: myappeal)
-    @task.prepare!
+    # @task = EstablishClaim.create(appeal: appeal)
+    # @task.prepare!
 
-    appeal = Appeal.create(
-      vacols_id: "789E",
-      vbms_id: "new_vbms_id"
-    )
-    @task2 = EstablishClaim.create(appeal: appeal)
-    @task2.prepare!
+    # appeal = Appeal.create(
+    #   vacols_id: "789E",
+    #   vbms_id: "new_vbms_id"
+    # )
+    # @task2 = EstablishClaim.create(appeal: appeal)
+    # @task2.prepare!
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
