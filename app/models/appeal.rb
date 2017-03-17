@@ -146,7 +146,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def serialized_decision_date
-    decision_date.to_formatted_s(:json_date)
+    decision_date ? decision_date.to_formatted_s(:json_date) : ""
   end
 
   def certify!
