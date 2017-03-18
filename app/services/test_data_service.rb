@@ -91,7 +91,7 @@ class TestDataService
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
-          SET TIOCTIME = (#{date})
+          SET TIOCTIME = #{date}
           WHERE TICKNUM = #{case_id}
         SQL
       end
