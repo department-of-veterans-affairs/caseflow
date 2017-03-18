@@ -1,5 +1,3 @@
-require "securerandom"
-
 class Generators::Appeal
   extend Generators::Base
 
