@@ -5,6 +5,8 @@ require "rack"
 require "prometheus/client/rack/collector"
 require "prometheus/client/rack/exporter"
 
+require_relative "app/middleware/metrics_collector"
+
 # require basic auth for the /metrics route
 use MetricsAuth, "metrics" do |username, password|
   # if we mistakenly didn't set a password for this route, disable the route
@@ -16,6 +18,9 @@ end
 # use gzip for the '/metrics' route, since it can get big.
 use Rack::Deflater,
     if: -> (env, _status, _headers, _body) { env["PATH_INFO"] == "/metrics" }
+
+# Collects custom Caseflow metrics
+use MetricsCollector
 
 # traces all HTTP requests
 use Prometheus::Client::Rack::Collector
@@ -45,6 +50,10 @@ module PumaThreadLogger
           waiting = @waiting
         }
 
+        thread_metric = PrometheusService.app_server_threads
+        thread_metric.set({ type: 'idle' }, waiting)
+        thread_metric.set({ type: 'active' }, thread_count - waiting)
+
         # For some reason, even a single Puma server (not clustered) has two booted ThreadPools.
         # One of them is empty, and the other is actually doing work.
         # The check above ignores the empty one.
@@ -61,6 +70,7 @@ module PumaThreadLogger
            "Live threads: #{@workers.select{|x| x.alive?}.size}/#{@workers.size} alive"
           Rails.logger.info(msg)
         end
+
       end
     end
     super *args
