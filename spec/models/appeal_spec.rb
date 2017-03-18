@@ -86,7 +86,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      AppealGenerator.build(documents: documents)
+      Generators::Appeal.build(documents: documents)
     end
 
     let(:result) { appeal.fetch_documents!(save: save) }

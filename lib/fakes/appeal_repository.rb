@@ -259,7 +259,7 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID")
     {
       vbms_id: vbms_id,
       type: "Original",
@@ -271,8 +271,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      documents: missing_decision ? [] : [decision_document]
+      regional_office_key: "RO13"
     }
   end
 

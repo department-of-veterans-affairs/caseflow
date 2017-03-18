@@ -20,9 +20,11 @@ class Generators::Appeal
     end
 
     def build(attrs = {})
-      vacols_record = attrs.delete(:vacols_record) || default_vacols_record
+      vacols_record = (attrs.delete(:vacols_record) || default_vacols_record).clone
       documents = attrs.delete(:documents)
       appeal = Appeal.new(default_attrs.merge(attrs))
+
+      vacols_record[:vbms_id] = appeal.vbms_id
 
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
