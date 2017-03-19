@@ -87,11 +87,12 @@ class TestDataService
     conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
+    date_fmt = conn.quoet(date)
     MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
-          SET TIOCTIME = (#{date})
+          SET TIOCTIME = #{date_fmt}
           WHERE TICKNUM = #{case_id}
         SQL
       end
