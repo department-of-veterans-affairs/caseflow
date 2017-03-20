@@ -3,149 +3,10 @@ import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
-import StringUtil from '../../util/StringUtil';
+import SPECIAL_ISSUES from '../../util/SpecialIssuesRouting';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
-
-const TABLE_HEADERS = ['Program', 'VACOLS Issue(s)', 'Disposition'];
-
-export const SPECIAL_ISSUES = [
-  'Contaminated Water at Camp LeJeune',
-  'DIC - death, or accrued benefits - United States',
-  `Education - GI Bill, dependents educational ` +
-    `assistance, scholarship, transfer of entitlement`,
-  'Foreign claim - compensation claims, dual claims, appeals',
-  'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
-  'Foreign pension, DIC - all other foreign countries',
-  'Hearing - including travel board & video conference',
-  'Home Loan Guarantee',
-  'Incarcerated Veterans',
-  'Insurance',
-  'Manlincon Compliance',
-  'Mustard Gas',
-  'National Cemetery Administration',
-  'Non-rating issue',
-  'Pension - United States',
-  'Private Attorney or Agent',
-  'Radiation',
-  'Rice Compliance',
-  'Spina Bifida',
-  `U.S. Territory claim - American Samoa, Guam, Northern ` +
-    `Mariana Islands (Rota, Saipan & Tinian)`,
-  'U.S. Territory claim - Philippines',
-  'U.S. Territory claim - Puerto Rico and Virgin Islands',
-  'VAMC',
-  'Vocational Rehab',
-  'Waiver of Overpayment'
-];
-
-
-const SPECIAL_ISSUE_NODE_MAP = {
-  'Manlincon Compliance': <span><i>Manlincon</i> Compliance</span>,
-  'Rice Compliance': <span><i>Rice</i> Compliance</span>
-};
-
-export const UNHANDLED_SPECIAL_ISSUES = [
-  {
-    emailAddress: 'PMC',
-    regionalOffice: 'PMC',
-    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates'
-  },
-  {
-    emailAddress: 'education',
-    regionalOffice: 'education',
-    specialIssue: 'educationGiBillDependentsEducational' +
-    'AssistanceScholarshipTransferOfEntitlement'
-  },
-  {
-    emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
-    regionalOffice: 'RO83',
-    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean'
-  },
-  {
-    emailAddess: 'PMC',
-    regionalOffice: 'PMC',
-    specialIssue: 'foreignPensionDicAllOtherForeignCountries'
-  },
-  {
-    emailAddress: null,
-    regionalOffice: null,
-    specialIssue: 'homeLoanGuarantee'
-  },
-  {
-    emailAddress: ['nancy.encarnado@va.gov'],
-    regionalOffice: 'RO80',
-    specialIssue: 'insurance'
-  },
-  {
-    emailAddress: null,
-    regionalOffice: null,
-    specialIssue: 'nationalCemeteryAdministration'
-  },
-  {
-    emailAddress: 'PMC',
-    regionalOffice: 'PMC',
-    specialIssue: 'pensionUnitedStates'
-  },
-  {
-    emailAddress: ['Travis.Richardson@va.gov'],
-    regionalOffice: 'RO99',
-    specialIssue: 'vamc'
-  },
-  {
-    emailAddress: null,
-    regionalOffice: null,
-    specialIssue: 'vocationalRehab'
-  },
-  {
-    emailAddress: 'COWC',
-    regionalOffice: 'COWC',
-    specialIssue: 'waiverOfOverpayment'
-  }
-];
-
-export const ROUTING_SPECIAL_ISSUES = [
-  {
-    specialIssue: 'mustardGas',
-    stationOfJurisdiction: '351 - Muskogee, OK'
-  },
-  {
-    specialIssue: 'contaminatedWaterAtCampLejeune',
-    stationOfJurisdiction: '327 - Louisville, KY'
-  },
-  {
-    specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
-    stationOfJurisdiction: '311 - Pittsburgh, PA'
-  },
-  {
-    specialIssue: 'usTerritoryClaimPhilippines',
-    stationOfJurisdiction: '358 - Manila, Philippines'
-  },
-  {
-    specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
-    stationOfJurisdiction: '355 - San Juan, Puerto Rico'
-  },
-  {
-    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
-      'MarianaIslandsRotaSaipanTinian',
-    stationOfJurisdiction: '459 - Honolulu, HI'
-  }
-];
-
-export const REGIONAL_OFFICE_SPECIAL_ISSUES = [
-  `educationGiBillDependentsEducational` +
-    `AssistanceScholarshipTransferOfEntitlement`,
-  'hearingIncludingTravelBoardVideoConference',
-  'homeLoanGuarantee',
-  'incarceratedVeterans',
-  'manlinconCompliance',
-  'nonratingIssue',
-  'privateAttorneyOrAgent',
-  'radiation',
-  'riceCompliance',
-  'spinaBifida'
-];
 
 export default class EstablishClaimDecision extends React.Component {
   constructor(props) {
@@ -321,16 +182,14 @@ export default class EstablishClaimDecision extends React.Component {
           <div className="cf-multiple-columns">
             {
               SPECIAL_ISSUES.map((issue, index) => {
-                let issueName = StringUtil.convertToCamelCase(issue);
-                let node = SPECIAL_ISSUE_NODE_MAP[issue] || issue;
 
                 return <Checkbox
-                  id={issueName}
-                  label={node}
-                  name={issueName}
-                  onChange={handleFieldChange('specialIssues', issueName)}
+                  id={issue.specialIssue}
+                  label={issue.display}
+                  name={issue.specialIssue}
+                  onChange={handleFieldChange('specialIssues', issue.specialIssue)}
                     key={index}
-                    {...specialIssues[issueName]}
+                    {...specialIssues[issue.specialIssue]}
                 />;
               })
             }

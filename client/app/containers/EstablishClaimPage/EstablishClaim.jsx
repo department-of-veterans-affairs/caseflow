@@ -4,6 +4,7 @@ import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
+import SPECIAL_ISSUES from '../../util/SpecialIssuesRouting';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -59,8 +60,6 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const SPECIAL_ISSUES = Decision.SPECIAL_ISSUES;
-
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -115,16 +114,15 @@ export default class EstablishClaim extends BaseForm {
       specialIssuesRegionalOffice: ''
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
       // Check special issue boxes based on what was sent from the database
       let snakeCaseIssueSubstring =
-        StringUtil.camelCaseToSnakeCase(camelCaseIssue).substring(0, 60);
+        StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
 
-      this.state.specialIssues[camelCaseIssue] =
+      this.state.specialIssues[issue.specialIssue] =
         new FormField(props.task.appeal[snakeCaseIssueSubstring]);
 
-      this.state.specialIssues[camelCaseIssue].issue = issue;
+      this.state.specialIssues[issue.specialIssue].issue = issue.display;
     });
   }
 
@@ -142,22 +140,28 @@ export default class EstablishClaim extends BaseForm {
     return DECISION_PAGE;
   }
 
-  containsRoutedSpecialIssues = () => {
-    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => {
-      return this.state.specialIssues[issue.specialIssue].value;
+  containsRoutedSpecialIssues() {
+    let containsRoutedSpecialIssues = false;
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.stationOfJurisdiction &&
+          issue.stationOfJurisdiction != 'regional' &&
+          this.state.specialIssues[issue.specialIssue].value) {
+        containsRoutedSpecialIssues = true;
+      }
     });
-  }
-
-  supportedSpecialIssues = () => {
-    return [...Decision.ROUTING_SPECIAL_ISSUES,
-      ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES];
-  }
+    return containsRoutedSpecialIssues;
+  };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return this.supportedSpecialIssues().some((issue) => {
-      return this.state.specialIssues[issue.specialIssue || issue].value;
+    let containsRoutedOrRegionalOfficeSpecialIssues = false;
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.stationOfJurisdiction &&
+          this.state.specialIssues[issue.specialIssue].value) {
+        containsRoutedOrRegionalOfficeSpecialIssues = true;
+      }
     });
-  }
+    return containsRoutedOrRegionalOfficeSpecialIssues;
+  };
 
   componentDidMount() {
     let { history } = this.state;
@@ -489,14 +493,18 @@ export default class EstablishClaim extends BaseForm {
     // default needs to be reset in case the user has navigated back in the form
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
-    Decision.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue].value) {
+    // Go through the special issues, and for any regional issues, set SOJ to RO
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.stationOfJurisdiction == 'regional' && this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
-    Decision.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+    // Go through all the special issues, this time looking for routed issues
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.stationOfJurisdiction &&
+          issue.stationOfJurisdiction != 'regional' &&
+          this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
@@ -602,13 +610,13 @@ export default class EstablishClaim extends BaseForm {
       return;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.unhandled && this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.emailAddress,
-          specialIssuesRegionalOffice: issue.regionalOffice
+          specialIssuesEmail: issue.unhandled.emailAddress,
+          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
         });
       }
     });
@@ -624,8 +632,8 @@ export default class EstablishClaim extends BaseForm {
       return true;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+    SPECIAL_ISSUES.forEach((issue) => {
+      if (issue.unhandled && this.state.specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }
     });
