@@ -32,7 +32,7 @@ const CertificationProgressBar = () => {
     ]
     }
   />;
-}
+};
 
 const Certification = () => {
   return <BrowserRouter>
