@@ -31,11 +31,11 @@ const ConfirmHearing = ({ match }) => {
       </div>
 
       <RadioField name={hearingChangeQuestion}
-        displayRequired="true"
+        displayRequired={true}
         options={hearingChangeAnswers}/>
 
       <RadioField name={typeOfAppealQuestion}
-        displayRequired="true"
+        displayRequired={true}
         options={typeOfAppealAnswers}/>
 
       <LoadingContainer>
@@ -52,7 +52,7 @@ const ConfirmHearing = ({ match }) => {
 
       <RadioField name={typeOfHearingQuestion}
           options={typeOfHearingAnswers}
-          displayRequired="true"/>
+          displayRequired={true}/>
     </div>
       <div className="cf-app-segment">
         <a href="#confirm-cancel-certification"
