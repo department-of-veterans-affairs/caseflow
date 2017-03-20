@@ -3,6 +3,30 @@ import { Link } from 'react-router-dom';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 
+const hearingChangeQuestion = `Was a hearing cancellation or request added after
+09/01/2017?`;
+const hearingChangeAnswers = ["Yes", "No"];
+
+const hearingCheckText = `Check the appellant's eFolder for a hearing
+cancellation or request added after 09/01/2017, the date the Form 9
+(or statement in lieu of Form 9) was uploaded.`;
+
+
+const typeOfAppealQuestion = `Caseflow found the document below, labeled as a Form 9,
+from the appellant's eFolder. What type of substantive appeal is it?`;
+const typeOfAppealAnswers = ["Form 9", "Statement in lieu of Form 9"];
+
+const typeOfHearingQuestion = `Which box did the appellant select for the Optional
+Board Hearing question above? Depending on the Form 9, this may be Question 8
+or Question 10.`;
+const typeOfHearingAnswers = [
+  'A. I do not want an optional board hearing',
+  'B. I want a hearing by videoconference at a local VA office.',
+  'C. I want a hearing in Washington, DC.',
+  'D. I want a hearing at a local VA office.',
+  'No box selected.'];
+
+
 // TODO: refactor to use shared components where helpful
 const ConfirmHearing = ({ match }) => {
   return <div>
@@ -50,28 +74,5 @@ const ConfirmHearing = ({ match }) => {
     </Link>
   </div>;
 };
-
-const hearingChangeQuestion = `Was a hearing cancellation or request added after
-09/01/2017?`;
-const hearingChangeAnswers = ["Yes", "No"];
-
-const hearingCheckText = `Check the appellant's eFolder for a hearing
-cancellation or request added after 09/01/2017, the date the Form 9
-(or statement in lieu of Form 9) was uploaded.`;
-
-
-const typeOfAppealQuestion = `Caseflow found the document below, labeled as a Form 9,
-from the appellant's eFolder. What type of substantive appeal is it?`;
-const typeOfAppealAnswers = ["Form 9", "Statement in lieu of Form 9"];
-
-const typeOfHearingQuestion = `Which box did the appellant select for the Optional
-Board Hearing question above? Depending on the Form 9, this may be Question 8
-or Question 10.`;
-const typeOfHearingAnswers = [
-  'A. I do not want an optional board hearing',
-  'B. I want a hearing by videoconference at a local VA office.',
-  'C. I want a hearing in Washington, DC.',
-  'D. I want a hearing at a local VA office.',
-  'No box selected.'];
 
 export default ConfirmHearing;
