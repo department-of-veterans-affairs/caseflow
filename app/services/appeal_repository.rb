@@ -271,7 +271,7 @@ class AppealRepository
   end
 
   def self.send_and_log_request(vbms_id, request)
-    name = request.class.name.split('::').last
+    name = request.class.name.split("::").last
     MetricsService.timer("sent VBMS request #{request.class} for #{vbms_id}",
                          service: :vbms,
                          name: name) do
