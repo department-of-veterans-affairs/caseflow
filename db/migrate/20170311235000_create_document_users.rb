@@ -4,7 +4,7 @@ class CreateDocumentUsers < ActiveRecord::Migration
       t.belongs_to :document, null: false
       t.belongs_to :user, null: false
 
-      t.datetime   :viewed_at
+      t.datetime   :first_viewed_at
     end
 
     add_index(:document_users, [:document_id, :user_id], unique: true)

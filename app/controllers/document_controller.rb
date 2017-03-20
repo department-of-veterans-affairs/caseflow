@@ -8,10 +8,11 @@ class DocumentController < ApplicationController
   end
 
   def mark_as_read
-    document_user = DocumentUser.find_or_create_by(
+    DocumentUser.find_or_create_by(
       document_id: params[:id],
-      user_id: current_user.id)
-    document_user.update!(viewed_at: Time.zone.now)
+      user_id: current_user.id).tap do |t|
+      t.update!(viewed_at: Time.zone.now)
+    end
     render json: {}
   end
 end

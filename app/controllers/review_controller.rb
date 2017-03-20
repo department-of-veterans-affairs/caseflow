@@ -4,9 +4,21 @@ class ReviewController < ApplicationController
   def index
     vacols_id = params[:vacols_id]
     @appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+
+    document_ids = @appeal.saved_documents.map do |document|
+      document.id
+    end
+
+    read_documents_hash = current_user.document_users.where(document_id:  document_ids).reduce({}) do |read_documents_hash, documents_user|
+      read_documents_hash[documents_user.document_id] = true
+      read_documents_hash
+    end
+
+    binding.pry
+
     @documents = @appeal.saved_documents.map do |document|
       document.to_hash.tap do |object|
-        object[:opened_by_current_user] = document.opened_by_user(current_user)
+        object[:opened_by_current_user] = read_documents_hash[document.id] || false
       end
     end
   end
