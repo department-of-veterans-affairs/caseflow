@@ -44,23 +44,12 @@ class Document < ActiveRecord::Base
       :other
   end
 
-  def self.from_vbms_document(vbms_document, save_record = false)
-    attributes =
-      {
-        type: type_from_vbms_type(vbms_document.doc_type),
+  def self.from_vbms_document(vbms_document)
+    new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename
-      }
-
-    if save_record
-      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
-        t.assign_attributes(attributes)
-      end
-    else
-      new(attributes)
-    end
+        filename: vbms_document.filename)
   end
 
   def self.type_id(type)
@@ -112,5 +101,24 @@ class Document < ActiveRecord::Base
     serializable_hash(
       methods: [:vbms_document_id, :type, :received_at, :filename, :label]
     )
+  end
+
+  def load_or_save!
+    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
+    return fill_in(existing_document) if existing_document
+    save! && self
+  end
+
+  private
+
+  def fill_in(persisted_document)
+    persisted_document.assign_attributes(
+      type: type,
+      alt_types: alt_types,
+      vbms_doc_type: vbms_doc_type,
+      received_at: received_at,
+      filename: filename
+    )
+    persisted_document
   end
 end

@@ -38,9 +38,9 @@
     "lodash": "^4.17.2",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
-    "react": "^0.14.8",
-    "react-dom": "^0.14.8",
-    "react-on-rails": "6.1.2",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-on-rails": "^6.8.0",
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "webpack": "^1.12.14"
@@ -54,7 +54,7 @@
     "eslint-plugin-react": "^6.7.1",
     "mocha": "^3.1.2",
     "npm-shrinkwrap": "^6.0.2",
-    "react-addons-test-utils": "^0.14.8"
+    "react-addons-test-utils": "^15.4.2"
   },
   "optionalDependencies": {
     "fsevents": "*"

@@ -34,10 +34,16 @@ const ApiUtil = {
   },
 
   get(url, options = {}) {
-    return request.
+    let promise = request.
       get(url).
       set(this.headers(options.headers)).
-      query(options.query).
+      query(options.query);
+
+    if (options.cache) {
+      return promise;
+    }
+
+    return promise.
       use(nocache);
   },
 
