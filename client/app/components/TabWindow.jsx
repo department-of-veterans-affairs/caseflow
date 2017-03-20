@@ -27,6 +27,10 @@ export default class TabWindow extends React.Component {
     }
   }
 
+  getPageContent = (tabNumber) => () => {
+    
+  }
+
   getTabHeaderWithSVG = (tab) => {
     return <span>
       {tab.icon ? tab.icon : ''}
