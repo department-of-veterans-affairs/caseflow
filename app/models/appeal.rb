@@ -147,7 +147,7 @@ class Appeal < ActiveRecord::Base
 
   def form9
     # TODO: should be most recent form9, not first.
-    form9 = documents_with_type("Form 9").first
+    documents_with_type("Form 9").first
   end
 
   def serialized_decision_date
