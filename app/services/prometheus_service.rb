@@ -15,6 +15,24 @@ class PrometheusService
                                 "A counter of completed VBMS requests")
     end
 
+    def vbms_request_latency
+      @vbms_request_latency ||=
+        find_or_register_gauge_and_summary(:vbms_request_latency,
+                                           "latency of completed VBMS requests")
+    end
+
+    def bgs_request_latency
+      @bgs_request_latency ||=
+        find_or_register_gauge_and_summary(:bgs_request_latency,
+                                           "latency of completed BGS requests")
+    end
+
+    def vacols_request_latency
+      @vacols_request_latency ||=
+        find_or_register_gauge_and_summary(:vacols_request_latency,
+                                           "latency of completed VACOLS requests")
+    end
+
     def app_server_threads
       @app_server_threads ||=
         find_or_register_gauge_and_summary(:app_server_threads,
@@ -31,6 +49,12 @@ class PrometheusService
       @vacols_db_connections ||=
         find_or_register_gauge_and_summary(:vacols_db_connections,
                                            "vacols db connection snapshot")
+    end
+
+    def background_jobs
+      @background_jobs ||=
+        find_or_register_gauge_and_summary(:background_jobs,
+                                           "sidekiq background jobs")
     end
 
     private

@@ -1,5 +1,24 @@
 require "ostruct"
 
+# Get rid of this function!
+def create_tasks(count, opts = {})
+  Array.new(count) do |i|
+    vacols_id = "#{opts[:id_prefix] || 'ABC'}-#{i}"
+    appeal = Appeal.create(vacols_id: vacols_id, vbms_id:  "DEF-#{i}")
+    Fakes::AppealRepository.records[vacols_id] = Fakes::AppealRepository.appeal_remand_decided
+
+    user = User.create(station_id: "123", css_id: "#{opts[:id_prefix] || 'ABC'}-#{i}", full_name: "Jane Smith #{i}")
+    task = EstablishClaim.create(appeal: appeal)
+    task.prepare!
+    task.assign!(:assigned, user)
+
+    task.start! if %i(started reviewed completed).include?(opts[:initial_state])
+    task.review!(outgoing_reference_id: "123") if %i(reviewed completed).include?(opts[:initial_state])
+    task.complete!(:completed, status: 0) if %i(completed).include?(opts[:initial_state])
+    task
+  end
+end
+
 describe Dispatch do
   before do
     Fakes::AppealRepository.records = {

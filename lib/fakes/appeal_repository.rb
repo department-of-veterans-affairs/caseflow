@@ -5,7 +5,12 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      PrometheusService.completed_vbms_requests.increment(status: status)
+      name = data[:request].class.name
+      application = RequestStore[:application] || "other"
+
+      PrometheusService.completed_vbms_requests.increment(status: status,
+                                                          application: application,
+                                                          name: name)
       if status != 200
         PrometheusService.vbms_errors.increment
         Rails.logger.error(
@@ -22,6 +27,7 @@ class Fakes::AppealRepository
   class << self
     attr_writer :documents
     attr_accessor :records
+    attr_accessor :document_records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :end_product_claim_id
   end
@@ -101,10 +107,7 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    vbms_record = @records[appeal.vbms_id]
-
-    # @documents seems to be defaults. Do we need this?
-    vbms_record ? vbms_record[:documents] : (@documents || [])
+    (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
   def self.fetch_document_file(document)
@@ -258,7 +261,7 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID")
     {
       vbms_id: vbms_id,
       type: "Original",
@@ -270,8 +273,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      documents: missing_decision ? [] : [decision_document]
+      regional_office_key: "RO13"
     }
   end
 
@@ -426,27 +428,20 @@ class Fakes::AppealRepository
       ]
       documents_multiple_decisions = documents.dup.push(decision_document2)
 
+      self.document_records ||= {}
+
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         # Make every other case have two decision documents
-        @records["vbms_id#{i}"] =
+        self.document_records["vbms_id#{i}"] =
           if i.even?
-            {
-              documents: documents,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents
           else
-            {
-              documents: documents_multiple_decisions,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents_multiple_decisions
           end
       end
 
-      @records["FULLGRANT_VBMS_ID"] = {
-        documents: documents_multiple_decisions,
-        vbms_id: "FULLGRANT_VBMS_ID"
-      }
+      self.document_records["FULLGRANT_VBMS_ID"] = documents_multiple_decisions
     end
   end
   # rubocop:enable Metrics/MethodLength

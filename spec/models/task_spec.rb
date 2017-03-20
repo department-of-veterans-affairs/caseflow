@@ -327,21 +327,18 @@ describe Task do
 
   context "#prepare_with_decision!" do
     subject { task.prepare_with_decision! }
-    let(:task) { EstablishClaim.create(appeal: appeal) }
-    let(:appeal) { Appeal.create(vacols_id: "222SHANE", vbms_id: "222SHANE") }
-    let(:appeal_data) { Fakes::AppealRepository.appeal_partial_grant_decided(missing_decision: missing_decision) }
 
-    before do
-      Fakes::AppealRepository.records = { "222SHANE" => appeal_data }
-    end
+    let(:task) { EstablishClaim.create(appeal: appeal) }
+    let(:appeal) { Generators::Appeal.create(vacols_record: vacols_record, documents: documents) }
+    let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
     context "if the task's appeal has no decisions" do
-      let(:missing_decision) { true }
+      let(:documents) { [] }
       it { is_expected.to be_falsey }
     end
 
     context "if the task's appeal has decisions" do
-      let(:missing_decision) { false }
+      let(:documents) { [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)] }
       let(:filename) { appeal.decisions.first.file_name }
 
       context "if the task's appeal errors out on decision content load" do
