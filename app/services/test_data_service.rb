@@ -31,26 +31,43 @@ class TestDataService
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
-
+    # Cancel EPs
+    appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
+    cancel_end_products(appeal) if cancel_eps
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
-    # Push the decision date to the current date in vacols
-    # Update location to what it should be initially
     vacols_case = VACOLS::Case.find(vacols_id)
     if decision_type == :full
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(2.days.ago))
-      # Full Grants stay 99 but need to be moved up to at least -3 days
-      reset_outcoding_date(vacols_case)
+      dec_date = AppealRepository.dateshift_to_utc(2.days.ago)
     else
-      vacols_case.update_attributes(bfddec: AppealRepository.dateshift_to_utc(10.days.ago))
+      dec_date = AppealRepository.dateshift_to_utc(10.days.ago)
+      # Partial grants change location, need to set it back
       reset_location(vacols_case)
     end
+    # Push the decision date in VACOLS:
+    vacols_case.update_attributes(bfddec: dec_date)
+    reset_outcoding_date(vacols_case: vacols_case, date: dec_date)
+    upload_decision_doc(vacols_id: vacols_id, date: dec_date)
+  end
 
-    # Upload decision document for the appeal if it isn't there
-    log "Uploading decision for file #{vacols_case.bfcorlid}"
+  def self.upload_decision_doc(vacols_id: nil, date: Timezone.now)
+    return false if vacols_id.nil?
+    # Upload test decision document for the date
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
-    AppealRepository.upload_document(appeal, TestDecisionDocument.new) if appeal.decisions.empty?
-
-    cancel_end_products(appeal) if cancel_eps
+    vbms_client ||= AppealRepository.init_vbms_client
+    uploadable_document = TestDecisionDocument.new
+    log "Uploading decision for #{appeal.sanitized_vbms_id}"
+    upload_request = VBMS::Requests::UploadDocumentWithAssociations.new(appeal.sanitized_vbms_id,
+                                                                        date,
+                                                                        appeal.veteran_first_name,
+                                                                        appeal.veteran_middle_initial,
+                                                                        appeal.veteran_last_name,
+                                                                        uploadable_document.document_type,
+                                                                        uploadable_document.pdf_location,
+                                                                        uploadable_document.document_type_id,
+                                                                        "VACOLS",
+                                                                        true)
+    upload_resp = vbms_client.send_request(upload_request)
+    log "VBMS Test Decision Document upload response: #{upload_resp}"
   end
 
   # Cancel all EPs for an appeal to prevent duplicates
@@ -65,15 +82,17 @@ class TestDataService
     end
   end
 
-  def self.reset_outcoding_date(vacols_case)
+  def self.reset_outcoding_date(vacols_case: nil, date: 2.days.ago)
+    return false if vacols_case.nil?
     conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
+    date_fmt = conn.quote(date)
     MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
-          SET TIOCTIME = (SYSDATE-2)
+          SET TIOCTIME = #{date_fmt}
           WHERE TICKNUM = #{case_id}
         SQL
       end

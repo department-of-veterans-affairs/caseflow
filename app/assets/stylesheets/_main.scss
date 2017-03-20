@@ -236,3 +236,11 @@ select {
 .cf-bottom-border {
   border-bottom: 1px solid $color-gray-light;
 }
+
+.cf-bold-ordered-list {
+  font-weight: bold;
+
+  div {
+    font-weight: normal;
+  }
+}
