@@ -87,11 +87,11 @@ describe Document do
   end
 
   context "#load_or_save!" do
-    let(:document) { Document.new(type: "Form 9", vbms_document_id: "123456") }
+    let(:document) { Generators::Document.build(type: "Form 9") }
     let(:result) { document.load_or_save! }
 
     context "if the document exists in the DB" do
-      let!(:existing_document) { Document.create(vbms_document_id: "123456") }
+      let!(:existing_document) { Generators::Document.create(vbms_document_id: document.vbms_document_id) }
 
       it "returns the existing document" do
         expect(result.id).to eq(existing_document.id)

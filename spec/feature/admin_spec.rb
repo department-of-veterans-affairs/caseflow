@@ -72,12 +72,12 @@ RSpec.feature "Admin" do
     end
     page.click_on "Create Task"
 
-    # # ensure new task is created
+    # ensure new task is created
     expect(page).to have_current_path("/admin/establish_claim")
     expect(page).to have_content "Task created"
     expect(Task.count).to eq(3)
 
-    # # ensure that the task is unassigned
+    # ensure that the task is unassigned
     expect(Task.to_complete.count).to eq(2)
   end
 end

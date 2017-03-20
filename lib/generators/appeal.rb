@@ -17,6 +17,10 @@ class Generators::Appeal
       }
     end
 
+    # Build an appeal and set up the correct faked data in AppealRepository
+    # @attrs - the hash of arguments passed into `Appeal#new` with a few exceptions:
+    #   - :vacols_record [Hash] - Hash of the parsed values returned from AppealRepository from VACOLS
+    #   - :documents [Array] - Array of `Document` objects returned from AppealsRepository from VBMS
     def build(attrs = {})
       vacols_record = (attrs.delete(:vacols_record) || default_vacols_record).clone
       documents = attrs.delete(:documents)

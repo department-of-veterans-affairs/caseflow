@@ -103,7 +103,7 @@ describe Appeal do
 
       context "when document exists in the database" do
         let!(:existing_document) do
-          Document.create(vbms_document_id: documents[0].vbms_document_id)
+          Generators::Document.create(vbms_document_id: documents[0].vbms_document_id)
         end
 
         it "should return existing document" do
