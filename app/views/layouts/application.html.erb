@@ -4,6 +4,14 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
   <title>Caseflow <%= logo_name %></title>
+
+  <% if ENV["PUBLIC_SENTRY_DSN"] %>
+    <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
+    <script>
+      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>").install();
+    </script>
+  <% end %>
+
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
