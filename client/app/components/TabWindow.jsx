@@ -35,9 +35,7 @@ export default class TabWindow extends React.Component {
   }
 
   getTabClassName = (index, currentPage, isTabDisabled) => {
-    let className = "";
-
-    className = `cf-tab${index === currentPage ? " cf-active" : ""}`;
+    let className = `cf-tab${index === currentPage ? " cf-active" : ""}`;
     className += isTabDisabled ? ' disabled' : '';
 
     return className;
