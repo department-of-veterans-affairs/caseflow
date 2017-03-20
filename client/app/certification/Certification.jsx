@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import DocumentsCheckSuccess from './DocumentsCheckSuccess';
-import ConfirmCaseDetails from './ConfirmCaseDetails';
+import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
+import ProgressBar from '../components/ProgressBar';
 
 // TODO: rethink routes, this may be a temporary solution.
 // do we want to still use vacols_id?
@@ -11,10 +12,32 @@ const EntryPointRedirect = ({ match }) => {
   return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
 };
 
+// TODO: use app state to render this.
+const CertificationProgressBar = () => {
+  return <ProgressBar
+    sections = {
+    [
+      {
+        activated: true,
+        title: '1. Check Documents'
+      },
+      {
+        activated: false,
+        title: '2. Confirm Hearing'
+      },
+      {
+        activated: false,
+        title: '3. Confirmation'
+      }
+    ]
+    }
+  />;
+}
+
 const Certification = () => {
   return <BrowserRouter>
     <div>
-      {/* TODO: add progress bar here */}
+      <CertificationProgressBar/>
       <Route path="/certifications/new/:vacols_id"
         component={EntryPointRedirect}/>
       {/* TODO: Right now we're still using Rails to render the pages
@@ -24,8 +47,8 @@ const Certification = () => {
         port those over here */}
       <Route path="/certifications/:vacols_id/check_documents"
         component={DocumentsCheckSuccess}/>
-      <Route path="/certifications/:vacols_id/confirm_case_details"
-        component={ConfirmCaseDetails}/>
+      <Route path="/certifications/:vacols_id/confirm_hearing"
+        component={ConfirmHearing}/>
       <Route path="/certifications/:vacols_id/sign_and_certify"
         component={SignAndCertify}/>
       {/* TODO: should we add the cancel certification link

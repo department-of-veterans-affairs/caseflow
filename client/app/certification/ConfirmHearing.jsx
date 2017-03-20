@@ -4,10 +4,10 @@ import LoadingContainer from '../components/LoadingContainer';
 
 
 // TODO: refactor to use shared components where helpful
-const ConfirmCaseDetails = ({ match }) => {
+const ConfirmHearing = ({ match }) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
-      <h2>Confirm Case Details</h2>
+      <h2>Confirm Hearing</h2>
     </div>
 
     <LoadingContainer>
@@ -36,4 +36,4 @@ const ConfirmCaseDetails = ({ match }) => {
   </div>;
 };
 
-export default ConfirmCaseDetails;
+export default ConfirmHearing;
