@@ -24,15 +24,18 @@ export default class StyleGuideTabs extends React.Component {
     tabHeadersWithIcons = [{
       disable: false,
       icon: checkSymbolHtml(),
-      label: "Active Tab"
+      label: "Active Tab",
+      page: "1"
     }, {
       disable: false,
       icon: checkSymbolHtml(),
-      label: "Enabled Tab"
+      label: "Enabled Tab",
+      page: "2"
     }, {
       disable: true,
       icon: crossSymbolHtml(),
-      label: "Disabled Tab"
+      label: "Disabled Tab",
+      page: "3"
     }
     ];
 
