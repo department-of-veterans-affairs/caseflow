@@ -170,7 +170,7 @@ class Fakes::AppealRepository
   end
 
   def self.appeal_ready_to_certify_with_informal_form9
-    appeal = self.appeal_ready_to_certify.clone
+    appeal = appeal_ready_to_certify.clone
     appeal[:documents] = [nod_document, soc_document, informal_form9_document]
     appeal
   end
