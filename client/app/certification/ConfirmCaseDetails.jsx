@@ -19,11 +19,11 @@ const ConfirmCaseDetails = ({ match }) => {
         className="cf-action-openmodal cf-btn-link">
         Cancel Certification
       </a>
-      <button type="button" className="cf-push-right">
         <Link to={`/certifications/${match.params.vacols_id}/sign_and_certify`}>
-          Continue
+          <button type="button" className="cf-push-right">
+            Continue
+          </button>
         </Link>
-      </button>
     </div>
   </div>;
 };
