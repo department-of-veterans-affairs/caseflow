@@ -10,10 +10,10 @@ class MetricsService
     end
 
     if service
-      metric = PrometheusService.send("#{serivce}_request_latency".to_sym)
+      metric = PrometheusService.send("#{service}_request_latency".to_sym)
       app = RequestStore[:application] || "other"
 
-      metric.set({ app: app, name: name }, stopwatch)
+      metric.set({ app: app, name: name }, stopwatch.real)
 
     end
 

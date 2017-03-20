@@ -51,6 +51,6 @@ class MetricsCollector
     PrometheusService.background_jobs.set({ type: "processed" }, stats.processed)
     PrometheusService.background_jobs.set({ type: "enqueued" }, stats.enqueued)
     PrometheusService.background_jobs.set({ type: "failed" }, stats.failed)
-    PrometheusService.background_jobs.set({ type: "default_queue_latency" }, stats.defaut_queue_latency)
+    PrometheusService.background_jobs.set({ type: "default_queue_latency" }, stats.default_queue_latency)
   end
 end
