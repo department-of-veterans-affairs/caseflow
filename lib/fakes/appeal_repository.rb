@@ -5,7 +5,12 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      PrometheusService.completed_vbms_requests.increment(status: status)
+      name = data[:request].class.name
+      application = RequestStore[:application] || "other"
+
+      PrometheusService.completed_vbms_requests.increment(status: status,
+                                                          application: application,
+                                                          name: name)
       if status != 200
         PrometheusService.vbms_errors.increment
         Rails.logger.error(
