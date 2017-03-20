@@ -13,13 +13,13 @@ gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-gem "rack-timeout"
+gem "rack-timeout", require:"rack/timeout/base"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
 # React
-gem "react_on_rails", "~> 6"
+gem "react_on_rails", "~> 6.8.0"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
@@ -41,7 +41,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'db4d02611d7cf07e6c9610cd323b8dd4ee487d76'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '68f7431a3e642ed41da5ff6568aa9d45c11e6aca'
 
 # PDF Tools
 gem 'pdf-forms'
