@@ -17,7 +17,7 @@ const Certification = () => {
       {/* TODO: add progress bar here */}
       <Route path="/certifications/new/:vacols_id"
         component={EntryPointRedirect}/>
-      {/* TODO: Right we're still using Rails to render the pages
+      {/* TODO: Right now we're still using Rails to render the pages
         we display in scenarios where the appeal is not ready
         for certification (e.g. mismatched documents, already certified appeal).
         when we finish implementing the rest of certification v2,
