@@ -27,10 +27,6 @@ export default class TabWindow extends React.Component {
     }
   }
 
-  getPageContent = (tabNumber) => () => {
-    
-  }
-
   getTabHeaderWithSVG = (tab) => {
     return <span>
       {tab.icon ? tab.icon : ''}
@@ -50,7 +46,6 @@ export default class TabWindow extends React.Component {
   render() {
     let {
       tabs,
-      pages,
       fullPage
     } = this.props;
 
@@ -72,7 +67,7 @@ export default class TabWindow extends React.Component {
           )}
         </div>
         <div className="cf-tab-window-body-full-screen">
-          {pages[this.state.currentPage]}
+          {tabs[this.state.currentPage].page}
         </div>
       </div>;
   }
@@ -80,6 +75,5 @@ export default class TabWindow extends React.Component {
 
 TabWindow.propTypes = {
   onChange: PropTypes.func,
-  pages: PropTypes.arrayOf(PropTypes.node).isRequired,
-  tabs: PropTypes.arrayOf(PropTypes.object)
+  tabs: PropTypes.arrayOf(PropTypes.object).isRequired
 };
