@@ -12,7 +12,7 @@ describe PrometheusService do
 
       it "sets values for gauge & summary" do
         expect(@gauge.values[{}]).to eq(5)
-        expect(@summary.values[{}]).to eq(5)
+        expect(@summary.values[{}][0.5]).to eq(5)
       end
     end
   end
