@@ -107,7 +107,7 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || []
+    (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
   def self.fetch_document_file(document)
