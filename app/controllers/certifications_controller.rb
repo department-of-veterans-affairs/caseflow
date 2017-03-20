@@ -2,6 +2,7 @@ require "vbms_error"
 
 class CertificationsController < ApplicationController
   before_action :verify_access
+  before_action :set_application
 
   def new
     # NOTE: this isn't rails-restful. certification.start! saves
@@ -58,6 +59,10 @@ class CertificationsController < ApplicationController
 
   def cancel
     render layout: "application"
+  end
+
+  def set_application
+    RequestStore.store[:application] = :certification
   end
 
   private
