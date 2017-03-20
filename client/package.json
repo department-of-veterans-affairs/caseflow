@@ -41,6 +41,8 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-on-rails": "^6.8.0",
+    "react-router": "^4.0.0",
+    "react-router-dom": "^4.0.0",
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "webpack": "^1.12.14"
