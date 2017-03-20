@@ -39,6 +39,11 @@ class CertificationsController < ApplicationController
     render "confirm", layout: "application" if params[:confirm]
   end
 
+  def form9_pdf
+    form9 = certification.appeal.form9
+    send_file(form9.serve, type: "application/pdf", disposition: "inline")
+  end
+
   def pdf
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
   end
