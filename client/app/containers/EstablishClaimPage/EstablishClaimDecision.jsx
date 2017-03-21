@@ -185,7 +185,7 @@ export default class EstablishClaimDecision extends React.Component {
 
                 return <Checkbox
                   id={issue.specialIssue}
-                  label={issue.display}
+                  label={issue.node || issue.display}
                   name={issue.specialIssue}
                   onChange={handleFieldChange('specialIssues', issue.specialIssue)}
                     key={index}

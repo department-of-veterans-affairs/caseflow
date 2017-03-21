@@ -82,7 +82,8 @@ const SPECIAL_ISSUES = [
     }
   },
   {
-    display: <span><i>Manlincon</i> Compliance</span>,
+    display: 'Manlincon Compliance',
+    node: <span><i>Manlincon</i> Compliance</span>,
     specialIssue: 'manlinconCompliance',
     stationOfJurisdiction: 'regional',
     unhandled: null
@@ -130,7 +131,8 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: <span><i>Rice</i> Compliance</span>,
+    display: 'Rice Compliance',
+    node: <span><i>Rice</i> Compliance</span>,
     specialIssue: 'riceCompliance',
     stationOfJurisdiction: 'regional',
     unhandled: null
