@@ -86,6 +86,26 @@ describe Document do
     end
   end
 
+  context "#load_or_save!" do
+    let(:document) { Generators::Document.build(type: "Form 9") }
+    let(:result) { document.load_or_save! }
+
+    context "if the document exists in the DB" do
+      let!(:existing_document) { Generators::Document.create(vbms_document_id: document.vbms_document_id) }
+
+      it "returns the existing document" do
+        expect(result.id).to eq(existing_document.id)
+        expect(result.type).to eq("Form 9")
+      end
+    end
+
+    context "if the document doesn't exist in the DB" do
+      it "saves the document" do
+        expect(result).to be_persisted
+      end
+    end
+  end
+
   context "#serve!" do
     before do
       File.delete(file) if File.exist?(file)
