@@ -98,7 +98,9 @@ export default class DecisionReviewer extends React.Component {
         event.metaKey ||
         (event.button &&
         event.button === 1)) {
+
       this.markAsRead(pdfNumber);
+
       return true;
     }
 
@@ -107,6 +109,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   markAsRead = (pdfNumber) => {
+
     let documentId = this.state.documents[pdfNumber].id;
 
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).

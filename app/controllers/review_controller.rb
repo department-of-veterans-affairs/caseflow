@@ -10,7 +10,7 @@ class ReviewController < ApplicationController
     end
 
     read_documents_hash = current_user.document_views.where(document_id:  document_ids).reduce({}) do |read_documents_hash, document_view|
-      read_documents_hash[document_viewed.document_id] = true
+      read_documents_hash[document_view.document_id] = true
       read_documents_hash
     end
 
