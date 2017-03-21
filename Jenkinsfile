@@ -10,7 +10,7 @@ def APP_NAME = 'certification';
 // The application version to checkout.
 // See http://docs.ansible.com/ansible/git_module.html version field
 def APP_VERSION = sh (
-    script: 'git ls-remote --tags https://github.com/department-of-veterans-affairs/${APP_NAME}.git | awk '{print \$2}' | grep -v '{}' | awk -F"/" '{print "stable/"\$4}' | tail -n 1'
+    script: "git ls-remote --tags https://github.com/department-of-veterans-affairs/${APP_NAME}.git | awk '{print \$2}' | grep -v '{}' | awk -F"/" '{print "stable/"\$4}' | tail -n 1"
     returnStdout: true
   ).trim()
 
