@@ -29,3 +29,23 @@
 .usa-accordion-content {
   font-size: 1.4rem;
 }
+
+.cf-modal.active {
+  z-index: 3;
+}
+
+//TODO(marian): add to commons
+.cf-tab {
+  font-weight: 500;
+
+  i {
+    width: 17px;
+    height: 17px;
+    margin-right: 0.25em;
+    margin-left: -0.4em;
+  }
+}
+
+.cf-active {
+  font-weight: 700;
+}

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 /*
  * This component can be used to easily build tabs.
- * There required props are:
+ * The required props are:
  * - @tabs {array[string]} array of strings placed in the tabs at the top
  * of the window
  * - @pages {array[node]} array of nodes displayed when the corresponding
@@ -12,7 +12,8 @@ export default class TabWindow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 0
+      currentPage: 0,
+      disabled: false
     };
   }
 
@@ -26,10 +27,24 @@ export default class TabWindow extends React.Component {
     }
   }
 
+  getTabHeaderWithSVG = (tab) => {
+    return <span>
+      {tab.icon ? tab.icon : ''}
+      <span>{tab.label}</span>
+    </span>;
+  }
+
+  getTabClassName = (index, currentPage, isTabDisabled) => {
+    let className = `cf-tab${index === currentPage ? " cf-active" : ""}`;
+
+    className += isTabDisabled ? ' disabled' : '';
+
+    return className;
+  }
+
   render() {
     let {
       tabs,
-      pages,
       fullPage
     } = this.props;
 
@@ -38,21 +53,20 @@ export default class TabWindow extends React.Component {
           `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
         }>
           {tabs.map((tab, i) =>
-            <div
-              className={`cf-tab${i === this.state.currentPage ? " cf-active" : ""}`}
+            <button
+              className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
               id={`tab-${i}`}
-              onClick={this.onTabClick(i)}>
+              onClick={this.onTabClick(i)}
+              disabled={Boolean(tab.disable)}>
               <span>
-                <span>
-                  {tab}
-                </span>
+                {this.getTabHeaderWithSVG(tab)}
               </span>
-            </div>
+            </button>
           )}
         </div>
         <div className="cf-tab-window-body-full-screen">
-          {pages[this.state.currentPage]}
+          {tabs[this.state.currentPage].page}
         </div>
       </div>;
   }
@@ -60,6 +74,10 @@ export default class TabWindow extends React.Component {
 
 TabWindow.propTypes = {
   onChange: PropTypes.func,
-  pages: PropTypes.arrayOf(PropTypes.node).isRequired,
-  tabs: PropTypes.arrayOf(PropTypes.string).isRequired
+  tabs: PropTypes.arrayOf(PropTypes.shape({
+    disable: PropTypes.boolean,
+    icon: PropTypes.obj,
+    label: PropTypes.node.isRequired,
+    page: PropTypes.node.isRequired
+  }))
 };

@@ -9,9 +9,9 @@ import React from 'react';
  * @param {string} color The color of the non-gray part of the caseflow logo.
  * @returns {string} The HTML for the loading symbol.
  */
+
 export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#844E9F') {
   let style = { 'marginLeft': parseInt(`-${size}`, 10) };
-
 
   return (
       <span>
@@ -76,7 +76,7 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
 
 export let closeSymbolHtml = function() {
   return (
-    <svg style={{ pointerEvents: "none" }} width="55" height="55" className="cf-icon-close"
+    <svg width="55" height="55" className="cf-icon-close"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
       <title>close</title>
       <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3
@@ -111,6 +111,18 @@ export let missingSymbolHtml = function() {
       3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8
       1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"/>
     </svg>
+  );
+};
+
+export let checkSymbolHtml = function() {
+  return (
+    <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
+  );
+};
+
+export let crossSymbolHtml = function() {
+  return (
+    <i className="fa fa-times fa-1 cf-tab-cross" aria-hidden="true"></i>
   );
 };
 
