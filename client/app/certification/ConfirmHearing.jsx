@@ -24,6 +24,7 @@ const typeOfHearingAnswers = [
   'C. I want a hearing in Washington, DC.',
   'D. I want a hearing at a local VA office.',
   'No box selected.'];
+
 /*
 * Check the Veteran's hearing request in VBMS and update it in VACOLS.
 *
@@ -37,6 +38,7 @@ const typeOfHearingAnswers = [
 * in VBMS, if we can detect that based on the subject field in VBMS.
 *
  */
+
 // TODO: refactor to use shared components where helpful
 const ConfirmHearing = ({ match }) => {
   return <div>
