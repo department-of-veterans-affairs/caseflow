@@ -8,6 +8,7 @@ import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 import DocumentLabels from '../components/DocumentLabels';
+import Pdf from '../components/Pdf';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -158,33 +159,7 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  placeNote = (viewport, pageNumber) => (event) => {
-    if (this.state.isPlacingNote) {
-      let annotation = {
-        class: "Annotation",
-        page: pageNumber,
-        "type": "point",
-        "x": (event.offsetX + event.srcElement.offsetLeft) / this.state.scale,
-        "y": (event.offsetY + event.srcElement.offsetTop) / this.state.scale
-      };
-      let commentBox = document.getElementById('addComment');
-      let commentEvent = this.commentKeyPress(
-        this.saveNote(annotation, viewport, pageNumber));
 
-      if (this.state.commentBoxEventListener) {
-        commentBox.removeEventListener("keyup", this.state.commentBoxEventListener);
-        commentBox.removeEventListener("blur", this.state.commentBoxEventListener);
-      }
-
-      commentBox.addEventListener('keyup', commentEvent);
-      commentBox.addEventListener('blur', commentEvent);
-      this.setState({
-        commentBoxEventListener: commentEvent,
-        isAddingComment: true,
-        isPlacingNote: false
-      });
-    }
-  }
 
   saveNote = (annotation, viewport, pageNumber) => (content) => {
     annotation.comment = content;
@@ -204,49 +179,9 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
-  renderPage = (index) => {
-    const { UI } = PDFJSAnnotate;
 
-    let RENDER_OPTIONS = {
-      documentId: this.props.doc.id,
-      pdfDocument: this.state.pdfDocument,
-      rotate: 0,
-      scale: this.state.scale
-    };
 
-    this.isRendered[index] = true;
-    UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
-      let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
-      pageContainer.addEventListener('click',
-        this.placeNote(pdfPage.getViewport(this.state.scale, 0), index + 1));
-    }).
-    catch(() => {
-      this.isRendered[index] = false;
-    });
-  }
-
-  createPages = (pdfDocument) => {
-    const { UI } = PDFJSAnnotate;
-
-    // Create a page in the DOM for every page in the PDF
-    let viewer = document.getElementById('viewer');
-
-    // If the user has switched to the list view and this element doesnt
-    // exist then don't try to render the PDF.
-    // TODO: look into just hiding the PDFs instead of removing them.
-    if (!viewer) {
-      return;
-    }
-
-    viewer.innerHTML = '';
-
-    for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
-      let page = UI.createPage(i + 1);
-
-      viewer.appendChild(page);
-    }
-  }
 
   draw = (file, scrollLocation = 0) => {
     PDFJS.getDocument(file).then((pdfDocument) => {
@@ -285,35 +220,7 @@ export default class PdfViewer extends BaseForm {
       document.getElementById('scrollWindow').scrollTop * zoomFactor);
   }
 
-  scrollEvent = () => {
-    let page = document.getElementsByClassName('page');
-    let scrollWindow = document.getElementById('scrollWindow');
 
-    Array.prototype.forEach.call(page, (ele, index) => {
-      let boundingRect = ele.getBoundingClientRect();
-
-      // You are on this page, if the top of the page is above the middle
-      // and the bottom of the page is below the middle
-      if (boundingRect.top < scrollWindow.clientHeight / 2 &&
-          boundingRect.bottom > scrollWindow.clientHeight / 2) {
-        this.setState({
-          currentPage: index + 1
-        });
-      }
-
-      // This renders each page as it comes into view. i.e. when
-      // the top of the next page is within a thousand pixels of
-      // the current view we render it. If the bottom of the page
-      // above is within a thousand pixels of the current view
-      // we also redner it.
-      // TODO: Make this more robust and avoid magic numbers.
-      if (!this.isRendered[index] &&
-          boundingRect.bottom > -1000 &&
-          boundingRect.top < scrollWindow.clientHeight + 1000) {
-        this.renderPage(index);
-      }
-    });
-  }
 
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
@@ -488,13 +395,7 @@ export default class PdfViewer extends BaseForm {
                   </Button>
                 </span> }
             </div>
-            <div id="scrollWindow" className="cf-pdf-scroll-view">
-              <div
-                id="viewer"
-                className={`${this.state.isPlacingNote ? "cf-comment-cursor " : ""}` +
-                `cf-pdf-page pdfViewer singlePageView`}>
-              </div>
-            </div>
+            <Pdf />
             <div className="cf-pdf-footer cf-pdf-toolbar">
               <div className="usa-grid-full">
                 <div className="usa-width-one-third cf-pdf-buttons-left">
