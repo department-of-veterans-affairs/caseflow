@@ -1,6 +1,6 @@
 class Document < ActiveRecord::Base
   has_many :annotations
-  has_many :document_view
+  has_many :document_views
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb

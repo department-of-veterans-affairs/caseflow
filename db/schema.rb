@@ -88,20 +88,20 @@ ActiveRecord::Schema.define(version: 20170311235000) do
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
 
+  create_table "document_view", force: :cascade do |t|
+    t.integer  "document_id",     null: false
+    t.integer  "user_id",         null: false
+    t.datetime "first_viewed_at"
+  end
+
+  add_index "document_view", ["document_id", "user_id"], name: "index_document_view_on_document_id_and_user_id", unique: true, using: :btree
+
   create_table "documents", force: :cascade do |t|
     t.string  "vbms_document_id", null: false
     t.integer "label"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
-
-  create_table "documents_view", force: :cascade do |t|
-    t.integer  "document_id",     null: false
-    t.integer  "user_id",         null: false
-    t.datetime "first_viewed_at"
-  end
-
-  add_index "documents_view", ["document_id", "user_id"], name: "index_documents_view_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
