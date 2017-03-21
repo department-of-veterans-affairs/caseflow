@@ -19,7 +19,7 @@ const DocumentsCheckSuccess = ({ match }) => {
         Cancel Certification
       </a>
       <Link
-        to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
         <button type="button" className="cf-push-right">
           Continue
         </button>

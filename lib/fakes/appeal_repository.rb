@@ -116,8 +116,10 @@ class Fakes::AppealRepository
       when "1"
         File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
       when "2"
-        File.join(Rails.root, "lib", "pdfs", "VA9.pdf")
+        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
       when "3"
+        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+      when "4"
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       else
         File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
@@ -165,6 +167,12 @@ class Fakes::AppealRepository
       disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
       status: VACOLS::Case::STATUS["ADV"] # Advance
     }
+  end
+
+  def self.appeal_ready_to_certify_with_informal_form9
+    appeal = appeal_ready_to_certify.clone
+    appeal[:documents] = [nod_document, soc_document, informal_form9_document]
+    appeal
   end
 
   def self.appeal_mismatched_nod
@@ -360,24 +368,24 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.soc_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "95",
-        received_at: Date.new(1987, 9, 6),
-        document_id: "2",
-        filename: "My_SOC"
-      )
-    )
-  end
-
   def self.form9_document
     Document.from_vbms_document(
       OpenStruct.new(
         doc_type: "179",
         received_at: 1.day.ago,
+        document_id: "2",
+        filename: "Form_9"
+      )
+    )
+  end
+
+  def self.informal_form9_document
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "179",
+        received_at: 1.day.ago,
         document_id: "3",
-        filename: "My_Form_9"
+        filename: "Form_9"
       )
     )
   end
@@ -393,12 +401,24 @@ class Fakes::AppealRepository
     )
   end
 
+  # TODO: get a mock SOC
+  def self.soc_document
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "95",
+        received_at: Date.new(1987, 9, 6),
+        document_id: "5",
+        filename: "My_SOC"
+      )
+    )
+  end
+
   def self.decision_document2
     Document.from_vbms_document(
       OpenStruct.new(
         doc_type: "27",
         received_at: 8.days.ago,
-        document_id: "5",
+        document_id: "1001",
         filename: "My_Decision2"
       )
     )
@@ -413,6 +433,7 @@ class Fakes::AppealRepository
 
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
+        "124C" => Fakes::AppealRepository.appeal_ready_to_certify_with_informal_form9,
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
         "321C" => Fakes::AppealRepository.appeal_remand_decided,

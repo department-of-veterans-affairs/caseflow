@@ -26,6 +26,9 @@ RSpec.feature "Start Certification" do
     visit "certifications/new/ABCD"
     expect(page).to have_current_path("/certifications/ABCD/check_documents")
     expect(page).to have_content("All documents detected!")
+    click_button("Continue")
+    expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+    ENV["ENABLE_CERTIFICATION_V2"] = ""
   end
 
   scenario "Starting a certification with missing documents" do

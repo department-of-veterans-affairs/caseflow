@@ -3,7 +3,9 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
-import ROUTING_INFORMATION from '../../util/RoutingConstants';
+import ROUTING_INFORMATION from '../../constants/Routing';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -12,7 +14,7 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
+import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
@@ -58,8 +60,6 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '178',
   '179'
 ];
-
-const SPECIAL_ISSUES = Decision.SPECIAL_ISSUES;
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -115,16 +115,15 @@ export default class EstablishClaim extends BaseForm {
       specialIssuesRegionalOffice: ''
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
       // Check special issue boxes based on what was sent from the database
       let snakeCaseIssueSubstring =
-        StringUtil.camelCaseToSnakeCase(camelCaseIssue).substring(0, 60);
+        StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
 
-      this.state.specialIssues[camelCaseIssue] =
+      this.state.specialIssues[issue.specialIssue] =
         new FormField(props.task.appeal[snakeCaseIssueSubstring]);
 
-      this.state.specialIssues[camelCaseIssue].issue = issue;
+      this.state.specialIssues[issue.specialIssue].issue = issue.display;
     });
   }
 
@@ -143,18 +142,13 @@ export default class EstablishClaim extends BaseForm {
   }
 
   containsRoutedSpecialIssues = () => {
-    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => {
+    return specialIssueFilters.routedSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue].value;
     });
   }
 
-  supportedSpecialIssues = () => {
-    return [...Decision.ROUTING_SPECIAL_ISSUES,
-      ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES];
-  }
-
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return this.supportedSpecialIssues().some((issue) => {
+    return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue || issue].value;
     });
   }
@@ -489,13 +483,15 @@ export default class EstablishClaim extends BaseForm {
     // default needs to be reset in case the user has navigated back in the form
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
-    Decision.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue].value) {
+    // Go through the special issues, and for any regional issues, set SOJ to RO
+    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
-    Decision.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
+    // Go through all the special issues, this time looking for routed issues
+    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
@@ -602,13 +598,13 @@ export default class EstablishClaim extends BaseForm {
       return;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.emailAddress,
-          specialIssuesRegionalOffice: issue.regionalOffice
+          specialIssuesEmail: issue.unhandled.emailAddress,
+          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
         });
       }
     });
@@ -624,7 +620,7 @@ export default class EstablishClaim extends BaseForm {
       return true;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }
