@@ -12,12 +12,14 @@ export default class RadioField extends React.Component {
       name,
       options,
       value,
-      displayRequired
+      required
     } = this.props;
+
+    required = required || false;
 
     return <fieldset className="cf-form-radio-inline cf-form-showhide-radio">
       <legend className="question-label">
-        {(label || name)} {(displayRequired && <RequiredIndicator/>)}
+        {(label || name)} {(required && <RequiredIndicator/>)}
       </legend>
 
       <div className="cf-form-radio-options">
@@ -40,7 +42,7 @@ export default class RadioField extends React.Component {
 }
 
 RadioField.propTypes = {
-  displayRequired: PropTypes.bool,
+  required: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,

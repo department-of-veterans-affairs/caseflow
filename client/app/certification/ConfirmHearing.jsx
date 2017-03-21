@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 
-const hearingChangeQuestion = `Was a hearing cancellation or request added after
-09/01/2017?`;
-const hearingChangeAnswers = ["Yes", "No"];
 
 const hearingCheckText = `Check the appellant's eFolder for a hearing
 cancellation or request added after 09/01/2017, the date the Form 9
 (or statement in lieu of Form 9) was uploaded.`;
 
+const hearingChangeQuestion = `Was a hearing cancellation or request added after
+09/01/2017?`;
+const hearingChangeAnswers = ["Yes", "No"];
 
 const typeOfAppealQuestion = `Caseflow found the document below, labeled as a Form 9,
 from the appellant's eFolder. What type of substantive appeal is it?`;
@@ -26,6 +26,19 @@ const typeOfHearingAnswers = [
   'D. I want a hearing at a local VA office.',
   'No box selected.'];
 
+/*
+* Check the Veteran's hearing request in VBMS and update it in VACOLS.
+*
+* This was created to reduce the number of errors
+* that show up in the activation process later on,
+* thus paving the way for auto-activation.
+*
+* In its final form, it will show:
+* The most recent form9 (where the VACOLS date matches the VBMS date)
+* OR the most recent hearing change/cancellation/request document found
+* in VBMS, if we can detect that based on the subject field in VBMS.
+*
+ */
 
 // TODO: refactor to use shared components where helpful
 const ConfirmHearing = ({ match }) => {
@@ -38,11 +51,11 @@ const ConfirmHearing = ({ match }) => {
       </div>
 
       <RadioField name={hearingChangeQuestion}
-        displayRequired={true}
+        required={true}
         options={hearingChangeAnswers}/>
 
       <RadioField name={typeOfAppealQuestion}
-        displayRequired={true}
+        required={true}
         options={typeOfAppealAnswers}/>
 
       <LoadingContainer>
@@ -59,14 +72,16 @@ const ConfirmHearing = ({ match }) => {
 
       <RadioField name={typeOfHearingQuestion}
         options={typeOfHearingAnswers}
-        displayRequired={true}/>
+        required={true}/>
     </div>
+
     <div className="cf-app-segment">
       <a href="#confirm-cancel-certification"
         className="cf-action-openmodal cf-btn-link">
         Cancel Certification
       </a>
     </div>
+
     <Link to={`/certifications/${match.params.vacols_id}/sign_and_certify`}>
       <button type="button" className="cf-push-right">
         Continue

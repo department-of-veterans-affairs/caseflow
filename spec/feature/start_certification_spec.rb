@@ -20,9 +20,7 @@ RSpec.feature "Start Certification" do
   end
 
   scenario "Starting a Certification v2" do
-    ENV["ENABLE_CERTIFICATION_V2"] = "true"
-
-    User.authenticate!(roles: ["Certify Appeal"])
+    User.authenticate!(roles: ["Certify Appeal", "CertificationV2"])
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
     visit "certifications/new/ABCD"
