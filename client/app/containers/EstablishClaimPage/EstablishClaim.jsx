@@ -5,6 +5,7 @@ import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../util/RoutingConstants';
 import SPECIAL_ISSUES from '../../util/SpecialIssuesRouting';
+import specialIssueFunctions from '../../util/SpecialIssueFunctions';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -140,32 +141,17 @@ export default class EstablishClaim extends BaseForm {
     return DECISION_PAGE;
   }
 
-  containsRoutedSpecialIssues() {
-    let containsRoutedSpecialIssues = false;
-
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.stationOfJurisdiction &&
-          issue.stationOfJurisdiction !== 'regional' &&
-          this.state.specialIssues[issue.specialIssue].value) {
-        containsRoutedSpecialIssues = true;
-      }
+  containsRoutedSpecialIssues = () => {
+    return specialIssueFunctions.routedSpecialIssues().some((issue) => {
+      return this.state.specialIssues[issue.specialIssue].value;
     });
-
-    return containsRoutedSpecialIssues;
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    let containsRoutedOrRegionalOfficeSpecialIssues = false;
-
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.stationOfJurisdiction &&
-          this.state.specialIssues[issue.specialIssue].value) {
-        containsRoutedOrRegionalOfficeSpecialIssues = true;
-      }
+    return specialIssueFunctions.routedOrRegionalSpecialIssues().some((issue) => {
+      return this.state.specialIssues[issue.specialIssue || issue].value;
     });
-
-    return containsRoutedOrRegionalOfficeSpecialIssues;
-  };
+  }
 
   componentDidMount() {
     let { history } = this.state;
@@ -498,18 +484,15 @@ export default class EstablishClaim extends BaseForm {
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.stationOfJurisdiction === 'regional' &&
-          this.state.specialIssues[issue.specialIssue].value) {
+    specialIssueFunctions.regionalSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
     // Go through all the special issues, this time looking for routed issues
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.stationOfJurisdiction &&
-          issue.stationOfJurisdiction !== 'regional' &&
-          this.state.specialIssues[issue.specialIssue].value) {
+    specialIssueFunctions.routedSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
@@ -615,8 +598,8 @@ export default class EstablishClaim extends BaseForm {
       return;
     }
 
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.unhandled && this.state.specialIssues[issue.specialIssue].value) {
+    specialIssueFunctions.unhandledSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -637,8 +620,8 @@ export default class EstablishClaim extends BaseForm {
       return true;
     }
 
-    SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.unhandled && this.state.specialIssues[issue.specialIssue].value) {
+    specialIssueFunctions.unhandledSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }
     });
