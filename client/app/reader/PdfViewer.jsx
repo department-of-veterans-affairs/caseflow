@@ -8,7 +8,7 @@ import TextareaField from '../components/TextareaField';
 import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 import DocumentLabels from '../components/DocumentLabels';
-import Pdf from '../components/Pdf';
+import PdfUI from '../components/PdfUI';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -159,8 +159,6 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-
-
   saveNote = (annotation, viewport, pageNumber) => (content) => {
     annotation.comment = content;
     this.props.annotationStorage.addAnnotation(
@@ -182,44 +180,26 @@ export default class PdfViewer extends BaseForm {
 
 
 
+  placeNote = (viewport, pageNumber, annotation) => {   
+    if (this.state.isPlacingNote) {   
+      let commentBox = document.getElementById('addComment');   
+      let commentEvent = this.commentKeyPress(    
+        this.saveNote(annotation, viewport, pageNumber));   
+    
+      if (this.state.commentBoxEventListener) {   
+        commentBox.removeEventListener("keyup", this.state.commentBoxEventListener);    
+        commentBox.removeEventListener("blur", this.state.commentBoxEventListener);   
+      }
 
-  draw = (file, scrollLocation = 0) => {
-    PDFJS.getDocument(file).then((pdfDocument) => {
-      this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-      this.setState({
-        currentPage: 1,
-        numPages: pdfDocument.pdfInfo.numPages,
-        pdfDocument
-      });
-
-      this.createPages(pdfDocument);
-      // Automatically render the first page
-      // This assumes that page has already been created and appended
-      this.renderPage(0);
-      document.getElementById('scrollWindow').scrollTop = scrollLocation;
-      this.scrollEvent();
-
-      this.onCommentChange();
-    });
+      commentBox.addEventListener('keyup', commentEvent);    
+      commentBox.addEventListener('blur', commentEvent);    
+      this.setState({   
+        commentBoxEventListener: commentEvent,    
+        isAddingComment: true,    
+        isPlacingNote: false    
+      });   
+    }   
   }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.file !== this.props.file) {
-      document.getElementById('scrollWindow').scrollTop = 0;
-      this.draw(nextProps.file);
-    }
-  }
-
-  zoom = (delta) => () => {
-    let zoomFactor = (this.state.scale + delta) / this.state.scale;
-
-    this.setState({
-      scale: this.state.scale + delta
-    });
-    this.draw(this.props.file,
-      document.getElementById('scrollWindow').scrollTop * zoomFactor);
-  }
-
 
 
   // Returns true if the user is doing some action. i.e.
@@ -242,8 +222,6 @@ export default class PdfViewer extends BaseForm {
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
-    PDFJS.workerSrc = this.props.pdfWorker;
-
     UI.addEventListener('annotation:click', (event) => {
       let comments = [...this.state.comments];
 
@@ -264,12 +242,6 @@ export default class PdfViewer extends BaseForm {
 
     window.addEventListener('keydown', this.keyListener);
 
-    this.draw(this.props.file);
-
-    // Scroll event to render pages as they come into view
-    let scrollWindow = document.getElementById('scrollWindow');
-
-    scrollWindow.addEventListener('scroll', this.scrollEvent);
     UI.enableEdit();
   }
 
@@ -299,19 +271,9 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
-  onColorLabelChange = (label) => () => {
-    if (label === this.props.label) {
-      this.props.setLabel('');
-    } else {
-      this.props.setLabel(label);
-    }
-  }
-
   render() {
     let comments = [];
-    let selectedLabels = {};
 
-    selectedLabels[this.props.label] = true;
 
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
@@ -351,90 +313,13 @@ export default class PdfViewer extends BaseForm {
     return (
       <div>
         <div className="cf-pdf-page-container">
-          <div className="cf-pdf-container">
-            <div className="cf-pdf-header cf-pdf-toolbar">
-              <div>
-                <span className="cf-pdf-buttons-left">
-                  { !this.props.hideNavigation &&
-                    <Button
-                      name="backToDocuments"
-                      classNames={["cf-pdf-button"]}
-                      onClick={this.props.showList}>
-                      <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                      &nbsp; View all documents
-                    </Button> }
-                </span>
-                <span className="cf-right-side">
-                  <Button
-                    name="newTab"
-                    classNames={["cf-pdf-button"]}
-                    onClick={() => window.open(
-                      linkToSingleDocumentView(this.props.doc), '_blank')}>
-                    {this.props.doc.filename}
-                  </Button>
-                </span>
-              </div>
-            </div>
-            <div className="cf-pdf-navigation">
-              { this.props.previousPdf &&
-                <span className="cf-pdf-buttons-left">
-                  <Button
-                    name="previous"
-                    classNames={["cf-pdf-button"]}
-                    onClick={this.props.previousPdf}>
-                    <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
-                  </Button>
-                </span> }
-              { this.props.nextPdf &&
-                <span className="cf-pdf-buttons-right">
-                  <Button
-                    name="next"
-                    classNames={["cf-pdf-button cf-right-side"]}
-                    onClick={this.props.nextPdf}>
-                    <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
-                  </Button>
-                </span> }
-            </div>
-            <Pdf />
-            <div className="cf-pdf-footer cf-pdf-toolbar">
-              <div className="usa-grid-full">
-                <div className="usa-width-one-third cf-pdf-buttons-left">
-                  <DocumentLabels
-                    onClick={this.onColorLabelChange}
-                    selectedLabels={selectedLabels}/>
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-center">
-                  Page {this.state.currentPage} of {this.state.numPages}
-                </div>
-                <div className="usa-width-one-third cf-pdf-buttons-right">
-                  <Button
-                    name="download"
-                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-                  >
-                    <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="zoomOut"
-                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-                    onClick={this.zoom(-0.3)}>
-                    <i className="fa fa-minus" aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="fit"
-                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-                    onClick={this.zoom(1)}>
-                    <i className="fa fa-arrows-alt" aria-hidden="true"></i>
-                  </Button>
-                  <Button
-                    name="zoomIn"
-                    classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-                    onClick={this.zoom(0.3)}>
-                    <i className="fa fa-plus" aria-hidden="true"></i>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PdfUI
+            doc={this.props.doc}
+            file={this.props.file}
+            pdfWorker={this.props.pdfWorker}
+            id="pdf1"
+            onPageClick={this.placeNote}
+          />
           <div className="cf-sidebar-wrapper">
             <div className="cf-document-info-wrapper">
               <div className="cf-heading-alt">Document</div>
@@ -479,6 +364,7 @@ export default class PdfViewer extends BaseForm {
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
+  doc: PropTypes.object,
   file: PropTypes.string.isRequired,
   hideNavigation: PropTypes.bool,
   label: PropTypes.string,

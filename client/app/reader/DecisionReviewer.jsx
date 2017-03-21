@@ -283,12 +283,6 @@ export default class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
-    return <div><Pdf
-      file={this.documentUrl(documents[4])}
-      pdfWorker={this.props.pdfWorker}
-      id="pdf1"
-    /></div>;
-
     return (
       <div>
         {this.state.currentPdfIndex === null && <PdfListView
