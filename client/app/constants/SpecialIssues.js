@@ -1,3 +1,5 @@
+import React from 'react';
+
 const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
@@ -80,7 +82,7 @@ const SPECIAL_ISSUES = [
     }
   },
   {
-    display: 'Manlincon Compliance',
+    display: <span><i>Manlincon</i> Compliance</span>,
     specialIssue: 'manlinconCompliance',
     stationOfJurisdiction: 'regional',
     unhandled: null
@@ -128,7 +130,7 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: 'Rice Compliance',
+    display: <span><i>Rice</i> Compliance</span>,
     specialIssue: 'riceCompliance',
     stationOfJurisdiction: 'regional',
     unhandled: null
