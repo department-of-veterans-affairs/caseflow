@@ -5,7 +5,12 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      PrometheusService.completed_vbms_requests.increment(status: status)
+      name = data[:request].class.name
+      application = RequestStore[:application] || "other"
+
+      PrometheusService.completed_vbms_requests.increment(status: status,
+                                                          application: application,
+                                                          name: name)
       if status != 200
         PrometheusService.vbms_errors.increment
         Rails.logger.error(
@@ -22,6 +27,7 @@ class Fakes::AppealRepository
   class << self
     attr_writer :documents
     attr_accessor :records
+    attr_accessor :document_records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :end_product_claim_id
   end
@@ -101,10 +107,7 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    vbms_record = @records[appeal.vbms_id]
-
-    # @documents seems to be defaults. Do we need this?
-    vbms_record ? vbms_record[:documents] : (@documents || [])
+    (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
   def self.fetch_document_file(document)
@@ -113,8 +116,10 @@ class Fakes::AppealRepository
       when "1"
         File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
       when "2"
-        File.join(Rails.root, "lib", "pdfs", "VA9.pdf")
+        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
       when "3"
+        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+      when "4"
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       else
         File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
@@ -162,6 +167,12 @@ class Fakes::AppealRepository
       disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
       status: VACOLS::Case::STATUS["ADV"] # Advance
     }
+  end
+
+  def self.appeal_ready_to_certify_with_informal_form9
+    appeal = appeal_ready_to_certify.clone
+    appeal[:documents] = [nod_document, soc_document, informal_form9_document]
+    appeal
   end
 
   def self.appeal_mismatched_nod
@@ -258,7 +269,7 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID")
     {
       vbms_id: vbms_id,
       type: "Original",
@@ -270,8 +281,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      documents: missing_decision ? [] : [decision_document]
+      regional_office_key: "RO13"
     }
   end
 
@@ -358,24 +368,24 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.soc_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "95",
-        received_at: Date.new(1987, 9, 6),
-        document_id: "2",
-        filename: "My_SOC"
-      )
-    )
-  end
-
   def self.form9_document
     Document.from_vbms_document(
       OpenStruct.new(
         doc_type: "179",
         received_at: 1.day.ago,
+        document_id: "2",
+        filename: "Form_9"
+      )
+    )
+  end
+
+  def self.informal_form9_document
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "179",
+        received_at: 1.day.ago,
         document_id: "3",
-        filename: "My_Form_9"
+        filename: "Form_9"
       )
     )
   end
@@ -391,12 +401,24 @@ class Fakes::AppealRepository
     )
   end
 
+  # TODO: get a mock SOC
+  def self.soc_document
+    Document.from_vbms_document(
+      OpenStruct.new(
+        doc_type: "95",
+        received_at: Date.new(1987, 9, 6),
+        document_id: "5",
+        filename: "My_SOC"
+      )
+    )
+  end
+
   def self.decision_document2
     Document.from_vbms_document(
       OpenStruct.new(
         doc_type: "27",
         received_at: 8.days.ago,
-        document_id: "5",
+        document_id: "1001",
         filename: "My_Decision2"
       )
     )
@@ -411,6 +433,7 @@ class Fakes::AppealRepository
 
       self.records = {
         "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
+        "124C" => Fakes::AppealRepository.appeal_ready_to_certify_with_informal_form9,
         "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
         "789C" => Fakes::AppealRepository.appeal_already_certified,
         "321C" => Fakes::AppealRepository.appeal_remand_decided,
@@ -426,27 +449,20 @@ class Fakes::AppealRepository
       ]
       documents_multiple_decisions = documents.dup.push(decision_document2)
 
+      self.document_records ||= {}
+
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         # Make every other case have two decision documents
-        @records["vbms_id#{i}"] =
+        self.document_records["vbms_id#{i}"] =
           if i.even?
-            {
-              documents: documents,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents
           else
-            {
-              documents: documents_multiple_decisions,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents_multiple_decisions
           end
       end
 
-      @records["FULLGRANT_VBMS_ID"] = {
-        documents: documents_multiple_decisions,
-        vbms_id: "FULLGRANT_VBMS_ID"
-      }
+      self.document_records["FULLGRANT_VBMS_ID"] = documents_multiple_decisions
     end
   end
   # rubocop:enable Metrics/MethodLength

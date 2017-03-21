@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
     EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
   }.freeze
 
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal"].freeze
+  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2"].freeze
 
   def username
     css_id
