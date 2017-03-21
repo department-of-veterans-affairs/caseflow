@@ -92,11 +92,6 @@ class Document < ActiveRecord::Base
     File.join(Rails.root, "tmp", "pdfs", file_name)
   end
 
-  def opened_by_user(user)
-    document_user = document_view.find_by(user: user)
-    document_user && document_user.viewed_at
-  end
-
   def to_hash
     serializable_hash(
       methods: [:vbms_document_id, :type, :received_at, :filename, :label]

@@ -19,17 +19,17 @@ export default class PdfListView extends React.Component {
 
     let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
 
-    let boldUnreadContent = (content, unread) => {
-      if (unread) {
+    let boldUnreadContent = (content, doc) => {
+      if (!doc.opened_by_current_user) {
         return <b>{content}</b>;
       }
 
       return content;
     };
 
-    // We have blank headers for the comment indicator and label indicator columns
-    // We use onMouseUp instead of onClick since OnMouseUp is triggered when a middle
-    // mouse button is clicked while onClick isn't.
+    // We have blank headers for the comment indicator and label indicator columns.
+    // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
+    // is triggered when a middle mouse button is clicked while onClick isn't.
     return [
       {
         valueFunction: (doc) => {
@@ -63,13 +63,13 @@ export default class PdfListView extends React.Component {
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) =>
-          boldUnreadContent(formatDate(doc.received_at), !doc.opened_by_current_user)
+          boldUnreadContent(formatDate(doc.received_at), doc)
       },
       {
         header: <div onClick={this.props.changeSortState('type')}>
           Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
         </div>,
-        valueFunction: (doc) => boldUnreadContent(doc.type, !doc.opened_by_current_user)
+        valueFunction: (doc) => boldUnreadContent(doc.type, doc)
       },
       {
         header: <div onClick={this.props.changeSortState('filename')}>
@@ -80,7 +80,7 @@ export default class PdfListView extends React.Component {
             href={linkToSingleDocumentView(doc)}
             onMouseUp={this.props.showPdf(index)}>
             {doc.filename}
-          </a>, !doc.opened_by_current_user)
+          </a>, doc)
       }
     ];
   }

@@ -5,13 +5,12 @@ class ReviewController < ApplicationController
     vacols_id = params[:vacols_id]
     @appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
 
-    document_ids = @appeal.saved_documents.map do |document|
-      document.id
-    end
+    document_ids = @appeal.saved_documents.map(&:id)
 
-    read_documents_hash = current_user.document_views.where(document_id:  document_ids).reduce({}) do |read_documents_hash, document_view|
-      read_documents_hash[document_view.document_id] = true
-      read_documents_hash
+    # Create a hash mapping each document_id that has been read to true
+    read_documents_hash = current_user.document_views.where(document_id:  document_ids)
+                                      .each_with_object({}) do |document_view, object|
+      object[document_view.document_id] = true
     end
 
     @documents = @appeal.saved_documents.map do |document|

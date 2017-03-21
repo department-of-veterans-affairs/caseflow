@@ -11,7 +11,7 @@ class DocumentController < ApplicationController
     DocumentView.find_or_create_by(
       document_id: params[:id],
       user_id: current_user.id).tap do |t|
-      t.update!(first_viewed_at: Time.zone.now) if !t.first_viewed_at
+      t.update!(first_viewed_at: Time.zone.now) unless t.first_viewed_at
     end
     render json: {}
   end
