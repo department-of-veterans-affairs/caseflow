@@ -42,7 +42,7 @@ export default class Table extends React.Component {
         <tr>
           {props.columns.map((column, columnNumber) =>
             <th scope="col" key={columnNumber} className={cellClasses(column)}>
-              <h3>{column.header || ""}</h3>
+              {column.header || ""}
             </th>
           )}
         </tr>
