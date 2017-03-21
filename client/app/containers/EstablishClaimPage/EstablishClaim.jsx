@@ -13,7 +13,7 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
+import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
@@ -142,24 +142,28 @@ export default class EstablishClaim extends BaseForm {
 
   containsRoutedSpecialIssues() {
     let containsRoutedSpecialIssues = false;
+
     SPECIAL_ISSUES.forEach((issue) => {
       if (issue.stationOfJurisdiction &&
-          issue.stationOfJurisdiction != 'regional' &&
+          issue.stationOfJurisdiction !== 'regional' &&
           this.state.specialIssues[issue.specialIssue].value) {
         containsRoutedSpecialIssues = true;
       }
     });
-    return containsRoutedSpecialIssues;
+
+    return containsRoutedSpecialIssues
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     let containsRoutedOrRegionalOfficeSpecialIssues = false;
+
     SPECIAL_ISSUES.forEach((issue) => {
       if (issue.stationOfJurisdiction &&
           this.state.specialIssues[issue.specialIssue].value) {
         containsRoutedOrRegionalOfficeSpecialIssues = true;
       }
     });
+
     return containsRoutedOrRegionalOfficeSpecialIssues;
   };
 
@@ -495,7 +499,8 @@ export default class EstablishClaim extends BaseForm {
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
     SPECIAL_ISSUES.forEach((issue) => {
-      if (issue.stationOfJurisdiction == 'regional' && this.state.specialIssues[issue.specialIssue].value) {
+      if (issue.stationOfJurisdiction === 'regional' &&
+          this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
@@ -503,7 +508,7 @@ export default class EstablishClaim extends BaseForm {
     // Go through all the special issues, this time looking for routed issues
     SPECIAL_ISSUES.forEach((issue) => {
       if (issue.stationOfJurisdiction &&
-          issue.stationOfJurisdiction != 'regional' &&
+          issue.stationOfJurisdiction !== 'regional' &&
           this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }

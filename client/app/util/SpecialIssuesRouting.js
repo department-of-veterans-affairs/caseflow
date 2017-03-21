@@ -15,8 +15,10 @@ const SPECIAL_ISSUES = [
     }
   },
   {
-    display: `Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement`,
-    specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarshipTransferOfEntitlement',
+    display: `Education - GI Bill, dependents educational assistance, ` +
+      `scholarship, transfer of entitlement`,
+    specialIssue: `educationGiBillDependentsEducationalAssistanceScholarship` +
+      `TransferOfEntitlement`,
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: 'education',
@@ -35,7 +37,7 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
-      regionalOffice: 'RO83',
+      regionalOffice: 'RO83'
     }
   },
   {
@@ -44,7 +46,7 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: null,
     unhandled: {
       emailAddess: 'PMC',
-      regionalOffice: 'PMC',
+      regionalOffice: 'PMC'
     }
   },
   {
@@ -59,7 +61,7 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: null,
-      regionalOffice: null,
+      regionalOffice: null
     }
   },
   {
@@ -74,7 +76,7 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: ['nancy.encarnado@va.gov'],
-      regionalOffice: 'RO80',
+      regionalOffice: 'RO80'
     }
   },
   {
@@ -138,8 +140,10 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: 'U.S. Territory claim - American Samoa, Guam, Northern Mariana Islands (Rota, Saipan & Tinian)',
-    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthernMarianaIslandsRotaSaipanTinian',
+    display: `U.S. Territory claim - American Samoa, Guam, Northern ` +
+      `Mariana Islands (Rota, Saipan & Tinian)`,
+    specialIssue: `usTerritoryClaimAmericanSamoaGuamNorthern` +
+      `MarianaIslandsRotaSaipanTinian`,
     stationOfJurisdiction: '459 - Honolulu, HI',
     unhandled: null
   },
@@ -169,8 +173,8 @@ const SPECIAL_ISSUES = [
     specialIssue: 'vocationalRehab',
     stationOfJurisdiction: null,
     unhandled: {
-        emailAddress: null,
-        regionalOffice: null
+      emailAddress: null,
+      regionalOffice: null
     }
   },
   {
