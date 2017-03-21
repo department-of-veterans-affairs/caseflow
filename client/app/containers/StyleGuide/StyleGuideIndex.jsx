@@ -30,6 +30,9 @@ export default class StyleGuideIndex extends React.Component {
             <li>
               <a href="#tables">Tables</a>
             </li>
+            <li>
+              <a href="#progress_bar">Progress Bar</a>
+            </li>
           </ul>
       </div>
       <div className="cf-push-right cf-sg-content">
