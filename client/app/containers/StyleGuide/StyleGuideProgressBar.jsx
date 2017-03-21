@@ -2,12 +2,10 @@ import React from 'react';
 
 // components
 import ProgressBar from '../../components/ProgressBar';
-import ProgressBarSection from '../../components/ProgressBarSection';
-import EstablishClaimProgressBar from '../EstablishClaimPage/EstablishClaimProgressBar';
-import Button from '../../components/Button';
 
 export default class StyleGuideProgressBar extends React.Component {
 
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
   render() {
 
     return <div>
@@ -34,5 +32,5 @@ export default class StyleGuideProgressBar extends React.Component {
       }
       />
   </div>;
-};
+  }
 }
