@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fd406fe"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "a05aa91a0152845406fba200b95922842165a7fb"
 
 gem "moment_timezone-rails"
 
@@ -13,7 +13,6 @@ gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-gem "rack-timeout", require:"rack/timeout/base"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -62,7 +61,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b5e43ac1ade8e02cfb6658caf13f159710db8b5c"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "19eae09d9296c4836689b01360c3d9669778cd53"
 
 gem 'redis-rails'
 
