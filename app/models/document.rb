@@ -1,6 +1,6 @@
 class Document < ActiveRecord::Base
   has_many :annotations
-  has_many :document_users
+  has_many :document_view
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
@@ -93,7 +93,7 @@ class Document < ActiveRecord::Base
   end
 
   def opened_by_user(user)
-    document_user = document_users.find_by(user: user)
+    document_user = document_view.find_by(user: user)
     document_user && document_user.viewed_at
   end
 

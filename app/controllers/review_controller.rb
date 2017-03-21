@@ -9,12 +9,10 @@ class ReviewController < ApplicationController
       document.id
     end
 
-    read_documents_hash = current_user.document_users.where(document_id:  document_ids).reduce({}) do |read_documents_hash, documents_user|
-      read_documents_hash[documents_user.document_id] = true
+    read_documents_hash = current_user.document_view.where(document_id:  document_ids).reduce({}) do |read_documents_hash, document_view|
+      read_documents_hash[document_viewed.document_id] = true
       read_documents_hash
     end
-
-    binding.pry
 
     @documents = @appeal.saved_documents.map do |document|
       document.to_hash.tap do |object|

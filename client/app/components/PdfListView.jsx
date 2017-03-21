@@ -73,7 +73,11 @@ export default class PdfListView extends React.Component {
       },
       {
         header: 'Opened',
-        valueName: "opened_by_current_user"
+        valueFunction: (doc) =>
+          <span>
+            { doc.opened_by_current_user &&
+              <i className="fa fa-check" aria-hidden="true"></i>}
+          </span>
       }
     ];
   }
