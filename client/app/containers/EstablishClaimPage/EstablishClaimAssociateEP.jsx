@@ -5,8 +5,6 @@ import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-const TABLE_HEADERS = ['Decision Date', 'EP Code', 'Status', 'Select this EP'];
-
 export default class AssociatePage extends React.Component {
 
   constructor(props) {
@@ -24,17 +22,31 @@ export default class AssociatePage extends React.Component {
     }
   }
 
-  buildEndProductRow = (endProduct) => [
-    formatDate(endProduct.claim_receive_date),
-    endProduct.claim_type_code,
-    endProduct.status_type_code,
-    <Button
-      id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
-      name="Assign to Claim"
-      classNames={["usa-button-outline"]}
-      onClick={this.handleAssignEndProduct(endProduct)}
-      loading={this.state.loading === endProduct.benefit_claim_id}
-    />
+  getEndProductColumns = () => [
+    {
+      header: 'Decision Date',
+      valueFunction: (endProduct) =>
+        formatDate(endProduct.claim_receive_date)
+    },
+    {
+      header: 'EP Code',
+      valueName: 'claim_type_code'
+    },
+    {
+      header: 'Status',
+      valueName: 'status_type_code'
+    },
+    {
+      header: 'Select this EP',
+      valueFunction: (endProduct) =>
+        <Button
+          id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
+          name="Assign to Claim"
+          classNames={["usa-button-outline"]}
+          onClick={this.handleAssignEndProduct(endProduct)}
+          loading={this.state.loading === endProduct.benefit_claim_id}
+        />
+    }
   ];
 
   handleAssignEndProduct = (endProduct) => (event) => {
@@ -84,9 +96,10 @@ export default class AssociatePage extends React.Component {
       hasAvailableModifers
     } = this.props;
 
-    let alert;
+    let alert, title;
 
     if (this.props.hasAvailableModifers) {
+      title = <h1>Route Claim: Existing End Product(s)</h1>;
       alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
         <p className="usa-alert-text">We found one or more existing EP(s)
           created within 30 days of this decision date.
@@ -95,6 +108,7 @@ export default class AssociatePage extends React.Component {
         </p>
       </div>;
     } else {
+      title = <h1>Route Claim: Create End Product</h1>;
       alert = <div><h3 className="usa-alert-heading">
           Existing EP, all EP & Claim Label Modifiers in use
         </h3>
@@ -111,7 +125,7 @@ export default class AssociatePage extends React.Component {
 
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
-        <h1>Create End Product</h1>
+        {title}
         <div className="usa-alert usa-alert-warning">
           <div className="usa-alert-body">
             {alert}
@@ -119,9 +133,9 @@ export default class AssociatePage extends React.Component {
         </div>
         <div className="usa-grid-full">
           <Table
-            headers={TABLE_HEADERS}
-            buildRowValues={this.buildEndProductRow}
-            values={this.state.sortedEndProducts}
+            columns={this.getEndProductColumns()}
+            rowObjects={this.state.sortedEndProducts}
+            summary="Existing end products for this veteran"
           />
         </div>
       </div>
@@ -140,7 +154,7 @@ export default class AssociatePage extends React.Component {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
-            name="Create New EP"
+            name="Create new EP"
             onClick={handleSubmit}
             disabled={!hasAvailableModifers}
           />

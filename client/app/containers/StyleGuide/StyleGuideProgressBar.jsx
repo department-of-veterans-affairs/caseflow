@@ -22,7 +22,6 @@ export default class StyleGuideProgressBar extends React.Component {
     //     section3: true
     //   })
     };
-  };
 
   render() {
     let {

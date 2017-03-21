@@ -33,6 +33,22 @@ class Certification < ActiveRecord::Base
     certification_status
   end
 
+  def to_hash
+    serializable_hash(
+      methods: :certification_status,
+      include: [
+        appeal: { methods:
+       [:nod_match?,
+        :nod_date,
+        :soc_match?,
+        :soc_date,
+        :form9_match?,
+        :form9_date,
+        :veteran_name,
+        :vbms_id] }]
+    )
+  end
+
   def complete!(user_id)
     appeal.certify!
     update_attributes!(completed_at: Time.zone.now, user_id: user_id)
@@ -87,10 +103,16 @@ class Certification < ActiveRecord::Base
     where(ssocs_required: true)
   end
 
-  # Only for TEST_USER
-  def uncertify!(user_id)
-    return unless user_id == ENV["TEST_USER_ID"]
-    appeal.uncertify!(user_id)
+  def certification_status
+    if appeal.certified?
+      :already_certified
+    elsif appeal.missing_certification_data?
+      :data_missing
+    elsif !appeal.documents_match?
+      :mismatched_documents
+    else
+      :started
+    end
   end
 
   private
@@ -125,18 +147,6 @@ class Certification < ActiveRecord::Base
 
   def calculate_ssocs_required
     !appeal.ssoc_dates.empty?
-  end
-
-  def certification_status
-    if appeal.certified?
-      :already_certified
-    elsif appeal.missing_certification_data?
-      :data_missing
-    elsif !appeal.documents_match?
-      :mismatched_documents
-    else
-      :started
-    end
   end
 
   class << self

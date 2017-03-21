@@ -4,6 +4,14 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
   <title>Caseflow <%= logo_name %></title>
+
+  <% if ENV["PUBLIC_SENTRY_DSN"] %>
+    <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
+    <script>
+      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>").install();
+    </script>
+  <% end %>
+
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
@@ -128,7 +136,7 @@
       <div>
         <div class="cf-push-left">
           <span<% if Rails.application.config.build_version %> title="<%= Rails.application.config.build_version[:date] %>"<% end %>>Built</span> with <abbr title="love">&#9825;</abbr> by the
-          <a href="http://www.va.gov/ds/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
+          <a href="https://www.va.gov/digitalstrategy/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
         </div>
         <div class="cf-push-right">
           <a target="_blank" href="<%= feedback_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">

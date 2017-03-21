@@ -2,19 +2,30 @@ require "vbms_error"
 
 class CertificationsController < ApplicationController
   before_action :verify_access
+  before_action :set_application
 
   def new
     # NOTE: this isn't rails-restful. certification.start! saves
     # the certification instance.
-    case certification.start!
+    status = certification.start!
+    @form8 = certification.form8
+
+    # TODO: change this to use the feature flag or roles
+    if ENV["ENABLE_CERTIFICATION_V2"] == "true" && status == :started
+      render "v2", layout: "application"
+      return
+    end
+
+    case status
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
 
-    @form8 = certification.form8
+    @form8
   end
 
+  # TODO: update for certification v2- should we use hidden form params?
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
@@ -43,6 +54,10 @@ class CertificationsController < ApplicationController
 
   def cancel
     render layout: "application"
+  end
+
+  def set_application
+    RequestStore.store[:application] = :certification
   end
 
   private

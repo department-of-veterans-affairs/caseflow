@@ -1,10 +1,33 @@
 require "ostruct"
 
+class VBMSCaseflowLogger
+  def self.log(event, data)
+    case event
+    when :request
+      status = data[:response_code]
+      name = data[:request].class.name
+      application = RequestStore[:application] || "other"
+
+      PrometheusService.completed_vbms_requests.increment(status: status,
+                                                          application: application,
+                                                          name: name)
+      if status != 200
+        PrometheusService.vbms_errors.increment
+        Rails.logger.error(
+          "VBMS HTTP Error #{status} " \
+          "(#{data[:request].class.name}) #{data[:response_body]}"
+        )
+      end
+    end
+  end
+end
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
     attr_writer :documents
     attr_accessor :records
+    attr_accessor :document_records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :end_product_claim_id
   end
@@ -26,6 +49,7 @@ class Fakes::AppealRepository
 
   def self.certify(appeal)
     @certified_appeal = appeal
+    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.establish_claim!(claim:, appeal:)
@@ -82,16 +106,9 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
-  def self.fetch_documents_for(appeal, save:)
-    vbms_record = @records[appeal.vbms_id]
-    if vbms_record
-      appeal.documents = vbms_record[:documents]
-      return
-    end
-    appeal.documents = @documents || []
+  def self.fetch_documents_for(appeal)
+    (document_records || {})[appeal.vbms_id] || @documents || []
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def self.fetch_document_file(document)
     path =
@@ -142,7 +159,7 @@ class Fakes::AppealRepository
       nod_date: 3.days.ago,
       soc_date: Date.new(1987, 9, 6),
       form9_date: 1.day.ago,
-      hearing_type: VACOLS::Case::HEARING_TYPES["1"], # Central office
+      hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES["1"], # Central office
       regional_office_key: "DSUSER",
       documents: [nod_document, soc_document, form9_document],
       disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
@@ -244,7 +261,7 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID", missing_decision: false)
+  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID")
     {
       vbms_id: vbms_id,
       type: "Original",
@@ -256,8 +273,7 @@ class Fakes::AppealRepository
       appellant_first_name: "Susie",
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      documents: missing_decision ? [] : [decision_document]
+      regional_office_key: "RO13"
     }
   end
 
@@ -340,8 +356,7 @@ class Fakes::AppealRepository
         received_at: 3.days.ago,
         document_id: "1",
         filename: "My_NOD"
-      ),
-      true
+      )
     )
   end
 
@@ -352,8 +367,7 @@ class Fakes::AppealRepository
         received_at: Date.new(1987, 9, 6),
         document_id: "2",
         filename: "My_SOC"
-      ),
-      false
+      )
     )
   end
 
@@ -364,8 +378,7 @@ class Fakes::AppealRepository
         received_at: 1.day.ago,
         document_id: "3",
         filename: "My_Form_9"
-      ),
-      false
+      )
     )
   end
 
@@ -376,8 +389,7 @@ class Fakes::AppealRepository
         received_at: 7.days.ago,
         document_id: "4",
         filename: "My_Decision"
-      ),
-      false
+      )
     )
   end
 
@@ -388,8 +400,7 @@ class Fakes::AppealRepository
         received_at: 8.days.ago,
         document_id: "5",
         filename: "My_Decision2"
-      ),
-      false
+      )
     )
   end
 
@@ -417,27 +428,20 @@ class Fakes::AppealRepository
       ]
       documents_multiple_decisions = documents.dup.push(decision_document2)
 
+      self.document_records ||= {}
+
       50.times.each do |i|
         @records["vacols_id#{i}"] = appeals_for_tasks(i)
         # Make every other case have two decision documents
-        @records["vbms_id#{i}"] =
+        self.document_records["vbms_id#{i}"] =
           if i.even?
-            {
-              documents: documents,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents
           else
-            {
-              documents: documents_multiple_decisions,
-              vbms_id: "vbms_id#{i}"
-            }
+            documents_multiple_decisions
           end
       end
 
-      @records["FULLGRANT_VBMS_ID"] = {
-        documents: documents_multiple_decisions,
-        vbms_id: "FULLGRANT_VBMS_ID"
-      }
+      self.document_records["FULLGRANT_VBMS_ID"] = documents_multiple_decisions
     end
   end
   # rubocop:enable Metrics/MethodLength

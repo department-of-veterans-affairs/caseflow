@@ -5,9 +5,10 @@ import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
+import { linkToSingleDocumentView } from './PdfViewer';
 
 export default class PdfListView extends React.Component {
-  getDocumentTableHeaders = () => {
+  getDocumentColumns = () => {
     let className;
 
     if (this.props.sortDirection === 'ascending') {
@@ -20,38 +21,57 @@ export default class PdfListView extends React.Component {
 
     // We have blank headers for the comment indicator and label indicator columns
     return [
-      '',
-      '',
-      <div onClick={this.props.changeSortState('date')}>
-        Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
-      </div>,
-      <div onClick={this.props.changeSortState('type')}>
-        Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
-      </div>,
-      <div onClick={this.props.changeSortState('filename')}>
-        Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
-      </div>
+      {
+        valueFunction: (doc) => {
+          return <span>
+            {doc.label && <i
+            className={`fa fa-bookmark cf-pdf-bookmark-` +
+              `${StringUtil.camelCaseToDashCase(doc.label)}`}
+            aria-hidden="true"></i> }
+          </span>;
+        }
+      },
+      {
+        valueFunction: (doc) => {
+          let numberOfComments = this.props.annotationStorage.
+            getAnnotationByDocumentId(doc.id).length;
+
+          return <span className="fa-stack fa-3x cf-pdf-comment-indicator">
+            { numberOfComments > 0 &&
+                <span>
+                  <i className="fa fa-comment-o fa-stack-2x"></i>
+                  <strong className="fa-stack-1x fa-stack-text">
+                    {numberOfComments}
+                  </strong>
+                </span>
+            }
+          </span>;
+        }
+      },
+      {
+        header: <div onClick={this.props.changeSortState('date')}>
+          Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+        </div>,
+        valueFunction: (doc) => formatDate(doc.received_at)
+      },
+      {
+        header: <div onClick={this.props.changeSortState('type')}>
+          Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
+        </div>,
+        valueName: "type"
+      },
+      {
+        header: <div onClick={this.props.changeSortState('filename')}>
+          Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
+        </div>,
+        valueFunction: (doc, index) =>
+          <a
+            href={linkToSingleDocumentView(doc)}
+            onClick={this.props.showPdf(index)}>
+            {doc.filename}
+          </a>
+      }
     ];
-  }
-
-  buildDocumentRow = (doc, index) => {
-    let numberOfComments = this.props.annotationStorage.
-      getAnnotationByDocumentId(doc.id).length;
-
-    return [
-      <span>
-        { doc.label && <i
-        className={`fa fa-bookmark cf-pdf-bookmark-` +
-          `${StringUtil.camelCaseToDashCase(doc.label)}`}
-        aria-hidden="true"></i> }
-      </span>,
-      <span className="fa-stack fa-3x cf-pdf-comment-indicator">
-        <i className="fa fa-comment-o fa-stack-2x"></i>
-        <strong className="fa-stack-1x fa-stack-text">{numberOfComments}</strong>
-      </span>,
-      formatDate(doc.received_at),
-      doc.type,
-      <a onClick={this.props.showPdf(index)}>{doc.filename}</a>];
   }
 
   render() {
@@ -95,9 +115,9 @@ export default class PdfListView extends React.Component {
           </div>
           <div>
             <Table
-              headers={this.getDocumentTableHeaders()}
-              buildRowValues={this.buildDocumentRow}
-              values={this.props.documents}
+              columns={this.getDocumentColumns()}
+              rowObjects={this.props.documents}
+              summary="Document list"
             />
           </div>
         </div>

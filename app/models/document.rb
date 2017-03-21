@@ -1,19 +1,19 @@
 class Document < ActiveRecord::Base
   has_many :annotations
 
-  TYPES = {
-    "34" => "Correspondence",
+  # Document types are defined in the following file in
+  # caseflow commons: /app/models/caseflow/document_types.rb
+  # some of these names are confusing and are overriden
+  # in the following table.
+  TYPES_OVERRIDE = {
     "73" => "NOD",
     "95" => "SOC",
     "97" => "SSOC",
-    "115" => "VA 21-4138 Statement In Support of Claim",
     "178" => "Form 8",
     "179" => "Form 9",
-    "475" => "Third Party Correspondence",
     "713" => "NOD",
     "856" => "NOD",
-    "857" => "Form 9",
-    "27"  => "BVA Decision"
+    "857" => "Form 9"
   }.freeze
 
   ALT_TYPES = {
@@ -31,34 +31,29 @@ class Document < ActiveRecord::Base
     layperson: 4,
     private_medical: 5
   }
-
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
   end
 
-  def self.from_vbms_document(vbms_document, save_record = false)
-    attributes =
-      {
-        type: TYPES[vbms_document.doc_type] || :other,
+  def self.type_from_vbms_type(vbms_type)
+    TYPES_OVERRIDE[vbms_type] ||
+      Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
+      :other
+  end
+
+  def self.from_vbms_document(vbms_document)
+    new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename
-      }
-
-    if save_record
-      find_or_create_by(vbms_document_id: vbms_document.document_id).tap do |t|
-        t.assign_attributes(attributes)
-      end
-    else
-      new(attributes)
-    end
+        filename: vbms_document.filename)
   end
 
   def self.type_id(type)
-    TYPES.key(type)
+    TYPES_OVERRIDE.key(type) ||
+      Caseflow::DocumentTypes::TYPES.key(type)
   end
 
   # Currently three levels of caching. Try to serve content
@@ -100,5 +95,24 @@ class Document < ActiveRecord::Base
     serializable_hash(
       methods: [:vbms_document_id, :type, :received_at, :filename, :label]
     )
+  end
+
+  def load_or_save!
+    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
+    return fill_in(existing_document) if existing_document
+    save! && self
+  end
+
+  private
+
+  def fill_in(persisted_document)
+    persisted_document.assign_attributes(
+      type: type,
+      alt_types: alt_types,
+      vbms_doc_type: vbms_doc_type,
+      received_at: received_at,
+      filename: filename
+    )
+    persisted_document
   end
 end

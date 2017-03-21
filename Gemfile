@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "34cfe59"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fd406fe"
 
 gem "moment_timezone-rails"
 
@@ -13,13 +13,13 @@ gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-gem "rack-timeout"
+gem "rack-timeout", require:"rack/timeout/base"
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
 # React
-gem "react_on_rails", "~> 6"
+gem "react_on_rails", "~> 6.8.0"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'

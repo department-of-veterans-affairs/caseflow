@@ -1,7 +1,9 @@
 import React from 'react';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
-// import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideLoadingButton from './StyleGuideLoadingButton';
+import StyleGuideTables from './StyleGuideTables';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -21,6 +23,12 @@ export default class StyleGuideIndex extends React.Component {
             </li>
             <li>
               <a href="#tabs">Tabs</a>
+            </li>
+            <li>
+              <a href="#loading_button">Loading Button</a>
+            </li>
+            <li>
+              <a href="#tables">Tables</a>
             </li>
           </ul>
       </div>
@@ -45,7 +53,11 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuideTabs />
         <div className="cf-help-divider"></div>
-        // <StyleGuideProgressBar />
+        <StyleGuideLoadingButton />
+        <div className="cf-help-divider"></div>
+        <StyleGuideTables />
+        <div className="cf-help-divider"></div>
+        <StyleGuideProgressBar />
     </div>
     </div>;
   }
