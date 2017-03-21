@@ -17,13 +17,6 @@ describe Appeal do
       )
     end
 
-    before do
-      @old_repo = Appeal.repository
-      Appeal.repository = Fakes::AppealRepository
-      Fakes::AppealRepository.records = nil
-    end
-    after { Appeal.repository = @old_repo }
-
     subject { appeal.documents_match? }
 
     context "when there is an nod, soc, and form9 document matching the respective dates" do
@@ -93,11 +86,7 @@ describe Appeal do
     end
 
     let(:appeal) do
-      Appeal.new(vbms_id: "123")
-    end
-
-    before do
-      Fakes::AppealRepository.records = { appeal.vbms_id => { documents: documents } }
+      Generators::Appeal.build(documents: documents)
     end
 
     let(:result) { appeal.fetch_documents!(save: save) }
@@ -111,8 +100,22 @@ describe Appeal do
 
     context "when save is true" do
       let(:save) { true }
-      it "should return documents saved in the database" do
-        expect(result.first).to be_persisted
+
+      context "when document exists in the database" do
+        let!(:existing_document) do
+          Generators::Document.create(vbms_document_id: documents[0].vbms_document_id)
+        end
+
+        it "should return existing document" do
+          p "result: #{result}"
+          expect(result.first.id).to eq(existing_document.id)
+        end
+      end
+
+      context "when document doesn't exist in the database" do
+        it "should return documents saved in the database" do
+          expect(result.first).to be_persisted
+        end
       end
     end
   end

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
+    get 'form9_pdf', on: :member
     post 'confirm', on: :member
     get 'cancel', on: :member
   end
