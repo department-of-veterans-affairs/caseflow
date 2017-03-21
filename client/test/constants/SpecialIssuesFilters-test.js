@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import specialIssueFunctions from '../../app/util/SpecialIssueFunctions';
+import specialIssueFunctions from '../../app/constants/SpecialIssueFilters';
 
-describe('SpecialIssueFunctions', () => {
+describe('SpecialIssueFilters', () => {
   context('.unhandledSpecialIssues', () => {
     it('returns all unhandled special issues', () => {
       expect(specialIssueFunctions.unhandledSpecialIssues()).have.lengthOf(11);

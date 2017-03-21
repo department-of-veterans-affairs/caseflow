@@ -1,6 +1,6 @@
-import SPECIAL_ISSUES from './SpecialIssuesRouting';
+import SPECIAL_ISSUES from './SpecialIssues';
 
-const specialIssueFunctions = {
+const specialIssueFilters = {
 
   unhandledSpecialIssues() {
     return SPECIAL_ISSUES.filter((issue) => {
@@ -28,4 +28,4 @@ const specialIssueFunctions = {
   }
 };
 
-export default specialIssueFunctions;
+export default specialIssueFilters;

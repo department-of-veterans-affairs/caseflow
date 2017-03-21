@@ -3,9 +3,9 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
-import ROUTING_INFORMATION from '../../util/RoutingConstants';
-import SPECIAL_ISSUES from '../../util/SpecialIssuesRouting';
-import specialIssueFunctions from '../../util/SpecialIssueFunctions';
+import ROUTING_INFORMATION from '../../constants/Routing';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -142,13 +142,13 @@ export default class EstablishClaim extends BaseForm {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFunctions.routedSpecialIssues().some((issue) => {
+    return specialIssueFilters.routedSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue].value;
     });
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFunctions.routedOrRegionalSpecialIssues().some((issue) => {
+    return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue || issue].value;
     });
   }
@@ -484,14 +484,14 @@ export default class EstablishClaim extends BaseForm {
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
-    specialIssueFunctions.regionalSpecialIssues().forEach((issue) => {
+    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
     // Go through all the special issues, this time looking for routed issues
-    specialIssueFunctions.routedSpecialIssues().forEach((issue) => {
+    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
@@ -598,7 +598,7 @@ export default class EstablishClaim extends BaseForm {
       return;
     }
 
-    specialIssueFunctions.unhandledSpecialIssues().forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
@@ -620,7 +620,7 @@ export default class EstablishClaim extends BaseForm {
       return true;
     }
 
-    specialIssueFunctions.unhandledSpecialIssues().forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }

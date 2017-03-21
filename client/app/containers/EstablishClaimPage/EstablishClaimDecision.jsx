@@ -3,7 +3,7 @@ import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
-import SPECIAL_ISSUES from '../../util/SpecialIssuesRouting';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
