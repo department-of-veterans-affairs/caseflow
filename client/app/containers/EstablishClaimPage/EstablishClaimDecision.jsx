@@ -228,6 +228,14 @@ export default class EstablishClaimDecision extends React.Component {
       tab.label = `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
 
       tab.page = <div>
+
+  /* This link is here for 508 compliance, and shouldn't be visible to sighted
+    users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
+    is the accessibility standard and is used across gov't, so we'll recommend it
+    for now. The usa-sr-only class will place an element off screen without
+    affecting its placement in tab order, thus making it invisible onscreen
+    but read out by screen readers. */
+
          <a
            className="usa-sr-only"
            id="sr-download-link"
