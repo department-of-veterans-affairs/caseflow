@@ -34,19 +34,18 @@
   z-index: 3;
 }
 
-.cf-tab svg {
-  width: 17px;
-  height: 17px;
+//TODO(marian): add to commons
+.cf-tab {
+  font-weight: 500;
+
+  i {
+    width: 17px;
+    height: 17px;
+    margin-right: 0.25em;
+    margin-left: -0.4em;
+  }
 }
 
-.cf-sg-progess-bar {
-  width: 100%;
-  display: table;
-  table-layout: fixed;
-}
-
-.cf-sg-progress-bar-section {
-  display: table-cell;
-  padding-left: 61px;
-  padding-right: 61px;
+.cf-active {
+  font-weight: 700;
 }

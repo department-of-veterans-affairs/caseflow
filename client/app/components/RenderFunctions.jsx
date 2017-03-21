@@ -114,5 +114,17 @@ export let missingSymbolHtml = function() {
   );
 };
 
+export let checkSymbolHtml = function() {
+  return (
+    <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
+  );
+};
+
+export let crossSymbolHtml = function() {
+  return (
+    <i className="fa fa-times fa-1 cf-tab-cross" aria-hidden="true"></i>
+  );
+};
+
 
 /* eslint-enable max-len */

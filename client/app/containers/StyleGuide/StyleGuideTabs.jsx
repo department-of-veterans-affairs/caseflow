@@ -2,60 +2,47 @@ import React from 'react';
 
 // components
 import TabWindow from '../../components/TabWindow';
-// import RenderFunctions from '../../components/RenderFunctions';
-import { successSymbolHtml, missingSymbolHtml }
-from '../../components/RenderFunctions.jsx';
+import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tabText: "HI"
-    };
-
-  }
-
   render() {
 
     let {
-      tabHeaders,
-      tabHeadersWithIcons,
-      tabPages,
-      tabPagesWithIcons
+      tabs,
+      tabsWithIcons
     } = this.props;
 
-    tabHeaders = [
-      { label: "Tab 1" },
-      { label: "Tab 2" },
-      { label: "Tab 3" }
+    tabs = [
+      {
+        label: "Tab 1",
+        page: "Content for Tab 1"
+      },
+      {
+        label: "Tab 2",
+        page: "Content for Tab 2"
+      },
+      {
+        label: "Tab 3",
+        page: "Content for Tab 3"
+      }
     ];
 
-    tabHeadersWithIcons = [{
+    tabsWithIcons = [{
       disable: false,
-      icon: successSymbolHtml(),
-      label: "Active Tab"
+      icon: checkSymbolHtml(),
+      label: "Active Tab",
+      page: "This is an 'Active' Tab."
     }, {
       disable: false,
-      icon: successSymbolHtml(),
-      label: "Enabled Tab"
+      icon: checkSymbolHtml(),
+      label: "Enabled Tab",
+      page: "This is an 'Enabled' Tab."
     }, {
       disable: true,
-      icon: missingSymbolHtml(),
-      label: "Disabled Tab"
+      icon: crossSymbolHtml(),
+      label: "Disabled Tab",
+      page: "This is a 'Disabled' Tab"
     }
-    ];
-
-    tabPages = [
-      "1",
-      "2",
-      "3"
-    ];
-
-    tabPagesWithIcons = [
-      "This is an 'Active' Tab.",
-      "This is an 'Enabled' Tab.",
-      "This is a 'Disabled' Tab"
     ];
 
     return <div>
@@ -68,8 +55,7 @@ export default class StyleGuideTabs extends React.Component {
         and cannot be clicked.
       </p>
       <TabWindow
-        tabs={tabHeaders}
-        pages={tabPages}
+        tabs={tabs}
         onChange={this.onTabSelected}/>
       <h3>Tabs with Icons</h3>
       <p>
@@ -78,8 +64,7 @@ export default class StyleGuideTabs extends React.Component {
         U.S. Design standards. Here is an example of tabs with icons:
       </p>
       <TabWindow
-        tabs={tabHeadersWithIcons}
-        pages={tabPagesWithIcons}
+        tabs={tabsWithIcons}
         onChange={this.onTabSelected}/>
       <p><a href="#">View the tab code sample in React.</a></p>
 
