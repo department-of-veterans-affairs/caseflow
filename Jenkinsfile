@@ -9,7 +9,10 @@ def APP_NAME = 'certification';
 
 // The application version to checkout.
 // See http://docs.ansible.com/ansible/git_module.html version field
-
+def APP_VERSION = sh (
+    script: 'git ls-remote --tags https://github.com/department-of-veterans-affairs/${APP_NAME}.git | awk '{print \$2}' | grep -v '{}' | awk -F"/" '{print "stable/"\$4}' | tail -n 1'
+    returnStdout: true
+  ).trim()
 
 
 /************************ Common Pipeline boilerplate ************************/
@@ -40,10 +43,6 @@ node {
       dir ('./appeals-deployment/ansible') {
         sh 'git submodule init'
         sh 'git submodule update'
-        def APP_VERSION = sh (
-            script: 'git describe --tags'
-            returnStdout: true
-          ).trim()
         // The commmon pipeline script should kick off the deployment.
         commonPipeline = load "../jenkins/common-pipeline.groovy"
       }
