@@ -151,8 +151,8 @@ export default class EstablishClaim extends BaseForm {
       }
     });
 
-    return containsRoutedSpecialIssues
-  };
+    return containsRoutedSpecialIssues;
+  }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     let containsRoutedOrRegionalOfficeSpecialIssues = false;
