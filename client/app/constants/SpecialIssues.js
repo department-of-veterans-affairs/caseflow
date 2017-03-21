@@ -34,8 +34,8 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: 'Foreign pension, DIC - Mexico, Central and South American, Caribbean',
-    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericanCaribbean',
+    display: 'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribbean',
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
@@ -58,8 +58,8 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: 'Home Loan Guarantee',
-    specialIssue: 'homeLoanGuarantee',
+    display: 'Home Loan Guaranty',
+    specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: null,
