@@ -10,8 +10,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    # TODO: change this to use the feature flag or roles
-    if ENV["ENABLE_CERTIFICATION_V2"] == "true" && status == :started
+    if verify_certification_v2_access && status == :started
       render "v2", layout: "application"
       return
     end
@@ -38,6 +37,11 @@ class CertificationsController < ApplicationController
 
   def show
     render "confirm", layout: "application" if params[:confirm]
+  end
+
+  def form9_pdf
+    form9 = certification.appeal.form9
+    send_file(form9.serve, type: "application/pdf", disposition: "inline")
   end
 
   def pdf
@@ -69,6 +73,10 @@ class CertificationsController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Certify Appeal")
+  end
+
+  def verify_certification_v2_access
+    return true if current_user && current_user.can?("CertificationV2")
   end
 
   def certification

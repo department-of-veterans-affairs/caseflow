@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import RequiredIndicator from './RequiredIndicator';
 
 export default class RadioField extends React.Component {
   onChange = (event) => {
@@ -10,11 +11,17 @@ export default class RadioField extends React.Component {
       label,
       name,
       options,
-      value
+      value,
+      required
     } = this.props;
 
+    required = required || false;
+
     return <fieldset className="cf-form-radio-inline cf-form-showhide-radio">
-      <legend className="question-label">{label || name}</legend>
+      <legend className="question-label">
+        {(label || name)} {(required && <RequiredIndicator/>)}
+      </legend>
+
       <div className="cf-form-radio-options">
         {options.map((option) =>
           <div className="cf-form-radio-option" key={option}>
@@ -35,6 +42,7 @@ export default class RadioField extends React.Component {
 }
 
 RadioField.propTypes = {
+  required: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
