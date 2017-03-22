@@ -48,7 +48,7 @@ export default class SignAndCertify extends React.Component {
               "Veterans Service Representative",
               "Claims Assistant",
               "Other"
-             ]}
+            ]}
           />
           <DateSelector
             label="Decision Date"
