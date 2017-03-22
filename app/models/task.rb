@@ -3,6 +3,7 @@ class Task < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :appeal
+  has_one :establish_claim_meta
 
   validate :no_open_tasks_for_appeal, on: :create
 
