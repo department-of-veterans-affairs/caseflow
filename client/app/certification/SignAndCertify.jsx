@@ -21,28 +21,34 @@ export default class SignAndCertify extends React.Component {
 
           <p>Fill in information about yourself below to sign this certification.</p>
           <TextField
-           label="Name and location of certifying office:"
-           name="certifyingOffice"
-           value={certifyingOffice}
-           readOnly={true}
+            label="Name and location of certifying office:"
+            name="certifyingOffice"
+            value={certifyingOffice}
+            readOnly={true}
           />
           <TextField
-           label="Organizational elements certifying appeal:"
-           name="certifyingUsername"
-           value={certifyingUsername}
-           readOnly={true}
+            label="Organizational elements certifying appeal:"
+            name="certifyingUsername"
+            value={certifyingUsername}
+            readOnly={true}
           />
           <TextField
-           label="Name of certifying official:"
-           name="certifyingOfficialName"
-           value={certifyingOfficialName}
-           readOnly={true}
+            label="Name of certifying official:"
+            name="certifyingOfficialName"
+            value={certifyingOfficialName}
+            readOnly={true}
           />
           <RadioField
-           label="Title of certifying official:"
-           name="certifyingOfficialTitle"
-           value={certifyingOfficialTitle}
-           options={["Decision Review Officer", "Rating Specialist", "Veterans Service Representative", "Claims Assistant", "Other"]}
+            label="Title of certifying official:"
+            name="certifyingOfficialTitle"
+            value={certifyingOfficialTitle}
+            options={[
+              "Decision Review Officer",
+              "Rating Specialist",
+              "Veterans Service Representative",
+              "Claims Assistant",
+              "Other"
+             ]}
           />
           <DateSelector
             label="Decision Date"
