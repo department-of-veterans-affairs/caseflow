@@ -39,7 +39,7 @@ node {
       sh "git clone -b artem/tag-update https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       dir ('./appeals-deployment/ansible') {
         APP_VERSION = sh (
-          script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \"stable/\"\$4}' | tail -n 1",
+          script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \$0}' | tail -n 1",
           returnStdout: true
         ).trim()
         sh 'git submodule init'
