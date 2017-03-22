@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import Pdf from '../components/Pdf';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
@@ -26,7 +25,7 @@ export default class DecisionReviewer extends React.Component {
       // We want to show the list view (currentPdfIndex null), unless
       // there is just a single pdf in which case we want to just show
       // the first pdf.
-      currentPdfIndex: 0,//this.props.appealDocuments.length > 1 ? null : 0,
+      currentPdfIndex: this.props.appealDocuments.length > 1 ? null : 0,
       filterBy: '',
       isCommentLabelSelected: false,
       selectedLabels,

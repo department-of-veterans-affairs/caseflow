@@ -1,11 +1,8 @@
-/* eslint-disable max-lines */
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 
-
 export default class Pdf extends React.Component {
-  
   constructor(props) {
     super(props);
     this.state = {
@@ -108,7 +105,7 @@ export default class Pdf extends React.Component {
         pdfDocument
       });
 
-      if(this.props.onPageChange) {
+      if (this.props.onPageChange) {
         this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
       }
 
@@ -141,7 +138,7 @@ export default class Pdf extends React.Component {
       this.draw(nextProps.file);
     }
 
-    if (nextProps.scale !== this.props.scale){
+    if (nextProps.scale !== this.props.scale) {
       this.draw(nextProps.file);
     }
   }
@@ -158,7 +155,7 @@ export default class Pdf extends React.Component {
 
 Pdf.defaultProps = {
   scale: 1
-}
+};
 
 Pdf.propTypes = {
   // comments: PropTypes.object(PropTypes.shape({
@@ -172,5 +169,3 @@ Pdf.propTypes = {
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func
 };
-
-/* eslint-enable max-lines */

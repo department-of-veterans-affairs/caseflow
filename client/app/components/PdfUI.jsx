@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
@@ -25,7 +24,8 @@ export default class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    let zoomFactor = (this.state.scale + delta) / this.state.scale;
+    // TODO: Fix scrolling when zooming
+    // let zoomFactor = (this.state.scale + delta) / this.state.scale;
 
     this.setState({
       scale: this.state.scale + delta
@@ -51,6 +51,7 @@ export default class PdfUI extends React.Component {
 
   render() {
     let selectedLabels = {};
+
     selectedLabels[this.props.label] = true;
 
     return <div className="cf-pdf-container">
@@ -158,7 +159,3 @@ PdfUI.propTypes = {
   onPageClick: PropTypes.func,
   showList: PropTypes.func
 };
-
-/* eslint-enable max-lines */
-
-

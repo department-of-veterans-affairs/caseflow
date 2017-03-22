@@ -1,11 +1,8 @@
 /* eslint-disable max-lines */
 import React, { PropTypes } from 'react';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
-import Button from '../components/Button';
-import DocumentLabels from '../components/DocumentLabels';
 import PdfUI from '../components/PdfUI';
-import PdfSidebar from '../components/PdfSidebar'
+import PdfSidebar from '../components/PdfSidebar';
 
 export default class PdfViewer extends React.Component {
   constructor(props) {
@@ -30,14 +27,14 @@ export default class PdfViewer extends React.Component {
     this.comments = [];
 
     this.setState({ comments: this.comments });
-    let annotations = this.props.annotationStorage.getAnnotationByDocumentId(this.props.doc.id);
-    annotations.forEach((annotation) => {
-      this.comments.push({
-        content: annotation.comment,
-        uuid: annotation.uuid
+    this.props.annotationStorage.getAnnotationByDocumentId(this.props.doc.id).
+      forEach((annotation) => {
+        this.comments.push({
+          content: annotation.comment,
+          uuid: annotation.uuid
+        });
+        this.setState({ comments: this.comments });
       });
-      this.setState({ comments: this.comments });
-    });
   }
 
   showEditIcon = (index) => () => {
@@ -114,10 +111,10 @@ export default class PdfViewer extends React.Component {
 
   onDoneAddingComment = () => {
     this.setState({
-      isAddingComment: false,    
+      isAddingComment: false,
       isPlacingNote: false,
       onSaveComment: null
-    }); 
+    });
   }
 
   onSaveComment = (annotation, viewport, pageNumber) => (content) => {
@@ -138,14 +135,14 @@ export default class PdfViewer extends React.Component {
       });
   }
 
-  placeComment = (viewport, pageNumber, annotation) => {   
+  placeComment = (viewport, pageNumber, annotation) => {
     if (this.state.isPlacingNote) {
       this.setState({
-        isAddingComment: true,    
+        isAddingComment: true,
         isPlacingNote: false,
         onSaveComment: this.onSaveComment(annotation, viewport, pageNumber)
-      });   
-    }   
+      });
+    }
   }
 
 

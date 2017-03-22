@@ -17,6 +17,7 @@ export default class PdfSidebar extends BaseForm {
 
   doneAddingComment = () => {
     let commentForm = { ...this.state.commentForm };
+
     commentForm.addComment.value = '';
     this.setState({
       commentForm,
@@ -25,8 +26,7 @@ export default class PdfSidebar extends BaseForm {
     this.props.onDoneAddingComment();
   }
 
-  addCommentOnChange = (saveNote) => (event) => {
-    // TODO: Should we continue to save on blur?
+  addCommentOnChange = (event) => {
     if (event.key === 'Enter') {
       if (this.state.commentForm.addComment.value.length > 0) {
         this.props.onSaveComment(this.state.commentForm.addComment.value);
@@ -40,11 +40,6 @@ export default class PdfSidebar extends BaseForm {
   }
 
   render() {
-    let {
-      activated,
-      title
-    } = this.props;
-
     return <div className="cf-sidebar-wrapper">
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">Document</div>
@@ -74,7 +69,7 @@ export default class PdfSidebar extends BaseForm {
                 label="Add Comment"
                 name="addComment"
                 onChange={this.handleFieldChange('commentForm', 'addComment')}
-                onKeyDown={this.addCommentOnChange(this.props.onSaveComment)}
+                onKeyDown={this.addCommentOnChange}
                 {...this.state.commentForm.addComment}
               />
             </div>
