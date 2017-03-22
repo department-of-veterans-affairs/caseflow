@@ -3,8 +3,8 @@ class User < ActiveRecord::Base
   has_many :document_views
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :roles, :ip_address, :admin_roles
-  attr_writer :regional_office
+  attr_accessor :ip_address, :admin_roles
+  attr_writer :regional_office, :roles
 
   TASK_TYPE_TO_ROLES = {
     EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
@@ -12,8 +12,19 @@ class User < ActiveRecord::Base
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2"].freeze
 
+  # Because of the funciton character limit, we need to also alias some functions
+  FUNCTION_ALIASES = {
+    "Manage Claim Establishme" => ["Manage Claim Establishment"]
+  }.freeze
+
   def username
     css_id
+  end
+
+  def roles
+    (@roles || []).inject([]) do |result, role|
+      result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
+    end
   end
 
   # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
