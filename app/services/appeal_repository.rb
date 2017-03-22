@@ -102,7 +102,8 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro]
+      status: VACOLS::Case::STATUS[case_record.bfmpro],
+      outcoding_date: normalize_vacols_date(folder_record.tioctime)
     )
 
     appeal
