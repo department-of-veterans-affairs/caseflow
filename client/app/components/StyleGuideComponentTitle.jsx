@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { githubHtml } from './RenderFunctions';
+import { githubIcon } from './RenderFunctions';
 
 export default class StyleGuideComponentTitle extends React.Component {
 
@@ -8,11 +8,12 @@ export default class StyleGuideComponentTitle extends React.Component {
 
     let baseUrl = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/";
 
-    return <span>
-      <a className="usa-button" href={baseUrl + link} target="_blank">{githubHtml()} View Source Code</a>
-    </span>;
-
     /* eslint-enable max-len */
+    return <span>
+      <a className="usa-button" href={baseUrl + link} target="_blank">
+        {githubIcon()} View Source Code
+      </a>
+    </span>;
   }
 
   render() {
