@@ -126,7 +126,7 @@ export let crossSymbolHtml = function() {
   );
 };
 
-export let githubIcon = function() {
+export let GithubIcon = function() {
   return (
     <i className="fa fa-github fa-1" aria-hidden="true"></i>
   );
