@@ -20,20 +20,20 @@ class EstablishClaimsController < TasksController
     Task.transaction do
       Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
       task.complete!(status: 0)
-      task.claim_establishment.update!(decision_date: Time.now)
+      task.claim_establishment.update!(decision_date: Time.now) if task.claim_establishment
     end
     render json: {}
   end
 
   def email_complete
     task.complete!(status: Task.completion_status_code(:special_issue_emailed))
-    task.claim_establishment.update!(decision_date: Time.now)
+    task.claim_establishment.update!(decision_date: Time.now) if task.claim_establishment
     render json: {}
   end
 
   def no_email_complete
     task.complete!(status: Task.completion_status_code(:special_issue_not_emailed))
-    task.claim_establishment.update!(decision_date: Time.now)
+    task.claim_establishment.update!(decision_date: Time.now) if task.claim_establishment
     render json: {}
   end
 
@@ -41,7 +41,7 @@ class EstablishClaimsController < TasksController
     Dispatch.new(task: task)
             .assign_existing_end_product!(end_product_id: params[:end_product_id],
                                           special_issues: special_issues_params)
-    task.claim_establishment.update!(decision_date: Time.now)
+    task.claim_establishment.update!(decision_date: Time.now) if task.claim_establishment
     render json: {}
   end
 
