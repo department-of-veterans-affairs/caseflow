@@ -19,7 +19,7 @@ export default class StyleGuideComponentTitle extends React.Component {
           <GithubIcon /> View Source Code
         </a>
       </span>;
-    }
+    };
 
     /* Link is only the name of the file that you want to link to in the
     Style Guide (aka StyleGuideModal.jsx)*/
