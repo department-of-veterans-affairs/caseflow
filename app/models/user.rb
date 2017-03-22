@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :tasks
+  has_many :document_views
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :ip_address, :admin_roles
