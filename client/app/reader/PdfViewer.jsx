@@ -6,6 +6,9 @@ import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 import TextareaField from '../components/TextareaField';
 
+// PdfViewer is a smart component that renders the entire
+// PDF view of the Reader SPA. It displays the PDF with UI
+// as well as the sidebar for comments and document information.
 export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
@@ -28,11 +31,11 @@ export default class PdfViewer extends BaseForm {
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  onCommentChange = () => {
+  onCommentChange = (documentId = this.props.doc.id) => {
     this.comments = [];
 
     this.setState({ comments: this.comments });
-    this.props.annotationStorage.getAnnotationByDocumentId(this.props.doc.id).
+    this.props.annotationStorage.getAnnotationByDocumentId(documentId).
       forEach((annotation) => {
         this.comments.push({
           content: annotation.comment,
@@ -72,30 +75,30 @@ export default class PdfViewer extends BaseForm {
       let commentToAdd = this.state.commentForm.editComment.value;
 
       this.props.annotationStorage.getAnnotation(
+        this.props.doc.id,
+        comment.uuid,
+      ).then((annotation) => {
+        annotation.comment = commentToAdd;
+        this.props.annotationStorage.editAnnotation(
           this.props.doc.id,
-          comment.uuid,
-        ).then((annotation) => {
-          annotation.comment = commentToAdd;
-          this.props.annotationStorage.editAnnotation(
-            this.props.doc.id,
-            annotation.uuid,
-            annotation
-            ).
-            catch(() => {
-              // TODO: Add error case if comment can't be added
-              /* eslint-disable no-console */
-              console.log('Error editing annotation in saveEdit');
+          annotation.uuid,
+          annotation
+        ).
+        catch(() => {
+          // TODO: Add error case if comment can't be added
+          /* eslint-disable no-console */
+          console.log('Error editing annotation in saveEdit');
 
-              /* eslint-enable no-console */
-            });
-        }).
-          catch(() => {
+          /* eslint-enable no-console */
+        });
+      }).
+      catch(() => {
 
-            /* eslint-disable no-console */
-            console.log('Error getting annotation in saveEdit');
+        /* eslint-disable no-console */
+        console.log('Error getting annotation in saveEdit');
 
-            /* eslint-enable no-console */
-          });
+        /* eslint-enable no-console */
+      });
 
       this.setState({
         editingComment: null
@@ -114,7 +117,7 @@ export default class PdfViewer extends BaseForm {
     });
   }
 
-  onDoneAddingComment = () => {
+  onAddCommentComplete = () => {
     this.setState({
       isAddingComment: false,
       isPlacingNote: false,
@@ -143,8 +146,16 @@ export default class PdfViewer extends BaseForm {
       });
   }
 
-  placeComment = (viewport, pageNumber, annotation) => {
+  placeComment = (viewport, pageNumber, coordinates) => {
     if (this.state.isPlacingNote) {
+      let annotation = {
+        class: "Annotation",
+        page: pageNumber,
+        "type": "point",
+        "x": coordinates.xPosition,
+        "y": coordinates.yPosition
+      };
+
       this.setState({
         isAddingComment: true,
         isPlacingNote: false,
@@ -210,6 +221,12 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.doc.id !== this.props.doc.id) {
+      this.onCommentChange(nextProps.doc.id);
+    }
+  }
+
   scrollToAnnotation = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
@@ -272,10 +289,10 @@ export default class PdfViewer extends BaseForm {
             id="pdf1"
             label={this.props.label}
             onPageClick={this.placeComment}
-            setLabel={this.props.setLabel}
-            showList={this.props.showList}
-            nextPdf={this.props.nextPdf}
-            previousPdf={this.props.previousPdf}
+            onSetLabel={this.props.onSetLabel}
+            onShowList={this.props.onShowList}
+            onNextPdf={this.props.onNextPdf}
+            onPreviousPdf={this.props.onPreviousPdf}
           />
           <PdfSidebar
             doc={this.props.doc}
@@ -283,7 +300,7 @@ export default class PdfViewer extends BaseForm {
             isAddingComment={this.state.isAddingComment}
             comments={comments}
             onSaveComment={this.state.onSaveComment}
-            onDoneAddingComment={this.onDoneAddingComment}
+            onAddCommentComplete={this.onAddCommentComplete}
           />
         </div>
       </div>
@@ -297,5 +314,5 @@ PdfViewer.propTypes = {
   file: PropTypes.string.isRequired,
   label: PropTypes.string,
   pdfWorker: PropTypes.string,
-  setLabel: PropTypes.func.isRequired
+  onSetLabel: PropTypes.func.isRequired
 };

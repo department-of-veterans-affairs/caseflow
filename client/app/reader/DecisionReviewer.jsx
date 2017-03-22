@@ -45,7 +45,7 @@ export default class DecisionReviewer extends React.Component {
       this.sortDocuments(this.state.unsortedDocuments));
   }
 
-  previousPdf = () => {
+  onPreviousPdf = () => {
     this.setState({
       currentPdfIndex: Math.max(this.state.currentPdfIndex - 1, 0)
     });
@@ -55,7 +55,7 @@ export default class DecisionReviewer extends React.Component {
     return `${this.props.url}?id=${doc.id}`;
   }
 
-  nextPdf = () => {
+  onNextPdf = () => {
     this.setState({
       currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
         this.state.documents.length - 1)
@@ -84,7 +84,7 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  showList = () => {
+  onShowList = () => {
     this.setState({
       currentPdfIndex: null
     }, this.sortAndFilter);
@@ -212,7 +212,7 @@ export default class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  setLabel = (pdfIndex) => (label) => {
+  onSetLabel = (pdfIndex) => (label) => {
     let data = { label: StringUtil.camelCaseToSnakeCase(label) };
     let documentId = this.state.documents[pdfIndex].id;
 
@@ -282,6 +282,9 @@ export default class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
+    let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
+    let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
+
     return (
       <div>
         {this.state.currentPdfIndex === null && <PdfListView
@@ -302,11 +305,11 @@ export default class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={documents[this.state.currentPdfIndex]}
-          previousPdf={this.shouldShowPreviousButton() && this.previousPdf}
-          nextPdf={this.shouldShowNextButton() && this.nextPdf}
-          showList={this.showList}
+          onPreviousPdf={onPreviousPdf}
+          onNextPdf={onNextPdf}
+          onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
-          setLabel={this.setLabel(this.state.currentPdfIndex)}
+          onSetLabel={this.onSetLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label} />}
       </div>
     );

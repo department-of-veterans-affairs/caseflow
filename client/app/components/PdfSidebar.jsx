@@ -4,6 +4,9 @@ import BaseForm from '../containers/BaseForm';
 import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
 
+// PdfSidebar shows relevant document information and comments.
+// It is intended to be used with the PdfUI component to
+// show a PDF with it's corresponding information.
 export default class PdfSidebar extends BaseForm {
   constructor(props) {
     super(props);
@@ -14,26 +17,27 @@ export default class PdfSidebar extends BaseForm {
     };
   }
 
-  doneAddingComment = () => {
+  onAddCommentComplete = () => {
     let commentForm = { ...this.state.commentForm };
 
     commentForm.addComment.value = '';
     this.setState({
       commentForm
     });
-    this.props.onDoneAddingComment();
+    this.props.onAddCommentComplete();
   }
 
+  // We use keyDown to capture enter and escape events.
   addCommentKeyDown = (event) => {
     if (event.key === 'Enter') {
       if (this.state.commentForm.addComment.value.length > 0) {
         this.props.onSaveComment(this.state.commentForm.addComment.value);
       }
-      this.doneAddingComment();
+      this.onAddCommentComplete();
       event.preventDefault();
     } else if (event.key === 'Escape') {
       this.resetCommentForm();
-      event.doneAddingComment();
+      event.onAddCommentComplete();
     }
   }
 
@@ -84,5 +88,5 @@ PdfSidebar.propTypes = {
   comments: PropTypes.node,
   isAddingComment: PropTypes.bool,
   onSaveComment: PropTypes.func,
-  onDoneAddingComment: PropTypes.func
+  onAddCommentComplete: PropTypes.func
 };
