@@ -6,5 +6,4 @@ class ClaimEstablishment < ActiveRecord::Base
     full_grant: 1,
     remand: 2
   }
-
 end

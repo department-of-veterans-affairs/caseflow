@@ -5,7 +5,7 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
     "Full Grant" => :full_grant,
     "Partial Grant" => :partial_grant,
     "Remand" => :remand
-  }
+  }.freeze
 
   def perform
     # fetch all full grants
@@ -44,10 +44,10 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
   # Creates a new EstablishClaim task and it's related meta data information
   # using the infromation from appeal.
   def add_establish_claim_data(appeal)
-
-    establish_claim_task = EstablishClaim.
-      find_or_create_by(appeal: appeal) do |establish_claim_task|
-      #call this method only if a new establishment claim task is created.
+    EstablishClaim
+      .find_or_create_by(appeal: appeal) do |establish_claim_task|
+      # create a new claim establishment only if a new establish
+      # claim task is created.
       ClaimEstablishment.create(
         decision_type: CreateEstablishClaimTasksJob.get_decision_type(appeal),
         decision_date: appeal.outcoding_date,
@@ -63,5 +63,4 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
   def self.get_decision_type(appeal)
     DECSION_TYPES[appeal.decision_type]
   end
-
 end
