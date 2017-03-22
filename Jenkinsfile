@@ -9,7 +9,7 @@ def APP_NAME = 'certification';
 
 // The application version to checkout.
 // See http://docs.ansible.com/ansible/git_module.html version field
-def APP_VERSION = 'HEAD'
+def APP_VERSION = 'HEAD';
 
 
 /************************ Common Pipeline boilerplate ************************/
@@ -36,11 +36,14 @@ node {
     // Checkout the deployment repo for the ansible script. This is needed
     // since the deployment scripts are separated from the source code.
     stage ('checkout-deploy-repo') {
-      sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
+      sh "git clone -b artem/tag-update https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       dir ('./appeals-deployment/ansible') {
+        APP_VERSION = sh (
+          script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \$0}' | tail -n 1",
+          returnStdout: true
+        ).trim()
         sh 'git submodule init'
         sh 'git submodule update'
-
         // The commmon pipeline script should kick off the deployment.
         commonPipeline = load "../jenkins/common-pipeline.groovy"
       }
