@@ -308,8 +308,7 @@ export default class DecisionReviewer extends React.Component {
           showList={this.showList}
           pdfWorker={this.props.pdfWorker}
           setLabel={this.setLabel(this.state.currentPdfIndex)}
-          label={documents[this.state.currentPdfIndex].label}
-          hideNavigation={this.props.appealDocuments.length === 1} />}
+          label={documents[this.state.currentPdfIndex].label} />}
       </div>
     );
   }

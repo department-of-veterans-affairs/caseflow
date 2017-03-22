@@ -4,6 +4,16 @@ import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
 import Pdf from '../components/Pdf';
 
+export const linkToSingleDocumentView = (doc) => {
+  let id = doc.id;
+  let filename = doc.filename;
+  let type = doc.type;
+  let receivedAt = doc.received_at;
+
+  return `/decision/review/show?id=${id}&type=${type}` +
+    `&received_at=${receivedAt}&filename=${filename}`;
+};
+
 export default class PdfUI extends React.Component {
   constructor(props) {
     super(props);
@@ -47,7 +57,7 @@ export default class PdfUI extends React.Component {
       <div className="cf-pdf-header cf-pdf-toolbar">
         <div>
           <span className="cf-pdf-buttons-left">
-            { !this.props.hideNavigation &&
+            { this.props.showList &&
               <Button
                 name="backToDocuments"
                 classNames={["cf-pdf-button"]}
@@ -145,7 +155,8 @@ PdfUI.propTypes = {
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
-  onPageClick: PropTypes.func
+  onPageClick: PropTypes.func,
+  showList: PropTypes.func
 };
 
 /* eslint-enable max-lines */
