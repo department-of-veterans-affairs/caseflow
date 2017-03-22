@@ -135,6 +135,9 @@ export default class PdfViewer extends BaseForm {
             let svg = document.getElementById(`pageContainer${pageNumber}`).
               getElementsByClassName("annotationLayer")[0];
 
+            // This is the icky part of this component. We have to
+            // hook directly into PDFJSAnnotate to trigger a redraw
+            // of the page, in order to see the new comments
             PDFJSAnnotate.render(svg, viewport, annotations);
           });
       });

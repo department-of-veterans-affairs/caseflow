@@ -21,13 +21,17 @@ export default class Pdf extends React.Component {
     };
 
     this.isRendered[index] = true;
+
+    // Call into PDFJSAnnotate to render this page
     UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+      // If successful then we want to setup a click handler
       let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
       pageContainer.addEventListener('click',
         this.onPageClick(pdfPage.getViewport(this.props.scale, 0), index + 1));
     }).
     catch(() => {
+      // If unsuccessful we want to mark this page as not rendered
       this.isRendered[index] = false;
     });
   }
@@ -115,9 +119,6 @@ export default class Pdf extends React.Component {
       this.renderPage(0);
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
-
-      // TODO: come and fix this
-      // this.onCommentChange();
     });
   }
 
@@ -158,9 +159,6 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
-  // comments: PropTypes.object(PropTypes.shape({
-
-  // })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
