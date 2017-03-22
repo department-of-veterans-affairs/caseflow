@@ -9,8 +9,7 @@ export default class PdfSidebar extends BaseForm {
     super(props);
     this.state = {
       commentForm: {
-        addComment: new FormField(''),
-        editComment: new FormField('')
+        addComment: new FormField('')
       }
     };
   }
@@ -20,13 +19,12 @@ export default class PdfSidebar extends BaseForm {
 
     commentForm.addComment.value = '';
     this.setState({
-      commentForm,
-      isAddingComment: false
+      commentForm
     });
     this.props.onDoneAddingComment();
   }
 
-  addCommentOnChange = (event) => {
+  addCommentKeyDown = (event) => {
     if (event.key === 'Enter') {
       if (this.state.commentForm.addComment.value.length > 0) {
         this.props.onSaveComment(this.state.commentForm.addComment.value);
@@ -69,7 +67,7 @@ export default class PdfSidebar extends BaseForm {
                 label="Add Comment"
                 name="addComment"
                 onChange={this.handleFieldChange('commentForm', 'addComment')}
-                onKeyDown={this.addCommentOnChange}
+                onKeyDown={this.addCommentKeyDown}
                 {...this.state.commentForm.addComment}
               />
             </div>

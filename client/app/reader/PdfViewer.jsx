@@ -1,16 +1,21 @@
-/* eslint-disable max-lines */
 import React, { PropTypes } from 'react';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
+import FormField from '../util/FormField';
+import BaseForm from '../containers/BaseForm';
+import TextareaField from '../components/TextareaField';
 
-export default class PdfViewer extends React.Component {
+export default class PdfViewer extends BaseForm {
   constructor(props) {
     super(props);
     this.state = {
       commentBoxEventListener: null,
       commentOverIndex: null,
       comments: [],
+      commentForm: {
+        editComment: new FormField('')
+      },
       currentPage: 1,
       editingComment: null,
       isAddingComment: false,
@@ -223,20 +228,20 @@ export default class PdfViewer extends React.Component {
     comments = this.state.comments.map((comment, index) => {
       let selectedClass = comment.selected ? " cf-comment-selected" : "";
 
-      // if (this.state.editingComment === index) {
-      //   return (
-      //     <div
-      //       key="commentEditor"
-      //       className="cf-pdf-comment-list-item"
-      //       onKeyUp={this.saveEdit(comment)}>
-      //       <TextareaField
-      //         label="Edit Comment"
-      //         name="editComment"
-      //         onChange={this.handleFieldChange('commentForm', 'editComment')}
-      //         {...this.state.commentForm.editComment}
-      //       />
-      //     </div>);
-      // }
+      if (this.state.editingComment === index) {
+        return (
+          <div
+            key="commentEditor"
+            className="cf-pdf-comment-list-item"
+            onKeyUp={this.saveEdit(comment)}>
+            <TextareaField
+              label="Edit Comment"
+              name="editComment"
+              onChange={this.handleFieldChange('commentForm', 'editComment')}
+              {...this.state.commentForm.editComment}
+            />
+          </div>);
+      }
 
       return <div
           onClick={this.scrollToAnnotation(comment.uuid)}
@@ -290,5 +295,3 @@ PdfViewer.propTypes = {
   pdfWorker: PropTypes.string,
   setLabel: PropTypes.func.isRequired
 };
-
-/* eslint-enable max-lines */
