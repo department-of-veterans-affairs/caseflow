@@ -298,7 +298,8 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "RO13",
-      documents: [nod_document, soc_document, form9_document, decision_document]
+      documents: [nod_document, soc_document, form9_document, decision_document],
+      outcoding_date: 2.days.ago
     }
   end
 
