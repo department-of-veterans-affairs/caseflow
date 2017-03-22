@@ -35,7 +35,7 @@ const SPECIAL_ISSUES = [
   },
   {
     display: 'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
-    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribbean',
+    specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribb',
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
