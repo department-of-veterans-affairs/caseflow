@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170309203602) do
+ActiveRecord::Schema.define(version: 20170320195443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,14 @@ ActiveRecord::Schema.define(version: 20170309203602) do
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
+
+  create_table "establish_claims", force: :cascade do |t|
+    t.integer  "task_id"
+    t.integer  "decision_type"
+    t.datetime "outcoding_date"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
