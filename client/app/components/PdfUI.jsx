@@ -157,5 +157,7 @@ PdfUI.propTypes = {
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
-  showList: PropTypes.func
+  showList: PropTypes.func,
+  nextPdf: PropTypes.func,
+  previousPdf: PropTypes.func
 };

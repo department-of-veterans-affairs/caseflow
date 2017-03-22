@@ -153,7 +153,6 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
@@ -275,6 +274,8 @@ export default class PdfViewer extends BaseForm {
             onPageClick={this.placeComment}
             setLabel={this.props.setLabel}
             showList={this.props.showList}
+            nextPdf={this.props.nextPdf}
+            previousPdf={this.props.previousPdf}
           />
           <PdfSidebar
             doc={this.props.doc}
