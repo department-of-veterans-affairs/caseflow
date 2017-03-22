@@ -53,8 +53,8 @@ class Fakes::AppealRepository
   end
 
   def self.establish_claim!(claim:, appeal:)
-    p "Submitting claim to VBMS for appeal: #{appeal.id}"
-    p "Claim data:\n", claim
+    Rails.logger.info("Submitting claim to VBMS for appeal: #{appeal.id}")
+    Rails.logger.info("Claim data:\n #{claim}")
 
     # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id)
@@ -88,8 +88,8 @@ class Fakes::AppealRepository
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     return unless @records
 
-    p "Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}"
-    p "Decision Type:\n", decision_type
+    Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
+    Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]

@@ -46,9 +46,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   onPreviousPdf = () => {
-    this.setState({
-      currentPdfIndex: Math.max(this.state.currentPdfIndex - 1, 0)
-    });
+    this.setPage(Math.max(this.state.currentPdfIndex - 1, 0));
   }
 
   documentUrl = (doc) => {
@@ -56,9 +54,34 @@ export default class DecisionReviewer extends React.Component {
   }
 
   onNextPdf = () => {
+    this.setPage(Math.min(this.state.currentPdfIndex + 1,
+        this.state.documents.length - 1));
+  }
+
+  // This method is used for updating attributes of documents.
+  // Since we maintain a sorted and unsorted list of documents
+  // when we update one, we need to update the other.
+  setDocumentAttribute = (pdfNumber, field, value) => {
+    let unsortedDocs = [...this.state.unsortedDocuments];
+    let documentId = this.state.documents[pdfNumber].id;
+
+    // We need to update the attribute in both the unsorted
+    // and sorted list of documents. PdfNumber refers to the
+    // sorted list. For the unsorted list, we need to look
+    // it up by documentId.
+    unsortedDocs.forEach((doc) => {
+      if (doc.id === documentId) {
+        doc[field] = value;
+      }
+    });
+
+    let docs = [...this.state.documents];
+
+    docs[pdfNumber][field] = value;
+
     this.setState({
-      currentPdfIndex: Math.min(this.state.currentPdfIndex + 1,
-        this.state.documents.length - 1)
+      documents: docs,
+      unsortedDocuments: unsortedDocs
     });
   }
 
@@ -75,10 +98,34 @@ export default class DecisionReviewer extends React.Component {
         event.metaKey ||
         (event.button &&
         event.button === 1)) {
+
+      this.markAsRead(pdfNumber);
+
       return true;
     }
 
     event.preventDefault();
+    this.setPage(pdfNumber);
+  }
+
+  markAsRead = (pdfNumber) => {
+
+    let documentId = this.state.documents[pdfNumber].id;
+
+    ApiUtil.patch(`/document/${documentId}/mark-as-read`).
+      then(() => {
+        this.setDocumentAttribute(pdfNumber, 'opened_by_current_user', true);
+      }, () => {
+
+        /* eslint-disable no-console */
+        console.log('Error marking as read');
+
+        /* eslint-enable no-console */
+      });
+  }
+
+  setPage = (pdfNumber) => {
+    this.markAsRead(pdfNumber);
     this.setState({
       currentPdfIndex: pdfNumber
     });
@@ -212,32 +259,13 @@ export default class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  onSetLabel = (pdfIndex) => (label) => {
+  onSetLabel = (pdfNumber) => (label) => {
     let data = { label: StringUtil.camelCaseToSnakeCase(label) };
-    let documentId = this.state.documents[pdfIndex].id;
+    let documentId = this.state.documents[pdfNumber].id;
 
     ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
       then(() => {
-        let unsortedDocs = [...this.state.unsortedDocuments];
-
-        // We need to update the label in both the unsorted
-        // and sorted list of documents. PdfIndex refers to the
-        // sorted list. For the unsorted list, we need to look
-        // it up by documentId.
-        unsortedDocs.forEach((doc) => {
-          if (doc.id === documentId) {
-            doc.label = label;
-          }
-        });
-
-        let docs = [...this.state.documents];
-
-        docs[pdfIndex].label = label;
-
-        this.setState({
-          documents: docs,
-          unsortedDocuments: unsortedDocs
-        });
+        this.setDocumentAttribute(pdfNumber, 'label', label);
       }, () => {
 
         /* eslint-disable no-console */
