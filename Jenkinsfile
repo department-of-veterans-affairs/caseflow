@@ -37,8 +37,10 @@ node {
     // since the deployment scripts are separated from the source code.
     stage ('checkout-deploy-repo') {
       sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
+      // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
       if (env.APP_ENV == 'prod') {
         APP_VERSION = sh (
+          // magical shell script that will find the latest tag for the repository
           script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \$0}' | tail -n 1",
           returnStdout: true
         ).trim()
