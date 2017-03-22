@@ -7,9 +7,9 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       name = data[:request].class.name.split("::").last
-      application = RequestStore[:application] || "other"
+      app = RequestStore[:application] || "other"
       PrometheusService.completed_vbms_requests.increment(status: status,
-                                                          application: application,
+                                                          app: app,
                                                           name: name)
 
       if status != 200
@@ -31,7 +31,9 @@ class AppealRepository
   ).freeze
 
   def self.load_vacols_data(appeal)
-    case_record = MetricsService.timer "loaded VACOLS case #{appeal.vacols_id}" do
+    case_record = MetricsService.timer("VACOLS: load_vacols_data #{appeal.vacols_id}",
+                                       service: :vacols,
+                                       name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
 
@@ -51,7 +53,9 @@ class AppealRepository
                    VACOLS::Case.includes(:folder, :correspondent)
                  end
 
-    case_records = MetricsService.timer "loaded VACOLS case #{appeal.vbms_id}" do
+    case_records = MetricsService.timer("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
+                                       service: :vacols,
+                                       name: "load_vacols_data_by_vbms_id") do
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
@@ -116,7 +120,9 @@ class AppealRepository
 
   # :nocov:
   def self.remands_ready_for_claims_establishment
-    remands = MetricsService.timer "loaded remands in loc 97 from VACOLS" do
+    remands = MetricsService.timer("VACOLS: remands_ready_for_claims_establishment",
+                                   service: :vacols,
+                                   name: "remands_ready_for_claims_establishment") do
       VACOLS::Case.remands_ready_for_claims_establishment
     end
 
@@ -124,7 +130,9 @@ class AppealRepository
   end
 
   def self.amc_full_grants(outcoded_after:)
-    full_grants = MetricsService.timer "loaded AMC full grants outcoded after #{outcoded_after} from VACOLS" do
+    full_grants = MetricsService.timer("VACOLS:  amc_full_grants #{outcoded_after}",
+                                       service: :vacols,
+                                       name: "amc_full_grants") do
       VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
@@ -173,10 +181,7 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
-
-    raw_veteran_record = MetricsService.timer "BGS: fetch_veteran_info #{appeal.vacols_id}" do
-      BGSService.new.fetch_veteran_info(sanitized_id)
-    end
+    raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
 
     # Reduce keys in raw response down to what we specifically need for
     # establish claim
@@ -191,7 +196,7 @@ class AppealRepository
       update_location_after_dispatch!(appeal)
 
       if vacols_note
-        VACOLS::Note.create!(case_record: appeal.case_record,
+       VACOLS::Note.create!(case_record: appeal.case_record,
                              text: vacols_note)
       end
     end
@@ -229,7 +234,9 @@ class AppealRepository
 
     appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
 
-    MetricsService.timer "saved VACOLS case #{appeal.vacols_id}" do
+    MetricsService.timer("VACOLS: certify #{appeal.vacols_id}",
+                         service: :vacols,
+                         name: "certify") do
       appeal.case_record.save!
     end
   end
