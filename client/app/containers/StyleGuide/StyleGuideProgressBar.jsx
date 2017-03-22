@@ -5,7 +5,7 @@ import ProgressBar from '../../components/ProgressBar';
 
 export default function StyleGuideProgressBar() {
 
-    return <div>
+  return <div>
       <h2 id="progress_bar">Progress Bar</h2>
       <p>
         Something.
@@ -28,6 +28,6 @@ export default function StyleGuideProgressBar() {
         ]
       }
       />
-  </div>
+  </div>;
 
 }
