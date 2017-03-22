@@ -41,7 +41,7 @@ node {
         APP_VERSION = sh (
           script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/${APP_NAME}.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \"stable/\"\$4}' | tail -n 1",
           returnStdout: true
-        ).trim();
+        ).trim()
         sh 'git submodule init'
         sh 'git submodule update'
         // The commmon pipeline script should kick off the deployment.
