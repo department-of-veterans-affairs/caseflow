@@ -193,7 +193,7 @@ class AppealRepository
 
   def self.update_vacols_after_dispatch!(appeal:, vacols_note: nil)
     VACOLS::Case.transaction do
-      update_location_after_dispatch!(appeal)
+      update_location_after_dispatch!(appeal: appeal)
 
       if vacols_note
        VACOLS::Note.create!(case_record: appeal.case_record,
@@ -202,14 +202,14 @@ class AppealRepository
     end
   end
 
-  def self.update_location_after_dispatch!(appeal)
-    location = location_after_dispatch(appeal)
+  def self.update_location_after_dispatch!(appeal:)
+    location = location_after_dispatch(appeal: appeal)
 
     appeal.case_record.update_vacols_location!(location)
   end
 
   # Determine VACOLS location desired after dispatching a decision
-  def self.location_after_dispatch(appeal)
+  def self.location_after_dispatch(appeal:)
     return if appeal.full_grant?
 
     return "51" if appeal.vamc?

@@ -181,7 +181,7 @@ describe AppealRepository do
       # Clear the mock set for Appeal used in all the other AppealRepository tests
       allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_call_original
     end
-    subject { AppealRepository.location_after_dispatch(appeal) }
+    subject { AppealRepository.location_after_dispatch(appeal: appeal) }
 
     context "full grant" do
       let(:appeal) { Appeal.create(vacols_id: "789") }
