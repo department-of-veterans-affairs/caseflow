@@ -9,7 +9,7 @@ export default class StyleGuideComponentTitle extends React.Component {
       title
     } = this.props;
 
-    let SourceCodeLink = (props) => {
+    let ViewSourceCodeLink = (props) => {
       /* eslint-disable max-len */
       let baseUrl = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/";
       /* eslint-enable max-len */
@@ -29,7 +29,7 @@ export default class StyleGuideComponentTitle extends React.Component {
       </div>
 
       <div className="cf-push-right">
-        <SourceCodeLink link={link} />
+        <ViewSourceCodeLink link={link} />
       </div>
     </div>;
   }
