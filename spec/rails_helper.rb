@@ -132,6 +132,7 @@ RSpec.configure do |config|
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) { User.unauthenticate! }
+  config.before(:each) { Appeal.repository.seed! }
 
   config.after(:each) do
     Timecop.return
