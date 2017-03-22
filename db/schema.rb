@@ -91,9 +91,9 @@ ActiveRecord::Schema.define(version: 20170320195443) do
   create_table "claim_establishments", force: :cascade do |t|
     t.integer  "task_id"
     t.integer  "decision_type"
-    t.datetime "outcoding_date"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "decision_date"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "documents", force: :cascade do |t|
