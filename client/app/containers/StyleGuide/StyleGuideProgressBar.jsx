@@ -3,10 +3,7 @@ import React from 'react';
 // components
 import ProgressBar from '../../components/ProgressBar';
 
-export default class StyleGuideProgressBar extends React.Component {
-
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
-  render() {
+export default function StyleGuideProgressBar() {
 
     return <div>
       <h2 id="progress_bar">Progress Bar</h2>
@@ -31,6 +28,6 @@ export default class StyleGuideProgressBar extends React.Component {
         ]
       }
       />
-  </div>;
-  }
+  </div>
+
 }
