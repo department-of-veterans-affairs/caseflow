@@ -50,14 +50,13 @@ describe CreateEstablishClaimTasksJob do
 
       establish_claim = EstablishClaim.first
       expect(establish_claim.appeal_id).to eq(@full_grant.id)
-      puts "OUTCODING DATE"
-      puts @full_grant.outcoding_date
       expect(establish_claim.claim_establishment.decision_date).to eq(@full_grant.outcoding_date)
+      expect(establish_claim.claim_establishment.full_grant?).to eq(true)
     end
   end
 
   context ".get_decision_type" do
-    it "returns the right decision type based on the appeal information passed in'" do
+    it "returns the right decision type based on the appeal information passed in" do
       expect(CreateEstablishClaimTasksJob.get_decision_type(@full_grant)).to eq(:full_grant)
       expect(CreateEstablishClaimTasksJob.get_decision_type(@remand)).to eq(:remand)
     end
