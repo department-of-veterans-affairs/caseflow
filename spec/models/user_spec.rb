@@ -29,6 +29,11 @@ describe User do
       it { is_expected.to eq([]) }
     end
 
+    context "when roles has non-aliased roles" do
+      before { user.roles = ["System Admin", "Certify Appeal"] }
+      it { is_expected.to eq(["System Admin", "Certify Appeal"]) }
+    end
+
     context "when has a role alias" do
       before { user.roles = ["Manage Claim Establishme"] }
       it "is expected to return the aliases as well" do
