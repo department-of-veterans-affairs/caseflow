@@ -1,5 +1,4 @@
-class EstablishClaimMeta < ActiveRecord::Base
-  self.table_name = "establish_claims"
+class ClaimEstablishment < ActiveRecord::Base
   belongs_to :task
 
   enum decision_type: {

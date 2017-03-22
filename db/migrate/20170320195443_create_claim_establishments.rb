@@ -1,6 +1,6 @@
-class CreateEstablishClaims < ActiveRecord::Migration
+class CreateClaimEstablishments < ActiveRecord::Migration
   def change
-    create_table :establish_claims do |t|
+    create_table :claim_establishments do |t|
       t.integer :task_id
       t.integer :decision_type
       t.datetime :outcoding_date
