@@ -18,8 +18,8 @@ class ExternalApi::BGSService
   def get_end_products(vbms_id)
     @end_products[vbms_id] ||=
       MetricsService.timer("BGS: get end products for vbms id: #{vbms_id}",
-                            service: :bgs,
-                            name: "claim.find_by_vbms_file_number") do
+                           service: :bgs,
+                           name: "claim.find_by_vbms_file_number") do
         client.claims.find_by_vbms_file_number(vbms_id.strip)
       end
   end
@@ -27,8 +27,8 @@ class ExternalApi::BGSService
   def fetch_veteran_info(vbms_id)
     @veteran_info[vbms_id] ||=
       MetricsService.timer("BGS: fetch veteran info for vbms id: #{vbms_id}",
-                            service: :bgs,
-                            name: "veteran.find_by_file_number") do
+                           service: :bgs,
+                           name: "veteran.find_by_file_number") do
         client.veteran.find_by_file_number(vbms_id)
       end
   end

@@ -54,8 +54,8 @@ class AppealRepository
                  end
 
     case_records = MetricsService.timer("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
-                                       service: :vacols,
-                                       name: "load_vacols_data_by_vbms_id") do
+                                        service: :vacols,
+                                        name: "load_vacols_data_by_vbms_id") do
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
@@ -196,7 +196,7 @@ class AppealRepository
       update_location_after_dispatch!(appeal)
 
       if vacols_note
-       VACOLS::Note.create!(case_record: appeal.case_record,
+        VACOLS::Note.create!(case_record: appeal.case_record,
                              text: vacols_note)
       end
     end
