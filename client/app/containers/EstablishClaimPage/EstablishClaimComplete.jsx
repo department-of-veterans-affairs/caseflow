@@ -7,6 +7,13 @@ import Button from '../../components/Button';
 const PARSE_INT_RADIX = 10;
 
 export default class EstablishClaimComplete extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoading: false
+    };
+  }
 
   render() {
 
@@ -75,10 +82,12 @@ export default class EstablishClaimComplete extends React.Component {
       <div className="cf-push-right">
         { availableTasks &&
         <Button
+          app="dispatch"
           name={buttonText}
-          onClick={this.onClick}
+          onClick={this.establishNextClaim}
           classNames={["usa-button-primary", "cf-push-right"]}
           disabled={!availableTasks}
+          loading={this.state.isLoading}
         />
         }
         { !availableTasks &&
@@ -98,9 +107,24 @@ export default class EstablishClaimComplete extends React.Component {
     </div>;
   }
 
-  onClick = () => {
-    ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
+  establishNextClaim = () => {
+    this.setState({
+      isLoading: true
+    });
+
+    ApiUtil.patch(`/dispatch/establish-claim/assign`).
+    then((response) => {
       window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
+    }, () => {
+      this.props.handleAlert(
+        'error',
+        'Error',
+        'There was an error establishing the next claim. Please try again later'
+      );
+
+      this.setState({
+        isLoading: false
+      });
     });
   };
 
