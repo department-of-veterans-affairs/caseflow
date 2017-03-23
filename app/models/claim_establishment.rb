@@ -13,6 +13,7 @@ class ClaimEstablishment < ActiveRecord::Base
     "Remand" => :remand
   }.freeze
 
+  # virtual setter using the appeal information
   def appeal=(appeal)
     self.decision_type = ClaimEstablishment.get_decision_type(appeal)
   end
