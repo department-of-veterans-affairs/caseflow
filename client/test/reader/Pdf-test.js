@@ -59,15 +59,15 @@ describe.only('Pdf', () => {
       PDFJSAnnotate.UI.renderPage.restore();
       PDFJSAnnotate.UI.createPage.restore();
     });
+    context('.render', () => {
+      it(`renders the staging div`, () => {
+        expect(wrapper.find(`#${pdfId}`)).to.have.length(1);
+      });
+    });
 
     // This tests what happens when we first mount the component
     // This also tests the methods '.draw', and '.createPages'
     context('.componentDidMount', () => {
-      it(`creates ${numPages} pages`, () => {
-        expect(wrapper.find('#scrollWindow')).to.have.length(1);
-        expect(createPage.callCount).to.equal(3);
-      });
-
       it(`only renders the first page`, () => {
         expect(renderPage.callCount).to.equal(1);
       });
