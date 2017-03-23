@@ -1,7 +1,7 @@
 class EstablishClaim < Task
   include CachedAttributes
- 
-  has_one :claim_establishment
+
+  has_one :claim_establishment, foreign_key: :task_id
 
   cache_attribute :cached_decision_type do
     appeal.decision_type

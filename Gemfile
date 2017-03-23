@@ -62,7 +62,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b5e43ac1ade8e02cfb6658caf13f159710db8b5c"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "bda8d58d72f3b78281a164444737b81c51ec48c6"
 
 gem 'redis-rails'
 
@@ -77,7 +77,7 @@ gem 'prometheus-client'
 gem 'request_store'
 
 # State machine
-gem 'aasm'
+gem 'aasm', '4.11.0'
 
 gem 'font-awesome-sass'
 
@@ -111,10 +111,10 @@ group :development, :test do
   # Testing tools
   gem 'rspec'
   gem 'rspec-rails'
-  gem 'guard-rspec'
+  #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "axe"
-  gem 'simplecov', require: false
+  gem 'simplecov', '0.12.0', require: false
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
