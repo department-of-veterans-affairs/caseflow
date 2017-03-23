@@ -13,8 +13,6 @@ export const linkToSingleDocumentView = (doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
-<<<<<<< HEAD
-=======
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
 //
@@ -29,8 +27,6 @@ export const linkToSingleDocumentView = (doc) => {
 //   corresponding arrow will be missing.
 // Color labels: If you want users to be able to see/select color labels
 //   on the document pass in the onSetLabel handler.
-
->>>>>>> master
 export default class PdfUI extends React.Component {
   constructor(props) {
     super(props);
