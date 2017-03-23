@@ -12,7 +12,7 @@ export default class Pdf extends React.Component {
 
   renderPage = (index) => {
     const { UI } = PDFJSAnnotate;
-
+    console.log('rendering'+index);
     let RENDER_OPTIONS = {
       documentId: this.props.documentId,
       pdfDocument: this.state.pdfDocument,
@@ -64,10 +64,9 @@ export default class Pdf extends React.Component {
     }
 
     viewer.innerHTML = '';
-
+    
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       let page = UI.createPage(i + 1);
-
       viewer.appendChild(page);
     }
   }
@@ -107,16 +106,17 @@ export default class Pdf extends React.Component {
       this.setState({
         numPages: pdfDocument.pdfInfo.numPages,
         pdfDocument
+      }, () => {
+        this.createPages(pdfDocument);
+        // Automatically render the first page
+        // This assumes that page has already been created and appended
+        this.renderPage(0);
       });
 
       if (this.props.onPageChange) {
         this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
       }
 
-      this.createPages(pdfDocument);
-      // Automatically render the first page
-      // This assumes that page has already been created and appended
-      this.renderPage(0);
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
     });
