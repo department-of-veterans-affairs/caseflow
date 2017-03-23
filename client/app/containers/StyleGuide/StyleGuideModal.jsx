@@ -4,7 +4,7 @@ import React from 'react';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-// import { ModalCode } from './StyleGuideCode'; //will be used for code samples
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideModal extends React.Component {
   constructor(props) {
@@ -26,7 +26,11 @@ export default class StyleGuideModal extends React.Component {
     let styleGuideModal = this.state.modal;
 
     return <div>
-      <h2 id="modals">Modals</h2>
+      <StyleGuideComponentTitle
+        title="Modals"
+        id="modals"
+        link="StyleGuideModal.jsx"
+      />
         <p>Modals are 490 pixels in width with 30px padding around the border and
         contain the following: a title, explanation text, a divider,
         and action buttons. There are modal-specific classes that must be included
