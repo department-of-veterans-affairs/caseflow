@@ -24,16 +24,14 @@ export default class Button extends React.Component {
     } = this.props;
 
     let LoadingIndicator = () => {
-      if (!app) {
-        app = 'dispatch';
-      }
+      app = app || 'dispatch';
 
       children = loadingText || "Loading...";
 
       return <span>
         <button
           id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
-          className={classNames.join(' ') + ` cf-${app} cf-loading`}
+          className={`${classNames.join(' ')} cf-${app} cf-loading`}
           type={type}
           disabled={true}>
           <span className="cf-loading-icon-container">
@@ -47,9 +45,7 @@ export default class Button extends React.Component {
       </span>;
     };
 
-    if (!children) {
-      children = name;
-    }
+    children = children || name;
 
     if (disabled || loading) {
       // remove any usa-button styling and then add disabled styling
