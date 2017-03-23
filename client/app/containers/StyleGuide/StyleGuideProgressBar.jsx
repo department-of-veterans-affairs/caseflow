@@ -2,27 +2,30 @@ import React from 'react';
 
 // components
 import ProgressBar from '../../components/ProgressBar';
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default function StyleGuideProgressBar() {
 
   return <div>
-      <h2 id="progress_bar">Progress Bar</h2>
+      <StyleGuideComponentTitle
+        title="Progress Bar"
+        id="progress_bar"
+        link="StyleGuideProgressBar.jsx"
+      />
       <p>
-        Something.
+        This text here is the placeholder description for the Progress Bar.
       </p>
       <ProgressBar
         sections = {
         [
           {
-            activated: true,
             title: '1. Shopping Cart'
           },
           {
-            activated: true,
-            title: '2. Checkout'
+            title: '2. Checkout',
+            current: true
           },
           {
-            activated: false,
             title: '3. Confirmation'
           }
         ]
