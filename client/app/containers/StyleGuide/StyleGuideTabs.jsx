@@ -47,11 +47,11 @@ export default class StyleGuideTabs extends React.Component {
     ];
 
     return <div>
-      <StyleGuideComponentTitle
+      <p><StyleGuideComponentTitle
         title="Tabs"
         id="tabs"
         link="StyleGuideTabs.jsx"
-      />
+      /></p>
       <h3>Tabs without Icons</h3>
       <p>
         The US Web Design doesn’t include tabs so we’ve designed our own.
@@ -71,8 +71,6 @@ export default class StyleGuideTabs extends React.Component {
       <TabWindow
         tabs={tabsWithIcons}
         onChange={this.onTabSelected}/>
-      <p><a href="#">View the tab code sample in React.</a></p>
-
   </div>;
   }
 }
