@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   # Because of the funciton character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
-    "Manage Claim Establishme" => ["Manage Claim Establishment"]
+    "Manage Claims Establishme" => ["Manage Claim Establishment"]
   }.freeze
 
   def username

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import PdfViewer from '../components/PdfViewer';
-import PdfListView from '../components/PdfListView';
+import PdfViewer from './PdfViewer';
+import PdfListView from './PdfListView';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
@@ -45,7 +45,7 @@ export default class DecisionReviewer extends React.Component {
       this.sortDocuments(this.state.unsortedDocuments));
   }
 
-  previousPdf = () => {
+  onPreviousPdf = () => {
     this.setPage(Math.max(this.state.currentPdfIndex - 1, 0));
   }
 
@@ -53,7 +53,7 @@ export default class DecisionReviewer extends React.Component {
     return `${this.props.url}?id=${doc.id}`;
   }
 
-  nextPdf = () => {
+  onNextPdf = () => {
     this.setPage(Math.min(this.state.currentPdfIndex + 1,
         this.state.documents.length - 1));
   }
@@ -131,7 +131,7 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  showList = () => {
+  onShowList = () => {
     this.setState({
       currentPdfIndex: null
     }, this.sortAndFilter);
@@ -259,7 +259,7 @@ export default class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  setLabel = (pdfNumber) => (label) => {
+  onSetLabel = (pdfNumber) => (label) => {
     let data = { label: StringUtil.camelCaseToSnakeCase(label) };
     let documentId = this.state.documents[pdfNumber].id;
 
@@ -310,6 +310,9 @@ export default class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
+    let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
+    let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
+
     return (
       <div>
         {this.state.currentPdfIndex === null && <PdfListView
@@ -330,13 +333,12 @@ export default class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={documents[this.state.currentPdfIndex]}
-          previousPdf={this.shouldShowPreviousButton() && this.previousPdf}
-          nextPdf={this.shouldShowNextButton() && this.nextPdf}
-          showList={this.showList}
+          onPreviousPdf={onPreviousPdf}
+          onNextPdf={onNextPdf}
+          onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
-          setLabel={this.setLabel(this.state.currentPdfIndex)}
-          label={documents[this.state.currentPdfIndex].label}
-          hideNavigation={this.props.appealDocuments.length === 1} />}
+          onSetLabel={this.onSetLabel(this.state.currentPdfIndex)}
+          label={documents[this.state.currentPdfIndex].label} />}
       </div>
     );
   }
