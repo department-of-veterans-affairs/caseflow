@@ -107,7 +107,7 @@ describe.only('Pdf', () => {
     context('.componentWillReceiveProps', () => {
       let draw;
       beforeEach(() => {
-        draw = sinon.spy(wrapper.getNode(), 'draw');
+        draw = sinon.spy(wrapper.getNode(), 'setupPdf');
       });
       context('when file is set', () => {
         it('creates a new page', () => {
@@ -118,7 +118,7 @@ describe.only('Pdf', () => {
 
       context('when scale is set', () => {
         it('creates a new page', () => {
-          wrapper.setProps({ scale: '2' });
+          wrapper.setProps({ scale: 2 });
           expect(draw.callCount).to.equal(1);
         });
       });
