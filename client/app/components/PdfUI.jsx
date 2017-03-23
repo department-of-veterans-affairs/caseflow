@@ -13,6 +13,24 @@ export const linkToSingleDocumentView = (doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
+<<<<<<< HEAD
+=======
+// The PdfUI component displays the PDF with surrounding UI
+// controls. We currently support the following controls:
+//
+// Zoom In & Out: A plus and minus to zoom in and out.
+// Page number: Shows what page you're currently on, out of the
+//   total number of pages.
+// Document name: The document name is in the top right corner.
+//   it is currently a link to open the document in a new tab.
+// Next & Previous PDF: If you have several PDFs you would like
+//   a user to be able to navigate to, pass in handlers for onNextPdf
+//   and onPreviousPdf. If one is not supplied, or is null, then the
+//   corresponding arrow will be missing.
+// Color labels: If you want users to be able to see/select color labels
+//   on the document pass in the onSetLabel handler.
+
+>>>>>>> master
 export default class PdfUI extends React.Component {
   constructor(props) {
     super(props);
@@ -36,9 +54,9 @@ export default class PdfUI extends React.Component {
 
   onColorLabelChange = (label) => () => {
     if (label === this.props.label) {
-      this.props.setLabel('');
+      this.props.onSetLabel('');
     } else {
-      this.props.setLabel(label);
+      this.props.onSetLabel(label);
     }
   }
 
@@ -58,11 +76,11 @@ export default class PdfUI extends React.Component {
       <div className="cf-pdf-header cf-pdf-toolbar">
         <div>
           <span className="cf-pdf-buttons-left">
-            { this.props.showList &&
+            { this.props.onShowList &&
               <Button
                 name="backToDocuments"
                 classNames={["cf-pdf-button"]}
-                onClick={this.props.showList}>
+                onClick={this.props.onShowList}>
                 <i className="fa fa-chevron-left" aria-hidden="true"></i>
                 &nbsp; View all documents
               </Button> }
@@ -79,21 +97,21 @@ export default class PdfUI extends React.Component {
         </div>
       </div>
       <div className="cf-pdf-navigation">
-        { this.props.previousPdf &&
+        { this.props.onPreviousPdf &&
           <span className="cf-pdf-buttons-left">
             <Button
               name="previous"
               classNames={["cf-pdf-button"]}
-              onClick={this.props.previousPdf}>
+              onClick={this.props.onPreviousPdf}>
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
-        { this.props.nextPdf &&
+        { this.props.onNextPdf &&
           <span className="cf-pdf-buttons-right">
             <Button
               name="next"
               classNames={["cf-pdf-button cf-right-side"]}
-              onClick={this.props.nextPdf}>
+              onClick={this.props.onNextPdf}>
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
@@ -112,9 +130,9 @@ export default class PdfUI extends React.Component {
       <div className="cf-pdf-footer cf-pdf-toolbar">
         <div className="usa-grid-full">
           <div className="usa-width-one-third cf-pdf-buttons-left">
-            <DocumentLabels
+            { this.props.onSetLabel && <DocumentLabels
               onClick={this.onColorLabelChange}
-              selectedLabels={selectedLabels}/>
+              selectedLabels={selectedLabels}/> }
           </div>
           <div className="usa-width-one-third cf-pdf-buttons-center">
             Page {this.state.currentPage} of {this.state.numPages}
@@ -157,7 +175,8 @@ PdfUI.propTypes = {
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
-  showList: PropTypes.func,
-  nextPdf: PropTypes.func,
-  previousPdf: PropTypes.func
+  onShowList: PropTypes.func,
+  onNextPdf: PropTypes.func,
+  onPreviousPdf: PropTypes.func,
+  onSetLabel: PropTypes.func
 };

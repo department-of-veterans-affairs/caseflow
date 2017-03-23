@@ -2,6 +2,9 @@ import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 
+// The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
+// The component will speed up rendering by only rendering pages when
+// they become visible.
 export default class Pdf extends React.Component {
   constructor(props) {
     super(props);
@@ -38,15 +41,17 @@ export default class Pdf extends React.Component {
 
   onPageClick = (viewport, pageNumber) => (event) => {
     if (this.props.onPageClick) {
-      let annotation = {
-        class: "Annotation",
-        page: pageNumber,
-        "type": "point",
-        "x": (event.offsetX + event.target.offsetLeft) / this.props.scale,
-        "y": (event.offsetY + event.target.offsetTop) / this.props.scale
-      };
+      let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
+      let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
-      this.props.onPageClick(viewport, pageNumber, annotation);
+      this.props.onPageClick(
+        viewport,
+        pageNumber,
+        {
+          xPosition,
+          yPosition
+        }
+      );
     }
   }
 
@@ -64,7 +69,7 @@ export default class Pdf extends React.Component {
     }
 
     viewer.innerHTML = '';
-    
+
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       let page = UI.createPage(i + 1);
       viewer.appendChild(page);
@@ -100,8 +105,13 @@ export default class Pdf extends React.Component {
     });
   }
 
-  draw = (file, scrollLocation = 0) => {
+  // This method sets up the PDF. It sends a web request for the file
+  // and when it receives it, starts to render it.
+  setupPdf = (file, scrollLocation = 0) => {
     PDFJS.getDocument(file).then((pdfDocument) => {
+      // Setup array that tracks whether a given page has been rendered.
+      // This way as we scroll we know if we need to render a page that
+      // has just come into view.
       this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
       this.setState({
         numPages: pdfDocument.pdfInfo.numPages,
@@ -125,7 +135,7 @@ export default class Pdf extends React.Component {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
-    this.draw(this.props.file);
+    this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
@@ -136,11 +146,13 @@ export default class Pdf extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
-      this.draw(nextProps.file);
+      this.setupPdf(nextProps.file);
     }
 
     if (nextProps.scale !== this.props.scale) {
-      this.draw(nextProps.file);
+      // The only way to scale the PDF is to re-render it,
+      // so we call setupPdf again.
+      this.setupPdf(nextProps.file);
     }
   }
 
