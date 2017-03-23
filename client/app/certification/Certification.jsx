@@ -21,7 +21,6 @@ const EntryPointRedirect = ({ match }) => {
 const Certification = ({ certification }) => {
   let store = createStore(certificationReducers, certification);
 
-  debugger;
   return <Provider store={store}>
     <BrowserRouter>
       <div>

@@ -17,10 +17,10 @@ const vbmsHearingDocExists = (exists) => {
   };
 };
 
-const hasFormalForm9 = (isFormal) => {
+const hasFormalForm9 = (isFormalForm9) => {
   return {
     type: CHANGE_TYPE_OF_FORM9,
-    form9Type: isFormal ? 'FORMAL' : 'INFORMAL'
+    form9Type: isFormalForm9 ? 'FORMAL' : 'INFORMAL'
   };
 };
 
