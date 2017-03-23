@@ -2,7 +2,7 @@ import React from 'react';
 
 // components
 import TabWindow from '../../components/TabWindow';
-// import RenderFunctions from '../../components/RenderFunctions';
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.Component {
@@ -47,7 +47,11 @@ export default class StyleGuideTabs extends React.Component {
     ];
 
     return <div>
-      <h2 id="tabs">Tabs</h2>
+      <StyleGuideComponentTitle
+        title="Tabs"
+        id="tabs"
+        link="StyleGuideTabs.jsx"
+      />
       <h3>Tabs without Icons</h3>
       <p>
         The US Web Design doesn’t include tabs so we’ve designed our own.

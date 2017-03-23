@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { loadingSymbolHtml } from './RenderFunctions.jsx';
 
 export default class Button extends React.Component {
   componentDidMount() {
@@ -12,6 +11,8 @@ export default class Button extends React.Component {
 
   render() {
     let {
+      app,
+      loadingText,
       classNames,
       children,
       id,
@@ -22,19 +23,31 @@ export default class Button extends React.Component {
       type
     } = this.props;
 
-    if (loading) {
-      classNames = classNames.filter((className) => !className.includes('usa-button'));
+    let LoadingIndicator = () => {
+      app = app || 'dispatch';
 
-      return <span className={classNames.join(' ')}>
-        <span className="cf-react-loading-indicator">{loadingSymbolHtml()}</span>
+      children = loadingText || "Loading...";
+
+      return <span>
+        <button
+          id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
+          className={`${classNames.join(' ')} cf-${app} cf-loading`}
+          type={type}
+          disabled={true}>
+          <span className="cf-loading-icon-container">
+            <span className="cf-loading-icon-front">
+              <span className="cf-loading-icon-back">
+                {children}
+              </span>
+            </span>
+          </span>
+        </button>
       </span>;
-    }
+    };
 
-    if (!children) {
-      children = name;
-    }
+    children = children || name;
 
-    if (disabled) {
+    if (disabled || loading) {
       // remove any usa-button styling and then add disabled styling
       classNames = classNames.filter((className) => !className.includes('usa-button'));
       classNames.push('usa-button-disabled');
@@ -43,12 +56,14 @@ export default class Button extends React.Component {
     return <span>
       <button
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
-        className={classNames.join(' ')}
+        className={classNames.join(' ') + (loading ? " hidden-field" : "")}
         type={type}
         disabled={disabled}
         onClick={onClick}>
           {children}
       </button>
+
+      { loading && <LoadingIndicator /> }
     </span>;
   }
 }

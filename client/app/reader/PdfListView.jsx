@@ -5,7 +5,7 @@ import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
-import { linkToSingleDocumentView } from './PdfViewer';
+import { linkToSingleDocumentView } from '../components/PdfUI';
 
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {
@@ -19,7 +19,17 @@ export default class PdfListView extends React.Component {
 
     let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
 
-    // We have blank headers for the comment indicator and label indicator columns
+    let boldUnreadContent = (content, doc) => {
+      if (!doc.opened_by_current_user) {
+        return <b>{content}</b>;
+      }
+
+      return content;
+    };
+
+    // We have blank headers for the comment indicator and label indicator columns.
+    // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
+    // is triggered when a middle mouse button is clicked while onClick isn't.
     return [
       {
         valueFunction: (doc) => {
@@ -52,24 +62,25 @@ export default class PdfListView extends React.Component {
         header: <div onClick={this.props.changeSortState('date')}>
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
-        valueFunction: (doc) => formatDate(doc.received_at)
+        valueFunction: (doc) =>
+          boldUnreadContent(formatDate(doc.received_at), doc)
       },
       {
         header: <div onClick={this.props.changeSortState('type')}>
           Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
         </div>,
-        valueName: "type"
+        valueFunction: (doc) => boldUnreadContent(doc.type, doc)
       },
       {
         header: <div onClick={this.props.changeSortState('filename')}>
           Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
         </div>,
-        valueFunction: (doc, index) =>
+        valueFunction: (doc, index) => boldUnreadContent(
           <a
             href={linkToSingleDocumentView(doc)}
-            onClick={this.props.showPdf(index)}>
+            onMouseUp={this.props.showPdf(index)}>
             {doc.filename}
-          </a>
+          </a>, doc)
       }
     ];
   }
