@@ -54,11 +54,4 @@ describe CreateEstablishClaimTasksJob do
       expect(establish_claim.claim_establishment.full_grant?).to eq(true)
     end
   end
-
-  context ".get_decision_type" do
-    it "returns the right decision type based on the appeal information passed in" do
-      expect(CreateEstablishClaimTasksJob.get_decision_type(@full_grant)).to eq(:full_grant)
-      expect(CreateEstablishClaimTasksJob.get_decision_type(@remand)).to eq(:remand)
-    end
-  end
 end
