@@ -37,7 +37,7 @@ describe User do
     context "when has a role alias" do
       before { user.roles = ["Manage Claim Establishme"] }
       it "is expected to return the aliases as well" do
-        expect(subject).to include("Manage Claim Establishment", "Manage Claim Establishme")
+        expect(subject).to include("Manage Claim Establishment", "Manage Claims Establishme")
       end
     end
   end
