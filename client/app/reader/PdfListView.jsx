@@ -5,7 +5,7 @@ import { formatDate } from '../util/DateUtil';
 import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
-import { linkToSingleDocumentView } from './PdfViewer';
+import { linkToSingleDocumentView } from '../components/PdfUI';
 
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {

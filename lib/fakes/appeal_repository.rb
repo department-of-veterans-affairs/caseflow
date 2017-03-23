@@ -63,7 +63,8 @@ class Fakes::AppealRepository
   def self.update_vacols_after_dispatch!(*)
   end
 
-  def self.update_location_after_dispatch!(*)
+  def self.update_location_after_dispatch!(appeal:)
+    return if appeal.full_grant?
   end
 
   def self.upload_and_clean_document(appeal, form8)
