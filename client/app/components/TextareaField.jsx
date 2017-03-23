@@ -28,6 +28,7 @@ export default class TextareaField extends React.Component {
         name={name}
         id={name}
         onChange={this.onChange}
+        onKeyDown={this.props.onKeyDown}
         type={type}
         value={value}
       />
@@ -43,6 +44,7 @@ TextareaField.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onKeyDown: PropTypes.func,
   type: PropTypes.string,
   validationError: PropTypes.string,
   value: PropTypes.string

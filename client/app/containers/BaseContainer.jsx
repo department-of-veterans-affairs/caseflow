@@ -11,7 +11,7 @@ import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
-import DecisionReviewer from './DecisionReviewer';
+import DecisionReviewer from '../reader/DecisionReviewer';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 

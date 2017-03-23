@@ -50,6 +50,8 @@ class Appeal < ActiveRecord::Base
     @documents ||= fetch_documents!(save: false)
   end
 
+  # This method fetches documents and saves their metadata
+  # in the database
   attr_writer :saved_documents
   def saved_documents
     @saved_documents ||= fetch_documents!(save: true)
