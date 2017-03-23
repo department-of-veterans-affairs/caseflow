@@ -30,16 +30,18 @@ export default class StyleGuideLoadingButton extends React.Component {
         when <em>true</em>, causes the button to show <strong>Loading... </strong>
         beside a spinning icon.
       </p>
-      <Button
-        name={"See It In Action"}
-        onClick={this.startLoading}
-        loading={this.state && this.state.loading}
-      />
-      <Button
-        name={"Reset"}
-        onClick={this.reset}
-        classNames={["cf-btn-link"]}
-      />
+      <p>
+        <Button
+          name={"See It In Action"}
+          onClick={this.startLoading}
+          loading={this.state && this.state.loading}
+        />
+        <Button
+          name={"Reset"}
+          onClick={this.reset}
+          classNames={["cf-btn-link"]}
+        />
+      </p>
     </div>;
   }
 }
