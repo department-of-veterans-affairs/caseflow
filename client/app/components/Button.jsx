@@ -9,16 +9,6 @@ export default class Button extends React.Component {
     }
   }
 
-  loadingClasses = (app, loading) => {
-    let classes = ` cf-${app}`;
-
-    if (loading) {
-      classes += " cf-loading";
-    }
-
-    return classes;
-  }
-
   render() {
     let {
       app,
@@ -37,12 +27,13 @@ export default class Button extends React.Component {
       if (!app) {
         app = 'dispatch';
       }
+
       children = loadingText || "Loading...";
 
       return <span>
         <button
           id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
-          className={classNames.join(' ') + this.loadingClasses(app, loading)}
+          className={classNames.join(' ') + ` cf-${app} cf-loading`}
           type={type}
           disabled={true}>
           <span className="cf-loading-icon-container">
