@@ -118,7 +118,9 @@ export default class Pdf extends React.Component {
         numPages: pdfDocument.pdfInfo.numPages,
         pdfDocument
       }, () => {
+        // Create but do not render all of the pages
         this.createPages(pdfDocument);
+
         // Automatically render the first page
         // This assumes that page has already been created and appended
         this.renderPage(0);
@@ -128,6 +130,7 @@ export default class Pdf extends React.Component {
         this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
       }
 
+      // Scroll to the correct location on the page
       document.getElementById('scrollWindow').scrollTop = scrollLocation;
       this.scrollEvent();
     });

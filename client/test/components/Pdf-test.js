@@ -11,15 +11,11 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 describe('Pdf', () => {
   let pdfId = "pdf";
 
-  // Note, these tests use mount rather than shallow
-  // in order to get that working, we must mock out
+  // Note, these tests use mount rather than shallow.
+  // In order to get that working, we must stub out
   // our endpoints in PDFJS and PDFJSAnnotate.
-  // Unfortunately PDFJS has to add to the DOM outside
-  // of our normal React flow. Enzyme only tracks
-  // elements that are added within this flow.
-  // This means if you want to reference any
-  // elements created by our mock'd PDFJS you
-  // will have to use document.getElement(s)By...
+  // To appraoch reality, our stubbed out versions
+  // also add divs representing PDF 'pages' to the dom.
 
   /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
@@ -30,10 +26,14 @@ describe('Pdf', () => {
     let numPages = 3;
 
     beforeEach(() => {
+      // We return a pdfInfo object that contains
+      // a field numPages.
       let getDocument = sinon.stub(PDFJS, 'getDocument');
 
       getDocument.resolves({ pdfInfo: { numPages } });
 
+      // We return a promise that resolves to an object
+      // with a getViewport function.
       renderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
       renderPage.resolves([
         {
@@ -41,6 +41,8 @@ describe('Pdf', () => {
         }
       ]);
 
+      // We return fake 'page' divs that the PDF component
+      // will add to the dom.
       createPage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
       createPage.callsFake((index) => {
         let div = document.createElement("div");
@@ -87,14 +89,14 @@ describe('Pdf', () => {
 
     context('.renderPage', () => {
       it('creates a new page', () => {
-        wrapper.getNode().renderPage(1);
+        wrapper.instance().renderPage(1);
         expect(renderPage.callCount).to.equal(2);
       });
 
       it('marks page as rendered', () => {
-        expect(wrapper.getNode().isRendered[1]).to.be.undefined;
-        wrapper.getNode().renderPage(1);
-        expect(wrapper.getNode().isRendered[1]).to.be.true;
+        expect(wrapper.instance().isRendered[1]).to.be.undefined;
+        wrapper.instance().renderPage(1);
+        expect(wrapper.instance().isRendered[1]).to.be.true;
       });
 
       context('mock renderPage to fail', () => {
@@ -104,10 +106,10 @@ describe('Pdf', () => {
         });
 
         // it('does not mark page as rendered', () => {
-        //   expect(wrapper.getNode().isRendered[1]).to.be.undefined;
-        //   console.log(wrapper.getNode().isRendered[1]);
-        //   wrapper.getNode().renderPage(1);
-        //   expect(wrapper.getNode().isRendered[1]).should.eventually.be.false;
+        //   expect(wrapper.instance().isRendered[1]).to.be.undefined;
+        //   console.log(wrapper.instance().isRendered[1]);
+        //   wrapper.instance().renderPage(1);
+        //   expect(wrapper.instance().isRendered[1]).should.eventually.be.false;
         // });
       });
     });
@@ -116,8 +118,9 @@ describe('Pdf', () => {
       let draw;
 
       beforeEach(() => {
-        draw = sinon.spy(wrapper.getNode(), 'setupPdf');
+        draw = sinon.spy(wrapper.instance(), 'setupPdf');
       });
+
       context('when file is set', () => {
         it('creates a new page', () => {
           wrapper.setProps({ file: 'newFile' });
@@ -164,7 +167,7 @@ describe('Pdf', () => {
             yPosition: 20
           };
 
-          wrapper.getNode().onPageClick('viewport', 0)(event);
+          wrapper.instance().onPageClick('viewport', 0)(event);
           expect(onPageClick.calledWith('viewport', 0, coordinate)).to.be.true;
         });
       });

@@ -50,6 +50,7 @@ describe('PdfUI', () => {
 
       context('when onNextPdf function is supplied', () => {
         it('renders the next PDF button', () => {
+          expect(wrapper.find({ name: 'next' })).to.have.length(0);
           let onNextPdf = sinon.spy();
 
           wrapper.setProps({ onNextPdf });
@@ -59,6 +60,7 @@ describe('PdfUI', () => {
 
       context('when onPreviousPdf function is supplied', () => {
         it('renders the previous PDF button', () => {
+          expect(wrapper.find({ name: 'previous' })).to.have.length(0);
           let onPreviousPdf = sinon.spy();
 
           wrapper.setProps({ onPreviousPdf });
@@ -68,6 +70,7 @@ describe('PdfUI', () => {
 
       context('when onShowList function is supplied', () => {
         it('renders the back to document list button', () => {
+          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);
           let onShowList = sinon.spy();
 
           wrapper.setProps({ onShowList });
@@ -77,6 +80,7 @@ describe('PdfUI', () => {
 
       context('when onSetLabel function is supplied', () => {
         it('renders the Document Labels component', () => {
+          expect(wrapper.find('DocumentLabels')).to.have.length(0);
           let onSetLabel = sinon.spy();
 
           wrapper.setProps({ onSetLabel });
