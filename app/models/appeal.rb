@@ -29,9 +29,9 @@ class Appeal < ActiveRecord::Base
                              education_gi_bill_dependents_educational_assistance_scholars
                              foreign_claim_compensation_claims_dual_claims_appeals
                              foreign_pension_dic_all_other_foreign_countries
-                             foreign_pension_dic_mexico_central_and_south_american_caribb
+                             foreign_pension_dic_mexico_central_and_south_america_caribb
                              hearing_including_travel_board_video_conference
-                             home_loan_guarantee incarcerated_veterans insurance
+                             home_loan_guaranty incarcerated_veterans insurance
                              manlincon_compliance mustard_gas national_cemetery_administration
                              nonrating_issue pension_united_states private_attorney_or_agent
                              radiation rice_compliance spina_bifida
