@@ -130,7 +130,7 @@ describe.only('Pdf', () => {
 
         beforeEach(() => {
           onPageClick = sinon.spy();
-          wrapper.setProps({ onPageClick });
+          wrapper.setProps({ onPageClick, scale: 2 });
         });
 
         it('calls onPageClick prop', () => {
@@ -139,12 +139,21 @@ describe.only('Pdf', () => {
             offsetY: 10,
             target: {
               offsetLeft: 20,
-              offsetTop: 20
+              offsetTop: 30
             }
           };
-          // TODO: add x, y coordinate check
+
+          // The expected coordinate is 
+          // (( offsetX + offsetLeft ) / 2, (offsetY + offsetTop) / 2)
+          // (( 10 + 20) / 2, (10 + 30) / 2)
+          // (15, 20)
+          let coordinate = {
+            xPosition: 15,
+            yPosition: 20
+          };
+
           wrapper.getNode().onPageClick('viewport', 0)(event);
-          expect(onPageClick.calledWith('viewport', 0));
+          expect(onPageClick.calledWith('viewport', 0, coordinate)).to.be.true;
         });
       });
     });
