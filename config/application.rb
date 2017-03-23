@@ -26,6 +26,7 @@ module CaseflowCertification
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('services')
     config.autoload_paths += Dir[Rails.root.join('app', 'models', '{**}')]
+    config.autoload_paths += Dir[Rails.root.join('app', 'jobs', '{**}')]
     config.exceptions_app = self.routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
@@ -34,6 +35,8 @@ module CaseflowCertification
     # default to no analytics (production only)
     config.google_analytics_account = nil
     config.google_analytics_host = nil
+
+    config.active_job.queue_adapter = :sidekiq
 
     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
 

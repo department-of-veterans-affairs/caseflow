@@ -57,6 +57,20 @@ class PrometheusService
                                            "sidekiq background jobs")
     end
 
+    def background_jobs_attempt_counter
+      @background_jobs_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :background_jobs_attempt_counter,
+                                "counter of all sidekiq background jobs attempted (fail or succeed)")
+    end
+
+    def background_jobs_error_counter
+      @background_jobs_error_counter ||=
+        find_or_register_metric(:counter,
+                                :background_jobs_error_counter,
+                                "counter of all sidekiq background jobs that errored")
+    end
+
     private
 
     def find_or_register_gauge_and_summary(name, description)

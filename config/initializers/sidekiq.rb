@@ -8,6 +8,10 @@ Sidekiq.configure_server do |config|
 
     Sidekiq::Cron::Job.load_from_hash! active_jobs
   end
+
+  config.server_middleware do |chain|
+    chain.add JobPrometheusMetricMiddleware
+  end
 end
 
 Sidekiq.configure_client do |config|
