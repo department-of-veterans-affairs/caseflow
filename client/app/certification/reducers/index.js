@@ -5,6 +5,7 @@ const CHANGE_TYPE_OF_HEARING = 'CHANGE_TYPE_OF_HEARING';
 
 
 const certification = function(state, action) {
+  console.log(state, action);
   switch (action.type) {
   case CHANGE_VBMS_HEARING_DOCUMENT:
     return Object.assign({}, state, {

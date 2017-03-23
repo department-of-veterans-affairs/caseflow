@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
+import { connect } from 'react-redux';
 
 const hearingCheckText = `Check the appellant's eFolder for a hearing
 cancellation or request added after 09/01/2017, the date the Form 9
@@ -9,24 +10,37 @@ cancellation or request added after 09/01/2017, the date the Form 9
 
 const hearingChangeQuestion = `Was a hearing cancellation or request added after
 09/01/2017?`;
-const hearingChangeAnswers = ["Yes", "No"];
+const hearingChangeAnswers = [
+  { displayText: "Yes", value: true },
+  { displayText: "No", value: false }
+];
 
 const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
 from the appellant's eFolder. What type of substantive appeal is it?`;
-//TODO: [{displayText: "Form 9", value: "FORMAL"},{displayText: "Statement in lieu of Form 9", value: "INFORMAL"}]
-const typeOfForm9Answers = ["Form 9", "Statement in lieu of Form 9"];
+const typeOfForm9Answers = [
+  {displayText: "Form 9", value: 'FORMAL'},
+  {displayText: "Statement in lieu of Form 9", value: "INFORMAL"}
+];
 
 const typeOfHearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
-//TODO: [{displayText: "Form 9", value: "FORMAL"}
-//,{displayText: "Statement in lieu of Form 9", value: "INFORMAL"}]
-const typeOfHearingAnswers = [
-  'A. I do not want an optional board hearing',
-  'B. I want a hearing by videoconference at a local VA office.',
-  'C. I want a hearing in Washington, DC.',
-  'D. I want a hearing at a local VA office.',
-  'No box selected.'];
+const typeOfHearingAnswers = [{
+  displayText: 'A. I do not want an optional board hearing',
+  value: 'NO_HEARING_DESIRED'
+},{
+  displayText: 'B. I want a hearing by videoconference at a local VA office.',
+  value: 'VIDEO'
+},{
+  displayText: 'C. I want a hearing in Washington, DC.',
+  value: 'BVA'
+},{
+  displayText: 'D. I want a hearing at a local VA office.',
+  value: 'TRAVEL_BOARD'
+},{
+  displayText: 'No box selected.',
+  value: 'NO_HEARING_SELECTION'
+}];
 
 /*
 * Check the Veteran's hearing request in VBMS and update it in VACOLS.
@@ -42,9 +56,6 @@ const typeOfHearingAnswers = [
 *
  */
 
-/*
- *
- */
 const mapDispatchToProps = (dispatch) => {
   return {
     onHearingDocumentChange: (hearingDocumentIsInVbms) => {
@@ -90,8 +101,9 @@ const _ConfirmHearing = ({
     onTypeOfForm9Change,
     hearingType,
     onHearingTypeChange,
-    hearingDocumentIsInVbms
+    match
 }) => {
+  debugger;
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -104,12 +116,13 @@ const _ConfirmHearing = ({
           required={true}
           options={hearingChangeAnswers}
           value={hearingDocumentIsInVbms}
-          onChange={hearingTypeChange}/>
+          onChange={onHearingDocumentChange}/>
 
         <RadioField name={typeOfForm9Question}
           required={true}
-          options={typeOfAppealAnswers}
-          value={form9Type}/>
+          options={typeOfForm9Answers}
+          value={form9Type}
+          onChange={onTypeOfForm9Change}/>
 
         <LoadingContainer>
           <iframe
@@ -126,7 +139,8 @@ const _ConfirmHearing = ({
         <RadioField name={typeOfHearingQuestion}
           options={typeOfHearingAnswers}
           value={hearingType}
-          required={true}/>
+          required={true}
+          onChange={onHearingTypeChange}/>
       </div>
 
       <div className="cf-app-segment">
