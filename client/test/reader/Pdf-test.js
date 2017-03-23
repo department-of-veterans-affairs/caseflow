@@ -1,13 +1,14 @@
 import React from 'react';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
 
 import PDFJSAnnotate from 'pdf-annotate.js';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
-describe('Pdf', () => {
+describe.only('Pdf', () => {
+  let pdfId = "pdf";
 
   // Note, these tests use mount rather than shallow
   // in order to get that working, we must mock out
@@ -23,40 +24,26 @@ describe('Pdf', () => {
     let mock;
     let renderPage;
     let createPage;
+    let onPageChange;
 
     let numPages = 3;
-    let pdfId = "pdf";
-
-    let stubCreatePage = (index) => {
-      let pageDiv = document.createElement("div");
-      let divId = `pageContainer${index}`;
-
-      pageDiv.id = divId;
-      pageDiv.className = 'page';
-      pageDiv.style.width = '400px';
-      pageDiv.style.height = '400px';
-      return pageDiv;
-    }
-
-    let stubRenderPage = (index, RENDER_OPTIONS) => {
-      let divId = `pageContainer${index}`;
-      let pageContent = document.createTextNode(divId);
-      let pageDiv = document.getElementById(divId);
-      
-      pageDiv.appendChild(pageContent);
-
-      return new Promise((resolve, reject) =>
-        {
-          resolve([{ getViewport: () => { return 0; } }]);
-        });
-    }
 
     beforeEach(() => {
       let getDocument = sinon.stub(PDFJS, 'getDocument');
       getDocument.resolves({ pdfInfo: { numPages } });
 
-      renderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage', stubRenderPage);
-      createPage = sinon.stub(PDFJSAnnotate.UI, 'createPage', stubCreatePage);
+      renderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
+      renderPage.resolves([{ getViewport: () => { return 0; } }]);
+
+      createPage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
+      createPage.callsFake((index) => {
+        let div = document.createElement("div");
+        div.id = `pageContainer${index}`;
+
+        return div;
+      });
+
+      onPageChange = sinon.spy();
 
       wrapper = mount(<Pdf
         documentId={1}
@@ -73,27 +60,27 @@ describe('Pdf', () => {
       PDFJSAnnotate.UI.createPage.restore();
     });
 
-    context.only('.mount', () => {
+    // This tests what happens when we first mount the component
+    // This also tests the methods '.draw', and '.createPages'
+    context('.componentDidMount', () => {
       it(`creates ${numPages} pages`, () => {
         expect(wrapper.find('#scrollWindow')).to.have.length(1);
         expect(createPage.callCount).to.equal(3);
-        expect(renderPage.callCount).to.equal(1);
-
-        // expect(document.getElementById('pageContainer1').innerHTML).to.equal('pageContainer1');
-        // expect(document.getElementsByClassName('page')).to.have.length(numPages);
       });
 
       it(`only renders the first page`, () => {
-        expect(document.getElementById('pageContainer1').innerHTML).to.equal('pageContainer1');
-        expect(document.getElementById('pageContainer2').innerHTML).to.equal('');
-      });    
+        expect(renderPage.callCount).to.equal(1);
+      });
+
+      it(`calls onPageChange with page Numbers`, () => {
+        expect(onPageChange.calledWith(1, numPages));
+      });
     });
 
     context('.renderPage', () => {
       it('creates a new page', () => {
-        expect(document.getElementById('pageContainer2').innerHTML).to.equal('');
         wrapper.getNode().renderPage(1);
-        expect(document.getElementById('pageContainer2').innerHTML).to.equal('pageContainer2');
+        expect(renderPage.callCount).to.equal(2);
       });
 
       it('marks page as rendered', () => {
@@ -103,10 +90,61 @@ describe('Pdf', () => {
       });
 
       context('mock renderPage to fail', () => {
-        it('receives render', () => {
-          expect(wrapper.getNode().isRendered[1]).to.be.undefined;
-          wrapper.getNode().renderPage(1);
-          expect(wrapper.getNode().isRendered[1]).to.be.true;
+        beforeEach(() => {
+          renderPage.resetBehavior();
+          renderPage.rejects();
+        });
+
+        // it('does not mark page as rendered', () => {
+        //   expect(wrapper.getNode().isRendered[1]).to.be.undefined;
+        //   console.log(wrapper.getNode().isRendered[1]);
+        //   wrapper.getNode().renderPage(1);
+        //   expect(wrapper.getNode().isRendered[1]).should.eventually.be.false;
+        // });
+      });
+    });
+
+    context('.componentWillReceiveProps', () => {
+      let draw;
+      beforeEach(() => {
+        draw = sinon.spy(wrapper.getNode(), 'draw');
+      });
+      context('when file is set', () => {
+        it('creates a new page', () => {
+          wrapper.setProps({ file: 'newFile' });
+          expect(draw.callCount).to.equal(1);
+        });
+      });
+
+      context('when scale is set', () => {
+        it('creates a new page', () => {
+          wrapper.setProps({ scale: '2' });
+          expect(draw.callCount).to.equal(1);
+        });
+      });
+    });
+
+    context('.onPageClick', () => {
+      context('supplied with props.onPageClick', () => {
+        let onPageClick;
+
+        beforeEach(() => {
+          onPageClick = sinon.spy();
+          wrapper.setProps({ onPageClick });
+        });
+
+        it('calls onPageClick prop', () => {
+          let event = {
+            offsetX: 10,
+            offsetY: 10,
+            target: {
+              offsetLeft: 20,
+              offsetTop: 20
+            }
+          };
+          // TODO: add x, y coordinate check
+          wrapper.getNode().onPageClick('viewport', 0)(event);
+          expect(onPageClick.calledWith('viewport', 0));
         });
       });
     });

@@ -12,7 +12,7 @@ export default class Pdf extends React.Component {
 
   renderPage = (index) => {
     const { UI } = PDFJSAnnotate;
-    console.log('rendering'+index);
+
     let RENDER_OPTIONS = {
       documentId: this.props.documentId,
       pdfDocument: this.state.pdfDocument,
