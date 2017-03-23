@@ -72,6 +72,7 @@ export default class Pdf extends React.Component {
 
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       let page = UI.createPage(i + 1);
+
       viewer.appendChild(page);
     }
   }

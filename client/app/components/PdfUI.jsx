@@ -7,7 +7,7 @@ export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
-  let receivedAt = doc.received_at;
+  let receivedAt = doc.receivedAt;
 
   return `/decision/review/show?id=${id}&type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
@@ -40,7 +40,6 @@ export default class PdfUI extends React.Component {
   zoom = (delta) => () => {
     // TODO: Fix scrolling when zooming
     // let zoomFactor = (this.state.scale + delta) / this.state.scale;
-
     this.setState({
       scale: this.state.scale + delta
     });
@@ -166,7 +165,15 @@ export default class PdfUI extends React.Component {
 }
 
 PdfUI.propTypes = {
-  doc: PropTypes.object.isRequired,
+  doc: PropTypes.shape(
+    {
+      filename: PropTypes.string,
+      id: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number]),
+      type: PropTypes.string,
+      receivedAt: PropTypes.string
+    }).isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,

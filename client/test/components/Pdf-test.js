@@ -1,13 +1,14 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
 
 import PDFJSAnnotate from 'pdf-annotate.js';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
-describe.only('Pdf', () => {
+/* eslint-disable no-unused-expressions */
+describe('Pdf', () => {
   let pdfId = "pdf";
 
   // Note, these tests use mount rather than shallow
@@ -19,25 +20,31 @@ describe.only('Pdf', () => {
   // This means if you want to reference any
   // elements created by our mock'd PDFJS you
   // will have to use document.getElement(s)By...
+
+  /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
     let wrapper;
-    let mock;
     let renderPage;
     let createPage;
     let onPageChange;
-
     let numPages = 3;
 
     beforeEach(() => {
       let getDocument = sinon.stub(PDFJS, 'getDocument');
+
       getDocument.resolves({ pdfInfo: { numPages } });
 
       renderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
-      renderPage.resolves([{ getViewport: () => { return 0; } }]);
+      renderPage.resolves([
+        {
+          getViewport: () => 0
+        }
+      ]);
 
       createPage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
       createPage.callsFake((index) => {
         let div = document.createElement("div");
+
         div.id = `pageContainer${index}`;
 
         return div;
@@ -59,6 +66,7 @@ describe.only('Pdf', () => {
       PDFJSAnnotate.UI.renderPage.restore();
       PDFJSAnnotate.UI.createPage.restore();
     });
+
     context('.render', () => {
       it(`renders the staging div`, () => {
         expect(wrapper.find(`#${pdfId}`)).to.have.length(1);
@@ -106,6 +114,7 @@ describe.only('Pdf', () => {
 
     context('.componentWillReceiveProps', () => {
       let draw;
+
       beforeEach(() => {
         draw = sinon.spy(wrapper.getNode(), 'setupPdf');
       });
@@ -130,7 +139,10 @@ describe.only('Pdf', () => {
 
         beforeEach(() => {
           onPageClick = sinon.spy();
-          wrapper.setProps({ onPageClick, scale: 2 });
+          wrapper.setProps({
+            onPageClick,
+            scale: 2
+          });
         });
 
         it('calls onPageClick prop', () => {
@@ -143,7 +155,7 @@ describe.only('Pdf', () => {
             }
           };
 
-          // The expected coordinate is 
+          // The expected coordinate is
           // (( offsetX + offsetLeft ) / 2, (offsetY + offsetTop) / 2)
           // (( 10 + 20) / 2, (10 + 30) / 2)
           // (15, 20)
@@ -158,4 +170,6 @@ describe.only('Pdf', () => {
       });
     });
   });
+  /* eslint-enable max-statements */
 });
+/* eslint-enable no-unused-expressions */
