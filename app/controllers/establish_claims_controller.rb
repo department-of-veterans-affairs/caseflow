@@ -93,9 +93,7 @@ class EstablishClaimsController < TasksController
 
   private
 
-  # handle_task_status_update
-  #
-  # sets a task completion staus and updates the claim establishment
+  # sets a task completion status and updates the claim establishment
   # for a task if it exists.
   def handle_task_status_update(completion_status_code)
     task.complete!(status: Task.completion_status_code(completion_status_code))

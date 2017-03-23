@@ -1,12 +1,6 @@
 class CreateEstablishClaimTasksJob < ActiveJob::Base
   queue_as :default
 
-  DECSION_TYPES = {
-    "Full Grant" => :full_grant,
-    "Partial Grant" => :partial_grant,
-    "Remand" => :remand
-  }.freeze
-
   def perform
     # fetch all full grants
     # These are imported first to enforce the required order of tasks
@@ -39,8 +33,6 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
     rounded_current_time - 3.days
   end
 
-  # add_establish_claim_meta
-  #
   # Creates a new EstablishClaim task and it's related meta data information
   # using the infromation from appeal.
   def add_establish_claim_data(appeal)
@@ -49,18 +41,10 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
       # create a new claim establishment only if a new establish
       # claim task is created.
       ClaimEstablishment.create(
-        decision_type: CreateEstablishClaimTasksJob.get_decision_type(appeal),
         decision_date: appeal.outcoding_date,
-        task: establish_claim_task
+        task: establish_claim_task,
+        appeal: appeal
       )
     end
-  end
-
-  # get_decision_type
-  #
-  # returns the type of a decision based on appeal data
-  # If a type is not matched, it returns nil
-  def self.get_decision_type(appeal)
-    DECSION_TYPES[appeal.decision_type]
   end
 end
