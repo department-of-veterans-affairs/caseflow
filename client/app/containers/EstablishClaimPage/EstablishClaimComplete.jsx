@@ -38,15 +38,45 @@ export default class EstablishClaimComplete extends React.Component {
       Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = totalCasesCompleted >= casesAssigned;
 
+    let NoMoreClaimsButton = () => {
+      return <div>
+        <span className="cf-button-associated-text-right">
+          There are no more claims in your queue
+        </span>
+
+        <Button
+          name={buttonText}
+          classNames={["cf-push-right"]}
+          disabled={true}
+        />
+      </div>;
+    };
+
+    let NextClaimButton = () => {
+      return <div>
+        <span className="cf-button-associated-text-right">
+          { casesAssigned } cases assigned, { totalCasesCompleted } completed
+        </span>
+
+        <Button
+          name={buttonText}
+          onClick={this.onClick}
+          classNames={["usa-button-primary", "cf-push-right"]}
+        />
+      </div>;
+    };
+
     return <div>
       <EstablishClaimProgressBar
         isConfirmation={true}
         isReviewDecision={true}
         isRouteClaim={true}
       />
+
       <div
         id="certifications-generate"
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
+
       <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
       <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
 
@@ -54,45 +84,16 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
-      { <ul className="cf-list-checklist establish-claim-feedback">
-        <div>
-         <div>{hasQuotaReached ?
-          quotaReachedMessage :
-          `Way to go! You have completed ${totalCasesCompleted} out of the
-          ${casesAssigned} cases assigned to you today.`}</div>
-          {availableTasks ?
-            `You can now establish the next claim or go back to your work history.` :
-            noMoreCasesMessage
-          }
-         </div>
-        </ul>
-      }
     </div>
+
     <div className="cf-app-segment">
       <div className="cf-push-left">
         <a href="/dispatch/establish-claim">View Work History</a>
       </div>
+
       <div className="cf-push-right">
-        { availableTasks &&
-        <Button
-          name={buttonText}
-          onClick={this.onClick}
-          classNames={["usa-button-primary", "cf-push-right"]}
-          disabled={!availableTasks}
-        />
-        }
-        { !availableTasks &&
-        <div>
-          <span className="cf-button-associated-text-right">
-            { "There are no more claims in your queue" }
-          </span>
-          <Button
-            name={buttonText}
-            classNames={["usa-button-disabled", "cf-push-right"]}
-            disabled={true}
-        />
-        </div>
-        }
+        { availableTasks && <NextClaimButton /> }
+        { !availableTasks && <NoMoreClaimsButton /> }
       </div>
     </div>
     </div>;

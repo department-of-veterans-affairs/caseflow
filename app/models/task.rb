@@ -114,6 +114,10 @@ class Task < ActiveRecord::Base
     end
   end
 
+  def ep_created?
+    completed? && (completion_status != Task.completion_status_code(:canceled))
+  end
+
   def before_assign
     # Test hook for testing race conditions
   end

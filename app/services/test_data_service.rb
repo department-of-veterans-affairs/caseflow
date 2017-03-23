@@ -21,7 +21,7 @@ class TestDataService
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
 
     Appeal.find_each do |appeal|
-      Appeal::SPECIAL_ISSUE_COLUMNS.each do |special_issue|
+      Appeal::SPECIAL_ISSUES.keys.each do |special_issue|
         appeal.send("#{special_issue}=", false)
       end
       appeal.save
