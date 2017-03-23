@@ -24,7 +24,10 @@ ActiveSupport.on_load(:active_record_vacols) do
   Rails.logger.info("creating #{initial_pool_size} initial connections...")
 
   unless ApplicationController.dependencies_faked?
-    MetricsService.timer "created #{initial_pool_size} connections" do
+    MetricsService.timer("VACOLS: warmup_vacols #{initial_pool_size} connections",
+                         service: :vacols,
+                         name: "warmup_vacols") do
+
       warmup_pool(VACOLS::Record.connection_pool, initial_pool_size)
     end
   end
