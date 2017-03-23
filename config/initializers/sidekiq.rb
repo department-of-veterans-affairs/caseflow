@@ -1,3 +1,5 @@
+require "#{Rails.root}/app/jobs/middleware/job_prometheus_metric_middleware"
+
 Sidekiq.configure_server do |config|
   config.redis = { url: Rails.application.secrets.redis_url_sidekiq }
 
