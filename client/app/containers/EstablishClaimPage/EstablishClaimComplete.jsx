@@ -41,8 +41,6 @@ export default class EstablishClaimComplete extends React.Component {
     return <div>
       <EstablishClaimProgressBar
         isConfirmation={true}
-        isReviewDecision={true}
-        isRouteClaim={true}
       />
       <div
         id="certifications-generate"

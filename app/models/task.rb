@@ -141,7 +141,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      review! if may_review?
+      # review! if may_review?
       complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end

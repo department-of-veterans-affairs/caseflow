@@ -26,7 +26,7 @@ export default class EstablishClaimProgressBar extends React.Component {
 }
 
 EstablishClaimProgressBar.propTypes = {
-  isConfirmation: PropTypes.bool.isRequired,
-  isReviewDecision: PropTypes.bool.isRequired,
-  isRouteClaim: PropTypes.bool.isRequired
+  isConfirmation: PropTypes.bool,
+  isReviewDecision: PropTypes.bool,
+  isRouteClaim: PropTypes.bool
 };
