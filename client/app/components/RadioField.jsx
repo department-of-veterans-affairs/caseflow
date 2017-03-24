@@ -40,9 +40,9 @@ export default class RadioField extends React.Component {
           <div className="cf-form-radio-option" key={option.value}>
             <input
               name={name}
-              onChange={this.onChange}
+              onChange={this.onChange.bind(this)}
               type="radio"
-              id={`${name}_${option}`}
+              id={`${name}_${option.value}`}
               value={option.value}
               checked={value === option.value}
             />

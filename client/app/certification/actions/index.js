@@ -11,16 +11,17 @@ store.dispatch(changeHearingType('BVA'))
  */
 
 const vbmsHearingDocExists = (exists) => {
+  debugger;
   return {
     type: CHANGE_VBMS_HEARING_DOCUMENT,
     hearingDocumentIsInVbms: exists
   };
 };
 
-const hasFormalForm9 = (isFormalForm9) => {
+const hasFormalForm9 = (form9Type) => {
   return {
     type: CHANGE_TYPE_OF_FORM9,
-    isFormalForm9: isFormalForm9
+    form9Type: form9Type
   };
 };
 

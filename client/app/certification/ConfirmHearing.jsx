@@ -11,15 +11,15 @@ cancellation or request added after 09/01/2017, the date the Form 9
 const hearingChangeQuestion = `Was a hearing cancellation or request added after
 09/01/2017?`;
 const hearingChangeAnswers = [
-  { displayText: "Yes", value: true },
-  { displayText: "No", value: false }
+  { displayText: 'Yes', value: 'true' },
+  { displayText: 'No', value: 'false' }
 ];
 
 const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
 from the appellant's eFolder. What type of substantive appeal is it?`;
 const typeOfForm9Answers = [
-  {displayText: "Form 9", value: 'FORMAL'},
-  {displayText: "Statement in lieu of Form 9", value: "INFORMAL"}
+  {displayText: 'Form 9', value: 'FORMAL'},
+  {displayText: 'Statement in lieu of Form 9', value: 'INFORMAL'}
 ];
 
 const typeOfHearingQuestion = `Which box did the appellant select for the Optional
@@ -61,35 +61,31 @@ const mapDispatchToProps = (dispatch) => {
     onHearingDocumentChange: (hearingDocumentIsInVbms) => {
       dispatch({
         type: 'CHANGE_VBMS_HEARING_DOCUMENT',
-        hearingDocumentIsInVbms
+        hearingDocumentIsInVbms: hearingDocumentIsInVbms
       });
     },
-    onTypeOfForm9Change: (isFormalForm9) => {
+    onTypeOfForm9Change: (form9Type) => {
       dispatch({
         type: 'CHANGE_TYPE_OF_FORM9',
-        isFormalForm9
+        form9Type: form9Type
       });
     },
     onHearingTypeChange: (hearingType) => {
+      debugger;
       dispatch({
         type: 'CHANGE_TYPE_OF_HEARING',
-        hearingType
+        hearingType: hearingType
       });
     }
   };
 }
 
 const mapStateToProps = (state) => {
-  let {
-    hearingDocumentIsInVbms,
-    form9Type,
-    hearingType
-  } = state;
-
+  debugger;
   return {
-    hearingDocumentIsInVbms,
-    form9Type,
-    hearingType
+    hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
+    form9Type: state.form9Type,
+    hearingType: state.hearingType
   };
 };
 
@@ -103,7 +99,7 @@ const _ConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-  debugger;
+    debugger;
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -126,10 +122,6 @@ const _ConfirmHearing = ({
 
         <LoadingContainer>
           <iframe
-            aria-label="The PDF embedded here is not accessible. Please use the above
-              link to download the PDF and view it in a PDF reader. Then use the
-              buttons below to go back and make edits or upload and certify
-              the document."
             className="cf-doc-embed cf-iframe-with-loading"
             title="Form8 PDF"
             src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
