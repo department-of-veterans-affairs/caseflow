@@ -22,7 +22,7 @@ RSpec.feature "Admin" do
   end
 
   scenario "Establish Claim page" do
-    visit "/admin/establish_claim"
+    visit "/admin/establish-claim"
 
     # View existing tasks
     expect(Task.count).to eq(1)
