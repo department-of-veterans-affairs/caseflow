@@ -132,7 +132,6 @@ export default class PdfViewer extends BaseForm {
         return copy;
       });
       this.setState({ comments });
-
     });
 
     window.addEventListener('keydown', this.keyListener);

@@ -4,6 +4,7 @@ import BaseForm from '../containers/BaseForm';
 
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
+import EditComment from '../components/EditComment';
 
 // A rounded rectangle with a user's comment inside
 export default class Comment extends BaseForm {
@@ -13,7 +14,6 @@ export default class Comment extends BaseForm {
       commentForm: {
         editComment: new FormField('')
       },
-      commentOverIndex: null,
       editingComment: false
     };
   }
@@ -28,19 +28,15 @@ export default class Comment extends BaseForm {
     });
   }
 
-  cancelEdit = () => {
-    let commentForm = { ...this.state.commentForm };
-
-    commentForm.editComment.value = '';
+  onCancelCommentEdit = () => {
     this.setState({
-      commentForm,
       editingComment: false
     });
   }
 
   onSaveCommentEdit = () => {
     this.props.onSaveCommentEdit(this.state.commentForm.editComment.value, this.props.uuid);
-    this.cancelEdit();
+    this.onCancelCommentEdit();
   }
 
   onDeleteComment = () => {
@@ -56,33 +52,15 @@ export default class Comment extends BaseForm {
     let comment;
 
     if (this.state.editingComment) {
-      comment = <div>
-          <div
-            key={this.props.children.toString()}
-            className="cf-pdf-comment-list-item">
-            <TextareaField
-              label="Edit Comment"
-              name="editComment"
-              onChange={this.handleFieldChange('commentForm', 'editComment')}
-              {...this.state.commentForm.editComment}
-            />
-          </div>
-          <div className="comment-control-button-container">
-            <span className="cf-right-side">
-              <Button
-                name="cancel"
-                classNames={["cf-btn-link"]}
-                onClick={this.cancelEdit}>
-                Cancel
-              </Button>
-              <Button
-                name="save"
-                onClick={this.onSaveCommentEdit}>
-                Save
-              </Button>
-            </span>
-          </div>
-        </div>;
+      comment = <EditComment
+        onCancelCommentEdit={this.onCancelCommentEdit}
+        onSaveCommentEdit={this.onSaveCommentEdit}
+        id={this.props.id}
+        uuid={this.props.uuid}
+        selected={this.props.selected}
+      >
+        {this.props.children}
+      </EditComment>;
     } else {
       comment = <div>
           <div className="comment-control-button-container">
