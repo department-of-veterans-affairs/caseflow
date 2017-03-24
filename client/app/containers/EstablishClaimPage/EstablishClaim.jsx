@@ -425,10 +425,10 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    let data = {
-      email_ro_id: this.getSpecialIssuesRegionalOfficeCode(),
-      email_recipient: this.getSpecialIssuesEmail().join(', ')
-    };
+    let data = ApiUtil.convertToSnakeCase({
+      emailRoId: this.getSpecialIssuesRegionalOfficeCode(),
+      emailRecipient: this.getSpecialIssuesEmail().join(', ')
+    });
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
       then(() => {

@@ -31,19 +31,17 @@ export default class EstablishClaimComplete extends React.Component {
     let casesAssigned, employeeCountInt,
       hasQuotaReached, quotaReachedMessage, totalCases;
 
-    const noMoreCasesMessage = <div>There are no more cases to work today.
-    <a href="/dispatch/establish-claim"> Return to homepage</a> to view your work history.
-    </div>;
-
-    quotaReachedMessage = `Way to go! You have completed all of the total cases
-      assigned to you today.`;
+    quotaReachedMessage = <h2 className="cf-msg-screen-deck">
+      Way to go! 💻💪🇺🇸<br/>
+      You have completed all of the total cases assigned to you today.
+    </h2>;
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
     casesAssigned = employeeCountInt > 0 ?
       Math.ceil(totalCases / employeeCountInt) : 0;
-    hasQuotaReached = totalCasesCompleted >= casesAssigned;
+    hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
     let NoMoreClaimsButton = () => {
       return <div>
@@ -86,7 +84,11 @@ export default class EstablishClaimComplete extends React.Component {
         className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
 
       <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
-      <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
+      <h2 className="cf-msg-screen-deck">
+        {secondHeader}
+      </h2>
+
+      {hasQuotaReached && quotaReachedMessage}
 
       <ul className="cf-list-checklist cf-left-padding">
         {checklist.map((listValue) => <li key={listValue}>

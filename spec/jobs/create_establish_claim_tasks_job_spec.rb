@@ -51,7 +51,7 @@ describe CreateEstablishClaimTasksJob do
 
       establish_claim = EstablishClaim.first
       expect(establish_claim.appeal_id).to eq(@full_grant.id)
-      expect(establish_claim.claim_establishment.decision_date).to eq(@full_grant.outcoding_date)
+      expect(establish_claim.claim_establishment.outcoding_date).to eq(@full_grant.outcoding_date)
       expect(establish_claim.claim_establishment).to be_full_grant
     end
   end
