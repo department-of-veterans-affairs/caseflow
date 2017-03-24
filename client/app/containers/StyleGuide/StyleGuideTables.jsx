@@ -78,7 +78,12 @@ export default function StyleGuideTables() {
 
     <h3>Queues</h3>
     <p>
-      Tables are most frequenqtly used in users' Queues or a list of work items for a user to take action on. Queues are shown in the standard App Canvas as tables. A distinct feature of queue tables is the right-aligned actionable link, such as "Assign >>," located on the far right column.
+      Tables are most frequenqtly used in users' Queues or
+      a list of work items for a user to take action on.
+      Queues are shown in the standard App Canvas as
+      tables. A distinct feature of queue tables is the
+      right-aligned actionable link, such as
+      "Assign >>," located on the far right column.
     </p>
     <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} />
   </div>;
