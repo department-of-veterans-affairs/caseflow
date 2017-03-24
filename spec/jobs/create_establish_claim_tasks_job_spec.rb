@@ -42,17 +42,4 @@ describe CreateEstablishClaimTasksJob do
       is_expected.to eq(Time.zone.local(2015, 1, 29, 0))
     end
   end
-
-  context ".add_establish_claim_data" do
-    it "creates EstablishClaim task and it's related meta data'" do
-      CreateEstablishClaimTasksJob.new.add_establish_claim_data(@full_grant)
-      expect(EstablishClaim.count).to eq(1)
-      expect(ClaimEstablishment.count).to eq(1)
-
-      establish_claim = EstablishClaim.first
-      expect(establish_claim.appeal_id).to eq(@full_grant.id)
-      expect(establish_claim.claim_establishment.outcoding_date).to eq(@full_grant.outcoding_date)
-      expect(establish_claim.claim_establishment).to be_full_grant
-    end
-  end
 end
