@@ -41,7 +41,7 @@ Rails.application.routes.draw do
       post 'no-email-complete', on: :member
       get 'pdf', on: :member
       patch 'cancel', on: :member
-      put 'update_appeal', on: :member
+      put 'update-appeal', on: :member
     end
   end
 
@@ -69,8 +69,8 @@ Rails.application.routes.draw do
   patch "certifications" => "certifications#create"
 
   namespace :admin do
-    resource :establish_claim,
-             only: [:show, :create]
+    post "establish-claim", to: "establish_claims#create"
+    get "establish-claim", to: "establish_claims#show"
   end
 
   resources :functions, only: :index
@@ -108,14 +108,14 @@ Rails.application.routes.draw do
     # Only allow data_setup routes if TEST_USER is set
     if ENV["TEST_USER_ID"]
       resources :setup, only: [:index]
-      post "setup_uncertify_appeal" => "setup#uncertify_appeal"
-      post "setup_appeal_location_date_reset" => "setup#appeal_location_date_reset"
-      get "setup_delete_test_data" => "setup#delete_test_data"
+      post "setup-uncertify-appeal" => "setup#uncertify_appeal", as: "test_setup_uncertify_appeal_path"
+      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset", as: "test_setup_appeal_location_date_reset_path"
+      get "setup-delete-test-data" => "setup#delete_test_data", as: "test_setup_delete_test_data_path"
     end
 
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
-      post "/set_user/:id", to: "users#set_user", as: "set_user"
+      post "/set-user/:id", to: "users#set_user", as: "set_user"
       post "/set-end-products", to: "users#set_end_products", as: 'set_end_products'
     end
   end
