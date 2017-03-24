@@ -23,6 +23,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :outcoding_date
 
   SPECIAL_ISSUE_COLUMNS = %i(contaminated_water_at_camp_lejeune
                              dic_death_or_accrued_benefits_united_states
