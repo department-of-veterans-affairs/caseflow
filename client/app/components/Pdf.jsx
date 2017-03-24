@@ -184,13 +184,16 @@ export default class Pdf extends React.Component {
 
     // Determine which comments have changed, and
     // rerender the pages the changed comments are on.
-    let symmetricDifference = symmetricDifference(
-      new Set(nextProps.comments),
-      new Set(this.props.comments));
+    let symmetricDifference = this.symmetricDifference(
+      new Set(nextProps.comments.map(comment => comment.uuid)),
+      new Set(this.props.comments.map(comment => comment.uuid)));
 
     let pagesToUpdate = new Set();
-    symmetricDifference.forEach((comment) => {
-      pagesToUpdate.add(comment.page);
+    let allComments = [...nextProps.comments, ...this.props.comments];
+
+    symmetricDifference.forEach((uuid) => {
+      let page = allComments.filter(comment => comment.uuid === uuid)[0].page;
+      pagesToUpdate.add(page);
     });
 
     pagesToUpdate.forEach((page) => {
@@ -216,7 +219,7 @@ Pdf.defaultProps = {
 
 Pdf.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.string,
+    comment: PropTypes.string,
     uuid: PropTypes.number,
     page: PropTypes.number
   })),

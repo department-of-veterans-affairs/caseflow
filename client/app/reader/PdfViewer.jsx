@@ -25,31 +25,11 @@ export default class PdfViewer extends BaseForm {
       onSaveComment: null
     };
 
-    // this.viewports = new Array();
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  // onViewPortCreated = (viewport, page) => {
-  //   this.viewports[page] = viewport;
-  // }
-
-  // onViewPortsCleared = () => {
-  //   this.viewports = new Array();
-  // }
-
   onCommentChange = (documentId = this.props.doc.id) => {
-    this.comments = [];
-
-    this.setState({ comments: this.comments });
-    this.props.annotationStorage.getAnnotationByDocumentId(documentId).
-      forEach((annotation) => {
-        this.comments.push({
-          content: annotation.comment,
-          uuid: annotation.uuid,
-          page: annotation.page
-        });
-        this.setState({ comments: this.comments });
-      });
+    this.setState({ comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)] });
   }
 
   onDeleteComment = (uuid) => {
@@ -70,21 +50,7 @@ export default class PdfViewer extends BaseForm {
         this.props.doc.id,
         annotation.uuid,
         annotation
-      ).
-      catch(() => {
-        // TODO: Add error case if comment can't be added
-        /* eslint-disable no-console */
-        console.log('Error editing annotation in saveEdit');
-
-        /* eslint-enable no-console */
-      });
-    }).
-    catch(() => {
-
-      /* eslint-disable no-console */
-      console.log('Error getting annotation in saveEdit');
-
-      /* eslint-enable no-console */
+      );
     });
   }
 
@@ -105,22 +71,10 @@ export default class PdfViewer extends BaseForm {
   onSaveComment = (annotation, pageNumber) => (content) => {
     annotation.comment = content;
     this.props.annotationStorage.addAnnotation(
-        this.props.doc.id,
-        pageNumber,
-        annotation
-      ).then(() => {
-        this.props.annotationStorage.getAnnotations(this.props.doc.id, pageNumber).
-          then((annotations) => {
-            // // Redraw all the annotations on the page to show the new one.
-            // let svg = document.getElementById(`pageContainer${pageNumber}`).
-            //   getElementsByClassName("annotationLayer")[0];
-
-            // // This is the icky part of this component. We have to
-            // // hook directly into PDFJSAnnotate to trigger a redraw
-            // // of the page, in order to see the new comments
-            // PDFJSAnnotate.render(svg, viewport, annotations);
-          });
-      });
+      this.props.doc.id,
+      pageNumber,
+      annotation
+    );
   }
 
   placeComment = (pageNumber, coordinates) => {
@@ -204,7 +158,7 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  scrollToAnnotation = (uuid) => () => {
+  onJumpToComment = (uuid) => () => {
     PDFJSAnnotate.
       getStoreAdapter().
       getAnnotation(this.props.doc.id, uuid).
@@ -219,41 +173,6 @@ export default class PdfViewer extends BaseForm {
   }
 
   render() {
-    // comments = this.state.comments.map((comment, index) => {
-    //   let selectedClass = comment.selected ? " cf-comment-selected" : "";
-
-    //   if (this.state.editingComment === index) {
-    //     return (
-    //       <div
-    //         key="commentEditor"
-    //         className="cf-pdf-comment-list-item"
-    //         onKeyUp={this.saveEdit(comment)}>
-    //         <TextareaField
-    //           label="Edit Comment"
-    //           name="editComment"
-    //           onChange={this.handleFieldChange('commentForm', 'editComment')}
-    //           {...this.state.commentForm.editComment}
-    //         />
-    //       </div>);
-    //   }
-
-    //   return <div
-    //       onClick={this.scrollToAnnotation(comment.uuid)}
-    //       onMouseEnter={this.showEditIcon(index)}
-    //       onMouseLeave={this.hideEditIcon(index)}
-    //       className={`cf-pdf-comment-list-item${selectedClass}`}
-    //       key={`comment${index}`}
-    //       id={`comment${index}`}>
-    //       {this.state.commentOverIndex === index &&
-    //         <div className="cf-pdf-edit-comment" onClick={this.editComment(index)}>
-    //           <i
-    //             className="cf-pdf-edit-comment-icon fa fa-pencil"
-    //             aria-hidden="true"></i>
-    //         </div>}
-    //       {comment.content}
-    //     </div>;
-    // });
-
     return (
       <div>
         <div className="cf-pdf-page-container">
@@ -281,6 +200,7 @@ export default class PdfViewer extends BaseForm {
             onSaveCommentEdit={this.onSaveCommentEdit}
             onAddCommentComplete={this.onAddCommentComplete}
             onDeleteComment={this.onDeleteComment}
+            onJumpToComment={this.onJumpToComment}
           />
         </div>
       </div>

@@ -51,8 +51,10 @@ export default class PdfSidebar extends BaseForm {
         selected={false}
         onSaveCommentEdit={this.props.onSaveCommentEdit}
         onDeleteComment={this.props.onDeleteComment}
-        uuid={comment.uuid}>
-          {comment.content}
+        uuid={comment.uuid}
+        selected={comment.selected}
+        onClick={this.props.onJumpToComment}>
+          {comment.comment}
         </Comment>;
     });
 
@@ -100,12 +102,13 @@ PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
   comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    content: React.PropTypes.string,
+    comment: React.PropTypes.string,
     uuid: React.PropTypes.number
   })),
   isAddingComment: PropTypes.bool,
   onSaveComment: PropTypes.func,
   onSaveCommentEdit: PropTypes.func,
   onAddCommentComplete: PropTypes.func,
-  onDeleteComment: PropTypes.func
+  onDeleteComment: PropTypes.func,
+  onJumpToComment: PropTypes.func
 };

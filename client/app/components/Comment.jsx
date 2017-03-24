@@ -84,7 +84,6 @@ export default class Comment extends BaseForm {
           </div>
         </div>;
     } else {
-      //onClick={this.scrollToAnnotation(comment.uuid)}
       comment = <div>
           <div className="comment-control-button-container">
             <span className="cf-right-side">
@@ -108,7 +107,8 @@ export default class Comment extends BaseForm {
           <div
             className={className}
             key={this.props.children.toString()}
-            id={this.props.id}>
+            id={this.props.id}
+            onClick={this.props.onClick(this.props.uuid)}>
             {this.props.children}
           </div>
         </div>;
@@ -124,5 +124,6 @@ Comment.propTypes = {
   selected: PropTypes.bool,
   onSaveCommentEdit: PropTypes.func,
   onDeleteComment: PropTypes.func,
+  onClick: PropTypes.func,
   uuid: PropTypes.number
 };
