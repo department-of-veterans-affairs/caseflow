@@ -20,24 +20,24 @@ class EstablishClaimsController < TasksController
     Task.transaction do
       Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
       task.complete!(status: 0)
+      task.claim_establishment.update!(decision_date: Time.zone.now) if task.claim_establishment
     end
     render json: {}
   end
 
   def email_complete
-    task.complete!(status: Task.completion_status_code(:special_issue_emailed))
-    render json: {}
+    handle_task_status_update(:special_issue_emailed)
   end
 
   def no_email_complete
-    task.complete!(status: Task.completion_status_code(:special_issue_not_emailed))
-    render json: {}
+    handle_task_status_update(:special_issue_not_emailed)
   end
 
   def assign_existing_end_product
     Dispatch.new(task: task)
             .assign_existing_end_product!(end_product_id: params[:end_product_id],
                                           special_issues: special_issues_params)
+    task.claim_establishment.update!(decision_date: Time.zone.now) if task.claim_establishment
     render json: {}
   end
 
@@ -92,6 +92,14 @@ class EstablishClaimsController < TasksController
   end
 
   private
+
+  # sets a task completion status and updates the claim establishment
+  # for a task if it exists.
+  def handle_task_status_update(completion_status_code)
+    task.complete!(status: Task.completion_status_code(completion_status_code))
+    task.claim_stablishment.update!(decision_date: Time.zone.now) if task.claim_establishment
+    render json: {}
+  end
 
   def appeal_params
     { dispatched_to_station: establish_claim_params[:station_of_jurisdiction] }
