@@ -2,6 +2,8 @@ require "rails_helper"
 
 describe CreateEstablishClaimTasksJob do
   before do
+    Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))
+
     FeatureToggle.enable!(:dispatch_full_grants)
     FeatureToggle.enable!(:dispatch_partial_grants_remands)
     @remand = Fakes::AppealRepository.new("123C", :appeal_remand_decided)
@@ -9,7 +11,6 @@ describe CreateEstablishClaimTasksJob do
 
     allow(AppealRepository).to receive(:remands_ready_for_claims_establishment).and_return([@remand])
     allow(AppealRepository).to receive(:amc_full_grants).and_return([@full_grant])
-    Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))
   end
 
   context ".perform" do
