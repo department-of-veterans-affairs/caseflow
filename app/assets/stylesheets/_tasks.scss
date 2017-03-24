@@ -2,7 +2,8 @@
 @import 'uswds/core/variables';
 
 .task-start-wrapper {
-  padding: 0 0 20px;
+  padding: 0;
+  padding-bottom: 20px;
   border-bottom: 1px solid $color-gray-lighter;
   margin-bottom: 20px;
 }

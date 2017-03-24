@@ -364,10 +364,6 @@ export default class EstablishClaim extends BaseForm {
     return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update_appeal`,
       { data }).then(() => {
 
-        this.setState({
-          loading: false
-        });
-
         if (!this.willCreateEndProduct()) {
           if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
             this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
@@ -380,6 +376,11 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handlePageChange(FORM_PAGE);
         }
+
+        this.setState({
+          loading: false
+        });
+
       });
   }
 
@@ -456,7 +457,8 @@ export default class EstablishClaim extends BaseForm {
         'error',
         'Error',
         'There was an error while completing the task. Please try again later'
-        );
+      );
+
       this.setState({
         loading: false
       });
@@ -631,7 +633,6 @@ export default class EstablishClaim extends BaseForm {
 
   render() {
     let {
-      loading,
       cancelModalDisplay,
       history,
       modalSubmitLoading,
@@ -655,7 +656,6 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
-            loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssues={specialIssues}
@@ -686,7 +686,6 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
-            loading={loading}
             validModifiers={this.validModifiers()}
           />
         }
