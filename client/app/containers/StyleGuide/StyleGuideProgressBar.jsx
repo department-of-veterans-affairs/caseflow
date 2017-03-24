@@ -6,6 +6,19 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 export default function StyleGuideProgressBar() {
 
+  let sections = [
+    {
+      title: '1. Shopping Cart'
+    },
+    {
+      title: '2. Checkout',
+      current: true
+    },
+    {
+      title: '3. Confirmation'
+    }
+  ];
+
   return <div>
       <StyleGuideComponentTitle
         title="Progress Bar"
@@ -16,20 +29,7 @@ export default function StyleGuideProgressBar() {
         This text here is the placeholder description for the Progress Bar.
       </p>
       <ProgressBar
-        sections = {
-        [
-          {
-            title: '1. Shopping Cart'
-          },
-          {
-            title: '2. Checkout',
-            current: true
-          },
-          {
-            title: '3. Confirmation'
-          }
-        ]
-      }
+        sections = {sections}
       />
   </div>;
 
