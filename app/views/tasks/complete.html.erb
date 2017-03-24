@@ -1,15 +1,13 @@
 <% content_for :page_title do task.appeal.task_header end %>
-<% checklist = ["Reviewed decision", "EP established"]
-   checklist = ["Reviewed decision", "EP established", "Manually Added VBMS Note"] if !task.dispatched_to_arc?
-   checklist = ["Reviewed decision", "Processed case outside of Caseflow"] if task.special_issue_not_emailed?
-   checklist = ["Reviewed decision", "Sent email notification"] if task.special_issue_emailed?
-   second_header = task.appeal.veteran_full_name + "'s End Product (" + task.appeal.vbms_id + ') has been created.'
+
+<% second_header = task.appeal.veteran_full_name + "'s End Product (" + task.appeal.vbms_id + ') has been created.'
    second_header = task.appeal.veteran_full_name + "'s claim (" + task.appeal.vbms_id + ') has been processed' if task.special_issue_emailed? or task.special_issue_not_emailed? %>
+
 <%= react_component("BaseContainer", props: {
     availableTasks: !!current_user_next_task,
     buttonText: start_text,
-    checklist: checklist,
-    firstHeader: "Congratulations!",
+    checklist: task.actions_taken,
+    firstHeader: "Success!",
     page: "EstablishClaimComplete",
     totalCasesCompleted: @completed_count_today,
     employeeCount: Rails.cache.read('employee_count') || '0',
