@@ -61,7 +61,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
   end
 
-  context "As a caseworker", focus: true do
+  context "As a caseworker" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
@@ -87,6 +87,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
       expect(task.reload.user).to eq(current_user)
       expect(task).to be_started
+
+      # Validate that a Claim Establishment object was created
+      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task.claim_establishment).to be_remand
 
       visit "/dispatch/establish-claim"
       click_on "Establish next claim"
@@ -224,7 +228,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("Reviewed Full Grant decision")
-        expect(page).to have_content("Established EP: 172BVAG - BVA Grant for Station 351 - Muskogee, OK")
+        expect(page).to have_content("Established EP: 172BVAG - BVA Grant for Station 351 - Muskogee")
 
         expect(page).to have_content("There are no more claims in your queue")
         expect(page).to have_button("Establish next claim", disabled: true)
@@ -267,8 +271,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         find_label_for("confirmEmail").click
         click_on "Finish routing claim"
 
-        expect(page).to have_content("Sent email to: PMCAPPEALS.VBAPHI@va.gov, matthew.wright@va.gov in" +
-                                     "Philadelphia Pension Center, PA - re: DIC - death, or accrued benefits - United States")
+        expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
+                                     "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
       end
 
       scenario "Cancelling a claims establishment with special issues with no email routing" do

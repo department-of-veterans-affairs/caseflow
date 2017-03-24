@@ -425,7 +425,12 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+    let data = {
+      email_ro_id: this.getSpecialIssuesRegionalOfficeCode(),
+      email_recipient: this.getSpecialIssuesEmail().join(', ')
+    };
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
       then(() => {
         this.reloadPage();
       }, () => {
@@ -522,12 +527,22 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getCityAndState(regionalOfficeKey) {
+    if (!regionalOfficeKey) {
+      return null;
+    }
+
     return `${regionalOfficeKey} - ${
       this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
       this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   getSpecialIssuesRegionalOffice() {
+    return this.getCityAndState(
+      this.getSpecialIssuesRegionalOfficeCode(this.state.specialIssuesRegionalOffice)
+    );
+  }
+
+  getSpecialIssuesRegionalOfficeCode() {
     if (this.state.specialIssuesRegionalOffice === 'PMC') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
     } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
@@ -538,13 +553,13 @@ export default class EstablishClaim extends BaseForm {
       return null;
     }
 
-    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
+    return this.state.specialIssuesRegionalOffice;
   }
 
   getRegionalOfficeFromConstant(constant) {
     let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
-    return this.getCityAndState(constant[regionalOfficeKey]);
+    return constant[regionalOfficeKey];
   }
 
   getStationOfJurisdiction() {

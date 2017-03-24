@@ -26,15 +26,16 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :outcoding_date
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
+  # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
     foreign_claim_compensation_claims_dual_claims_appeals: "Foreign claim - compensation claims, dual claims, appeals",
-    foreign_pension_dic_all_other_foreign_countries: "Foreign pension, DIC - Mexico, Central and South American, Caribbean",
-    foreign_pension_dic_mexico_central_and_south_american_caribb: "Foreign pension, DIC - all other foreign countries",
+    foreign_pension_dic_all_other_foreign_countries: "Foreign pension, DIC - all other foreign countries",
+    foreign_pension_dic_mexico_central_and_south_america_caribb: "Foreign pension, DIC - Mexico, Central and South America, Caribbean",
     hearing_including_travel_board_video_conference: "Hearing - including travel board & video conference",
-    home_loan_guarantee: "Home Loan Guarantee",
+    home_loan_guaranty: "Home Loan Guaranty",
     incarcerated_veterans: "Incarcerated Veterans",
     insurance: "Insurance",
     manlincon_compliance: "Manlincon Compliance",
@@ -53,6 +54,7 @@ class Appeal < ActiveRecord::Base
     vocational_rehab: "Vocational Rehab",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
+  # rubocop:enable Metrics/LineLength
 
   attr_writer :ssoc_dates
   def ssoc_dates

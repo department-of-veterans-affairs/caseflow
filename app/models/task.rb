@@ -93,7 +93,12 @@ class Task < ActiveRecord::Base
     end
 
     event :assign do
-      transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
+      transitions from: :unassigned, to: :assigned, after: (proc do |*args|
+        assign_user(*args)
+
+        # Temporarily needed while there are tasks created that don't have claim establishments
+        init_claim_establishment!
+      end)
     end
 
     event :start do
@@ -112,10 +117,6 @@ class Task < ActiveRecord::Base
       transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
       transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
     end
-  end
-
-  def ep_created?
-    completed? && (completion_status != Task.completion_status_code(:canceled))
   end
 
   def before_assign

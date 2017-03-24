@@ -67,8 +67,9 @@ export default class EstablishClaimComplete extends React.Component {
 
         <Button
           name={buttonText}
-          onClick={this.onClick}
+          onClick={this.establishNextClaim}
           classNames={["usa-button-primary", "cf-push-right"]}
+          loading={this.state.isLoading}
         />
       </div>;
     };
