@@ -3,6 +3,7 @@ import FormField from '../util/FormField';
 import BaseForm from '../containers/BaseForm';
 import { formatDate } from '../util/DateUtil';
 import TextareaField from '../components/TextareaField';
+import Comment from '../components/Comment';
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
@@ -42,6 +43,19 @@ export default class PdfSidebar extends BaseForm {
   }
 
   render() {
+    let comments = [];
+
+    comments = this.props.comments.map((comment, index) => {
+      return <Comment
+        id={`comment${index}`}
+        selected={false}
+        onSaveCommentEdit={this.props.onSaveCommentEdit}
+        onDeleteComment={this.props.onDeleteComment}
+        uuid={comment.uuid}>
+          {comment.content}
+        </Comment>;
+    });
+
     return <div className="cf-sidebar-wrapper">
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">Document</div>
@@ -75,7 +89,7 @@ export default class PdfSidebar extends BaseForm {
                 {...this.state.commentForm.addComment}
               />
             </div>
-            {this.props.comments}
+            {comments}
           </div>
         </div>
       </div>;
@@ -85,8 +99,13 @@ export default class PdfSidebar extends BaseForm {
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
-  comments: PropTypes.node,
+  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
+    content: React.PropTypes.string,
+    uuid: React.PropTypes.number
+  })),
   isAddingComment: PropTypes.bool,
   onSaveComment: PropTypes.func,
-  onAddCommentComplete: PropTypes.func
+  onSaveCommentEdit: PropTypes.func,
+  onAddCommentComplete: PropTypes.func,
+  onDeleteComment: PropTypes.func
 };

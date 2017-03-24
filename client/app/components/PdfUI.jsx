@@ -115,6 +115,7 @@ export default class PdfUI extends React.Component {
       </div>
       <div>
         <Pdf
+          comments={this.props.comments}
           documentId={this.props.doc.id}
           file={this.props.file}
           pdfWorker={this.props.pdfWorker}
@@ -167,6 +168,10 @@ export default class PdfUI extends React.Component {
 }
 
 PdfUI.propTypes = {
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    content: PropTypes.string,
+    uuid: PropTypes.number
+  })),
   doc: PropTypes.object.isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
