@@ -63,7 +63,8 @@ class Fakes::AppealRepository
   def self.update_vacols_after_dispatch!(*)
   end
 
-  def self.update_location_after_dispatch!(*)
+  def self.update_location_after_dispatch!(appeal:)
+    return if appeal.full_grant?
   end
 
   def self.upload_and_clean_document(appeal, form8)
@@ -298,7 +299,8 @@ class Fakes::AppealRepository
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       regional_office_key: "RO13",
-      documents: [nod_document, soc_document, form9_document, decision_document]
+      documents: [nod_document, soc_document, form9_document, decision_document],
+      outcoding_date: 2.days.ago
     }
   end
 

@@ -19,6 +19,7 @@ export default class EstablishClaimDecision extends React.Component {
       endProductButtonText = "Route claim";
     }
     this.state = {
+      isLoading: false,
       endProductButtonText
     };
   }
@@ -27,6 +28,14 @@ export default class EstablishClaimDecision extends React.Component {
     this.setState({
       endProductButtonText: `Route claim for Decision ${tabNumber + 1}`
     });
+  }
+
+  handleSubmit = () => {
+    this.setState({
+      isLoading: true
+    });
+
+    this.props.handleSubmit();
   }
 
   hasMultipleDecisions() {
@@ -38,8 +47,6 @@ export default class EstablishClaimDecision extends React.Component {
       decisionType,
       handleCancelTask,
       handleFieldChange,
-      handleSubmit,
-      loading,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -207,9 +214,10 @@ export default class EstablishClaimDecision extends React.Component {
                 classNames={["cf-btn-link", "cf-adjacent-buttons"]}
             />
             <Button
+              app="dispatch"
               name={this.state.endProductButtonText}
-              onClick={handleSubmit}
-              loading={loading}
+              onClick={this.handleSubmit}
+              loading={this.state.isLoading}
             />
           </div>
         </div>

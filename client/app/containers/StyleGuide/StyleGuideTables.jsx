@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 // components
 import Table from '../../components/Table';
@@ -53,7 +54,11 @@ export default function StyleGuideTables() {
   let summary = "Example styleguide table";
 
   return <div>
-    <h2 id="tables">Tables</h2>
+    <StyleGuideComponentTitle
+      title="Tables"
+      id="tables"
+      link="StyleGuideTables.jsx"
+    />
     <p>
       We use tables to display information accross Caseflow.
       Most frequently they are used in users’ Queues but we

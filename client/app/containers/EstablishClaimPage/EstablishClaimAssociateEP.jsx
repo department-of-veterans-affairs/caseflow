@@ -11,7 +11,8 @@ export default class AssociatePage extends React.Component {
     super(props);
 
     this.state = {
-      loading: null,
+      isLoading: null,
+      submitting: null,
       sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
   }
@@ -40,11 +41,12 @@ export default class AssociatePage extends React.Component {
       header: 'Select this EP',
       valueFunction: (endProduct) =>
         <Button
+          app="dispatch"
           id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
           name="Assign to Claim"
           classNames={["usa-button-outline"]}
           onClick={this.handleAssignEndProduct(endProduct)}
-          loading={this.state.loading === endProduct.benefit_claim_id}
+          loading={this.state.isLoading === endProduct.benefit_claim_id}
         />
     }
   ];
@@ -57,7 +59,7 @@ export default class AssociatePage extends React.Component {
     handleAlertClear();
 
     this.setState({
-      loading: endProduct.benefit_claim_id
+      isLoading: endProduct.benefit_claim_id
     });
 
     let data = ApiUtil.convertToSnakeCase({
@@ -71,7 +73,7 @@ export default class AssociatePage extends React.Component {
         window.location.reload();
       }, () => {
         this.setState({
-          loading: null
+          isLoading: null
         });
         handleAlert(
           'error',
@@ -88,11 +90,18 @@ export default class AssociatePage extends React.Component {
     return time2 - time1;
   }
 
+  handleSubmit = () => {
+    this.setState({
+      submitting: true
+    });
+
+    this.props.handleSubmit();
+  }
+
   render() {
     let {
       handleCancelTask,
       handleBackToDecisionReview,
-      handleSubmit,
       hasAvailableModifers
     } = this.props;
 
@@ -154,9 +163,11 @@ export default class AssociatePage extends React.Component {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
+            app="dispatch"
             name="Create new EP"
-            onClick={handleSubmit}
+            onClick={this.handleSubmit}
             disabled={!hasAvailableModifers}
+            loading={this.state.submitting}
           />
         </div>
       </div>

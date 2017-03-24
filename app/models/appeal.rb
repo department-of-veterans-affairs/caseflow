@@ -23,6 +23,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :outcoding_date
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   SPECIAL_ISSUES = {
