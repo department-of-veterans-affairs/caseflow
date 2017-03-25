@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170321214122) do
+ActiveRecord::Schema.define(version: 20170324120538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,9 +89,12 @@ ActiveRecord::Schema.define(version: 20170321214122) do
   create_table "claim_establishments", force: :cascade do |t|
     t.integer  "task_id"
     t.integer  "decision_type"
-    t.datetime "decision_date"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "outcoding_date"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "email_ro_id"
+    t.string   "email_recipient"
+    t.string   "ep_code"
   end
 
   create_table "document_views", force: :cascade do |t|
