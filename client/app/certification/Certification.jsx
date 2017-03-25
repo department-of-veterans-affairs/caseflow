@@ -18,13 +18,15 @@ const CertificationProgressBar = () => {
     sections = {
     [
       {
-        current: true,
+        activated: true,
         title: '1. Check Documents'
       },
       {
+        activated: false,
         title: '2. Confirm Hearing'
       },
       {
+        activated: false,
         title: '3. Confirmation'
       }
     ]

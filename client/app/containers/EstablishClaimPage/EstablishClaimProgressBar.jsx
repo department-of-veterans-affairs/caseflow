@@ -8,15 +8,15 @@ export default class EstablishClaimProgressBar extends React.Component {
       sections = {
       [
         {
-          current: this.props.isReviewDecision,
+          activated: this.props.isReviewDecision,
           title: '1. Review Decision'
         },
         {
-          current: this.props.isRouteClaim,
+          activated: this.props.isRouteClaim,
           title: '2. Route Claim'
         },
         {
-          current: this.props.isConfirmation,
+          activated: this.props.isConfirmation,
           title: '3. Confirmation'
         }
       ]
@@ -26,7 +26,7 @@ export default class EstablishClaimProgressBar extends React.Component {
 }
 
 EstablishClaimProgressBar.propTypes = {
-  isConfirmation: PropTypes.bool,
-  isReviewDecision: PropTypes.bool,
-  isRouteClaim: PropTypes.bool
+  isConfirmation: PropTypes.bool.isRequired,
+  isReviewDecision: PropTypes.bool.isRequired,
+  isRouteClaim: PropTypes.bool.isRequired
 };
