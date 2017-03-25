@@ -43,6 +43,10 @@ export default class Comment extends BaseForm {
     this.props.onDeleteComment(this.props.uuid);
   }
 
+  onClick = () => {
+    this.props.onClick(this.props.uuid);
+  }
+
   render() {
     let className = 'cf-pdf-comment-list-item';
     if (this.props.selected) {
@@ -86,7 +90,7 @@ export default class Comment extends BaseForm {
             className={className}
             key={this.props.children.toString()}
             id={this.props.id}
-            onClick={this.props.onClick(this.props.uuid)}>
+            onClick={this.onClick}>
             {this.props.children}
           </div>
         </div>;

@@ -123,6 +123,7 @@ export default class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
+          onCommentClick={this.props.onCommentClick}
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
@@ -180,5 +181,6 @@ PdfUI.propTypes = {
   onShowList: PropTypes.func,
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
-  onSetLabel: PropTypes.func
+  onSetLabel: PropTypes.func,
+  onCommentClick: PropTypes.func
 };

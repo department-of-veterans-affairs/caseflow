@@ -142,6 +142,7 @@ export default class Pdf extends React.Component {
   }
 
   componentDidMount = () => {
+    const { UI } = PDFJSAnnotate;
     PDFJS.workerSrc = this.props.pdfWorker;
 
     this.setupPdf(this.props.file);
@@ -150,6 +151,23 @@ export default class Pdf extends React.Component {
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
+
+    UI.enableEdit();
+
+    UI.addEventListener('annotation:click', (event) => {
+      let comments = [...this.props.comments];
+
+      let filteredComments = comments.filter((comment) => {
+        return comment.uuid.toString() ===
+            event.getAttribute('data-pdf-annotate-id').toString();
+      });
+
+      if(filteredComments.length === 1) {
+        this.props.onCommentClick(filteredComments[0])
+      } else if (filteredComments.length !== 0) {
+        throw new Error('Multiple comments with same uuid');
+      }
+    });
   }
 
   symmetricDifference = (set1, set2) => {
@@ -230,5 +248,6 @@ Pdf.propTypes = {
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
-  onViewportCreated: PropTypes.func
+  onViewportCreated: PropTypes.func,
+  onCommentClick: PropTypes.func
 };

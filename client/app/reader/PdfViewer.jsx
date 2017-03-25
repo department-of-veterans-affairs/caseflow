@@ -112,31 +112,38 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  componentDidMount = () => {
-    const { UI } = PDFJSAnnotate;
-
-    this.onCommentChange();
-
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.state.comments];
-
-      comments = comments.map((comment) => {
-        let copy = { ...comment };
-
-        copy.selected = false;
-        if (comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString()) {
-          copy.selected = true;
-        }
-
-        return copy;
-      });
-      this.setState({ comments });
+  onCommentClick = (clickedComment) => {
+    let comments = [...this.state.comments].map((comment) => {
+      if (clickedComment.uuid === comment.uuid) {
+        comment.selected = true;
+      } else {
+        comment.selected = false;
+      }
+      return comment;
     });
 
-    window.addEventListener('keydown', this.keyListener);
+    this.setState({ comments });
+  }
 
-    UI.enableEdit();
+  // Consider moving this down into Pdf.jsx
+  onJumpToComment = (uuid) => {
+    PDFJSAnnotate.
+      getStoreAdapter().
+      getAnnotation(this.props.doc.id, uuid).
+      then((annotation) => {
+        let page = document.getElementsByClassName('page');
+        let scrollWindow = document.getElementById('scrollWindow');
+
+        scrollWindow.scrollTop =
+          page[annotation.page - 1].getBoundingClientRect().top +
+          annotation.y - 100 + scrollWindow.scrollTop;
+      });
+  }
+
+  componentDidMount = () => {
+    this.onCommentChange();
+
+    window.addEventListener('keydown', this.keyListener);
   }
 
   componentWillUnmount = () => {
@@ -157,20 +164,6 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
-  onJumpToComment = (uuid) => () => {
-    PDFJSAnnotate.
-      getStoreAdapter().
-      getAnnotation(this.props.doc.id, uuid).
-      then((annotation) => {
-        let page = document.getElementsByClassName('page');
-        let scrollWindow = document.getElementById('scrollWindow');
-
-        scrollWindow.scrollTop =
-          page[annotation.page - 1].getBoundingClientRect().top +
-          annotation.y - 100 + scrollWindow.scrollTop;
-      });
-  }
-
   render() {
     return (
       <div>
@@ -189,6 +182,7 @@ export default class PdfViewer extends BaseForm {
             onPreviousPdf={this.props.onPreviousPdf}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
+            onCommentClick={this.onCommentClick}
           />
           <PdfSidebar
             doc={this.props.doc}
