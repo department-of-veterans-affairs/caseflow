@@ -3,10 +3,28 @@ import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
 import DecisionReviewer from '../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
-import { step } from 'mocha-steps';
+import { eventually } from 'chai-as-promised';
 
 import PDFJSAnnotate from 'pdf-annotate.js';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+
+let asyncTest = (fn) => {
+  return async () => {
+    try {
+      await fn();
+    } catch (err) {
+      return err;
+    }
+  };
+}
+
+let pause = (ms = 0) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve();
+    }, ms);
+  });
+}
 
 /* eslint-disable no-unused-expressions */
 describe.only('DecisionReviewer', () => {
@@ -56,14 +74,7 @@ describe.only('DecisionReviewer', () => {
       // We return a promise that resolves to an object
       // with a getViewport function.
       pdfjsRenderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
-      pdfjsRenderPage.callsFake((arg1, arg2) => {
-        console.log(arg1);
-        console.log(arg2);
-        resolves([
-        {
-          getViewport: () => 0
-        }
-      ])});
+      pdfjsRenderPage.resolves([{ getViewport: () => 0 }]);
 
       // We return fake 'page' divs that the PDF component
       // will add to the dom.
@@ -91,11 +102,11 @@ describe.only('DecisionReviewer', () => {
     });
 
     context('Can enter document from list view', () => {
-      step('renders pdf list view', () => {
+      it('renders pdf list view', () => {
         expect(wrapper.find('PdfListView')).to.have.length(1);
       });
 
-      step('click into a single pdf', () => {
+      it('click into a single pdf', () => {
         wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
         //console.log(wrapper.debug());
 
@@ -103,19 +114,59 @@ describe.only('DecisionReviewer', () => {
       });
     });
 
-    context('Zoom document', () => {
-      step('zoom in and out', () => {
-        wrapper.find('a').findWhere((link) => {return link.text() === doc1Name}).simulate('mouseUp');
-
-        ///pdfjsRenderPage.resetHistory();
-        console.log('before');
+    context('Zooming calls pdfjs to rerender with the correct scale', () => {
+      it('zoom in and zoom out', asyncTest(async () => {
+        wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
+        pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomIn').simulate('click');
-        expect(pdfjsRenderPage.called).to.be.true;
-        //expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.object)).to.be.true;
-        //pdfjsRenderPage.resetHistory();
-        //wrapper.find('#button-zoomOut').simulate('click');
-        //expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('scale', 1))).to.be.true;
-      });
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('scale', 1.3))).to.be.true;
+
+        pdfjsRenderPage.resetHistory();
+        wrapper.find('#button-zoomOut').simulate('click');
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('scale', 1))).to.be.true;
+      }));
+    });
+
+    context('Navigation buttons move between PDFs', () => {
+      it('next button moves to the next PDF previous button moves back', asyncTest(async() => {
+        wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+
+        pdfjsRenderPage.resetHistory();
+        wrapper.find('#button-next').simulate('click');
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 2))).to.be.true;
+
+        pdfjsRenderPage.resetHistory();
+        wrapper.find('#button-previous').simulate('click');
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+      }));
+    });
+
+    context('Navigation buttons move between PDFs', () => {
+      it('next button moves to the next PDF previous button moves back', asyncTest(async() => {
+        wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+
+        pdfjsRenderPage.resetHistory();
+        wrapper.find('#button-next').simulate('click');
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 2))).to.be.true;
+
+        pdfjsRenderPage.resetHistory();
+        wrapper.find('#button-previous').simulate('click');
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+      }));
     });
   });
   /* eslint-enable max-statements */

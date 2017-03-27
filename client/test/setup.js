@@ -1,3 +1,6 @@
+require("babel-core/register");
+require("babel-polyfill");
+
 let jsdom = require('jsdom').jsdom;
 
 global.document = jsdom('<html><head></head><body><div id="app" /></body></html>');
