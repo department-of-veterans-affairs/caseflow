@@ -87,11 +87,11 @@ export default class EditComment extends BaseForm {
   }
 }
 
-Comment.defaultProps = {
+EditComment.defaultProps = {
   id: 'commentEditBox'
 };
 
-Comment.propTypes = {
+EditComment.propTypes = {
   children: React.PropTypes.string,
   id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,

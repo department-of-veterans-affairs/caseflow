@@ -38,7 +38,7 @@ export default class Pdf extends React.Component {
 
     return new Promise((resolve, reject) => {
       // Call into PDFJSAnnotate to render this page
-      UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+      UI.renderPage(index + 1, RENDER_OPTIONS).then(() => {
         // If successful then we want to setup a click handler
         let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
