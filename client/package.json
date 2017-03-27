@@ -55,8 +55,10 @@
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-react": "^6.7.1",
     "mocha": "^3.1.2",
+    "mocha-steps": "^1.0.2",
     "npm-shrinkwrap": "^6.0.2",
-    "react-addons-test-utils": "^15.4.2"
+    "react-addons-test-utils": "^15.4.2",
+    "sinon": "^2.1.0"
   },
   "optionalDependencies": {
     "fsevents": "*"

@@ -13,7 +13,5 @@
     "lint": "cd client && npm run lint",
     "lint:fix": "cd client && npm run lint:fix"
   },
-  "devDependencies": {
-    "mocha-steps": "^1.0.2"
-  }
+  "devDependencies": {}
 }

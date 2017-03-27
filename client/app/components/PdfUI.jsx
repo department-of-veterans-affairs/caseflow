@@ -7,7 +7,7 @@ export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
-  let receivedAt = doc.received_at;
+  let receivedAt = doc.receivedAt;
 
   return `/decision/review/show?id=${id}&type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
@@ -27,7 +27,6 @@ export const linkToSingleDocumentView = (doc) => {
 //   corresponding arrow will be missing.
 // Color labels: If you want users to be able to see/select color labels
 //   on the document pass in the onSetLabel handler.
-
 export default class PdfUI extends React.Component {
   constructor(props) {
     super(props);
@@ -41,20 +40,12 @@ export default class PdfUI extends React.Component {
   zoom = (delta) => () => {
     // TODO: Fix scrolling when zooming
     // let zoomFactor = (this.state.scale + delta) / this.state.scale;
-    console.log('inZoom' + delta);
+
     this.setState({
       scale: this.state.scale + delta
     });
     // this.draw(this.props.file,
     //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
-  }
-
-  onColorLabelChange = (label) => () => {
-    if (label === this.props.label) {
-      this.props.onSetLabel('');
-    } else {
-      this.props.onSetLabel(label);
-    }
   }
 
   onPageChange = (currentPage, numPages) => {
@@ -128,7 +119,7 @@ export default class PdfUI extends React.Component {
         <div className="usa-grid-full">
           <div className="usa-width-one-third cf-pdf-buttons-left">
             { this.props.onSetLabel && <DocumentLabels
-              onClick={this.onColorLabelChange}
+              onClick={this.props.onSetLabel}
               selectedLabels={selectedLabels}/> }
           </div>
           <div className="usa-width-one-third cf-pdf-buttons-center">
@@ -167,7 +158,15 @@ export default class PdfUI extends React.Component {
 }
 
 PdfUI.propTypes = {
-  doc: PropTypes.object.isRequired,
+  doc: PropTypes.shape(
+    {
+      filename: PropTypes.string,
+      id: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number]),
+      type: PropTypes.string,
+      receivedAt: PropTypes.string
+    }).isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
