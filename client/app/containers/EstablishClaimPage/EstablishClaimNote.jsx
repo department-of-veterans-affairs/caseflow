@@ -45,7 +45,7 @@ export default class EstablishClaimNote extends BaseForm {
     let specialIssues = this.props.specialIssues;
 
     if (specialIssues.vamc.value) {
-      return "51";
+      return "54";
     } else if (specialIssues.nationalCemeteryAdministration.value) {
       return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
