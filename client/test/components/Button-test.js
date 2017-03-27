@@ -13,7 +13,7 @@ describe('Button', () => {
                               onChange={onChange}
                               loading={true} />);
 
-    expect(wrapper.find('#test-button.hidden-field')).to.have.length(1);
+    expect(wrapper.find('#test-button.cf-loading')).to.have.length(1);
   });
 
   it('removes other button classes when disabled', () => {

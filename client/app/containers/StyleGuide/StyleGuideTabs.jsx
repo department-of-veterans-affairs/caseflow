@@ -16,15 +16,15 @@ export default class StyleGuideTabs extends React.Component {
     tabs = [
       {
         label: "Tab 1",
-        page: "Content for Tab 1"
+        page: " "
       },
       {
         label: "Tab 2",
-        page: "Content for Tab 2"
+        page: " "
       },
       {
         label: "Tab 3",
-        page: "Content for Tab 3"
+        page: " "
       }
     ];
 
@@ -32,17 +32,17 @@ export default class StyleGuideTabs extends React.Component {
       disable: false,
       icon: checkSymbolHtml(),
       label: "Active Tab",
-      page: "This is an 'Active' Tab."
+      page: " "
     }, {
       disable: false,
       icon: checkSymbolHtml(),
       label: "Enabled Tab",
-      page: "This is an 'Enabled' Tab."
+      page: " "
     }, {
       disable: true,
       icon: crossSymbolHtml(),
       label: "Disabled Tab",
-      page: "This is a 'Disabled' Tab"
+      page: " "
     }
     ];
 

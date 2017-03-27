@@ -4,6 +4,10 @@ import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
 
+let func = function() {
+  // empty function
+};
+
 describe('EstablishClaim', () => {
   context('.render', () => {
     let wrapper;
@@ -25,7 +29,13 @@ describe('EstablishClaim', () => {
 
       /* eslint-enable camelcase */
 
-      wrapper = mount(<EstablishClaim task={task}/>);
+      wrapper = mount(<EstablishClaim
+        regionalOfficeCities={{}}
+        pdfLink=""
+        pdfjsLink=""
+        handleAlert={func}
+        handleAlertClear={func}
+        task={task}/>);
 
     });
 
@@ -147,7 +157,13 @@ describe('EstablishClaim', () => {
 
       /* eslint-enable camelcase */
 
-      wrapper = mount(<EstablishClaim task={task}/>);
+      wrapper = mount(<EstablishClaim
+        regionalOfficeCities={{}}
+        pdfLink=""
+        pdfjsLink=""
+        handleAlert={func}
+        handleAlertClear={func}
+        task={task}/>);
     });
 
     context("when ARC EP", () => {
