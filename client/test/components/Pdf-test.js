@@ -112,7 +112,7 @@ describe('Pdf', () => {
         pdfjsCreatePage.resetHistory();
       });
 
-      it(`calls PDFJS create page ${numPages} times`, () => {
+      it(`calls PDFJS createPage ${numPages} times`, () => {
         wrapper.instance().createPages(pdfDocument);
         expect(pdfjsCreatePage.callCount).to.equal(numPages);
       });
