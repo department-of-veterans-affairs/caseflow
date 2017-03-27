@@ -7,7 +7,6 @@ import DocumentsCheckSuccess from './DocumentsCheckSuccess';
 import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
-
 import certificationReducers from './reducers/index';
 
 // TODO: rethink routes, this may be a temporary solution.
@@ -16,7 +15,6 @@ import certificationReducers from './reducers/index';
 const EntryPointRedirect = ({ match }) => {
   return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
 };
-
 
 const Certification = ({ certification }) => {
   let store = createStore(certificationReducers, certification);

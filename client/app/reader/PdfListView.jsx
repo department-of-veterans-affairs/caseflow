@@ -63,7 +63,7 @@ export default class PdfListView extends React.Component {
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) =>
-          boldUnreadContent(formatDate(doc.received_at), doc)
+          boldUnreadContent(formatDate(doc.receivedAt), doc)
       },
       {
         header: <div onClick={this.props.changeSortState('type')}>
