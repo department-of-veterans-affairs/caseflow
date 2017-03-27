@@ -73,11 +73,13 @@ i {
 }
 
 //Inline Code Text
-code, pre {
+code,
+pre {
   background-color: $color-gray-lightest;
   color: $color-base;
 
-  &::before, &::after {
+  &::before,
+  &::after {
     letter-spacing: -0.2em;
     content: '\00a0';
   }
