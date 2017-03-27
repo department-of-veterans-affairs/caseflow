@@ -37,6 +37,7 @@ $color-tab-text-hover: #1f5593;
 }
 
 //TODO(marian): add to commons
+// Tabs
 .cf-tab {
   font-weight: 500;
 }
@@ -57,4 +58,16 @@ i {
       color: $color-tab-text-hover;
     }
   }
+}
+
+//TODO(marian): add to commons
+// Progress Bar
+.cf-progress-bar-activated {
+  font-weight: 700;
+  border-bottom: 7px solid $color-gray-dark;
+}
+
+.cf-progress-bar-not-activated {
+  font-weight: 700;
+  border-bottom: 7px solid $color-gray-light;
 }
