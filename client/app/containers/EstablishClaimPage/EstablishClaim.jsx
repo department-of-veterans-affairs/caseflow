@@ -364,10 +364,6 @@ export default class EstablishClaim extends BaseForm {
     return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update-appeal`,
       { data }).then(() => {
 
-        this.setState({
-          loading: false
-        });
-
         if (!this.willCreateEndProduct()) {
           if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
             this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
@@ -380,6 +376,11 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handlePageChange(FORM_PAGE);
         }
+
+        this.setState({
+          loading: false
+        });
+
       });
   }
 
@@ -424,7 +425,12 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+    let data = ApiUtil.convertToSnakeCase({
+      emailRoId: this.getSpecialIssuesRegionalOfficeCode(),
+      emailRecipient: this.getSpecialIssuesEmail().join(', ')
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
       then(() => {
         this.reloadPage();
       }, () => {
@@ -456,7 +462,8 @@ export default class EstablishClaim extends BaseForm {
         'error',
         'Error',
         'There was an error while completing the task. Please try again later'
-        );
+      );
+
       this.setState({
         loading: false
       });
@@ -520,12 +527,22 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getCityAndState(regionalOfficeKey) {
+    if (!regionalOfficeKey) {
+      return null;
+    }
+
     return `${regionalOfficeKey} - ${
       this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
       this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   getSpecialIssuesRegionalOffice() {
+    return this.getCityAndState(
+      this.getSpecialIssuesRegionalOfficeCode(this.state.specialIssuesRegionalOffice)
+    );
+  }
+
+  getSpecialIssuesRegionalOfficeCode() {
     if (this.state.specialIssuesRegionalOffice === 'PMC') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
     } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
@@ -536,13 +553,13 @@ export default class EstablishClaim extends BaseForm {
       return null;
     }
 
-    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
+    return this.state.specialIssuesRegionalOffice;
   }
 
   getRegionalOfficeFromConstant(constant) {
     let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
-    return this.getCityAndState(constant[regionalOfficeKey]);
+    return constant[regionalOfficeKey];
   }
 
   getStationOfJurisdiction() {
@@ -631,7 +648,6 @@ export default class EstablishClaim extends BaseForm {
 
   render() {
     let {
-      loading,
       cancelModalDisplay,
       history,
       modalSubmitLoading,
@@ -646,8 +662,7 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         <EstablishClaimProgressBar
-          isConfirmation={false}
-          isReviewDecision={true}
+          isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
@@ -656,7 +671,6 @@ export default class EstablishClaim extends BaseForm {
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
-            loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssues={specialIssues}
@@ -687,7 +701,6 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
-            loading={loading}
             validModifiers={this.validModifiers()}
           />
         }

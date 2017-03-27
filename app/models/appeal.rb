@@ -23,22 +23,38 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :outcoding_date
 
-  SPECIAL_ISSUE_COLUMNS = %i(contaminated_water_at_camp_lejeune
-                             dic_death_or_accrued_benefits_united_states
-                             education_gi_bill_dependents_educational_assistance_scholars
-                             foreign_claim_compensation_claims_dual_claims_appeals
-                             foreign_pension_dic_all_other_foreign_countries
-                             foreign_pension_dic_mexico_central_and_south_america_caribb
-                             hearing_including_travel_board_video_conference
-                             home_loan_guaranty incarcerated_veterans insurance
-                             manlincon_compliance mustard_gas national_cemetery_administration
-                             nonrating_issue pension_united_states private_attorney_or_agent
-                             radiation rice_compliance spina_bifida
-                             us_territory_claim_american_samoa_guam_northern_mariana_isla
-                             us_territory_claim_philippines
-                             us_territory_claim_puerto_rico_and_virgin_islands
-                             vamc vocational_rehab waiver_of_overpayment).freeze
+  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
+  # rubocop:disable Metrics/LineLength
+  SPECIAL_ISSUES = {
+    contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
+    dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
+    education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
+    foreign_claim_compensation_claims_dual_claims_appeals: "Foreign claim - compensation claims, dual claims, appeals",
+    foreign_pension_dic_all_other_foreign_countries: "Foreign pension, DIC - all other foreign countries",
+    foreign_pension_dic_mexico_central_and_south_america_caribb: "Foreign pension, DIC - Mexico, Central and South America, Caribbean",
+    hearing_including_travel_board_video_conference: "Hearing - including travel board & video conference",
+    home_loan_guaranty: "Home Loan Guaranty",
+    incarcerated_veterans: "Incarcerated Veterans",
+    insurance: "Insurance",
+    manlincon_compliance: "Manlincon Compliance",
+    mustard_gas: "Mustard Gas",
+    national_cemetery_administration: "National Cemetery Administration",
+    nonrating_issue: "Non-rating issue",
+    pension_united_states: "Pension - United States",
+    private_attorney_or_agent: "Private Attorney or Agent",
+    radiation: "Radiation",
+    rice_compliance: "Rice Compliance",
+    spina_bifida: "Spina Bifida",
+    us_territory_claim_american_samoa_guam_northern_mariana_isla: "U.S. Territory claim - American Samoa, Guam, Northern Mariana Islands (Rota, Saipan & Tinian)",
+    us_territory_claim_philippines: "U.S. Territory claim - Philippines",
+    us_territory_claim_puerto_rico_and_virgin_islands: "U.S. Territory claim - Puerto Rico and Virgin Islands",
+    vamc: "VAMC",
+    vocational_rehab: "Vocational Rehab",
+    waiver_of_overpayment: "Waiver of Overpayment"
+  }.freeze
+  # rubocop:enable Metrics/LineLength
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -182,10 +198,15 @@ class Appeal < ActiveRecord::Base
     return "Remand" if remand?
   end
 
-  # Does this appeal have any special issues
+  def special_issues
+    SPECIAL_ISSUES.inject([]) do |list, special_issue|
+      send(special_issue[0]) ? (list + [special_issue[1]]) : list
+    end
+  end
+
   def special_issues?
-    SPECIAL_ISSUE_COLUMNS.any? do |special_issue|
-      method(special_issue).call
+    SPECIAL_ISSUES.keys.any? do |special_issue|
+      send(special_issue)
     end
   end
 
