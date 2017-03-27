@@ -14,8 +14,12 @@ export default class Pdf extends React.Component {
   }
 
   renderPage = (index) => {
-    const { UI } = PDFJSAnnotate;
+    // If we've already rendered the page return.
+    if (this.isRendered[index]) {
+      return;
+    }
 
+    const { UI } = PDFJSAnnotate;
     let RENDER_OPTIONS = {
       documentId: this.props.documentId,
       pdfDocument: this.state.pdfDocument,
@@ -25,17 +29,21 @@ export default class Pdf extends React.Component {
 
     this.isRendered[index] = true;
 
-    // Call into PDFJSAnnotate to render this page
-    UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
-      // If successful then we want to setup a click handler
-      let pageContainer = document.getElementById(`pageContainer${index + 1}`);
+    return new Promise((resolve, reject) => {
+      // Call into PDFJSAnnotate to render this page
+      UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+        // If successful then we want to setup a click handler
+        let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
-      pageContainer.addEventListener('click',
-        this.onPageClick(pdfPage.getViewport(this.props.scale, 0), index + 1));
-    }).
-    catch(() => {
-      // If unsuccessful we want to mark this page as not rendered
-      this.isRendered[index] = false;
+        pageContainer.addEventListener('click',
+          this.onPageClick(pdfPage.getViewport(this.props.scale, 0), index + 1));
+        resolve();
+      }).
+      catch(() => {
+        // If unsuccessful we want to mark this page as not rendered
+        this.isRendered[index] = false;
+        reject();
+      });
     });
   }
 
@@ -98,8 +106,7 @@ export default class Pdf extends React.Component {
       // above is within a thousand pixels of the current view
       // we also redner it.
       // TODO: Make this more robust and avoid magic numbers.
-      if (!this.isRendered[index] &&
-          boundingRect.bottom > -1000 &&
+      if (boundingRect.bottom > -1000 &&
           boundingRect.top < scrollWindow.clientHeight + 1000) {
         this.renderPage(index);
       }
@@ -109,30 +116,33 @@ export default class Pdf extends React.Component {
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
   setupPdf = (file, scrollLocation = 0) => {
-    PDFJS.getDocument(file).then((pdfDocument) => {
-      // Setup array that tracks whether a given page has been rendered.
-      // This way as we scroll we know if we need to render a page that
-      // has just come into view.
-      this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-      this.setState({
-        numPages: pdfDocument.pdfInfo.numPages,
-        pdfDocument
-      }, () => {
-        // Create but do not render all of the pages
-        this.createPages(pdfDocument);
+    return new Promise((resolve) => {
+      PDFJS.getDocument(file).then((pdfDocument) => {
+        // Setup array that tracks whether a given page has been rendered.
+        // This way as we scroll we know if we need to render a page that
+        // has just come into view.
+        this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+        this.setState({
+          numPages: pdfDocument.pdfInfo.numPages,
+          pdfDocument
+        }, () => {
+          // Create but do not render all of the pages
+          this.createPages(pdfDocument);
 
-        // Automatically render the first page
-        // This assumes that page has already been created and appended
-        this.renderPage(0);
+          // Automatically render the first page
+          // This assumes that page has already been created and appended
+          this.renderPage(0);
+          resolve();
+        });
+
+        if (this.props.onPageChange) {
+          this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
+        }
+
+        // Scroll to the correct location on the page
+        document.getElementById('scrollWindow').scrollTop = scrollLocation;
+        this.scrollEvent();
       });
-
-      if (this.props.onPageChange) {
-        this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
-      }
-
-      // Scroll to the correct location on the page
-      document.getElementById('scrollWindow').scrollTop = scrollLocation;
-      this.scrollEvent();
     });
   }
 

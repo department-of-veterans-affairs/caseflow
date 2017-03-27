@@ -1,5 +1,5 @@
 import React from 'react';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
@@ -20,22 +20,22 @@ describe('Pdf', () => {
   /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
     let wrapper;
-    let renderPage;
-    let createPage;
-    let onPageChange;
+    let pdfjsRenderPage;
+    let pdfjsCreatePage;
     let numPages = 3;
+    let pdfDocument = { pdfInfo: { numPages } };
 
     beforeEach(() => {
       // We return a pdfInfo object that contains
       // a field numPages.
       let getDocument = sinon.stub(PDFJS, 'getDocument');
 
-      getDocument.resolves({ pdfInfo: { numPages } });
+      getDocument.resolves(pdfDocument);
 
       // We return a promise that resolves to an object
       // with a getViewport function.
-      renderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
-      renderPage.resolves([
+      pdfjsRenderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
+      pdfjsRenderPage.resolves([
         {
           getViewport: () => 0
         }
@@ -43,16 +43,14 @@ describe('Pdf', () => {
 
       // We return fake 'page' divs that the PDF component
       // will add to the dom.
-      createPage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
-      createPage.callsFake((index) => {
+      pdfjsCreatePage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
+      pdfjsCreatePage.callsFake((index) => {
         let div = document.createElement("div");
 
         div.id = `pageContainer${index}`;
 
         return div;
       });
-
-      onPageChange = sinon.spy();
 
       wrapper = mount(<Pdf
         documentId={1}
@@ -75,42 +73,116 @@ describe('Pdf', () => {
       });
     });
 
-    // This tests what happens when we first mount the component
-    // This also tests the methods '.draw', and '.createPages'
-    context('.componentDidMount', () => {
-      it(`only renders the first page`, () => {
-        expect(renderPage.callCount).to.equal(1);
+    context('.setuppdf', () => {
+      it('calls createPages and renderPage', (done) => {
+        let renderPageSpy = sinon.spy(wrapper.instance(), 'renderPage');
+        let createPageSpy = sinon.spy(wrapper.instance(), 'createPages');
+
+        wrapper.instance().setupPdf("test.pdf").
+          then(() => {
+            expect(renderPageSpy.callCount).to.equal(1);
+            expect(createPageSpy.callCount).to.equal(1);
+            done();
+          });
       });
 
-      it(`calls onPageChange with page Numbers`, () => {
-        expect(onPageChange.calledWith(1, numPages));
+      context('onPageChange set', () => {
+        let onPageChange;
+
+        beforeEach(() => {
+          onPageChange = sinon.spy();
+          wrapper.setProps({
+            onPageChange
+          });
+        });
+
+        it(`calls onPageChange with 1 and ${numPages}`, (done) => {
+          wrapper.instance().setupPdf("test.pdf").
+            then(() => {
+              expect(onPageChange.calledWith(1, numPages)).to.be.true;
+              done();
+            });
+        });
+      });
+    });
+
+    context('.createPages', () => {
+      // reset any calls from mounting
+      beforeEach(() => {
+        pdfjsCreatePage.resetHistory();
+      });
+
+      it(`calls PDFJS create page ${numPages} times`, () => {
+        wrapper.instance().createPages(pdfDocument);
+        expect(pdfjsCreatePage.callCount).to.equal(numPages);
+      });
+
+      it(`creates ${numPages} pages`, () => {
+        wrapper.instance().createPages(pdfDocument);
+        expect(wrapper.html()).to.include('pageContainer1');
+        expect(wrapper.html()).to.include('pageContainer2');
+        expect(wrapper.html()).to.include('pageContainer3');
+      });
+
+      context('when document.getElementById returns null', () => {
+        let getElement;
+
+        beforeEach(() => {
+          getElement = sinon.stub(document, 'getElementById');
+          getElement.returns(null);
+        });
+
+        it('create page is not called', () => {
+          wrapper.instance().createPages(pdfDocument);
+          expect(pdfjsCreatePage.callCount).to.equal(0);
+        });
+
+        afterEach(() => {
+          getElement.restore();
+        });
       });
     });
 
     context('.renderPage', () => {
       it('creates a new page', () => {
+        expect(pdfjsRenderPage.callCount).to.equal(1);
         wrapper.instance().renderPage(1);
-        expect(renderPage.callCount).to.equal(2);
+        expect(pdfjsRenderPage.callCount).to.equal(2);
       });
 
-      it('marks page as rendered', () => {
-        expect(wrapper.instance().isRendered[1]).to.be.undefined;
-        wrapper.instance().renderPage(1);
-        expect(wrapper.instance().isRendered[1]).to.be.true;
+      it('only renders page once when called twice', (done) => {
+        expect(pdfjsRenderPage.callCount).to.equal(1);
+        wrapper.instance().renderPage(1).
+          then(() => {
+            wrapper.instance().renderPage(1);
+            expect(pdfjsRenderPage.callCount).to.equal(2);
+            done();
+          }).
+          catch(() => {
+            // Should never get here since the render is mocked to succeed.
+            assert.fail();
+          });
       });
 
-      context('mock renderPage to fail', () => {
+      context('mock renderPage to fail', (done) => {
         beforeEach(() => {
-          renderPage.resetBehavior();
-          renderPage.rejects();
+          pdfjsRenderPage.resetBehavior();
+          pdfjsRenderPage.rejects();
         });
 
-        // it('does not mark page as rendered', () => {
-        //   expect(wrapper.instance().isRendered[1]).to.be.undefined;
-        //   console.log(wrapper.instance().isRendered[1]);
-        //   wrapper.instance().renderPage(1);
-        //   expect(wrapper.instance().isRendered[1]).should.eventually.be.false;
-        // });
+        it('tries to render page twice when called twice', () => {
+          expect(pdfjsRenderPage.callCount).to.equal(1);
+          wrapper.instance().renderPage(1).
+            then(() => {
+              // Should never get here since the render is mocked to fail.
+              assert.fail();
+            }).
+            catch(() => {
+              wrapper.instance().renderPage(1);
+              expect(pdfjsRenderPage.callCount).to.equal(3);
+              done();
+            });
+        });
       });
     });
 
@@ -123,6 +195,7 @@ describe('Pdf', () => {
 
       context('when file is set', () => {
         it('creates a new page', () => {
+          expect(draw.callCount).to.equal(0);
           wrapper.setProps({ file: 'newFile' });
           expect(draw.callCount).to.equal(1);
         });
@@ -130,8 +203,16 @@ describe('Pdf', () => {
 
       context('when scale is set', () => {
         it('creates a new page', () => {
+          expect(draw.callCount).to.equal(0);
           wrapper.setProps({ scale: 2 });
           expect(draw.callCount).to.equal(1);
+        });
+      });
+
+      context('when id is set', () => {
+        it('pages are not redrawn (no-op)', () => {
+          wrapper.setProps({ id: 'newId' });
+          expect(draw.callCount).to.equal(0);
         });
       });
     });
@@ -159,7 +240,7 @@ describe('Pdf', () => {
           };
 
           // The expected coordinate is
-          // (( offsetX + offsetLeft ) / 2, (offsetY + offsetTop) / 2)
+          // (( offsetX + offsetLeft ) / scale, (offsetY + offsetTop) / scale)
           // (( 10 + 20) / 2, (10 + 30) / 2)
           // (15, 20)
           let coordinate = {

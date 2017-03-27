@@ -261,12 +261,20 @@ export default class DecisionReviewer extends React.Component {
   }
 
   onSetLabel = (pdfNumber) => (label) => {
-    let data = { label: StringUtil.camelCaseToSnakeCase(label) };
+    let setLabel = label;
+
+    // If the label was the same as originally set, we
+    // un-set the label.
+    if (label === this.state.documents[pdfNumber].label) {
+      setLabel = null;
+    }
+
+    let data = { label: StringUtil.camelCaseToSnakeCase(setLabel) };
     let documentId = this.state.documents[pdfNumber].id;
 
     ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
       then(() => {
-        this.setDocumentAttribute(pdfNumber, 'label', label);
+        this.setDocumentAttribute(pdfNumber, 'label', setLabel);
       }, () => {
 
         /* eslint-disable no-console */

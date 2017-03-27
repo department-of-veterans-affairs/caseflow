@@ -104,34 +104,7 @@ describe('PdfUI', () => {
         let numPages = 4;
 
         wrapper.instance().onPageChange(currentPage, numPages);
-        expect(wrapper.find('div').
-          filterWhere((node) => node.text() === `Page ${currentPage} of ${numPages}`)).
-          to.have.length(1);
-      });
-    });
-
-    context('.onColorLabelChange', () => {
-      let onSetLabel;
-
-      beforeEach(() => {
-        onSetLabel = sinon.spy();
-        wrapper.setProps({ onSetLabel });
-      });
-
-      it('calls the onSetLabel handler with a new label', () => {
-        let newLabel = 'decision';
-
-        wrapper.setProps({ label: '' });
-        wrapper.instance().onColorLabelChange(newLabel)();
-        expect(onSetLabel.calledWith(newLabel)).to.be.true;
-      });
-
-      it('calls the onSetLabel handler with the current label', () => {
-        let label = 'decision';
-
-        wrapper.setProps({ label });
-        wrapper.instance().onColorLabelChange(label)();
-        expect(onSetLabel.calledWith('')).to.be.true;
+        expect(wrapper.text()).to.include(`Page ${currentPage} of ${numPages}`);
       });
     });
 

@@ -47,14 +47,6 @@ export default class PdfUI extends React.Component {
     //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
   }
 
-  onColorLabelChange = (label) => () => {
-    if (label === this.props.label) {
-      this.props.onSetLabel('');
-    } else {
-      this.props.onSetLabel(label);
-    }
-  }
-
   onPageChange = (currentPage, numPages) => {
     this.setState({
       currentPage,
@@ -126,7 +118,7 @@ export default class PdfUI extends React.Component {
         <div className="usa-grid-full">
           <div className="usa-width-one-third cf-pdf-buttons-left">
             { this.props.onSetLabel && <DocumentLabels
-              onClick={this.onColorLabelChange}
+              onClick={this.props.onSetLabel}
               selectedLabels={selectedLabels}/> }
           </div>
           <div className="usa-width-one-third cf-pdf-buttons-center">
