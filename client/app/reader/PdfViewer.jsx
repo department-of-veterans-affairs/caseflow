@@ -181,28 +181,29 @@ export default class PdfViewer extends BaseForm {
     }
   }
 
+  onCommentClick = (event) => {
+    let comments = [...this.state.comments];
+
+    comments = comments.map((comment) => {
+      let copy = { ...comment };
+
+      copy.selected = false;
+      if (comment.uuid.toString() ===
+          event.getAttribute('data-pdf-annotate-id').toString()) {
+        copy.selected = true;
+      }
+
+      return copy;
+    });
+    this.setState({ comments });
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
     this.onCommentChange();
 
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.state.comments];
-
-      comments = comments.map((comment) => {
-        let copy = { ...comment };
-
-        copy.selected = false;
-        if (comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString()) {
-          copy.selected = true;
-        }
-
-        return copy;
-      });
-      this.setState({ comments });
-
-    });
+    UI.addEventListener('annotation:click', this.onCommentClick);
 
     window.addEventListener('keydown', this.keyListener);
 
@@ -210,6 +211,9 @@ export default class PdfViewer extends BaseForm {
   }
 
   componentWillUnmount = () => {
+    const { UI } = PDFJSAnnotate;
+
+    UI.removeEventListener('annotation:click', this.onCommentClick);
     window.removeEventListener('keydown', this.keyListener);
   }
 

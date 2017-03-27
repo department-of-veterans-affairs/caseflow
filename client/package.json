@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "mocha test/setup.js test/* --compilers js:babel-core/register",
-    "test:watch": "mocha test/setup.js test/* --watch --compilers js:babel-core/register",
+    "test:watch": "mocha test/setup.js test/* --watch --compilers jsx:babel-core/register js:babel-core/register",
     "lint": "eslint . --ext .jsx --ext .js",
     "lint:fix": "eslint . --fix --ext .jsx --ext .js",
     "build:test": "webpack --config webpack.config.js",

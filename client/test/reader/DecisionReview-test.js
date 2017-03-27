@@ -7,14 +7,18 @@ import { eventually } from 'chai-as-promised';
 
 import PDFJSAnnotate from 'pdf-annotate.js';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import ApiUtil from '../../app/util/ApiUtil';
 
 let asyncTest = (fn) => {
-  return async () => {
-    try {
-      await fn();
-    } catch (err) {
-      return err;
-    }
+  return () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await fn();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   };
 }
 
@@ -41,24 +45,29 @@ describe.only('DecisionReviewer', () => {
     let wrapper;
     let pdfjsRenderPage;
     let pdfjsCreatePage;
+    let patch;
+    let post;
+    let get;
     let numPages = 3;
     let pdfDocument = { pdfInfo: { numPages } };
     let doc1Name = 'doc1';
+    let doc1Id = 1;
     let doc2Name = 'doc2';
+    let doc2Id = 2;
 
     let documents = [
       {
         id: 1,
         filename: doc1Name,
         received_at: '1/2/2017',
-        label: 'decisions',
+        label: null,
         type: 'bva decision'
       },
       {
         id: 2,
         filename: doc2Name,
         received_at: '3/4/2017',
-        label: 'decisions',
+        label: null,
         type: 'form 8'
       }
     ];
@@ -87,6 +96,15 @@ describe.only('DecisionReviewer', () => {
         return div;
       });
 
+      patch = sinon.stub(ApiUtil, 'patch');
+      patch.resolves();
+
+      get = sinon.stub(ApiUtil, 'get');
+      get.resolves();
+
+      post = sinon.stub(ApiUtil, 'post');
+      post.resolves();
+
       wrapper = mount(<DecisionReviewer
         appealDocuments={documents}
         annotations={annotations}
@@ -99,6 +117,9 @@ describe.only('DecisionReviewer', () => {
       PDFJS.getDocument.restore();
       PDFJSAnnotate.UI.renderPage.restore();
       PDFJSAnnotate.UI.createPage.restore();
+      ApiUtil.patch.restore();
+      ApiUtil.post.restore();
+      ApiUtil.get.restore();
     });
 
     context('Can enter document from list view', () => {
@@ -120,54 +141,68 @@ describe.only('DecisionReviewer', () => {
         pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomIn').simulate('click');
         await pause();
-
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('scale', 1.3))).to.be.true;
-
+        expect(pdfjsRenderPage.calledWith(sinon.match.number, sinon.match({ scale: 1.3 }))).to.be.true;
+        
         pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomOut').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('scale', 1))).to.be.true;
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ scale: 1 }))).to.be.true;
       }));
     });
 
     context('Navigation buttons move between PDFs', () => {
       it('next button moves to the next PDF previous button moves back', asyncTest(async() => {
         wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+        await pause();
+
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: doc1Id }))).to.be.true;
 
         pdfjsRenderPage.resetHistory();
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 2))).to.be.true;
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: doc2Id }))).to.be.true;
 
         pdfjsRenderPage.resetHistory();
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: doc1Id }))).to.be.true;
       }));
     });
 
-    context('Navigation buttons move between PDFs', () => {
-      it('next button moves to the next PDF previous button moves back', asyncTest(async() => {
-        wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
+    it('Clicking label buttons send labels to the server', asyncTest(async() => {
+      wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
 
-        pdfjsRenderPage.resetHistory();
-        wrapper.find('#button-next').simulate('click');
-        await pause();
+      patch.resetHistory();
+      wrapper.find('.cf-pdf-bookmark-decisions').simulate('click');
+      await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 2))).to.be.true;
+      expect(patch.calledWith(`/document/${doc1Id}/set-label`, sinon.match({ data: { label: 'decisions' } }))).to.be.true;
 
-        pdfjsRenderPage.resetHistory();
-        wrapper.find('#button-previous').simulate('click');
-        await pause();
+      patch.resetHistory();
+      wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
+      await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match.has('documentId', 1))).to.be.true;
-      }));
-    });
+      expect(patch.calledWith(`/document/${doc1Id}/set-label`, sinon.match({ data: { label: 'procedural' } }))).to.be.true;
+
+
+      patch.resetHistory();
+      wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
+      await pause();
+
+      expect(patch.calledWith(`/document/${doc1Id}/set-label`, sinon.match({ data: { label: null } }))).to.be.true;
+    }));
+
+    it('Adding comments', asyncTest(async() => {
+      // Click on first pdf
+      wrapper.find('a').findWhere((link) => link.text() === doc1Name).simulate('mouseUp');
+      await pause();
+
+      wrapper.find('a').findWhere((link) => link.text() === '+ Add a Comment').simulate('click');
+      wrapper.find('#pageContainer1').simulate('click');
+    }));
   });
   /* eslint-enable max-statements */
 });
