@@ -8,10 +8,10 @@ export default function StyleGuideProgressBar() {
 
   let sections = [
     {
-      title: '1. Shopping Cart'
+      title: '1. Review Description'
     },
     {
-      title: '2. Checkout',
+      title: '2. Create End Product',
       current: true
     },
     {
