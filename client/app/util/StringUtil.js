@@ -7,6 +7,10 @@ const StringUtil = {
 
   camelCaseToSnakeCase(variable) {
     // convert key from camelCase to snake_case
+    if (!variable) {
+      return variable;
+    }
+
     return variable.replace(/([A-Z])/g, ($1) => `_${$1.toLowerCase()}`);
   },
 
