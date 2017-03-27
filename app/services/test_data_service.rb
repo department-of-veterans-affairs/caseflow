@@ -53,21 +53,10 @@ class TestDataService
     return false if vacols_id.nil?
     # Upload test decision document for the date
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
-    vbms_client ||= AppealRepository.init_vbms_client
     uploadable_document = TestDecisionDocument.new
     log "Uploading decision for #{appeal.sanitized_vbms_id}"
-    upload_request = VBMS::Requests::UploadDocumentWithAssociations.new(appeal.sanitized_vbms_id,
-                                                                        date,
-                                                                        appeal.veteran_first_name,
-                                                                        appeal.veteran_middle_initial,
-                                                                        appeal.veteran_last_name,
-                                                                        uploadable_document.document_type,
-                                                                        uploadable_document.pdf_location,
-                                                                        uploadable_document.document_type_id,
-                                                                        "VACOLS",
-                                                                        true)
-    upload_resp = vbms_client.send_request(upload_request)
-    log "VBMS Test Decision Document upload response: #{upload_resp}"
+    document = AppealRepository.upload_document_to_vbms(appeal, uploadable_document)
+    log "VBMS Test Decision Document upload response: #{document}"
   end
 
   # Cancel all EPs for an appeal to prevent duplicates

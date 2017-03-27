@@ -296,7 +296,8 @@ class Appeal < ActiveRecord::Base
       fail "No Form 8 found for appeal being certified" unless form8
 
       repository.certify(appeal)
-      repository.upload_and_clean_document(appeal, form8)
+      repository.upload_document_to_vbms(appeal, form8)
+      repository.clean_document(form8.pdf_location)
     end
 
     def map_end_product_value(code, mapping)
