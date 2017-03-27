@@ -21,15 +21,19 @@ export const hearingChangeQuestion = `Was a hearing cancellation or request adde
 09/01/2017?`;
 // TODO: make into constant?
 export const hearingChangeAnswers = [
-  { displayText: 'Yes', value: 'true' },
-  { displayText: 'No', value: 'false' }
+  { displayText: 'Yes',
+    value: 'true' },
+  { displayText: 'No',
+    value: 'false' }
 ];
 
 export const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
 from the appellant's eFolder. What type of substantive appeal is it?`;
 const typeOfForm9Answers = [
-  {displayText: 'Form 9', value: Constants.FORMAL_FORM9},
-  {displayText: 'Statement in lieu of Form 9', value: Constants.INFORMAL_FORM9}
+  { displayText: 'Form 9',
+    value: Constants.FORMAL_FORM9 },
+  { displayText: 'Statement in lieu of Form 9',
+    value: Constants.INFORMAL_FORM9 }
 ];
 
 const typeOfHearingQuestion = `Which box did the appellant select for the Optional
@@ -38,16 +42,16 @@ or Question 10.`;
 const typeOfHearingAnswers = [{
   displayText: 'A. I do not want an optional board hearing',
   value: Constants.NO_HEARING_DESIRED
-},{
+}, {
   displayText: 'B. I want a hearing by videoconference at a local VA office.',
   value: Constants.VIDEO
-},{
+}, {
   displayText: 'C. I want a hearing in Washington, DC.',
   value: Constants.WASHINGTON_DC
-},{
+}, {
   displayText: 'D. I want a hearing at a local VA office.',
   value: Constants.TRAVEL_BOARD
-},{
+}, {
   displayText: 'No box selected.',
   value: Constants.HEARING_TYPE_NOT_SPECIFIED
 }];
@@ -75,7 +79,7 @@ const _ConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-    return <div>
+  return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
 
@@ -160,23 +164,23 @@ const mapDispatchToProps = (dispatch) => {
     onHearingDocumentChange: (hearingDocumentIsInVbms) => {
       dispatch({
         type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
-        hearingDocumentIsInVbms: hearingDocumentIsInVbms
+        hearingDocumentIsInVbms
       });
     },
     onTypeOfForm9Change: (form9Type) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_FORM9,
-        form9Type: form9Type
+        form9Type
       });
     },
     onHearingTypeChange: (hearingType) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
-        hearingType: hearingType
+        hearingType
       });
     }
   };
-}
+};
 
 /**
  * This function tells us which parts of the global
@@ -200,6 +204,6 @@ const mapStateToProps = (state) => {
 const ConfirmHearing = connect(
   mapStateToProps,
   mapDispatchToProps
-)(_ConfirmHearing)
+)(_ConfirmHearing);
 
 export default ConfirmHearing;
