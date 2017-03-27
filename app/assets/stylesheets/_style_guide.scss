@@ -71,3 +71,16 @@ i {
   font-weight: 700;
   border-bottom: 7px solid $color-gray-light;
 }
+
+//Inline Code Text
+code,
+pre {
+  background-color: $color-gray-lightest;
+  color: $color-base;
+
+  &::before,
+  &::after {
+    letter-spacing: -0.2em;
+    content: '\00a0';
+  }
+}
