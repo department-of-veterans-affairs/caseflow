@@ -9,6 +9,16 @@ export default class Button extends React.Component {
     }
   }
 
+  loadingClasses = (app, loading) => {
+    let classes = ` cf-${app}`;
+
+    if (loading) {
+      classes += " cf-loading";
+    }
+
+    return classes;
+  }
+
   render() {
     let {
       app,
@@ -23,29 +33,13 @@ export default class Button extends React.Component {
       type
     } = this.props;
 
-    let LoadingIndicator = () => {
-      app = app || 'dispatch';
+    if (!children) {
+      children = name;
+    }
 
+    if (loading) {
       children = loadingText || "Loading...";
-
-      return <span>
-        <button
-          id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
-          className={`${classNames.join(' ')} cf-${app} cf-loading`}
-          type={type}
-          disabled={true}>
-          <span className="cf-loading-icon-container">
-            <span className="cf-loading-icon-front">
-              <span className="cf-loading-icon-back">
-                {children}
-              </span>
-            </span>
-          </span>
-        </button>
-      </span>;
-    };
-
-    children = children || name;
+    }
 
     if (disabled || loading) {
       // remove any usa-button styling and then add disabled styling
@@ -56,14 +50,18 @@ export default class Button extends React.Component {
     return <span>
       <button
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
-        className={classNames.join(' ') + (loading ? " hidden-field" : "")}
+        className={classNames.join(' ') + this.loadingClasses(app, loading)}
         type={type}
         disabled={disabled}
         onClick={onClick}>
-          {children}
+        <span className="cf-loading-icon-container">
+          <span className="cf-loading-icon-front">
+            <span className="cf-loading-icon-back">
+              {children}
+            </span>
+          </span>
+        </span>
       </button>
-
-      { loading && <LoadingIndicator /> }
     </span>;
   }
 }
@@ -74,6 +72,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  app: PropTypes.string,
   children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,

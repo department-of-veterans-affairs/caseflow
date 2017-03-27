@@ -7,9 +7,19 @@ export default class ProgressBar extends React.Component {
       sections
     } = this.props;
 
+    let currentSectionIndex = this.props.sections.findIndex(
+      (section) => section.current === true
+    );
+
     return <div className="cf-app-segment">
       <div className="cf-progress-bar">
         {sections.map((section, i) => {
+          if (i <= currentSectionIndex) {
+            section.activated = true;
+          } else {
+            section.activated = false;
+          }
+
           return <ProgressBarSection
             activated={section.activated}
             key={i}

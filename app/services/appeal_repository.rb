@@ -106,7 +106,8 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
-      status: VACOLS::Case::STATUS[case_record.bfmpro]
+      status: VACOLS::Case::STATUS[case_record.bfmpro],
+      outcoding_date: normalize_vacols_date(folder_record.tioctime)
     )
 
     appeal
@@ -212,7 +213,7 @@ class AppealRepository
   def self.location_after_dispatch(appeal:)
     return if appeal.full_grant?
 
-    return "51" if appeal.vamc?
+    return "54" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
     return "50" if appeal.special_issues?
 

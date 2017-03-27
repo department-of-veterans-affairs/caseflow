@@ -62,8 +62,8 @@ const SPECIAL_ISSUES = [
     specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     unhandled: {
-      emailAddress: null,
-      regionalOffice: null
+      emailAddress: ['jennifer.Tillery@va.gov'],
+      regionalOffice: 'RO88'
     }
   },
   {
@@ -99,8 +99,8 @@ const SPECIAL_ISSUES = [
     specialIssue: 'nationalCemeteryAdministration',
     stationOfJurisdiction: null,
     unhandled: {
-      emailAddress: null,
-      regionalOffice: null
+      emailAddress: ['richard.byersII@va.gov'],
+      regionalOffice: 'RO98'
     }
   },
   {
@@ -175,11 +175,7 @@ const SPECIAL_ISSUES = [
   {
     display: 'Vocational Rehab',
     specialIssue: 'vocationalRehab',
-    stationOfJurisdiction: null,
-    unhandled: {
-      emailAddress: null,
-      regionalOffice: null
-    }
+    stationOfJurisdiction: 'regional'
   },
   {
     display: 'Waiver of Overpayment',

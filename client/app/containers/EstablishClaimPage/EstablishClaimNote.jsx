@@ -33,7 +33,8 @@ export default class EstablishClaimNote extends BaseForm {
       noteForm: {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
-      }
+      },
+      isLoading: false
     };
   }
 
@@ -44,7 +45,7 @@ export default class EstablishClaimNote extends BaseForm {
     let specialIssues = this.props.specialIssues;
 
     if (specialIssues.vamc.value) {
-      return "51";
+      return "54";
     } else if (specialIssues.nationalCemeteryAdministration.value) {
       return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
@@ -139,6 +140,10 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   handleSubmit = () => {
+    this.setState({
+      isLoading: true
+    });
+
     this.props.handleSubmit(this.vacolsNoteText());
   }
 
@@ -172,10 +177,12 @@ export default class EstablishClaimNote extends BaseForm {
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
             <Button
+              app="dispatch"
               name="Finish routing claim"
               classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
               onClick={this.handleSubmit}
+              loading={this.state.isLoading}
             />
           </div>
         </div>

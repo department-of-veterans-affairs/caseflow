@@ -12,6 +12,10 @@ const LABELS = [
 ];
 
 export default class DocumentLabels extends React.Component {
+  onClick = (label) => () => {
+    this.props.onClick(label);
+  }
+
   render() {
     let bookmarkClasses = ['cf-pdf-bookmarks', 'cf-pdf-button', 'cf-label'];
     let bookmarkClassesSelected = [...bookmarkClasses, 'cf-selected-label'];
@@ -21,7 +25,7 @@ export default class DocumentLabels extends React.Component {
         name={label}
         classNames={this.props.selectedLabels[label] ?
           bookmarkClassesSelected : bookmarkClasses}
-        onClick={this.props.onClick(label)}>
+        onClick={this.onClick(label)}>
         <i
           className={`fa fa-bookmark cf-pdf-bookmark-` +
             `${StringUtil.camelCaseToDashCase(label)}`}
