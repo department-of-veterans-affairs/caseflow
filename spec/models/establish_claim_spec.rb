@@ -60,7 +60,7 @@ describe EstablishClaim do
         context "when the appeal was routed to an RO in VACOLS" do
           let(:special_issues) { { vamc: true } }
 
-          it { is_expected.to include("VACOLS Updated: Changed Location to 51") }
+          it { is_expected.to include("VACOLS Updated: Changed Location to 54") }
           it { is_expected.to include("VACOLS Updated: Added Diary Note on VAMC") }
         end
       end
