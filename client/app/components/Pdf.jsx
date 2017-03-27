@@ -142,9 +142,9 @@ export default class Pdf extends React.Component {
     this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
-    let scrollWindow = document.getElementById('scrollWindow');
+    // let scrollWindow = document.getElementById('scrollWindow');
 
-    scrollWindow.addEventListener('scroll', this.scrollEvent);
+    // scrollWindow.addEventListener('scroll', this.scrollEvent);
   }
 
   componentWillReceiveProps(nextProps) {
