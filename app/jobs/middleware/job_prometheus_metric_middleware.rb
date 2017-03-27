@@ -11,5 +11,7 @@ class JobPrometheusMetricMiddleware
     raise
   ensure
     PrometheusService.background_jobs_attempt_counter.increment(name: name)
+
+    PrometheusService.push_metrics!
   end
 end

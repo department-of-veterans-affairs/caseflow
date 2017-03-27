@@ -1,3 +1,6 @@
+require "prometheus/client"
+require "prometheus/client/push"
+
 class PrometheusService
   # :nocov:
   class << self
@@ -69,6 +72,15 @@ class PrometheusService
         find_or_register_metric(:counter,
                                 :background_jobs_error_counter,
                                 "counter of all sidekiq background jobs that errored")
+
+    end
+
+    # This method pushes all registered metrics to the prometheus pushgateway
+    def push_metrics!
+      metrics = Prometheus::Client.registry
+      url = Rails.application.secrets.prometheus_push_gateway_url
+
+      Prometheus::Client::Push.new("push-gateway", nil, url).add(metrics)
     end
 
     private
