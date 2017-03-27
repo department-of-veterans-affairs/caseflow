@@ -4,6 +4,7 @@ import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideTables from './StyleGuideTables';
+import StyleGuideTextInput from './StyleGuideTextInput';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -33,6 +34,9 @@ export default class StyleGuideIndex extends React.Component {
             <li>
               <a href="#progress_bar">Progress Bar</a>
             </li>
+            <li>
+              <a href="#text_input">Text Input</a>
+            </li>
           </ul>
       </div>
       <div className="cf-push-right cf-sg-content">
@@ -61,6 +65,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
         <StyleGuideProgressBar />
+        <div className="cf-help-divider"></div>
+        <StyleGuideTextInput />
     </div>
     </div>;
   }

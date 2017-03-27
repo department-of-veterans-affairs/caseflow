@@ -12,11 +12,10 @@ export default class TasksManagerEmployeeCount extends React.Component {
     } = this.props;
 
     return <div>
-      <h3>Enter the number of people working today.</h3>
-      <div className="usa-grid-half cf-push-row">
+      <div className="usa-grid-half cf-push-row cf-inline-field">
         <div className="cf-push-left">
           <TextField
-            label="Number of people"
+            label="Enter the number of people working today"
             name="employeeCount"
             readOnly={false}
             onChange={handleFieldChange('employeeCountForm', 'employeeCount')}
