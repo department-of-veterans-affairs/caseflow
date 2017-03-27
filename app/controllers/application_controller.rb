@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
   before_action :strict_transport_security
 
   before_action :set_timezone,
-                :setup_fakes,
                 :check_whats_new_cookie
   before_action :set_raven_user
   before_action :verify_authentication
@@ -95,10 +94,6 @@ class ApplicationController < ActionController::Base
 
   def set_timezone
     Time.zone = current_user.timezone if current_user
-  end
-
-  def setup_fakes
-    Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
   end
 
   def test_user?
