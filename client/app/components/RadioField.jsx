@@ -1,6 +1,24 @@
 import React, { PropTypes } from 'react';
 import RequiredIndicator from './RequiredIndicator';
 
+
+/**
+ *
+ * Usage example:
+ *
+ * const options = [
+    {displayText:"Hearing changed", value: "true" },
+    {displayText:"Hearing did not change", value: "false"}
+  ]
+ * <RadioField name={"Did hearing change?"}
+      required={true}
+      options={}
+      value={hearingDocumentIsInVbms}
+      onChange={onHearingDocumentChange}/>
+ *
+ *
+ */
+
 export default class RadioField extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.value);
@@ -27,7 +45,7 @@ export default class RadioField extends React.Component {
           <div className="cf-form-radio-option" key={option.value}>
             <input
               name={name}
-              onChange={this.onChange}
+              onChange={this.onChange.bind(this)}
               type="radio"
               id={`${name}_${option.value}`}
               value={option.value}
