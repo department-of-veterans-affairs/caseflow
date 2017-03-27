@@ -33,6 +33,7 @@ export default class DecisionReviewer extends React.Component {
       sortDirection: 'ascending',
       unsortedDocuments: this.props.appealDocuments.map((doc) => {
         doc.label = doc.label ? StringUtil.snakeCaseToCamelCase(doc.label) : null;
+        doc.receivedAt = doc.received_at;
 
         return doc;
       })
@@ -158,7 +159,7 @@ export default class DecisionReviewer extends React.Component {
 
     documentCopy.sort((doc1, doc2) => {
       if (this.state.sortBy === 'date') {
-        return multiplier * (new Date(doc1.received_at) - new Date(doc2.received_at));
+        return multiplier * (new Date(doc1.receivedAt) - new Date(doc2.receivedAt));
       } else if (this.state.sortBy === 'type') {
         return multiplier * (doc1.type < doc2.type ? -1 : 1);
       } else if (this.state.sortBy === 'filename') {
@@ -218,7 +219,7 @@ export default class DecisionReviewer extends React.Component {
       return true;
     } else if (doc.filename.toLowerCase().includes(searchString)) {
       return true;
-    } else if (doc.received_at.toLowerCase().includes(searchString)) {
+    } else if (doc.receivedAt.toLowerCase().includes(searchString)) {
       return true;
     }
   }
@@ -260,12 +261,20 @@ export default class DecisionReviewer extends React.Component {
   }
 
   onSetLabel = (pdfNumber) => (label) => {
-    let data = { label: StringUtil.camelCaseToSnakeCase(label) };
+    let setLabel = label;
+
+    // If the label was the same as originally set, we
+    // un-set the label.
+    if (label === this.state.documents[pdfNumber].label) {
+      setLabel = null;
+    }
+
+    let data = { label: StringUtil.camelCaseToSnakeCase(setLabel) };
     let documentId = this.state.documents[pdfNumber].id;
 
     ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
       then(() => {
-        this.setDocumentAttribute(pdfNumber, 'label', label);
+        this.setDocumentAttribute(pdfNumber, 'label', setLabel);
       }, () => {
 
         /* eslint-disable no-console */

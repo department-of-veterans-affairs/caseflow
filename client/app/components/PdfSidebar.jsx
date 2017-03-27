@@ -52,7 +52,7 @@ export default class PdfSidebar extends BaseForm {
             <b>Document Type:</b> {this.props.doc.type}
           </p>
           <p className="cf-pdf-meta-title">
-            <b>Receipt Date:</b> {formatDate(this.props.doc.received_at)}
+            <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
           <div className="cf-heading-alt">
             Comments
