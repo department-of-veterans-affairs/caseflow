@@ -241,7 +241,6 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rack-timeout (0.4.2)
     rails (4.2.7.1)
       actionmailer (= 4.2.7.1)
       actionpack (= 4.2.7.1)
@@ -453,7 +452,6 @@ DEPENDENCIES
   prometheus-client
   pry
   puma (~> 2.16.0)
-  rack-timeout
   rails (= 4.2.7.1)
   rails_stdout_logging
   rainbow
