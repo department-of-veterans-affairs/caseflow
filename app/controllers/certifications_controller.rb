@@ -10,9 +10,14 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if verify_certification_v2_access && status == :started
-      render "v2", layout: "application"
+    if verify_certification_v2_access
+      case status
+      when :started              then render "v2", layout: "application"
+      when :already_certified    then render "v2", layout: "application"
+      when :data_missing         then render "not_ready", status: 409
+      when :mismatched_documents then render "mismatched_documents"
       return
+      end
     end
 
     case status

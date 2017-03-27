@@ -1,16 +1,18 @@
 import React from 'react';
-import DocumentsMatchingBox from './DocumentsMatchingBox';
+import DocumentsMismatchingBox from './DocumentsMismatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
 import { Link } from 'react-router-dom';
 
 
 // TODO: refactor to use shared components where helpful
-const DocumentsCheckSuccess = ({ match }) => {
+const MismatchedDocuments = ({ match }) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Check Documents</h2>
-      <DocumentsMatchingBox/>
-      <DocumentsCheckTable/>
+      <DocumentsMismatchingBox/>
+      <DocumentsCheckTable
+        form9_match={ match ? true : false }
+        ssoc_dates={[dsafdsafdas]}/>
     </div>
 
     <div className="cf-app-segment">
@@ -28,4 +30,4 @@ const DocumentsCheckSuccess = ({ match }) => {
   </div>;
 };
 
-export default DocumentsCheckSuccess;
+export default MismatchedDocuments;
