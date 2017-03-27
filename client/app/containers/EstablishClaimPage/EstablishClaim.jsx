@@ -662,8 +662,7 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         <EstablishClaimProgressBar
-          isConfirmation={false}
-          isReviewDecision={true}
+          isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
