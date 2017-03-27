@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "a05aa91a0152845406fba200b95922842165a7fb"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fcb9245974e2a2055a36cc3d6771565bbb433540"
 
 gem "moment_timezone-rails"
 
@@ -61,7 +61,11 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
+<<<<<<< HEAD
 gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "19eae09d9296c4836689b01360c3d9669778cd53"
+=======
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "bda8d58d72f3b78281a164444737b81c51ec48c6"
+>>>>>>> master
 
 gem 'redis-rails'
 
@@ -76,7 +80,7 @@ gem 'prometheus-client'
 gem 'request_store'
 
 # State machine
-gem 'aasm'
+gem 'aasm', '4.11.0'
 
 gem 'font-awesome-sass'
 
@@ -110,10 +114,10 @@ group :development, :test do
   # Testing tools
   gem 'rspec'
   gem 'rspec-rails'
-  gem 'guard-rspec'
+  #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "axe"
-  gem 'simplecov', require: false
+  gem 'simplecov', '0.12.0', require: false
   gem 'timecop'
   gem 'konacha'
   gem 'database_cleaner'
