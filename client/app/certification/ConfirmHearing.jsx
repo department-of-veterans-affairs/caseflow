@@ -3,23 +3,33 @@ import { Link } from 'react-router-dom';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 import { connect } from 'react-redux';
+import * as Constants from './constants/constants';
 
-const hearingCheckText = `Check the appellant's eFolder for a hearing
+// TODO: how should we organize content?
+// one school of thought is to put content
+// in its own separate file.
+// another is to make your react components
+// small and self-contained enough that
+// putting content with them doesn't
+// cause file length bloat.
+
+export const hearingCheckText = `Check the appellant's eFolder for a hearing
 cancellation or request added after 09/01/2017, the date the Form 9
 (or statement in lieu of Form 9) was uploaded.`;
 
-const hearingChangeQuestion = `Was a hearing cancellation or request added after
+export const hearingChangeQuestion = `Was a hearing cancellation or request added after
 09/01/2017?`;
-const hearingChangeAnswers = [
+// TODO: make into constant?
+export const hearingChangeAnswers = [
   { displayText: 'Yes', value: 'true' },
   { displayText: 'No', value: 'false' }
 ];
 
-const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
+export const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
 from the appellant's eFolder. What type of substantive appeal is it?`;
 const typeOfForm9Answers = [
-  {displayText: 'Form 9', value: 'FORMAL'},
-  {displayText: 'Statement in lieu of Form 9', value: 'INFORMAL'}
+  {displayText: 'Form 9', value: Constants.FORMAL_FORM9},
+  {displayText: 'Statement in lieu of Form 9', value: Constants.INFORMAL_FORM9}
 ];
 
 const typeOfHearingQuestion = `Which box did the appellant select for the Optional
@@ -27,19 +37,19 @@ Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
 const typeOfHearingAnswers = [{
   displayText: 'A. I do not want an optional board hearing',
-  value: 'NO_HEARING_DESIRED'
+  value: Constants.NO_HEARING_DESIRED
 },{
   displayText: 'B. I want a hearing by videoconference at a local VA office.',
-  value: 'VIDEO'
+  value: Constants.VIDEO
 },{
   displayText: 'C. I want a hearing in Washington, DC.',
-  value: 'BVA'
+  value: Constants.WASHINGTON_DC
 },{
   displayText: 'D. I want a hearing at a local VA office.',
-  value: 'TRAVEL_BOARD'
+  value: Constants.TRAVEL_BOARD
 },{
   displayText: 'No box selected.',
-  value: 'NO_HEARING_SELECTION'
+  value: Constants.HEARING_TYPE_NOT_SPECIFIED
 }];
 
 /*
@@ -55,40 +65,6 @@ const typeOfHearingAnswers = [{
 * in VBMS, if we can detect that based on the subject field in VBMS.
 *
  */
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onHearingDocumentChange: (hearingDocumentIsInVbms) => {
-      debugger;
-      dispatch({
-        type: 'CHANGE_VBMS_HEARING_DOCUMENT',
-        hearingDocumentIsInVbms: hearingDocumentIsInVbms
-      });
-    },
-    onTypeOfForm9Change: (form9Type) => {
-      dispatch({
-        type: 'CHANGE_TYPE_OF_FORM9',
-        form9Type: form9Type
-      });
-    },
-    onHearingTypeChange: (hearingType) => {
-      dispatch({
-        type: 'CHANGE_TYPE_OF_HEARING',
-        hearingType: hearingType
-      });
-    }
-  };
-}
-
-const mapStateToProps = (state) => {
-  debugger;
-  return {
-    hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
-    form9Type: state.form9Type,
-    hearingType: state.hearingType
-  };
-};
-
 // TODO: refactor to use shared components where helpful
 const _ConfirmHearing = ({
     hearingDocumentIsInVbms,
@@ -99,7 +75,6 @@ const _ConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-    debugger;
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -108,6 +83,17 @@ const _ConfirmHearing = ({
           {hearingCheckText}
         </div>
 
+        {/*
+          TODO: would we be better served by
+          making our connected components smaller?
+          we could make e.g.
+          HearingChangeRadioField,
+          TypeOfForm9RadioField,
+          HearingTypeChangeRadioField
+
+          which would be a connected component with
+          direct access to the Redux store.
+        */}
         <RadioField name={hearingChangeQuestion}
           required={true}
           options={hearingChangeAnswers}
@@ -120,6 +106,8 @@ const _ConfirmHearing = ({
           value={form9Type}
           onChange={onTypeOfForm9Change}/>
 
+        {/* TODO: restore the accessibility stuff here.
+          also, we should stop using rails pdf viewer */}
         <LoadingContainer>
           <iframe
             className="cf-doc-embed cf-iframe-with-loading"
@@ -149,6 +137,60 @@ const _ConfirmHearing = ({
       </Link>
     </div>;
 };
+
+/**
+ * CONNECTED COMPONENT STUFF:
+ *
+ * the code below makes this into a "connected component"
+ * which can read and update the redux store.
+ * TODO: as a matter of convention, should we make the connecting
+ * bits into their own file? Do we like the _Component/ Component
+ * convention for connected and unconnected components? So many
+ * questions.
+ *
+ */
+
+/**
+ * These functions call `dispatch`, a Redux method
+ * that causes the reducer in reducers/index.js
+ * to return a new state object.
+ */
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onHearingDocumentChange: (hearingDocumentIsInVbms) => {
+      dispatch({
+        type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
+        hearingDocumentIsInVbms: hearingDocumentIsInVbms
+      });
+    },
+    onTypeOfForm9Change: (form9Type) => {
+      dispatch({
+        type: Constants.CHANGE_TYPE_OF_FORM9,
+        form9Type: form9Type
+      });
+    },
+    onHearingTypeChange: (hearingType) => {
+      dispatch({
+        type: Constants.CHANGE_TYPE_OF_HEARING,
+        hearingType: hearingType
+      });
+    }
+  };
+}
+
+/**
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state) => {
+  return {
+    hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
+    form9Type: state.form9Type,
+    hearingType: state.hearingType
+  };
+};
+
 
 /**
  * Creates a component that's connected to the Redux store
