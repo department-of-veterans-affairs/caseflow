@@ -275,7 +275,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
                                      "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
       end
 
-      scenario "Cancelling a claims establishment with special issues with no email routing" do
+      # There are no more issues that have no email addresses :)
+      # Skip this for now, but we'll clear it out when we finalize that decision
+      skip "Cancelling a claims establishment with special issues with no email routing" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
