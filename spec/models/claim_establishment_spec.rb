@@ -25,4 +25,45 @@ describe ClaimEstablishment do
       expect(claim_establishment).to be_full_grant
     end
   end
+
+  context "#ep_description" do
+    subject { claim_establishment.ep_description }
+
+    let(:claim_establishment) { ClaimEstablishment.new(ep_code: ep_code) }
+
+    context "when ep_code doesn't exist" do
+      let(:ep_code) { "BLARGYBLARG" }
+      it { is_expected.to be_nil }
+    end
+
+    context "when ep_code does exist" do
+      let(:ep_code) { "170RBVAG" }
+      it { is_expected.to eq("170RBVAG - Remand with BVA Grant") }
+    end
+  end
+
+  context "#sent_email" do
+    subject { claim_establishment.sent_email }
+
+    let(:claim_establishment) do
+      ClaimEstablishment.new(email_recipient: email_recipient, email_ro_id: email_ro_id)
+    end
+    let(:email_ro_id) { nil }
+    let(:email_recipient) { nil }
+
+    context "when email_recipient is nil" do
+      let(:email_ro_id) { "RO04" }
+      it { is_expected.to be_nil }
+    end
+
+    context "when email_recipient is set" do
+      let(:email_recipient) { "johnson@va.gov" }
+      it { is_expected.to have_attributes(recipient: "johnson@va.gov", ro_name: "Unknown") }
+
+      context "when email_ro_id is set" do
+        let(:email_ro_id) { "RO04" }
+        it { is_expected.to have_attributes(recipient: "johnson@va.gov", ro_name: "Providence, RI") }
+      end
+    end
+  end
 end
