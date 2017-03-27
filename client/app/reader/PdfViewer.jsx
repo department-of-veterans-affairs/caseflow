@@ -2,34 +2,28 @@ import React, { PropTypes } from 'react';
 import PDFJSAnnotate from 'pdf-annotate.js';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
-import FormField from '../util/FormField';
-import BaseForm from '../containers/BaseForm';
-import TextareaField from '../components/TextareaField';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
-export default class PdfViewer extends BaseForm {
+export default class PdfViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      commentBoxEventListener: null,
-      commentOverIndex: null,
       comments: [],
-      currentPage: 1,
       editingComment: null,
       isAddingComment: false,
       isPlacingNote: false,
-      numPages: 0,
-      scale: 1,
-      onSaveComment: null
+      onSaveCommentAdd: null
     };
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
   onCommentChange = (documentId = this.props.doc.id) => {
-    this.setState({ comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)] });
+    this.setState({
+      comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)]
+    });
   }
 
   onDeleteComment = (uuid) => {
@@ -39,11 +33,18 @@ export default class PdfViewer extends BaseForm {
     );
   }
 
-  // TODO: refactor this method to make it cleaner
-  onSaveCommentEdit = (comment, uuid)  => {
+  onEditComment = (uuid) => {
+    if (!this.isUserActive()) {
+      this.setState({
+        editingComment: uuid
+      });
+    }
+  }
+
+  onSaveCommentEdit = (comment) => {
     this.props.annotationStorage.getAnnotation(
       this.props.doc.id,
-      uuid,
+      this.state.editingComment,
     ).then((annotation) => {
       annotation.comment = comment;
       this.props.annotationStorage.editAnnotation(
@@ -52,29 +53,21 @@ export default class PdfViewer extends BaseForm {
         annotation
       );
     });
+    this.onCancelCommentEdit();
+  }
+
+  onCancelCommentEdit = () => {
+    this.setState({
+      editingComment: null
+    });
   }
 
   onAddComment = () => {
-    this.setState({
-      isPlacingNote: true
-    });
-  }
-
-  onAddCommentComplete = () => {
-    this.setState({
-      isAddingComment: false,
-      isPlacingNote: false,
-      onSaveComment: null
-    });
-  }
-
-  onSaveComment = (annotation, pageNumber) => (content) => {
-    annotation.comment = content;
-    this.props.annotationStorage.addAnnotation(
-      this.props.doc.id,
-      pageNumber,
-      annotation
-    );
+    if (!this.isUserActive()) {
+      this.setState({
+        isPlacingNote: true
+      });
+    }
   }
 
   placeComment = (pageNumber, coordinates) => {
@@ -90,9 +83,27 @@ export default class PdfViewer extends BaseForm {
       this.setState({
         isAddingComment: true,
         isPlacingNote: false,
-        onSaveComment: this.onSaveComment(annotation, pageNumber)
+        onSaveCommentAdd: this.onSaveCommentAdd(annotation, pageNumber)
       });
     }
+  }
+
+  onSaveCommentAdd = (annotation, pageNumber) => (content) => {
+    annotation.comment = content;
+    this.props.annotationStorage.addAnnotation(
+      this.props.doc.id,
+      pageNumber,
+      annotation
+    );
+    this.onCancelCommentAdd();
+  }
+
+  onCancelCommentAdd = () => {
+    this.setState({
+      isAddingComment: false,
+      isPlacingNote: false,
+      onSaveCommentAdd: null
+    });
   }
 
   // Returns true if the user is doing some action. i.e.
@@ -104,10 +115,10 @@ export default class PdfViewer extends BaseForm {
   keyListener = (event) => {
     if (!this.isUserActive()) {
       if (event.key === 'ArrowLeft') {
-        this.props.previousPdf();
+        this.props.onPreviousPdf();
       }
       if (event.key === 'ArrowRight') {
-        this.props.nextPdf();
+        this.props.onNextPdf();
       }
     }
   }
@@ -119,6 +130,7 @@ export default class PdfViewer extends BaseForm {
       } else {
         comment.selected = false;
       }
+
       return comment;
     });
 
@@ -150,14 +162,6 @@ export default class PdfViewer extends BaseForm {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  componentDidUpdate = () => {
-    if (this.state.isAddingComment) {
-      let commentBox = document.getElementById('addComment');
-
-      commentBox.focus();
-    }
-  }
-
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.doc.id !== this.props.doc.id) {
       this.onCommentChange(nextProps.doc.id);
@@ -173,7 +177,7 @@ export default class PdfViewer extends BaseForm {
             doc={this.props.doc}
             file={this.props.file}
             pdfWorker={this.props.pdfWorker}
-            id="pdf1"
+            id="pdf"
             label={this.props.label}
             onPageClick={this.placeComment}
             onSetLabel={this.props.onSetLabel}
@@ -186,13 +190,16 @@ export default class PdfViewer extends BaseForm {
           />
           <PdfSidebar
             doc={this.props.doc}
+            editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
             isAddingComment={this.state.isAddingComment}
             comments={this.state.comments}
-            onSaveComment={this.state.onSaveComment}
+            onSaveCommentAdd={this.state.onSaveCommentAdd}
+            onCancelCommentAdd={this.onCancelCommentAdd}
             onSaveCommentEdit={this.onSaveCommentEdit}
-            onAddCommentComplete={this.onAddCommentComplete}
+            onCancelCommentEdit={this.onCancelCommentEdit}
             onDeleteComment={this.onDeleteComment}
+            onEditComment={this.onEditComment}
             onJumpToComment={this.onJumpToComment}
           />
         </div>

@@ -33,7 +33,7 @@ export default class Pdf extends React.Component {
     this.isRendered[index] = true;
 
     // Call into PDFJSAnnotate to render this page
-    UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+    UI.renderPage(index + 1, RENDER_OPTIONS).then(() => {
       // If successful then we want to setup a click handler
       let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
@@ -143,6 +143,7 @@ export default class Pdf extends React.Component {
 
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
+
     PDFJS.workerSrc = this.props.pdfWorker;
 
     this.setupPdf(this.props.file);
@@ -162,8 +163,8 @@ export default class Pdf extends React.Component {
             event.getAttribute('data-pdf-annotate-id').toString();
       });
 
-      if(filteredComments.length === 1) {
-        this.props.onCommentClick(filteredComments[0])
+      if (filteredComments.length === 1) {
+        this.props.onCommentClick(filteredComments[0]);
       } else if (filteredComments.length !== 0) {
         throw new Error('Multiple comments with same uuid');
       }
@@ -203,14 +204,15 @@ export default class Pdf extends React.Component {
     // Determine which comments have changed, and
     // rerender the pages the changed comments are on.
     let symmetricDifference = this.symmetricDifference(
-      new Set(nextProps.comments.map(comment => comment.uuid)),
-      new Set(this.props.comments.map(comment => comment.uuid)));
+      new Set(nextProps.comments.map((comment) => comment.uuid)),
+      new Set(this.props.comments.map((comment) => comment.uuid)));
 
     let pagesToUpdate = new Set();
     let allComments = [...nextProps.comments, ...this.props.comments];
 
     symmetricDifference.forEach((uuid) => {
-      let page = allComments.filter(comment => comment.uuid === uuid)[0].page;
+      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
       pagesToUpdate.add(page);
     });
 

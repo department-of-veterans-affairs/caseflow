@@ -11,24 +11,29 @@ export default class EditComment extends BaseForm {
     super(props);
     this.state = {
       commentForm: {
-        editComment: new FormField('')
+        editComment: new FormField(this.props.children)
       }
     };
   }
 
-  cancelEdit = () => {
+  resetForm = () => {
     let commentForm = { ...this.state.commentForm };
 
     commentForm.editComment.value = '';
     this.setState({
       commentForm
     });
+  }
+
+  cancelEdit = () => {
     this.props.onCancelCommentEdit();
+    this.resetForm();
   }
 
   onSaveCommentEdit = () => {
-    this.props.onSaveCommentEdit(this.state.commentForm.editComment.value, this.props.uuid);
-    this.cancelEdit();
+    this.props.onSaveCommentEdit(
+      this.state.commentForm.editComment.value, this.props.uuid);
+    this.resetForm();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,46 +47,50 @@ export default class EditComment extends BaseForm {
     }
   }
 
+  componentDidMount = () => {
+    let commentBox = document.getElementById(this.props.id);
+
+    commentBox.focus();
+  }
+
   render() {
-    let className = 'cf-pdf-comment-list-item';
-    if (this.props.selected) {
-      className = className + ' cf-comment-selected';
-    }
     return <div>
-          <div
-            key={this.props.children.toString()}
-            className={className}>
-            <TextareaField
-              label="Edit Comment"
-              name="editComment"
-              onChange={this.handleFieldChange('commentForm', 'editComment')}
-              {...this.state.commentForm.editComment}
-            />
-          </div>
-          <div className="comment-control-button-container">
-            <span className="cf-right-side">
-              <Button
-                name="cancel"
-                classNames={["cf-btn-link"]}
-                onClick={this.cancelEdit}>
-                Cancel
-              </Button>
-              <Button
-                name="save"
-                onClick={this.onSaveCommentEdit}>
-                Save
-              </Button>
-            </span>
-          </div>
-        </div>;
+        <div
+          className="cf-pdf-comment-list-item">
+          <TextareaField
+            id={this.props.id}
+            label="Edit Comment"
+            name="editComment"
+            onChange={this.handleFieldChange('commentForm', 'editComment')}
+            {...this.state.commentForm.editComment}
+          />
+        </div>
+        <div className="comment-control-button-container">
+          <span className="cf-right-side">
+            <Button
+              name="cancel"
+              classNames={["cf-btn-link"]}
+              onClick={this.cancelEdit}>
+              Cancel
+            </Button>
+            <Button
+              name="save"
+              onClick={this.onSaveCommentEdit}>
+              Save
+            </Button>
+          </span>
+        </div>
+      </div>;
   }
 }
 
+Comment.defaultProps = {
+  id: 'commentEditBox'
+};
+
 Comment.propTypes = {
   children: React.PropTypes.string,
-  id: PropTypes.string,
-  selected: PropTypes.bool,
+  id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
-  uuid: PropTypes.number
+  onCancelCommentEdit: PropTypes.func
 };
