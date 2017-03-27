@@ -6,13 +6,6 @@ import NotFoundIcon from '../components/NotFoundIcon';
 // TODO: refactor to use shared components where helpful
 const DocumentsCheckTable = (props) => {
 
-  // let { form9_match?,
-  //       form9_date,
-  //       nod_match?,
-  //       nod_date,
-  //       soc_match?,
-  //       soc_date } = this.props;
-
   return <div className="cf-table-wrap">
     <table className="usa-table-borderless cf-table-borderless"
       summary="Each row represents document mismatch">
