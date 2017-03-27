@@ -36,6 +36,9 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
+  # Because there are no unhandled email addresses this code path is never run
+  # We will remove this soon.
+  # :nocov:
   def no_email_complete
     Task.transaction do
       task.complete!(status: Task.completion_status_code(:special_issue_not_emailed))
@@ -44,6 +47,7 @@ class EstablishClaimsController < TasksController
 
     render json: {}
   end
+  # :nocov:
 
   def assign_existing_end_product
     Task.transaction do
