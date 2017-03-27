@@ -83,7 +83,7 @@ export default class EstablishClaimEmail extends BaseForm {
             <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
             <p><b>RO:</b> {this.props.regionalOffice}</p>
-            <p><b>RO email:</b> {this.props.regionalOfficeEmail.join(';')}</p>
+            <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
           </div>
 
           <TextareaField
