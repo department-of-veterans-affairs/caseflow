@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 
-// A rounded rectangle with a user's comment inside
+// A rounded rectangle with a user's comment inside.
+// Comes with edit and delete buttons
 export default class Comment extends React.Component {
   onDeleteComment = () => {
     this.props.onDeleteComment(this.props.uuid);

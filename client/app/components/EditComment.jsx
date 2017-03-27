@@ -5,7 +5,8 @@ import BaseForm from '../containers/BaseForm';
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
 
-// A rounded rectangle with a user's comment inside
+// A rounded rectangle with a text box for adding
+// or editing an existing comment.
 export default class EditComment extends BaseForm {
   constructor(props) {
     super(props);
@@ -36,6 +37,8 @@ export default class EditComment extends BaseForm {
     this.resetForm();
   }
 
+  // If we receive a new 'children' prop, we use it as the text
+  // in the edit form.
   componentWillReceiveProps(nextProps) {
     if (nextProps.children !== this.props.children) {
       let commentForm = { ...this.state.commentForm };
