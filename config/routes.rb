@@ -108,9 +108,9 @@ Rails.application.routes.draw do
     # Only allow data_setup routes if TEST_USER is set
     if ENV["TEST_USER_ID"]
       resources :setup, only: [:index]
-      post "setup-uncertify-appeal" => "setup#uncertify_appeal", as: "test_setup_uncertify_appeal_path"
-      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset", as: "test_setup_appeal_location_date_reset_path"
-      get "setup-delete-test-data" => "setup#delete_test_data", as: "test_setup_delete_test_data_path"
+      post "setup-uncertify-appeal" => "setup#uncertify_appeal"
+      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
+      get "setup-delete-test-data" => "setup#delete_test_data"
     end
 
     if ApplicationController.dependencies_faked?
