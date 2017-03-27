@@ -146,14 +146,14 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "RO85" => { city: "Milwaukee COWAC", state: "WI", timezone: "America/Chicago" },
     "RO86" => { city: "St. Paul COWAC", state: "MN", timezone: "America/Chicago" },
     "RO87" => { city: "Atlanta Health Eligibility Center", state: "GA", timezone: "America/New_York" },
-    "RO88" => { city: "LGY Eligibility Center (Atlanta)", state: "GA", timezone: "America/New_York" },
+    "RO88" => { city: "LGY Eligibility Center - Atlanta", state: "GA", timezone: "America/New_York" },
     "RO89" => { city: "General Counsel", state: "DC", timezone: "America/New_York" },
     "RO91" => { city: "Buffalo Education Center", state: "NY", timezone: "America/New_York" },
     "RO92" => { city: "Atlanta Education Center", state: "GA", timezone: "America/New_York" },
     "RO93" => { city: "Muskogee Education Center", state: "OK", timezone: "America/Chicago" },
     "RO94" => { city: "St. Louis Education Center", state: "MO", timezone: "America/Chicago" },
     "RO97" => { city: "ARC", state: "DC", timezone: "America/New_York" },
-    "RO98" => { city: "NCA", state: "DC", timezone: "America/New_York" },
+    "RO98" => { city: "National Cemetery Administration - St. Louis", state: "MO", timezone: "America/Chicago" },
     "RO99" => { city: "VHA CO", state: "DC", timezone: "America/New_York" },
     "DSUSER" => { city: "Digital Service HQ", state: "DC", timezone: "America/New_York" }
   }.freeze
