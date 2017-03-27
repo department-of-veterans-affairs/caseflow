@@ -593,4 +593,35 @@ describe Appeal do
         .to eq("Test")
     end
   end
+
+  context "#special_issues" do
+    subject { appeal.special_issues }
+    let(:appeal) { Appeal.new }
+
+    context "when no special issues are true" do
+      it { is_expected.to eq([]) }
+    end
+
+    context "when one special issue is true" do
+      let(:appeal) { Appeal.new(dic_death_or_accrued_benefits_united_states: true) }
+      it { is_expected.to eq(["DIC - death, or accrued benefits - United States"]) }
+    end
+
+    context "when many special issues are true" do
+      let(:appeal) do
+        Appeal.new(
+          foreign_claim_compensation_claims_dual_claims_appeals: true,
+          vocational_rehab: true,
+          education_gi_bill_dependents_educational_assistance_scholars: true,
+          us_territory_claim_puerto_rico_and_virgin_islands: true
+        )
+      end
+
+      it { expect(subject.length).to eq(4) }
+      it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
+      it { is_expected.to include("Vocational Rehab") }
+      it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
+      it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+    end
+  end
 end

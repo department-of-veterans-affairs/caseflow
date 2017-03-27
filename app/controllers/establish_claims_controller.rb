@@ -10,6 +10,7 @@ class EstablishClaimsController < TasksController
 
     Task.transaction do
       task.appeal.update!(appeal_params)
+      task.update_claim_establishment!(ep_code: establish_claim_params[:end_product_code])
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
     end
     render json: {}
@@ -20,24 +21,38 @@ class EstablishClaimsController < TasksController
     Task.transaction do
       Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
       task.complete!(status: 0)
-      task.claim_establishment.update!(decision_date: Time.zone.now) if task.claim_establishment
+      task.update_claim_establishment!
     end
     render json: {}
   end
 
   def email_complete
-    handle_task_status_update(:special_issue_emailed)
+    task.complete!(status: Task.completion_status_code(:special_issue_emailed))
+    task.update_claim_establishment!(
+      email_recipient: email_params[:email_recipient],
+      email_ro_id: email_params[:email_ro_id]
+    )
+
+    render json: {}
   end
 
   def no_email_complete
-    handle_task_status_update(:special_issue_not_emailed)
+    Task.transaction do
+      task.complete!(status: Task.completion_status_code(:special_issue_not_emailed))
+      task.update_claim_establishment!
+    end
+
+    render json: {}
   end
 
   def assign_existing_end_product
-    Dispatch.new(task: task)
-            .assign_existing_end_product!(end_product_id: params[:end_product_id],
-                                          special_issues: special_issues_params)
-    task.claim_establishment.update!(decision_date: Time.zone.now) if task.claim_establishment
+    Task.transaction do
+      Dispatch.new(task: task)
+              .assign_existing_end_product!(end_product_id: params[:end_product_id],
+                                            special_issues: special_issues_params)
+      task.update_claim_establishment!
+    end
+
     render json: {}
   end
 
@@ -107,6 +122,10 @@ class EstablishClaimsController < TasksController
 
   def vacols_note_params
     params[:vacols_note]
+  end
+
+  def email_params
+    params.permit(:email_ro_id, :email_recipient)
   end
 
   def establish_claim_params
