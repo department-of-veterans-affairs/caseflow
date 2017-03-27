@@ -1,3 +1,4 @@
 <%= react_component("Certification", props: {
-  certification: @certification.to_hash
+  certification: @certification.to_hash,
+  form9Link: pdfjs.full_path(file: form9_pdf_certification_path(@certification.form8.vacols_id))
 }) %>

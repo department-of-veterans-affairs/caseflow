@@ -71,7 +71,6 @@ const mapDispatchToProps = (dispatch) => {
       });
     },
     onHearingTypeChange: (hearingType) => {
-      debugger;
       dispatch({
         type: 'CHANGE_TYPE_OF_HEARING',
         hearingType: hearingType
@@ -81,7 +80,6 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const mapStateToProps = (state) => {
-  debugger;
   return {
     hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
     form9Type: state.form9Type,
@@ -99,7 +97,6 @@ const _ConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-    debugger;
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
