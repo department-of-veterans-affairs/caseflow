@@ -221,11 +221,11 @@ export default class EstablishClaim extends BaseForm {
           loading: false
         });
         handleAlert(
-        'error',
-        'System Error',
-        'Something went wrong on our end. We were not able to create an End Product.' +
-        ' Please try again later.'
-      );
+          'error',
+          'System Error',
+          'Something went wrong on our end. We were not able to create an End Product.' +
+          ' Please try again later.'
+        );
       });
   }
 
@@ -364,6 +364,10 @@ export default class EstablishClaim extends BaseForm {
     return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update_appeal`,
       { data }).then(() => {
 
+        this.setState({
+          loading: false
+        });
+
         if (!this.willCreateEndProduct()) {
           if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
             this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
@@ -376,10 +380,6 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handlePageChange(FORM_PAGE);
         }
-
-        this.setState({
-          loading: false
-        });
 
       });
   }
@@ -667,6 +667,7 @@ export default class EstablishClaim extends BaseForm {
         />
         { this.isDecisionPage() &&
           <EstablishClaimDecision
+            loading={this.state.loading}
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
@@ -679,6 +680,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isAssociatePage() &&
           <AssociatePage
+            loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
             decisionType={this.state.reviewForm.decisionType.value}
@@ -695,6 +697,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isFormPage() &&
           <EstablishClaimForm
+            loading={this.state.loading}
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
@@ -706,6 +709,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isNotePage() &&
           <EstablishClaimNote
+            loading={this.state.loading}
             appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
@@ -716,6 +720,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isEmailPage() &&
           <EstablishClaimEmail
+            loading={this.state.loading}
             appeal={this.props.task.appeal}
             handleCancelTask={this.handleCancelTask}
             handleEmailSubmit={this.handleEmailPageSubmit}

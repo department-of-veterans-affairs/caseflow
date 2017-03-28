@@ -13,9 +13,20 @@ export default class Pdf extends React.Component {
     };
   }
 
-  renderPage = (index) => {
-    const { UI } = PDFJSAnnotate;
+  rerenderPage = (index) => {
+    if (this.isRendered && this.isRendered[index]) {
+      this.isRendered[index] = false;
+      this.renderPage(index);
+    }
+  }
 
+  renderPage = (index) => {
+    // If we've already rendered the page return.
+    if (this.isRendered[index]) {
+      return;
+    }
+
+    const { UI } = PDFJSAnnotate;
     let RENDER_OPTIONS = {
       documentId: this.props.documentId,
       pdfDocument: this.state.pdfDocument,
@@ -25,27 +36,29 @@ export default class Pdf extends React.Component {
 
     this.isRendered[index] = true;
 
-    // Call into PDFJSAnnotate to render this page
-    UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
-      // If successful then we want to setup a click handler
-      let pageContainer = document.getElementById(`pageContainer${index + 1}`);
+    return new Promise((resolve, reject) => {
+      // Call into PDFJSAnnotate to render this page
+      UI.renderPage(index + 1, RENDER_OPTIONS).then(() => {
+        // If successful then we want to setup a click handler
+        let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
-      pageContainer.addEventListener('click',
-        this.onPageClick(pdfPage.getViewport(this.props.scale, 0), index + 1));
-    }).
-    catch(() => {
-      // If unsuccessful we want to mark this page as not rendered
-      this.isRendered[index] = false;
+        pageContainer.addEventListener('click', this.onPageClick(index + 1));
+        resolve();
+      }).
+      catch(() => {
+        // If unsuccessful we want to mark this page as not rendered
+        this.isRendered[index] = false;
+        reject();
+      });
     });
   }
 
-  onPageClick = (viewport, pageNumber) => (event) => {
+  onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
       let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
       let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
       this.props.onPageClick(
-        viewport,
         pageNumber,
         {
           xPosition,
@@ -98,8 +111,7 @@ export default class Pdf extends React.Component {
       // above is within a thousand pixels of the current view
       // we also redner it.
       // TODO: Make this more robust and avoid magic numbers.
-      if (!this.isRendered[index] &&
-          boundingRect.bottom > -1000 &&
+      if (boundingRect.bottom > -1000 &&
           boundingRect.top < scrollWindow.clientHeight + 1000) {
         this.renderPage(index);
       }
@@ -109,34 +121,39 @@ export default class Pdf extends React.Component {
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
   setupPdf = (file, scrollLocation = 0) => {
-    PDFJS.getDocument(file).then((pdfDocument) => {
-      // Setup array that tracks whether a given page has been rendered.
-      // This way as we scroll we know if we need to render a page that
-      // has just come into view.
-      this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
-      this.setState({
-        numPages: pdfDocument.pdfInfo.numPages,
-        pdfDocument
+    return new Promise((resolve) => {
+      PDFJS.getDocument(file).then((pdfDocument) => {
+        // Setup array that tracks whether a given page has been rendered.
+        // This way as we scroll we know if we need to render a page that
+        // has just come into view.
+        this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+        this.setState({
+          numPages: pdfDocument.pdfInfo.numPages,
+          pdfDocument
+        }, () => {
+          // Create but do not render all of the pages
+          this.createPages(pdfDocument);
+
+          // Automatically render the first page
+          // This assumes that page has already been created and appended
+          this.renderPage(0);
+          resolve();
+        });
+
+        if (this.props.onPageChange) {
+          this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
+        }
+
+        // Scroll to the correct location on the page
+        document.getElementById('scrollWindow').scrollTop = scrollLocation;
+        this.scrollEvent();
       });
-
-      if (this.props.onPageChange) {
-        this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
-      }
-
-      // Create but do not render all of the pages
-      this.createPages(pdfDocument);
-
-      // Automatically render the first page
-      // This assumes that page has already been created and appended
-      this.renderPage(0);
-
-      // Scroll to the correct location on the page
-      document.getElementById('scrollWindow').scrollTop = scrollLocation;
-      this.scrollEvent();
     });
   }
 
   componentDidMount = () => {
+    const { UI } = PDFJSAnnotate;
+
     PDFJS.workerSrc = this.props.pdfWorker;
 
     this.setupPdf(this.props.file);
@@ -145,6 +162,44 @@ export default class Pdf extends React.Component {
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
+
+    UI.enableEdit();
+
+    UI.addEventListener('annotation:click', (event) => {
+      let comments = [...this.props.comments];
+
+      let filteredComments = comments.filter((comment) => {
+        return comment.uuid.toString() ===
+            event.getAttribute('data-pdf-annotate-id').toString();
+      });
+
+      if (filteredComments.length === 1) {
+        this.props.onCommentClick(filteredComments[0]);
+      } else if (filteredComments.length !== 0) {
+        throw new Error('Multiple comments with same uuid');
+      }
+    });
+  }
+
+  // Calculates the symmetric difference between two sets.
+  // The symmetric difference are all the elements that are
+  // in exactly one of the sets. (In one but not the other.)
+  symmetricDifference = (set1, set2) => {
+    let symmetricDifference = new Set();
+
+    set1.forEach((element) => {
+      if (!set2.has(element)) {
+        symmetricDifference.add(element);
+      }
+    });
+
+    set2.forEach((element) => {
+      if (!set1.has(element)) {
+        symmetricDifference.add(element);
+      }
+    });
+
+    return symmetricDifference;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -158,6 +213,31 @@ export default class Pdf extends React.Component {
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
     }
+
+    // Determine which comments have changed, and
+    // rerender the pages the changed comments are on.
+    // The symmetric difference gives us which comments
+    // were added or removed.
+    let symmetricDifference = this.symmetricDifference(
+      new Set(nextProps.comments.map((comment) => comment.uuid)),
+      new Set(this.props.comments.map((comment) => comment.uuid)));
+
+    let pagesToUpdate = new Set();
+    let allComments = [...nextProps.comments, ...this.props.comments];
+
+    // Find the pages for the added/removed comments
+    symmetricDifference.forEach((uuid) => {
+      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
+      pagesToUpdate.add(page);
+    });
+
+    // Rerender all these pages to add/remove the comment boxes as necessary.
+    pagesToUpdate.forEach((page) => {
+      let index = page - 1;
+
+      this.rerenderPage(index);
+    });
   }
 
   render() {
@@ -175,11 +255,17 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    comment: PropTypes.string,
+    uuid: PropTypes.number,
+    page: PropTypes.number
+  })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
-  onPageChange: PropTypes.func
+  onPageChange: PropTypes.func,
+  onCommentClick: PropTypes.func
 };
