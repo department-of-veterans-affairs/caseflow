@@ -13,6 +13,13 @@ export default class Pdf extends React.Component {
     };
   }
 
+  rerenderPage = (index) => {
+    if (this.isRendered && this.isRendered[index]) {
+      this.isRendered[index] = false;
+      this.renderPage(index);
+    }
+  }
+
   renderPage = (index) => {
     // If we've already rendered the page return.
     if (this.isRendered[index]) {
@@ -31,12 +38,11 @@ export default class Pdf extends React.Component {
 
     return new Promise((resolve, reject) => {
       // Call into PDFJSAnnotate to render this page
-      UI.renderPage(index + 1, RENDER_OPTIONS).then(([pdfPage]) => {
+      UI.renderPage(index + 1, RENDER_OPTIONS).then(() => {
         // If successful then we want to setup a click handler
         let pageContainer = document.getElementById(`pageContainer${index + 1}`);
 
-        pageContainer.addEventListener('click',
-          this.onPageClick(pdfPage.getViewport(this.props.scale, 0), index + 1));
+        pageContainer.addEventListener('click', this.onPageClick(index + 1));
         resolve();
       }).
       catch(() => {
@@ -47,13 +53,12 @@ export default class Pdf extends React.Component {
     });
   }
 
-  onPageClick = (viewport, pageNumber) => (event) => {
+  onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
       let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
       let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
       this.props.onPageClick(
-        viewport,
         pageNumber,
         {
           xPosition,
@@ -147,6 +152,8 @@ export default class Pdf extends React.Component {
   }
 
   componentDidMount = () => {
+    const { UI } = PDFJSAnnotate;
+
     PDFJS.workerSrc = this.props.pdfWorker;
 
     this.setupPdf(this.props.file);
@@ -155,6 +162,44 @@ export default class Pdf extends React.Component {
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
+
+    UI.enableEdit();
+
+    UI.addEventListener('annotation:click', (event) => {
+      let comments = [...this.props.comments];
+
+      let filteredComments = comments.filter((comment) => {
+        return comment.uuid.toString() ===
+            event.getAttribute('data-pdf-annotate-id').toString();
+      });
+
+      if (filteredComments.length === 1) {
+        this.props.onCommentClick(filteredComments[0]);
+      } else if (filteredComments.length !== 0) {
+        throw new Error('Multiple comments with same uuid');
+      }
+    });
+  }
+
+  // Calculates the symmetric difference between two sets.
+  // The symmetric difference are all the elements that are
+  // in exactly one of the sets. (In one but not the other.)
+  symmetricDifference = (set1, set2) => {
+    let symmetricDifference = new Set();
+
+    set1.forEach((element) => {
+      if (!set2.has(element)) {
+        symmetricDifference.add(element);
+      }
+    });
+
+    set2.forEach((element) => {
+      if (!set1.has(element)) {
+        symmetricDifference.add(element);
+      }
+    });
+
+    return symmetricDifference;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -168,6 +213,31 @@ export default class Pdf extends React.Component {
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
     }
+
+    // Determine which comments have changed, and
+    // rerender the pages the changed comments are on.
+    // The symmetric difference gives us which comments
+    // were added or removed.
+    let symmetricDifference = this.symmetricDifference(
+      new Set(nextProps.comments.map((comment) => comment.uuid)),
+      new Set(this.props.comments.map((comment) => comment.uuid)));
+
+    let pagesToUpdate = new Set();
+    let allComments = [...nextProps.comments, ...this.props.comments];
+
+    // Find the pages for the added/removed comments
+    symmetricDifference.forEach((uuid) => {
+      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
+      pagesToUpdate.add(page);
+    });
+
+    // Rerender all these pages to add/remove the comment boxes as necessary.
+    pagesToUpdate.forEach((page) => {
+      let index = page - 1;
+
+      this.rerenderPage(index);
+    });
   }
 
   render() {
@@ -185,11 +255,17 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    comment: PropTypes.string,
+    uuid: PropTypes.number,
+    page: PropTypes.number
+  })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
-  onPageChange: PropTypes.func
+  onPageChange: PropTypes.func,
+  onCommentClick: PropTypes.func
 };
