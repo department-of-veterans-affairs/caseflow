@@ -201,7 +201,7 @@ describe.only('DecisionReviewer', () => {
       await pause();
 
       wrapper.find('a').findWhere((link) => link.text() === '+ Add a Comment').simulate('click');
-      wrapper.find('#pageContainer1').simulate('click');
+      wrapper.find('Pdf').instance().
     }));
   });
   /* eslint-enable max-statements */
