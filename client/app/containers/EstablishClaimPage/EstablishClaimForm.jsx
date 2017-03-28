@@ -12,15 +12,16 @@ export const MODIFIER_OPTIONS = [
 ];
 
 export default class EstablishClaimForm extends React.Component {
+
   render() {
     let {
+      loading,
       claimLabelValue,
       claimForm,
+      handleSubmit,
       handleCancelTask,
       handleFieldChange,
-      handleSubmit,
       handleBackToDecisionReview,
-      loading,
       validModifiers
     } = this.props;
 
@@ -97,6 +98,7 @@ export default class EstablishClaimForm extends React.Component {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
+            app="dispatch"
             name="Create End Product"
             loading={loading}
             onClick={handleSubmit}

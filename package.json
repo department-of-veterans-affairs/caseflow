@@ -14,5 +14,6 @@
     "lint:fix": "cd client && npm run lint:fix"
   },
   "devDependencies": {
+    "sinon": "^2.1.0"
   }
 }

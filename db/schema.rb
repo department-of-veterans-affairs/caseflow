@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170309203602) do
+ActiveRecord::Schema.define(version: 20170324120538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20170309203602) do
     t.boolean "foreign_claim_compensation_claims_dual_claims_appeals",        default: false
     t.boolean "manlincon_compliance",                                         default: false
     t.boolean "hearing_including_travel_board_video_conference",              default: false
-    t.boolean "home_loan_guarantee",                                          default: false
+    t.boolean "home_loan_guaranty",                                           default: false
     t.boolean "insurance",                                                    default: false
     t.boolean "national_cemetery_administration",                             default: false
     t.boolean "spina_bifida",                                                 default: false
@@ -51,12 +51,10 @@ ActiveRecord::Schema.define(version: 20170309203602) do
     t.boolean "mustard_gas",                                                  default: false
     t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
     t.boolean "foreign_pension_dic_all_other_foreign_countries",              default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_american_caribb", default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb",  default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
-    t.boolean "home_loan_guaranty",                                           default: false
-    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb",  default: false
   end
 
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
@@ -87,6 +85,25 @@ ActiveRecord::Schema.define(version: 20170309203602) do
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
+
+  create_table "claim_establishments", force: :cascade do |t|
+    t.integer  "task_id"
+    t.integer  "decision_type"
+    t.datetime "outcoding_date"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "email_ro_id"
+    t.string   "email_recipient"
+    t.string   "ep_code"
+  end
+
+  create_table "document_views", force: :cascade do |t|
+    t.integer  "document_id",     null: false
+    t.integer  "user_id",         null: false
+    t.datetime "first_viewed_at"
+  end
+
+  add_index "document_views", ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string  "vbms_document_id", null: false

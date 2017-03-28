@@ -2,58 +2,56 @@ import React from 'react';
 
 // components
 import TabWindow from '../../components/TabWindow';
-// import RenderFunctions from '../../components/RenderFunctions';
-import { closeSymbolHtml, missingSymbolHtml } from '../../components/RenderFunctions.jsx';
-
-export const tabIconFunctions = [closeSymbolHtml(), missingSymbolHtml()];
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
+import { crossSymbolHtml, checkSymbolHtml } from '../../components/RenderFunctions';
 
 export default class StyleGuideTabs extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tabText: "HI"
-    };
-
-  }
-
   render() {
 
     let {
-      tabHeaders,
-      tabHeadersWithIcons,
-      tabPages,
-      tabPagesWithIcons
+      tabs,
+      tabsWithIcons
     } = this.props;
 
-    tabHeaders = [
-      "Tab 1",
-      "Tab 2",
-      "Tab 3"
+    tabs = [
+      {
+        label: "Tab 1",
+        page: " "
+      },
+      {
+        label: "Tab 2",
+        page: " "
+      },
+      {
+        label: "Tab 3",
+        page: " "
+      }
     ];
 
-    tabHeadersWithIcons = [
-      " Active Tab",
-      "Enabled Tab",
-      "Disabled Tab"
-    ];
-
-    tabPages = [
-      "This is an 'Active' Tab.",
-      "This is an 'Enabled' Tab.",
-      "This is a 'Disabled' Tab"
-    ];
-
-    tabPagesWithIcons = [
-      "This tab uses the 'Suggested Questions' icon.",
-      "This tab uses the 'All Questions' icon.",
-      "This tab uses the 'In Progress' icon.",
-      "This tab uses the 'Completed' icon.",
-      "This tab uses the 'Errors' icon."
+    tabsWithIcons = [{
+      disable: false,
+      icon: checkSymbolHtml(),
+      label: "Active Tab",
+      page: " "
+    }, {
+      disable: false,
+      icon: checkSymbolHtml(),
+      label: "Enabled Tab",
+      page: " "
+    }, {
+      disable: true,
+      icon: crossSymbolHtml(),
+      label: "Disabled Tab",
+      page: " "
+    }
     ];
 
     return <div>
-      <h2 id="tabs">Tabs</h2>
+      <p><StyleGuideComponentTitle
+        title="Tabs"
+        id="tabs"
+        link="StyleGuideTabs.jsx"
+      /></p>
       <h3>Tabs without Icons</h3>
       <p>
         The US Web Design doesn’t include tabs so we’ve designed our own.
@@ -62,8 +60,7 @@ export default class StyleGuideTabs extends React.Component {
         and cannot be clicked.
       </p>
       <TabWindow
-        tabs={tabHeaders}
-        pages={tabPages}
+        tabs={tabs}
         onChange={this.onTabSelected}/>
       <h3>Tabs with Icons</h3>
       <p>
@@ -72,9 +69,8 @@ export default class StyleGuideTabs extends React.Component {
         U.S. Design standards. Here is an example of tabs with icons:
       </p>
       <TabWindow
-        tabs={tabHeadersWithIcons}
-        pages={tabPagesWithIcons}
+        tabs={tabsWithIcons}
         onChange={this.onTabSelected}/>
-    </div>;
+  </div>;
   }
 }

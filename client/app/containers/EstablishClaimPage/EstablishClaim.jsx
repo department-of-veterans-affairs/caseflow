@@ -3,7 +3,9 @@
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
-import ROUTING_INFORMATION from '../../util/RoutingConstants';
+import ROUTING_INFORMATION from '../../constants/Routing';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 
 import Modal from '../../components/Modal';
@@ -12,7 +14,7 @@ import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
-import EstablishClaimDecision, * as Decision from './EstablishClaimDecision';
+import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
@@ -58,8 +60,6 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '178',
   '179'
 ];
-
-const SPECIAL_ISSUES = Decision.SPECIAL_ISSUES;
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -115,16 +115,15 @@ export default class EstablishClaim extends BaseForm {
       specialIssuesRegionalOffice: ''
     };
     SPECIAL_ISSUES.forEach((issue) => {
-      let camelCaseIssue = StringUtil.convertToCamelCase(issue);
 
       // Check special issue boxes based on what was sent from the database
       let snakeCaseIssueSubstring =
-        StringUtil.camelCaseToSnakeCase(camelCaseIssue).substring(0, 60);
+        StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
 
-      this.state.specialIssues[camelCaseIssue] =
+      this.state.specialIssues[issue.specialIssue] =
         new FormField(props.task.appeal[snakeCaseIssueSubstring]);
 
-      this.state.specialIssues[camelCaseIssue].issue = issue;
+      this.state.specialIssues[issue.specialIssue].issue = issue.display;
     });
   }
 
@@ -143,18 +142,13 @@ export default class EstablishClaim extends BaseForm {
   }
 
   containsRoutedSpecialIssues = () => {
-    return Decision.ROUTING_SPECIAL_ISSUES.some((issue) => {
+    return specialIssueFilters.routedSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue].value;
     });
   }
 
-  supportedSpecialIssues = () => {
-    return [...Decision.ROUTING_SPECIAL_ISSUES,
-      ...Decision.REGIONAL_OFFICE_SPECIAL_ISSUES];
-  }
-
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return this.supportedSpecialIssues().some((issue) => {
+    return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
       return this.state.specialIssues[issue.specialIssue || issue].value;
     });
   }
@@ -227,11 +221,11 @@ export default class EstablishClaim extends BaseForm {
           loading: false
         });
         handleAlert(
-        'error',
-        'System Error',
-        'Something went wrong on our end. We were not able to create an End Product.' +
-        ' Please try again later.'
-      );
+          'error',
+          'System Error',
+          'Something went wrong on our end. We were not able to create an End Product.' +
+          ' Please try again later.'
+        );
       });
   }
 
@@ -386,6 +380,7 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handlePageChange(FORM_PAGE);
         }
+
       });
   }
 
@@ -430,7 +425,12 @@ export default class EstablishClaim extends BaseForm {
       loading: true
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`).
+    let data = ApiUtil.convertToSnakeCase({
+      emailRoId: this.getSpecialIssuesRegionalOfficeCode(),
+      emailRecipient: this.getSpecialIssuesEmail().join(', ')
+    });
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
       then(() => {
         this.reloadPage();
       }, () => {
@@ -462,7 +462,8 @@ export default class EstablishClaim extends BaseForm {
         'error',
         'Error',
         'There was an error while completing the task. Please try again later'
-        );
+      );
+
       this.setState({
         loading: false
       });
@@ -489,13 +490,15 @@ export default class EstablishClaim extends BaseForm {
     // default needs to be reset in case the user has navigated back in the form
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
 
-    Decision.REGIONAL_OFFICE_SPECIAL_ISSUES.forEach((issue) => {
-      if (this.state.specialIssues[issue].value) {
+    // Go through the special issues, and for any regional issues, set SOJ to RO
+    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
+      if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
-    Decision.ROUTING_SPECIAL_ISSUES.forEach((issue) => {
+    // Go through all the special issues, this time looking for routed issues
+    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
@@ -524,12 +527,22 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getCityAndState(regionalOfficeKey) {
+    if (!regionalOfficeKey) {
+      return null;
+    }
+
     return `${regionalOfficeKey} - ${
       this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
       this.props.regionalOfficeCities[regionalOfficeKey].state}`;
   }
 
   getSpecialIssuesRegionalOffice() {
+    return this.getCityAndState(
+      this.getSpecialIssuesRegionalOfficeCode(this.state.specialIssuesRegionalOffice)
+    );
+  }
+
+  getSpecialIssuesRegionalOfficeCode() {
     if (this.state.specialIssuesRegionalOffice === 'PMC') {
       return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
     } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
@@ -540,13 +553,13 @@ export default class EstablishClaim extends BaseForm {
       return null;
     }
 
-    return this.getCityAndState(this.state.specialIssuesRegionalOffice);
+    return this.state.specialIssuesRegionalOffice;
   }
 
   getRegionalOfficeFromConstant(constant) {
     let regionalOfficeKey = this.props.task.appeal.regional_office_key;
 
-    return this.getCityAndState(constant[regionalOfficeKey]);
+    return constant[regionalOfficeKey];
   }
 
   getStationOfJurisdiction() {
@@ -602,13 +615,13 @@ export default class EstablishClaim extends BaseForm {
       return;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.emailAddress,
-          specialIssuesRegionalOffice: issue.regionalOffice
+          specialIssuesEmail: issue.unhandled.emailAddress,
+          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
         });
       }
     });
@@ -624,7 +637,7 @@ export default class EstablishClaim extends BaseForm {
       return true;
     }
 
-    Decision.UNHANDLED_SPECIAL_ISSUES.forEach((issue) => {
+    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
       if (this.state.specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }
@@ -635,7 +648,6 @@ export default class EstablishClaim extends BaseForm {
 
   render() {
     let {
-      loading,
       cancelModalDisplay,
       history,
       modalSubmitLoading,
@@ -650,17 +662,16 @@ export default class EstablishClaim extends BaseForm {
     return (
       <div>
         <EstablishClaimProgressBar
-          isConfirmation={false}
-          isReviewDecision={true}
+          isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
           <EstablishClaimDecision
+            loading={this.state.loading}
             decisionType={this.state.reviewForm.decisionType}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
-            loading={loading}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             specialIssues={specialIssues}
@@ -669,6 +680,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isAssociatePage() &&
           <AssociatePage
+            loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
             decisionType={this.state.reviewForm.decisionType.value}
@@ -685,18 +697,19 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isFormPage() &&
           <EstablishClaimForm
+            loading={this.state.loading}
             claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
-            loading={loading}
             validModifiers={this.validModifiers()}
           />
         }
         { this.isNotePage() &&
           <EstablishClaimNote
+            loading={this.state.loading}
             appeal={this.props.task.appeal}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
@@ -707,6 +720,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isEmailPage() &&
           <EstablishClaimEmail
+            loading={this.state.loading}
             appeal={this.props.task.appeal}
             handleCancelTask={this.handleCancelTask}
             handleEmailSubmit={this.handleEmailPageSubmit}
