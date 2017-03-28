@@ -22,34 +22,34 @@ const Certification = ({ certification }) => {
   let store = createStore(certificationReducers, certification);
 
   return <Provider store={store}>
-    <BrowserRouter>
-      <div>
+    <div>
+      <BrowserRouter>
+        <div>
         <CertificationProgressBar/>
-        <Route path="/certifications">
-          <Route path="/new/:vacols_id"
-            component={EntryPointRedirect}/>
-            {/* TODO: Right now we're still using Rails to render the pages
-            we display in scenarios where the appeal is not ready
-            for certification (e.g. mismatched documents, already certified appeal).
-            when we finish implementing the rest of certification v2,
-            port those over here */}
-          <Route path="/:vacols_id/check_documents"
-            component={DocumentsCheck}/>
-          <Route path="/:vacols_id/confirm_hearing"
-            component={ConfirmHearing}/>
-          <Route path="/:vacols_id/sign_and_certify"
-            component={SignAndCertify}/>
-          <Route path="/:vacols_id/already_certified"
-            component={AlreadyCertified}/>
-          <Route path="/:vacols_id/not_ready"
-            component={NotReady}/>
-          <Route path="/:vacols_id/mismatched_documents"
-            component={DocumentsCheck}/>
-            {/* TODO: should we add the cancel certification link
-            and continue links here, or keep them on their own page? */}
-        </Route>
+        <Route path="/certifications/new/:vacols_id"
+          component={EntryPointRedirect}/>
+          {/* TODO: Right now we're still using Rails to render the pages
+          we display in scenarios where the appeal is not ready
+          for certification (e.g. mismatched documents, already certified appeal).
+          when we finish implementing the rest of certification v2,
+          port those over here */}
+        <Route path="/certifications/:vacols_id/check_documents"
+          component={DocumentsCheck}/>
+        <Route path="/certifications/:vacols_id/confirm_hearing"
+          component={ConfirmHearing}/>
+        <Route path="/certifications/:vacols_id/sign_and_certify"
+          component={SignAndCertify}/>
+        <Route path="/certifications/:vacols_id/already_certified"
+          component={AlreadyCertified}/>
+        <Route path="/certifications/:vacols_id/not_ready"
+          component={NotReady}/>
+        <Route path="/certifications/:vacols_id/mismatched_documents"
+          component={DocumentsCheck}/>
+          {/* TODO: should we add the cancel certification link
+          and continue links here, or keep them on their own page? */}
       </div>
-    </BrowserRouter>;
+      </BrowserRouter>
+    </div>
   </Provider>;
 };
 
