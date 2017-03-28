@@ -1,0 +1,2 @@
+// actions
+export const CHANGE_SPECIAL_ISSUE = 'CHANGE_SPECIAL_ISSUE';

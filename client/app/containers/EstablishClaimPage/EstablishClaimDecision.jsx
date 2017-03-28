@@ -33,6 +33,20 @@ export default class EstablishClaimDecision extends React.Component {
     return this.props.task.appeal.decisions.length > 1;
   }
 
+  handleSpecialIssueFieldChange = (form, field) => (value) => {
+    establishClaim({
+      type: Constants.CHANGE_SPECIAL_ISSUE,
+
+    })
+
+
+    // let stateObject = {};
+    //
+    // stateObject[form] = { ...this.state[form] };
+    // stateObject[form][field].value = value;
+    // this.setState(stateObject);
+  };
+
   render() {
     let {
       loading,
@@ -191,7 +205,7 @@ export default class EstablishClaimDecision extends React.Component {
                   id={issue.specialIssue}
                   label={issue.node || issue.display}
                   name={issue.specialIssue}
-                  onChange={handleFieldChange('specialIssues', issue.specialIssue)}
+                  onChange={this.handleSpecialIssueFieldChange('specialIssues', issue.specialIssue)}
                     key={index}
                     {...specialIssues[issue.specialIssue]}
                 />;
