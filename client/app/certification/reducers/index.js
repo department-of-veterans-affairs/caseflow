@@ -11,15 +11,15 @@
    switch (action.type) {
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {
-       hearingDocumentIsInVbms: action.hearingDocumentIsInVbms
+       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms
      });
    case Constants.CHANGE_TYPE_OF_FORM9:
      return Object.assign({}, state, {
-       form9Type: action.form9Type
+       form9Type: action.payload.form9Type
      });
    case Constants.CHANGE_TYPE_OF_HEARING:
      return Object.assign({}, state, {
-       hearingType: action.hearingType
+       hearingType: action.payload.hearingType
      });
    default:
      return state;

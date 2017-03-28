@@ -166,19 +166,25 @@ const mapDispatchToProps = (dispatch) => {
     onHearingDocumentChange: (hearingDocumentIsInVbms) => {
       dispatch({
         type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
-        hearingDocumentIsInVbms
+        payload: {
+          hearingDocumentIsInVbms
+        }
       });
     },
     onTypeOfForm9Change: (form9Type) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_FORM9,
-        form9Type
+        payload: {
+          form9Type
+        }
       });
     },
     onHearingTypeChange: (hearingType) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
-        hearingType
+        payload: {
+          hearingType
+        }
       });
     }
   };
