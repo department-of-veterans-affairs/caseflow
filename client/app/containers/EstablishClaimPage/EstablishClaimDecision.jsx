@@ -7,8 +7,9 @@ import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
+import { connect } from 'react-redux';
 
-export default class EstablishClaimDecision extends React.Component {
+export class EstablishClaimDecision extends React.Component {
   constructor(props) {
     super(props);
     let endProductButtonText;
@@ -32,20 +33,6 @@ export default class EstablishClaimDecision extends React.Component {
   hasMultipleDecisions() {
     return this.props.task.appeal.decisions.length > 1;
   }
-
-  handleSpecialIssueFieldChange = (form, field) => (value) => {
-    establishClaim({
-      type: Constants.CHANGE_SPECIAL_ISSUE,
-
-    })
-
-
-    // let stateObject = {};
-    //
-    // stateObject[form] = { ...this.state[form] };
-    // stateObject[form][field].value = value;
-    // this.setState(stateObject);
-  };
 
   render() {
     let {
@@ -243,3 +230,40 @@ EstablishClaimDecision.propTypes = {
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
+
+/*
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSpecialIssueFieldChange: (specialIssue) => {
+      dispatch({
+          type: Constants.CHANGE_SPECIAL_ISSUE,
+          payload: {
+              specialIssue: specialIssue
+          }
+      });
+    }
+  }
+}
+
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const ConnectedEstablishClaimDecision = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(EstablishClaimDecision);
+
+export default ConnectedEstablishClaimDecision;

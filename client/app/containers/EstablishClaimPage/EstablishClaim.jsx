@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 
 import React, { PropTypes } from 'react';
+import { createStore } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
@@ -20,6 +21,7 @@ import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
+import establishClaimReducers from '../../establishClaim/reducers/index';
 
 import { createHashHistory } from 'history';
 
@@ -61,6 +63,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -69,6 +72,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
+    this.store = createStore(establishClaimReducers, props);
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -660,7 +664,7 @@ export default class EstablishClaim extends BaseForm {
     } = this.props;
 
     return (
-      <div>
+      <Provider store={this.store}>
         <EstablishClaimProgressBar
           isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
@@ -762,7 +766,7 @@ export default class EstablishClaim extends BaseForm {
             {...this.state.cancelModal.cancelFeedback}
           />
         </Modal>}
-      </div>
+      </Provider>
     );
   }
 }

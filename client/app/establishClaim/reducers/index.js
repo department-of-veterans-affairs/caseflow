@@ -5,6 +5,13 @@ const establishClaim = function(state, action) {
     case Constants.CHANGE_SPECIAL_ISSUE:
       return Object.assign({}, state, {
 
+          // let stateObject = {};
+          //
+          // stateObject[form] = { ...this.state[form] };
+          // stateObject[form][field].value = value;
+          // this.setState(stateObject);
+
+
       });
     default:
       return state;
