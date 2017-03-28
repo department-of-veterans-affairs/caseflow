@@ -25,7 +25,7 @@ export default class StyleGuideIndex extends React.Component {
               <a href="#tabs">Tabs</a>
             </li>
             <li>
-              <a href="#loading_button">Loading Button</a>
+              <a href="#loading_buttons">Loading Buttons</a>
             </li>
             <li>
               <a href="#tables">Tables</a>
