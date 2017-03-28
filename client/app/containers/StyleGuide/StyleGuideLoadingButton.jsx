@@ -5,24 +5,35 @@ import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideLoadingButton extends React.Component {
+  constructor(props) {
+    super(props);
 
-  startLoading = () => {
-    this.setState({
-      loading: true
-    });
+    this.state = {
+      loading: {
+        default: false,
+        cert: false,
+        dispatch: false,
+        efolder: false,
+        feedback: false
+      }
+    };
   }
 
-  reset = () => {
-    this.setState({
-      loading: false
-    });
+  toggle = (event) => {
+    let state = this.state;
+    let attr = event.target.getAttribute("id").split("-")[1];
+
+    state.loading[attr] = !state.loading[attr];
+    this.setState(state);
   }
 
   render() {
+    let buttonName = "See It In Action";
+
     return <div>
       <StyleGuideComponentTitle
-        title="Loading Button"
-        id="loading_button"
+        title="Loading Buttons"
+        id="loading_buttons"
         link="StyleGuideLoadingButton.jsx"
       />
       <p>
@@ -31,14 +42,81 @@ export default class StyleGuideLoadingButton extends React.Component {
         beside a spinning icon.
       </p>
       <p>
+        <span className="loading-button-example">Default:</span>
         <Button
-          name={"See It In Action"}
-          onClick={this.startLoading}
-          loading={this.state && this.state.loading}
+          id="btn-default"
+          name={buttonName}
+          onClick={this.toggle}
+          loading={this.state.loading.default}
         />
         <Button
+          id="reset-default"
           name={"Reset"}
-          onClick={this.reset}
+          onClick={this.toggle}
+          classNames={["cf-btn-link"]}
+        />
+      </p>
+      <p>
+        <span className="loading-button-example">Dispatch:</span>
+        <Button
+          app="dispatch"
+          id="btn-dispatch"
+          name={buttonName}
+          onClick={this.toggle}
+          loading={this.state.loading.dispatch}
+        />
+        <Button
+          id="reset-dispatch"
+          name={"Reset"}
+          onClick={this.toggle}
+          classNames={["cf-btn-link"]}
+        />
+      </p>
+      <p>
+        <span className="loading-button-example">Certification:</span>
+        <Button
+          app="cert"
+          id="btn-cert"
+          name={buttonName}
+          onClick={this.toggle}
+          loading={this.state.loading.cert}
+        />
+        <Button
+          id="reset-cert"
+          name={"Reset"}
+          onClick={this.toggle}
+          classNames={["cf-btn-link"]}
+        />
+      </p>
+      <p>
+        <span className="loading-button-example">eFolder:</span>
+        <Button
+          app="efolder"
+          id="btn-efolder"
+          name={buttonName}
+          onClick={this.toggle}
+          loading={this.state.loading.efolder}
+        />
+        <Button
+          id="reset-efolder"
+          name={"Reset"}
+          onClick={this.toggle}
+          classNames={["cf-btn-link"]}
+        />
+      </p>
+      <p>
+        <span className="loading-button-example">Feedback:</span>
+        <Button
+          app="feedback"
+          id="btn-feedback"
+          name={buttonName}
+          onClick={this.toggle}
+          loading={this.state.loading.feedback}
+        />
+        <Button
+          id="reset-feedback"
+          name={"Reset"}
+          onClick={this.toggle}
           classNames={["cf-btn-link"]}
         />
       </p>
