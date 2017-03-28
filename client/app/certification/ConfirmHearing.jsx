@@ -5,6 +5,9 @@ import RadioField from '../components/RadioField';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
+
+
+
 // TODO: how should we organize content?
 // one school of thought is to put content
 // in its own separate file.
@@ -13,48 +16,49 @@ import * as Constants from './constants/constants';
 // putting content with them doesn't
 // cause file length bloat.
 
-export const hearingCheckText = `Check the appellant's eFolder for a hearing
+const hearingCheckText = `Check the appellant's eFolder for a hearing
 cancellation or request added after 09/01/2017, the date the Form 9
 (or statement in lieu of Form 9) was uploaded.`;
 
-export const hearingChangeQuestion = `Was a hearing cancellation or request added after
+const hearingChangeQuestion = `Was a hearing cancellation or request added after
 09/01/2017?`;
 // TODO: make into constant?
-export const hearingChangeAnswers = [
+const hearingChangeAnswers = [
   { displayText: 'Yes',
     value: 'true' },
   { displayText: 'No',
     value: 'false' }
 ];
 
-export const typeOfForm9Question = `Caseflow found the document below,
+const typeOfForm9Question = `Caseflow found the document below,
 labeled as a Form 9, from the appellant's eFolder. What type of
 substantive appeal is it?`;
 const typeOfForm9Answers = [
   { displayText: 'Form 9',
-    value: Constants.FORMAL_FORM9 },
+    value: Constants.form9Types.FORMAL_FORM9 },
   { displayText: 'Statement in lieu of Form 9',
-    value: Constants.INFORMAL_FORM9 }
+    value: Constants.form9Types.INFORMAL_FORM9 }
 ];
+
 
 const typeOfHearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
 const typeOfHearingAnswers = [{
   displayText: 'A. I do not want an optional board hearing',
-  value: Constants.NO_HEARING_DESIRED
+  value: Constants.hearingTypes.NO_HEARING_DESIRED
 }, {
   displayText: 'B. I want a hearing by videoconference at a local VA office.',
-  value: Constants.VIDEO
+  value: Constants.hearingTypes.VIDEO
 }, {
   displayText: 'C. I want a hearing in Washington, DC.',
-  value: Constants.WASHINGTON_DC
+  value: Constants.hearingTypes.WASHINGTON_DC
 }, {
   displayText: 'D. I want a hearing at a local VA office.',
-  value: Constants.TRAVEL_BOARD
+  value: Constants.hearingTypes.TRAVEL_BOARD
 }, {
   displayText: 'No box selected.',
-  value: Constants.HEARING_TYPE_NOT_SPECIFIED
+  value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
 }];
 
 /*
