@@ -4,7 +4,7 @@ class JobPrometheusMetricMiddleware
 
     yield
 
-  rescue => e
+  rescue
     PrometheusService.background_jobs_error_counter.increment(name: name)
 
     # reraise the same error. This lets Sidekiq's retry logic kick off
