@@ -93,7 +93,12 @@ class Task < ActiveRecord::Base
     end
 
     event :assign do
-      transitions from: :unassigned, to: :assigned, after: proc { |*args| assign_user(*args) }
+      transitions from: :unassigned, to: :assigned, after: (proc do |*args|
+        assign_user(*args)
+
+        # Temporarily needed while there are tasks created that don't have claim establishments
+        init_claim_establishment!
+      end)
     end
 
     event :start do
@@ -141,7 +146,6 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      review! if may_review?
       complete!(:completed, status: self.class.completion_status_code(:canceled))
     end
   end

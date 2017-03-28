@@ -11,7 +11,7 @@ export default class AssociatePage extends React.Component {
     super(props);
 
     this.state = {
-      loading: null,
+      epLoading: null,
       sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
   }
@@ -40,11 +40,12 @@ export default class AssociatePage extends React.Component {
       header: 'Select this EP',
       valueFunction: (endProduct) =>
         <Button
+          app="dispatch"
           id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
           name="Assign to Claim"
           classNames={["usa-button-outline"]}
           onClick={this.handleAssignEndProduct(endProduct)}
-          loading={this.state.loading === endProduct.benefit_claim_id}
+          loading={this.state.epLoading === endProduct.benefit_claim_id}
         />
     }
   ];
@@ -57,7 +58,7 @@ export default class AssociatePage extends React.Component {
     handleAlertClear();
 
     this.setState({
-      loading: endProduct.benefit_claim_id
+      epLoading: endProduct.benefit_claim_id
     });
 
     let data = ApiUtil.convertToSnakeCase({
@@ -71,7 +72,7 @@ export default class AssociatePage extends React.Component {
         window.location.reload();
       }, () => {
         this.setState({
-          loading: null
+          epLoading: null
         });
         handleAlert(
           'error',
@@ -90,10 +91,11 @@ export default class AssociatePage extends React.Component {
 
   render() {
     let {
+      handleSubmit,
       handleCancelTask,
       handleBackToDecisionReview,
-      handleSubmit,
-      hasAvailableModifers
+      hasAvailableModifers,
+      loading
     } = this.props;
 
     let alert, title;
@@ -154,9 +156,11 @@ export default class AssociatePage extends React.Component {
             classNames={["cf-btn-link", "cf-adjacent-buttons"]}
           />
           <Button
+            app="dispatch"
             name="Create new EP"
             onClick={handleSubmit}
             disabled={!hasAvailableModifers}
+            loading={loading}
           />
         </div>
       </div>

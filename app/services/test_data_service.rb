@@ -21,7 +21,7 @@ class TestDataService
     fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
 
     Appeal.find_each do |appeal|
-      Appeal::SPECIAL_ISSUE_COLUMNS.each do |special_issue|
+      Appeal::SPECIAL_ISSUES.keys.each do |special_issue|
         appeal.send("#{special_issue}=", false)
       end
       appeal.save
@@ -88,7 +88,9 @@ class TestDataService
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
     date_fmt = conn.quote(date)
-    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
+    MetricsService.timer("VACOLS: reset decision date for #{case_id}",
+                         service: :vacols,
+                         name: "reset_outcoding_date") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
@@ -104,7 +106,9 @@ class TestDataService
     conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
-    MetricsService.timer "VACOLS: reset decision date for #{case_id}" do
+    MetricsService.timer("VACOLS: reset decision date for #{case_id}",
+                         service: :vacols,
+                         name: "reset_location") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE BRIEFF

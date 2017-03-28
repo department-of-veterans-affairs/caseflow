@@ -21,6 +21,27 @@ describe User do
     end
   end
 
+  context "#roles" do
+    subject { user.roles }
+
+    context "when roles is nil" do
+      before { user.roles = nil }
+      it { is_expected.to eq([]) }
+    end
+
+    context "when roles has non-aliased roles" do
+      before { user.roles = ["System Admin", "Certify Appeal"] }
+      it { is_expected.to eq(["System Admin", "Certify Appeal"]) }
+    end
+
+    context "when has a role alias" do
+      before { user.roles = ["Manage Claims Establishme"] }
+      it "is expected to return the aliases as well" do
+        expect(subject).to include("Manage Claim Establishment", "Manage Claims Establishme")
+      end
+    end
+  end
+
   context "#timezone" do
     context "when ro is set" do
       subject { user.timezone }
