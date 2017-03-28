@@ -361,7 +361,7 @@ export default class EstablishClaim extends BaseForm {
       specialIssues: this.prepareSpecialIssues()
     });
 
-    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update_appeal`,
+    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update-appeal`,
       { data }).then(() => {
 
         this.setState({
