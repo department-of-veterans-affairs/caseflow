@@ -6,36 +6,28 @@ const PARSE_INT_RADIX = 10;
 
 export default class EstablishClaimCanceled extends React.Component {
 
-render() {
+  render() {
 
-  let {
-    availableTasks,
-    buttonText,
-    checklist,
-    firstHeader,
-    secondHeader,
-    totalCasesCompleted,
-    totalCasesToComplete,
-    employeeCount
-  } = this.props;
+    let {
+      availableTasks,
+      buttonText,
+      checklist,
+      firstHeader,
+      secondHeader,
+      totalCasesCompleted,
+      totalCasesToComplete,
+      employeeCount
+    } = this.props;
 
-    let casesAssigned, employeeCountInt,
-        hasQuotaReached, quotaReachedMessage, totalCases;
-
-    quotaReachedMessage = <h2 className="cf-msg-screen-deck">
-        Way to go! 💻💪🇺🇸<br/>
-        You have completed all of the total cases assigned to you today.
-    </h2>;
+    let casesAssigned, employeeCountInt, totalCases;
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
     casesAssigned = employeeCountInt > 0 ?
         Math.ceil(totalCases / employeeCountInt) : 0;
-    hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
     return <div>
-        <div>
         <EstablishClaimProgressBar
             isConfirmation={true}
         />
