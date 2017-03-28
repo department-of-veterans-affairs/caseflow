@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Not used yet. TODO: use it.
 const NotReady = () => {
   return <div>
     <div className="cf-txt-c cf-app-segment cf-app-segment--alt">

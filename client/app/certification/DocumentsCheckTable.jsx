@@ -1,7 +1,6 @@
 import React from 'react';
 import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
-// notfoundicon
 
 // TODO: refactor to use shared components where helpful
 const DocumentsCheckTable = (props) => {
@@ -24,29 +23,29 @@ const DocumentsCheckTable = (props) => {
 
       <tbody>
         <tr id="form9-match">
-          <td> { props.form9_match ? <FoundIcon/> : <NotFoundIcon/> } </td>
-          <td> Form 9 </td>
-          <td> {props.form9_date} </td>
-          <td> {props.form9_date} </td>
+          <td>{props.form9_match ? <FoundIcon/> : <NotFoundIcon/>}</td>
+          <td>Form 9</td>
+          <td>{props.form9_date}</td>
+          <td>{props.form9_date}</td>
         </tr>
         <tr id="nod-match">
-          <td> { props.nod_match ? <FoundIcon/> : <NotFoundIcon/> } </td>
-          <td> NOD </td>
-          <td> {props.nod_date} </td>
-          <td> {props.nod_date} </td>
+          <td>{props.nod_match ? <FoundIcon/> : <NotFoundIcon/>}</td>
+          <td>NOD</td>
+          <td>{props.nod_date}</td>
+          <td>{props.nod_date}</td>
         </tr>
         <tr id="soc-match">
-          <td> { props.soc_match ? <FoundIcon/> : <NotFoundIcon/> } </td>
-          <td> SOC </td>
-          <td> {props.soc_date} </td>
-          <td> {props.soc_date} </td>
+          <td>{props.soc_match ? <FoundIcon/> : <NotFoundIcon/>}</td>
+          <td>SOC</td>
+          <td>{props.soc_date}</td>
+          <td>{props.soc_date}</td>
         </tr>
-        { props.ssoc_dates.map((ssoc_date, index) =>
-          <tr key={index}>
+        {props.ssoc_dates.map((ssoc_date, index) =>
+          <tr id={"ssoc-${index + 1}-match"} key={index}>
             <td><FoundIcon/></td>
-            <td> SSOC { index+1 }</td>
-            <td> { ssoc_date} </td>
-            <td> { ssoc_date} </td>
+            <td>SSOC {index + 1}</td>
+            <td>{ssoc_date}</td>
+            <td>{ssoc_date}</td>
           </tr>
         )}
       </tbody>

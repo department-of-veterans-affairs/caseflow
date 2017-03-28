@@ -10,9 +10,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if verify_certification_v2_access
-      render "v2", layout: "application"
-    end
+    render "v2", layout: "application" if verify_certification_v2_access
 
     case status
     when :already_certified    then render "already_certified"
