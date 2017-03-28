@@ -27,8 +27,9 @@ export const hearingChangeAnswers = [
     value: 'false' }
 ];
 
-export const typeOfForm9Question = `Caseflow found the document below, labeled as a Form 9,
-from the appellant's eFolder. What type of substantive appeal is it?`;
+export const typeOfForm9Question = `Caseflow found the document below,
+labeled as a Form 9, from the appellant's eFolder. What type of
+substantive appeal is it?`;
 const typeOfForm9Answers = [
   { displayText: 'Form 9',
     value: Constants.FORMAL_FORM9 },
@@ -70,7 +71,7 @@ const typeOfHearingAnswers = [{
 *
  */
 // TODO: refactor to use shared components where helpful
-const _ConfirmHearing = ({
+const UnconnectedConfirmHearing = ({
     hearingDocumentIsInVbms,
     onHearingDocumentChange,
     form9Type,
@@ -142,19 +143,20 @@ const _ConfirmHearing = ({
     </div>;
 };
 
-/**
+/*
  * CONNECTED COMPONENT STUFF:
  *
  * the code below makes this into a "connected component"
  * which can read and update the redux store.
  * TODO: as a matter of convention, should we make the connecting
- * bits into their own file? Do we like the _Component/ Component
- * convention for connected and unconnected components? So many
+ * bits into their own file?
+ * What naming convention should we use
+ * for connected and unconnected components? So many
  * questions.
  *
  */
 
-/**
+/*
  * These functions call `dispatch`, a Redux method
  * that causes the reducer in reducers/index.js
  * to return a new state object.
@@ -182,7 +184,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-/**
+/*
  * This function tells us which parts of the global
  * application state should be passed in as props to
  * the rendered component.
@@ -196,7 +198,7 @@ const mapStateToProps = (state) => {
 };
 
 
-/**
+/*
  * Creates a component that's connected to the Redux store
  * using the state & dispatch map functions and the
  * ConfirmHearing function.
@@ -204,6 +206,6 @@ const mapStateToProps = (state) => {
 const ConfirmHearing = connect(
   mapStateToProps,
   mapDispatchToProps
-)(_ConfirmHearing);
+)(UnconnectedConfirmHearing);
 
 export default ConfirmHearing;
