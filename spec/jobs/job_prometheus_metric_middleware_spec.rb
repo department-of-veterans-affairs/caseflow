@@ -9,6 +9,7 @@ describe JobPrometheusMetricMiddleware do
     }
     @yield_called = false
     allow(PrometheusService).to receive(:push_metrics!).and_return(nil)
+    @labels = { name: "FunTestJob" }
   end
 
 
@@ -16,14 +17,21 @@ describe JobPrometheusMetricMiddleware do
     let (:call) { @middleware.call(nil, @msg, :default) { @yield_called = true } }
 
     it "always increments attempts counter" do
-      labels = { name: "FunTestJob" }
 
-      expect(PrometheusService.background_jobs_attempt_counter.values[labels]).to eq(nil)
+      expect(PrometheusService.background_jobs_attempt_counter.values[@labels]).to eq(nil)
       expect(@yield_called).to be_falsey
       call
       expect(@yield_called).to be_truthy
-      expect(PrometheusService.background_jobs_attempt_counter.values[labels]).to eq(1)
+      expect(PrometheusService.background_jobs_attempt_counter.values[@labels]).to eq(1)
     end
 
+    it "increments error counter on error" do
+      expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(nil)
+     expect {
+       @middleware.call(nil, @msg, :default) { fail('test') }
+     }.to raise_error
+
+     expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(1)
+    end
   end
 end

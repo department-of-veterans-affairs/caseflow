@@ -1,8 +1,9 @@
 class JobPrometheusMetricMiddleware
   def call(worker, msg, queue)
+    name = msg["args"][0]["job_class"]
+
     yield
 
-    name = msg["args"][0]["job_class"]
   rescue => e
     PrometheusService.background_jobs_error_counter.increment(name: name)
 
