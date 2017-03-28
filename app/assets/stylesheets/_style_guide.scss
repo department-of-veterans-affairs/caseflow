@@ -91,3 +91,14 @@ pre {
   text-align: right;
   margin-right: 2rem;
 }
+
+.show-change {
+  position: relative;
+
+  em {
+    position: absolute;
+    left: 0;
+    bottom: -2rem;
+    font-size: 90%;
+  }
+}
