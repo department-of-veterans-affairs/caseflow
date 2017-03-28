@@ -28,6 +28,8 @@ export default class StyleGuideLoadingButton extends React.Component {
   }
 
   render() {
+    let button_name = "See It In Action";
+
     return <div>
       <StyleGuideComponentTitle
         title="Loading Buttons"
@@ -40,9 +42,10 @@ export default class StyleGuideLoadingButton extends React.Component {
         beside a spinning icon.
       </p>
       <p>
+        <span className="loading-button-example">Default:</span>
         <Button
           id="btn-default"
-          name={"See It In Action"}
+          name={button_name}
           onClick={this.toggle}
           loading={this.state.loading.default}
         />
@@ -54,10 +57,11 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
       </p>
       <p>
+        <span className="loading-button-example">Dispatch:</span>
         <Button
           app="dispatch"
           id="btn-dispatch"
-          name={"Dispatch: See It In Action"}
+          name={button_name}
           onClick={this.toggle}
           loading={this.state.loading.dispatch}
         />
@@ -69,10 +73,11 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
       </p>
       <p>
+        <span className="loading-button-example">Certification:</span>
         <Button
           app="cert"
           id="btn-cert"
-          name={"Cert: See It In Action"}
+          name={button_name}
           onClick={this.toggle}
           loading={this.state.loading.cert}
         />
@@ -84,10 +89,11 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
       </p>
       <p>
+        <span className="loading-button-example">eFolder:</span>
         <Button
           app="efolder"
           id="btn-efolder"
-          name={"Efolder: See It In Action"}
+          name={button_name}
           onClick={this.toggle}
           loading={this.state.loading.efolder}
         />
@@ -99,10 +105,11 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
       </p>
       <p>
+        <span className="loading-button-example">Feedback:</span>
         <Button
           app="feedback"
           id="btn-feedback"
-          name={"Feedback: See It In Action"}
+          name={button_name}
           onClick={this.toggle}
           loading={this.state.loading.feedback}
         />
