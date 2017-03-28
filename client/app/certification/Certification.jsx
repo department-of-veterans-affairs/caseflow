@@ -39,17 +39,17 @@ const Certification = ({ certification }) => {
             component={ConfirmHearing}/>
           <Route path="/:vacols_id/sign_and_certify"
             component={SignAndCertify}/>
-          <Route path="/certifications/:vacols_id/already_certified"
+          <Route path="/:vacols_id/already_certified"
             component={AlreadyCertified}/>
-          <Route path="/certifications/:vacols_id/not_ready"
+          <Route path="/:vacols_id/not_ready"
             component={NotReady}/>
-          <Route path="/certifications/:vacols_id/mismatched_documents"
+          <Route path="/:vacols_id/mismatched_documents"
             component={DocumentsCheck}/>
             {/* TODO: should we add the cancel certification link
             and continue links here, or keep them on their own page? */}
         </Route>
       </div>
-    </BrowserRouter>
+    </BrowserRouter>;
   </Provider>;
 };
 
