@@ -11,7 +11,7 @@ export default class EstablishClaimComplete extends React.Component {
     super(props);
 
     this.state = {
-      isLoading: false
+      loading: false
     };
   }
 
@@ -64,10 +64,11 @@ export default class EstablishClaimComplete extends React.Component {
         </span>
 
         <Button
+          app="dispatch"
           name={buttonText}
           onClick={this.establishNextClaim}
           classNames={["usa-button-primary", "cf-push-right"]}
-          loading={this.state.isLoading}
+          loading={this.state.loading}
         />
       </div>;
     };
@@ -109,7 +110,7 @@ export default class EstablishClaimComplete extends React.Component {
 
   establishNextClaim = () => {
     this.setState({
-      isLoading: true
+      loading: true
     });
 
     ApiUtil.patch(`/dispatch/establish-claim/assign`).
@@ -123,7 +124,7 @@ export default class EstablishClaimComplete extends React.Component {
       );
 
       this.setState({
-        isLoading: false
+        loading: false
       });
     });
   };
