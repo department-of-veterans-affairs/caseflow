@@ -22,7 +22,7 @@ RSpec.feature "Admin" do
   end
 
   scenario "Establish Claim page" do
-    visit "/admin/establish_claim"
+    visit "/admin/establish-claim"
 
     # View existing tasks
     expect(Task.count).to eq(1)
@@ -73,7 +73,7 @@ RSpec.feature "Admin" do
     page.click_on "Create Task"
 
     # ensure new task is created
-    expect(page).to have_current_path("/admin/establish_claim")
+    expect(page).to have_current_path("/admin/establish-claim")
     expect(page).to have_content "Task created"
     expect(Task.count).to eq(3)
 

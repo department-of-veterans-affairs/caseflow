@@ -33,8 +33,7 @@ export default class EstablishClaimNote extends BaseForm {
       noteForm: {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
-      },
-      isLoading: false
+      }
     };
   }
 
@@ -71,7 +70,7 @@ export default class EstablishClaimNote extends BaseForm {
     let noteFor = [];
 
     if (this.props.displayVacolsNote) {
-      noteFor.push('VACOLS Updated');
+      noteFor.push('Confirm VACOLS Update');
     }
     if (this.props.displayVbmsNote) {
       noteFor.push('Add VBMS Note');
@@ -93,8 +92,8 @@ export default class EstablishClaimNote extends BaseForm {
 
   vacolsSection() {
     return <div>
-      <p>To ensure this claim is routed correctly, we will take the following
-      steps in VACOLS:</p>
+      <p>To ensure this claim is routed correctly, Caseflow will make the following
+      updates to VACOLS:</p>
 
       <ol className="cf-bold-ordered-list">
         <li type="A">
@@ -140,10 +139,6 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   handleSubmit = () => {
-    this.setState({
-      isLoading: true
-    });
-
     this.props.handleSubmit(this.vacolsNoteText());
   }
 
@@ -182,7 +177,7 @@ export default class EstablishClaimNote extends BaseForm {
               classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
               onClick={this.handleSubmit}
-              loading={this.state.isLoading}
+              loading={this.props.loading}
             />
           </div>
         </div>

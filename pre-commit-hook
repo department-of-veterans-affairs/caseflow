@@ -1,0 +1,8 @@
+#!/bin/bash
+# This is a precommit hook. If you'd like to run it before commits,
+# from the root directory of the repo. run:
+#
+# cd .git/hooks && ln -s ../../pre-commit-hook pre-commit
+set -e
+
+rake lint
