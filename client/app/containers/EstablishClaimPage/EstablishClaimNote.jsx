@@ -70,7 +70,7 @@ export default class EstablishClaimNote extends BaseForm {
     let noteFor = [];
 
     if (this.props.displayVacolsNote) {
-      noteFor.push('VACOLS Updated');
+      noteFor.push('Confirm VACOLS Update');
     }
     if (this.props.displayVbmsNote) {
       noteFor.push('Add VBMS Note');
@@ -92,8 +92,8 @@ export default class EstablishClaimNote extends BaseForm {
 
   vacolsSection() {
     return <div>
-      <p>To ensure this claim is routed correctly, we will take the following
-      steps in VACOLS:</p>
+      <p>To ensure this claim is routed correctly, Caseflow will make the following
+      updates to VACOLS:</p>
 
       <ol className="cf-bold-ordered-list">
         <li type="A">
