@@ -3,19 +3,9 @@ import RequiredIndicator from './RequiredIndicator';
 
 
 /**
+ * Radio button component.
  *
- * Usage example:
- *
- * const options = [
-    {displayText:"Hearing changed", value: "true" },
-    {displayText:"Hearing did not change", value: "false"}
-  ]
- * <RadioField name={"Did hearing change?"}
-      required={true}
-      options={}
-      value={hearingDocumentIsInVbms}
-      onChange={onHearingDocumentChange}/>
- *
+ * See StyleGuideCheckBoxes.jsx for usage example.
  *
  */
 

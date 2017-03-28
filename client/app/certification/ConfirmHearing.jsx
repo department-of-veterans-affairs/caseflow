@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
 
-
-
 // TODO: how should we organize content?
 // one school of thought is to put content
 // in its own separate file.
