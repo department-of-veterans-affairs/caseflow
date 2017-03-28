@@ -7,5 +7,6 @@
  * styles with .react-<component_name>-<style_name>
  *
  *= require ./_loading_container.scss
+ *= require ./_comment.scss
  */
 
