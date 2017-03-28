@@ -28,7 +28,7 @@ export default class StyleGuideLoadingButton extends React.Component {
   }
 
   render() {
-    let button_name = "See It In Action";
+    let buttonName = "See It In Action";
 
     return <div>
       <StyleGuideComponentTitle
@@ -45,7 +45,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         <span className="loading-button-example">Default:</span>
         <Button
           id="btn-default"
-          name={button_name}
+          name={buttonName}
           onClick={this.toggle}
           loading={this.state.loading.default}
         />
@@ -61,7 +61,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         <Button
           app="dispatch"
           id="btn-dispatch"
-          name={button_name}
+          name={buttonName}
           onClick={this.toggle}
           loading={this.state.loading.dispatch}
         />
@@ -77,7 +77,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         <Button
           app="cert"
           id="btn-cert"
-          name={button_name}
+          name={buttonName}
           onClick={this.toggle}
           loading={this.state.loading.cert}
         />
@@ -93,7 +93,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         <Button
           app="efolder"
           id="btn-efolder"
-          name={button_name}
+          name={buttonName}
           onClick={this.toggle}
           loading={this.state.loading.efolder}
         />
@@ -109,7 +109,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         <Button
           app="feedback"
           id="btn-feedback"
-          name={button_name}
+          name={buttonName}
           onClick={this.toggle}
           loading={this.state.loading.feedback}
         />
