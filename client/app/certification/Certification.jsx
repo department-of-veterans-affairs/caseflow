@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import DocumentsCheckSuccess from './DocumentsCheckSuccess';
+import DocumentsCheck from './DocumentsCheck';
+import AlreadyCertified from './AlreadyCertified';
+import NotReady from './NotReady';
 import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
 import ProgressBar from '../components/ProgressBar';
@@ -44,7 +46,13 @@ const Certification = () => {
         when we finish implementing the rest of certification v2,
         port those over here */}
       <Route path="/certifications/:vacols_id/check_documents"
-        component={DocumentsCheckSuccess}/>
+        component={DocumentsCheck}/>
+      <Route path="/certifications/:vacols_id/already_certified"
+        component={AlreadyCertified}/>
+      <Route path="/certifications/:vacols_id/not_ready"
+        component={NotReady}/>
+      <Route path="/certifications/:vacols_id/mismatched_documents"
+        component={DocumentsCheck}/>
       <Route path="/certifications/:vacols_id/confirm_hearing"
         component={ConfirmHearing}/>
       <Route path="/certifications/:vacols_id/sign_and_certify"
