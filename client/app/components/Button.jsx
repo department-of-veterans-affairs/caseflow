@@ -24,7 +24,7 @@ export default class Button extends React.Component {
     } = this.props;
 
     let LoadingIndicator = () => {
-      app = app || 'dispatch';
+      app = app || 'default';
 
       children = loadingText || "Loading...";
 
