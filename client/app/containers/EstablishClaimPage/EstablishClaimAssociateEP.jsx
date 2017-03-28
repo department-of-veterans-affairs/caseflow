@@ -11,8 +11,7 @@ export default class AssociatePage extends React.Component {
     super(props);
 
     this.state = {
-      isLoading: null,
-      submitting: null,
+      epLoading: null,
       sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
   }
@@ -46,7 +45,7 @@ export default class AssociatePage extends React.Component {
           name="Assign to Claim"
           classNames={["usa-button-outline"]}
           onClick={this.handleAssignEndProduct(endProduct)}
-          loading={this.state.isLoading === endProduct.benefit_claim_id}
+          loading={this.state.epLoading === endProduct.benefit_claim_id}
         />
     }
   ];
@@ -59,7 +58,7 @@ export default class AssociatePage extends React.Component {
     handleAlertClear();
 
     this.setState({
-      isLoading: endProduct.benefit_claim_id
+      epLoading: endProduct.benefit_claim_id
     });
 
     let data = ApiUtil.convertToSnakeCase({
@@ -73,7 +72,7 @@ export default class AssociatePage extends React.Component {
         window.location.reload();
       }, () => {
         this.setState({
-          isLoading: null
+          epLoading: null
         });
         handleAlert(
           'error',
@@ -90,19 +89,13 @@ export default class AssociatePage extends React.Component {
     return time2 - time1;
   }
 
-  handleSubmit = () => {
-    this.setState({
-      submitting: true
-    });
-
-    this.props.handleSubmit();
-  }
-
   render() {
     let {
+      handleSubmit,
       handleCancelTask,
       handleBackToDecisionReview,
-      hasAvailableModifers
+      hasAvailableModifers,
+      loading
     } = this.props;
 
     let alert, title;
@@ -165,9 +158,9 @@ export default class AssociatePage extends React.Component {
           <Button
             app="dispatch"
             name="Create new EP"
-            onClick={this.handleSubmit}
+            onClick={handleSubmit}
             disabled={!hasAvailableModifers}
-            loading={this.state.submitting}
+            loading={loading}
           />
         </div>
       </div>

@@ -19,7 +19,6 @@ export default class EstablishClaimDecision extends React.Component {
       endProductButtonText = "Route claim";
     }
     this.state = {
-      isLoading: false,
       endProductButtonText
     };
   }
@@ -30,21 +29,15 @@ export default class EstablishClaimDecision extends React.Component {
     });
   }
 
-  handleSubmit = () => {
-    this.setState({
-      isLoading: true
-    });
-
-    this.props.handleSubmit();
-  }
-
   hasMultipleDecisions() {
     return this.props.task.appeal.decisions.length > 1;
   }
 
   render() {
     let {
+      loading,
       decisionType,
+      handleSubmit,
       handleCancelTask,
       handleFieldChange,
       pdfLink,
@@ -216,8 +209,8 @@ export default class EstablishClaimDecision extends React.Component {
             <Button
               app="dispatch"
               name={this.state.endProductButtonText}
-              onClick={this.handleSubmit}
-              loading={this.state.isLoading}
+              onClick={handleSubmit}
+              loading={loading}
             />
           </div>
         </div>
