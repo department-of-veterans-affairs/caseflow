@@ -252,11 +252,11 @@ class AppealRepository
   def self.upload_document_to_vbms(appeal, form8)
     @vbms_client ||= init_vbms_client
     document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-      response = initialize_upload(appeal, form8)
-      upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
-    else
-      upload_document_deprecated(appeal, form8)
-    end
+                 response = initialize_upload(appeal, form8)
+                 upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
+               else
+                 upload_document_deprecated(appeal, form8)
+               end
     document
   end
 
@@ -270,7 +270,7 @@ class AppealRepository
     request = VBMS::Requests::InitializeUpload.new(content_hash: content_hash,
                                                    filename: filename,
                                                    file_number: appeal.sanitized_vbms_id,
-                                                   va_receive_date: Time.now,
+                                                   va_receive_date: uploadable_document.upload_date,
                                                    doc_type: uploadable_document.document_type_id,
                                                    source: "VACOLS",
                                                    subject: uploadable_document.document_type,
@@ -288,7 +288,7 @@ class AppealRepository
   def self.upload_document_deprecated(appeal, uploadable_document)
     request = VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
-      Time.zone.now,
+      uploadable_document.upload_date,
       appeal.veteran_first_name,
       appeal.veteran_middle_initial,
       appeal.veteran_last_name,

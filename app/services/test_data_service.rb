@@ -3,6 +3,8 @@
 class TestDecisionDocument
   include UploadableDocument
 
+  attr_accessor :upload_date
+
   def document_type
     "BVA Decision"
   end
@@ -54,6 +56,7 @@ class TestDataService
     # Upload test decision document for the date
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
     uploadable_document = TestDecisionDocument.new
+    uploadable_document.upload_date = date
     log "Uploading decision for #{appeal.sanitized_vbms_id}"
     document = AppealRepository.upload_document_to_vbms(appeal, uploadable_document)
     log "VBMS Test Decision Document upload response: #{document}"
