@@ -2,9 +2,7 @@ import React from 'react';
 import ProgressBar from '../components/ProgressBar';
 
 // TODO: use the redux store to grab data and render this.
-const CertificationProgressBar = ({ match }) => {
-  debugger;
-
+const CertificationProgressBar = () => {
   return <ProgressBar
     sections = {
     [
