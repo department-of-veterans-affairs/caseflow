@@ -254,6 +254,8 @@ describe('Pdf', () => {
       });
     });
   });
+
   /* eslint-enable max-statements */
 });
+
 /* eslint-enable no-unused-expressions */

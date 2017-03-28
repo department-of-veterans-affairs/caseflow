@@ -12,12 +12,10 @@ describe JobPrometheusMetricMiddleware do
     @labels = { name: "FunTestJob" }
   end
 
-
   context ".call" do
-    let (:call) { @middleware.call(nil, @msg, :default) { @yield_called = true } }
+    let :call { @middleware.call(nil, @msg, :default) { @yield_called = true } }
 
     it "always increments attempts counter" do
-
       expect(PrometheusService.background_jobs_attempt_counter.values[@labels]).to eq(nil)
       expect(@yield_called).to be_falsey
       call
@@ -27,11 +25,11 @@ describe JobPrometheusMetricMiddleware do
 
     it "increments error counter on error" do
       expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(nil)
-     expect {
-       @middleware.call(nil, @msg, :default) { fail('test') }
-     }.to raise_error
+      expect do
+        @middleware.call(nil, @msg, :default) { fail('test') }
+      end.to raise_error
 
-     expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(1)
+      expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(1)
     end
   end
 end

@@ -72,7 +72,6 @@ class PrometheusService
         find_or_register_metric(:counter,
                                 :background_jobs_error_counter,
                                 "counter of all sidekiq background jobs that errored")
-
     end
 
     # This method pushes all registered metrics to the prometheus pushgateway

@@ -1,5 +1,5 @@
 class JobPrometheusMetricMiddleware
-  def call(worker, msg, queue)
+  def call(_worker, msg, _queue)
     name = msg["args"][0]["job_class"]
 
     yield
