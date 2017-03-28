@@ -27,7 +27,6 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
     }
 
     return firstAnnotation.page - secondAnnotation.page;
-
   }
 
   constructor(annotations) {
