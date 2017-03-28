@@ -7,7 +7,14 @@
  * these are conventionally broken out into separate "actions" files
  * that would live at client/app/actions/**.js.
  */
- const certification = function(state, action) {
+
+ const initialState = {
+   hearingDocumentIsInVbms: null,
+   form9Type: null,
+   hearingType: null
+ };
+
+ const certification = function(state = initialState, action) {
    switch (action.type) {
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {
