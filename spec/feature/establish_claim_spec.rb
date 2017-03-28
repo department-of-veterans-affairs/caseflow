@@ -425,7 +425,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         click_loading_button "Create End Product"
 
-        expect(page).to have_content("Route Claim: VACOLS Updated, Add VBMS Note")
+        expect(page).to have_content("Route Claim: Confirm VACOLS Update, Add VBMS Note")
 
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
@@ -476,7 +476,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
         click_loading_button "Route claim"
 
-        expect(page).to have_content("Route Claim: VACOLS Updated")
+        expect(page).to have_content("Route Claim: Confirm VACOLS Update")
 
         # Validate special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
