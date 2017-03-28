@@ -53,6 +53,7 @@ describe('Pdf', () => {
       });
 
       wrapper = mount(<Pdf
+        comments={[]}
         documentId={1}
         file="test.pdf"
         id={pdfId}
@@ -248,8 +249,8 @@ describe('Pdf', () => {
             yPosition: 20
           };
 
-          wrapper.instance().onPageClick('viewport', 0)(event);
-          expect(onPageClick.calledWith('viewport', 0, coordinate)).to.be.true;
+          wrapper.instance().onPageClick(0)(event);
+          expect(onPageClick.calledWith(0, coordinate)).to.be.true;
         });
       });
     });
