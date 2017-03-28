@@ -213,7 +213,7 @@ class AppealRepository
   def self.location_after_dispatch(appeal:)
     return if appeal.full_grant?
 
-    return "51" if appeal.vamc?
+    return "54" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
     return "50" if appeal.special_issues?
 
