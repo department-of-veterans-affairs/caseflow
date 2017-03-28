@@ -105,6 +105,7 @@ export default class PdfUI extends React.Component {
       </div>
       <div>
         <Pdf
+          comments={this.props.comments}
           documentId={this.props.doc.id}
           file={this.props.file}
           pdfWorker={this.props.pdfWorker}
@@ -112,6 +113,7 @@ export default class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
+          onCommentClick={this.props.onCommentClick}
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
@@ -157,15 +159,18 @@ export default class PdfUI extends React.Component {
 }
 
 PdfUI.propTypes = {
-  doc: PropTypes.shape(
-    {
-      filename: PropTypes.string,
-      id: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number]),
-      type: PropTypes.string,
-      receivedAt: PropTypes.string
-    }).isRequired,
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    content: PropTypes.string,
+    uuid: PropTypes.number
+  })),
+  doc: PropTypes.shape({
+    filename: PropTypes.string,
+    id: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number]),
+    type: PropTypes.string,
+    receivedAt: PropTypes.string
+  }).isRequired,
   file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
@@ -173,5 +178,6 @@ PdfUI.propTypes = {
   onShowList: PropTypes.func,
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
-  onSetLabel: PropTypes.func
+  onSetLabel: PropTypes.func,
+  onCommentClick: PropTypes.func
 };
