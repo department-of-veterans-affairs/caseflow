@@ -206,38 +206,36 @@ export default class Pdf extends React.Component {
     if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.setupPdf(nextProps.file);
-    }
-
-    if (nextProps.scale !== this.props.scale) {
+    } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
+    } else {
+      // Determine which comments have changed, and
+      // rerender the pages the changed comments are on.
+      // The symmetric difference gives us which comments
+      // were added or removed.
+      let symmetricDifference = this.symmetricDifference(
+        new Set(nextProps.comments.map((comment) => comment.uuid)),
+        new Set(this.props.comments.map((comment) => comment.uuid)));
+
+      let pagesToUpdate = new Set();
+      let allComments = [...nextProps.comments, ...this.props.comments];
+
+      // Find the pages for the added/removed comments
+      symmetricDifference.forEach((uuid) => {
+        let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
+        pagesToUpdate.add(page);
+      });
+
+      // Rerender all these pages to add/remove the comment boxes as necessary.
+      pagesToUpdate.forEach((page) => {
+        let index = page - 1;
+
+        this.rerenderPage(index);
+      });
     }
-
-    // Determine which comments have changed, and
-    // rerender the pages the changed comments are on.
-    // The symmetric difference gives us which comments
-    // were added or removed.
-    let symmetricDifference = this.symmetricDifference(
-      new Set(nextProps.comments.map((comment) => comment.uuid)),
-      new Set(this.props.comments.map((comment) => comment.uuid)));
-
-    let pagesToUpdate = new Set();
-    let allComments = [...nextProps.comments, ...this.props.comments];
-
-    // Find the pages for the added/removed comments
-    symmetricDifference.forEach((uuid) => {
-      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
-
-      pagesToUpdate.add(page);
-    });
-
-    // Rerender all these pages to add/remove the comment boxes as necessary.
-    pagesToUpdate.forEach((page) => {
-      let index = page - 1;
-
-      this.rerenderPage(index);
-    });
   }
 
   render() {

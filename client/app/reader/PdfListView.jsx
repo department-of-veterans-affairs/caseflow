@@ -59,14 +59,14 @@ export default class PdfListView extends React.Component {
         }
       },
       {
-        header: <div onClick={this.props.changeSortState('date')}>
+        header: <div id="receipt-date-header" onClick={this.props.changeSortState('date')}>
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) =>
           boldUnreadContent(formatDate(doc.receivedAt), doc)
       },
       {
-        header: <div onClick={this.props.changeSortState('type')}>
+        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
           Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) => boldUnreadContent(doc.type, doc)

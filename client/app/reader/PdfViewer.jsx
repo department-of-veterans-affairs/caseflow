@@ -169,6 +169,7 @@ export default class PdfViewer extends React.Component {
 
   // Consider moving this down into Pdf.jsx
   onJumpToComment = (uuid) => {
+    console.log('here '+ uuid);
     PDFJSAnnotate.
       getStoreAdapter().
       getAnnotation(this.props.doc.id, uuid).

@@ -71,6 +71,7 @@ const ApiUtil = {
   },
 
   post(url, options = {}) {
+    console.log(options);
     return request.
       post(url).
       set(this.headers(options.headers)).
