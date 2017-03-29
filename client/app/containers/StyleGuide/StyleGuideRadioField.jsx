@@ -99,7 +99,7 @@ export default class StyleGuideRadioField extends React.Component {
       <p>This field hides its label:</p>
       <RadioField
         label="This label is hidden:"
-        name="radio_example_5"
+        name="radio_example_7"
         options={[
           { displayText: "One",
             value: "1" },
