@@ -24,7 +24,10 @@ class TasksController < ApplicationController
   def show
     start_task!
 
-    return render "canceled" if task.canceled?
+    if task.canceled?
+      populate_completed_stats
+      return render "canceled"
+    end
 
     if task.assigned_existing_ep?
       populate_completed_stats

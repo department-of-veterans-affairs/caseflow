@@ -11,12 +11,10 @@ export default class EstablishClaimCanceled extends React.Component {
     let {
       availableTasks,
       buttonText,
-      checklist,
-      firstHeader,
+      employeeCount,
       secondHeader,
       totalCasesCompleted,
-      totalCasesToComplete,
-      employeeCount
+      totalCasesToComplete
     } = this.props;
 
     let casesAssigned, employeeCountInt, totalCases;
@@ -27,6 +25,13 @@ export default class EstablishClaimCanceled extends React.Component {
     casesAssigned = employeeCountInt > 0 ?
         Math.ceil(totalCases / employeeCountInt) : 0;
 
+    console.log(availableTasks);
+    console.log(buttonText);
+    console.log(employeeCount);
+    console.log(secondHeader);
+    console.log(totalCasesCompleted);
+    console.log(totalCasesToComplete);
+
     return <div>
         <EstablishClaimProgressBar
             isConfirmation={true}
@@ -34,7 +39,7 @@ export default class EstablishClaimCanceled extends React.Component {
 
         <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
             <h1 className="cf-red-text cf-msg-screen-heading">Claim Processing Discontinued</h1>
-            <h2 className="cf-msg-screen-deck">{secondHeading}</h2>
+            <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
             <p className="cf-msg-screen-text">
                 You can now establish the next claim or go back to your Work History.</p>
         </div>
@@ -52,10 +57,8 @@ export default class EstablishClaimCanceled extends React.Component {
 EstablishClaimCanceled.propTypes = {
   availableTasks: PropTypes.bool,
   buttonText: PropTypes.string,
-  checklist: PropTypes.array,
   employeeCount: PropTypes.string,
-  firstHeader: PropTypes.string,
   secondHeader: PropTypes.string,
-  totalCasesAssigned: PropTypes.number,
-  totalCasesCompleted: PropTypes.number
+  totalCasesCompleted: PropTypes.number,
+  totalCasesToComplete: PropTypes.number
 };

@@ -1,6 +1,11 @@
 <% content_for :page_title do task.appeal.task_header end %>
 
 <%= react_component("BaseContainer", props: {
+  availableTasks: !!current_user_next_task,
+  buttonText: start_text,
+  employeeCount: Rails.cache.read('employee_count') || '0',
   page: "EstablishClaimCancel",
-  secondHeading: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch."
+  secondHeader: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch.",
+  totalCasesCompleted: @completed_count_today,
+  totalCasesToComplete: @to_complete_count
 }) %>
