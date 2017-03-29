@@ -259,6 +259,11 @@ describe Form8 do
     it { is_expected.to eq("178") }
   end
 
+  context "#upload_date" do
+    subject { Form8.new.upload_date }
+    it { is_expected.to_not eq nil }
+  end
+
   context ".from_appeal" do
     before do
       Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
