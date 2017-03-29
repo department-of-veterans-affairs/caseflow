@@ -14,12 +14,11 @@ export default function StyleGuideTextInput() {
         id="text_input"
         link="StyleGuideTextInput.jsx"
       />
-    <h3>Inline Text Input</h3>
+    <h3>Inline Input Field</h3>
       <p>
-        Text input allows users to insert numbers or text into a field.
-        The width of the input field will vary according to the context,
-        whether it is for a number or name of a state, so that users are primed
-        to know what to type in.
+        Inline input fields give designers and developers the liberty to customize
+        the width and spacing of each field in a row. Input fields can be found
+        placed after labels and descriptions to provide users context and actionable steps.
       </p>
     <InlineForm>
       <TextField
