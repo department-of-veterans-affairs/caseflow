@@ -25,7 +25,6 @@ export default class RadioField extends React.Component {
     }
 
     return this.state.value === option;
-
   }
 
   isVertical() {
