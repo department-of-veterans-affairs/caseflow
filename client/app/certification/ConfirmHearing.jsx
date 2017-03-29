@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import LoadingContainer from '../components/LoadingContainer';
-import RadioField from '../components/RadioField';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+
+import Footer from './Footer';
+import LoadingContainer from '../components/LoadingContainer';
+import RadioField from '../components/RadioField';
 
 
 // TODO: how should we organize content?
@@ -28,6 +29,27 @@ const hearingChangeAnswers = [
     value: 'false' }
 ];
 
+const hearingChangeFoundQuestion = `What did the appellant request
+in the document you found?`;
+const hearingChangeFoundAnswers = [
+  {
+    displayText: 'They cancelled their hearing request.',
+    value: Constants.hearingTypes.HEARING_CANCELLED
+  },
+  {
+    displayText: 'They requested a board hearing via videoconference',
+    value: Constants.hearingTypes.VIDEO,
+  },
+  {
+    displayText: 'They requested a board hearing in Washington, DC.',
+    value: Constants.hearingTypes.WASHINGTON_DC
+  },
+  {
+    displayText: 'They requested a board hearing at a local VA office.',
+    value: Constants.hearingTypes.TRAVEL_BOARD
+  }
+];
+
 const typeOfForm9Question = `Caseflow found the document below,
 labeled as a Form 9, from the appellant's eFolder. What type of
 substantive appeal is it?`;
@@ -39,10 +61,10 @@ const typeOfForm9Answers = [
 ];
 
 
-const typeOfHearingQuestion = `Which box did the appellant select for the Optional
+const formalForm9HearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
-const typeOfHearingAnswers = [{
+const formalForm9HearingAnswers = [{
   displayText: 'A. I do not want an optional board hearing',
   value: Constants.hearingTypes.NO_HEARING_DESIRED
 }, {
@@ -57,6 +79,26 @@ const typeOfHearingAnswers = [{
 }, {
   displayText: 'No box selected.',
   value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
+}];
+
+const informalForm9HearingQuestion = `What optional board hearing preference,
+if any, did the appellant request?`;
+const informalForm9HearingAnswers  = [{
+  displayText: `Does not want an optional board hearing
+  or did not mention a board hearing`,
+  value: Constants.hearingTypes.NO_HEARING_DESIRED
+}, {
+  displayText: 'Wants a board hearing and did not specify what type',
+  value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
+}, {
+  displayText: 'Wants a board hearing by videoconference',
+  value: Constants.hearingTypes.VIDEO
+}, {
+  displayText: 'Wants a board hearing in Washington, DC.',
+  value: Constants.hearingTypes.WASHINGTON_DC
+}, {
+  displayText: 'Wants a board hearing at their regional office',
+  value: Constants.hearingTypes.TRAVEL_BOARD
 }];
 
 /*
@@ -82,6 +124,7 @@ const UnconnectedConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
+
   return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -107,6 +150,12 @@ const UnconnectedConfirmHearing = ({
           value={hearingDocumentIsInVbms}
           onChange={onHearingDocumentChange}/>
 
+        <RadioField name={hearingChangeFoundQuestion}
+          required={true}
+          options={hearingChangeFoundAnswers}
+          value={hearingType}
+          onChange={onHearingTypeChange}/>
+
         <RadioField name={typeOfForm9Question}
           required={true}
           options={typeOfForm9Answers}
@@ -123,25 +172,23 @@ const UnconnectedConfirmHearing = ({
           </iframe>
         </LoadingContainer>
 
-        <RadioField name={typeOfHearingQuestion}
-          options={typeOfHearingAnswers}
+        <RadioField name={formalForm9HearingQuestion}
+          options={formalForm9HearingAnswers}
+          value={hearingType}
+          required={true}
+          onChange={onHearingTypeChange}/>
+
+        <RadioField name={informalForm9HearingQuestion}
+          options={informalForm9HearingAnswers}
           value={hearingType}
           required={true}
           onChange={onHearingTypeChange}/>
       </div>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel Certification
-        </a>
-      </div>
-
-      <Link to={`/certifications/${match.params.vacols_id}/sign_and_certify`}>
-        <button type="button" className="cf-push-right">
-          Continue
-        </button>
-      </Link>
+      <Footer
+        nextPageUrl={
+          `/certifications/${match.params.vacols_id}/sign_and_certify`
+        }/>
     </div>;
 };
 
