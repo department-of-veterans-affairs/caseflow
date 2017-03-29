@@ -34,13 +34,6 @@ export default class EstablishClaimComplete extends React.Component {
       Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
-    console.log(availableTasks);
-    console.log(buttonText);
-    console.log(employeeCount);
-    console.log(secondHeader);
-    console.log(totalCasesCompleted);
-    console.log(totalCasesToComplete);
-
     return <div>
       <EstablishClaimProgressBar
         isConfirmation={true}

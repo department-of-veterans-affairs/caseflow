@@ -25,18 +25,7 @@ export default class EstablishClaimCanceled extends React.Component {
     casesAssigned = employeeCountInt > 0 ?
         Math.ceil(totalCases / employeeCountInt) : 0;
 
-    console.log(availableTasks);
-    console.log(buttonText);
-    console.log(employeeCount);
-    console.log(secondHeader);
-    console.log(totalCasesCompleted);
-    console.log(totalCasesToComplete);
-
     return <div>
-        <EstablishClaimProgressBar
-            isConfirmation={true}
-        />
-
         <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
             <h1 className="cf-red-text cf-msg-screen-heading">Claim Processing Discontinued</h1>
             <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
