@@ -21,8 +21,14 @@
   vertical-align: top;
 }
 
+input {
+  &[type=number] {
+    display: inline;
+  }
+}
+
 //TODO(marian): add to commons
-.cf-inline-field {
+.cf-inline-form {
   label,
   input {
     display: inline;

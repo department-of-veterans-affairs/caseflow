@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
-import InlineField from '../../components/InlineField';
+import InlineForm from '../../components/InlineForm';
 
 export default class TasksManagerEmployeeCount extends React.Component {
   render() {
@@ -13,7 +13,7 @@ export default class TasksManagerEmployeeCount extends React.Component {
     } = this.props;
 
     return <div>
-      <InlineField>
+      <InlineForm>
           <TextField
             label="Enter the number of people working today"
             name="employeeCount"
@@ -28,7 +28,7 @@ export default class TasksManagerEmployeeCount extends React.Component {
             onClick={handleEmployeeCountUpdate}
             disabled={!employeeCountForm.employeeCount.value}
           />
-      </InlineField>
+      </InlineForm>
     </div>;
   }
 }
