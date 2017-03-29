@@ -5,8 +5,8 @@ import RadioField from '../components/RadioField';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
-const certifyingOfficialTitalQuestion = 'Title of certifying official:';
-const certifyingOfficialTitleAnswers = [{
+
+const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
   value: Constants.certifyingOfficialTitles.DECISION_REVIEW_OFFICER
 }, {
@@ -25,8 +25,16 @@ const certifyingOfficialTitleAnswers = [{
 
 
 const UnconnectedSignAndCertify = ({
+    certifyingOffice,
+    onCertifyingOfficeChange,
+    certifyingUsername,
+    onCertifyingUsernameChange,
+    certifyingOfficialName,
+    onCertifyingOfficialNameChange,
     certifyingOfficialTitle,
-    onCertifyingOfficialTitleChange
+    onCertifyingOfficialTitleChange,
+    certificationDate,
+    onCertificationDateChange
 }) => {
   return <div>
     <form noValidate id="end_product">
@@ -34,12 +42,32 @@ const UnconnectedSignAndCertify = ({
         <h2>Sign and Certify</h2>
         <p>Fill in information about yourself below to sign this certification.</p>
 
+        <TextField
+          name="Name and location of certifying office:"
+          value={certifyingOffice}
+          required={true}
+          onChange={onCertifyingOfficeChange}/>
+        <TextField
+          name="Organizational elements certifying appeal:"
+          value={certifyingUsername}
+          required={true}
+          onChange={onCertifyingUsernameChange}/>
+        <TextField
+          name="Name of certifying official:"
+          value={certifyingOfficialName}
+          required={true}
+          onChange={onCertifyingOfficialNameChange}/>
         <RadioField
-          name={certifyingOfficialTitalQuestion}
-          options={certifyingOfficialTitleAnswers}
+          name="Title of certifying official:"
+          options={certifyingOfficialTitleOptions}
           value={certifyingOfficialTitle}
           required={true}
           onChange={onCertifyingOfficialTitleChange}/>
+        <DateSelector
+          name="Decision Date:"
+          value={certificationDate}
+          required={true}
+          onChange={onCertificationDateChange}/>
       </div>
     </form>
 
@@ -57,6 +85,30 @@ const UnconnectedSignAndCertify = ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    onCertifyingOfficeChange: (certifyingOffice) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL,
+        payload: {
+          certifyingOffice
+        }
+      });
+    },
+    onCertifyingUsernameChange: (certifyingUsername) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_USERNAME,
+        payload: {
+          certifyingUsername
+        }
+      });
+    },
+    onCertifyingOfficialNameChange: (certifyingOfficialName) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL_NAME,
+        payload: {
+          certifyingOfficialName
+        }
+      });
+    },
     onCertifyingOfficialTitleChange: (certifyingOfficialTitle) => {
       dispatch({
         type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE,
@@ -64,13 +116,26 @@ const mapDispatchToProps = (dispatch) => {
           certifyingOfficialTitle
         }
       });
+    },
+    onCertificationDateChange: (certificationDate) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFICATION_DATE,
+        payload: {
+          certificationDate
+        }
+      });
     }
+
   };
 };
 
 const mapStateToProps = (state) => {
   return {
-    certifyingOfficialTitle: state.certifyingOfficialTitle
+    certifyingOffice: state.certifyingOffice,
+    certifyingUsername: state.certifyingUsername,
+    certifyingOfficialName: state.certifyingOfficialName,
+    certifyingOfficialTitle: state.certifyingOfficialTitle,
+    certificationDate: state.certificationDate
   };
 };
 
