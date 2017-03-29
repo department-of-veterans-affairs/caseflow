@@ -144,8 +144,6 @@ export default class PdfViewer extends React.Component {
 
     this.onCommentChange();
 
-    UI.addEventListener('annotation:click', this.onCommentClick);
-
     window.addEventListener('keydown', this.keyListener);
 
     UI.enableEdit();
