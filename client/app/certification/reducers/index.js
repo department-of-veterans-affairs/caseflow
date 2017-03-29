@@ -26,7 +26,8 @@
      });
    case Constants.CHANGE_TYPE_OF_HEARING:
      return Object.assign({}, state, {
-       hearingType: action.payload.hearingType
+       hearingType: action.payload.hearingType,
+       hearingTypeFromQuestion: action.payload.hearingTypeFromQuestion
      });
    default:
      return state;

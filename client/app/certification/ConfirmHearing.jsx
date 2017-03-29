@@ -38,7 +38,7 @@ const hearingChangeFoundAnswers = [
   },
   {
     displayText: 'They requested a board hearing via videoconference',
-    value: Constants.hearingTypes.VIDEO,
+    value: Constants.hearingTypes.VIDEO
   },
   {
     displayText: 'They requested a board hearing in Washington, DC.',
@@ -83,7 +83,7 @@ const formalForm9HearingAnswers = [{
 
 const informalForm9HearingQuestion = `What optional board hearing preference,
 if any, did the appellant request?`;
-const informalForm9HearingAnswers  = [{
+const informalForm9HearingAnswers = [{
   displayText: `Does not want an optional board hearing
   or did not mention a board hearing`,
   value: Constants.hearingTypes.NO_HEARING_DESIRED
@@ -122,6 +122,7 @@ const UnconnectedConfirmHearing = ({
     onTypeOfForm9Change,
     hearingType,
     onHearingTypeChange,
+    hearingTypeFromQuestion,
     match
 }) => {
 
@@ -150,39 +151,56 @@ const UnconnectedConfirmHearing = ({
           value={hearingDocumentIsInVbms}
           onChange={onHearingDocumentChange}/>
 
-        <RadioField name={hearingChangeFoundQuestion}
-          required={true}
-          options={hearingChangeFoundAnswers}
-          value={hearingType}
-          onChange={onHearingTypeChange}/>
+        {
+          hearingDocumentIsInVbms === 'true' &&
+          <RadioField name={hearingChangeFoundQuestion}
+            required={true}
+            options={hearingChangeFoundAnswers}
+            value={hearingTypeFromQuestion === 'VBMS' ? hearingType : null}
+            onChange={onHearingTypeChange.bind(this, 'VBMS')}/>
+        }
 
-        <RadioField name={typeOfForm9Question}
-          required={true}
-          options={typeOfForm9Answers}
-          value={form9Type}
-          onChange={onTypeOfForm9Change}/>
+        {
+          hearingDocumentIsInVbms === 'false' &&
+          <RadioField name={typeOfForm9Question}
+            required={true}
+            options={typeOfForm9Answers}
+            value={form9Type}
+            onChange={onTypeOfForm9Change}/>
+        }
 
-        {/* TODO: restore the accessibility stuff here.
-          also, we should stop using rails pdf viewer */}
-        <LoadingContainer>
-          <iframe
-            className="cf-doc-embed cf-iframe-with-loading"
-            title="Form8 PDF"
-            src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
-          </iframe>
-        </LoadingContainer>
+        {
+          hearingDocumentIsInVbms === 'false' &&
+          /* TODO: restore the accessibility stuff here.
+            also, we should stop using rails pdf viewer */
+          <LoadingContainer>
+            <iframe
+              className="cf-doc-embed cf-iframe-with-loading"
+              title="Form8 PDF"
+              src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+            </iframe>
+          </LoadingContainer>
+        }
 
-        <RadioField name={formalForm9HearingQuestion}
-          options={formalForm9HearingAnswers}
-          value={hearingType}
-          required={true}
-          onChange={onHearingTypeChange}/>
+        {
+          hearingDocumentIsInVbms === 'false' &&
+          form9Type === Constants.form9Types.FORMAL_FORM9 &&
+          <RadioField name={formalForm9HearingQuestion}
+            options={formalForm9HearingAnswers}
+            value={hearingTypeFromQuestion === 'FORMAL_FORM9' ? hearingType : null}
+            required={true}
+            onChange={onHearingTypeChange.bind(this, 'FORMAL_FORM9')}/>
+        }
 
-        <RadioField name={informalForm9HearingQuestion}
-          options={informalForm9HearingAnswers}
-          value={hearingType}
-          required={true}
-          onChange={onHearingTypeChange}/>
+        {
+          hearingDocumentIsInVbms === 'false' &&
+          form9Type === Constants.form9Types.INFORMAL_FORM9 &&
+          <RadioField name={informalForm9HearingQuestion}
+            options={informalForm9HearingAnswers}
+            value={hearingTypeFromQuestion === 'INFORMAL_FORM9' ? hearingType : null}
+            required={true}
+            onChange={onHearingTypeChange.bind(this, 'INFORMAL_FORM9')}/>
+        }
       </div>
 
       <Footer
@@ -228,11 +246,12 @@ const mapDispatchToProps = (dispatch) => {
         }
       });
     },
-    onHearingTypeChange: (hearingType) => {
+    onHearingTypeChange: (hearingTypeFromQuestion, hearingType) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
         payload: {
-          hearingType
+          hearingType,
+          hearingTypeFromQuestion
         }
       });
     }
@@ -248,7 +267,8 @@ const mapStateToProps = (state) => {
   return {
     hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
     form9Type: state.form9Type,
-    hearingType: state.hearingType
+    hearingType: state.hearingType,
+    hearingTypeFromQuestion: state.hearingTypeFromQuestion
   };
 };
 

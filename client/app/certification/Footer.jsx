@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Footer = ({nextPageUrl}) => {
+const Footer = ({ nextPageUrl }) => {
   return <div>
     <div className="cf-app-segment">
       <a href="#confirm-cancel-certification"
