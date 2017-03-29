@@ -21,13 +21,13 @@
   vertical-align: top;
 }
 
+//TODO(marian): add to commons
 input {
   &[type=number] {
     display: inline;
   }
 }
 
-//TODO(marian): add to commons
 .cf-inline-form {
   label,
   input {
