@@ -102,3 +102,9 @@ pre {
     font-size: 75%;
   }
 }
+
+.cf-btn-link {
+  &.usa-button-disabled {
+    color: $color-gray-light;
+  }
+}
