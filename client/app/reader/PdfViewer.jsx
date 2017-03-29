@@ -123,15 +123,14 @@ export default class PdfViewer extends React.Component {
     }
   }
 
-  onCommentClick = (event) => {
+  onCommentClick = (uuid) => {
     let comments = [...this.state.comments];
 
     comments = comments.map((comment) => {
       let copy = { ...comment };
 
       copy.selected = false;
-      if (comment.uuid.toString() ===
-          event.getAttribute('data-pdf-annotate-id').toString()) {
+      if (comment.uuid === uuid) {
         copy.selected = true;
       }
 
@@ -152,13 +151,6 @@ export default class PdfViewer extends React.Component {
     UI.enableEdit();
   }
 
-  componentWillUnmount = () => {
-    const { UI } = PDFJSAnnotate;
-
-    UI.removeEventListener('annotation:click', this.onCommentClick);
-    window.removeEventListener('keydown', this.keyListener);
-  }
-
   componentDidUpdate = () => {
     if (this.state.isAddingComment) {
       let commentBox = document.getElementById('addComment');
@@ -169,7 +161,6 @@ export default class PdfViewer extends React.Component {
 
   // Consider moving this down into Pdf.jsx
   onJumpToComment = (uuid) => {
-    console.log('here '+ uuid);
     PDFJSAnnotate.
       getStoreAdapter().
       getAnnotation(this.props.doc.id, uuid).

@@ -151,6 +151,10 @@ export default class Pdf extends React.Component {
     });
   }
 
+  onCommentClick = (event) => {
+    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id')));
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
@@ -165,20 +169,13 @@ export default class Pdf extends React.Component {
 
     UI.enableEdit();
 
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.props.comments];
+    UI.addEventListener('annotation:click', this.onCommentClick);
+  }
 
-      let filteredComments = comments.filter((comment) => {
-        return comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString();
-      });
+  componentWillUnmount = () => {
+    const { UI } = PDFJSAnnotate;
 
-      if (filteredComments.length === 1) {
-        this.props.onCommentClick(filteredComments[0]);
-      } else if (filteredComments.length !== 0) {
-        throw new Error('Multiple comments with same uuid');
-      }
-    });
+    UI.removeEventListener('annotation:click', this.onCommentClick);
   }
 
   // Calculates the symmetric difference between two sets.
