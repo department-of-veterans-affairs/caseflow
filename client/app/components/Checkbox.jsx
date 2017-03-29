@@ -13,6 +13,9 @@ export default class Checkbox extends React.Component {
       value
     } = this.props;
 
+      console.log('we are in checkbox, line 8');
+      console.log(value);
+
     return <div className={`cf-form-checkboxes checkbox-wrapper-${name}`}>
       <div className="cf-form-checkbox">
 

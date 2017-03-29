@@ -1,13 +1,14 @@
 /* eslint-disable max-lines */
 
 import React, { PropTypes } from 'react';
-import { createStore } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
+
+import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -21,7 +22,6 @@ import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
-import establishClaimReducers from '../../establishClaim/reducers/index';
 
 import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -73,7 +73,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
-    this.store = createStore(establishClaimReducers, props);
+    this.store = createEstablishClaimStore(props);
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -119,17 +119,6 @@ export default class EstablishClaim extends BaseForm {
       specialIssuesEmail: '',
       specialIssuesRegionalOffice: ''
     };
-    SPECIAL_ISSUES.forEach((issue) => {
-
-      // Check special issue boxes based on what was sent from the database
-      let snakeCaseIssueSubstring =
-        StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
-
-      this.state.specialIssues[issue.specialIssue] =
-        new FormField(props.task.appeal[snakeCaseIssueSubstring]);
-
-      this.state.specialIssues[issue.specialIssue].issue = issue.display;
-    });
   }
 
   defaultPage() {
@@ -676,11 +665,9 @@ export default class EstablishClaim extends BaseForm {
               loading={this.state.loading}
               decisionType={this.state.reviewForm.decisionType}
               handleCancelTask={this.handleCancelTask}
-              handleFieldChange={this.handleFieldChange}
               handleSubmit={this.handleDecisionPageSubmit}
               pdfLink={pdfLink}
               pdfjsLink={pdfjsLink}
-              specialIssues={specialIssues}
               task={this.props.task}
             />
           }

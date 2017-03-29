@@ -8,6 +8,7 @@ import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
+import * as Constants from '../../establishClaim/constants/constants';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
@@ -40,12 +41,14 @@ export class EstablishClaimDecision extends React.Component {
       decisionType,
       handleSubmit,
       handleCancelTask,
-      handleFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
       task
     } = this.props;
+
+    console.log('decision render function');
+    console.log(specialIssues);
 
     let issueColumns = [
       {
@@ -192,9 +195,9 @@ export class EstablishClaimDecision extends React.Component {
                   id={issue.specialIssue}
                   label={issue.node || issue.display}
                   name={issue.specialIssue}
-                  onChange={this.handleSpecialIssueFieldChange('specialIssues', issue.specialIssue)}
-                    key={index}
-                    {...specialIssues[issue.specialIssue]}
+                  onChange={this.props.handleSpecialIssueFieldChange(issue.specialIssue)}
+                  key={index}
+                  value={specialIssues[issue.specialIssue]}
                 />;
               })
             }
@@ -223,7 +226,6 @@ export class EstablishClaimDecision extends React.Component {
 EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
-  handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
@@ -236,7 +238,10 @@ EstablishClaimDecision.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+  console.log('we are in decision map state to props');
+  console.log(state);
+  debugger;
   return {
     specialIssues: state.specialIssues
   };
@@ -244,17 +249,17 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleSpecialIssueFieldChange: (specialIssue) => {
+    handleSpecialIssueFieldChange: (specialIssue) => (value) => {
       dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
-              specialIssue: specialIssue
+              specialIssue: specialIssue,
+              value: value
           }
       });
     }
   }
 }
-
 
 /*
  * Creates a component that's connected to the Redux store
@@ -263,7 +268,9 @@ const mapDispatchToProps = (dispatch) => {
  */
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
+    null,
+{ pure: false }
 )(EstablishClaimDecision);
 
 export default ConnectedEstablishClaimDecision;
