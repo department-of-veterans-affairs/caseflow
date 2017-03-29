@@ -99,6 +99,6 @@ def find_label_for(val)
   find(:xpath, "//label[@for='#{val}']")
 end
 
-def click_loading_button(text)
+def click_cf_button(text)
   find(:xpath, "//button[contains(., '#{text}')]").trigger("click")
 end
