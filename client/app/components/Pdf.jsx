@@ -152,7 +152,7 @@ export default class Pdf extends React.Component {
   }
 
   onCommentClick = (event) => {
-    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id')));
+    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id'), 10));
   }
 
   componentDidMount = () => {
@@ -163,9 +163,9 @@ export default class Pdf extends React.Component {
     this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
-    // let scrollWindow = document.getElementById('scrollWindow');
+    let scrollWindow = document.getElementById('scrollWindow');
 
-    // scrollWindow.addEventListener('scroll', this.scrollEvent);
+    scrollWindow.addEventListener('scroll', this.scrollEvent);
 
     UI.enableEdit();
 
@@ -200,6 +200,10 @@ export default class Pdf extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // In general I think this is a good lint rule. However,
+    // I think the below statements are clearer
+    // with negative conditions.
+    /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.setupPdf(nextProps.file);
@@ -233,6 +237,7 @@ export default class Pdf extends React.Component {
         this.rerenderPage(index);
       });
     }
+    /* eslint-enable no-negated-condition */
   }
 
   render() {

@@ -12,6 +12,5 @@
     "test": "cd client && npm test",
     "lint": "cd client && npm run lint",
     "lint:fix": "cd client && npm run lint:fix"
-  },
-  "devDependencies": {}
+  }
 }

@@ -59,7 +59,9 @@ export default class PdfListView extends React.Component {
         }
       },
       {
-        header: <div id="receipt-date-header" onClick={this.props.changeSortState('date')}>
+        header: <div
+          id="receipt-date-header"
+          onClick={this.props.changeSortState('date')}>
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) =>

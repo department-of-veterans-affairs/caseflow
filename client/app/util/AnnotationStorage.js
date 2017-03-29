@@ -100,10 +100,9 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           this.storedAnnotations[documentId].sort(this.sortAnnotations);
 
           let data = ApiUtil.convertToSnakeCase({ annotation });
-          
+
           ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
               then(() => {
-                console.log('on success');
                 resolve(annotation);
                 this.onCommentChange();
               }, () => {

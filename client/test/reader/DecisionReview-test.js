@@ -1,29 +1,37 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
 import DecisionReviewer from '../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
-import { eventually } from 'chai-as-promised';
 import { documents } from '../data/documents';
 import { annotations } from '../data/annotations';
 
 import { asyncTest, pause } from '../helpers/AsyncTests';
-import { apiPatch, apiPost, apiDelete } from '../helpers/ApiUtilStub';
+import ApiUtilStub from '../helpers/ApiUtilStub';
 
-import { pdfjsRenderPage } from '../helpers/PdfJsStub';
+import PdfJsStub from '../helpers/PdfJsStub';
 
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
-describe.only('DecisionReviewer', () => {
+describe('DecisionReviewer', () => {
   let wrapper;
 
   beforeEach(() => {
+    PdfJsStub.beforeEach();
+    ApiUtilStub.beforeEach();
+
     wrapper = mount(<DecisionReviewer
       appealDocuments={documents}
       annotations={annotations}
       pdfWorker="worker"
       url="url"
     />, { attachTo: document.getElementById('app') });
+  });
+
+  afterEach(() => {
+    ApiUtilStub.afterEach();
+    PdfJsStub.afterEach();
   });
 
   context('PDF View', () => {
@@ -34,7 +42,9 @@ describe.only('DecisionReviewer', () => {
 
       it('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].filename).
+          simulate('mouseUp');
         await pause();
 
         expect(wrapper.find('PdfViewer')).to.have.length(1);
@@ -48,52 +58,64 @@ describe.only('DecisionReviewer', () => {
     context('zooming buttons', () => {
       it('render pdf at different scales', asyncTest(async () => {
         // Click on first document link
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].filename).
+          simulate('mouseUp');
 
         // Verify when we click zoom in, we render the PDF zoomed in
-        pdfjsRenderPage.resetHistory();
+        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomIn').simulate('click');
         await pause();
-        expect(pdfjsRenderPage.calledWith(sinon.match.number, sinon.match({ scale: 1.3 }))).to.be.true;
-        
+        expect(PdfJsStub.pdfjsRenderPage.calledWith(sinon.match.number,
+          sinon.match({ scale: 1.3 }))).to.be.true;
+
         // Verify when we click zoom out, we render the PDF zoomed out
-        pdfjsRenderPage.resetHistory();
+        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomOut').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.calledWith(sinon.match.number, sinon.match({ scale: 1 }))).to.be.true;
+        expect(PdfJsStub.pdfjsRenderPage.calledWith(sinon.match.number,
+          sinon.match({ scale: 1 }))).to.be.true;
       }));
     });
 
     context('navigation buttons', () => {
       it('move to the next and previous pdfs', asyncTest(async() => {
         // Click on first document link
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].filename).
+          simulate('mouseUp');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: documents[0].id }))).to.be.true;
+        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
+          sinon.match({ documentId: documents[0].id }))).to.be.true;
 
         // Next button moves us to the next page
-        pdfjsRenderPage.resetHistory();
+        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: documents[1].id }))).to.be.true;
+        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
+          sinon.match({ documentId: documents[1].id }))).to.be.true;
 
         // Previous button moves us to the previous page
-        pdfjsRenderPage.resetHistory();
+        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(pdfjsRenderPage.alwaysCalledWith(sinon.match.number, sinon.match({ documentId: documents[0].id }))).to.be.true;
+        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
+          sinon.match({ documentId: documents[0].id }))).to.be.true;
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
         // Filter documents on the second document's comment
-        wrapper.find('input').simulate('change', { target: { value: annotations[0].comment } });
+        wrapper.find('input').simulate('change',
+          { target: { value: annotations[0].comment } });
 
         // Enter the pdf view
-        wrapper.find('a').findWhere((link) => link.text() === documents[1].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[1].filename).
+          simulate('mouseUp');
 
         // Verify the arrow navigations keys are not present
         expect(wrapper.find('#button-next')).to.have.length(0);
@@ -105,37 +127,50 @@ describe.only('DecisionReviewer', () => {
     });
 
     context('labels', () => {
-      it('send the correct data when clicked and highlights the right label', asyncTest(async() => {
-        // Enter the pdf view
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+      it('send the correct data when clicked and highlights the right label',
+        asyncTest(async() => {
+          // Enter the pdf view
+          wrapper.find('a').findWhere(
+            (link) => link.text() === documents[0].filename).
+            simulate('mouseUp');
 
-        // Click on the decision label
-        apiPatch.resetHistory();
-        wrapper.find('.cf-pdf-bookmark-decisions').simulate('click');
-        await pause();
+          // Click on the decision label
+          ApiUtilStub.apiPatch.resetHistory();
+          wrapper.find('.cf-pdf-bookmark-decisions').simulate('click');
+          await pause();
 
-        // Verify the decisions label is selected, and that we send an api request
-        expect(wrapper.find('.cf-pdf-bookmark-decisions').parent().hasClass('cf-selected-label')).to.be.true;
-        expect(apiPatch.calledWith(`/document/${documents[0].id}/set-label`, sinon.match({ data: { label: 'decisions' } }))).to.be.true;
+          // Verify the decisions label is selected, and that we send an api request
+          expect(wrapper.find('.cf-pdf-bookmark-decisions').
+            parent().
+            hasClass('cf-selected-label')).to.be.true;
+          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+            sinon.match({ data: { label: 'decisions' } }))).to.be.true;
 
-        // Click on a different label
-        apiPatch.resetHistory();
-        wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
-        await pause();
+          // Click on a different label
+          ApiUtilStub.apiPatch.resetHistory();
+          wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
+          await pause();
 
-        // Verify the procedural label is selected, and that we send an api request
-        expect(wrapper.find('.cf-pdf-bookmark-procedural').parent().hasClass('cf-selected-label')).to.be.true;
-        expect(apiPatch.calledWith(`/document/${documents[0].id}/set-label`, sinon.match({ data: { label: 'procedural' } }))).to.be.true;
+          // Verify the procedural label is selected, and that we send an api request
+          expect(wrapper.find('.cf-pdf-bookmark-procedural').
+            parent().
+            hasClass('cf-selected-label')).to.be.true;
+          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+            sinon.match({ data: { label: 'procedural' } }))).to.be.true;
 
-        // Click on the same label
-        apiPatch.resetHistory();
-        wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
-        await pause();
-        
-        // Verify the procedural label is not selected, and that we send an api request to deselect
-        expect(wrapper.find('.cf-pdf-bookmark-procedural').parent().hasClass('cf-selected-label')).to.be.false;
-        expect(apiPatch.calledWith(`/document/${documents[0].id}/set-label`, sinon.match({ data: { label: null } }))).to.be.true;
-      }));
+          // Click on the same label
+          ApiUtilStub.apiPatch.resetHistory();
+          wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
+          await pause();
+
+          // Verify the procedural label is not selected,
+          // and that we send an api request to deselect
+          expect(wrapper.find('.cf-pdf-bookmark-procedural').
+            parent().
+            hasClass('cf-selected-label')).to.be.false;
+          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+            sinon.match({ data: { label: null } }))).to.be.true;
+        }));
     });
 
     context('comments', () => {
@@ -171,64 +206,81 @@ describe.only('DecisionReviewer', () => {
         };
 
         // Stub out post requests to return the commentId
-        apiPost.resolves({text: `{ "id": ${commentId} }`});
+        ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
         // Click on first pdf
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].filename).
+          simulate('mouseUp');
         await pause();
 
         // Click on the add a comment button
-        wrapper.find('a').findWhere((link) => link.text() === '+ Add a Comment').simulate('click');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === '+ Add a Comment').
+          simulate('click');
 
         // Click on the pdf at the location specified by event
-        wrapper.find('Pdf').getNode().onPageClick(1)(event);
+        wrapper.find('Pdf').getNode().
+          onPageClick(1)(event);
 
         // Add text to the comment text box.
-        wrapper.find('#addComment').simulate('change', { target: { value: firstComment.comment } });
+        wrapper.find('#addComment').simulate('change',
+          { target: { value: firstComment.comment } });
 
         // Click on save
         wrapper.find('#button-save').simulate('click');
         await pause();
 
         // Verify the api is called to add a comment
-        expect(apiPost.calledWith('/decision/review/annotation', sinon.match({ data: { annotation: firstComment } }))).to.be.true;
+        expect(ApiUtilStub.apiPost.calledWith('/decision/review/annotation',
+          sinon.match({ data: { annotation: firstComment } }))).to.be.true;
         await pause();
 
         // Click on the edit button
         wrapper.find('#button-edit').simulate('click');
 
         // Verify that the text in the textbox is the existing comment
-        expect(wrapper.find('TextareaField').props().value).to.be.equal(firstComment.comment);
+        expect(wrapper.find('TextareaField').props().value).
+          to.be.equal(firstComment.comment);
 
         // Add new text to the edit textbox
-        wrapper.find('#editCommentBox').simulate('change', { target: { value: secondComment.comment } });
+        wrapper.find('#editCommentBox').simulate('change',
+          { target: { value: secondComment.comment } });
 
         // Save the edit
         wrapper.find('#button-save').simulate('click');
         await pause();
 
         // Verify the api is called to edit a comment
-        expect(apiPatch.calledWith(`/decision/review/annotation/${commentId}`, sinon.match({ data: { annotation: secondComment } }))).to.be.true;
+        expect(ApiUtilStub.apiPatch.calledWith(`/decision/review/annotation/${commentId}`,
+          sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
         wrapper.find('#button-delete').simulate('click');
         await pause();
 
         // Verify the api is called to delete a comment
-        expect(apiDelete.calledWith(`/decision/review/annotation/${commentId}`)).to.be.true;
+        expect(ApiUtilStub.apiDelete.
+          calledWith(`/decision/review/annotation/${commentId}`)).
+          to.be.true;
       }));
 
-      it('can be clicked on to jump to icon', asyncTest(async()  => {
+      it('can be clicked on to jump to icon', asyncTest(async() => {
         let commentId = 1;
 
-        apiPost.resolves({text: `{ "id": ${commentId} }`});
+        ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
-        wrapper.find('a').findWhere((link) => link.text() === documents[0].filename).simulate('mouseUp');
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].filename).
+          simulate('mouseUp');
         let pdfViewer = wrapper.find('PdfViewer').getNode();
         let jumpTo = sinon.spy(pdfViewer, 'onJumpToComment');
 
-        wrapper.find('a').findWhere((link) => link.text() === '+ Add a Comment').simulate('click');
-        wrapper.find('Pdf').getNode().onPageClick(1)(event);
+        wrapper.find('a').findWhere(
+          (link) => link.text() === '+ Add a Comment').
+          simulate('click');
+        wrapper.find('Pdf').getNode().
+          onPageClick(1)(event);
 
         wrapper.find('#addComment').simulate('change', { target: { value: 'hello' } });
 
@@ -239,14 +291,19 @@ describe.only('DecisionReviewer', () => {
         expect(jumpTo.calledWith(commentId)).to.be.true;
       }));
 
-      it('highlighted by clicking on the icon', asyncTest(async()  => {
-        wrapper.find('a').findWhere((link) => link.text() === documents[1].filename).simulate('mouseUp');
-        
-        let clickedOnCommentEvent = {
-          getAttribute: () => { return annotations[0].id }
-        }
+      it('highlighted by clicking on the icon', asyncTest(async() => {
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[1].filename).
+          simulate('mouseUp');
 
-        wrapper.find('Pdf').getNode().onCommentClick(clickedOnCommentEvent);
+        let clickedOnCommentEvent = {
+          getAttribute: () => {
+            return annotations[0].id;
+          }
+        };
+
+        wrapper.find('Pdf').getNode().
+          onCommentClick(clickedOnCommentEvent);
         expect(wrapper.find('#comment0').hasClass('cf-comment-selected')).to.be.true;
       }));
     });
@@ -255,32 +312,42 @@ describe.only('DecisionReviewer', () => {
   context('PDF list view', () => {
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
-        expect(wrapper.find('#receipt-date-header').find('i').hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#receipt-date-header').
+          find('i').
+          hasClass('fa-caret-down')).to.be.true;
 
-        let textArray = wrapper.find('tr').map(node => node.text());
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
         expect(textArray[1]).to.include(documents[0].received_at);
         expect(textArray[2]).to.include(documents[1].received_at);
 
         wrapper.find('#receipt-date-header').simulate('click');
-        expect(wrapper.find('#receipt-date-header').find('i').hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#receipt-date-header').
+          find('i').
+          hasClass('fa-caret-up')).to.be.true;
 
-        textArray = wrapper.find('tr').map(node => node.text());
+        textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(documents[1].received_at);
         expect(textArray[2]).to.include(documents[0].received_at);
       });
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').find('i').hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#type-header').
+          find('i').
+          hasClass('fa-caret-down')).to.be.true;
 
-        let textArray = wrapper.find('tr').map(node => node.text());
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
         expect(textArray[1]).to.include(documents[0].type);
         expect(textArray[2]).to.include(documents[1].type);
 
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').find('i').hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#type-header').
+          find('i').
+          hasClass('fa-caret-up')).to.be.true;
 
-        textArray = wrapper.find('tr').map(node => node.text());
+        textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(documents[1].type);
         expect(textArray[2]).to.include(documents[0].type);
       });
@@ -288,46 +355,49 @@ describe.only('DecisionReviewer', () => {
 
     context('when filtered by', () => {
       it('date displays properly', () => {
-        wrapper.find('input').simulate('change', { target: { value: documents[1].received_at } });
+        wrapper.find('input').simulate('change',
+          { target: { value: documents[1].received_at } });
 
-        let textArray = wrapper.find('tr').map(node => node.text());
+        let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
         expect(textArray[1]).to.include(documents[1].received_at);
-        
+
         wrapper.find('input').simulate('change', { target: { value: '' } });
-        textArray = wrapper.find('tr').map(node => node.text());
+        textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
 
       it('type displays properly', () => {
-        wrapper.find('input').simulate('change', { target: { value: documents[1].type } });
+        wrapper.find('input').simulate('change',
+          { target: { value: documents[1].type } });
 
-        let textArray = wrapper.find('tr').map(node => node.text());
+        let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
         expect(textArray[1]).to.include(documents[1].type);
-        
+
         wrapper.find('input').simulate('change', { target: { value: '' } });
-        textArray = wrapper.find('tr').map(node => node.text());
+        textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
 
       it('comment displays properly', () => {
-        wrapper.find('input').simulate('change', { target: { value: annotations[0].comment } });
+        wrapper.find('input').simulate('change',
+          { target: { value: annotations[0].comment } });
 
-        let textArray = wrapper.find('tr').map(node => node.text());
+        let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
-        
+
         wrapper.find('input').simulate('change', { target: { value: '' } });
-        textArray = wrapper.find('tr').map(node => node.text());
+        textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
     });
@@ -335,3 +405,4 @@ describe.only('DecisionReviewer', () => {
 });
 /* eslint-enable max-statements */
 /* eslint-enable no-unused-expressions */
+/* eslint-enable camelcase */
