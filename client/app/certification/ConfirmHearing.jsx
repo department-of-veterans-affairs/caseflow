@@ -122,7 +122,6 @@ const UnconnectedConfirmHearing = ({
     onTypeOfForm9Change,
     hearingType,
     onHearingTypeChange,
-    hearingTypeFromQuestion,
     match
 }) => {
 
@@ -156,8 +155,8 @@ const UnconnectedConfirmHearing = ({
           <RadioField name={hearingChangeFoundQuestion}
             required={true}
             options={hearingChangeFoundAnswers}
-            value={hearingTypeFromQuestion === 'VBMS' ? hearingType : null}
-            onChange={onHearingTypeChange.bind(this, 'VBMS')}/>
+            value={hearingType}
+            onChange={onHearingTypeChange}/>
         }
 
         {
@@ -171,6 +170,7 @@ const UnconnectedConfirmHearing = ({
 
         {
           hearingDocumentIsInVbms === 'false' &&
+
           /* TODO: restore the accessibility stuff here.
             also, we should stop using rails pdf viewer */
           <LoadingContainer>
@@ -187,9 +187,9 @@ const UnconnectedConfirmHearing = ({
           form9Type === Constants.form9Types.FORMAL_FORM9 &&
           <RadioField name={formalForm9HearingQuestion}
             options={formalForm9HearingAnswers}
-            value={hearingTypeFromQuestion === 'FORMAL_FORM9' ? hearingType : null}
+            value={hearingType}
             required={true}
-            onChange={onHearingTypeChange.bind(this, 'FORMAL_FORM9')}/>
+            onChange={onHearingTypeChange}/>
         }
 
         {
@@ -197,9 +197,9 @@ const UnconnectedConfirmHearing = ({
           form9Type === Constants.form9Types.INFORMAL_FORM9 &&
           <RadioField name={informalForm9HearingQuestion}
             options={informalForm9HearingAnswers}
-            value={hearingTypeFromQuestion === 'INFORMAL_FORM9' ? hearingType : null}
+            value={hearingType}
             required={true}
-            onChange={onHearingTypeChange.bind(this, 'INFORMAL_FORM9')}/>
+            onChange={onHearingTypeChange}/>
         }
       </div>
 
@@ -237,6 +237,16 @@ const mapDispatchToProps = (dispatch) => {
           hearingDocumentIsInVbms
         }
       });
+      // If we change our answer for the
+      // VBMS hearing document question,
+      // we should also nullify the value
+      // for hearing type.
+      dispatch({
+        type: Constants.CHANGE_TYPE_OF_HEARING,
+        payload: {
+          hearingType: null
+        }
+      });
     },
     onTypeOfForm9Change: (form9Type) => {
       dispatch({
@@ -245,13 +255,22 @@ const mapDispatchToProps = (dispatch) => {
           form9Type
         }
       });
-    },
-    onHearingTypeChange: (hearingTypeFromQuestion, hearingType) => {
+      // If we change our answer for the
+      // type of form 9 question,
+      // we should also nullify the value
+      // for hearing type.
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
         payload: {
-          hearingType,
-          hearingTypeFromQuestion
+          hearingType: null
+        }
+      });
+    },
+    onHearingTypeChange: (hearingType) => {
+      dispatch({
+        type: Constants.CHANGE_TYPE_OF_HEARING,
+        payload: {
+          hearingType
         }
       });
     }
@@ -267,8 +286,7 @@ const mapStateToProps = (state) => {
   return {
     hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
     form9Type: state.form9Type,
-    hearingType: state.hearingType,
-    hearingTypeFromQuestion: state.hearingTypeFromQuestion
+    hearingType: state.hearingType
   };
 };
 
