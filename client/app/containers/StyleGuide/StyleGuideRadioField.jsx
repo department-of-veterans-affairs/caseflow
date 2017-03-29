@@ -21,10 +21,7 @@ export default class StyleGuideRadioField extends React.Component {
   render = () => {
 
     let ShowChange = () => {
-      return <em>
-        You checked option with value
-        <strong>{this.state.selectedValue}</strong>
-      </em>;
+      return <em>Value is {this.state.selectedValue}</em>;
     };
 
     return <div>
