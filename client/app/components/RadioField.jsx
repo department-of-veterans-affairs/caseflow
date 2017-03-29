@@ -1,5 +1,13 @@
 import React, { PropTypes } from 'react';
 import RequiredIndicator from './RequiredIndicator';
+import StringUtil from '../util/StringUtil';
+
+/**
+ * Radio button component.
+ *
+ * See StyleGuideRadioField.jsx for usage examples.
+ *
+ */
 
 export default class RadioField extends React.Component {
   constructor(props) {
@@ -37,6 +45,7 @@ export default class RadioField extends React.Component {
 
   render() {
     let {
+      id,
       className,
       label,
       name,
@@ -58,23 +67,26 @@ export default class RadioField extends React.Component {
       labelClass += " hidden-field";
     }
 
+    // Since HTML5 IDs should not contain spaces...
+    let idPart = StringUtil.html5CompliantId(id || name);
+
     return <fieldset className={radioClass.join(' ')}>
       <legend className={labelClass}>
         {(label || name)} {(required && <RequiredIndicator/>)}
       </legend>
 
       <div className="cf-form-radio-options">
-        {options.map((option) =>
-          <div className="cf-form-radio-option" key={`${name}-${option.value}`}>
+        {options.map((option, i) =>
+          <div className="cf-form-radio-option" key={`${idPart}-${option.value}-${i}`}>
             <input
               name={name}
               onChange={this.onChange}
               type="radio"
-              id={`${name}_${option.value}`}
+              id={`${idPart}_${option.value}`}
               value={option.value}
               checked={this.isChecked(value, option.value)}
             />
-            <label htmlFor={`${name}_${option.value}`}>{option.displayText}</label>
+            <label htmlFor={`${idPart}_${option.value}`}>{option.displayText}</label>
           </div>
         )}
       </div>
@@ -87,6 +99,7 @@ RadioField.defaultProps = {
 };
 
 RadioField.propTypes = {
+  id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
   label: PropTypes.string,
