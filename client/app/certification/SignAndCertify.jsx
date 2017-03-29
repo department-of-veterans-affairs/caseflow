@@ -2,80 +2,81 @@ import React, { PropTypes } from 'react';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
+import { connect } from 'react-redux';
+import * as Constants from './constants/constants';
 
-// TODO: refactor to use shared components where helpful
-export default class SignAndCertify extends React.Component {
-  render() {
-    let {
-      certifyingOffice,
-      certifyingUsername,
-      certifyingOfficialName,
-      certifyingOfficialTitle,
-      certificationDate
-    } = this.props;
+const certifyingOfficialTitalQuestion = 'Title of certifying official:';
+const certifyingOfficialTitleAnswers = [{
+  displayText: 'Decision Review Officer',
+  value: Constants.certifyingOfficialTitles.DECISION_REVIEW_OFFICER
+}, {
+  displayText: 'Rating Specialist',
+  value: Constants.certifyingOfficialTitles.RATING_SPECIALIST
+}, {
+  displayText: 'Veterans Service Representative',
+    value: Constants.certifyingOfficialTitles.VETERANS_SERVICE_REPRESENTATIVE
+}, {
+  displayText: 'Claims Assistant',
+  value: Constants.certifyingOfficialTitles.CLAIMS_ASSISTANT
+}, {
+  displayText: 'Other',
+  value: Constants.certifyingOfficialTitles.OTHER
+}];
 
-    return <div>
-      <form noValidate id="end_product">
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Sign and Certify</h2>
 
-          <p>Fill in information about yourself below to sign this certification.</p>
-          <TextField
-            label="Name and location of certifying office:"
-            name="certifyingOffice"
-            value={certifyingOffice}
-            readOnly={true}
-          />
-          <TextField
-            label="Organizational elements certifying appeal:"
-            name="certifyingUsername"
-            value={certifyingUsername}
-            readOnly={true}
-          />
-          <TextField
-            label="Name of certifying official:"
-            name="certifyingOfficialName"
-            value={certifyingOfficialName}
-            readOnly={true}
-          />
-          <RadioField
-            label="Title of certifying official:"
-            name="certifyingOfficialTitle"
-            value={certifyingOfficialTitle}
-            options={[
-              "Decision Review Officer",
-              "Rating Specialist",
-              "Veterans Service Representative",
-              "Claims Assistant",
-              "Other"
-            ]}
-          />
-          <DateSelector
-            label="Decision Date"
-            name="certificationDate"
-            value={certificationDate}
-            readOnly={true}
-          />
-        </div>
-      </form>
+const UnconnectedSignAndCertify = ({
+    certifyingOfficialTitle,
+    onCertifyingOfficialTitleChange
+}) => {
+  return <div>
+    <form noValidate id="end_product">
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Sign and Certify</h2>
+        <p>Fill in information about yourself below to sign this certification.</p>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel certification
-        </a>
-        <button type="button" className="cf-push-right">
-          Certify appeal
-        </button>
+        <RadioField
+          name={certifyingOfficialTitalQuestion}
+          options={certifyingOfficialTitleAnswers}
+          value={certifyingOfficialTitle}
+          required={true}
+          onChange={onCertifyingOfficialTitleChange}/>
       </div>
-    </div>;
-  }
-}
+    </form>
 
-SignAndCertify.propTypes = {
-  certifyingOffice: PropTypes.string.isRequired,
-  certifyingUsername: PropTypes.string.isRequired,
-  certifyingOfficialName: PropTypes.string.isRequired,
-  certifyingOfficialTitle: PropTypes.string.isRequired,
-  certificationDate: PropTypes.string.isRequired
+    <div className="cf-app-segment">
+      <a href="#confirm-cancel-certification"
+        className="cf-action-openmodal cf-btn-link">
+        Cancel certification
+      </a>
+      <button type="button" className="cf-push-right">
+        Certify appeal
+      </button>
+    </div>
+  </div>;
 };
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onCertifyingOfficialTitleChange: (certifyingOfficialTitle) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE,
+        payload: {
+          certifyingOfficialTitle
+        }
+      });
+    }
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    certifyingOfficialTitle: state.certifyingOfficialTitle
+  };
+};
+
+const SignAndCertify = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UnconnectedSignAndCertify);
+
+export default SignAndCertify;

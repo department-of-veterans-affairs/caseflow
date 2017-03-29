@@ -11,7 +11,8 @@
  const initialState = {
    hearingDocumentIsInVbms: null,
    form9Type: null,
-   hearingType: null
+   hearingType: null,
+   certifyingOfficialTitle: null
  };
 
  const certification = function(state = initialState, action) {
@@ -27,6 +28,10 @@
    case Constants.CHANGE_TYPE_OF_HEARING:
      return Object.assign({}, state, {
        hearingType: action.payload.hearingType
+     });
+   case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE:
+     return Object.assign({}, state, {
+       certifyingOfficialTitle: action.payload.certifyingOfficialTitle
      });
    default:
      return state;
