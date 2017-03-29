@@ -5,6 +5,7 @@ class Task < ActiveRecord::Base
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
+  delegate :vbms_id, to: :appeal
 
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
@@ -243,17 +244,6 @@ class Task < ActiveRecord::Base
 
   def attributes
     super.merge(type: type)
-  end
-
-  def to_hash
-    serializable_hash(
-      include: [:user, appeal: { methods:
-       [:serialized_decision_date,
-        :veteran_name,
-        :decision_type,
-        :vbms_id] }],
-      methods: [:progress_status, :days_since_creation, :completion_status_text]
-    )
   end
 
   def to_hash_with_bgs_call
