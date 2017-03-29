@@ -58,7 +58,7 @@ export default class EstablishClaimToolbar extends React.Component {
         { availableTasks && <NextClaimButton /> }
         { !availableTasks && <NoMoreClaimsButton /> }
       </div>
-    </div>
+    </div>;
   }
 
   establishNextClaim = () => {
