@@ -30,6 +30,7 @@ describe('DecisionReviewer', () => {
   });
 
   afterEach(() => {
+    wrapper.detach();
     ApiUtilStub.afterEach();
     PdfJsStub.afterEach();
   });
@@ -63,18 +64,16 @@ describe('DecisionReviewer', () => {
           simulate('mouseUp');
 
         // Verify when we click zoom in, we render the PDF zoomed in
-        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomIn').simulate('click');
         await pause();
-        expect(PdfJsStub.pdfjsRenderPage.calledWith(sinon.match.number,
+        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
           sinon.match({ scale: 1.3 }))).to.be.true;
 
         // Verify when we click zoom out, we render the PDF zoomed out
-        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-zoomOut').simulate('click');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.calledWith(sinon.match.number,
+        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
           sinon.match({ scale: 1 }))).to.be.true;
       }));
     });
@@ -91,19 +90,17 @@ describe('DecisionReviewer', () => {
           sinon.match({ documentId: documents[0].id }))).to.be.true;
 
         // Next button moves us to the next page
-        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
+        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
           sinon.match({ documentId: documents[1].id }))).to.be.true;
 
         // Previous button moves us to the previous page
-        PdfJsStub.pdfjsRenderPage.resetHistory();
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
+        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
           sinon.match({ documentId: documents[0].id }))).to.be.true;
       }));
 
@@ -135,7 +132,6 @@ describe('DecisionReviewer', () => {
             simulate('mouseUp');
 
           // Click on the decision label
-          ApiUtilStub.apiPatch.resetHistory();
           wrapper.find('.cf-pdf-bookmark-decisions').simulate('click');
           await pause();
 
@@ -143,11 +139,11 @@ describe('DecisionReviewer', () => {
           expect(wrapper.find('.cf-pdf-bookmark-decisions').
             parent().
             hasClass('cf-selected-label')).to.be.true;
-          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+          expect(ApiUtilStub.apiPatch.lastCall.
+            calledWith(`/document/${documents[0].id}/set-label`,
             sinon.match({ data: { label: 'decisions' } }))).to.be.true;
 
           // Click on a different label
-          ApiUtilStub.apiPatch.resetHistory();
           wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
           await pause();
 
@@ -155,11 +151,11 @@ describe('DecisionReviewer', () => {
           expect(wrapper.find('.cf-pdf-bookmark-procedural').
             parent().
             hasClass('cf-selected-label')).to.be.true;
-          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+          expect(ApiUtilStub.apiPatch.lastCall.
+            calledWith(`/document/${documents[0].id}/set-label`,
             sinon.match({ data: { label: 'procedural' } }))).to.be.true;
 
           // Click on the same label
-          ApiUtilStub.apiPatch.resetHistory();
           wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
           await pause();
 
@@ -168,7 +164,8 @@ describe('DecisionReviewer', () => {
           expect(wrapper.find('.cf-pdf-bookmark-procedural').
             parent().
             hasClass('cf-selected-label')).to.be.false;
-          expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/set-label`,
+          expect(ApiUtilStub.apiPatch.lastCall.
+            calledWith(`/document/${documents[0].id}/set-label`,
             sinon.match({ data: { label: null } }))).to.be.true;
         }));
     });

@@ -34,6 +34,7 @@ describe('Pdf', () => {
     });
 
     afterEach(() => {
+      wrapper.detach();
       PdfJsStub.afterEach();
     });
 
