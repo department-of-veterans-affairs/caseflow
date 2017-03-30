@@ -10,6 +10,7 @@ import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
+import { connect } from 'react-redux';
 
 // TODO: rethink routes, this may be a temporary solution.
 // do we want to still use vacols_id?
