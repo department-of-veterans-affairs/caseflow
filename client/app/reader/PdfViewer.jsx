@@ -146,9 +146,11 @@ export default class PdfViewer extends React.Component {
         let page = document.getElementsByClassName('page');
         let scrollWindow = document.getElementById('scrollWindow');
 
-        scrollWindow.scrollTop =
-          page[annotation.page - 1].getBoundingClientRect().top +
-          annotation.y - 100 + scrollWindow.scrollTop;
+        if (page[annotation.page - 1] && scrollWindow) {
+          scrollWindow.scrollTop =
+            page[annotation.page - 1].getBoundingClientRect().top +
+            annotation.y - 100 + scrollWindow.scrollTop;
+        }
       });
   }
 
