@@ -18,7 +18,8 @@ export default function StyleGuideTextInput() {
       <p>
         Inline forms give designers and developers the liberty to customize
         the width and spacing of each field in a row. Input fields can be found
-        placed after labels and descriptions to provide users context and actionable steps.
+        placed after labels and descriptions to provide users context and
+        actionable steps.
       </p>
     <InlineForm>
       <TextField
