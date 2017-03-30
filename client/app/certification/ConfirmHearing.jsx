@@ -37,7 +37,7 @@ const hearingChangeFoundAnswers = [
     value: Constants.hearingTypes.HEARING_CANCELLED
   },
   {
-    displayText: 'They requested a board hearing via videoconference',
+    displayText: 'They requested a board hearing via videoconference.',
     value: Constants.hearingTypes.VIDEO
   },
   {
@@ -85,19 +85,19 @@ const informalForm9HearingQuestion = `What optional board hearing preference,
 if any, did the appellant request?`;
 const informalForm9HearingAnswers = [{
   displayText: `Does not want an optional board hearing
-  or did not mention a board hearing`,
+  or did not mention a board hearing.`,
   value: Constants.hearingTypes.NO_HEARING_DESIRED
 }, {
-  displayText: 'Wants a board hearing and did not specify what type',
+  displayText: 'Wants a board hearing and did not specify what type.',
   value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
 }, {
-  displayText: 'Wants a board hearing by videoconference',
+  displayText: 'Wants a board hearing by videoconference.',
   value: Constants.hearingTypes.VIDEO
 }, {
   displayText: 'Wants a board hearing in Washington, DC.',
   value: Constants.hearingTypes.WASHINGTON_DC
 }, {
-  displayText: 'Wants a board hearing at their regional office',
+  displayText: 'Wants a board hearing at their regional office.',
   value: Constants.hearingTypes.TRAVEL_BOARD
 }];
 
@@ -237,32 +237,12 @@ const mapDispatchToProps = (dispatch) => {
           hearingDocumentIsInVbms
         }
       });
-      // If we change our answer for the
-      // VBMS hearing document question,
-      // we should also nullify the value
-      // for hearing type.
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_HEARING,
-        payload: {
-          hearingType: null
-        }
-      });
     },
     onTypeOfForm9Change: (form9Type) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_FORM9,
         payload: {
           form9Type
-        }
-      });
-      // If we change our answer for the
-      // type of form 9 question,
-      // we should also nullify the value
-      // for hearing type.
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_HEARING,
-        payload: {
-          hearingType: null
         }
       });
     },
