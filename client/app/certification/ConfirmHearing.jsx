@@ -169,9 +169,9 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
-          hearingDocumentIsInVbms === 'false' &&
           /* TODO: restore the accessibility stuff here.
             also, we should stop using rails pdf viewer */
+          hearingDocumentIsInVbms === 'false' &&
           <LoadingContainer>
             <iframe
               className="cf-doc-embed cf-iframe-with-loading"
