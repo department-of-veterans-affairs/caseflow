@@ -47,9 +47,6 @@ export class EstablishClaimDecision extends React.Component {
       task
     } = this.props;
 
-    console.log('decision render function');
-    console.log(specialIssues);
-
     let issueColumns = [
       {
         header: 'Program',
@@ -239,9 +236,6 @@ EstablishClaimDecision.propTypes = {
  * the rendered component.
  */
 const mapStateToProps = (state, ownProps) => {
-  console.log('we are in decision map state to props');
-  console.log(state);
-  debugger;
   return {
     specialIssues: state.specialIssues
   };
@@ -269,8 +263,7 @@ const mapDispatchToProps = (dispatch) => {
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
     mapDispatchToProps,
-    null,
-{ pure: false }
+    null
 )(EstablishClaimDecision);
 
 export default ConnectedEstablishClaimDecision;

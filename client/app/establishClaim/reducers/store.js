@@ -30,6 +30,6 @@ export const createEstablishClaimStore = (props) => {
      return createStore(
         establishClaimReducers,
         getInitialState(props),
-        // applyMiddleware(logger)
+        applyMiddleware(logger)
     )
 }
