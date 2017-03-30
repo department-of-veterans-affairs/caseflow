@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
   end
 
   # This is essentially only used for development mode
-  # The config/initialized/fake_dependencies runs on app boot and overs most cases
+  # The config/initialized/fake_dependencies runs on app boot and covers production scenarios
   # However, in dev mode with class reloading the initializer gets wiped away
   def setup_fakes
     Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
