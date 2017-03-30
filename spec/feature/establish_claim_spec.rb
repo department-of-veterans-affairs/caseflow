@@ -68,7 +68,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
     end
 
-    scenario "Assign the correct new task to myself", retry: 5 do
+    scenario "Assign the correct new task to myself" do
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
@@ -99,14 +99,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
     end
 
-    scenario "Visit an Establish Claim task that is assigned to another user", retry: 5 do
+    scenario "Visit an Establish Claim task that is assigned to another user" do
       not_my_task = Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
       visit "/dispatch/establish-claim/#{not_my_task.id}"
       expect(page).to have_current_path("/unauthorized")
     end
 
-    scenario "Go back and forward in the browser", retry: 5 do
+    scenario "Go back and forward in the browser" do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
@@ -127,7 +127,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "Cancel a claims establishment", retry: 5 do
+    scenario "Cancel a claims establishment" do
       task.assign!(:assigned, current_user)
 
       # The cancel button is the same on both the review and form pages, so one test
@@ -166,7 +166,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(task.appeal.reload.rice_compliance).to be_falsey
     end
 
-    context "For an appeal with multiple possible decision documents in VBMS", retry: 5 do
+    context "For an appeal with multiple possible decision documents in VBMS" do
       let(:documents) do
         [
           Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago),
@@ -190,7 +190,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Benefit Type")
       end
 
-      scenario "the EP creation page has a link back to decision review", retry: 5 do
+      scenario "the EP creation page has a link back to decision review" do
         visit "/dispatch/establish-claim"
         safe_click_on "Establish next claim"
 
@@ -209,7 +209,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         )
       end
 
-      scenario "Establish a new claim with special issue routed to national office", retry: 5 do
+      scenario "Establish a new claim with special issue routed to national office" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -236,7 +236,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
       end
 
-      scenario "Establish a new claim with special issue routed to ROJ", retry: 5 do
+      scenario "Establish a new claim with special issue routed to ROJ" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -259,7 +259,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
       end
 
-      scenario "Establish a new claim with special issues by routing via email", retry: 5 do
+      scenario "Establish a new claim with special issues by routing via email" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -277,7 +277,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # There are no more issues that have no email addresses :)
       # Skip this for now, but we'll clear it out when we finalize that decision
-      skip "Cancelling a claims establishment with special issues with no email routing", retry: 5 do
+      skip "Cancelling a claims establishment with special issues with no email routing" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -305,7 +305,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Assigning it to complete the claims establishment", retry: 5 do
+        scenario "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -335,7 +335,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
-      scenario "Establish a new claim routed to ARC", retry: 5 do
+      scenario "Establish a new claim routed to ARC" do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
 
@@ -405,7 +405,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
-      scenario "Establish a new claim with special issues", retry: 5 do
+      scenario "Establish a new claim with special issues" do
         visit "/dispatch/establish-claim"
 
         safe_click_on "Establish next claim"
@@ -469,7 +469,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         )
       end
 
-      scenario "Establish a new claim with special issues with no EP", retry: 5 do
+      scenario "Establish a new claim with special issues with no EP" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -501,7 +501,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP", retry: 5 do
+        scenario "Establish a new claim defaults to creating a 171 EP" do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           safe_click_on "Route claim"
