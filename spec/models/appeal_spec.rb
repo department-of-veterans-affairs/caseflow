@@ -358,6 +358,14 @@ describe Appeal do
       it { is_expected.to eq([]) }
     end
 
+    context "returns nil when no decision_date" do
+      before do
+        appeal.decision_date = nil
+      end
+
+      it { is_expected.to eq([]) }
+    end
+
     context "returns multiple decisions when there are two decisions" do
       let(:documents) { [decision, decision.clone] }
 
