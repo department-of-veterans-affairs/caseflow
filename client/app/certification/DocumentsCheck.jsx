@@ -26,7 +26,7 @@ const DocumentsCheck = ({ match }) => {
         Cancel Certification
       </a>
       <Link
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
+        to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
         <button type="button" className="cf-push-right">
           Continue
         </button>

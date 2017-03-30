@@ -7,6 +7,7 @@ import DocumentsCheck from './DocumentsCheck';
 import AlreadyCertified from './AlreadyCertified';
 import NotReady from './NotReady';
 import ConfirmHearing from './ConfirmHearing';
+import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import certificationReducers from './reducers/index';
@@ -35,6 +36,8 @@ const Certification = ({ certification }) => {
           port those over here */}
         <Route path="/certifications/:vacols_id/check_documents"
           component={DocumentsCheck}/>
+        <Route path="/certifications/:vacols_id/confirm_case_details"
+          component={ConfirmCaseDetails}/>
         <Route path="/certifications/:vacols_id/confirm_hearing"
           component={ConfirmHearing}/>
         <Route path="/certifications/:vacols_id/sign_and_certify"
