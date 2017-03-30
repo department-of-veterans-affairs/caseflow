@@ -72,7 +72,7 @@ class Fakes::AppealRepository
     @uploaded_form8_appeal = appeal
   end
 
-  def self.clean_document(location)
+  def self.clean_document(_location)
     # noop
   end
 

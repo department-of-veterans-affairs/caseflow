@@ -5,11 +5,11 @@ module UploadableDocument
     Document.type_id(document_type) || fail("#{document_type} is not recognized in Document.")
   end
 
+  # :nocov:
   def upload_date
-     Time.zone.now
+    Time.zone.now
   end
 
-  # :nocov:
   def document_type
     fail "#{self.class} is missing document_type"
   end
