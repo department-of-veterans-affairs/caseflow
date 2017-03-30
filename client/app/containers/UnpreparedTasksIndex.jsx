@@ -13,15 +13,15 @@ export default class UnpreparedTasksIndex extends React.Component {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.appeal.veteran_name} (${task.appeal.vbms_id})`
+          `${task.cached_veteran_name} (${task.vbms_id})`
       },
       {
         header: 'Decision Type',
-        valueFunction: (task) => task.appeal.decision_type
+        valueFunction: (task) => task.cached_decision_type
       },
       {
         header: 'Decision Date',
-        valueFunction: (task) => formatDate(task.appeal.serialized_decision_date)
+        valueFunction: (task) => formatDate(task.cached_serialized_decision_date)
       },
       {
         header: 'Days in Queue',

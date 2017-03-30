@@ -35,6 +35,8 @@ module CaseflowCertification
     config.google_analytics_account = nil
     config.google_analytics_host = nil
 
+    config.active_job.queue_adapter = :sidekiq
+
     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
 
   end
