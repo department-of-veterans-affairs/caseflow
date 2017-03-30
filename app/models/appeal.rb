@@ -157,6 +157,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def decisions
+    return [] unless decision_date
+
     decisions = documents_with_type("BVA Decision").select do |decision|
       (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
