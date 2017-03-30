@@ -43,7 +43,7 @@ const UnconnectedConfirmCaseDetails = ({
               value: Constants.representativeTypes.NONE
             },
             {
-              displayText: "OTHER",
+              displayText: "Other",
               value: Constants.representativeTypes.OTHER
             }
           ]
