@@ -120,6 +120,7 @@ group :development, :test do
   gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
+  gem 'rspec-retry'
 end
 
 group :development do
