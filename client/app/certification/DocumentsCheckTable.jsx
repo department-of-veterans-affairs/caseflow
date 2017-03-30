@@ -40,14 +40,15 @@ const DocumentsCheckTable = (props) => {
           <td>{props.socDate}</td>
           <td>{props.socDate}</td>
         </tr>
-        {props.ssocDates.map((ssocDate, index) =>
-          <tr id={`ssoc-${index + 1}-match`} key={index}>
-            <td><FoundIcon/></td>
-            <td>SSOC {index + 1}</td>
-            <td>{ssocDate}</td>
-            <td>{ssocDate}</td>
-          </tr>
-        )}
+        { typeof props.ssocDates !== 'undefined' && props.ssocDates.length > 0 && props.ssocDates.map((ssocDate, index) =>
+              <tr id={`ssoc-${index + 1}-match`} key={index}>
+                <td><FoundIcon/></td>
+                <td>SSOC {index + 1}</td>
+                <td>{ssocDate}</td>
+                <td>{ssocDate}</td>
+              </tr>
+            )
+        }
       </tbody>
     </table>
   </div>;
