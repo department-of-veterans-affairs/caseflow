@@ -501,7 +501,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP" do
+        scenario "Establish a new claim defaults to creating a 171 EP", retry: 5 do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           safe_click_on "Route claim"
