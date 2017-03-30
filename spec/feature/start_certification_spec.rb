@@ -27,7 +27,11 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path("/certifications/ABCD/check_documents")
     expect(page).to have_content("All documents detected!")
     click_button("Continue")
+    expect(page).to have_content("Review data from BGS about the appellant's representative")
+    click_button("Continue")
     expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+    click_button("Continue")
+    expect(page).to have_content("Fill in information about yourself below to sign this certification")
     ENV["ENABLE_CERTIFICATION_V2"] = ""
   end
 
