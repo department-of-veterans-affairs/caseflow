@@ -91,3 +91,9 @@ pre {
   text-align: right;
   margin-right: 2rem;
 }
+
+.cf-btn-link {
+  &.usa-button-disabled {
+    color: $color-gray-light;
+  }
+}

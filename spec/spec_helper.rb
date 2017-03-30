@@ -102,3 +102,9 @@ end
 def click_loading_button(text)
   find(:xpath, "//button[contains(., '#{text}')]").trigger("click")
 end
+
+# PhantomJS sometimes crashes if an element in focus is removed from the DOM
+# This click action triggers a click event on a button without focusing on it.
+def safe_click_on(text)
+  click_loading_button(text)
+end
