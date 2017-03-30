@@ -9,7 +9,7 @@ import NotReady from './NotReady';
 import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
-import certificationReducers from './reducers/specialIssues';
+import certificationReducers from './reducers/index';
 
 // TODO: rethink routes, this may be a temporary solution.
 // do we want to still use vacols_id?

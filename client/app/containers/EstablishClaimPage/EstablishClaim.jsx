@@ -137,13 +137,13 @@ export default class EstablishClaim extends BaseForm {
 
   containsRoutedSpecialIssues = () => {
     return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.state.specialIssues[issue.specialIssue].value;
+      return this.store.getState().specialIssues[issue.specialIssue].value;
     });
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.state.specialIssues[issue.specialIssue || issue].value;
+      return this.store.getState().specialIssues[issue.specialIssue || issue].value;
     });
   }
 
@@ -486,14 +486,14 @@ export default class EstablishClaim extends BaseForm {
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
     specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
     // Go through all the special issues, this time looking for routed issues
     specialIssueFilters.routedSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue].value) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
@@ -571,7 +571,7 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.state.specialIssues)
+      this.getFormValues(this.store.getState().specialIssues)
     );
 
     Object.keys(formValues).forEach((key) => {
@@ -610,7 +610,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue].value) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -632,7 +632,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue].value) {
         willCreateEndProduct = false;
       }
     });
@@ -685,7 +685,7 @@ export default class EstablishClaim extends BaseForm {
               handleBackToDecisionReview={this.handleBackToDecisionReview}
               history={history}
               specialIssues={ApiUtil.convertToSnakeCase(
-                this.getFormValues(this.state.specialIssues))}
+                this.getFormValues(this.store.getState().specialIssues))}
             />
           }
           { this.isFormPage() &&
