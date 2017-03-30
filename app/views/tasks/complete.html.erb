@@ -9,8 +9,8 @@
     checklist: task.actions_taken,
     firstHeader: "Success!",
     page: "EstablishClaimComplete",
-    totalCasesCompleted: @completed_count_today,
+    totalCasesCompleted: user_completed_today,
     employeeCount: Rails.cache.read('employee_count') || '0',
-    totalCasesToComplete: @to_complete_count,
+    totalCasesToComplete: to_complete_count,
     secondHeader: second_header
 }) %>
