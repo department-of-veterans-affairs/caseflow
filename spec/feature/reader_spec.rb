@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Reader", focus: true do  
+RSpec.feature "Reader" do
   let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
@@ -35,29 +35,42 @@ RSpec.feature "Reader", focus: true do
       visit "/decision/review?vacols_id=#{appeal.vacols_id}"
       expect(page).to have_content("Caseflow Decision")
 
+      # Click on the link to the first file
       click_on documents[0].filename
+
+      # Ensure PDF content loads
       expect(page).to have_content("Important Decision Document!!!")
 
+      # Add a comment
       click_on "+ Add a Comment"
       find("#pageContainer1").click
-
       fill_in "addComment", with: "Foo"
-
       click_on "Save"
+
+      # Expect comment to be visible on page
       expect(page).to have_content("Foo")
 
+      # Expect comment to be in database
       expect(documents[0].reload.annotations.first.comment).to eq("Foo")
 
+      # Edit the comment
       click_on "Edit"
       fill_in "editComment", with: "Bar"
-
       click_on "Save"
+
+      # Expect edited comment to be visible on opage
       expect(page).to have_content("Bar")
 
+      # Expect comment to be in database
       expect(documents[0].reload.annotations.first.comment).to eq("Bar")
 
+      # Delete the comment
       click_on "Delete"
+
+      # Expect the comment to be removed from the page
       expect(page).to_not have_content("Bar")
+
+      # Expect the comment to be removed from teh database
       expect(documents[0].reload.annotations.count).to eq(0)
     end
 
@@ -79,11 +92,13 @@ RSpec.feature "Reader", focus: true do
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
-        originalScroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
+        # Click on the comment and ensure the scroll position changes
+        # by the y value the comment.
+        original_scroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
         find("#comment0").click
-        afterClickScroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
+        after_click_scroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
 
-        expect(afterClickScroll - originalScroll).to eq(annotation.y)
+        expect(after_click_scroll - original_scroll).to eq(annotation.y)
       end
     end
 
@@ -93,9 +108,12 @@ RSpec.feature "Reader", focus: true do
       click_on documents[0].filename
       expect(page).to have_css(".page")
 
-      expect(all('.page').count).to eq(1)
-      page.execute_script("document.getElementById('scrollWindow').scrollTop=500") 
-      expect(all('.page').count).to eq(2)
+      # Expect only the first page to be reneder on first load
+      # But if we scroll second page should be rendered and
+      # we should be able to find text from the second page.
+      expect(page).to_not have_content("Banana. Banana who")
+      page.execute_script("document.getElementById('scrollWindow').scrollTop=500")
+      expect(page).to have_content("Banana. Banana who")
     end
   end
 end
