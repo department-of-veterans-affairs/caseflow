@@ -25,28 +25,28 @@ const UnconnectedConfirmCaseDetails = ({
         <RadioField name="Representative type"
           required={true}
           options={
-            [
-              {
-                displayText: "Attorney",
-                value: Constants.representativeTypes.ATTORNEY
-              },
-              {
-                displayText: "Agent",
-                value: Constants.representativeTypes.AGENT
-              },
-              {
-                displayText: "Organization",
-                value: Constants.representativeTypes.ORGANIZATION
-              },
-              {
-                displayText: "None",
-                value: Constants.representativeTypes.NONE
-              },
-              {
-                displayText: "OTHER",
-                value: Constants.representativeTypes.OTHER
-              },
-            ]
+          [
+            {
+              displayText: "Attorney",
+              value: Constants.representativeTypes.ATTORNEY
+            },
+            {
+              displayText: "Agent",
+              value: Constants.representativeTypes.AGENT
+            },
+            {
+              displayText: "Organization",
+              value: Constants.representativeTypes.ORGANIZATION
+            },
+            {
+              displayText: "None",
+              value: Constants.representativeTypes.NONE
+            },
+            {
+              displayText: "OTHER",
+              value: Constants.representativeTypes.OTHER
+            }
+          ]
           }
           value={representativeType}
           onChange={onRepresentativeTypeChange}/>

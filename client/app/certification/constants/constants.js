@@ -28,4 +28,4 @@ export const representativeTypes = {
   NONE: 'NONE',
   // TODO: should "Other be a real type"?
   OTHER: 'OTHER'
-}
+};
