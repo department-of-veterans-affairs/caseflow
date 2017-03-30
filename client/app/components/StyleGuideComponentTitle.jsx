@@ -18,7 +18,7 @@ export default class StyleGuideComponentTitle extends React.Component {
 
       return <span>
         <a className="usa-button" href={baseUrl + props.link} target="_blank">
-          <GithubIcon /> View Source Code
+          <GithubIcon /> View source code
         </a>
       </span>;
     };

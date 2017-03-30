@@ -37,7 +37,7 @@ export default class StyleGuideModal extends React.Component {
         in your modal (see below code snippets).
         Whenever possible, use a close link as the left action.</p>
       <p><Button
-          name="Launch Modal"
+          name="Launch modal"
           onClick={this.handleModalOpen}
           classNames={["usa-button", "usa-button-outline"]}
       /></p>
