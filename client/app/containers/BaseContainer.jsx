@@ -13,12 +13,14 @@ import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
 import DecisionReviewer from '../reader/DecisionReviewer';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
+import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
   CaseWorkerIndex,
   DecisionReviewer,
   EstablishClaim,
+  EstablishClaimCancel,
   EstablishClaimComplete,
   StyleGuideIndex,
   StyleGuideModal,
