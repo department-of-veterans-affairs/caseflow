@@ -728,6 +728,7 @@ export default class EstablishClaim extends BaseForm {
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
           />
         }
 
