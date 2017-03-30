@@ -63,13 +63,13 @@ const UnconnectedConfirmCaseDetails = ({
           className="cf-action-openmodal cf-btn-link">
           Cancel Certification
         </a>
+        <Link to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
+          <button type="button" className="cf-push-right">
+            Continue
+          </button>
+        </Link>
       </div>
 
-      <Link to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
-        <button type="button" className="cf-push-right">
-          Continue
-        </button>
-      </Link>
     </div>;
 };
 
