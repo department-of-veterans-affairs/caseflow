@@ -169,6 +169,7 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
+
           /* TODO: restore the accessibility stuff here.
             also, we should stop using rails pdf viewer */
           hearingDocumentIsInVbms === 'false' &&
