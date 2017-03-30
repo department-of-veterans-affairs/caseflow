@@ -196,7 +196,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        click_on "< Back to Decision Review"
+        safe_click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
