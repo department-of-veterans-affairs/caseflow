@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: fcb9245974e2a2055a36cc3d6771565bbb433540
-  ref: fcb9245974e2a2055a36cc3d6771565bbb433540
+  revision: da96a1bebc5ade8657f4c34c71f7237967bba9f4
+  ref: da96a1bebc5
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -21,8 +21,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: bda8d58d72f3b78281a164444737b81c51ec48c6
-  ref: bda8d58d72f3b78281a164444737b81c51ec48c6
+  revision: 7e3192a502563ff4afc8241161bdd8678080236f
+  ref: 7e3192a
   specs:
     connect_vbms (1.0.0)
       httpclient (~> 2.8.0)
@@ -108,13 +108,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.8.11)
-      aws-sdk-resources (= 2.8.11)
-    aws-sdk-core (2.8.11)
+    aws-sdk (2.8.14)
+      aws-sdk-resources (= 2.8.14)
+    aws-sdk-core (2.8.14)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.8.11)
-      aws-sdk-core (= 2.8.11)
+    aws-sdk-resources (2.8.14)
+      aws-sdk-core (= 2.8.14)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -411,7 +411,7 @@ GEM
     where-or (0.1.5)
     xmldsig (0.3.2)
       nokogiri
-    xmlenc (0.6.8)
+    xmlenc (0.6.9)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
       nokogiri (>= 1.6.0, < 2.0.0)
