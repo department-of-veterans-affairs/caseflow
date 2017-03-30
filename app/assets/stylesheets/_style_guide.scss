@@ -92,6 +92,17 @@ pre {
   margin-right: 2rem;
 }
 
+.show-change {
+  position: relative;
+
+  em {
+    position: absolute;
+    left: 20rem;
+    bottom: .75em;
+    font-size: 75%;
+  }
+}
+
 .cf-btn-link {
   &.usa-button-disabled {
     color: $color-gray-light;
