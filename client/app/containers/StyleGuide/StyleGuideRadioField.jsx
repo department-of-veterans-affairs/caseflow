@@ -1,114 +1,37 @@
 import React from 'react';
 
 // components
-import RadioField from '../../components/RadioField';
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
+
+import Example1 from './RadioFieldExamples/Example1';
+import Example2 from './RadioFieldExamples/Example2';
+import Example3 from './RadioFieldExamples/Example3';
+import Example4 from './RadioFieldExamples/Example4';
+import Example5 from './RadioFieldExamples/Example5';
+import Example6 from './RadioFieldExamples/Example6';
 
 export default class StyleGuideRadioField extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selectedValue: null
-    };
-  }
-
-  onChange = (value) => {
-    this.setState({
-      selectedValue: value
-    });
-  }
 
   render = () => {
-
-    let ShowChange = () => {
-      return <em>Value is {this.state.selectedValue}</em>;
-    };
-
     return <div>
-      <h2 id="radios">Radio Buttons</h2>
-      <RadioField
-        label="Here's one:"
-        name="radio_example_1"
-        options={[
-          { displayText: "One",
-            value: "1" }
-        ]}
-      ></RadioField>
-      <RadioField
-        label="Here's one with an option initially checked:"
-        name="radio_example_2"
-        options={[
-          { displayText: "One",
-            value: "1" },
-          { displayText: "Two",
-            value: "2" }
-        ]}
-        value="2"
-      ></RadioField>
-      <p>The component will automatically render two or less options
-        horizontally unless its "vertical" property is set to true:</p>
-      <RadioField
-        label="Two options in forced vertical display:"
-        name="radio_example_3"
-        options={[
-          { displayText: "One",
-            value: "1" },
-          { displayText: "Two",
-            value: "2" }
-        ]}
-        value="2"
-        vertical={true}
-      ></RadioField>
-      <RadioField
-        label="Three or more options are automatically vertical:"
-        name="radio_example_4"
-        options={[
-          { displayText: "One",
-            value: "1" },
-          { displayText: "Two",
-            value: "2" },
-          { displayText: "Three",
-            value: "3" }
-        ]}
-        value="2"
-      ></RadioField>
-      <RadioField
-        label="Here's a required field:"
-        name="radio_example_5"
-        options={[
-          { displayText: "One",
-            value: "1" },
-          { displayText: "Two",
-            value: "2" }
-        ]}
-        required={true}
-      ></RadioField>
-      <div className="show-change">
-        <RadioField
-          label="This field handles a value change:"
-          name="radio_example_6"
-          options={[
-            { displayText: "One",
-              value: "1" },
-            { displayText: "Two",
-              value: "2" }
-          ]}
-          onChange={this.onChange}
-        ></RadioField>{ this.state.selectedValue && <ShowChange /> }
-      </div>
+      <StyleGuideComponentTitle
+        title="Radio Buttons"
+        id="radios"
+        link="StyleGuideRadioField.jsx"
+      />
+      <p>Radio Buttons are used for selecting one of several choices.</p>
+      <Example1 />
+      <Example2 />
+      <p>
+        The component will automatically render two options
+        horizontally unless the <strong>vertical</strong> property
+        is <strong>true</strong>:
+      </p>
+      <Example3 />
+      <Example4 />
+      <Example5 />
       <p>This field hides its label:</p>
-      <RadioField
-        label="This label is hidden:"
-        name="radio_example_7"
-        options={[
-          { displayText: "One",
-            value: "1" },
-          { displayText: "Two",
-            value: "2" }
-        ]}
-        required={true}
-        hideLabel={true}
-      ></RadioField>
+      <Example6 />
     </div>;
   }
 }
