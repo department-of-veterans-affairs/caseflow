@@ -509,7 +509,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          click_on "< Back to Decision Review"
+          safe_click_on "< Back to Decision Review"
 
           expect(page).to have_content("Review Decision")
 
