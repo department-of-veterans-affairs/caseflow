@@ -6,6 +6,44 @@ import { Link } from 'react-router-dom';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
 
+const representativeTypeOptions = [
+  {
+    displayText: "Attorney",
+    value: Constants.representativeTypes.ATTORNEY
+  },
+  {
+    displayText: "Agent",
+    value: Constants.representativeTypes.AGENT
+  },
+  {
+    displayText: "Organization",
+    value: Constants.representativeTypes.ORGANIZATION
+  },
+  {
+    displayText: "None",
+    value: Constants.representativeTypes.NONE
+  },
+  {
+    displayText: "Other",
+    value: Constants.representativeTypes.OTHER
+  }
+];
+
+/*
+ * Confirm Case Details
+ *
+ * This page will display information from BGS
+ * about the appellant's representation for the appeal
+ * and confirm it.
+ *
+ * On the backend, we'll then update that information in VACOLS
+ * if necessary. This was created since power of attorney
+ * information in VACOLS is very often out of date, which can
+ * in case delays -- attorneys can't access the appeal information
+ * if they're not noted as being the appellant's representative
+ *
+ */
+
 const UnconnectedConfirmCaseDetails = ({
     representativeType,
     onRepresentativeTypeChange,
@@ -19,43 +57,21 @@ const UnconnectedConfirmCaseDetails = ({
         <h2>Confirm Case Details</h2>
 
         <div>
-          {`Review data from VBMS about the appellant's
+          {`Review data from BGS about the appellant's
             representative and make changes if necessary.`}
         </div>
-        <RadioField name="Representative type"
-          required={true}
-          options={
-          [
-            {
-              displayText: "Attorney",
-              value: Constants.representativeTypes.ATTORNEY
-            },
-            {
-              displayText: "Agent",
-              value: Constants.representativeTypes.AGENT
-            },
-            {
-              displayText: "Organization",
-              value: Constants.representativeTypes.ORGANIZATION
-            },
-            {
-              displayText: "None",
-              value: Constants.representativeTypes.NONE
-            },
-            {
-              displayText: "Other",
-              value: Constants.representativeTypes.OTHER
-            }
-          ]
-          }
-          value={representativeType}
-          onChange={onRepresentativeTypeChange}/>
 
-          <TextField name="Representative name"
-            value={representativeName}
-            onChange={onRepresentativeNameChange}
-            required={true}
-          />
+        <RadioField name="Representative type"
+          options={representativeTypeOptions}
+          value={representativeType}
+          onChange={onRepresentativeTypeChange}
+          required={true}/>
+
+        <TextField name="Representative name"
+          value={representativeName}
+          onChange={onRepresentativeNameChange}
+          required={true}/>
+
       </div>
 
       <div className="cf-app-segment">
@@ -63,34 +79,18 @@ const UnconnectedConfirmCaseDetails = ({
           className="cf-action-openmodal cf-btn-link">
           Cancel Certification
         </a>
+
         <Link to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
           <button type="button" className="cf-push-right">
             Continue
           </button>
         </Link>
+
       </div>
 
-    </div>;
+  </div>;
 };
 
-/*
- * CONNECTED COMPONENT STUFF:
- *
- * the code below makes this into a "connected component"
- * which can read and update the redux store.
- * TODO: as a matter of convention, should we make the connecting
- * bits into their own file?
- * What naming convention should we use
- * for connected and unconnected components? So many
- * questions.
- *
- */
-
-/*
- * These functions call `dispatch`, a Redux method
- * that causes the reducer in reducers/index.js
- * to return a new state object.
- */
 const mapDispatchToProps = (dispatch) => {
   return {
     onRepresentativeNameChange: (representativeName) => {
@@ -112,11 +112,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-/*
- * This function tells us which parts of the global
- * application state should be passed in as props to
- * the rendered component.
- */
 const mapStateToProps = (state) => {
   return {
     representativeType: state.representativeType,
@@ -124,12 +119,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-
-/*
- * Creates a component that's connected to the Redux store
- * using the state & dispatch map functions and the
- * ConfirmHearing function.
- */
 const ConfirmCaseDetails = connect(
   mapStateToProps,
   mapDispatchToProps
