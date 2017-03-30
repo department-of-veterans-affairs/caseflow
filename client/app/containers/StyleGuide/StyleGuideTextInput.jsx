@@ -14,9 +14,9 @@ export default function StyleGuideTextInput() {
         id="text_input"
         link="StyleGuideTextInput.jsx"
       />
-    <h3>Inline Input Field</h3>
+    <h3>Inline Form</h3>
       <p>
-        Inline input fields give designers and developers the liberty to customize
+        Inline forms give designers and developers the liberty to customize
         the width and spacing of each field in a row. Input fields can be found
         placed after labels and descriptions to provide users context and actionable steps.
       </p>
