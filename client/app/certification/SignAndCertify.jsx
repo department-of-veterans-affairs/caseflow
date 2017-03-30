@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
@@ -14,7 +14,7 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.RATING_SPECIALIST
 }, {
   displayText: 'Veterans Service Representative',
-    value: Constants.certifyingOfficialTitles.VETERANS_SERVICE_REPRESENTATIVE
+  value: Constants.certifyingOfficialTitles.VETERANS_SERVICE_REPRESENTATIVE
 }, {
   displayText: 'Claims Assistant',
   value: Constants.certifyingOfficialTitles.CLAIMS_ASSISTANT
