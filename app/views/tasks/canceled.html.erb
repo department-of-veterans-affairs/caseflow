@@ -1,10 +1,11 @@
 <% content_for :page_title do task.appeal.task_header end %>
-<div id="certifications-generate" class="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
-  <h1 class="cf-red-text cf-msg-screen-heading">Claim Processing Discontinued</h1>
-  <h2 class="cf-msg-screen-deck"> We’ve recorded your explanation for halting
-    the routing of claim #<%= task.appeal.vbms_id %>. It has been removed
-    from the queue and must now be processed outside of Caseflow Dispatch.</h2>
-  <p class="cf-msg-screen-text">
-    You can now establish the next claim or go back to your Work History.</p>
-</div>
-<%= render 'finished_toolbar' %>
+
+<%= react_component("BaseContainer", props: {
+  availableTasks: !!current_user_next_task,
+  buttonText: start_text,
+  employeeCount: Rails.cache.read('employee_count') || '0',
+  page: "EstablishClaimCancel",
+  secondHeader: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch.",
+  totalCasesCompleted: user_completed_today,
+  totalCasesToComplete: to_complete_count
+}) %>
