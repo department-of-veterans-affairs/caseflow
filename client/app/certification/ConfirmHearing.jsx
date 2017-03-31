@@ -124,6 +124,15 @@ const UnconnectedConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
+  const shouldDisplayHearingChangeFound = hearingDocumentIsInVbms === 'true';
+  const shouldDisplayTypeOfForm9Question = hearingDocumentIsInVbms === 'false';
+  const form9IsFormal = form9Type === Constants.form9Types.FORMAL_FORM9;
+  const form9IsInformal = form9Type === Constants.form9Types.INFORMAL_FORM9;
+  const shouldDisplayFormalForm9Question = shouldDisplayTypeOfForm9Question &&
+    form9IsFormal;
+  const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
+    form9IsInformal;
+
   return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -149,7 +158,7 @@ const UnconnectedConfirmHearing = ({
           onChange={onHearingDocumentChange}/>
 
         {
-          hearingDocumentIsInVbms === 'true' &&
+          shouldDisplayHearingChangeFound &&
           <RadioField name={hearingChangeFoundQuestion}
             required={true}
             options={hearingChangeFoundAnswers}
@@ -158,7 +167,7 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
-          hearingDocumentIsInVbms === 'false' &&
+          shouldDisplayTypeOfForm9Question &&
           <RadioField name={typeOfForm9Question}
             required={true}
             options={typeOfForm9Answers}
@@ -167,10 +176,9 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
-
+          shouldDisplayTypeOfForm9Question &&
           /* TODO: restore the accessibility stuff here.
             also, we should stop using rails pdf viewer */
-          hearingDocumentIsInVbms === 'false' &&
           <LoadingContainer>
             <iframe
               className="cf-doc-embed cf-iframe-with-loading form9-viewer"
@@ -181,8 +189,7 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
-          hearingDocumentIsInVbms === 'false' &&
-          form9Type === Constants.form9Types.FORMAL_FORM9 &&
+          shouldDisplayFormalForm9Question &&
           <RadioField name={formalForm9HearingQuestion}
             options={formalForm9HearingAnswers}
             value={hearingType}
@@ -191,8 +198,7 @@ const UnconnectedConfirmHearing = ({
         }
 
         {
-          hearingDocumentIsInVbms === 'false' &&
-          form9Type === Constants.form9Types.INFORMAL_FORM9 &&
+          shouldDisplayInformalForm9Question &&
           <RadioField name={informalForm9HearingQuestion}
             options={informalForm9HearingAnswers}
             value={hearingType}
