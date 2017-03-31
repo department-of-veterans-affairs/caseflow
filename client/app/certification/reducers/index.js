@@ -11,22 +11,55 @@
  const initialState = {
    hearingDocumentIsInVbms: null,
    form9Type: null,
-   hearingType: null
+   hearingType: null,
+   certifyingOffice: null,
+   certifyingUsername: null,
+   certifyingOfficialName: null,
+   certifyingOfficialTitle: null,
+   certificationDate: null
  };
 
  const certification = function(state = initialState, action) {
    switch (action.type) {
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {
-       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms
+       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms,
+       // If we change the answer for the hearing doc in VBMS question,
+       // also wipe the state for the type of hearing the Veteran prefers,
+       // since the previous answer is no longer valid.
+       hearingType: null
      });
    case Constants.CHANGE_TYPE_OF_FORM9:
      return Object.assign({}, state, {
-       form9Type: action.payload.form9Type
+       form9Type: action.payload.form9Type,
+       // If we change the answer for the form 9 type question,
+       // also wipe the state for the type of hearing the Veteran prefers,
+       // since the previous answer is no longer valid.
+       hearingType: null
      });
    case Constants.CHANGE_TYPE_OF_HEARING:
      return Object.assign({}, state, {
        hearingType: action.payload.hearingType
+     });
+   case Constants.CHANGE_CERTIFYING_OFFICIAL:
+     return Object.assign({}, state, {
+       certifyingOffice: action.payload.certifyingOffice
+     });
+   case Constants.CHANGE_CERTIFYING_USERNAME:
+     return Object.assign({}, state, {
+       certifyingUsername: action.payload.certifyingUsername
+     });
+   case Constants.CHANGE_CERTIFYING_OFFICIAL_NAME:
+     return Object.assign({}, state, {
+       certifyingOfficialName: action.payload.certifyingOfficialName
+     });
+   case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE:
+     return Object.assign({}, state, {
+       certifyingOfficialTitle: action.payload.certifyingOfficialTitle
+     });
+   case Constants.CHANGE_CERTIFICATION_DATE:
+     return Object.assign({}, state, {
+       certificationDate: action.payload.certificationDate
      });
    default:
      return state;
