@@ -40,7 +40,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("ARC Work Assignments")
 
       fill_in "Number of people", with: "2"
-      click_on "Update"
+      safe_click_on "Update"
       visit "/dispatch/establish-claim"
       expect(find_field("Number of people").value).to have_content("2")
 
@@ -196,7 +196,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        click_on "< Back to Decision Review"
+        safe_click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
