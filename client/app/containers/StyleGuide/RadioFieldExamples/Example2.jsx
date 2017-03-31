@@ -8,7 +8,7 @@ export default class Example2 extends React.Component {
     super(props);
 
     this.state = {
-      value: "2"
+      value: "1"
     };
   }
 
@@ -19,15 +19,18 @@ export default class Example2 extends React.Component {
   }
 
   render = () => {
+    let options = [
+      { displayText: "Yes",
+        value: "1" },
+      { displayText: "No",
+        value: "2" }
+    ];
+
     return <RadioField
-      label="Here's one with an option initially checked:"
+      label={<span><strong>Horizontal Radio Button</strong></span>}
+      hideLabel={true}
       name="radio_example_2"
-      options={[
-        { displayText: "One",
-          value: "1" },
-        { displayText: "Two",
-          value: "2" }
-      ]}
+      options={options}
       value={this.state.value}
       onChange={this.onChange}
     ></RadioField>;
