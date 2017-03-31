@@ -6,8 +6,10 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
+import { connect } from 'react-redux';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 
-export default class EstablishClaimNote extends BaseForm {
+export class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
     let {
@@ -59,11 +61,14 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   selectedSpecialIssues() {
-    let specialIssues = this.props.specialIssues;
-
-    return Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
+    let result = [];
+    let specialIssuesStatus = this.props.specialIssues;
+    for (let key in SPECIAL_ISSUES) {
+      if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
+        result.push(SPECIAL_ISSUES[key].display)
+      }
+    }
+    return result;
   }
 
   headerText() {
@@ -191,3 +196,27 @@ EstablishClaimNote.propTypes = {
   displayVbmsNote: PropTypes.bool.isRequired,
   handleSubmit: PropTypes.func.isRequired
 };
+
+/*
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state, ownProps) => {
+    return {
+        specialIssues: state.specialIssues
+    };
+};
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const ConnectedEstablishClaimNote = connect(
+    mapStateToProps,
+    null,
+    null
+)(EstablishClaimNote);
+
+export default ConnectedEstablishClaimNote;

@@ -6,8 +6,9 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
+import { connect } from 'react-redux';
 
-export default class EstablishClaimEmail extends BaseForm {
+export class EstablishClaimEmail extends BaseForm {
   constructor(props) {
     super(props);
     let {
@@ -174,3 +175,27 @@ EstablishClaimEmail.propTypes = {
   regionalOffice: PropTypes.string,
   regionalOfficeEmail: PropTypes.arrayOf(PropTypes.string)
 };
+
+/*
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state, ownProps) => {
+    return {
+        specialIssues: state.specialIssues
+    };
+};
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const ConnectedEstablishClaimEmail = connect(
+    mapStateToProps,
+    null,
+    null
+)(EstablishClaimEmail);
+
+export default ConnectedEstablishClaimEmail;

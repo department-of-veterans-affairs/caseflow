@@ -136,13 +136,13 @@ export default class EstablishClaim extends BaseForm {
 
   containsRoutedSpecialIssues = () => {
     return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue].value;
+      return this.store.getState().specialIssues[issue.specialIssue];
     });
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue || issue].value;
+      return this.store.getState().specialIssues[issue.specialIssue || issue];
     });
   }
 
