@@ -207,11 +207,19 @@ select {
   input {
     left: -999em;
   }
+
+  i {
+    margin-left: 0;
+  }
 }
 
 .cf-form-checkbox {
   input {
     left: -999em;
+  }
+
+  i {
+    margin-left: 0;
   }
 }
 
