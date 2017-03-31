@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
-import { Link } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
+import Footer from './Footer';
 
 const representativeTypeOptions = [
   {
@@ -88,30 +88,19 @@ const UnconnectedConfirmCaseDetails = ({
 
       </div>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel Certification
-        </a>
-
-        <Link to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
-          <button type="button" className="cf-push-right">
-            Continue
-          </button>
-        </Link>
-
-      </div>
-
+      <Footer
+        nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
+      />
   </div>;
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onRepresentativeNameChange: (event) => {
+    onRepresentativeNameChange: (representativeName) => {
       dispatch({
         type: Constants.CHANGE_REPRESENTATIVE_NAME,
         payload: {
-          representativeName: event.target.value
+          representativeName
         }
       });
     },
@@ -123,11 +112,11 @@ const mapDispatchToProps = (dispatch) => {
         }
       });
     },
-    onOtherRepresentativeTypeChange: (event) => {
+    onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
       dispatch({
         type: Constants.CHANGE_REPRESENTATIVE_TYPE,
         payload: {
-          otherRepresentativeType: event.target.value
+          otherRepresentativeType
         }
       });
     }
@@ -137,7 +126,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     representativeType: state.representativeType,
-    representativeName: state.representativeName
+    representativeName: state.representativeName,
+    otherRepresentativeType: state.otherRepresentativeType
   };
 };
 
