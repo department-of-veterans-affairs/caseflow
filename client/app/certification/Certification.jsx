@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, connect } from 'redux';
 
 import DocumentsCheck from './DocumentsCheck';
 import AlreadyCertified from './AlreadyCertified';
@@ -10,17 +10,23 @@ import ConfirmHearing from './ConfirmHearing';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
-import { connect } from 'react-redux';
 
 // TODO: rethink routes, this may be a temporary solution.
 // do we want to still use vacols_id?
 // what do we want the actual routes to be?
 const UnconnectedEntryPointRedirect = ({ certificationStatus, match }) => {
-  switch(certificationStatus){
-    case "started": return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
-    case "already_certified": return <Redirect to={`/certifications/${match.params.vacols_id}/already_certified`}/>;
-    case "data_missing": return <Redirect to={`/certifications/${match.params.vacols_id}/not_ready`}/>;
-    case "mismatched_documents": return <Redirect to={`/certifications/${match.params.vacols_id}/mismatched_documents`}/>;
+  switch (certificationStatus) {
+  case "started":
+    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+  case "already_certified":
+    return <Redirect to={`/certifications/${match.params.vacols_id}/already_certified`}/>;
+  case "data_missing":
+    return <Redirect to={`/certifications/${match.params.vacols_id}/not_ready`}/>;
+  case "mismatched_documents":
+    return <Redirect
+      to={`/certifications/${match.params.vacols_id}/mismatched_documents`}/>;
+  default:
+    return <Redirect to={`/certifications/${match.params.vacols_id}/not_ready`}/>;
   }
 };
 

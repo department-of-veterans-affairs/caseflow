@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 
-
 // TODO: refactor to use shared components where helpful
 const UnconnectedDocumentsCheck = ({
   form9Match,
@@ -15,12 +14,9 @@ const UnconnectedDocumentsCheck = ({
   nodDate,
   socMatch,
   socDate,
-  /* TODO: add ssoc_match and ssoc_dates */
-  vbmsId,
-  veteranName,
-  certificationStatus,
-  vacolsId,
   match
+
+  /* TODO: add ssoc_match and ssoc_dates */
 }) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
@@ -31,7 +27,8 @@ const UnconnectedDocumentsCheck = ({
         nodMatch={nodMatch}
         nodDate={nodDate}
         socMatch={socMatch}
-        socDate={socDate} />
+        socDate={socDate}
+        match={match}/>
     </div>
 
     <div className="cf-app-segment">
@@ -57,11 +54,9 @@ const mapStateToProps = (state) => {
     nodDate: state.nodDate,
     socMatch: state.socMatch,
     socDate: state.socDate,
+    match: state.match
+
     /* TODO: add ssoc_match and ssoc_dates */
-    vbmsId: state.vbmsId,
-    veteranName: state.veteranName,
-    certificationStatus: state.certificationStatus,
-    vacolsId: state.vacolsId
   };
 };
 

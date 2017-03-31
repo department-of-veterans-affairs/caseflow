@@ -39,10 +39,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
-      fill_in "Enter the number of people working today", with: "2"
+      fill_in "Number of people", with: "2"
       click_on "Update"
       visit "/dispatch/establish-claim"
-      expect(find_field("Enter the number of people working today").value).to have_content("2")
+      expect(find_field("Number of people").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
@@ -134,22 +134,22 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # can adequetly test both of them.
       visit "/dispatch/establish-claim/#{task.id}"
       find_label_for("riceCompliance").click
-      click_on "Cancel"
+      safe_click_on "Cancel"
 
       expect(page).to have_css(".cf-modal")
 
       # Validate I can't cancel without entering an explanation
-      click_on "Stop processing claim"
+      safe_click_on "Stop processing claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
       expect(page).to have_css(".cf-modal")
       expect(page).to have_content("Please enter an explanation")
 
       # Validate closing the cancellation modal
-      click_on "Close"
+      safe_click_on "Close"
       expect(page).to_not have_css(".cf-modal")
 
       # Open modal
-      click_on "Cancel"
+      safe_click_on "Cancel"
       expect(page).to have_css(".cf-modal")
 
       # Fill in explanation and cancel
@@ -196,7 +196,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Decision Review"
+        click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
@@ -287,7 +287,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Please process this claim manually")
 
         find_label_for("confirmEmail").click
-        click_on "Release claim"
+        safe_click_on "Release claim"
 
         expect(page).to have_content("Processed case outside of Caseflow")
       end
