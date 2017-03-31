@@ -83,6 +83,11 @@ RadioField.propTypes = {
   label: PropTypes.node,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  options: PropTypes.array,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      displayText: PropTypes.node,
+      value: PropTypes.string
+    })
+  ),
   value: PropTypes.string
 };
