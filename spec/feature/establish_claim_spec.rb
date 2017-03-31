@@ -68,6 +68,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
     end
 
+    let(:ep_already_exists_error) do
+      VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+        "A duplicate claim for this EP code already exists in CorpDB. Please " \
+        "use a different EP code modifier. GUID: 13fcd</faultstring>")
+    end
+
     scenario "Assign the correct new task to myself" do
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
@@ -164,6 +170,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate special issue isn't saved on cancel
       expect(task.appeal.reload.rice_compliance).to be_falsey
+    end
+
+    scenario "Error establishing claim" do
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+      task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{task.id}"
+      safe_click_on "Route claim"
+      safe_click_on "Create End Product"
+
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("An EP with that modifier was previously created for this claim.")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
