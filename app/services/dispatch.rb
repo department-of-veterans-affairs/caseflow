@@ -93,7 +93,7 @@ class Dispatch
       return EndProductAlreadyExistsError
     end
 
-    return error
+    error
   end
 
   # Class used for validating the claim object
