@@ -25,7 +25,7 @@ export default class Example2 extends React.Component {
       { displayText: "No",
         value: "2" }
     ];
-    
+
     return <RadioField
       label={<span><strong>Horizontal Radio Button</strong></span>}
       hideLabel={true}

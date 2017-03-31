@@ -9,7 +9,7 @@ export default class Example4 extends React.Component {
 
     this.state = {
       value: null,
-      errorMessage: "This field is required",
+      errorMessage: "This field is required"
     };
   }
 
