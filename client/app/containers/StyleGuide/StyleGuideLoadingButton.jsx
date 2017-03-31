@@ -28,7 +28,7 @@ export default class StyleGuideLoadingButton extends React.Component {
   }
 
   render() {
-    let buttonName = "See It In Action";
+    let buttonName = "See it in action";
 
     return <div>
       <StyleGuideComponentTitle
