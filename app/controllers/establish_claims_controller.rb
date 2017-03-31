@@ -14,6 +14,9 @@ class EstablishClaimsController < TasksController
       Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
     end
     render json: {}
+
+  rescue Dispatch::EndProductAlreadyExistsError => e
+    render json: { error_code: "duplicate_ep" }, status: 500
   end
 
   # This POST updates VACOLS & VBMS Note

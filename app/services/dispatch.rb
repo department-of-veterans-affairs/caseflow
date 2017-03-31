@@ -1,5 +1,6 @@
 class Dispatch
   class InvalidClaimError < StandardError; end
+  class EndProductAlreadyExistsError < StandardError; end
 
   END_PRODUCT_STATUS = {
     "PEND" => "Pending",
@@ -67,6 +68,9 @@ class Dispatch
                                                      appeal: task.appeal)
 
     task.review!(outgoing_reference_id: end_product.claim_id)
+
+  rescue VBMS::HTTPError => error
+    raise parse_vbms_error(error)
   end
 
   def update_vacols!
@@ -79,6 +83,16 @@ class Dispatch
       task.appeal.update!(special_issues)
       task.assign_existing_end_product!(end_product_id)
       Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
+    end
+  end
+
+  private
+
+  def parse_vbms_error(error)
+    if /A duplicate claim for this EP code already exists/ =~ error.body
+      return EndProductAlreadyExistsError
+    else
+      return error
     end
   end
 
