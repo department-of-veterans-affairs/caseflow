@@ -23,7 +23,9 @@ export default class Pdf extends React.Component {
   renderPage = (index) => {
     // If we've already rendered the page return.
     if (this.isRendered[index]) {
-      return;
+      return new Promise((resolve) => {
+        resolve();
+      });
     }
 
     const { UI } = PDFJSAnnotate;
@@ -133,10 +135,14 @@ export default class Pdf extends React.Component {
         }, () => {
           // Create but do not render all of the pages
           this.createPages(pdfDocument);
+          
+          this.renderPage(0);
 
+          if (this.props.scrollToComment) {
+            this.onJumpToComment(this.props.comments, this.props.scrollToComment);
+          }
           // Automatically render the first page
           // This assumes that page has already been created and appended
-          this.renderPage(0);
           resolve();
         });
 
@@ -149,6 +155,30 @@ export default class Pdf extends React.Component {
         this.scrollEvent();
       });
     });
+  }
+
+  // Consider moving this down into Pdf.jsx
+  onJumpToComment = (comments, uuid) => {
+    let comment = comments.filter((comment => comment.id === uuid));
+
+    if (comment.length === 1) {
+      let pageNumber = comment[0].page;  
+      let yPosition = comment[0].y;
+
+      this.renderPage(pageNumber - 1).then(() => {
+        let pageElement = document.getElementById(`pageContainer${pageNumber}`);
+        let scrollWindow = document.getElementById('scrollWindow');
+
+        let height = (scrollWindow.getBoundingClientRect().bottom -
+          scrollWindow.getBoundingClientRect().top);
+
+        scrollWindow.scrollTop =
+          pageElement.getBoundingClientRect().top +
+          yPosition + scrollWindow.scrollTop - height / 2;
+      });
+    } else {
+      throw new Error(`Cannot scroll to comment ${uuid}`);
+    }
   }
 
   componentDidMount = () => {
@@ -238,6 +268,10 @@ export default class Pdf extends React.Component {
 
       this.rerenderPage(index);
     });
+
+    if (nextProps.scrollToComment !== this.props.scrollToComment) {
+      this.onJumpToComment(nextProps.comments, nextProps.scrollToComment);      
+    }
   }
 
   render() {
@@ -267,5 +301,6 @@ Pdf.propTypes = {
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
-  onCommentClick: PropTypes.func
+  onCommentClick: PropTypes.func,
+  scrollToComment: PropTypes.number
 };

@@ -23,24 +23,50 @@ export default class Comment extends React.Component {
       className = `${className} cf-comment-selected`;
     }
 
+    let editButtons = [];
+
+    if (this.props.onEditComment) {
+      editButtons.push(<Button
+        name="edit"
+        classNames={["cf-btn-link comment-control-button"]}
+        onClick={this.onEditComment}>
+        Edit
+      </Button>);
+      if (this.props.onDeleteComment) {
+        editButtons.push(<span className="comment-control-button-divider">
+            |
+          </span>);
+      }
+    }
+    if (this.props.onDeleteComment) {
+     editButtons.push(<Button
+        name="delete"
+        classNames={["cf-btn-link comment-control-button"]}
+        onClick={this.onDeleteComment}>
+        Delete
+      </Button>);
+    }
+
+    let jumpToSectionButton = null;
+
+    if (this.props.onJumpToComment) {
+      jumpToSectionButton = <Button
+          name="jumpToComment"
+          classNames={["cf-btn-link comment-control-button"]}
+          onClick={this.props.onJumpToComment}>
+          Jump to Section
+        </Button>;
+    }
+
     return <div>
         <div className="comment-control-button-container">
-          <span className="cf-right-side">
-            <Button
-              name="edit"
-              classNames={["cf-btn-link comment-control-button"]}
-              onClick={this.onEditComment}>
-              Edit
-            </Button>
-            <span className="comment-control-button-divider">
-              |
+          <span className="cf-left-side">
+            Pg. {this.props.page} {jumpToSectionButton}
+          </span>
+          <span>
+            <span className="cf-right-side">
+              {editButtons}
             </span>
-            <Button
-              name="delete"
-              classNames={["cf-btn-link comment-control-button"]}
-              onClick={this.onDeleteComment}>
-              Delete
-            </Button>
           </span>
         </div>
         <div
@@ -54,12 +80,18 @@ export default class Comment extends React.Component {
   }
 }
 
+Comment.defaultProps = {
+  onClick: () => {}
+}
+
 Comment.propTypes = {
   children: React.PropTypes.string,
   id: PropTypes.string,
   selected: PropTypes.bool,
   onEditComment: PropTypes.func,
   onDeleteComment: PropTypes.func,
+  onJumpToComment: PropTypes.func,
   onClick: PropTypes.func,
+  page: PropTypes.number,
   uuid: PropTypes.number
 };

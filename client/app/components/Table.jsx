@@ -40,7 +40,7 @@ export default class Table extends React.Component {
     let HeaderRow = (props) => {
       return <thead>
         <tr>
-          {props.columns.map((column, columnNumber) =>
+          {getColumns(props).map((column, columnNumber) =>
             <th scope="col" key={columnNumber} className={cellClasses(column)}>
               {column.header || ""}
             </th>
@@ -60,12 +60,28 @@ export default class Table extends React.Component {
       return "";
     };
 
+    let getCellSpan = (rowObject, column) => {
+      if (column.span) {
+        return column.span(rowObject);
+      } else {
+        return 1;
+      }
+    }
+
+    let getColumns = (props) => {
+      if (typeof props.columns === 'function') {
+        return props.columns(props.rowObject);
+      } else {
+        return props.columns;
+      }
+    }
+
     let Row = (props) => {
       let rowId = props.footer ? "footer" : props.rowNumber;
 
       return <tr id={`table-row-${rowId}`}>
-        {props.columns.map((column, columnNumber) =>
-          <td key={columnNumber} className={cellClasses(column)}>
+        {getColumns(props).map((column, columnNumber) =>
+          <td key={columnNumber} className={cellClasses(column)} colSpan={getCellSpan(props.rowObject, column)}>
             {props.footer ?
               column.footer :
               getCellValue(props.rowObject, props.rowNumber, column)}
@@ -107,7 +123,9 @@ export default class Table extends React.Component {
 }
 
 Table.propTypes = {
-  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columns: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   summary: PropTypes.string.isRequired,
   id: PropTypes.string

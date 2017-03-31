@@ -137,21 +137,6 @@ export default class PdfViewer extends React.Component {
     this.setState({ comments });
   }
 
-  // Consider moving this down into Pdf.jsx
-  onJumpToComment = (uuid) => {
-    PDFJSAnnotate.
-      getStoreAdapter().
-      getAnnotation(this.props.doc.id, uuid).
-      then((annotation) => {
-        let page = document.getElementsByClassName('page');
-        let scrollWindow = document.getElementById('scrollWindow');
-
-        scrollWindow.scrollTop =
-          page[annotation.page - 1].getBoundingClientRect().top +
-          annotation.y - 100 + scrollWindow.scrollTop;
-      });
-  }
-
   componentDidMount = () => {
     this.onCommentChange();
 
@@ -187,6 +172,7 @@ export default class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
+            scrollToComment={this.props.scrollToComment}
           />
           <PdfSidebar
             doc={this.props.doc}
@@ -200,7 +186,7 @@ export default class PdfViewer extends React.Component {
             onCancelCommentEdit={this.onCancelCommentEdit}
             onDeleteComment={this.onDeleteComment}
             onEditComment={this.onEditComment}
-            onJumpToComment={this.onJumpToComment}
+            onScrollToComment={this.props.onScrollToComment}
           />
         </div>
       </div>
@@ -214,5 +200,6 @@ PdfViewer.propTypes = {
   file: PropTypes.string.isRequired,
   label: PropTypes.string,
   pdfWorker: PropTypes.string,
-  onSetLabel: PropTypes.func.isRequired
+  onSetLabel: PropTypes.func.isRequired,
+  scrollToComment: PropTypes.number
 };
