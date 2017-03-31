@@ -124,7 +124,6 @@ const UnconnectedConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-
   return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -132,7 +131,6 @@ const UnconnectedConfirmHearing = ({
         <div>
           {hearingCheckText}
         </div>
-
         {/*
           TODO: would we be better served by
           making our connected components smaller?
@@ -175,7 +173,7 @@ const UnconnectedConfirmHearing = ({
           hearingDocumentIsInVbms === 'false' &&
           <LoadingContainer>
             <iframe
-              className="cf-doc-embed cf-iframe-with-loading"
+              className="cf-doc-embed cf-iframe-with-loading form9-viewer"
               title="Form8 PDF"
               src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
             </iframe>
@@ -230,27 +228,27 @@ const UnconnectedConfirmHearing = ({
  */
 const mapDispatchToProps = (dispatch) => {
   return {
-    onHearingDocumentChange: (hearingDocumentIsInVbms) => {
+    onHearingDocumentChange: (event) => {
       dispatch({
         type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
         payload: {
-          hearingDocumentIsInVbms
+          hearingDocumentIsInVbms: event.target.value
         }
       });
     },
-    onTypeOfForm9Change: (form9Type) => {
+    onTypeOfForm9Change: (event) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_FORM9,
         payload: {
-          form9Type
+          form9Type: event.target.value
         }
       });
     },
-    onHearingTypeChange: (hearingType) => {
+    onHearingTypeChange: (event) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
         payload: {
-          hearingType
+          hearingType: event.target.value
         }
       });
     }
