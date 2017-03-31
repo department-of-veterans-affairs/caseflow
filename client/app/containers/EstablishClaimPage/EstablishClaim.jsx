@@ -654,6 +654,7 @@ export default class EstablishClaim extends BaseForm {
 
     return (
       <Provider store={this.store}>
+        <div>
         <EstablishClaimProgressBar
           isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
@@ -755,6 +756,7 @@ export default class EstablishClaim extends BaseForm {
             {...this.state.cancelModal.cancelFeedback}
           />
         </Modal>}
+        </div>
       </Provider>
     );
   }
