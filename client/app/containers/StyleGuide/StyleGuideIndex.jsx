@@ -6,6 +6,8 @@ import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StickyNav from '../../components/StickyNav';
+import NavLink from '../../components/NavLink';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -15,34 +17,18 @@ export default class StyleGuideIndex extends React.Component {
 /* eslint-disable max-len */
 
     return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-      <div className="cf-push-left cf-sg-nav">
+      <StickyNav>
+        <div className="cf-push-left cf-sg-nav">
           <ul className="usa-sidenav-list">
-            <li>
-              <a href="/styleguide#">Introduction</a>
-            </li>
-            <li>
-              <a href="#modals">Modals</a>
-            </li>
-            <li>
-              <a href="#tabs">Tabs</a>
-            </li>
-            <li>
-              <a href="#loading_buttons">Loading Buttons</a>
-            </li>
-            <li>
-              <a href="#radios">Radio Fields</a>
-            </li>
-            <li>
-              <a href="#tables">Tables</a>
-            </li>
-            <li>
-              <a href="#progress_bar">Progress Bar</a>
-            </li>
-            <li>
-              <a href="#text_input">Text Input</a>
-            </li>
+            <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
+            <NavLink anchor="#modals" name="Modals"></NavLink>
+            <NavLink anchor="#tabs" name="Tabs"></NavLink>
+            <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
+            <NavLink anchor="#tables" name="Tables"></NavLink>
+            <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
           </ul>
-      </div>
+        </div>
+      </StickyNav>
       <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>

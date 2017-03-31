@@ -7,6 +7,26 @@ $color-tab-text-hover: #1f5593;
   padding-top: 30px;
 }
 
+// Style Guide Sticky Menu
+div {
+  &[class$="-scrolling"] {
+    position: fixed;
+    top: 0;
+  }
+  &[class$="-not-scrolling"] {
+    position: relative;
+  }
+}
+
+.cf-sg-nav {
+  .current-link {
+    border-left: 4px solid #0071bc;
+    color: #0071bc;
+    font-weight: 700;
+    padding-left: 1.4em;
+  }
+}
+
 .cf-sg-content {
   width: 80%;
 }
