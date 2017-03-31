@@ -27,6 +27,11 @@ export const form9Types = {
   INFORMAL_FORM9: 'INFORMAL_FORM9'
 };
 
+export const vbmsHearingDocument = {
+  FOUND: 'FOUND',
+  NOT_FOUND: 'NOT_FOUND'
+};
+
 
 export const CHANGE_CERTIFYING_OFFICIAL = 'CHANGE_CERTIFYING_OFFICIAL';
 export const CHANGE_CERTIFYING_USERNAME = 'CHANGE_CERTIFYING_USERNAME';

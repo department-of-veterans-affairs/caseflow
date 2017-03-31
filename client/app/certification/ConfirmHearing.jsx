@@ -24,9 +24,9 @@ const hearingChangeQuestion = `Was a hearing cancellation or request added after
 // TODO: make into constant?
 const hearingChangeAnswers = [
   { displayText: 'Yes',
-    value: 'true' },
+    value: Constants.vbmsHearingDocument.FOUND },
   { displayText: 'No',
-    value: 'false' }
+    value: Constants.vbmsHearingDocument.NOT_FOUND }
 ];
 
 const hearingChangeFoundQuestion = `What did the appellant request
@@ -124,10 +124,14 @@ const UnconnectedConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
-  const shouldDisplayHearingChangeFound = hearingDocumentIsInVbms === 'true';
-  const shouldDisplayTypeOfForm9Question = hearingDocumentIsInVbms === 'false';
+  const shouldDisplayHearingChangeFound =
+    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
+  const shouldDisplayTypeOfForm9Question =
+    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND;
+
   const form9IsFormal = form9Type === Constants.form9Types.FORMAL_FORM9;
   const form9IsInformal = form9Type === Constants.form9Types.INFORMAL_FORM9;
+
   const shouldDisplayFormalForm9Question = shouldDisplayTypeOfForm9Question &&
     form9IsFormal;
   const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
@@ -177,6 +181,7 @@ const UnconnectedConfirmHearing = ({
 
         {
           shouldDisplayTypeOfForm9Question &&
+
           /* TODO: restore the accessibility stuff here.
             also, we should stop using rails pdf viewer */
           <LoadingContainer>
