@@ -31,11 +31,19 @@
      });
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {
-       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms
+       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms,
+       // If we change the answer for the hearing doc in VBMS question,
+       // also wipe the state for the type of hearing the Veteran prefers,
+       // since the previous answer is no longer valid.
+       hearingType: null
      });
    case Constants.CHANGE_TYPE_OF_FORM9:
      return Object.assign({}, state, {
-       form9Type: action.payload.form9Type
+       form9Type: action.payload.form9Type,
+       // If we change the answer for the form 9 type question,
+       // also wipe the state for the type of hearing the Veteran prefers,
+       // since the previous answer is no longer valid.
+       hearingType: null
      });
    case Constants.CHANGE_TYPE_OF_HEARING:
      return Object.assign({}, state, {

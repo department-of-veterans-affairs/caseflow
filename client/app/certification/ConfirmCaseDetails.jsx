@@ -49,8 +49,13 @@ const UnconnectedConfirmCaseDetails = ({
     onRepresentativeTypeChange,
     representativeName,
     onRepresentativeNameChange,
+    otherRepresentativeType,
+    onOtherRepresentativeTypeChange,
     match
 }) => {
+
+  const shouldShowOtherTypeField =
+    representativeType === Constants.representativeTypes.OTHER;
 
   return <div>
       <div className="cf-app-segment cf-app-segment--alt">
@@ -66,6 +71,15 @@ const UnconnectedConfirmCaseDetails = ({
           value={representativeType}
           onChange={onRepresentativeTypeChange}
           required={true}/>
+
+        {
+          shouldShowOtherTypeField &&
+          <TextField
+            name="Specify other representative type"
+            value={otherRepresentativeType}
+            onChange={onOtherRepresentativeTypeChange}
+            required={true}/>
+        }
 
         <TextField name="Representative name"
           value={representativeName}
@@ -93,19 +107,27 @@ const UnconnectedConfirmCaseDetails = ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onRepresentativeNameChange: (representativeName) => {
+    onRepresentativeNameChange: (event) => {
       dispatch({
         type: Constants.CHANGE_REPRESENTATIVE_NAME,
         payload: {
-          representativeName
+          representativeName: event.target.value
         }
       });
     },
-    onRepresentativeTypeChange: (representativeType) => {
+    onRepresentativeTypeChange: (event) => {
       dispatch({
         type: Constants.CHANGE_REPRESENTATIVE_TYPE,
         payload: {
-          representativeType
+          representativeType: event.target.value
+        }
+      });
+    },
+    onOtherRepresentativeTypeChange: (event) => {
+      dispatch({
+        type: Constants.CHANGE_REPRESENTATIVE_TYPE,
+        payload: {
+          otherRepresentativeType: event.target.value
         }
       });
     }
