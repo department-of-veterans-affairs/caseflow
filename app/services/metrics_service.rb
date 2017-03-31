@@ -2,6 +2,7 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
+  # rubocop:disable Metrics/MethodLength
   def self.timer(description, service: nil, name: "unknown")
     return_value = nil
     app = RequestStore[:application] || "other"
@@ -26,6 +27,8 @@ class MetricsService
       metric.increment(app: app, name: name)
     end
 
+    # Reraise the same error. We don't want to interfere at all in normal error handling
+    # this is just to capture the metric
     raise
   ensure
     if service

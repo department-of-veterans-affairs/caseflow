@@ -24,9 +24,7 @@ describe MetricsService do
       expect(gauge_labels[:app]).to eq("fake-app")
       expect(gauge_labels[:name]).to eq("ListDocuments")
 
-
       expect(counter.values[labels]).to eq(current_counter + 1)
-
 
       # Ensure a value has been assigned
       expect(gauge.values[labels]).to be_truthy
@@ -36,9 +34,9 @@ describe MetricsService do
       counter = PrometheusService.vbms_request_error_counter
       current_counter = counter.values[labels] || 0
 
-      expect {
+      expect do
         MetricsService.timer("fake api call", service: "vbms", name: "ListDocuments") { fail("hi") }
-      }.to raise_error("hi")
+      end.to raise_error("hi")
 
       expect(counter.values[labels]).to eq(current_counter + 1)
     end

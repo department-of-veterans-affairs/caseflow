@@ -10,7 +10,7 @@ class VBMSCaseflowLogger
       if status != 200
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
-          "(#{data[:request].class.name}) #{data[:response_body]}"
+          "(#{name}) #{data[:response_body]}"
         )
       end
     end
