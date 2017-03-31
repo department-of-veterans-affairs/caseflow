@@ -53,7 +53,7 @@
 .cf-associated-header {
   color: $color-gray;
   font-size: 24px;
-  margin-left: 20px;
+  margin-left: 175px;
   font-weight: normal;
 }
 
@@ -207,11 +207,19 @@ select {
   input {
     left: -999em;
   }
+
+  i {
+    margin-left: 0;
+  }
 }
 
 .cf-form-checkbox {
   input {
     left: -999em;
+  }
+
+  i {
+    margin-left: 0;
   }
 }
 
