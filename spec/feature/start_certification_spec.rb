@@ -34,8 +34,6 @@ RSpec.feature "Start Certification" do
     expect(page).to have_content("Caseflow found the document below, labeled as a Form 9")
     page.find(".cf-form-radio-option", text: "Statement in lieu of Form 9").click
     expect(page).to have_content("What optional board hearing preference, if any")
-
-    ENV["ENABLE_CERTIFICATION_V2"] = ""
   end
 
   scenario "Starting a certification with missing documents" do
