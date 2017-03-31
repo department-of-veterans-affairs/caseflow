@@ -7,13 +7,8 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       name = data[:request].class.name.split("::").last
-      app = RequestStore[:application] || "other"
-      PrometheusService.completed_vbms_requests.increment(status: status,
-                                                          app: app,
-                                                          name: name)
 
       if status != 200
-        PrometheusService.vbms_errors.increment
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
           "(#{name}) #{data[:response_body]}"
