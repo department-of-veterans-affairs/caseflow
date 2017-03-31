@@ -2,9 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
-import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 

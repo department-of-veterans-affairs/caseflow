@@ -235,7 +235,7 @@ EstablishClaimDecision.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     specialIssues: state.specialIssues
   };
@@ -245,15 +245,15 @@ const mapDispatchToProps = (dispatch) => {
   return {
     handleSpecialIssueFieldChange: (specialIssue) => (value) => {
       dispatch({
-          type: Constants.CHANGE_SPECIAL_ISSUE,
-          payload: {
-              specialIssue: specialIssue,
-              value: value
-          }
+        type: Constants.CHANGE_SPECIAL_ISSUE,
+        payload: {
+          specialIssue: specialIssue,
+          value: value
+        }
       });
     }
-  }
-}
+  };
+};
 
 /*
  * Creates a component that's connected to the Redux store

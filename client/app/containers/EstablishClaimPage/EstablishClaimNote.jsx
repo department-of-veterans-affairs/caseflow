@@ -63,11 +63,13 @@ export class EstablishClaimNote extends BaseForm {
   selectedSpecialIssues() {
     let result = [];
     let specialIssuesStatus = this.props.specialIssues;
+
     for (let key in SPECIAL_ISSUES) {
       if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
-        result.push(SPECIAL_ISSUES[key].display)
+        result.push(SPECIAL_ISSUES[key].display);
       }
     }
+
     return result;
   }
 
@@ -202,10 +204,10 @@ EstablishClaimNote.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state, ownProps) => {
-    return {
-        specialIssues: state.specialIssues
-    };
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
 };
 
 /*
