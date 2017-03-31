@@ -39,10 +39,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
-      fill_in "Number of people", with: "2"
+      fill_in "Enter the number of people working today", with: "2"
       click_on "Update"
       visit "/dispatch/establish-claim"
-      expect(find_field("Number of people").value).to have_content("2")
+      expect(find_field("Enter the number of people working today").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
@@ -196,7 +196,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        click_on "< Back to Decision Review"
+        safe_click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
