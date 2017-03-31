@@ -25,6 +25,7 @@ const UnconnectedEntryPointRedirect = ({ certificationStatus, match }) => {
   case "mismatched_documents":
     return <Redirect
       to={`/certifications/${match.params.vacols_id}/mismatched_documents`}/>;
+  // TODO: this should be changed to error page
   default:
     return <Redirect to={`/certifications/${match.params.vacols_id}/not_ready`}/>;
   }
