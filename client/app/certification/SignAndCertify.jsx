@@ -1,81 +1,147 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
+import { connect } from 'react-redux';
+import * as Constants from './constants/constants';
 
-// TODO: refactor to use shared components where helpful
-export default class SignAndCertify extends React.Component {
-  render() {
-    let {
-      certifyingOffice,
-      certifyingUsername,
-      certifyingOfficialName,
-      certifyingOfficialTitle,
-      certificationDate
-    } = this.props;
 
-    return <div>
-      <form noValidate id="end_product">
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Sign and Certify</h2>
+const certifyingOfficialTitleOptions = [{
+  displayText: 'Decision Review Officer',
+  value: Constants.certifyingOfficialTitles.DECISION_REVIEW_OFFICER
+}, {
+  displayText: 'Rating Specialist',
+  value: Constants.certifyingOfficialTitles.RATING_SPECIALIST
+}, {
+  displayText: 'Veterans Service Representative',
+  value: Constants.certifyingOfficialTitles.VETERANS_SERVICE_REPRESENTATIVE
+}, {
+  displayText: 'Claims Assistant',
+  value: Constants.certifyingOfficialTitles.CLAIMS_ASSISTANT
+}, {
+  displayText: 'Other',
+  value: Constants.certifyingOfficialTitles.OTHER
+}];
 
-          <p>Fill in information about yourself below to sign this certification.</p>
-          <TextField
-            label="Name and location of certifying office:"
-            name="certifyingOffice"
-            value={certifyingOffice}
-            readOnly={true}
-          />
-          <TextField
-            label="Organizational elements certifying appeal:"
-            name="certifyingUsername"
-            value={certifyingUsername}
-            readOnly={true}
-          />
-          <TextField
-            label="Name of certifying official:"
-            name="certifyingOfficialName"
-            value={certifyingOfficialName}
-            readOnly={true}
-          />
-          <RadioField
-            label="Title of certifying official:"
-            name="certifyingOfficialTitle"
-            value={certifyingOfficialTitle}
-            options={[
-              "Decision Review Officer",
-              "Rating Specialist",
-              "Veterans Service Representative",
-              "Claims Assistant",
-              "Other"
-            ]}
-          />
-          <DateSelector
-            label="Decision Date"
-            name="certificationDate"
-            value={certificationDate}
-            readOnly={true}
-          />
-        </div>
-      </form>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel certification
-        </a>
-        <button type="button" className="cf-push-right">
-          Certify appeal
-        </button>
+const UnconnectedSignAndCertify = ({
+    certifyingOffice,
+    onCertifyingOfficeChange,
+    certifyingUsername,
+    onCertifyingUsernameChange,
+    certifyingOfficialName,
+    onCertifyingOfficialNameChange,
+    certifyingOfficialTitle,
+    onCertifyingOfficialTitleChange,
+    certificationDate,
+    onCertificationDateChange
+}) => {
+  return <div>
+    <form noValidate id="end_product">
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Sign and Certify</h2>
+        <p>Fill in information about yourself below to sign this certification.</p>
+
+        <TextField
+          name="Name and location of certifying office:"
+          value={certifyingOffice}
+          required={true}
+          onChange={onCertifyingOfficeChange}/>
+        <TextField
+          name="Organizational elements certifying appeal:"
+          value={certifyingUsername}
+          required={true}
+          onChange={onCertifyingUsernameChange}/>
+        <TextField
+          name="Name of certifying official:"
+          value={certifyingOfficialName}
+          required={true}
+          onChange={onCertifyingOfficialNameChange}/>
+        <RadioField
+          name="Title of certifying official:"
+          options={certifyingOfficialTitleOptions}
+          value={certifyingOfficialTitle}
+          required={true}
+          onChange={onCertifyingOfficialTitleChange}/>
+        <DateSelector
+          name="Decision Date:"
+          value={certificationDate}
+          required={true}
+          onChange={onCertificationDateChange}/>
       </div>
-    </div>;
-  }
-}
+    </form>
 
-SignAndCertify.propTypes = {
-  certifyingOffice: PropTypes.string.isRequired,
-  certifyingUsername: PropTypes.string.isRequired,
-  certifyingOfficialName: PropTypes.string.isRequired,
-  certifyingOfficialTitle: PropTypes.string.isRequired,
-  certificationDate: PropTypes.string.isRequired
+    <div className="cf-app-segment">
+      <a href="#confirm-cancel-certification"
+        className="cf-action-openmodal cf-btn-link">
+        Cancel certification
+      </a>
+      <button type="button" className="cf-push-right">
+        Certify appeal
+      </button>
+    </div>
+  </div>;
 };
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onCertifyingOfficeChange: (certifyingOffice) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL,
+        payload: {
+          certifyingOffice
+        }
+      });
+    },
+    onCertifyingUsernameChange: (certifyingUsername) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_USERNAME,
+        payload: {
+          certifyingUsername
+        }
+      });
+    },
+    onCertifyingOfficialNameChange: (certifyingOfficialName) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL_NAME,
+        payload: {
+          certifyingOfficialName
+        }
+      });
+    },
+    onCertifyingOfficialTitleChange: (certifyingOfficialTitle) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE,
+        payload: {
+          certifyingOfficialTitle
+        }
+      });
+    },
+    onCertificationDateChange: (certificationDate) => {
+      dispatch({
+        type: Constants.CHANGE_CERTIFICATION_DATE,
+        payload: {
+          certificationDate
+        }
+      });
+    }
+
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    certifyingOffice: state.certifyingOffice,
+    certifyingUsername: state.certifyingUsername,
+    certifyingOfficialName: state.certifyingOfficialName,
+    certifyingOfficialTitle: state.certifyingOfficialTitle,
+    certificationDate: state.certificationDate
+  };
+};
+
+const SignAndCertify = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UnconnectedSignAndCertify);
+
+export default SignAndCertify;
