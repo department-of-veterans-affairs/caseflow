@@ -1,5 +1,5 @@
 language: ruby
-dist: wily
+dist: trusty
 rvm:
   - 2.3.0
 
@@ -12,11 +12,11 @@ addons:
 # Install PhantomJS 2.0 from source binary, remove once TravisCI environment has PhantomJS 2.0 installed
 # see https://github.com/travis-ci/travis-ci/issues/3225 for more details
 before_install:
-  - mkdir travis-phantomjs
-  - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
-  - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
-  - phantomjs -v
+  mkdir travis-phantomjs
+  wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
+  tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
+  export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
+  phantomjs -v
 
 before_script:
   - node -v
