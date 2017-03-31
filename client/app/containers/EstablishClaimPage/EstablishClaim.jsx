@@ -482,17 +482,16 @@ export default class EstablishClaim extends BaseForm {
 
     // default needs to be reset in case the user has navigated back in the form
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
-
     // Go through the special issues, and for any regional issues, set SOJ to RO
     specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
     // Go through all the special issues, this time looking for routed issues
     specialIssueFilters.routedSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
