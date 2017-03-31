@@ -1,4 +1,3 @@
-require("babel-core/register");
 require("babel-polyfill");
 
 let jsdom = require('jsdom').jsdom;
