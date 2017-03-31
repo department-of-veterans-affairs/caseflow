@@ -15,7 +15,7 @@ class EstablishClaimsController < TasksController
     end
     render json: {}
 
-  rescue Dispatch::EndProductAlreadyExistsError => e
+  rescue Dispatch::EndProductAlreadyExistsError
     render json: { error_code: "duplicate_ep" }, status: 422
   end
 

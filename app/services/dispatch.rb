@@ -91,9 +91,9 @@ class Dispatch
   def parse_vbms_error(error)
     if /A duplicate claim for this EP code already exists/ =~ error.body
       return EndProductAlreadyExistsError
-    else
-      return error
     end
+
+    return error
   end
 
   # Class used for validating the claim object
