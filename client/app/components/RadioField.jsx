@@ -47,9 +47,9 @@ export default class RadioField extends React.Component {
     let idPart = StringUtil.html5CompliantId(id || name);
 
     return <fieldset className={radioClass.join(' ')}>
-      <div className={labelClass}>
+      <legend className={labelClass}>
         {(label || name)} {(required && <RequiredIndicator/>)}
-      </div>
+      </legend>
 
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
 
