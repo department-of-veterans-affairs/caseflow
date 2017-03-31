@@ -5,7 +5,7 @@ def scroll_position
 end
 
 def scroll_to(value)
-  page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")  
+  page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
 RSpec.feature "Reader" do
