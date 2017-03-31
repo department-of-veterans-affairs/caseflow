@@ -17,9 +17,9 @@ export default class StyleGuideRadioField extends React.Component {
         id="radios"
         link="StyleGuideRadioField.jsx"
       />
-      <p>largely follow the same design as those in the US Web Design Standards
-        but we also include horizontal radio buttons. This layout is used when
-        there are at most 2 options.</p>
+      <p>Radio buttons largely follow the same design as those in the
+        US Web Design Standards but we also include horizontal radio buttons.
+        This layout is used when there are at most 2 options.</p>
       <h3>Vertical Radio Button</h3>
       <Example1 />
       <h3>Horizontal Radio Button</h3>
