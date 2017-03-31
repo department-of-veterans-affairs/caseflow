@@ -16,7 +16,7 @@ class EstablishClaimsController < TasksController
     render json: {}
 
   rescue Dispatch::EndProductAlreadyExistsError => e
-    render json: { error_code: "duplicate_ep" }, status: 500
+    render json: { error_code: "duplicate_ep" }, status: 422
   end
 
   # This POST updates VACOLS & VBMS Note
