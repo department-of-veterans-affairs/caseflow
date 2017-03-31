@@ -608,7 +608,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -630,7 +630,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         willCreateEndProduct = false;
       }
     });
