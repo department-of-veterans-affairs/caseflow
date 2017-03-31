@@ -1,5 +1,13 @@
 require "rails_helper"
 
+def scroll_position
+  page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
+end
+
+def scroll_to(value)
+  page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")  
+end
+
 RSpec.feature "Reader" do
   let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
 
@@ -26,94 +34,94 @@ RSpec.feature "Reader" do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
   end
 
-  context "Visit Reader" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["System Admin"])
+  let!(:current_user) do
+    User.authenticate!(roles: ["System Admin"])
+  end
+
+  scenario "Add comment" do
+    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+    expect(page).to have_content("Caseflow Decision")
+
+    # Click on the link to the first file
+    click_on documents[0].filename
+
+    # Ensure PDF content loads
+    expect(page).to have_content("Important Decision Document!!!")
+
+    # Add a comment
+    click_on "+ Add a Comment"
+
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
+    fill_in "addComment", with: "Foo"
+    click_on "Save"
+
+    # Expect comment to be visible on page
+    expect(page).to have_content("Foo")
+
+    # Expect comment to be in database
+    expect(documents[0].reload.annotations.first.comment).to eq("Foo")
+
+    # Edit the comment
+    click_on "Edit"
+    fill_in "editComment", with: "Bar"
+    click_on "Save"
+
+    # Expect edited comment to be visible on opage
+    expect(page).to have_content("Bar")
+
+    # Expect comment to be in database
+    expect(documents[0].reload.annotations.first.comment).to eq("Bar")
+
+    # Delete the comment
+    click_on "Delete"
+
+    # Expect the comment to be removed from the page
+    expect(page).to_not have_content("Bar")
+
+    # Expect the comment to be removed from teh database
+    expect(documents[0].reload.annotations.count).to eq(0)
+  end
+
+  context "When there is an existing annotation" do
+    let!(:annotation) do
+      Generators::Annotation.create(
+        comment: "hello world",
+        document_id: documents[0].id
+      )
     end
 
-    scenario "Add comment" do
-      visit "/decision/review?vacols_id=#{appeal.vacols_id}"
-      expect(page).to have_content("Caseflow Decision")
-
-      # Click on the link to the first file
-      click_on documents[0].filename
-
-      # Ensure PDF content loads
-      expect(page).to have_content("Important Decision Document!!!")
-
-      # Add a comment
-      click_on "+ Add a Comment"
-      find("#pageContainer1").click
-      fill_in "addComment", with: "Foo"
-      click_on "Save"
-
-      # Expect comment to be visible on page
-      expect(page).to have_content("Foo")
-
-      # Expect comment to be in database
-      expect(documents[0].reload.annotations.first.comment).to eq("Foo")
-
-      # Edit the comment
-      click_on "Edit"
-      fill_in "editComment", with: "Bar"
-      click_on "Save"
-
-      # Expect edited comment to be visible on opage
-      expect(page).to have_content("Bar")
-
-      # Expect comment to be in database
-      expect(documents[0].reload.annotations.first.comment).to eq("Bar")
-
-      # Delete the comment
-      click_on "Delete"
-
-      # Expect the comment to be removed from the page
-      expect(page).to_not have_content("Bar")
-
-      # Expect the comment to be removed from teh database
-      expect(documents[0].reload.annotations.count).to eq(0)
-    end
-
-    context "Existing annotation" do
-      let!(:annotation) do
-        Generators::Annotation.create(
-          comment: "hello world",
-          document_id: documents[0].id
-        )
-      end
-
-      scenario "Scroll to comment" do
-        visit "/decision/review?vacols_id=#{appeal.vacols_id}"
-
-        click_on documents[0].filename
-
-        expect(page).to have_content(annotation.comment)
-
-        # Wait for PDFJS to render the pages
-        expect(page).to have_css(".page")
-
-        # Click on the comment and ensure the scroll position changes
-        # by the y value the comment.
-        original_scroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
-        find("#comment0").click
-        after_click_scroll = page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
-
-        expect(after_click_scroll - original_scroll).to eq(annotation.y)
-      end
-    end
-
-    scenario "Scrolling renders pages" do
+    scenario "Scroll to comment" do
       visit "/decision/review?vacols_id=#{appeal.vacols_id}"
 
       click_on documents[0].filename
+
+      expect(page).to have_content(annotation.comment)
+
+      # Wait for PDFJS to render the pages
       expect(page).to have_css(".page")
 
-      # Expect only the first page to be reneder on first load
-      # But if we scroll second page should be rendered and
-      # we should be able to find text from the second page.
-      expect(page).to_not have_content("Banana. Banana who")
-      page.execute_script("document.getElementById('scrollWindow').scrollTop=500")
-      expect(page).to have_content("Banana. Banana who")
+      # Click on the comment and ensure the scroll position changes
+      # by the y value the comment.
+      original_scroll = scroll_position
+      find("#comment0").click
+      after_click_scroll = scroll_position
+
+      expect(after_click_scroll - original_scroll).to eq(annotation.y)
     end
+  end
+
+  scenario "Scrolling renders pages" do
+    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+
+    click_on documents[0].filename
+    expect(page).to have_css(".page")
+
+    # Expect only the first page to be reneder on first load
+    # But if we scroll second page should be rendered and
+    # we should be able to find text from the second page.
+    expect(page).to_not have_content("Banana. Banana who")
+    scroll_to(500)
+    expect(page).to have_content("Banana. Banana who")
   end
 end
