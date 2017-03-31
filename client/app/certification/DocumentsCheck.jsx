@@ -14,6 +14,7 @@ const UnconnectedDocumentsCheck = ({
   nodDate,
   socMatch,
   socDate,
+  documentsMatch,
   match
 
   /* TODO: add ssoc_match and ssoc_dates */
@@ -21,14 +22,14 @@ const UnconnectedDocumentsCheck = ({
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Check Documents</h2>
-      { match ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
+      { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
       <DocumentsCheckTable form9Match={form9Match}
         form9Date={form9Date}
         nodMatch={nodMatch}
         nodDate={nodDate}
         socMatch={socMatch}
         socDate={socDate}
-        match={match}/>
+        documentsMatch={documentsMatch}/>
     </div>
 
     <div className="cf-app-segment">
@@ -54,8 +55,7 @@ const mapStateToProps = (state) => {
     nodDate: state.nodDate,
     socMatch: state.socMatch,
     socDate: state.socDate,
-    match: state.match
-
+    documentsMatch: state.documentsMatch
     /* TODO: add ssoc_match and ssoc_dates */
   };
 };

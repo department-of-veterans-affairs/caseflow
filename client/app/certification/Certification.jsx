@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { createStore, connect } from 'redux';
+import { Provider, connect } from 'react-redux';
+import { createStore } from 'redux';
 
 import DocumentsCheck from './DocumentsCheck';
 import AlreadyCertified from './AlreadyCertified';
