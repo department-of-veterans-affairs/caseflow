@@ -25,6 +25,7 @@ export default class RadioField extends React.Component {
       value,
       onChange,
       required,
+      errorMessage,
       hideLabel
     } = this.props;
 
@@ -32,6 +33,8 @@ export default class RadioField extends React.Component {
 
     let radioClass = className.concat(
       this.isVertical() ? "cf-form-radio" : "cf-form-radio-inline"
+    ).concat(
+      errorMessage ? "usa-input-error" : ""
     );
 
     let labelClass = "question-label";
@@ -44,9 +47,11 @@ export default class RadioField extends React.Component {
     let idPart = StringUtil.html5CompliantId(id || name);
 
     return <fieldset className={radioClass.join(' ')}>
-      <legend className={labelClass}>
+      <div className={labelClass}>
         {(label || name)} {(required && <RequiredIndicator/>)}
-      </legend>
+      </div>
+
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
 
       <div className="cf-form-radio-options">
         {options.map((option, i) =>
@@ -75,7 +80,7 @@ RadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
-  label: PropTypes.string,
+  label: PropTypes.node,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.array,

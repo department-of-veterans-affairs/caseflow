@@ -8,30 +8,32 @@ export default class Example4 extends React.Component {
     super(props);
 
     this.state = {
+      errorMessage: "This field is required",
       value: null
     };
   }
 
   onChange = (event) => {
     this.setState({
-      value: event.target.value
+      value: event.target.value,
+      errorMessage: null
     });
   }
 
   render = () => {
     return <RadioField
-      label="Three or more options are automatically vertical:"
+      label="Supplemental statement of the case"
       name="radio_example_4"
       options={[
-        { displayText: "One",
+        { displayText: "Furnished",
           value: "1" },
-        { displayText: "Two",
-          value: "2" },
-        { displayText: "Three",
-          value: "3" }
+        { displayText: "Not furnished",
+          value: "2" }
       ]}
       value={this.state.value}
       onChange={this.onChange}
+      required={true}
+      errorMessage={this.state.errorMessage}
     ></RadioField>;
   }
 }

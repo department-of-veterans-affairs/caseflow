@@ -8,7 +8,7 @@ export default class Example1 extends React.Component {
     super(props);
 
     this.state = {
-      value: null
+      value: "1"
     };
   }
 
@@ -20,13 +20,16 @@ export default class Example1 extends React.Component {
 
   render = () => {
     return <RadioField
-      label="Here's one:"
+      label="Vertical Radio Button"
+      hideLabel={true}
       name="radio_example_1"
       options={[
-        { displayText: "One",
+        { displayText: <span>Yosemite National Park</span>,
           value: "1" },
-        { displayText: "Two",
-          value: "2" }
+        { displayText: "Grand Canyon National Park",
+          value: "2" },
+        { displayText: "Yellowstone National Park and related services",
+          value: "3" }
       ]}
       value={this.state.value}
       onChange={this.onChange}
