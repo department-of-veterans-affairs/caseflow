@@ -1,3 +1,4 @@
+# :nocov:
 class DocumentController < ApplicationController
   before_action :verify_system_admin
 
@@ -16,3 +17,4 @@ class DocumentController < ApplicationController
     render json: {}
   end
 end
+# :nocov:
