@@ -15,7 +15,7 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
   // For now, do not accept sizes other than integers
   let imgSize = parseInt(size, 10);
 
-  let style = { 'marginLeft': `-${imgSize}` };
+  let style = { 'marginLeft': `-${imgSize}px` };
 
   return (
       <div>
@@ -24,8 +24,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
         </div>
         <div className="cf-loading-button-symbol">
           <svg
-            width={size}
-            height={size}
+            width={imgSize}
+            height={imgSize}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-back">
             <path
