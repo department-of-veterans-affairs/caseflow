@@ -1,7 +1,7 @@
-# :nocov:
 class DocumentController < ApplicationController
   before_action :verify_system_admin
 
+  # :nocov:
   def set_label
     document = Document.find(params[:id])
     document.update!(label: params[:label] || nil)
@@ -16,5 +16,5 @@ class DocumentController < ApplicationController
     end
     render json: {}
   end
+  # :nocov:
 end
-# :nocov:
