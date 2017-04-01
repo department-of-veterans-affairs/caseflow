@@ -110,8 +110,8 @@ export default class PdfViewer extends React.Component {
       this.props.doc.id,
       uuid
     ).then((annotation) => {
-      annotation.x = annotation.x + changeInCoordinates.deltaX;
-      annotation.y = annotation.y + changeInCoordinates.deltaY;
+      annotation.x += changeInCoordinates.deltaX;
+      annotation.y += changeInCoordinates.deltaY;
       this.props.annotationStorage.editAnnotation(
         this.props.doc.id,
         annotation.uuid,

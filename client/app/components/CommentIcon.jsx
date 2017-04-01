@@ -12,7 +12,10 @@ export default class CommentIcon extends React.Component {
 
   render = () => {
     return <div
-      style={{ left: this.props.x, top: this.props.y }}
+      style={{
+        left: this.props.x,
+        top: this.props.y
+      }}
       className="commentIcon-container"
       onClick={this.onClick}
       draggable={this.props.onIconMoved !== null}
@@ -30,8 +33,8 @@ CommentIcon.propTypes = {
   selected: PropTypes.bool,
   onClick: PropTypes.func,
   onIconMoved: PropTypes.func,
-  x: PropTypes.number,
-  y: PropTypes.number,
+  xPosition: PropTypes.number,
+  yPosition: PropTypes.number,
   uuid: PropTypes.number,
   page: PropTypes.number
 };

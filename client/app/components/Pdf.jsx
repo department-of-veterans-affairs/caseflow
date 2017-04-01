@@ -70,7 +70,10 @@ export default class Pdf extends React.Component {
     let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
     let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
-    return { xPosition, yPosition };
+    return {
+      xPosition,
+      yPosition
+    };
   }
 
   createPages = (pdfDocument) => {
@@ -83,7 +86,7 @@ export default class Pdf extends React.Component {
       pdfjsPages.push(page);
     }
 
-    this.setState({ pdfjsPages: pdfjsPages });
+    this.setState({ pdfjsPages });
   }
 
   scrollEvent = () => {
@@ -218,7 +221,7 @@ export default class Pdf extends React.Component {
     if (prevState.pdfjsPages.length !== this.state.pdfjsPages.length) {
       // Create a page in the DOM for every page in the PDF
 
-      let renderAllPages = (index, documentId) => { 
+      let renderAllPages = (index, documentId) => {
         setTimeout(() => {
           if (documentId === this.props.documentId) {
             this.renderPage(index);
@@ -241,23 +244,27 @@ export default class Pdf extends React.Component {
         x: event.screenX,
         y: event.screenY
       }
-    }
+    };
   }
 
   onDrag = (event) => {
-    this.draggingComment.lastChangeInCoordinates = this.draggingComment.changeInCoordinates;
+    this.draggingComment.lastChangeInCoordinates =
+      this.draggingComment.changeInCoordinates;
+
     let changeInCoordinates = {
       deltaX: event.screenX - this.draggingComment.startCoordinates.x,
       deltaY: event.screenY - this.draggingComment.startCoordinates.y
     };
+
     this.draggingComment.changeInCoordinates = changeInCoordinates;
   }
 
   onCommentDrop = (event) => {
     let scaledchangeInCoordinates = {
       deltaX: this.draggingComment.lastChangeInCoordinates.deltaX / this.props.scale,
-      deltaY: this.draggingComment.lastChangeInCoordinates.deltaY / this.props.scale,
-    }
+      deltaY: this.draggingComment.lastChangeInCoordinates.deltaY / this.props.scale
+    };
+
     this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
     this.draggingComment = null;
     event.preventDefault();
@@ -276,14 +283,15 @@ export default class Pdf extends React.Component {
       }
       acc[comment.page].push(
         <CommentIcon
-          x={comment.x * this.props.scale}
-          y={comment.y * this.props.scale}
+          xPosition={comment.x * this.props.scale}
+          yPosition={comment.y * this.props.scale}
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
           onClick={this.props.onCommentClick}
           onDragStart={this.onDragStart}
           onDrag={this.onDrag} />);
+
       return acc;
     }, {});
 
@@ -293,11 +301,11 @@ export default class Pdf extends React.Component {
         onDragOver={this.onPageDragOver(index)}
         onDrop={this.onCommentDrop} >
           <div>
-            {commentIcons[index+1]}
+            {commentIcons[index + 1]}
           </div>
           <div
             id={`page${index}`}
-            dangerouslySetInnerHTML={{__html: page.outerHTML}}
+            dangerouslySetInnerHTML={{ __html: page.outerHTML }}
           />
         </div>;
     });
