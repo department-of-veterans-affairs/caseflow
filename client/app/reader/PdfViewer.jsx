@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import PDFJSAnnotate from 'pdf-annotate.js';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 
