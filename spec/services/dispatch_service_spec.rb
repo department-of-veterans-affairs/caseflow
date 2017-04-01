@@ -135,6 +135,36 @@ describe Dispatch do
       expect(dispatch.claim.valid?).to be_falsey
       expect { dispatch.establish_claim! }.to raise_error(Dispatch::InvalidClaimError)
     end
+
+    context "when VBMS throws an EP already exists error" do
+      let(:ep_already_exists_error) do
+        VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+          "A duplicate claim for this EP code already exists in CorpDB. Please " \
+          "use a different EP code modifier. GUID: 13fcd</faultstring>")
+      end
+
+      it "raises EndProductAlreadyExistsError" do
+        allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        expect do
+          dispatch.establish_claim!
+        end.to raise_error(Dispatch::EndProductAlreadyExistsError)
+      end
+    end
+
+    context "when VBMS throws an unrecognized error" do
+      let(:unrecognized_error) do
+        VBMS::HTTPError.new("500", "<faultstring>some error</faultstring>")
+      end
+
+      it "Re-raises the error" do
+        allow(Appeal.repository).to receive(:establish_claim!).and_raise(unrecognized_error)
+
+        expect do
+          dispatch.establish_claim!
+        end.to raise_error(VBMS::HTTPError)
+      end
+    end
   end
 
   context "#filter_dispatch_end_products" do

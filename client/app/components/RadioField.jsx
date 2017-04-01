@@ -1,47 +1,70 @@
 import React, { PropTypes } from 'react';
 import RequiredIndicator from './RequiredIndicator';
-
+import StringUtil from '../util/StringUtil';
 
 /**
  * Radio button component.
  *
- * See StyleGuideCheckBoxes.jsx for usage example.
+ * See StyleGuideRadioField.jsx for usage examples.
  *
  */
 
 export default class RadioField extends React.Component {
-  onChange = (event) => {
-    this.props.onChange(event.target.value);
+
+  isVertical() {
+    return this.props.vertical || this.props.options.length > 2;
   }
 
   render() {
     let {
+      id,
+      className,
       label,
       name,
       options,
       value,
-      required
+      onChange,
+      required,
+      errorMessage,
+      hideLabel
     } = this.props;
 
     required = required || false;
 
-    return <fieldset className="cf-form-radio-inline cf-form-showhide-radio">
-      <legend className="question-label">
+    let radioClass = className.concat(
+      this.isVertical() ? "cf-form-radio" : "cf-form-radio-inline"
+    ).concat(
+      errorMessage ? "usa-input-error" : ""
+    );
+
+    let labelClass = "question-label";
+
+    if (hideLabel) {
+      labelClass += " hidden-field";
+    }
+
+    // Since HTML5 IDs should not contain spaces...
+    let idPart = StringUtil.html5CompliantId(id || name);
+
+    return <fieldset className={radioClass.join(' ')}>
+      <legend className={labelClass}>
         {(label || name)} {(required && <RequiredIndicator/>)}
       </legend>
 
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+
       <div className="cf-form-radio-options">
-        {options.map((option) =>
-          <div className="cf-form-radio-option" key={option.value}>
+        {options.map((option, i) =>
+          <div className="cf-form-radio-option" key={`${idPart}-${option.value}-${i}`}>
             <input
               name={name}
-              onChange={this.onChange.bind(this)}
+              onChange={onChange}
               type="radio"
-              id={`${name}_${option.value}`}
+              id={`${idPart}_${option.value}`}
               value={option.value}
               checked={value === option.value}
             />
-            <label htmlFor={`${name}_${option.value}`}>{option.displayText}</label>
+            <label htmlFor={`${idPart}_${option.value}`}>{option.displayText}</label>
           </div>
         )}
       </div>
@@ -49,11 +72,22 @@ export default class RadioField extends React.Component {
   }
 }
 
+RadioField.defaultProps = {
+  className: ["cf-form-showhide-radio"]
+};
+
 RadioField.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
-  label: PropTypes.string,
+  label: PropTypes.node,
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func,
-  options: PropTypes.array,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      displayText: PropTypes.node,
+      value: PropTypes.string
+    })
+  ),
   value: PropTypes.string
 };

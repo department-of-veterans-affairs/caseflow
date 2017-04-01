@@ -53,7 +53,7 @@
 .cf-associated-header {
   color: $color-gray;
   font-size: 24px;
-  margin-left: 20px;
+  margin-left: 175px;
   font-weight: normal;
 }
 
@@ -103,9 +103,10 @@
   display: inline-block;
 }
 
+//TODO(marian): add to style guide
 .cf-button-aligned-with-textfield {
   padding-left: 10px;
-  padding-top: 30px;
+  padding-top: 2px;
 }
 
 .cf-button-associated-text {
@@ -206,11 +207,19 @@ select {
   input {
     left: -999em;
   }
+
+  i {
+    margin-left: 0;
+  }
 }
 
 .cf-form-checkbox {
   input {
     left: -999em;
+  }
+
+  i {
+    margin-left: 0;
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
 
 export default class TasksManagerEmployeeCount extends React.Component {
   render() {
@@ -12,11 +13,9 @@ export default class TasksManagerEmployeeCount extends React.Component {
     } = this.props;
 
     return <div>
-      <h3>Enter the number of people working today.</h3>
-      <div className="usa-grid-half cf-push-row">
-        <div className="cf-push-left">
+      <InlineForm>
           <TextField
-            label="Number of people"
+            label="Enter the number of people working today"
             name="employeeCount"
             readOnly={false}
             onChange={handleFieldChange('employeeCountForm', 'employeeCount')}
@@ -24,15 +23,12 @@ export default class TasksManagerEmployeeCount extends React.Component {
             type="number"
             {...employeeCountForm.employeeCount}
           />
-        </div>
-        <div className="cf-push-left cf-button-aligned-with-textfield">
           <Button
             name="Update"
             onClick={handleEmployeeCountUpdate}
             disabled={!employeeCountForm.employeeCount.value}
           />
-        </div>
-      </div>
+      </InlineForm>
     </div>;
   }
 }

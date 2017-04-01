@@ -69,17 +69,11 @@ export default class PdfListView extends React.Component {
         header: <div onClick={this.props.changeSortState('type')}>
           Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
         </div>,
-        valueFunction: (doc) => boldUnreadContent(doc.type, doc)
-      },
-      {
-        header: <div onClick={this.props.changeSortState('filename')}>
-          Filename {this.props.sortBy === 'filename' ? sortIcon : ' '}
-        </div>,
         valueFunction: (doc, index) => boldUnreadContent(
           <a
             href={linkToSingleDocumentView(doc)}
             onMouseUp={this.props.showPdf(index)}>
-            {doc.filename}
+            {doc.type}
           </a>, doc)
       }
     ];
