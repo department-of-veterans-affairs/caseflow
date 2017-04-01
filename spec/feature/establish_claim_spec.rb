@@ -39,10 +39,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
-      fill_in "Number of people", with: "2"
+      fill_in "Enter the number of people working today", with: "2"
       click_on "Update"
       visit "/dispatch/establish-claim"
-      expect(find_field("Number of people").value).to have_content("2")
+      expect(find_field("Enter the number of people working today").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
@@ -66,6 +66,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     let!(:task) do
       Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
+    end
+
+    let(:ep_already_exists_error) do
+      VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+        "A duplicate claim for this EP code already exists in CorpDB. Please " \
+        "use a different EP code modifier. GUID: 13fcd</faultstring>")
     end
 
     scenario "Assign the correct new task to myself" do
@@ -166,6 +172,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(task.appeal.reload.rice_compliance).to be_falsey
     end
 
+    scenario "Error establishing claim" do
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+      task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{task.id}"
+      safe_click_on "Route claim"
+      safe_click_on "Create End Product"
+
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+    end
+
     context "For an appeal with multiple possible decision documents in VBMS" do
       let(:documents) do
         [
@@ -196,7 +214,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        click_on "< Back to Decision Review"
+        safe_click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
@@ -501,7 +519,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP" do
+        scenario "Establish a new claim defaults to creating a 171 EP", retry: 5 do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           safe_click_on "Route claim"

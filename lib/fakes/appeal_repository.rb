@@ -87,6 +87,8 @@ class Fakes::AppealRepository
     # RAISE_VACOLS_NOT_FOUND_ID == record[:vacols_id]
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
+    # This is bad. I'm sorry
+    record.delete(:vbms_id) if Rails.env.development?
     appeal.assign_from_vacols(record)
   end
 
