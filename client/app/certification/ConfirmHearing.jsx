@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import LoadingContainer from '../components/LoadingContainer';
-import RadioField from '../components/RadioField';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+
+import Footer from './Footer';
+import LoadingContainer from '../components/LoadingContainer';
+import RadioField from '../components/RadioField';
 
 
 // TODO: how should we organize content?
@@ -23,9 +24,30 @@ const hearingChangeQuestion = `Was a hearing cancellation or request added after
 // TODO: make into constant?
 const hearingChangeAnswers = [
   { displayText: 'Yes',
-    value: 'true' },
+    value: Constants.vbmsHearingDocument.FOUND },
   { displayText: 'No',
-    value: 'false' }
+    value: Constants.vbmsHearingDocument.NOT_FOUND }
+];
+
+const hearingChangeFoundQuestion = `What did the appellant request
+in the document you found?`;
+const hearingChangeFoundAnswers = [
+  {
+    displayText: 'They cancelled their hearing request.',
+    value: Constants.hearingTypes.HEARING_CANCELLED
+  },
+  {
+    displayText: 'They requested a board hearing via videoconference.',
+    value: Constants.hearingTypes.VIDEO
+  },
+  {
+    displayText: 'They requested a board hearing in Washington, DC.',
+    value: Constants.hearingTypes.WASHINGTON_DC
+  },
+  {
+    displayText: 'They requested a board hearing at a local VA office.',
+    value: Constants.hearingTypes.TRAVEL_BOARD
+  }
 ];
 
 const typeOfForm9Question = `Caseflow found the document below,
@@ -39,10 +61,10 @@ const typeOfForm9Answers = [
 ];
 
 
-const typeOfHearingQuestion = `Which box did the appellant select for the Optional
+const formalForm9HearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
-const typeOfHearingAnswers = [{
+const formalForm9HearingAnswers = [{
   displayText: 'A. I do not want an optional board hearing',
   value: Constants.hearingTypes.NO_HEARING_DESIRED
 }, {
@@ -57,6 +79,26 @@ const typeOfHearingAnswers = [{
 }, {
   displayText: 'No box selected.',
   value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
+}];
+
+const informalForm9HearingQuestion = `What optional board hearing preference,
+if any, did the appellant request?`;
+const informalForm9HearingAnswers = [{
+  displayText: `Does not want an optional board hearing
+  or did not mention a board hearing.`,
+  value: Constants.hearingTypes.NO_HEARING_DESIRED
+}, {
+  displayText: 'Wants a board hearing and did not specify what type.',
+  value: Constants.hearingTypes.HEARING_TYPE_NOT_SPECIFIED
+}, {
+  displayText: 'Wants a board hearing by videoconference.',
+  value: Constants.hearingTypes.VIDEO
+}, {
+  displayText: 'Wants a board hearing in Washington, DC.',
+  value: Constants.hearingTypes.WASHINGTON_DC
+}, {
+  displayText: 'Wants a board hearing at their regional office.',
+  value: Constants.hearingTypes.TRAVEL_BOARD
 }];
 
 /*
@@ -82,6 +124,19 @@ const UnconnectedConfirmHearing = ({
     onHearingTypeChange,
     match
 }) => {
+  const shouldDisplayHearingChangeFound =
+    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
+  const shouldDisplayTypeOfForm9Question =
+    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND;
+
+  const form9IsFormal = form9Type === Constants.form9Types.FORMAL_FORM9;
+  const form9IsInformal = form9Type === Constants.form9Types.INFORMAL_FORM9;
+
+  const shouldDisplayFormalForm9Question = shouldDisplayTypeOfForm9Question &&
+    form9IsFormal;
+  const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
+    form9IsInformal;
+
   return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
@@ -89,7 +144,6 @@ const UnconnectedConfirmHearing = ({
         <div>
           {hearingCheckText}
         </div>
-
         {/*
           TODO: would we be better served by
           making our connected components smaller?
@@ -107,41 +161,61 @@ const UnconnectedConfirmHearing = ({
           value={hearingDocumentIsInVbms}
           onChange={onHearingDocumentChange}/>
 
-        <RadioField name={typeOfForm9Question}
-          required={true}
-          options={typeOfForm9Answers}
-          value={form9Type}
-          onChange={onTypeOfForm9Change}/>
+        {
+          shouldDisplayHearingChangeFound &&
+          <RadioField name={hearingChangeFoundQuestion}
+            required={true}
+            options={hearingChangeFoundAnswers}
+            value={hearingType}
+            onChange={onHearingTypeChange}/>
+        }
 
-        {/* TODO: restore the accessibility stuff here.
-          also, we should stop using rails pdf viewer */}
-        <LoadingContainer>
-          <iframe
-            className="cf-doc-embed cf-iframe-with-loading"
-            title="Form8 PDF"
-            src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
-          </iframe>
-        </LoadingContainer>
+        {
+          shouldDisplayTypeOfForm9Question &&
+          <RadioField name={typeOfForm9Question}
+            required={true}
+            options={typeOfForm9Answers}
+            value={form9Type}
+            onChange={onTypeOfForm9Change}/>
+        }
 
-        <RadioField name={typeOfHearingQuestion}
-          options={typeOfHearingAnswers}
-          value={hearingType}
-          required={true}
-          onChange={onHearingTypeChange}/>
+        {
+          shouldDisplayTypeOfForm9Question &&
+
+          /* TODO: restore the accessibility stuff here.
+            also, we should stop using rails pdf viewer */
+          <LoadingContainer>
+            <iframe
+              className="cf-doc-embed cf-iframe-with-loading form9-viewer"
+              title="Form8 PDF"
+              src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+            </iframe>
+          </LoadingContainer>
+        }
+
+        {
+          shouldDisplayFormalForm9Question &&
+          <RadioField name={formalForm9HearingQuestion}
+            options={formalForm9HearingAnswers}
+            value={hearingType}
+            required={true}
+            onChange={onHearingTypeChange}/>
+        }
+
+        {
+          shouldDisplayInformalForm9Question &&
+          <RadioField name={informalForm9HearingQuestion}
+            options={informalForm9HearingAnswers}
+            value={hearingType}
+            required={true}
+            onChange={onHearingTypeChange}/>
+        }
       </div>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel Certification
-        </a>
-      </div>
-
-      <Link to={`/certifications/${match.params.vacols_id}/sign_and_certify`}>
-        <button type="button" className="cf-push-right">
-          Continue
-        </button>
-      </Link>
+      <Footer
+        nextPageUrl={
+          `/certifications/${match.params.vacols_id}/sign_and_certify`
+        }/>
     </div>;
 };
 
@@ -165,27 +239,27 @@ const UnconnectedConfirmHearing = ({
  */
 const mapDispatchToProps = (dispatch) => {
   return {
-    onHearingDocumentChange: (hearingDocumentIsInVbms) => {
+    onHearingDocumentChange: (event) => {
       dispatch({
         type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
         payload: {
-          hearingDocumentIsInVbms
+          hearingDocumentIsInVbms: event.target.value
         }
       });
     },
-    onTypeOfForm9Change: (form9Type) => {
+    onTypeOfForm9Change: (event) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_FORM9,
         payload: {
-          form9Type
+          form9Type: event.target.value
         }
       });
     },
-    onHearingTypeChange: (hearingType) => {
+    onHearingTypeChange: (event) => {
       dispatch({
         type: Constants.CHANGE_TYPE_OF_HEARING,
         payload: {
-          hearingType
+          hearingType: event.target.value
         }
       });
     }

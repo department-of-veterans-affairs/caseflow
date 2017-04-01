@@ -45,7 +45,7 @@ export default class CaseWorkerIndex extends BaseForm {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.appeal.veteran_name} (${task.appeal.vbms_id})`
+          `${task.cached_veteran_name} (${task.vbms_id})`
       },
       {
         header: 'Decision Date',
@@ -53,7 +53,7 @@ export default class CaseWorkerIndex extends BaseForm {
       },
       {
         header: 'Decision Type',
-        valueFunction: (task) => task.appeal.decision_type
+        valueFunction: (task) => task.cached_decision_type
       },
       {
         header: 'Action',

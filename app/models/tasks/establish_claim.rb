@@ -12,6 +12,25 @@ class EstablishClaim < Task
     appeal.veteran_name
   end
 
+  cache_attribute :cached_serialized_decision_date do
+    appeal.serialized_decision_date
+  end
+
+  def to_hash
+    serializable_hash(
+      include: [:user],
+      methods: [
+        :progress_status,
+        :days_since_creation,
+        :completion_status_text,
+        :cached_decision_type,
+        :cached_veteran_name,
+        :cached_serialized_decision_date,
+        :vbms_id
+      ]
+    )
+  end
+
   def actions_taken
     [
       decision_reviewed_action_description,
