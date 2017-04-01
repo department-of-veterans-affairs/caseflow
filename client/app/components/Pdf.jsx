@@ -58,17 +58,19 @@ export default class Pdf extends React.Component {
 
   onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
-      let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
-      let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
       this.props.onPageClick(
         pageNumber,
-        {
-          xPosition,
-          yPosition
-        }
+        this.getCommentCoordinatesFromEvent(event)
       );
     }
+  }
+
+  getCommentCoordinatesFromEvent = (event) => {
+    let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
+    let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
+
+    return { xPosition, yPosition };
   }
 
   createPages = (pdfDocument) => {
@@ -143,8 +145,6 @@ export default class Pdf extends React.Component {
   }
 
   componentDidMount = () => {
-    const { UI } = PDFJSAnnotate;
-
     PDFJS.workerSrc = this.props.pdfWorker;
 
     this.setupPdf(this.props.file);
@@ -153,23 +153,6 @@ export default class Pdf extends React.Component {
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
-
-    UI.enableEdit();
-
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.props.comments];
-
-      let filteredComments = comments.filter((comment) => {
-        return comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString();
-      });
-
-      if (filteredComments.length === 1) {
-        this.props.onCommentClick(filteredComments[0]);
-      } else if (filteredComments.length !== 0) {
-        throw new Error('Multiple comments with same uuid');
-      }
-    });
   }
 
   // Calculates the symmetric difference between two sets.
@@ -234,7 +217,55 @@ export default class Pdf extends React.Component {
   componentDidUpdate = (_prevProps, prevState) => {
     if (prevState.pdfjsPages.length !== this.state.pdfjsPages.length) {
       // Create a page in the DOM for every page in the PDF
-      this.renderPage(0);
+
+      let renderAllPages = (index, documentId) => { 
+        setTimeout(() => {
+          if (documentId === this.props.documentId) {
+            this.renderPage(index);
+            if (index < this.state.numPages) {
+              renderAllPages(index + 1);
+            }
+          }
+        }, 0);
+      };
+
+      renderAllPages(0, this.props.documentId);
+    }
+  }
+
+  onDragStart = (uuid, page, event) => {
+    this.draggingComment = {
+      uuid,
+      page,
+      startCoordinates: {
+        x: event.screenX,
+        y: event.screenY
+      }
+    }
+  }
+
+  onDrag = (event) => {
+    this.draggingComment.lastChangeInCoordinates = this.draggingComment.changeInCoordinates;
+    let changeInCoordinates = {
+      deltaX: event.screenX - this.draggingComment.startCoordinates.x,
+      deltaY: event.screenY - this.draggingComment.startCoordinates.y
+    };
+    this.draggingComment.changeInCoordinates = changeInCoordinates;
+  }
+
+  onCommentDrop = (event) => {
+    let scaledchangeInCoordinates = {
+      deltaX: this.draggingComment.lastChangeInCoordinates.deltaX / this.props.scale,
+      deltaY: this.draggingComment.lastChangeInCoordinates.deltaY / this.props.scale,
+    }
+    this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
+    this.draggingComment = null;
+    event.preventDefault();
+  }
+
+  onPageDragOver = (pageIndex) => (event) => {
+    if (pageIndex + 1 === this.draggingComment.page) {
+      event.preventDefault();
     }
   }
 
@@ -243,12 +274,24 @@ export default class Pdf extends React.Component {
       if (!acc[comment.page]) {
         acc[comment.page] = [];
       }
-      acc[comment.page].push(<CommentIcon x={comment.x} y={comment.y}/>);
+      acc[comment.page].push(
+        <CommentIcon
+          x={comment.x * this.props.scale}
+          y={comment.y * this.props.scale}
+          selected={comment.selected}
+          uuid={comment.uuid}
+          page={comment.page}
+          onClick={this.props.onCommentClick}
+          onDragStart={this.onDragStart}
+          onDrag={this.onDrag} />);
       return acc;
     }, {});
 
     let pages = this.state.pdfjsPages.map((page, index) => {
-      return <div className="cf-pdf-pdfjs-container">
+      return <div
+        className="cf-pdf-pdfjs-container"
+        onDragOver={this.onPageDragOver(index)}
+        onDrop={this.onCommentDrop} >
           <div>
             {commentIcons[index+1]}
           </div>
@@ -288,5 +331,6 @@ Pdf.propTypes = {
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
-  onCommentClick: PropTypes.func
+  onCommentClick: PropTypes.func,
+  onIconMoved: PropTypes.func
 };

@@ -44,7 +44,7 @@ export default class PdfViewer extends React.Component {
   onSaveCommentEdit = (comment) => {
     this.props.annotationStorage.getAnnotation(
       this.props.doc.id,
-      this.state.editingComment,
+      this.state.editingComment
     ).then((annotation) => {
       annotation.comment = comment;
       this.props.annotationStorage.editAnnotation(
@@ -106,6 +106,21 @@ export default class PdfViewer extends React.Component {
     });
   }
 
+  onIconMoved = (uuid, changeInCoordinates) => {
+    this.props.annotationStorage.getAnnotation(
+      this.props.doc.id,
+      uuid
+    ).then((annotation) => {
+      annotation.x = annotation.x + changeInCoordinates.deltaX;
+      annotation.y = annotation.y + changeInCoordinates.deltaY;
+      this.props.annotationStorage.editAnnotation(
+        this.props.doc.id,
+        annotation.uuid,
+        annotation
+      );
+    });
+  }
+
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
@@ -123,9 +138,9 @@ export default class PdfViewer extends React.Component {
     }
   }
 
-  onCommentClick = (clickedComment) => {
+  onCommentClick = (uuid) => {
     let comments = [...this.state.comments].map((comment) => {
-      if (clickedComment.uuid === comment.uuid) {
+      if (uuid === comment.uuid) {
         comment.selected = true;
       } else {
         comment.selected = false;
@@ -139,8 +154,7 @@ export default class PdfViewer extends React.Component {
 
   // Consider moving this down into Pdf.jsx
   onJumpToComment = (uuid) => {
-    PDFJSAnnotate.
-      getStoreAdapter().
+    this.props.annotationStorage.
       getAnnotation(this.props.doc.id, uuid).
       then((annotation) => {
         let page = document.getElementsByClassName('page');
@@ -187,6 +201,7 @@ export default class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
+            onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
             doc={this.props.doc}

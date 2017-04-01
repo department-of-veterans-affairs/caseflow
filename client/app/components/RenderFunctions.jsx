@@ -74,34 +74,35 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
   );
 };
 
-export let commentIcon = function() {
-  return <svg version="1.1" id="Layer_1" width="75" height="75" style={{'enableBackground': 'new 0 0 75 75'}}>
+export let commentIcon = function(selected) {
+  let outlineColor = selected? '#3e94cf' : '#5C626C';
+  return <svg version="1.1" id="Layer_1" width="100%" height="100%" viewBox="0 0 75 75">
       <g>
         <defs>
-          <path style={{overflow: 'visible'}} id="SVGID_1_" d="M16.6,38.2c-1,0-1.9,0.9-1.9,1.9s0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9s-0.9-1.9-1.9-1.9H16.6z
+          <path style={{overflow: 'visible'}} id="comment-svg-id-1" d="M16.6,38.2c-1,0-1.9,0.9-1.9,1.9s0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9s-0.9-1.9-1.9-1.9H16.6z
              M16.6,25.8c-1,0-1.9,0.9-1.9,1.9c0,1,0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9c0-1-0.9-1.9-1.9-1.9H16.6z M16.6,13.5
             c-1,0-1.9,0.9-1.9,1.9s0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9s-0.9-1.9-1.9-1.9H16.6z M10,5h55c2.1,0,3.8,1.7,3.8,3.8v38
             c0,2.1-1.7,3.8-3.8,3.8H35.6c-0.5,0-1,0.2-1.3,0.5L19,66.3l1.4-13.7c0.1-1.1-0.8-2.1-1.9-2.1H10c-2.1,0-3.8-1.7-3.8-3.8v-38
             C6.2,6.6,7.8,5,10,5L10,5z"/>
         </defs>
-        <clipPath id="SVGID_2_">
-          <use xlinkHref="#SVGID_1_"  style={{overflow: 'visible'}}/>
+        <clipPath id="comment-svg-id-2">
+          <use xlinkHref="#comment-svg-id-1"  style={{overflow: 'visible'}}/>
         </clipPath>
-        <rect x="-0.1" y="-1.4" style={{fill: '#EEDF1A', clipPath:'url(#SVGID_2_)'}} width="75.3" height="73.9"/>
+        <rect x="-0.1" y="-1.4" style={{fill: '#EEDF1A', clipPath:'url(#comment-svg-id-2)'}} width="75.3" height="73.9"/>
       </g>
       <g>
         <defs>
-          <path style={{overflow: 'visible'}} id="SVGID_3_" d="M16.6,38.2c-1,0-1.9,0.9-1.9,1.9c0,1,0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9c0-1-0.9-1.9-1.9-1.9H16.6z
+          <path style={{overflow: 'visible'}} id="comment-svg-id-3" d="M16.6,38.2c-1,0-1.9,0.9-1.9,1.9c0,1,0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9c0-1-0.9-1.9-1.9-1.9H16.6z
              M16.6,25.9c-1,0-1.9,0.9-1.9,1.9c0,1,0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9c0-1-0.9-1.9-1.9-1.9H16.6z M16.6,13.5
             c-1,0-1.9,0.9-1.9,1.9s0.9,1.9,1.9,1.9h41.7c1,0,1.9-0.9,1.9-1.9s-0.9-1.9-1.9-1.9H16.6z M10,5h55c2.1,0,3.8,1.7,3.8,3.8v38
             c0,2.1-1.7,3.8-3.8,3.8H35.6c-0.5,0-1,0.2-1.3,0.5L19,66.3l1.4-13.7c0.1-1.1-0.8-2.1-1.9-2.1H10c-2.1,0-3.8-1.7-3.8-3.8v-38
             C6.2,6.7,7.8,5,10,5L10,5z M10,1.2c-4.2,0-7.6,3.4-7.6,7.6v38c0,4.2,3.4,7.6,7.6,7.6h6.4l-1.7,16.9c-0.2,1.7,1.9,2.8,3.2,1.5
             l18.5-18.4H65c4.2,0,7.6-3.4,7.6-7.6v-38c0-4.2-3.4-7.6-7.6-7.6H10z"/>
         </defs>
-        <clipPath id="SVGID_4_">
-          <use xlinkHref="#SVGID_3_"  style={{overflow: 'visible'}}/>
+        <clipPath id="comment-svg-id-4">
+          <use xlinkHref="#comment-svg-id-3"  style={{overflow: 'visible'}}/>
         </clipPath>
-        <rect x="-3.9" y="-5.1" style={{fill: '#5C626C', clipPath:'url(#SVGID_4_)'}} width="82.9" height="84.7"/>
+        <rect x="-3.9" y="-5.1" style={{fill: outlineColor, clipPath:'url(#comment-svg-id-4)'}} width="82.9" height="84.7"/>
       </g>
     </svg>;
 };
