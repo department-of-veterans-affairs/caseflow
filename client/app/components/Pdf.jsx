@@ -219,10 +219,10 @@ export default class Pdf extends React.Component {
 
   componentDidUpdate = (_prevProps, prevState) => {
     if (prevState.pdfjsPages.length !== this.state.pdfjsPages.length) {
-      // Create a page in the DOM for every page in the PDF
-
+      // Render all the pages in the PDF
       let renderAllPages = (index, documentId) => {
         setTimeout(() => {
+          // Only render if we're still on the same PDF
           if (documentId === this.props.documentId) {
             this.renderPage(index);
             if (index < this.state.numPages) {
@@ -260,6 +260,8 @@ export default class Pdf extends React.Component {
   }
 
   onCommentDrop = (event) => {
+    // For some reason the final coordinates given to the onDrag callback
+    // are not the coordinates we want. So we use the previous coordinates.
     let scaledchangeInCoordinates = {
       deltaX: this.draggingComment.lastChangeInCoordinates.deltaX / this.props.scale,
       deltaY: this.draggingComment.lastChangeInCoordinates.deltaY / this.props.scale
@@ -271,6 +273,8 @@ export default class Pdf extends React.Component {
   }
 
   onPageDragOver = (pageIndex) => (event) => {
+    // If the user is dragging a comment over the page the comment is on,
+    // we preventDefault in order to allow drops on that page.
     if (pageIndex + 1 === this.draggingComment.page) {
       event.preventDefault();
     }

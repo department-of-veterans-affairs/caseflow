@@ -18,7 +18,7 @@ export default class CommentIcon extends React.Component {
       }}
       className="commentIcon-container"
       onClick={this.onClick}
-      draggable={this.props.onIconMoved !== null}
+      draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}
       onDrag={this.props.onDrag} >
         {commentIcon(this.props.selected)}
@@ -32,7 +32,8 @@ export default class CommentIcon extends React.Component {
 CommentIcon.propTypes = {
   selected: PropTypes.bool,
   onClick: PropTypes.func,
-  onIconMoved: PropTypes.func,
+  onDrag: PropTypes.func,
+  onDragStart: PropTypes.func,
   xPosition: PropTypes.number,
   yPosition: PropTypes.number,
   uuid: PropTypes.number,
