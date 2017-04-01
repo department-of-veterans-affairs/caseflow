@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 
+import CommentIcon from './CommentIcon';
+
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
@@ -9,7 +11,8 @@ export default class Pdf extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      numPages: 0
+      numPages: 0,
+      pdfjsPages: []
     };
   }
 
@@ -22,7 +25,7 @@ export default class Pdf extends React.Component {
 
   renderPage = (index) => {
     // If we've already rendered the page return.
-    if (this.isRendered[index]) {
+    if (this.isRendered[index] || index >= this.state.pdfjsPages.length) {
       return;
     }
 
@@ -70,24 +73,15 @@ export default class Pdf extends React.Component {
 
   createPages = (pdfDocument) => {
     const { UI } = PDFJSAnnotate;
-
-    // Create a page in the DOM for every page in the PDF
-    let viewer = document.getElementById(this.props.id);
-
-    // If the user has switched to the list view and this element doesnt
-    // exist then don't try to render the PDF.
-    // TODO: look into just hiding the PDFs instead of removing them.
-    if (!viewer) {
-      return;
-    }
-
-    viewer.innerHTML = '';
+    let pdfjsPages = [];
 
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       let page = UI.createPage(i + 1);
 
-      viewer.appendChild(page);
+      pdfjsPages.push(page);
     }
+
+    this.setState({ pdfjsPages: pdfjsPages });
   }
 
   scrollEvent = () => {
@@ -134,9 +128,6 @@ export default class Pdf extends React.Component {
           // Create but do not render all of the pages
           this.createPages(pdfDocument);
 
-          // Automatically render the first page
-          // This assumes that page has already been created and appended
-          this.renderPage(0);
           resolve();
         });
 
@@ -240,11 +231,39 @@ export default class Pdf extends React.Component {
     });
   }
 
+  componentDidUpdate = (_prevProps, prevState) => {
+    if (prevState.pdfjsPages.length !== this.state.pdfjsPages.length) {
+      // Create a page in the DOM for every page in the PDF
+      this.renderPage(0);
+    }
+  }
+
   render() {
+    let commentIcons = this.props.comments.reduce((acc, comment) => {
+      if (!acc[comment.page]) {
+        acc[comment.page] = [];
+      }
+      acc[comment.page].push(<CommentIcon x={comment.x} y={comment.y}/>);
+      return acc;
+    }, {});
+
+    let pages = this.state.pdfjsPages.map((page, index) => {
+      return <div className="cf-pdf-pdfjs-container">
+          <div>
+            {commentIcons[index+1]}
+          </div>
+          <div
+            id={`page${index}`}
+            dangerouslySetInnerHTML={{__html: page.outerHTML}}
+          />
+        </div>;
+    });
+
     return <div id="scrollWindow" className="cf-pdf-scroll-view">
         <div
           id={this.props.id}
           className={`cf-pdf-page pdfViewer singlePageView`}>
+          {pages}
         </div>
       </div>;
   }
@@ -258,7 +277,9 @@ Pdf.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
-    page: PropTypes.number
+    page: PropTypes.number,
+    x: PropTypes.number,
+    y: PropTypes.number
   })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
