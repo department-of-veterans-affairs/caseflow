@@ -93,7 +93,11 @@ export default class PdfListView extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-grid-full">
             <div className="usa-width-one-third">
-              <SearchBar id="searchBar" onChange={this.props.onFilter} value={this.props.filterBy} />
+              <SearchBar
+                id="searchBar"
+                onChange={this.props.onFilter}
+                value={this.props.filterBy}
+              />
             </div>
             <div className="usa-width-one-third">
               <span>
