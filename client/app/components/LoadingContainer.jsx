@@ -6,7 +6,7 @@ export default class LoadingContainer extends React.Component {
         <div className="loadingContainer-positioning">
           <div className="loadingContainer-table">
             <div className="loadingContainer-table-cell">
-              {loadingSymbolHtml('', '50%', '#844E9F')}
+              {loadingSymbolHtml('', '300', '#844E9F')}
             </div>
           </div>
         </div>
@@ -20,4 +20,3 @@ export default class LoadingContainer extends React.Component {
 LoadingContainer.propTypes = {
   children: PropTypes.node
 };
-

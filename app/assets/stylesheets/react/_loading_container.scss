@@ -22,8 +22,10 @@
 .loadingContainer-content {
   position: relative;
   z-index: 1;
+  height: 80vh;
 }
 
 .loadingContainer-container {
   position: relative;
+  overflow: hidden;
 }
