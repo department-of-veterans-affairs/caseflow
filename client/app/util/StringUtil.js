@@ -43,6 +43,10 @@ const StringUtil = {
   snakeCaseToCamelCase(variable) {
     // convert key from camelCase to snake_case
     return variable.replace(/(_\w)/g, (found) => found[1].toUpperCase());
+  },
+
+  html5CompliantId(str) {
+    return str.replace(/[^A-Za-z0-9-]/g, "-").replace(/-+/g, "-");
   }
 };
 

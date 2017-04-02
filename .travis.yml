@@ -1,7 +1,7 @@
 language: ruby
-dist: wily
+dist: trusty
 rvm:
-  - 2.3.0
+  - 2.2.4
 
 branches:
     only:

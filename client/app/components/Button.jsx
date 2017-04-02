@@ -11,6 +11,7 @@ export default class Button extends React.Component {
 
   render() {
     let {
+      ariaLabel,
       app,
       loadingText,
       classNames,
@@ -33,7 +34,8 @@ export default class Button extends React.Component {
           id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
           className={`${classNames.join(' ')} cf-${app} cf-loading`}
           type={type}
-          disabled={true}>
+          disabled={true}
+          aria-label={ariaLabel}>
           <span className="cf-loading-icon-container">
             <span className="cf-loading-icon-front">
               <span className="cf-loading-icon-back">
@@ -59,7 +61,8 @@ export default class Button extends React.Component {
         className={classNames.join(' ') + (loading ? " hidden-field" : "")}
         type={type}
         disabled={disabled}
-        onClick={onClick}>
+        onClick={onClick}
+        aria-label={ariaLabel}>
           {children}
       </button>
 
@@ -74,6 +77,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  ariaLabel: PropTypes.string,
   children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,

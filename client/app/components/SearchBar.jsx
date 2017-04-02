@@ -23,7 +23,7 @@ export default class SearchBar extends React.Component {
 }
 
 SearchBar.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   value: PropTypes.string

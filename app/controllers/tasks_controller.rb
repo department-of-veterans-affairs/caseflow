@@ -25,16 +25,8 @@ class TasksController < ApplicationController
     start_task!
 
     return render "canceled" if task.canceled?
-
-    if task.assigned_existing_ep?
-      populate_completed_stats
-      return render "assigned_existing_ep"
-    end
-
-    if task.completed?
-      populate_completed_stats
-      return render "complete"
-    end
+    return render "assigned_existing_ep" if task.assigned_existing_ep?
+    return render "complete" if task.completed?
 
     # TODO: Reassess the best way to handle decision errors
     return render "no_decisions" if task.appeal.decisions.nil?
@@ -60,12 +52,15 @@ class TasksController < ApplicationController
 
   private
 
-  def populate_completed_stats
-    @to_complete_count = Task.to_complete.count
-
-    # getting the number of completed tasks for that particular user
-    @completed_count_today = current_user ? Task.completed_today_by_user(current_user.id).count : 0
+  def user_completed_today
+    current_user ? Task.completed_today_by_user(current_user.id).count : 0
   end
+  helper_method :user_completed_today
+
+  def to_complete_count
+    Task.to_complete.count
+  end
+  helper_method :to_complete_count
 
   def current_user_historical_tasks
     current_user.tasks.completed.newest_first.limit(10)

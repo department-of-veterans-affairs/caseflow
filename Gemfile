@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fcb9245974e2a2055a36cc3d6771565bbb433540"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "da96a1bebc5"
 
 gem "moment_timezone-rails"
 
@@ -61,7 +61,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "bda8d58d72f3b78281a164444737b81c51ec48c6"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "7e3192a"
 
 gem 'redis-rails'
 
@@ -120,6 +120,7 @@ group :development, :test do
   gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
+  gem 'rspec-retry'
 end
 
 group :development do
