@@ -13,8 +13,8 @@ export default class CommentIcon extends React.Component {
   render = () => {
     return <div
       style={{
-        left: this.props.xPosition,
-        top: this.props.yPosition
+        left: this.props.position.x,
+        top: this.props.position.y
       }}
       className="commentIcon-container"
       onClick={this.onClick}
@@ -34,8 +34,10 @@ CommentIcon.propTypes = {
   onClick: PropTypes.func,
   onDrag: PropTypes.func,
   onDragStart: PropTypes.func,
-  xPosition: PropTypes.number,
-  yPosition: PropTypes.number,
+  position: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number
+  }),
   uuid: PropTypes.number,
   page: PropTypes.number
 };

@@ -235,7 +235,8 @@ export default class Pdf extends React.Component {
     }
   }
 
-  onDragStart = (uuid, page, event) => {
+  // Record the start coordinates of a drag
+  onCommentDragStart = (uuid, page, event) => {
     this.draggingComment = {
       uuid,
       page,
@@ -246,34 +247,25 @@ export default class Pdf extends React.Component {
     };
   }
 
-  onDrag = (event) => {
-    this.draggingComment.lastChangeInCoordinates =
-      this.draggingComment.changeInCoordinates;
-
-    let changeInCoordinates = {
-      deltaX: event.screenX - this.draggingComment.startCoordinates.x,
-      deltaY: event.screenY - this.draggingComment.startCoordinates.y
-    };
-
-    this.draggingComment.changeInCoordinates = changeInCoordinates;
-  }
-
+  // Move the comment when it's dropped on a page
   onCommentDrop = (event) => {
-    // For some reason the final coordinates given to the onDrag callback
-    // are not the coordinates we want. So we use the previous coordinates.
+    event.preventDefault();
+
     let scaledchangeInCoordinates = {
-      deltaX: this.draggingComment.lastChangeInCoordinates.deltaX / this.props.scale,
-      deltaY: this.draggingComment.lastChangeInCoordinates.deltaY / this.props.scale
+      deltaX: (event.screenX - this.draggingComment.startCoordinates.x) / this.props.scale,
+      deltaY: (event.screenY - this.draggingComment.startCoordinates.y) / this.props.scale
     };
 
     this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
     this.draggingComment = null;
-    event.preventDefault();
   }
 
   onPageDragOver = (pageIndex) => (event) => {
     // If the user is dragging a comment over the page the comment is on,
     // we preventDefault in order to allow drops on that page.
+    // PreventDefault on dragOver event handlers mean this component can be
+    // dropped on. The cursor will display a + icon over droppable components.
+    // We only want the current page to be droppable.
     if (pageIndex + 1 === this.draggingComment.page) {
       event.preventDefault();
     }
@@ -286,14 +278,15 @@ export default class Pdf extends React.Component {
       }
       acc[comment.page].push(
         <CommentIcon
-          xPosition={comment.x * this.props.scale}
-          yPosition={comment.y * this.props.scale}
+          position={{
+            x: comment.x * this.props.scale,
+            y: comment.y * this.props.scale
+          }}
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
           onClick={this.props.onCommentClick}
-          onDragStart={this.onDragStart}
-          onDrag={this.onDrag} />);
+          onDragStart={this.onCommentDragStart} />);
 
       return acc;
     }, {});
