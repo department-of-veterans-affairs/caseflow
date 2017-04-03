@@ -188,9 +188,7 @@ const mapStateToProps = (state) => {
 };
 
 const ConnectedEstablishClaimAssociateEP = connect(
-    mapStateToProps,
-    null,
-    null
+    mapStateToProps
 )(AssociatePage);
 
 export default ConnectedEstablishClaimAssociateEP;

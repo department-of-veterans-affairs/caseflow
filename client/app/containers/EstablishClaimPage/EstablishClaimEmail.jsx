@@ -188,9 +188,7 @@ const mapStateToProps = (state) => {
 };
 
 const ConnectedEstablishClaimEmail = connect(
-    mapStateToProps,
-    null,
-    null
+    mapStateToProps
 )(EstablishClaimEmail);
 
 export default ConnectedEstablishClaimEmail;

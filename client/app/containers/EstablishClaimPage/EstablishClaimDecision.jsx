@@ -41,6 +41,7 @@ export class EstablishClaimDecision extends React.Component {
       decisionType,
       handleSubmit,
       handleCancelTask,
+      handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -192,7 +193,7 @@ export class EstablishClaimDecision extends React.Component {
                   id={issue.specialIssue}
                   label={issue.node || issue.display}
                   name={issue.specialIssue}
-                  onChange={this.props.handleSpecialIssueFieldChange(issue.specialIssue)}
+                  onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
                   key={index}
                   value={specialIssues[issue.specialIssue]}
                 />;
@@ -252,8 +253,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
-    mapDispatchToProps,
-    null
+    mapDispatchToProps
 )(EstablishClaimDecision);
 
 export default ConnectedEstablishClaimDecision;

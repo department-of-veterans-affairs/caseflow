@@ -206,9 +206,7 @@ const mapStateToProps = (state) => {
 };
 
 const ConnectedEstablishClaimNote = connect(
-    mapStateToProps,
-    null,
-    null
+    mapStateToProps
 )(EstablishClaimNote);
 
 export default ConnectedEstablishClaimNote;
