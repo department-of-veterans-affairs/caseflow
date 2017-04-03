@@ -22,7 +22,10 @@
 .loadingContainer-content {
   position: relative;
   z-index: 1;
-  height: 80vh;
+
+  .cf-doc-embed {
+    display: block;
+  }
 }
 
 .loadingContainer-container {

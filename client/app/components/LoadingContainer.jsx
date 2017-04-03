@@ -11,7 +11,9 @@ export default class LoadingContainer extends React.Component {
           </div>
         </div>
         <div className="loadingContainer-content">
-          {this.props.children}
+          <div>
+            {this.props.children}
+          </div>
         </div>
       </div>;
   }
