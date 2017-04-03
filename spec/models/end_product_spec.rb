@@ -127,7 +127,7 @@ describe EndProduct do
         status_type_code: "PEND",
         modifier: "172",
         claim_date: Time.zone.local(2017, 9, 6, 10, 10, 1)
-      ).serializable_hash
+      ).serializable_hash({})
     end
 
     it "serializes the hash correctly" do
