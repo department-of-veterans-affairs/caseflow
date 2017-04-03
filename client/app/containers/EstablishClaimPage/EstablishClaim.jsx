@@ -61,6 +61,20 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
+const CREATE_EP_ERRORS = {
+  "duplicate_ep": {
+    header: 'At this time, we are unable to assign or create a new EP for this claim.',
+    body: 'An EP with that modifier was previously created for this claim. ' +
+          'Try a different modifier or select Cancel at the bottom of the ' +
+          'page to release this claim and proceed to process it outside of Caseflow.'
+  },
+  "default": {
+    header: 'System Error',
+    body: 'Something went wrong on our end. We were not able to create an End Product. ' +
+          'Please try again later.'
+  }
+};
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -216,15 +230,18 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handleNotePageSubmit(null);
         }
-      }, () => {
+      }, (error) => {
+        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+                          CREATE_EP_ERRORS.default;
+
         this.setState({
           loading: false
         });
+
         handleAlert(
           'error',
-          'System Error',
-          'Something went wrong on our end. We were not able to create an End Product.' +
-          ' Please try again later.'
+          errorMessage.header,
+          errorMessage.body
         );
       });
   }
