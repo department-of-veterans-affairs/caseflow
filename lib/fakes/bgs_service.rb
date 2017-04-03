@@ -251,8 +251,8 @@ class Fakes::BGSService
 
   def can_access?(_)
     # Save the intended return, then wipe it for future calls
-    value = @@can_access_on_next_call
-    @@can_access_on_next_call = nil
+    value = self.class.can_access_on_next_call
+    self.class.can_access_on_next_call = nil
 
     value.nil? ? true : value
   end
