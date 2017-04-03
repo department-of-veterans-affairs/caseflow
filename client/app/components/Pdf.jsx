@@ -12,20 +12,31 @@ export default class Pdf extends React.Component {
     super(props);
     this.state = {
       numPages: 0,
-      pdfjsPages: []
+      pdfjsPages: [],
+      isRendered: []
     };
   }
 
+  setIsRendered = (index, value) => {
+    this.setState({
+      isRendered: [
+        ...this.state.isRendered.slice(0, index),
+        value,
+        ...this.state.isRendered.slice(index + 1)
+      ]
+    });
+  }
+
   rerenderPage = (index) => {
-    if (this.isRendered && this.isRendered[index]) {
-      this.isRendered[index] = false;
+    if (this.state.isRendered && this.state.isRendered[index]) {
+      this.setIsRendered(index, false);
       this.renderPage(index);
     }
   }
 
   renderPage = (index) => {
     // If we've already rendered the page return.
-    if (this.isRendered[index] || index >= this.state.pdfjsPages.length) {
+    if (this.state.isRendered[index] || index >= this.state.pdfjsPages.length) {
       return;
     }
 
@@ -37,7 +48,7 @@ export default class Pdf extends React.Component {
       scale: this.props.scale
     };
 
-    this.isRendered[index] = true;
+    this.setIsRendered(index, true);
 
     return new Promise((resolve, reject) => {
       // Call into PDFJSAnnotate to render this page
@@ -50,7 +61,7 @@ export default class Pdf extends React.Component {
       }).
       catch(() => {
         // If unsuccessful we want to mark this page as not rendered
-        this.isRendered[index] = false;
+        this.setIsRendered(index, false);
         reject();
       });
     });
@@ -125,7 +136,9 @@ export default class Pdf extends React.Component {
         // Setup array that tracks whether a given page has been rendered.
         // This way as we scroll we know if we need to render a page that
         // has just come into view.
-        this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+        this.setState({
+          isRendered: new Array(pdfDocument.pdfInfo.numPages)
+        });
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument
@@ -216,25 +229,6 @@ export default class Pdf extends React.Component {
     });
   }
 
-  componentDidUpdate = (_prevProps, prevState) => {
-    if (0 !== this.state.pdfjsPages.length) {
-      // Render all the pages in the PDF
-      let renderAllPages = (index, documentId) => {
-        setTimeout(() => {
-          // Only render if we're still on the same PDF
-          if (documentId === this.props.documentId) {
-            this.renderPage(index);
-            if (index < this.state.numPages) {
-              renderAllPages(index + 1);
-            }
-          }
-        }, 0);
-      };
-
-      renderAllPages(0, this.props.documentId);
-    }
-  }
-
   // Record the start coordinates of a drag
   onCommentDragStart = (uuid, page, event) => {
     this.draggingComment = {
@@ -273,6 +267,10 @@ export default class Pdf extends React.Component {
 
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
+      // Only show comments on a page if it's been rendered
+      if (!this.state.isRendered[comment.page]) {
+        return acc;
+      }
       if (!acc[comment.page]) {
         acc[comment.page] = [];
       }
@@ -296,13 +294,13 @@ export default class Pdf extends React.Component {
         className="cf-pdf-pdfjs-container"
         onDragOver={this.onPageDragOver(index)}
         onDrop={this.onCommentDrop} >
-          <div>
-            {commentIcons[index + 1]}
-          </div>
           <div
             id={`page${index}`}
             dangerouslySetInnerHTML={{ __html: page.outerHTML }}
           />
+          <div>
+            {commentIcons[index + 1]}
+          </div>
         </div>;
     });
 
