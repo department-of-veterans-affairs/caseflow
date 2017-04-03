@@ -19,7 +19,7 @@
    certificationDate: null
  };
 
- const certification = function(state = initialState, action) {
+ export const certificationReducers = function(state = initialState, action) {
    switch (action.type) {
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {
@@ -66,4 +66,20 @@
    }
  };
 
- export default certification;
+ export const mapDataToInitialState = function(state) {
+   return {
+     form9Match: state.appeal['form9_match?'],
+     form9Date: state.appeal.form9_date,
+     nodMatch: state.appeal['nod_match?'],
+     nodDate: state.appeal.nod_date,
+     socMatch: state.appeal['soc_match?'],
+     socDate: state.appeal.soc_date,
+     documentsMatch: state.appeal['documents_match?'],
+
+      /* TODO: add ssoc_match and ssoc_dates */
+     vbmsId: state.appeal.vbms_id,
+     veteranName: state.appeal.veteran_name,
+     certificationStatus: state.certification_status,
+     vacolsId: state.vacols_id
+   };
+ };
