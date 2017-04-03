@@ -9,23 +9,34 @@ export default class Checkbox extends React.Component {
     let {
       label,
       name,
+      onChange,
       required,
-      value
+      value,
+      errorMessage
     } = this.props;
 
-    return <div className={`cf-form-checkboxes checkbox-wrapper-${name}`}>
-      <div className="cf-form-checkbox">
+    let classNames = [
+      'cf-form-checkboxes',
+      'checkbox-wrapper-' + name,
+    ];
 
-      <input
-        name={name}
-        onChange={this.onChange}
-        type="checkbox"
-        id={name}
-        checked={value}
-      />
-      <label className="question-label" htmlFor={name}>
-        {label || name} {required && <span className="cf-required">Required</span>}
-      </label>
+    if (errorMessage) classNames.push('usa-input-error');
+
+    return <div className={classNames.join(' ')}>
+
+      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
+
+      <div className="cf-form-checkbox">
+        <input
+          name={name}
+          onChange={this.onChange}
+          type="checkbox"
+          id={name}
+          checked={value}
+        />
+        <label className="question-label" htmlFor={name}>
+          {label || name} {required && <span className="cf-required">Required</span>}
+        </label>
       </div>
     </div>;
   }
