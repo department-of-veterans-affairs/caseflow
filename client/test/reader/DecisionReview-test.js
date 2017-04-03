@@ -44,7 +44,7 @@ describe('DecisionReviewer', () => {
       it('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].filename).
+          (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         await pause();
 
@@ -60,7 +60,7 @@ describe('DecisionReviewer', () => {
       it('render pdf at different scales', asyncTest(async () => {
         // Click on first document link
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].filename).
+          (link) => link.text() === documents[0].type).
           simulate('mouseUp');
 
         // Verify when we click zoom in, we render the PDF zoomed in
@@ -82,7 +82,7 @@ describe('DecisionReviewer', () => {
       it('move to the next and previous pdfs', asyncTest(async() => {
         // Click on first document link
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].filename).
+          (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         await pause();
 
@@ -111,7 +111,7 @@ describe('DecisionReviewer', () => {
 
         // Enter the pdf view
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[1].filename).
+          (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
         // Verify the arrow navigations keys are not present
@@ -128,7 +128,7 @@ describe('DecisionReviewer', () => {
         asyncTest(async() => {
           // Enter the pdf view
           wrapper.find('a').findWhere(
-            (link) => link.text() === documents[0].filename).
+            (link) => link.text() === documents[0].type).
             simulate('mouseUp');
 
           // Click on the decision label
@@ -207,7 +207,7 @@ describe('DecisionReviewer', () => {
 
         // Click on first pdf
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].filename).
+          (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         await pause();
 
@@ -268,7 +268,7 @@ describe('DecisionReviewer', () => {
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].filename).
+          (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         let pdfViewer = wrapper.find('PdfViewer').getNode();
         let jumpTo = sinon.spy(pdfViewer, 'onJumpToComment');
@@ -290,7 +290,7 @@ describe('DecisionReviewer', () => {
 
       it('highlighted by clicking on the icon', asyncTest(async() => {
         wrapper.find('a').findWhere(
-          (link) => link.text() === documents[1].filename).
+          (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
         let clickedOnCommentEvent = {
@@ -301,7 +301,7 @@ describe('DecisionReviewer', () => {
 
         wrapper.find('Pdf').getNode().
           onCommentClick(clickedOnCommentEvent);
-        expect(wrapper.find('#comment0').hasClass('cf-comment-selected')).to.be.true;
+        expect(wrapper.find('#comment0').hasClass('comment-container-selected')).to.be.true;
       }));
     });
   });
