@@ -9,8 +9,8 @@ export default class Example4 extends React.Component {
 
     this.state = {
       values: {
-        checkbox_example_4_1: false,
-        checkbox_example_4_2: true
+        checkboxExample41: false,
+        checkboxExample42: true
       }
     };
   }
@@ -26,11 +26,11 @@ export default class Example4 extends React.Component {
   render = () => {
     let options = [
       {
-        id: "checkbox_example_4_1",
+        id: "checkboxExample41",
         label: "Check me!"
       },
       {
-        id: "checkbox_example_4_2",
+        id: "checkboxExample42",
         label: "No me!"
       }
     ];

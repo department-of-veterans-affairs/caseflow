@@ -9,9 +9,8 @@ export default class Example6 extends React.Component {
 
     this.state = {
       values: {
-        checkbox_example_6_1: false,
-        checkbox_example_6_2: false,
-        checkbox_example_6_3: false
+        checkboxExample61: false,
+        checkboxExample62: false
       },
       errorMessage: "You must choose an option"
     };
@@ -28,11 +27,11 @@ export default class Example6 extends React.Component {
   render = () => {
     let options = [
       {
-        id: "checkbox_example_6_1",
+        id: "checkboxExample61",
         label: "Check me!"
       },
       {
-        id: "checkbox_example_6_2",
+        id: "checkboxExample62",
         label: "No, check me!"
       }
     ];

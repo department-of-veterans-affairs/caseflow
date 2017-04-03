@@ -15,9 +15,9 @@ export default class Example7 extends React.Component {
 
   onChange = (value) => {
     this.setState({
-      value: value,
+      value,
       errorMessage: null
-    })
+    });
   }
 
   render = () => {

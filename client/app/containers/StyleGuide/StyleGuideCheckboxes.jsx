@@ -1,8 +1,6 @@
 import React from 'react';
 
 // components
-import Checkbox from '../../components/Checkbox';
-import CheckboxGroup from '../../components/CheckboxGroup';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import Example1 from './CheckboxExamples/Example1';
 import Example2 from './CheckboxExamples/Example2';

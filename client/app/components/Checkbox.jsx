@@ -9,7 +9,6 @@ export default class Checkbox extends React.Component {
     let {
       label,
       name,
-      onChange,
       required,
       value,
       errorMessage
@@ -17,10 +16,12 @@ export default class Checkbox extends React.Component {
 
     let classNames = [
       'cf-form-checkboxes',
-      'checkbox-wrapper-' + name,
+      `checkbox-wrapper-${name}`
     ];
 
-    if (errorMessage) classNames.push('usa-input-error');
+    if (errorMessage) {
+      classNames.push('usa-input-error');
+    }
 
     return <div className={classNames.join(' ')}>
 
