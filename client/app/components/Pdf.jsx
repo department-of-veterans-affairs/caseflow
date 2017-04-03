@@ -12,8 +12,7 @@ export default class Pdf extends React.Component {
     super(props);
     this.state = {
       numPages: 0,
-      pdfjsPages: [],
-      isRendered: []
+      pdfjsPages: []
     };
   }
 
@@ -48,7 +47,7 @@ export default class Pdf extends React.Component {
       scale: this.props.scale
     };
 
-    this.setIsRendered(index, true);
+    this.setIsRendered(index, this.props.file);
 
     return new Promise((resolve, reject) => {
       // Call into PDFJSAnnotate to render this page
@@ -132,6 +131,9 @@ export default class Pdf extends React.Component {
   // and when it receives it, starts to render it.
   setupPdf = (file, scrollLocation = 0) => {
     return new Promise((resolve) => {
+      this.setState({
+        isRendered: []
+      });
       PDFJS.getDocument(file).then((pdfDocument) => {
         // Setup array that tracks whether a given page has been rendered.
         // This way as we scroll we know if we need to render a page that
@@ -246,8 +248,10 @@ export default class Pdf extends React.Component {
     event.preventDefault();
 
     let scaledchangeInCoordinates = {
-      deltaX: (event.screenX - this.draggingComment.startCoordinates.x) / this.props.scale,
-      deltaY: (event.screenY - this.draggingComment.startCoordinates.y) / this.props.scale
+      deltaX: (event.screenX - this.draggingComment.startCoordinates.x) /
+        this.props.scale,
+      deltaY: (event.screenY - this.draggingComment.startCoordinates.y) /
+        this.props.scale
     };
 
     this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
@@ -268,7 +272,7 @@ export default class Pdf extends React.Component {
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (!this.state.isRendered[comment.page]) {
+      if (this.state.isRendered[comment.page] !== this.props.file) {
         return acc;
       }
       if (!acc[comment.page]) {
@@ -280,6 +284,7 @@ export default class Pdf extends React.Component {
             x: comment.x * this.props.scale,
             y: comment.y * this.props.scale
           }}
+          key={comment.uuid}
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
@@ -293,7 +298,8 @@ export default class Pdf extends React.Component {
       return <div
         className="cf-pdf-pdfjs-container"
         onDragOver={this.onPageDragOver(index)}
-        onDrop={this.onCommentDrop} >
+        onDrop={this.onCommentDrop}
+        key={index} >
           <div
             id={`page${index}`}
             dangerouslySetInnerHTML={{ __html: page.outerHTML }}
