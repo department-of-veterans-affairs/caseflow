@@ -16,7 +16,7 @@ export default class StyleGuideCheckboxes extends React.Component {
       <StyleGuideComponentTitle
         title="Checkboxes"
         id="checkboxes"
-        link="StyleGuideCheckboxes.jsx"
+        link="CheckboxExamples"
       />
       <p>Checkboxes largely follow the same design as those in the
         US Web Design Standards but we also include horizontal checkboxes.
