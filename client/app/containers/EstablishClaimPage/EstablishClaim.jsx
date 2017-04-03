@@ -9,6 +9,7 @@ import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
+import { validModifiers } from '../../establishClaim/reducers/establishClaimForm';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -316,34 +317,18 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === EMAIL_PAGE;
   }
 
-  /*
-   * This function gets the set of unused modifiers. For a full grant, only one
-   * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
-   * are all potentially valid. This removes any modifiers that have already been
-   * used in previous EPs.
-   */
   validModifiers = () => {
-    let modifiers = [];
-    let endProducts = this.props.task.appeal.pending_eps;
-
-    if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
-      modifiers = FULL_GRANT_MODIFIER_OPTIONS;
-    } else {
-      modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
-    }
-
-    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
-      modifierObject[endProduct.end_product_type_code] = true;
-
-      return modifierObject;
-    }, {});
-
-    return modifiers.filter((modifier) => !modifierHash[modifier]);
+    return validModifiers(
+      this.props.task.appeal.pending_eps,
+      this.props.task.appeal.decision_type
+    )
   }
+
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
+    debugger;
     this.setStationState();
 
     this.setState({
@@ -469,35 +454,6 @@ export default class EstablishClaim extends BaseForm {
 
   handleBackToDecisionReview = () => {
     this.handlePageChange(DECISION_PAGE);
-  }
-
-  /*
-   * This function takes the special issues from the review page and sets the station
-   * of jurisdiction in the form page. Special issues that all go to the same spot are
-   * defined in the constant ROUTING_SPECIAL_ISSUES. Special issues that go back to the
-   * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
-   */
-  setStationState() {
-    let stateObject = this.state;
-
-    // default needs to be reset in case the user has navigated back in the form
-    stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
-    // Go through the special issues, and for any regional issues, set SOJ to RO
-    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
-        stateObject.claimForm.stationOfJurisdiction.value =
-          this.getStationOfJurisdiction();
-      }
-    });
-    // Go through all the special issues, this time looking for routed issues
-    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
-        stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
-      }
-    });
-    this.setState({
-      stateObject
-    });
   }
 
   getSpecialIssuesEmail() {
