@@ -3,6 +3,8 @@ export const CHANGE_VBMS_HEARING_DOCUMENT = 'CHANGE_VBMS_HEARING_DOCUMENT';
 export const CHANGE_TYPE_OF_FORM9 = 'CHANGE_TYPE_OF_FORM9';
 export const CHANGE_TYPE_OF_HEARING = 'CHANGE_TYPE_OF_HEARING';
 
+export const CHANGE_REPRESENTATIVE_NAME = 'CHANGE_REPRESENTATIVE_NAME';
+export const CHANGE_REPRESENTATIVE_TYPE = 'CHANGE_REPRESENTATIVE_TYPE';
 
 // types of hearings
 //
@@ -27,6 +29,17 @@ export const form9Types = {
   INFORMAL_FORM9: 'INFORMAL_FORM9'
 };
 
+// representation for the appellant
+export const representativeTypes = {
+  ATTORNEY: 'ATTORNEY',
+  AGENT: 'AGENT',
+  ORGANIZATION: 'ORGANIZATION',
+  NONE: 'NONE',
+  // TODO: should "Other be a real type"?
+  OTHER: 'OTHER'
+};
+
+// was a hearing document found in VBMS?
 export const vbmsHearingDocument = {
   FOUND: 'FOUND',
   NOT_FOUND: 'NOT_FOUND'

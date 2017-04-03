@@ -245,3 +245,19 @@ select {
     font-weight: normal;
   }
 }
+
+// caseflow-commons
+.cf-form-checkboxes-inline {
+  .checkbox {
+    float: left;
+    padding-right: rem(30px);
+    margin-bottom: .5em;
+  }
+}
+
+// caseflow-commons
+[class*='cf-form-checkbox'] {
+  legend {
+    margin-bottom: .75em;
+  }
+}

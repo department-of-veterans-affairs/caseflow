@@ -249,18 +249,20 @@ class Task < ActiveRecord::Base
   def to_hash_with_bgs_call
     serializable_hash(
       include: [:user, appeal: {
-        include:
-          [decisions: { methods: :received_at }],
-        methods:
-        [:serialized_decision_date,
-         :disposition,
-         :veteran_name,
-         :decision_type,
-         :station_key,
-         :regional_office_key,
-         :non_canceled_end_products_within_30_days,
-         :pending_eps,
-         :issues] }],
+        include: [
+          :pending_eps,
+          :non_canceled_end_products_within_30_days,
+          decisions: { methods: :received_at }
+        ],
+        methods: [
+          :serialized_decision_date,
+          :disposition,
+          :veteran_name,
+          :decision_type,
+          :station_key,
+          :regional_office_key,
+          :issues
+        ] }],
       methods: [:progress_status, :aasm_state]
     )
   end
