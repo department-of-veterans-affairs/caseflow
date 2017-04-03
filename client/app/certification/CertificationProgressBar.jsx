@@ -11,10 +11,13 @@ const CertificationProgressBar = () => {
         title: '1. Check Documents'
       },
       {
-        title: '2. Confirm Hearing'
+        title: '2. Confirm Case Details'
       },
       {
-        title: '3. Confirmation'
+        title: '3. Confirm Hearing'
+      },
+      {
+        title: '4. Confirmation'
       }
     ]
     }
