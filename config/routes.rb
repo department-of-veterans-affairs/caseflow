@@ -50,7 +50,9 @@ Rails.application.routes.draw do
     patch 'mark-as-read', on: :member
   end
 
-  scope path: "/reader" only: [:index] do
+  resources :reader,
+          path: "/reader",
+          only: [:index] do
     resources :annotation,
               path: "/reader/annotation",
               only: [:create, :destroy, :update],
