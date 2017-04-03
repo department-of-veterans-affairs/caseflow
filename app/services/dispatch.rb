@@ -45,11 +45,14 @@ class Dispatch
   private
 
   def parse_vbms_error(error)
-    if /A duplicate claim for this EP code already exists/ =~ error.body
+    case error.body
+    when /PIF is already in use/
       return EndProductAlreadyExistsError
+    when /A duplicate claim for this EP code already exists/
+      return EndProductAlreadyExistsError
+    else
+      return error
     end
-
-    error
   end
 
   # Class used for validating the claim object

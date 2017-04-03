@@ -152,6 +152,21 @@ describe Dispatch do
       end
     end
 
+    context "when VBMS throws an EP already exists in BGS error" do
+      let(:ep_already_exists_error) do
+        VBMS::HTTPError.new("500", "<faultstring>Claim not established." \
+          " BGS code; PIF is already in use.</faultstring>")
+      end
+
+      it "raises EndProductAlreadyExistsError" do
+        allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+        expect do
+          dispatch.establish_claim!
+        end.to raise_error(Dispatch::EndProductAlreadyExistsError)
+      end
+    end
+
     context "when VBMS throws an unrecognized error" do
       let(:unrecognized_error) do
         VBMS::HTTPError.new("500", "<faultstring>some error</faultstring>")
