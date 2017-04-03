@@ -230,11 +230,6 @@ EstablishClaimDecision.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/*
- * This function tells us which parts of the global
- * application state should be passed in as props to
- * the rendered component.
- */
 const mapStateToProps = (state) => {
   return {
     specialIssues: state.specialIssues
@@ -255,11 +250,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-/*
- * Creates a component that's connected to the Redux store
- * using the state & dispatch map functions and the
- * ConfirmHearing function.
- */
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
     mapDispatchToProps,

@@ -181,22 +181,12 @@ AssociatePage.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/*
- * This function tells us which parts of the global
- * application state should be passed in as props to
- * the rendered component.
- */
 const mapStateToProps = (state) => {
-    return {
-        specialIssues: state.specialIssues
-    };
+  return {
+    specialIssues: state.specialIssues
+  };
 };
 
-/*
- * Creates a component that's connected to the Redux store
- * using the state & dispatch map functions and the
- * ConfirmHearing function.
- */
 const ConnectedEstablishClaimAssociateEP = connect(
     mapStateToProps,
     null,
