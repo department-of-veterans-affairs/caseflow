@@ -2,50 +2,6 @@ class Dispatch
   class InvalidClaimError < StandardError; end
   class EndProductAlreadyExistsError < StandardError; end
 
-  END_PRODUCT_STATUS = {
-    "PEND" => "Pending",
-    "CLR" => "Cleared",
-    "CAN" => "Canceled"
-  }.freeze
-
-  END_PRODUCT_CODES = {
-    "170APPACT" => "Appeal Action",
-    "170APPACTPMC" => "PMC-Appeal Action",
-    "170PGAMC" => "ARC-Partial Grant",
-    "170RMD" => "Remand",
-    "170RMDAMC" => "ARC-Remand",
-    "170RMDPMC" => "PMC-Remand",
-    "172GRANT" => "Grant of Benefits",
-    "172BVAG" => "BVA Grant",
-    "170RBVAG" => "Remand with BVA Grant",
-    "172BVAGPMC" => "PMC-BVA Grant",
-    "400CORRC" => "Correspondence",
-    "400CORRCPMC" => "PMC-Correspondence",
-    "930RC" => "Rating Control",
-    "930RCPMC" => "PMC-Rating Control"
-  }.freeze
-
-  END_PRODUCT_MODIFIERS = %w(170 172).freeze
-
-  def self.filter_dispatch_end_products(end_products)
-    end_products.select do |end_product|
-      END_PRODUCT_CODES.keys.include? end_product[:claim_type_code]
-    end
-  end
-
-  def self.map_ep_values(end_products)
-    end_products.map do |end_product|
-      new_end_product = end_product.clone
-      new_end_product[:claim_type_code] = Appeal.map_end_product_value(
-        new_end_product[:claim_type_code],
-        Dispatch::END_PRODUCT_CODES)
-      new_end_product[:status_type_code] = Appeal.map_end_product_value(
-        new_end_product[:status_type_code],
-        Dispatch::END_PRODUCT_STATUS)
-      new_end_product
-    end
-  end
-
   def initialize(task:, claim: {}, vacols_note: nil)
     # TODO(jd): If we permanently keep the decision date a non-editable field,
     # we should instead pass that value from the taks.appeal.decision date, rather
@@ -159,7 +115,7 @@ class Dispatch
     end
 
     def end_product_code_and_label_match
-      unless END_PRODUCT_CODES[end_product_code] == end_product_label
+      unless EndProduct::CODES[end_product_code] == end_product_label
         errors.add(:end_product_label, "must match end_product_code")
       end
     end
