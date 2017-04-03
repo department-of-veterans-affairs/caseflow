@@ -22,8 +22,13 @@ class ReviewController < ApplicationController
   end
 
   def logo_name
-    "Decision"
+    "Reader"
   end
+
+  def logo_path
+    #establish_claims_path
+  end
+
 
   def show
     @document = Document.find(document_param).tap do |t|

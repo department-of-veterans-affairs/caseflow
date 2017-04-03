@@ -50,20 +50,14 @@ Rails.application.routes.draw do
     patch 'mark-as-read', on: :member
   end
 
-  scope path: "/decision" do
-    get "/", to: redirect("/decision/review")
-
+  scope path: "/reader" only: [:index] do
     resources :annotation,
-              path: "/review/annotation",
+              path: "/reader/annotation",
               only: [:create, :destroy, :update],
               on: :member
 
-    resources :review,
-              path: "/review",
-              only: [:index] do
-      get 'pdf', on: :collection
-      get 'show', on: :collection
-    end
+    get 'pdf', on: :collection
+    get 'show', on: :collection
   end
 
   patch "certifications" => "certifications#create"
