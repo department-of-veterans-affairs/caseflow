@@ -1,48 +1,36 @@
- import * as Constants from '../constants/constants';
+import * as Constants from '../constants/constants';
 
 /*
- * This global reducer is called every time a state change is
- * made in the application using `.dispatch`. The state changes implemented here
- * are very simple. As they get more complicated and numerous,
- * these are conventionally broken out into separate "actions" files
- * that would live at client/app/actions/**.js.
- */
+* This global reducer is called every time a state change is
+* made in the application using `.dispatch`. The state changes implemented here
+* are very simple. As they get more complicated and numerous,
+* these are conventionally broken out into separate "actions" files
+* that would live at client/app/actions/**.js.
+*/
 
- const initialState = {
-   hearingDocumentIsInVbms: null,
-   form9Type: null,
-   hearingType: null,
-   certifyingOffice: null,
-   certifyingUsername: null,
-   certifyingOfficialName: null,
-   certifyingOfficialTitle: null,
-   certificationDate: null
+const initialState = {
+  hearingDocumentIsInVbms: null,
+  form9Type: null,
+  hearingType: null,
+  certifyingOffice: null,
+  certifyingUsername: null,
+  certifyingOfficialName: null,
+  certifyingOfficialTitle: null,
+  certificationDate: null
+};
+
+// TODO: break this out into a separate actions file.
+ const updateRepresentativeType = (state, action) => {
+   const update = {};
+   update.represesntativeType = action.payload.representativeType;
+  // if we changed the type to something other than "Other",
+  // erase the other representative type if it was specified.
+   if (state.representativeType !== Constants.representativeTypes.OTHER) {
+     update.otherRepresentativeType = null;
+   }
+
+   return Object.assign({}, state, update);
  };
-
-  const updateRepresentativeType = (state, action) => {
-    const update = {};
-    const otherRepresentativeType =
-      Object.prototype.hasOwnProperty.call(action.payload, 'otherRepresentativeType');
-
-    if (otherRepresentativeType) {
-      update.otherRepresentativeType = action.payload.otherRepresentativeType;
-    }
-
-    const representativeType =
-      Object.prototype.hasOwnProperty.call(action.payload, 'representativeType');
-
-    if (representativeType) {
-      update.representativeType = action.payload.representativeType;
-      // if we changed the type to something other than "Other",
-      // erase the other representative type if it was specified.
-      if (state.representativeType !== Constants.representativeTypes.OTHER) {
-        update.otherRepresentativeType = null;
-      }
-    }
-
-    return Object.assign({}, state, update);
-  }
-
 
  const certification = function(state = initialState, action = {}) {
    switch (action.type) {
@@ -51,7 +39,12 @@
        representativeName: action.payload.representativeName
      });
    case Constants.CHANGE_REPRESENTATIVE_TYPE: {
-      return updateRepresentativeType(state, action);
+     return updateRepresentativeType(state, action);
+   }
+   case Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE: {
+     return Object.assign({}, state, {
+       otherRepresentativeType: action.payload.otherRepresentativeType
+     });
    }
    case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
      return Object.assign({}, state, {

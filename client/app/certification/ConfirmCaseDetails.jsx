@@ -114,7 +114,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
       dispatch({
-        type: Constants.CHANGE_REPRESENTATIVE_TYPE,
+        type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
         payload: {
           otherRepresentativeType
         }
