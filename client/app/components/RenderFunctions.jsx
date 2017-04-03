@@ -12,6 +12,14 @@ import React from 'react';
 
 export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color = '#844E9F') {
 
+  // if the callee only passed a number, append 'px'
+  if (!/\D/.test(size)) {
+    console.warn(
+      "loadingSymbolHtml() size argument", size, "converted to", size + "px"
+    );
+    size = size + 'px';
+  }
+
   let style = { 'marginLeft': `-${size}` };
 
   return (
