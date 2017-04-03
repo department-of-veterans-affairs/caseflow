@@ -23,7 +23,7 @@ const initialState = {
 const updateRepresentativeType = (state, action) => {
   const update = {};
 
-  update.represesntativeType = action.payload.representativeType;
+  update.representativeType = action.payload.representativeType;
   // if we changed the type to something other than "Other",
   // erase the other representative type if it was specified.
   if (state.representativeType !== Constants.representativeTypes.OTHER) {
