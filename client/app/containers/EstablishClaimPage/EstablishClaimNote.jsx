@@ -45,9 +45,9 @@ export class EstablishClaimNote extends BaseForm {
   updatedVacolsLocationCode() {
     let specialIssues = this.props.specialIssues;
 
-    if (specialIssues.vamc.value) {
+    if (specialIssues.vamc) {
       return "54";
-    } else if (specialIssues.nationalCemeteryAdministration.value) {
+    } else if (specialIssues.nationalCemeteryAdministration) {
       return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
       return "98";
