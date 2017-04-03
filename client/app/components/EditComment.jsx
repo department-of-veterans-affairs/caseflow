@@ -59,7 +59,7 @@ export default class EditComment extends BaseForm {
   render() {
     return <div>
         <div
-          className="cf-pdf-comment-list-item">
+          className="comment-container">
           <TextareaField
             id={this.props.id}
             label="Edit Comment"
