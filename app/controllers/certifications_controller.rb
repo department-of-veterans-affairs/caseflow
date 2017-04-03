@@ -10,15 +10,16 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    render "v2", layout: "application" if verify_certification_v2_access
+    if verify_certification_v2_access
+      render "v2", layout: "application"
+      return
+    end
 
     case status
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
-
-    @form8
   end
 
   # TODO: update for certification v2- should we use hidden form params?
