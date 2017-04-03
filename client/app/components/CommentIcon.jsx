@@ -13,8 +13,8 @@ export default class CommentIcon extends React.Component {
   render = () => {
     return <div
       style={{
-        left: this.props.x,
-        top: this.props.y
+        left: this.props.xPosition,
+        top: this.props.yPosition
       }}
       className="commentIcon-container"
       onClick={this.onClick}

@@ -149,7 +149,6 @@ export default class Pdf extends React.Component {
 
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
-
     this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
@@ -218,7 +217,7 @@ export default class Pdf extends React.Component {
   }
 
   componentDidUpdate = (_prevProps, prevState) => {
-    if (prevState.pdfjsPages.length !== this.state.pdfjsPages.length) {
+    if (0 !== this.state.pdfjsPages.length) {
       // Render all the pages in the PDF
       let renderAllPages = (index, documentId) => {
         setTimeout(() => {
