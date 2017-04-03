@@ -9,7 +9,7 @@ export default class Example3 extends React.Component {
 
     this.state = {
       values: {
-        checkboxExampl31: false,
+        checkboxExample31: false,
         checkboxExample32: false,
         checkboxExample33: false
       }
@@ -27,7 +27,7 @@ export default class Example3 extends React.Component {
   render = () => {
     let options = [
       {
-        id: "checkboxExampl31",
+        id: "checkboxExample31",
         label: "Check me!"
       },
       {

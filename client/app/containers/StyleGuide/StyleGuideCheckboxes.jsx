@@ -37,9 +37,9 @@ export default class StyleGuideCheckboxes extends React.Component {
       <Example6 />
       <h3>Acknowledgements</h3>
       <p>In certain circumstances we ask the user to click a checkbox agreeing
-        to an action before proceeding. The text here ishould be limited to 75
+        to an action before proceeding. The text here should be limited to 75
         characters and indented so it doesn't flow under the checkbox.  Most of
-        the time these checkboxes should have a required indicator and sand an
+        the time these checkboxes should have a required indicator and send an
         error state if a user tries to proceed without making a selection.</p>
       <Example7 />
     </div>;
