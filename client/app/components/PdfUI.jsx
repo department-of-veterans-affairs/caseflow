@@ -76,6 +76,7 @@ export default class PdfUI extends React.Component {
             <Button
               name="newTab"
               classNames={["cf-pdf-button"]}
+              ariaLabel="open document in new tab"
               onClick={() => window.open(
                 linkToSingleDocumentView(this.props.doc), '_blank')}>
               {this.props.doc.filename}
@@ -89,7 +90,8 @@ export default class PdfUI extends React.Component {
             <Button
               name="previous"
               classNames={["cf-pdf-button"]}
-              onClick={this.props.onPreviousPdf}>
+              onClick={this.props.onPreviousPdf}
+              ariaLabel="previous PDF">
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
@@ -98,7 +100,8 @@ export default class PdfUI extends React.Component {
             <Button
               name="next"
               classNames={["cf-pdf-button cf-right-side"]}
-              onClick={this.props.onNextPdf}>
+              onClick={this.props.onNextPdf}
+              ariaLabel="next PDF">
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
@@ -131,25 +134,29 @@ export default class PdfUI extends React.Component {
             <Button
               name="download"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+              ariaLabel="download"
             >
               <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
             </Button>
             <Button
               name="zoomOut"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(-0.3)}>
+              onClick={this.zoom(-0.3)}
+              ariaLabel="zoom out">
               <i className="fa fa-minus" aria-hidden="true"></i>
             </Button>
             <Button
               name="fit"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(1)}>
+              onClick={this.zoom(1)}
+              ariaLabel="fit to screen">
               <i className="fa fa-arrows-alt" aria-hidden="true"></i>
             </Button>
             <Button
               name="zoomIn"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(0.3)}>
+              onClick={this.zoom(0.3)}
+              ariaLabel="zoom in">
               <i className="fa fa-plus" aria-hidden="true"></i>
             </Button>
           </div>

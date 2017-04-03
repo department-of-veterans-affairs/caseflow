@@ -30,6 +30,7 @@ $bookmark-yellow: #efdf1a;
   bottom: 0;
   right: 0;
   left: 0;
+  min-height: 400px;
 }
 
 .cf-pdf-container {
@@ -109,20 +110,8 @@ svg[aria-hidden=true],
   overflow-y: scroll;
 }
 
-.cf-comment-selected {
-  box-shadow: 0 0 10px $color-primary;
-}
-
 .cf-pdf-comment-list {
   padding-top: 10px;
-}
-
-.cf-pdf-comment-list-item {
-  background-color: $color-white;
-  border-radius: 3px;
-  padding: 20px;
-  margin-bottom: 10px;
-  border: 1px solid $color-gray-lighter;
 }
 
 .cf-pdf-toolbar {
