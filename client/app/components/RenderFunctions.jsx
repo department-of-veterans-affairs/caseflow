@@ -10,12 +10,9 @@ import React from 'react';
  * @returns {string} The HTML for the loading symbol.
  */
 
-export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#844E9F') {
+export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color = '#844E9F') {
 
-  // For now, do not accept sizes other than integers
-  let imgSize = parseInt(size, 10);
-
-  let style = { 'marginLeft': `-${imgSize}px` };
+  let style = { 'marginLeft': `-${size}` };
 
   return (
       <div>
@@ -24,8 +21,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
         </div>
         <div className="cf-loading-button-symbol">
           <svg
-            width={imgSize}
-            height={imgSize}
+            width={size}
+            height={size}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-back">
             <path
@@ -50,8 +47,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = 30, color = '#8
                 l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81"/>
           </svg>
           <svg
-            width={imgSize}
-            height={imgSize}
+            width={size}
+            height={size}
             viewBox="0 0 500 500"
             style={style}
             className="cf-react-icon-loading-front">
