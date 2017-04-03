@@ -39,6 +39,7 @@ export default function StyleGuideProgressBar() {
       <ProgressBar
         sections = {sections}
       />
+    <br />
   </div>;
 
 }

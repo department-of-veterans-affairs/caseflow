@@ -44,6 +44,7 @@ class Certification < ActiveRecord::Base
         :soc_date,
         :form9_match?,
         :form9_date,
+        :documents_match?,
         :veteran_name,
         :vbms_id] }]
     )

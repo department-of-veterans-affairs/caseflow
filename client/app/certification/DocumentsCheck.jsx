@@ -3,21 +3,33 @@ import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 
 // TODO: refactor to use shared components where helpful
-const DocumentsCheck = ({ match }) => {
+const UnconnectedDocumentsCheck = ({
+  form9Match,
+  form9Date,
+  nodMatch,
+  nodDate,
+  socMatch,
+  socDate,
+  documentsMatch,
+  match
+
+  /* TODO: add ssoc_match and ssoc_dates */
+}) => {
   return <div>
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Check Documents</h2>
-      { match ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
-      <DocumentsCheckTable form9Match = { true }
-        form9Date = "09/31/2099"
-        nodMatch = { true }
-        nodDate = "04/10/2010"
-        socMatch = { true }
-        socDate = "03/19/2007"
-        ssocDates = {["02/22/2007", "03/22/2007"]}/>
+      { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
+      <DocumentsCheckTable form9Match={form9Match}
+        form9Date={form9Date}
+        nodMatch={nodMatch}
+        nodDate={nodDate}
+        socMatch={socMatch}
+        socDate={socDate}
+        documentsMatch={documentsMatch}/>
     </div>
 
     <div className="cf-app-segment">
@@ -26,7 +38,7 @@ const DocumentsCheck = ({ match }) => {
         Cancel Certification
       </a>
       <Link
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}>
+        to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
         <button type="button" className="cf-push-right">
           Continue
         </button>
@@ -34,5 +46,29 @@ const DocumentsCheck = ({ match }) => {
     </div>
   </div>;
 };
+
+const mapStateToProps = (state) => {
+  return {
+    form9Match: state.form9Match,
+    form9Date: state.form9Date,
+    nodMatch: state.nodMatch,
+    nodDate: state.nodDate,
+    socMatch: state.socMatch,
+    socDate: state.socDate,
+    documentsMatch: state.documentsMatch
+
+    /* TODO: add ssoc_match and ssoc_dates */
+  };
+};
+
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const DocumentsCheck = connect(
+  mapStateToProps
+)(UnconnectedDocumentsCheck);
 
 export default DocumentsCheck;
