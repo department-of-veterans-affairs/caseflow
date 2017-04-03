@@ -9,4 +9,5 @@ export const annotations = [{
   document_id: 2,
   id: 2
 }];
+
 /* eslint-enable camelcase */

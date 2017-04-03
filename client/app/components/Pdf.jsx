@@ -237,6 +237,7 @@ export default class Pdf extends React.Component {
         this.rerenderPage(index);
       });
     }
+
     /* eslint-enable no-negated-condition */
   }
 

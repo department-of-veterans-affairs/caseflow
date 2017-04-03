@@ -15,4 +15,5 @@ export const documents = [
     type: 'form 9'
   }
 ];
+
 /* eslint-enable camelcase */

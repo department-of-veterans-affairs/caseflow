@@ -301,7 +301,8 @@ describe('DecisionReviewer', () => {
 
         wrapper.find('Pdf').getNode().
           onCommentClick(clickedOnCommentEvent);
-        expect(wrapper.find('#comment0').hasClass('comment-container-selected')).to.be.true;
+        expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
+          to.be.true;
       }));
     });
   });
@@ -400,6 +401,7 @@ describe('DecisionReviewer', () => {
     });
   });
 });
+
 /* eslint-enable max-statements */
 /* eslint-enable no-unused-expressions */
 /* eslint-enable camelcase */
