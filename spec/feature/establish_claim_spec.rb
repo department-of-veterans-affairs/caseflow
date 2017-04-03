@@ -1,4 +1,5 @@
 require "rails_helper"
+require "vbms"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
@@ -75,6 +76,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Assign the correct new task to myself" do
+      # Create a newer task
+      appeal2 = Generators::Appeal.create(vacols_record: vacols_record)
+      task2 = Generators::EstablishClaim.create(appeal_id: appeal2.id,
+                                                aasm_state: :unassigned)
+
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
@@ -87,22 +93,25 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
 
+      # The oldest task (task local var) is now set to a higher security level so
+      # it will be skipped for task2
+      BGSService.can_access_on_next_call = false
       safe_click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-      expect(task.reload.user).to eq(current_user)
-      expect(task).to be_started
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task2.id}")
+      expect(task2.reload.user).to eq(current_user)
+      expect(task2).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
-      expect(task.claim_establishment).to be_remand
+      expect(task2.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task2.claim_establishment).to be_remand
 
       visit "/dispatch/establish-claim"
       safe_click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task2.id}")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
