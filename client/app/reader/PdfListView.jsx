@@ -95,7 +95,11 @@ export default class PdfListView extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-grid-full">
             <div className="usa-width-one-third">
-              <SearchBar onChange={this.props.onFilter} value={this.props.filterBy} />
+              <SearchBar
+                id="searchBar"
+                onChange={this.props.onFilter}
+                value={this.props.filterBy}
+              />
             </div>
             <div className="usa-width-one-third">
               <span>
@@ -108,7 +112,8 @@ export default class PdfListView extends React.Component {
                 <Button
                   name="comment-selector"
                   onClick={this.props.selectComments}
-                  classNames={commentSelectorClassNames}>
+                  classNames={commentSelectorClassNames}
+                  ariaLabel={"Filter by comments"}>
                   <i className="fa fa-comment-o fa-lg"></i>
                 </Button>
               </span>
