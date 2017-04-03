@@ -10,6 +10,7 @@ import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 import { validModifiers } from '../../establishClaim/reducers/establishClaimForm';
+import * as Actions from '../../establishClaim/actions/actions';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -328,8 +329,12 @@ export default class EstablishClaim extends BaseForm {
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
-    debugger;
-    this.setStationState();
+    this.store.dispatch(
+      Actions.setStationOfJurisdictionAction(
+        this.store.getState().specialIssues,
+        this.props.task.appeal.station_key
+      )
+    );
 
     this.setState({
       loading: true

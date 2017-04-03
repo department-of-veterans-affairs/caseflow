@@ -1,5 +1,5 @@
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
-import * from '../constants/constants';
+import * as Constants from '../constants/constants';
 
 /*
 * This function takes the special issues from the review page and sets the station
@@ -12,6 +12,7 @@ export function setStationOfJurisdictionAction(specialIssues, stationKey) {
 
   // Go through the special issues, and for any regional issues, set SOJ to RO
   specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
+    debugger;
     if (specialIssues[issue.specialIssue]) {
       station = stationKey;
     }
