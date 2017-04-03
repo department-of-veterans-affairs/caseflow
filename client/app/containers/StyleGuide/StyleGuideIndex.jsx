@@ -6,6 +6,7 @@ import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 
@@ -18,16 +19,18 @@ export default class StyleGuideIndex extends React.Component {
 
     return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
-        <div className="cf-push-left cf-sg-nav">
-          <ul className="usa-sidenav-list">
-            <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
-            <NavLink anchor="#modals" name="Modals"></NavLink>
-            <NavLink anchor="#tabs" name="Tabs"></NavLink>
-            <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
-            <NavLink anchor="#tables" name="Tables"></NavLink>
-            <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
-          </ul>
-        </div>
+        <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
+        <NavLink anchor="#typography" name="Typography"></NavLink>
+        <NavLink anchor="#modals" name="Modals"></NavLink>
+        <NavLink anchor="#tabs" name="Tabs"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
+        <NavLink anchor="#radios" name="Radio Fields"></NavLink>
+        <NavLink anchor="#tables" name="Tables"></NavLink>
+        <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
+        <NavLink anchor="#text_input" name="Text Input"></NavLink>
+        <ul className="usa-sidenav-sub_list">
+          <NavLink anchor="#inline_form" name="Inline Form"></NavLink>
+        </ul>
       </StickyNav>
       <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
@@ -45,6 +48,10 @@ export default class StyleGuideIndex extends React.Component {
           href="https://github.com/department-of-veterans-affairs/appeals-design-research/issues/8">
           Download UI Kit</a>
         </p>
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Typography"
+          id="typography" />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />
         <div className="cf-help-divider"></div>

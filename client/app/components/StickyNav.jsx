@@ -8,8 +8,6 @@ export default class StickyNav extends React.Component {
     super(props);
     this.state = {
       className: "cf-sg-nav-not-scrolling",
-      current: false,
-      scrollingLock: false
     };
     this.handleScroll = this.handleScroll.bind(this);
   }
@@ -23,23 +21,28 @@ export default class StickyNav extends React.Component {
   }
 
   handleScroll = () => {
+    // Nav bar will attach to top of page if the user scrolls down by 100px
     if (window.scrollY > 100) {
       this.setState({
-        className: "cf-sg-nav-scrolling",
-        scrollingLock: true
+        className: "cf-sg-nav-scrolling"
       });
     } else if (window.scrollY < 100) {
       this.setState({
-        className: "cf-sg-nav-not-scrolling",
-        scrollingLock: false
+        className: "cf-sg-nav-not-scrolling"
       });
     }
   }
 
+  //TODO(marian): add toggle for nav bar to float right for nice dazzler
+
   render() {
     return (
       <div className={this.state.className}>
-        { this.props.children }
+        <div className="cf-push-left cf-sg-nav">
+          <ul className="usa-sidenav-list">
+            { this.props.children }
+          </ul>
+        </div>
       </div>
     );
   }
