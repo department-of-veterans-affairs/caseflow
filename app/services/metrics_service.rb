@@ -3,7 +3,7 @@ require "benchmark"
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
   # rubocop:disable Metrics/MethodLength
-  def self.timer(description, service: nil, name: "unknown")
+  def self.record(description, service: nil, name: "unknown")
     return_value = nil
     app = RequestStore[:application] || "other"
 

@@ -6,7 +6,7 @@ describe MetricsService do
     let(:labels) { { app: "fake-app", name: "ListDocuments" } }
     let(:yield_val) { 5 }
     subject do
-      MetricsService.timer("fake api call", service: "vbms", name: "ListDocuments") { yield_val }
+      MetricsService.record("fake api call", service: "vbms", name: "ListDocuments") { yield_val }
     end
 
     it "returns yield value" do
@@ -35,7 +35,7 @@ describe MetricsService do
       current_counter = counter.values[labels] || 0
 
       expect do
-        MetricsService.timer("fake api call", service: "vbms", name: "ListDocuments") { fail("hi") }
+        MetricsService.record("fake api call", service: "vbms", name: "ListDocuments") { fail("hi") }
       end.to raise_error("hi")
 
       expect(counter.values[labels]).to eq(current_counter + 1)

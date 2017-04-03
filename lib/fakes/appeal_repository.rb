@@ -71,7 +71,7 @@ class Fakes::AppealRepository
     return unless @records
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
@@ -93,7 +93,7 @@ class Fakes::AppealRepository
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
       # TODO(jd): create a more dynamic setup
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end
