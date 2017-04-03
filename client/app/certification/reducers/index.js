@@ -33,7 +33,7 @@ const updateRepresentativeType = (state, action) => {
   return Object.assign({}, state, update);
 };
 
-export const certification = function(state = initialState, action = {}) {
+export const certificationReducers = function(state = initialState, action = {}) {
   switch (action.type) {
   case Constants.CHANGE_REPRESENTATIVE_NAME:
     return Object.assign({}, state, {
