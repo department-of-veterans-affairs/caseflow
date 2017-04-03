@@ -77,7 +77,12 @@ module.exports = {
     ],
     "max-nested-callbacks": "error",
     "max-params": "error",
-    "max-statements": "error",
+    "max-statements": [
+      "error",
+      {
+        "max": 12
+      }
+    ],
     "max-statements-per-line": "error",
     "mocha/no-exclusive-tests": "error",
     "new-cap": "error",

@@ -24,12 +24,13 @@ export let getSpecialIssuesInitialState = function(props = {}) {
 
 let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
   switch (action.type) {
-  case Constants.CHANGE_SPECIAL_ISSUE:
+  case Constants.CHANGE_SPECIAL_ISSUE: {
     let newState = Object.assign({}, state);
 
     newState[action.payload.specialIssue] = action.payload.value;
 
     return newState;
+  }
   default:
     return state;
   }

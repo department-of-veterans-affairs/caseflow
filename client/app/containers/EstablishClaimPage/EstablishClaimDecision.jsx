@@ -247,8 +247,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: Constants.CHANGE_SPECIAL_ISSUE,
         payload: {
-          specialIssue: specialIssue,
-          value: value
+          specialIssue,
+          value
         }
       });
     }
