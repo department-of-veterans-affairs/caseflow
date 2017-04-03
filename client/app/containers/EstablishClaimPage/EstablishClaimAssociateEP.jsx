@@ -4,8 +4,9 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import { connect } from 'react-redux';
 
-export default class AssociatePage extends React.Component {
+export class AssociatePage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -179,3 +180,27 @@ AssociatePage.propTypes = {
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
+
+/*
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state) => {
+    return {
+        specialIssues: state.specialIssues
+    };
+};
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const ConnectedEstablishClaimAssociateEP = connect(
+    mapStateToProps,
+    null,
+    null
+)(AssociatePage);
+
+export default ConnectedEstablishClaimAssociateEP;

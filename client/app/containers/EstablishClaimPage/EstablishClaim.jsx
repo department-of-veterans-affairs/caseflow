@@ -497,6 +497,7 @@ export default class EstablishClaim extends BaseForm {
 
     // default needs to be reset in case the user has navigated back in the form
     stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
+
     // Go through the special issues, and for any regional issues, set SOJ to RO
     specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
       if (this.store.getState().specialIssues[issue.specialIssue]) {
@@ -584,7 +585,7 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.store.getState().specialIssues)
+      this.store.getState().specialIssues
     );
 
     Object.keys(formValues).forEach((key) => {
@@ -674,71 +675,72 @@ export default class EstablishClaim extends BaseForm {
           isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
-        <EstablishClaimDecision
-          loading={this.state.loading}
-          decisionType={this.state.reviewForm.decisionType}
-          handleCancelTask={this.handleCancelTask}
-          handleFieldChange={this.handleFieldChange}
-          handleSubmit={this.handleDecisionPageSubmit}
-          pdfLink={pdfLink}
-          pdfjsLink={pdfjsLink}
-          specialIssues={specialIssues}
-          task={this.props.task}
-        />
+          <EstablishClaimDecision
+            loading={this.state.loading}
+            decisionType={this.state.reviewForm.decisionType}
+            handleCancelTask={this.handleCancelTask}
+            handleFieldChange={this.handleFieldChange}
+            handleSubmit={this.handleDecisionPageSubmit}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            specialIssues={specialIssues}
+            task={this.props.task}
+          />
         }
         { this.isAssociatePage() &&
-        <AssociatePage
-          loading={this.state.loading}
-          endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-          task={this.props.task}
-          decisionType={this.state.reviewForm.decisionType.value}
-          handleAlert={this.props.handleAlert}
-          handleAlertClear={this.props.handleAlertClear}
-          handleCancelTask={this.handleCancelTask}
-          handleSubmit={this.handleAssociatePageSubmit}
-          hasAvailableModifers={this.hasAvailableModifers()}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-          history={history}
-          specialIssues={ApiUtil.convertToSnakeCase(
+          <AssociatePage
+            loading={this.state.loading}
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleAssociatePageSubmit}
+            hasAvailableModifers={this.hasAvailableModifers()}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            history={history}
+            specialIssues={ApiUtil.convertToSnakeCase(
               this.getFormValues(this.state.specialIssues))}
-        />
+          />
         }
         { this.isFormPage() &&
-        <EstablishClaimForm
-          loading={this.state.loading}
-          claimForm={this.state.claimForm}
-          claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
-          handleCancelTask={this.handleCancelTask}
-          handleSubmit={this.handleFormPageSubmit}
-          handleFieldChange={this.handleFieldChange}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-          validModifiers={this.validModifiers()}
-        />
+          <EstablishClaimForm
+            loading={this.state.loading}
+            claimForm={this.state.claimForm}
+            claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleFormPageSubmit}
+            handleFieldChange={this.handleFieldChange}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            validModifiers={this.validModifiers()}
+          />
         }
         { this.isNotePage() &&
-        <EstablishClaimNote
-          loading={this.state.loading}
-          appeal={this.props.task.appeal}
-          handleSubmit={this.handleNotePageSubmit}
-          showNotePageAlert={this.state.showNotePageAlert}
-          specialIssues={specialIssues}
-          displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
-          displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
-        />
+          <EstablishClaimNote
+            loading={this.state.loading}
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleNotePageSubmit}
+            showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
+            displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
+            displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
+          />
         }
         { this.isEmailPage() &&
-        <EstablishClaimEmail
-          loading={this.state.loading}
-          appeal={this.props.task.appeal}
-          handleCancelTask={this.handleCancelTask}
-          handleEmailSubmit={this.handleEmailPageSubmit}
-          handleNoEmailSubmit={this.handleNoEmailPageSubmit}
-          regionalOffice={this.getSpecialIssuesRegionalOffice()}
-          regionalOfficeEmail={this.getSpecialIssuesEmail()}
-          specialIssues={specialIssues}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-        />
+          <EstablishClaimEmail
+            loading={this.state.loading}
+            appeal={this.props.task.appeal}
+            handleCancelTask={this.handleCancelTask}
+            handleEmailSubmit={this.handleEmailPageSubmit}
+            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
+            regionalOfficeEmail={this.getSpecialIssuesEmail()}
+            specialIssues={specialIssues}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+          />
         }
+
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
