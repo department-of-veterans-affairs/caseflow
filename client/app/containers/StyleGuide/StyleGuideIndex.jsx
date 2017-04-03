@@ -4,6 +4,7 @@ import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
+import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
 
@@ -31,6 +32,9 @@ export default class StyleGuideIndex extends React.Component {
             </li>
             <li>
               <a href="#radios">Radio Fields</a>
+            </li>
+            <li>
+              <a href="#checkboxes">Checkboxes</a>
             </li>
             <li>
               <a href="#tables">Tables</a>
@@ -67,6 +71,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
         <StyleGuideRadioField />
+        <div className="cf-help-divider"></div>
+        <StyleGuideCheckboxes />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
