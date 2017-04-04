@@ -6,16 +6,11 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       name = data[:request].class.name
-      application = RequestStore[:application] || "other"
 
-      PrometheusService.completed_vbms_requests.increment(status: status,
-                                                          application: application,
-                                                          name: name)
       if status != 200
-        PrometheusService.vbms_errors.increment
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
-          "(#{data[:request].class.name}) #{data[:response_body]}"
+          "(#{name}) #{data[:response_body]}"
         )
       end
     end
@@ -76,13 +71,15 @@ class Fakes::AppealRepository
     return unless @records
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
     # RAISE_VACOLS_NOT_FOUND_ID == record[:vacols_id]
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
+    # This is bad. I'm sorry
+    record.delete(:vbms_id) if Rails.env.development?
     appeal.assign_from_vacols(record)
   end
 
@@ -96,7 +93,7 @@ class Fakes::AppealRepository
     fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
-    record = MetricsService.timer "load appeal #{appeal.vacols_id}" do
+    record = MetricsService.record "load appeal #{appeal.vacols_id}" do
       # TODO(jd): create a more dynamic setup
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end

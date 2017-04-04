@@ -41,7 +41,7 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
+    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
@@ -174,8 +174,6 @@ export default class DecisionReviewer extends React.Component {
         return multiplier * (new Date(doc1.receivedAt) - new Date(doc2.receivedAt));
       } else if (this.state.sortBy === 'type') {
         return multiplier * (doc1.type < doc2.type ? -1 : 1);
-      } else if (this.state.sortBy === 'filename') {
-        return multiplier * (doc1.filename < doc2.filename ? -1 : 1);
       }
 
       return 0;
@@ -229,15 +227,13 @@ export default class DecisionReviewer extends React.Component {
   metadataContainsString = (doc, searchString) => {
     if (doc.type.toLowerCase().includes(searchString)) {
       return true;
-    } else if (doc.filename.toLowerCase().includes(searchString)) {
-      return true;
     } else if (doc.receivedAt.toLowerCase().includes(searchString)) {
       return true;
     }
   }
 
   // This filters documents to those that contain the search text
-  // in either the metadata (type, filename, date) or in the comments
+  // in either the metadata (type, date) or in the comments
   // on the document.
   filterDocuments = (documents) => {
     let filterBy = this.state.filterBy.toLowerCase();

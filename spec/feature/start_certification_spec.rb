@@ -27,8 +27,15 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path("/certifications/ABCD/check_documents")
     expect(page).to have_content("All documents detected!")
     click_button("Continue")
+    expect(page).to have_content("Review data from BGS about the appellant's representative")
+    click_button("Continue")
     expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
-    ENV["ENABLE_CERTIFICATION_V2"] = ""
+    page.find(".cf-form-radio-option", text: "Yes").click
+    expect(page).to have_content("What did the appellant request in the document you found")
+    page.find(".cf-form-radio-option", text: "No").click
+    expect(page).to have_content("Caseflow found the document below, labeled as a Form 9")
+    page.find(".cf-form-radio-option", text: "Statement in lieu of Form 9").click
+    expect(page).to have_content("What optional board hearing preference, if any")
   end
 
   scenario "Starting a certification with missing documents" do

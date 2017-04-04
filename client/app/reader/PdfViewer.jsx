@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import PDFJSAnnotate from 'pdf-annotate.js';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 
@@ -44,7 +43,7 @@ export default class PdfViewer extends React.Component {
   onSaveCommentEdit = (comment) => {
     this.props.annotationStorage.getAnnotation(
       this.props.doc.id,
-      this.state.editingComment,
+      this.state.editingComment
     ).then((annotation) => {
       annotation.comment = comment;
       this.props.annotationStorage.editAnnotation(
@@ -106,6 +105,21 @@ export default class PdfViewer extends React.Component {
     });
   }
 
+  onIconMoved = (uuid, changeInCoordinates) => {
+    this.props.annotationStorage.getAnnotation(
+      this.props.doc.id,
+      uuid
+    ).then((annotation) => {
+      annotation.x += changeInCoordinates.deltaX;
+      annotation.y += changeInCoordinates.deltaY;
+      this.props.annotationStorage.editAnnotation(
+        this.props.doc.id,
+        annotation.uuid,
+        annotation
+      );
+    });
+  }
+
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
@@ -123,20 +137,30 @@ export default class PdfViewer extends React.Component {
     }
   }
 
-  onCommentClick = (clickedComment) => {
-    let comments = [...this.state.comments].map((comment) => {
-      if (clickedComment.uuid === comment.uuid) {
-        comment.selected = true;
+  onCommentClick = (uuid) => {
+    let comments = [...this.state.comments];
+
+    comments = comments.map((comment) => {
+      let copy = { ...comment };
+
+      if (comment.uuid === uuid) {
+        copy.selected = true;
       } else {
-        comment.selected = false;
+        copy.selected = false;
       }
 
-      return comment;
+      return copy;
     });
-
     this.setState({ comments });
   }
 
+  componentDidUpdate = () => {
+    if (this.state.isAddingComment) {
+      let commentBox = document.getElementById('addComment');
+
+      commentBox.focus();
+    }
+  }
   componentDidMount = () => {
     this.onCommentChange();
 
@@ -173,6 +197,7 @@ export default class PdfViewer extends React.Component {
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
             scrollToComment={this.props.scrollToComment}
+            onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
             doc={this.props.doc}

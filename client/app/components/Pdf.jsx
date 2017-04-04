@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import PDFJSAnnotate from 'pdf-annotate.js';
 
+import CommentIcon from './CommentIcon';
+
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
@@ -9,20 +11,35 @@ export default class Pdf extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      numPages: 0
+      numPages: 0,
+      pdfjsPages: [],
+      isRendered: []
     };
+
+    PDFJS.workerSrc = this.props.pdfWorker;
+    this.setupPdf(this.props.file);
+  }
+
+  setIsRendered = (index, value) => {
+    this.setState({
+      isRendered: [
+        ...this.state.isRendered.slice(0, index),
+        value,
+        ...this.state.isRendered.slice(index + 1)
+      ]
+    });
   }
 
   rerenderPage = (index) => {
-    if (this.isRendered && this.isRendered[index]) {
-      this.isRendered[index] = false;
+    if (this.state.isRendered && this.state.isRendered[index]) {
+      this.setIsRendered(index, false);
       this.renderPage(index);
     }
   }
 
   renderPage = (index) => {
     // If we've already rendered the page return.
-    if (this.isRendered[index]) {
+    if (this.isRendering[index] || index >= this.state.pdfjsPages.length) {
       return new Promise((resolve) => {
         resolve();
       });
@@ -36,20 +53,22 @@ export default class Pdf extends React.Component {
       scale: this.props.scale
     };
 
-    this.isRendered[index] = true;
+    this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
       // Call into PDFJSAnnotate to render this page
       UI.renderPage(index + 1, RENDER_OPTIONS).then(() => {
         // If successful then we want to setup a click handler
         let pageContainer = document.getElementById(`pageContainer${index + 1}`);
-
         pageContainer.addEventListener('click', this.onPageClick(index + 1));
+
+        debugger;
+        this.setIsRendered(index, this.props.file);
         resolve();
       }).
       catch(() => {
-        // If unsuccessful we want to mark this page as not rendered
-        this.isRendered[index] = false;
+        // If unsuccessful we want to mark this page as not rendering
+        this.isRendering[index] = false;
         reject();
       });
     });
@@ -57,39 +76,35 @@ export default class Pdf extends React.Component {
 
   onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
-      let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
-      let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
 
       this.props.onPageClick(
         pageNumber,
-        {
-          xPosition,
-          yPosition
-        }
+        this.getCommentCoordinatesFromEvent(event)
       );
     }
   }
 
+  getCommentCoordinatesFromEvent = (event) => {
+    let xPosition = (event.offsetX + event.target.offsetLeft) / this.props.scale;
+    let yPosition = (event.offsetY + event.target.offsetTop) / this.props.scale;
+
+    return {
+      xPosition,
+      yPosition
+    };
+  }
+
   createPages = (pdfDocument) => {
     const { UI } = PDFJSAnnotate;
-
-    // Create a page in the DOM for every page in the PDF
-    let viewer = document.getElementById(this.props.id);
-
-    // If the user has switched to the list view and this element doesnt
-    // exist then don't try to render the PDF.
-    // TODO: look into just hiding the PDFs instead of removing them.
-    if (!viewer) {
-      return;
-    }
-
-    viewer.innerHTML = '';
+    let pdfjsPages = [];
 
     for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
       let page = UI.createPage(i + 1);
 
-      viewer.appendChild(page);
+      pdfjsPages.push(page);
     }
+
+    this.setState({ pdfjsPages });
   }
 
   scrollEvent = () => {
@@ -124,25 +139,22 @@ export default class Pdf extends React.Component {
   // and when it receives it, starts to render it.
   setupPdf = (file, scrollLocation = 0) => {
     return new Promise((resolve) => {
+      this.setState({
+        isRendered: []
+      });
       PDFJS.getDocument(file).then((pdfDocument) => {
-        // Setup array that tracks whether a given page has been rendered.
+        // Setup isRendered array that tracks whether a given page has been rendered.
         // This way as we scroll we know if we need to render a page that
         // has just come into view.
-        this.isRendered = new Array(pdfDocument.pdfInfo.numPages);
+        this.isRendering = new Array(pdfDocument.pdfInfo.numPages);
+
         this.setState({
+          isRendered: new Array(pdfDocument.pdfInfo.numPages),
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument
         }, () => {
           // Create but do not render all of the pages
           this.createPages(pdfDocument);
-          
-          this.renderPage(0);
-
-          if (this.props.scrollToComment) {
-            this.onJumpToComment(this.props.comments, this.props.scrollToComment);
-          }
-          // Automatically render the first page
-          // This assumes that page has already been created and appended
           resolve();
         });
 
@@ -152,7 +164,6 @@ export default class Pdf extends React.Component {
 
         // Scroll to the correct location on the page
         document.getElementById('scrollWindow').scrollTop = scrollLocation;
-        this.scrollEvent();
       });
     });
   }
@@ -181,34 +192,23 @@ export default class Pdf extends React.Component {
     }
   }
 
+  onCommentClick = (event) => {
+    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id'), 10));
+  }
+
   componentDidMount = () => {
-    const { UI } = PDFJSAnnotate;
-
-    PDFJS.workerSrc = this.props.pdfWorker;
-
-    this.setupPdf(this.props.file);
-
+    
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
+  }
 
-    UI.enableEdit();
-
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.props.comments];
-
-      let filteredComments = comments.filter((comment) => {
-        return comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString();
-      });
-
-      if (filteredComments.length === 1) {
-        this.props.onCommentClick(filteredComments[0]);
-      } else if (filteredComments.length !== 0) {
-        throw new Error('Multiple comments with same uuid');
-      }
-    });
+  componentDidUpdate = (_prevProps, prevState) => {
+    if (this.state.pdfjsPages !== prevState.pdfjsPages) {
+      this.renderPage(0);
+      this.onJumpToComment(this.props.comments, this.props.scrollToComment);
+    }
   }
 
   // Calculates the symmetric difference between two sets.
@@ -233,52 +233,142 @@ export default class Pdf extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // In general I think this is a good lint rule. However,
+    // I think the below statements are clearer
+    // with negative conditions.
+    /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.setupPdf(nextProps.file);
-    }
-
-    if (nextProps.scale !== this.props.scale) {
+    } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
+    } else {
+      // Determine which comments have changed, and
+      // rerender the pages the changed comments are on.
+      // The symmetric difference gives us which comments
+      // were added or removed.
+      let symmetricDifference = this.symmetricDifference(
+        new Set(nextProps.comments.map((comment) => comment.uuid)),
+        new Set(this.props.comments.map((comment) => comment.uuid)));
+
+      let pagesToUpdate = new Set();
+      let allComments = [...nextProps.comments, ...this.props.comments];
+
+      // Find the pages for the added/removed comments
+      symmetricDifference.forEach((uuid) => {
+        let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
+        pagesToUpdate.add(page);
+      });
+
+      // Rerender all these pages to add/remove the comment boxes as necessary.
+      pagesToUpdate.forEach((page) => {
+        let index = page - 1;
+
+        this.rerenderPage(index);
+      });
     }
 
-    // Determine which comments have changed, and
-    // rerender the pages the changed comments are on.
-    // The symmetric difference gives us which comments
-    // were added or removed.
-    let symmetricDifference = this.symmetricDifference(
-      new Set(nextProps.comments.map((comment) => comment.uuid)),
-      new Set(this.props.comments.map((comment) => comment.uuid)));
 
-    let pagesToUpdate = new Set();
-    let allComments = [...nextProps.comments, ...this.props.comments];
+    // if (nextProps.scrollToComment !== this.props.scrollToComment) {
+    //   this.onJumpToComment(nextProps.comments, nextProps.scrollToComment);
+    // }
 
-    // Find the pages for the added/removed comments
-    symmetricDifference.forEach((uuid) => {
-      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+    /* eslint-enable no-negated-condition */
+  }
 
-      pagesToUpdate.add(page);
-    });
+  componentDidUpdate = (prevProps) => {
+    if (this.props.scrollToComment && this.props.scrollToComment !== prevProps.scrollToComment) {
+      this.onJumpToComment(this.props.comments, this.props.scrollToComment);
+    }
+  }
 
-    // Rerender all these pages to add/remove the comment boxes as necessary.
-    pagesToUpdate.forEach((page) => {
-      let index = page - 1;
+  // Record the start coordinates of a drag
+  onCommentDragStart = (uuid, page, event) => {
+    this.draggingComment = {
+      uuid,
+      page,
+      startCoordinates: {
+        x: event.screenX,
+        y: event.screenY
+      }
+    };
+  }
 
-      this.rerenderPage(index);
-    });
+  // Move the comment when it's dropped on a page
+  onCommentDrop = (event) => {
+    event.preventDefault();
 
-    if (nextProps.scrollToComment !== this.props.scrollToComment) {
-      this.onJumpToComment(nextProps.comments, nextProps.scrollToComment);      
+    let scaledchangeInCoordinates = {
+      deltaX: (event.screenX - this.draggingComment.startCoordinates.x) /
+        this.props.scale,
+      deltaY: (event.screenY - this.draggingComment.startCoordinates.y) /
+        this.props.scale
+    };
+
+    this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
+    this.draggingComment = null;
+  }
+
+  onPageDragOver = (pageIndex) => (event) => {
+    // If the user is dragging a comment over the page the comment is on,
+    // we preventDefault in order to allow drops on that page.
+    // PreventDefault on dragOver event handlers mean this component can be
+    // dropped on. The cursor will display a + icon over droppable components.
+    // We only want the current page to be droppable.
+    if (pageIndex + 1 === this.draggingComment.page) {
+      event.preventDefault();
     }
   }
 
   render() {
+    let commentIcons = this.props.comments.reduce((acc, comment) => {
+      // Only show comments on a page if it's been rendered
+      if (this.state.isRendered[comment.page] !== this.props.file) {
+        return acc;
+      }
+      if (!acc[comment.page]) {
+        acc[comment.page] = [];
+      }
+      acc[comment.page].push(
+        <CommentIcon
+          position={{
+            x: comment.x * this.props.scale,
+            y: comment.y * this.props.scale
+          }}
+          key={comment.uuid}
+          selected={comment.selected}
+          uuid={comment.uuid}
+          page={comment.page}
+          onClick={this.props.onCommentClick}
+          onDragStart={this.onCommentDragStart} />);
+
+      return acc;
+    }, {});
+
+    let pages = this.state.pdfjsPages.map((page, index) => {
+      return <div
+        className="cf-pdf-pdfjs-container"
+        onDragOver={this.onPageDragOver(index)}
+        onDrop={this.onCommentDrop}
+        key={index} >
+          <div
+            id={`page${index}`}
+            dangerouslySetInnerHTML={{ __html: page.outerHTML }}
+          />
+          <div>
+            {commentIcons[index + 1]}
+          </div>
+        </div>;
+    });
+
     return <div id="scrollWindow" className="cf-pdf-scroll-view">
         <div
           id={this.props.id}
           className={`cf-pdf-page pdfViewer singlePageView`}>
+          {pages}
         </div>
       </div>;
   }
@@ -292,7 +382,9 @@ Pdf.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
-    page: PropTypes.number
+    page: PropTypes.number,
+    x: PropTypes.number,
+    y: PropTypes.number
   })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
@@ -302,5 +394,6 @@ Pdf.propTypes = {
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
   onCommentClick: PropTypes.func,
-  scrollToComment: PropTypes.number
+  scrollToComment: PropTypes.number,
+  onIconMoved: PropTypes.func
 };

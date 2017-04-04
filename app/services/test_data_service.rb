@@ -88,9 +88,9 @@ class TestDataService
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
     date_fmt = conn.quote(date)
-    MetricsService.timer("VACOLS: reset decision date for #{case_id}",
-                         service: :vacols,
-                         name: "reset_outcoding_date") do
+    MetricsService.record("VACOLS: reset decision date for #{case_id}",
+                          service: :vacols,
+                          name: "reset_outcoding_date") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE FOLDER
@@ -106,9 +106,9 @@ class TestDataService
     conn = vacols_case.class.connection
     # Note: we usee conn.quote here from ActiveRecord to deter SQL injection
     case_id = conn.quote(vacols_case)
-    MetricsService.timer("VACOLS: reset decision date for #{case_id}",
-                         service: :vacols,
-                         name: "reset_location") do
+    MetricsService.record("VACOLS: reset decision date for #{case_id}",
+                          service: :vacols,
+                          name: "reset_location") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE BRIEFF
