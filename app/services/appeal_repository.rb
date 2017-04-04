@@ -7,13 +7,8 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       name = data[:request].class.name.split("::").last
-      app = RequestStore[:application] || "other"
-      PrometheusService.completed_vbms_requests.increment(status: status,
-                                                          app: app,
-                                                          name: name)
 
       if status != 200
-        PrometheusService.vbms_errors.increment
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
           "(#{name}) #{data[:response_body]}"
@@ -31,9 +26,9 @@ class AppealRepository
   ).freeze
 
   def self.load_vacols_data(appeal)
-    case_record = MetricsService.timer("VACOLS: load_vacols_data #{appeal.vacols_id}",
-                                       service: :vacols,
-                                       name: "load_vacols_data") do
+    case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
+                                        service: :vacols,
+                                        name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
 
@@ -53,9 +48,9 @@ class AppealRepository
                    VACOLS::Case.includes(:folder, :correspondent)
                  end
 
-    case_records = MetricsService.timer("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
-                                        service: :vacols,
-                                        name: "load_vacols_data_by_vbms_id") do
+    case_records = MetricsService.record("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
+                                         service: :vacols,
+                                         name: "load_vacols_data_by_vbms_id") do
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
@@ -121,9 +116,9 @@ class AppealRepository
 
   # :nocov:
   def self.remands_ready_for_claims_establishment
-    remands = MetricsService.timer("VACOLS: remands_ready_for_claims_establishment",
-                                   service: :vacols,
-                                   name: "remands_ready_for_claims_establishment") do
+    remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
+                                    service: :vacols,
+                                    name: "remands_ready_for_claims_establishment") do
       VACOLS::Case.remands_ready_for_claims_establishment
     end
 
@@ -131,9 +126,9 @@ class AppealRepository
   end
 
   def self.amc_full_grants(outcoded_after:)
-    full_grants = MetricsService.timer("VACOLS:  amc_full_grants #{outcoded_after}",
-                                       service: :vacols,
-                                       name: "amc_full_grants") do
+    full_grants = MetricsService.record("VACOLS:  amc_full_grants #{outcoded_after}",
+                                        service: :vacols,
+                                        name: "amc_full_grants") do
       VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
@@ -235,9 +230,9 @@ class AppealRepository
 
     appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
 
-    MetricsService.timer("VACOLS: certify #{appeal.vacols_id}",
-                         service: :vacols,
-                         name: "certify") do
+    MetricsService.record("VACOLS: certify #{appeal.vacols_id}",
+                          service: :vacols,
+                          name: "certify") do
       appeal.case_record.save!
     end
   end
@@ -280,9 +275,9 @@ class AppealRepository
 
   def self.send_and_log_request(vbms_id, request)
     name = request.class.name.split("::").last
-    MetricsService.timer("sent VBMS request #{request.class} for #{vbms_id}",
-                         service: :vbms,
-                         name: name) do
+    MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
+                          service: :vbms,
+                          name: name) do
       @vbms_client.send_request(request)
     end
 

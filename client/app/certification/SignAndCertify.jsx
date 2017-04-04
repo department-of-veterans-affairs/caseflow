@@ -23,7 +23,6 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.OTHER
 }];
 
-
 class UnconnectedSignAndCertify extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
@@ -34,20 +33,16 @@ class UnconnectedSignAndCertify extends React.Component {
 
   render() {
     let {
+      onSignAndCertifyFormChange,
       certifyingOffice,
-      onCertifyingOfficeChange,
       certifyingUsername,
-      onCertifyingUsernameChange,
       certifyingOfficialName,
-      onCertifyingOfficialNameChange,
       certifyingOfficialTitle,
-      onCertifyingOfficialTitleChange,
-      certificationDate,
-      onCertificationDateChange
+      certificationDate
     } = this.props;
 
     return <div>
-      <form noValidate id="end_product">
+      <form>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Sign and Certify</h2>
           <p>Fill in information about yourself below to sign this certification.</p>
@@ -56,28 +51,28 @@ class UnconnectedSignAndCertify extends React.Component {
             name="Name and location of certifying office:"
             value={certifyingOffice}
             required={true}
-            onChange={onCertifyingOfficeChange}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
             name="Organizational elements certifying appeal:"
             value={certifyingUsername}
             required={true}
-            onChange={onCertifyingUsernameChange}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
             name="Name of certifying official:"
             value={certifyingOfficialName}
             required={true}
-            onChange={onCertifyingOfficialNameChange}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             required={true}
-            onChange={onCertifyingOfficialTitleChange}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
             name="Decision Date:"
             value={certificationDate}
             required={true}
-            onChange={onCertificationDateChange}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
       </form>
 
@@ -104,47 +99,14 @@ const mapDispatchToProps = (dispatch) => {
         }
       });
     },
-    onCertifyingOfficeChange: (certifyingOffice) => {
+    onSignAndCertifyFormChange: (fieldName, value) => {
       dispatch({
-        type: Constants.CHANGE_CERTIFYING_OFFICIAL,
+        type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
         payload: {
-          certifyingOffice
-        }
-      });
-    },
-    onCertifyingUsernameChange: (certifyingUsername) => {
-      dispatch({
-        type: Constants.CHANGE_CERTIFYING_USERNAME,
-        payload: {
-          certifyingUsername
-        }
-      });
-    },
-    onCertifyingOfficialNameChange: (certifyingOfficialName) => {
-      dispatch({
-        type: Constants.CHANGE_CERTIFYING_OFFICIAL_NAME,
-        payload: {
-          certifyingOfficialName
-        }
-      });
-    },
-    onCertifyingOfficialTitleChange: (certifyingOfficialTitle) => {
-      dispatch({
-        type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE,
-        payload: {
-          certifyingOfficialTitle
-        }
-      });
-    },
-    onCertificationDateChange: (certificationDate) => {
-      dispatch({
-        type: Constants.CHANGE_CERTIFICATION_DATE,
-        payload: {
-          certificationDate
+          [fieldName]: value
         }
       });
     }
-
   };
 };
 
