@@ -24,67 +24,83 @@ const certifyingOfficialTitleOptions = [{
 }];
 
 
-const UnconnectedSignAndCertify = ({
-    certifyingOffice,
-    onCertifyingOfficeChange,
-    certifyingUsername,
-    onCertifyingUsernameChange,
-    certifyingOfficialName,
-    onCertifyingOfficialNameChange,
-    certifyingOfficialTitle,
-    onCertifyingOfficialTitleChange,
-    certificationDate,
-    onCertificationDateChange
-}) => {
-  return <div>
-    <form noValidate id="end_product">
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h2>Sign and Certify</h2>
-        <p>Fill in information about yourself below to sign this certification.</p>
+class UnconnectedSignAndCertify extends React.Component {
+  componentWillMount() {
+    this.props.updateProgressBar();
+  }
 
-        <TextField
-          name="Name and location of certifying office:"
-          value={certifyingOffice}
-          required={true}
-          onChange={onCertifyingOfficeChange}/>
-        <TextField
-          name="Organizational elements certifying appeal:"
-          value={certifyingUsername}
-          required={true}
-          onChange={onCertifyingUsernameChange}/>
-        <TextField
-          name="Name of certifying official:"
-          value={certifyingOfficialName}
-          required={true}
-          onChange={onCertifyingOfficialNameChange}/>
-        <RadioField
-          name="Title of certifying official:"
-          options={certifyingOfficialTitleOptions}
-          value={certifyingOfficialTitle}
-          required={true}
-          onChange={onCertifyingOfficialTitleChange}/>
-        <DateSelector
-          name="Decision Date:"
-          value={certificationDate}
-          required={true}
-          onChange={onCertificationDateChange}/>
+  render(){
+    let {
+      certifyingOffice,
+      onCertifyingOfficeChange,
+      certifyingUsername,
+      onCertifyingUsernameChange,
+      certifyingOfficialName,
+      onCertifyingOfficialNameChange,
+      certifyingOfficialTitle,
+      onCertifyingOfficialTitleChange,
+      certificationDate,
+      onCertificationDateChange
+    } = this.props;
+
+    return <div>
+      <form noValidate id="end_product">
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Sign and Certify</h2>
+          <p>Fill in information about yourself below to sign this certification.</p>
+
+          <TextField
+            name="Name and location of certifying office:"
+            value={certifyingOffice}
+            required={true}
+            onChange={onCertifyingOfficeChange}/>
+          <TextField
+            name="Organizational elements certifying appeal:"
+            value={certifyingUsername}
+            required={true}
+            onChange={onCertifyingUsernameChange}/>
+          <TextField
+            name="Name of certifying official:"
+            value={certifyingOfficialName}
+            required={true}
+            onChange={onCertifyingOfficialNameChange}/>
+          <RadioField
+            name="Title of certifying official:"
+            options={certifyingOfficialTitleOptions}
+            value={certifyingOfficialTitle}
+            required={true}
+            onChange={onCertifyingOfficialTitleChange}/>
+          <DateSelector
+            name="Decision Date:"
+            value={certificationDate}
+            required={true}
+            onChange={onCertificationDateChange}/>
+        </div>
+      </form>
+
+      <div className="cf-app-segment">
+        <a href="#confirm-cancel-certification"
+          className="cf-action-openmodal cf-btn-link">
+          Cancel certification
+        </a>
+        <button type="button" className="cf-push-right">
+          Certify appeal
+        </button>
       </div>
-    </form>
-
-    <div className="cf-app-segment">
-      <a href="#confirm-cancel-certification"
-        className="cf-action-openmodal cf-btn-link">
-        Cancel certification
-      </a>
-      <button type="button" className="cf-push-right">
-        Certify appeal
-      </button>
-    </div>
-  </div>;
+    </div>;
+  }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    updateProgressBar: () => {
+      dispatch({
+        type: Constants.UPDATE_PROGRESS_BAR,
+        payload: {
+          currentSection: Constants.progressBarSections.CONFIRMATION
+        }
+      });
+    },
     onCertifyingOfficeChange: (certifyingOffice) => {
       dispatch({
         type: Constants.CHANGE_CERTIFYING_OFFICIAL,

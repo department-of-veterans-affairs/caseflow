@@ -30,7 +30,7 @@ class UnconnectedCertificationProgressBar extends React.Component {
   deriveSections() {
     const currentSection = this.props.currentSection;
 
-    return this.sections().map((section) => {
+    return UnconnectedCertificationProgressBar.sections().map((section) => {
       return {
         title: section.title,
         current: section.value === currentSection
