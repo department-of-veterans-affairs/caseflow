@@ -5,22 +5,24 @@ import React from 'react';
 /**
  * @param {string} text The text to associate with the spinning loading symbol.
  * defaults to 'Loading'.
- * @param {number} size The width and height of the loading symbol.
+ * @param {string} size The width and height of the loading symbol.
  * @param {string} color The color of the non-gray part of the caseflow logo.
  * @returns {string} The HTML for the loading symbol.
  */
 
 export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color = '#844E9F') {
 
+  let imgSize = size;
+
   // if the callee only passed a number, append 'px'
-  if (!/\D/.test(size)) {
+  if (!(/\D/).test(imgSize)) {
+    imgSize += 'px';
     console.warn(
-      "loadingSymbolHtml() size argument", size, "converted to", size + "px"
+      "loadingSymbolHtml() size argument", size, "converted to", imgSize
     );
-    size = size + 'px';
   }
 
-  let style = { 'marginLeft': `-${size}` };
+  let style = { 'marginLeft': `-${imgSize}` };
 
   return (
       <div>
@@ -29,8 +31,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color =
         </div>
         <div className="cf-loading-button-symbol">
           <svg
-            width={size}
-            height={size}
+            width={imgSize}
+            height={imgSize}
             viewBox="0 0 500 500"
             className="cf-react-icon-loading-back">
             <path
@@ -55,8 +57,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color =
                 l-12.7,28.8l29.3,11.3l12.7-28.8L180,81.1 M319.9,81l-29.3,11.3l12.7,28.8l29.3-11.3L319.9,81"/>
           </svg>
           <svg
-            width={size}
-            height={size}
+            width={imgSize}
+            height={imgSize}
             viewBox="0 0 500 500"
             style={style}
             className="cf-react-icon-loading-front">
