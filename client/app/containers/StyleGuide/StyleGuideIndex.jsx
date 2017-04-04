@@ -21,6 +21,11 @@ export default class StyleGuideIndex extends React.Component {
       <StickyNav>
         <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
         <NavLink anchor="#typography" name="Typography"></NavLink>
+        <ul className="usa-sidenav-sub_list">
+          <NavLink anchor="#headings_and_body" name="Headings and Body"></NavLink>
+          <NavLink anchor="#styles" name="Styles"></NavLink>
+        </ul>
+        <NavLink anchor="#colors" name="Colors"></NavLink>
         <NavLink anchor="#modals" name="Modals"></NavLink>
         <NavLink anchor="#tabs" name="Tabs"></NavLink>
         <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
@@ -52,6 +57,18 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuidePlaceholder
           title="Typography"
           id="typography" />
+        <StyleGuidePlaceholder
+          title="Headings and Body"
+          id="headings_and_body"
+          subsection={true} />
+        <StyleGuidePlaceholder
+          title="Styles"
+          id="styles"
+          subsection={true} />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Colors"
+          id="colors" />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />
         <div className="cf-help-divider"></div>
