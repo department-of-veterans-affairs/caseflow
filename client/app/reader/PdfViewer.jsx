@@ -138,17 +138,38 @@ export default class PdfViewer extends React.Component {
   }
 
   onCommentClick = (uuid) => {
-    let comments = [...this.state.comments].map((comment) => {
-      if (uuid === comment.uuid) {
-        comment.selected = true;
+    let comments = [...this.state.comments];
+
+    comments = comments.map((comment) => {
+      let copy = { ...comment };
+
+      if (comment.uuid === uuid) {
+        copy.selected = true;
       } else {
-        comment.selected = false;
+        copy.selected = false;  
       }
 
-      return comment;
+      return copy;
     });
-
     this.setState({ comments });
+  }
+
+  componentDidMount = () => {
+    const { UI } = PDFJSAnnotate;
+
+    this.onCommentChange();
+
+    window.addEventListener('keydown', this.keyListener);
+
+    UI.enableEdit();
+  }
+
+  componentDidUpdate = () => {
+    if (this.state.isAddingComment) {
+      let commentBox = document.getElementById('addComment');
+
+      commentBox.focus();
+    }
   }
 
   // Consider moving this down into Pdf.jsx
