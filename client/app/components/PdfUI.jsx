@@ -9,7 +9,7 @@ export const linkToSingleDocumentView = (doc) => {
   let type = doc.type;
   let receivedAt = doc.receivedAt;
 
-  return `/decision/review/show?id=${id}&type=${type}` +
+  return `/reader/show/${id}?type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 

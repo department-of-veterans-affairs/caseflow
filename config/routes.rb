@@ -50,16 +50,14 @@ Rails.application.routes.draw do
     patch 'mark-as-read', on: :member
   end
 
-  resources :reader,
-          path: "/reader",
-          only: [:index] do
-    resources :annotation,
-              path: "/reader/annotation",
-              only: [:create, :destroy, :update],
-              on: :member
+  resources :annotation,
+          only: [:create, :destroy, :update],
+          on: :member
 
-    get 'pdf', on: :collection
-    get 'show', on: :collection
+  namespace :reader do
+    get "pdf/:document_id", to: :pdf, as: :pdf
+    get "show/:document_id", to: :show, as: :show
+    get "/:vacols_id", to: :index, as: :index
   end
 
   patch "certifications" => "certifications#create"

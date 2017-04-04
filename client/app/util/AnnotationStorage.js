@@ -45,7 +45,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
           this.storedAnnotations[documentId] = allAnnotations.sort(this.sortAnnotations);
           let data = ApiUtil.convertToSnakeCase({ annotation });
 
-          ApiUtil.post(`/decision/review/annotation`, { data }).
+          ApiUtil.post(`/annotation`, { data }).
               then((response) => {
 
                 let responseObject = JSON.parse(response.text);
@@ -64,7 +64,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
       }),
 
       deleteAnnotation: (documentId, annotationId) => new Promise((resolve, reject) => {
-        ApiUtil.delete(`/decision/review/annotation/${annotationId}`).
+        ApiUtil.delete(`/annotation/${annotationId}`).
             then(() => {
               let index = this.findAnnotation(documentId, annotationId);
 
@@ -102,7 +102,7 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
 
           let data = ApiUtil.convertToSnakeCase({ annotation });
 
-          ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
+          ApiUtil.patch(`/annotation/${annotationId}`, { data }).
               then(() => {
                 resolve(annotation);
                 this.onCommentChange();

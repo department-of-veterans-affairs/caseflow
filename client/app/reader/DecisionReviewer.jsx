@@ -51,7 +51,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   documentUrl = (doc) => {
-    return `${this.props.url}?id=${doc.id}`;
+    return `/reader/pdf/${doc.id}`;
   }
 
   onNextPdf = () => {
