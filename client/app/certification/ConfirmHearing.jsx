@@ -108,117 +108,128 @@ const informalForm9HearingAnswers = [{
 *
  */
 // TODO: refactor to use shared components where helpful
-const UnconnectedConfirmHearing = ({
-    hearingDocumentIsInVbms,
-    onHearingDocumentChange,
-    form9Type,
-    form9Date,
-    onTypeOfForm9Change,
-    hearingType,
-    onHearingTypeChange,
-    match
-}) => {
-  const shouldDisplayHearingChangeFound =
-    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
-  const shouldDisplayTypeOfForm9Question =
-    hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND;
 
-  const form9IsFormal = form9Type === Constants.form9Types.FORMAL_FORM9;
-  const form9IsInformal = form9Type === Constants.form9Types.INFORMAL_FORM9;
+class UnconnectedConfirmHearing extends React.Component {
+  // TODO: updating state in ComponentWillMount is
+  // sometimes thought of as an anti-pattern.
+  // is there a better way to do this?
+  componentWillMount() {
+    this.props.updateProgressBar();
+  }
 
-  const shouldDisplayFormalForm9Question = shouldDisplayTypeOfForm9Question &&
-    form9IsFormal;
-  const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
-    form9IsInformal;
+  render() {
+    let { hearingDocumentIsInVbms,
+      onHearingDocumentChange,
+      form9Type,
+      form9Date,
+      onTypeOfForm9Change,
+      hearingType,
+      onHearingTypeChange,
+      match
+    } = this.props;
 
-  const hearingCheckText = `Check the appellant's eFolder for a hearing
-  cancellation or request added after ${form9Date}, the date the Form 9
-  (or statement in lieu of Form 9) was uploaded.`;
+    const hearingCheckText = `Check the appellant's eFolder for a hearing
+    cancellation or request added after ${form9Date}, the date the Form 9
+    (or statement in lieu of Form 9) was uploaded.`;
 
-  const hearingChangeQuestion = `Was a hearing cancellation or request added after
-  ${form9Date}?`;
+    const hearingChangeQuestion = `Was a hearing cancellation or request added after
+    ${form9Date}?`;
 
-  return <div>
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h2>Confirm Hearing</h2>
+    const shouldDisplayHearingChangeFound =
+      hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
+    const shouldDisplayTypeOfForm9Question =
+      hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND;
 
-        <div>
-          {hearingCheckText}
+    const form9IsFormal = form9Type === Constants.form9Types.FORMAL_FORM9;
+    const form9IsInformal = form9Type === Constants.form9Types.INFORMAL_FORM9;
+
+    const shouldDisplayFormalForm9Question = shouldDisplayTypeOfForm9Question &&
+      form9IsFormal;
+    const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
+      form9IsInformal;
+
+    return <div>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Confirm Hearing</h2>
+
+          <div>
+            {hearingCheckText}
+          </div>
+          {/*
+            TODO: would we be better served by
+            making our connected components smaller?
+            we could make e.g.
+            HearingChangeRadioField,
+            TypeOfForm9RadioField,
+            HearingTypeChangeRadioField
+
+            which would be a connected component with
+            direct access to the Redux store.
+          */}
+          <RadioField name={hearingChangeQuestion}
+            required={true}
+            options={hearingChangeAnswers}
+            value={hearingDocumentIsInVbms}
+            onChange={onHearingDocumentChange}/>
+
+          {
+            shouldDisplayHearingChangeFound &&
+            <RadioField name={hearingChangeFoundQuestion}
+              required={true}
+              options={hearingChangeFoundAnswers}
+              value={hearingType}
+              onChange={onHearingTypeChange}/>
+          }
+
+          {
+            shouldDisplayTypeOfForm9Question &&
+            <RadioField name={typeOfForm9Question}
+              required={true}
+              options={typeOfForm9Answers}
+              value={form9Type}
+              onChange={onTypeOfForm9Change}/>
+          }
+
+          {
+            shouldDisplayTypeOfForm9Question &&
+
+            /* TODO: restore the accessibility stuff here.
+              also, we should stop using rails pdf viewer */
+            <LoadingContainer>
+              <iframe
+                className="cf-doc-embed cf-iframe-with-loading form9-viewer"
+                title="Form8 PDF"
+                src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+              </iframe>
+            </LoadingContainer>
+          }
+
+          {
+            shouldDisplayFormalForm9Question &&
+            <RadioField name={formalForm9HearingQuestion}
+              options={formalForm9HearingAnswers}
+              value={hearingType}
+              required={true}
+              onChange={onHearingTypeChange}/>
+          }
+
+          {
+            shouldDisplayInformalForm9Question &&
+            <RadioField name={informalForm9HearingQuestion}
+              options={informalForm9HearingAnswers}
+              value={hearingType}
+              required={true}
+              onChange={onHearingTypeChange}/>
+          }
         </div>
-        {/*
-          TODO: would we be better served by
-          making our connected components smaller?
-          we could make e.g.
-          HearingChangeRadioField,
-          TypeOfForm9RadioField,
-          HearingTypeChangeRadioField
-
-          which would be a connected component with
-          direct access to the Redux store.
-        */}
-        <RadioField name={hearingChangeQuestion}
-          required={true}
-          options={hearingChangeAnswers}
-          value={hearingDocumentIsInVbms}
-          onChange={onHearingDocumentChange}/>
-
-        {
-          shouldDisplayHearingChangeFound &&
-          <RadioField name={hearingChangeFoundQuestion}
-            required={true}
-            options={hearingChangeFoundAnswers}
-            value={hearingType}
-            onChange={onHearingTypeChange}/>
-        }
-
-        {
-          shouldDisplayTypeOfForm9Question &&
-          <RadioField name={typeOfForm9Question}
-            required={true}
-            options={typeOfForm9Answers}
-            value={form9Type}
-            onChange={onTypeOfForm9Change}/>
-        }
-
-        {
-          shouldDisplayTypeOfForm9Question &&
-
-          /* TODO: restore the accessibility stuff here.
-            also, we should stop using rails pdf viewer */
-          <LoadingContainer>
-            <iframe
-              className="cf-doc-embed cf-iframe-with-loading form9-viewer"
-              title="Form8 PDF"
-              src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
-            </iframe>
-          </LoadingContainer>
-        }
-
-        {
-          shouldDisplayFormalForm9Question &&
-          <RadioField name={formalForm9HearingQuestion}
-            options={formalForm9HearingAnswers}
-            value={hearingType}
-            required={true}
-            onChange={onHearingTypeChange}/>
-        }
-
-        {
-          shouldDisplayInformalForm9Question &&
-          <RadioField name={informalForm9HearingQuestion}
-            options={informalForm9HearingAnswers}
-            value={hearingType}
-            required={true}
-            onChange={onHearingTypeChange}/>
-        }
-      </div>
 
       <Footer
         nextPageUrl={
           `/certifications/${match.params.vacols_id}/sign_and_certify`
         }/>
     </div>;
-};
+  }
+}
 
 /*
  * CONNECTED COMPONENT STUFF:
@@ -240,6 +251,14 @@ const UnconnectedConfirmHearing = ({
  */
 const mapDispatchToProps = (dispatch) => {
   return {
+    updateProgressBar: () => {
+      dispatch({
+        type: Constants.UPDATE_PROGRESS_BAR,
+        payload: {
+          currentSection: Constants.progressBarSections.CONFIRM_HEARING
+        }
+      });
+    },
     onHearingDocumentChange: (event) => {
       dispatch({
         type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
