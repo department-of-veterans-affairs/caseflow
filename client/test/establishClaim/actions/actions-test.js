@@ -1,4 +1,4 @@
-import * as Actions from '../../app/establishClaim/actions/actions';
+import * as Actions from '../../../app/establishClaim/actions/actions';
 import { expect } from 'chai';
 
 describe('EstablishClaim Actions', () => {

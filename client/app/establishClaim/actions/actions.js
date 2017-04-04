@@ -8,7 +8,7 @@ import * as Constants from '../constants/constants';
 * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
 */
 export function setStationOfJurisdictionAction(specialIssues, stationKey) {
-  let station = '397 - ARC';
+  let station = '397';
 
   // Go through the special issues, and for any regional issues, set SOJ to RO
   specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
@@ -20,7 +20,7 @@ export function setStationOfJurisdictionAction(specialIssues, stationKey) {
   // Go through all the special issues, this time looking for routed issues
   specialIssueFilters.routedSpecialIssues().forEach((issue) => {
     if (specialIssues[issue.specialIssue]) {
-      station = issue.stationOfJurisdiction;
+      station = issue.stationOfJurisdiction.key;
     }
   });
 

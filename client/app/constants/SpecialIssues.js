@@ -4,7 +4,10 @@ const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
     specialIssue: 'contaminatedWaterAtCampLejeune',
-    stationOfJurisdiction: '327 - Louisville, KY',
+    stationOfJurisdiction: {
+      key: '327',
+      location: 'Louisville, KY'
+    },
     unhandled: null
   },
   {
@@ -30,7 +33,10 @@ const SPECIAL_ISSUES = [
   {
     display: 'Foreign claim - compensation claims, dual claims, appeals',
     specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
-    stationOfJurisdiction: '311 - Pittsburgh, PA',
+    stationOfJurisdiction: {
+      key: '311',
+      location:  'Pittsburgh, PA'
+    },
     unhandled: null
   },
   {
@@ -148,19 +154,28 @@ const SPECIAL_ISSUES = [
       `Mariana Islands (Rota, Saipan & Tinian)`,
     specialIssue: `usTerritoryClaimAmericanSamoaGuamNorthern` +
       `MarianaIslandsRotaSaipanTinian`,
-    stationOfJurisdiction: '459 - Honolulu, HI',
+    stationOfJurisdiction: {
+      key: '459',
+      location: 'Honolulu, HI'
+    },
     unhandled: null
   },
   {
     display: 'U.S. Territory claim - Philippines',
     specialIssue: 'usTerritoryClaimPhilippines',
-    stationOfJurisdiction: '358 - Manila, Philippines',
+    stationOfJurisdiction: {
+      key: '358',
+      location: 'Manila, Philippines'
+    },
     unhandled: null
   },
   {
     display: 'U.S. Territory claim - Puerto Rico and Virgin Islands',
     specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
-    stationOfJurisdiction: '355 - San Juan, Puerto Rico',
+    stationOfJurisdiction: {
+      key:'355',
+      location: 'San Juan, Puerto Rico'
+    },
     unhandled: null
   },
   {

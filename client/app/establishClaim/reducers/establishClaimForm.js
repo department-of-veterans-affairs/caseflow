@@ -1,5 +1,6 @@
 import { FULL_GRANT } from '../../containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../constants/constants';
+import ReducerUtil from '../../util/ReducerUtil';
 
 const FULL_GRANT_MODIFIER_OPTIONS = [
   '172'
@@ -18,9 +19,7 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 export default function(state = getEstablishClaimFormInitialState(), action) {
   switch(action.type) {
     case Constants.CHANGE_ESTABLISH_CLAIM_FIELD:
-      let newState = Object.assign({}, state);
-      newState[action.payload.field] = action.payload.value;
-      return newState;
+      return ReducerUtil.changeFieldValue(state, action);
     default:
       return state;
   }

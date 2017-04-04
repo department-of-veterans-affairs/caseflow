@@ -6,6 +6,7 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import * as Constants from '../../establishClaim/constants/constants';
 import { connect } from 'react-redux';
 
@@ -15,6 +16,35 @@ export const MODIFIER_OPTIONS = [
 ];
 
 export class EstablishClaimForm extends React.Component {
+  formattedStationOfJurisdiction() {
+    let stationKey = this.props.establishClaimForm.stationOfJurisdiction;
+    let suffix;
+
+    SPECIAL_ISSUES.forEach((issue) => {
+      let issuekey = issue.stationOfJurisdiction && issue.stationOfJurisdiction.key;
+
+      // If the assigned stationKey matches a routed special issue, use the
+      // routed station's location
+      if (issuekey === stationKey) {
+        suffix = issue.stationOfJurisdiction.location;
+      }
+    });
+
+    // ARC is a special snowflake and doens't show the state (DC)
+    if (stationKey === '397') {
+      suffix = 'ARC';
+    }
+
+    // If there is no routed special issue override, use the default city/state
+    if (!suffix) {
+      let regionalOfficeKey = this.props.regionalOfficeKey;
+      suffix = `${this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
+          this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+    }
+
+    return `${stationKey} - ${suffix}`;
+  }
+
   render() {
     let {
       loading,
@@ -69,7 +99,7 @@ export class EstablishClaimForm extends React.Component {
            label="Station of Jurisdiction"
            name="stationOfJurisdiction"
            readOnly={true}
-           value={establishClaimForm.stationOfJurisdiction}
+           value={this.formattedStationOfJurisdiction()}
           />
           <Checkbox
            label="Gulf War Registry Permit"
@@ -118,6 +148,8 @@ EstablishClaimForm.propTypes = {
   handleBackToDecisionReview: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  regionalOfficeKey: PropTypes.string.isRequired,
+  regionalOfficeCities: PropTypes.object.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 

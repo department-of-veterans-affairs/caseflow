@@ -4,7 +4,6 @@ import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
 
@@ -124,13 +123,13 @@ export default class EstablishClaim extends BaseForm {
 
   containsRoutedSpecialIssues = () => {
     return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue].value;
+      return this.store.getState().specialIssues[issue.specialIssue];
     });
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue || issue].value;
+      return this.store.getState().specialIssues[issue.specialIssue || issue];
     });
   }
 
@@ -161,20 +160,11 @@ export default class EstablishClaim extends BaseForm {
     window.location.href = window.location.pathname + window.location.search;
   }
 
-  establishClaimFormData = () => {
-    return Object.assign({},
-      {
-        date: formatDate(this.props.task.appeal.serialized_decision_date)
-      },
-      this.store.getState().establishClaimForm
-    );
-  }
-
   shouldReviewAfterEndProductCreate = () => {
     return this.containsRoutedOrRegionalOfficeSpecialIssues();
   }
 
-  handleSubmit = () => {
+  handleFormPageSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
@@ -356,10 +346,6 @@ export default class EstablishClaim extends BaseForm {
       });
   }
 
-  handleFormPageSubmit = () => {
-    this.handleSubmit();
-  }
-
   handleNotePageSubmit = (vacolsNote) => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
@@ -508,15 +494,6 @@ export default class EstablishClaim extends BaseForm {
     return formatDate(this.props.task.appeal.serialized_decision_date);
   }
 
-  getStationOfJurisdiction() {
-    let stationKey = this.props.task.appeal.station_key;
-    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
-
-    return `${stationKey} - ${
-        this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
-        this.props.regionalOfficeCities[regionalOfficeKey].state}`;
-  }
-
   prepareSpecialIssues() {
     // The database column names must be less than 63 characters
     // so we shorten all of the keys in our hash before we send
@@ -533,13 +510,8 @@ export default class EstablishClaim extends BaseForm {
     return shortenedObject;
   }
 
-  stationOfJurisdictionCode() {
-    return this.store.getState().establishClaimForm.stationOfJurisdiction.substring(0, 3);
-  }
-
   prepareData() {
     let claim = this.store.getState().establishClaimForm;
-    claim.stationOfJurisdiction = this.stationOfJurisdictionCode();
     claim.date = this.formattedDecisionDate();
 
     // We have to add in the claimLabel separately, since it is derived from
@@ -596,14 +568,15 @@ export default class EstablishClaim extends BaseForm {
     let {
       cancelModalDisplay,
       history,
-      modalSubmitLoading,
-      specialIssues
+      modalSubmitLoading
     } = this.state;
 
     let {
       pdfLink,
       pdfjsLink,
     } = this.props;
+
+    let specialIssues = this.store.getState().specialIssues;
 
     return (
       <Provider store={this.store}>
@@ -621,7 +594,6 @@ export default class EstablishClaim extends BaseForm {
           handleSubmit={this.handleDecisionPageSubmit}
           pdfLink={pdfLink}
           pdfjsLink={pdfjsLink}
-          specialIssues={specialIssues}
           task={this.props.task}
         />
         }
@@ -638,8 +610,6 @@ export default class EstablishClaim extends BaseForm {
           hasAvailableModifers={this.hasAvailableModifers()}
           handleBackToDecisionReview={this.handleBackToDecisionReview}
           history={history}
-          specialIssues={ApiUtil.convertToSnakeCase(
-              this.getFormValues(this.state.specialIssues))}
         />
         }
         { this.isFormPage() &&
@@ -651,12 +621,14 @@ export default class EstablishClaim extends BaseForm {
           handleSubmit={this.handleFormPageSubmit}
           handleFieldChange={this.handleFieldChange}
           handleBackToDecisionReview={this.handleBackToDecisionReview}
+          regionalOfficeKey={this.props.task.appeal.regional_office_key}
+          regionalOfficeCities={this.props.regionalOfficeCities}
           validModifiers={this.validModifiers()}
         />
         }
         { this.isNotePage() &&
         <EstablishClaimNote
-          loading={thisthis.state.loading}
+          loading={this.state.loading}
           appeal={this.props.task.appeal}
           handleSubmit={this.handleNotePageSubmit}
           showNotePageAlert={this.state.showNotePageAlert}
