@@ -1,5 +1,6 @@
 class Fakes::BGSService
   cattr_accessor :end_product_data
+  cattr_accessor :can_access_on_next_call
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -246,5 +247,13 @@ class Fakes::BGSService
       power_of_atty_code2: "00",
       sex: "F"
     }
+  end
+
+  def can_access?(_)
+    # Save the intended return, then wipe it for future calls
+    value = self.class.can_access_on_next_call
+    self.class.can_access_on_next_call = nil
+
+    value.nil? ? true : value
   end
 end
