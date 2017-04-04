@@ -23,7 +23,9 @@ describe('EstablishClaim', () => {
             label: null
           }],
           non_canceled_end_products_within_30_days: [],
-          pending_eps: []
+          pending_eps: [],
+          station_key: '397',
+          regional_office_key: 'RO97'
         },
         user: 'a'
       };
@@ -62,9 +64,16 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context('EstablishClaimForm', () => {
+    context.only('EstablishClaimForm', () => {
       beforeEach(() => {
         // Force component to Form page
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+          payload: {
+            field: 'stationOfJurisdiction',
+            value: '397',
+          }
+        });
         wrapper.setState({ page: FORM_PAGE });
       });
 
@@ -179,7 +188,7 @@ describe('EstablishClaim', () => {
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
-            value: '397 - ARC',
+            value: '397',
           }
         });
       });

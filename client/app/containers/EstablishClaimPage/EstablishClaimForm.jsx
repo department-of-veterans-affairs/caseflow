@@ -25,7 +25,7 @@ export class EstablishClaimForm extends React.Component {
 
       // If the assigned stationKey matches a routed special issue, use the
       // routed station's location
-      if (issuekey === stationKey) {
+      if (issuekey && issuekey === stationKey) {
         suffix = issue.stationOfJurisdiction.location;
       }
     });
