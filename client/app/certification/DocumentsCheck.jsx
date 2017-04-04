@@ -4,6 +4,8 @@ import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Footer from './Footer';
+
 
 
 // TODO: refactor to use shared components where helpful
@@ -33,17 +35,12 @@ const UnconnectedDocumentsCheck = ({
     </div>
 
     <div className="cf-app-segment">
-      <a href="#confirm-cancel-certification"
-        className="cf-action-openmodal cf-btn-link">
-        Cancel Certification
-      </a>
-      <Link
-        to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
-        <button type="button" className="cf-push-right">
-          Continue
-        </button>
-      </Link>
+      <Footer
+        nextPageUrl={
+          `/certifications/${match.params.vacols_id}/sign_and_certify`
+        }/>
     </div>
+
   </div>;
 };
 
