@@ -170,9 +170,9 @@ class VACOLS::Case < VACOLS::Record
     user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
     case_id = conn.quote(bfkey)
 
-    MetricsService.timer("VACOLS: update_vacols_location! #{bfkey}",
-                         service: :vacols,
-                         name: "update_vacols_location") do
+    MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",
+                          service: :vacols,
+                          name: "update_vacols_location") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE BRIEFF

@@ -4,6 +4,7 @@ import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
+import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
@@ -30,6 +31,7 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#tabs" name="Tabs"></NavLink>
         <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
         <NavLink anchor="#radios" name="Radio Fields"></NavLink>
+        <NavLink anchor="#checkboxes" name="Checkboxes"></NavLink>
         <NavLink anchor="#tables" name="Tables"></NavLink>
         <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
         <NavLink anchor="#text_input" name="Text Input"></NavLink>
@@ -77,6 +79,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
         <StyleGuideRadioField />
+        <div className="cf-help-divider"></div>
+        <StyleGuideCheckboxes />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
