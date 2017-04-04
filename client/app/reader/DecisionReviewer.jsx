@@ -40,7 +40,7 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    PDFJSAnnotate.setStoreAdapter(this.annotationStorage);
+    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
