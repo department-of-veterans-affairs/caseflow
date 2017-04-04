@@ -47,7 +47,6 @@ export default class AnnotationStorage extends PDFJSAnnotate.StoreAdapter {
 
           ApiUtil.post(`/decision/review/annotation`, { data }).
               then((response) => {
-
                 let responseObject = JSON.parse(response.text);
 
                 annotation.uuid = responseObject.id;
