@@ -45,13 +45,11 @@ describe('Pdf', () => {
     });
 
     context('.setuppdf', () => {
-      it('calls createPages and renderPage', (done) => {
-        let renderPageSpy = sinon.spy(wrapper.instance(), 'renderPage');
+      it('calls createPages', (done) => {
         let createPageSpy = sinon.spy(wrapper.instance(), 'createPages');
 
         wrapper.instance().setupPdf("test.pdf").
           then(() => {
-            expect(renderPageSpy.callCount).to.equal(1);
             expect(createPageSpy.callCount).to.equal(1);
             done();
           });
@@ -90,27 +88,7 @@ describe('Pdf', () => {
 
       it(`creates ${PdfJsStub.numPages} pages`, () => {
         wrapper.instance().createPages(PdfJsStub.pdfDocument);
-        expect(wrapper.html()).to.include('pageContainer1');
-        expect(wrapper.html()).to.include('pageContainer2');
-        expect(wrapper.html()).to.include('pageContainer3');
-      });
-
-      context('when document.getElementById returns null', () => {
-        let getElement;
-
-        beforeEach(() => {
-          getElement = sinon.stub(document, 'getElementById');
-          getElement.returns(null);
-        });
-
-        it('create page is not called', () => {
-          wrapper.instance().createPages(PdfJsStub.pdfDocument);
-          expect(PdfJsStub.pdfjsCreatePage.callCount).to.equal(0);
-        });
-
-        afterEach(() => {
-          getElement.restore();
-        });
+        expect(wrapper.state('pdfjsPages')).to.have.length(3);
       });
     });
 
