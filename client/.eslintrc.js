@@ -50,7 +50,7 @@ module.exports = {
     "guard-for-in": "error",
     "handle-callback-err": "error",
     "id-blacklist": "error",
-    "id-length": ["error", { "exceptions": ["i", "j", "k", "_"] }],
+    "id-length": ["error", { "exceptions": ["i", "j", "k", "_", "x", "y"] }],
     "id-match": "error",
     "indent": ["error", 2],
     "react/jsx-uses-react": "error",
@@ -77,7 +77,12 @@ module.exports = {
     ],
     "max-nested-callbacks": "error",
     "max-params": "error",
-    "max-statements": "error",
+    "max-statements": [
+      "error",
+      {
+        "max": 12
+      }
+    ],
     "max-statements-per-line": "error",
     "mocha/no-exclusive-tests": "error",
     "new-cap": "error",

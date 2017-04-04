@@ -12,7 +12,7 @@ export default class TextField extends React.Component {
       readOnly,
       required,
       type,
-      value,
+      value = '',
       validationError,
       invisible,
       placeholder

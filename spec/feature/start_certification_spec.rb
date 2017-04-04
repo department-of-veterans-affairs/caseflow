@@ -27,6 +27,8 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path("/certifications/ABCD/check_documents")
     expect(page).to have_content("All documents detected!")
     click_button("Continue")
+    expect(page).to have_content("Review data from BGS about the appellant's representative")
+    click_button("Continue")
     expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
     page.find(".cf-form-radio-option", text: "Yes").click
     expect(page).to have_content("What did the appellant request in the document you found")

@@ -42,6 +42,7 @@ export class EstablishClaimDecision extends React.Component {
       decisionType,
       handleSubmit,
       handleCancelTask,
+      handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -193,7 +194,7 @@ export class EstablishClaimDecision extends React.Component {
                   id={issue.specialIssue}
                   label={issue.node || issue.display}
                   name={issue.specialIssue}
-                  onChange={this.props.handleSpecialIssueFieldChange(issue.specialIssue)}
+                  onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
                   key={index}
                   value={specialIssues[issue.specialIssue]}
                 />;
@@ -231,12 +232,7 @@ EstablishClaimDecision.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-/*
- * This function tells us which parts of the global
- * application state should be passed in as props to
- * the rendered component.
- */
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     specialIssues: state.specialIssues
   };
@@ -246,25 +242,19 @@ const mapDispatchToProps = (dispatch) => {
   return {
     handleSpecialIssueFieldChange: (specialIssue) => (value) => {
       dispatch({
-          type: Constants.CHANGE_SPECIAL_ISSUE,
-          payload: {
-              specialIssue: specialIssue,
-              value: value
-          }
+        type: Constants.CHANGE_SPECIAL_ISSUE,
+        payload: {
+          specialIssue,
+          value
+        }
       });
     }
-  }
-}
+  };
+};
 
-/*
- * Creates a component that's connected to the Redux store
- * using the state & dispatch map functions and the
- * ConfirmHearing function.
- */
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
-    mapDispatchToProps,
-    null
+    mapDispatchToProps
 )(EstablishClaimDecision);
 
 export default ConnectedEstablishClaimDecision;

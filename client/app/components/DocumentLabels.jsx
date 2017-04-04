@@ -25,7 +25,8 @@ export default class DocumentLabels extends React.Component {
         name={label}
         classNames={this.props.selectedLabels[label] ?
           bookmarkClassesSelected : bookmarkClasses}
-        onClick={this.onClick(label)}>
+        onClick={this.onClick(label)}
+        ariaLabel={`Filter by ${label} documents`}>
         <i
           className={`fa fa-bookmark cf-pdf-bookmark-` +
             `${StringUtil.camelCaseToDashCase(label)}`}

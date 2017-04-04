@@ -1,6 +1,7 @@
 class ReviewController < ApplicationController
   before_action :verify_system_admin
 
+  # :nocov:
   def index
     vacols_id = params[:vacols_id]
     @appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
@@ -48,4 +49,5 @@ class ReviewController < ApplicationController
       type: "application/pdf",
       disposition: "inline")
   end
+  # :nocov:
 end

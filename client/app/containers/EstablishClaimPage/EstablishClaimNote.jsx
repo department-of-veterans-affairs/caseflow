@@ -6,8 +6,10 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
+import { connect } from 'react-redux';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 
-export default class EstablishClaimNote extends BaseForm {
+export class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
     let {
@@ -43,9 +45,9 @@ export default class EstablishClaimNote extends BaseForm {
   updatedVacolsLocationCode() {
     let specialIssues = this.props.specialIssues;
 
-    if (specialIssues.vamc.value) {
+    if (specialIssues.vamc) {
       return "54";
-    } else if (specialIssues.nationalCemeteryAdministration.value) {
+    } else if (specialIssues.nationalCemeteryAdministration) {
       return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
       return "98";
@@ -59,11 +61,16 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   selectedSpecialIssues() {
-    let specialIssues = this.props.specialIssues;
+    let result = [];
+    let specialIssuesStatus = this.props.specialIssues;
 
-    return Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
+    for (let key in SPECIAL_ISSUES) {
+      if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
+        result.push(SPECIAL_ISSUES[key].display);
+      }
+    }
+
+    return result;
   }
 
   headerText() {
@@ -191,3 +198,15 @@ EstablishClaimNote.propTypes = {
   displayVbmsNote: PropTypes.bool.isRequired,
   handleSubmit: PropTypes.func.isRequired
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const ConnectedEstablishClaimNote = connect(
+    mapStateToProps
+)(EstablishClaimNote);
+
+export default ConnectedEstablishClaimNote;

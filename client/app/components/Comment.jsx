@@ -17,10 +17,10 @@ export default class Comment extends React.Component {
   }
 
   render() {
-    let className = 'cf-pdf-comment-list-item';
+    let className = 'comment-container';
 
     if (this.props.selected) {
-      className = `${className} cf-comment-selected`;
+      className = `${className} comment-container-selected`;
     }
 
     return <div>

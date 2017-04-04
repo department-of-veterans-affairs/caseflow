@@ -4,17 +4,17 @@ import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIss
 import establishClaimFormReducer, { getEstablishClaimFormInitialState } from './establishClaimForm';
 
 export const createEstablishClaimStore = (props) => {
-    // Logger with default options
+  // Logger with default options
 
-     return createStore(
-       combineReducers({
-         specialIssues: specialIssuesReducer,
-         establishClaimForm: establishClaimFormReducer
-       }),
-       {
-         specialIssues: getSpecialIssuesInitialState(props),
-         establishClaimForm: getEstablishClaimFormInitialState(props)
-       },
-        applyMiddleware(logger)
-    )
-}
+  return createStore(
+    combineReducers({
+      specialIssues: specialIssuesReducer,
+      establishClaimForm: establishClaimFormReducer
+    }),
+    {
+      specialIssues: getSpecialIssuesInitialState(props),
+      establishClaimForm: getEstablishClaimFormInitialState(props)
+    },
+    applyMiddleware(logger)
+  )
+};

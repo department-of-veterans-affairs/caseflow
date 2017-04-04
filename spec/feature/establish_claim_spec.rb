@@ -1,4 +1,5 @@
 require "rails_helper"
+require "vbms"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
@@ -39,10 +40,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
-      fill_in "Enter the number of people working today", with: "2"
-      click_on "Update"
+      fill_in "the number of people", with: "2"
+      safe_click_on "Update"
       visit "/dispatch/establish-claim"
-      expect(find_field("Enter the number of people working today").value).to have_content("2")
+      expect(find_field("the number of people").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
@@ -68,7 +69,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
     end
 
+    let(:ep_already_exists_error) do
+      VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+        "A duplicate claim for this EP code already exists in CorpDB. Please " \
+        "use a different EP code modifier. GUID: 13fcd</faultstring>")
+    end
+
     scenario "Assign the correct new task to myself" do
+      # Create a newer task, that the current user can access
+      appeal_with_access = Generators::Appeal.create(vacols_record: vacols_record)
+      task_with_access = Generators::EstablishClaim.create(appeal_id: appeal_with_access.id,
+                                                           aasm_state: :unassigned)
+
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
@@ -81,22 +93,25 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
 
+      # The oldest task (task local var) is now set to a higher security level so
+      # it will be skipped for task_with_access
+      BGSService.can_access_on_next_call = false
       safe_click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-      expect(task.reload.user).to eq(current_user)
-      expect(task).to be_started
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
+      expect(task_with_access.reload.user).to eq(current_user)
+      expect(task_with_access).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
-      expect(task.claim_establishment).to be_remand
+      expect(task_with_access.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task_with_access.claim_establishment).to be_remand
 
       visit "/dispatch/establish-claim"
       safe_click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -127,29 +142,29 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "Cancel a claims establishment" do
+    scenario "Cancel a claims establishment", retry: 5 do
       task.assign!(:assigned, current_user)
 
       # The cancel button is the same on both the review and form pages, so one test
       # can adequetly test both of them.
       visit "/dispatch/establish-claim/#{task.id}"
       find_label_for("riceCompliance").click
-      click_on "Cancel"
+      safe_click_on "Cancel"
 
       expect(page).to have_css(".cf-modal")
 
       # Validate I can't cancel without entering an explanation
-      click_on "Stop processing claim"
+      safe_click_on "Stop processing claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
       expect(page).to have_css(".cf-modal")
       expect(page).to have_content("Please enter an explanation")
 
       # Validate closing the cancellation modal
-      click_on "Close"
+      safe_click_on "Close"
       expect(page).to_not have_css(".cf-modal")
 
       # Open modal
-      click_on "Cancel"
+      safe_click_on "Cancel"
       expect(page).to have_css(".cf-modal")
 
       # Fill in explanation and cancel
@@ -164,6 +179,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate special issue isn't saved on cancel
       expect(task.appeal.reload.rice_compliance).to be_falsey
+    end
+
+    scenario "Error establishing claim" do
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+
+      task.assign!(:assigned, current_user)
+      visit "/dispatch/establish-claim/#{task.id}"
+      safe_click_on "Route claim"
+      safe_click_on "Create End Product"
+
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("An EP with that modifier was previously created for this claim.")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
@@ -236,7 +263,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
       end
 
-      scenario "Establish a new claim with special issue routed to ROJ", :focus do
+      scenario "Establish a new claim with special issue routed to ROJ", retry: 5 do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -287,7 +314,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Please process this claim manually")
 
         find_label_for("confirmEmail").click
-        click_on "Release claim"
+        safe_click_on "Release claim"
 
         expect(page).to have_content("Processed case outside of Caseflow")
       end

@@ -2,7 +2,6 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
-import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
@@ -64,6 +63,20 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '178',
   '179'
 ];
+
+const CREATE_EP_ERRORS = {
+  "duplicate_ep": {
+    header: 'At this time, we are unable to assign or create a new EP for this claim.',
+    body: 'An EP with that modifier was previously created for this claim. ' +
+          'Try a different modifier or select Cancel at the bottom of the ' +
+          'page to release this claim and proceed to process it outside of Caseflow.'
+  },
+  "default": {
+    header: 'System Error',
+    body: 'Something went wrong on our end. We were not able to create an End Product. ' +
+          'Please try again later.'
+  }
+};
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -190,15 +203,18 @@ export default class EstablishClaim extends BaseForm {
         } else {
           this.handleNotePageSubmit(null);
         }
-      }, () => {
+      }, (error) => {
+        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+                          CREATE_EP_ERRORS.default;
+
         this.setState({
           loading: false
         });
+
         handleAlert(
           'error',
-          'System Error',
-          'Something went wrong on our end. We were not able to create an End Product.' +
-          ' Please try again later.'
+          errorMessage.header,
+          errorMessage.body
         );
       });
   }
@@ -500,7 +516,7 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.store.getState().specialIssues)
+      this.store.getState().specialIssues
     );
 
     Object.keys(formValues).forEach((key) => {
@@ -534,7 +550,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -556,7 +572,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         willCreateEndProduct = false;
       }
     });
@@ -627,29 +643,30 @@ export default class EstablishClaim extends BaseForm {
         />
         }
         { this.isNotePage() &&
-        <EstablishClaimNote
-          loading={this.state.loading}
-          appeal={this.props.task.appeal}
-          handleSubmit={this.handleNotePageSubmit}
-          showNotePageAlert={this.state.showNotePageAlert}
-          specialIssues={specialIssues}
-          displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
-          displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
-        />
+          <EstablishClaimNote
+            loading={this.state.loading}
+            appeal={this.props.task.appeal}
+            handleSubmit={this.handleNotePageSubmit}
+            showNotePageAlert={this.state.showNotePageAlert}
+            specialIssues={specialIssues}
+            displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
+            displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
+          />
         }
         { this.isEmailPage() &&
-        <EstablishClaimEmail
-          loading={this.state.loading}
-          appeal={this.props.task.appeal}
-          handleCancelTask={this.handleCancelTask}
-          handleEmailSubmit={this.handleEmailPageSubmit}
-          handleNoEmailSubmit={this.handleNoEmailPageSubmit}
-          regionalOffice={this.getSpecialIssuesRegionalOffice()}
-          regionalOfficeEmail={this.getSpecialIssuesEmail()}
-          specialIssues={specialIssues}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-        />
+          <EstablishClaimEmail
+            loading={this.state.loading}
+            appeal={this.props.task.appeal}
+            handleCancelTask={this.handleCancelTask}
+            handleEmailSubmit={this.handleEmailPageSubmit}
+            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
+            regionalOffice={this.getSpecialIssuesRegionalOffice()}
+            regionalOfficeEmail={this.getSpecialIssuesEmail()}
+            specialIssues={specialIssues}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+          />
         }
+
         {cancelModalDisplay && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],

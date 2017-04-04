@@ -4,8 +4,9 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import { connect } from 'react-redux';
 
-export default class AssociatePage extends React.Component {
+export class AssociatePage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -177,3 +178,15 @@ AssociatePage.propTypes = {
   hasAvailableModifers: PropTypes.bool.isRequired,
   task: PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const ConnectedEstablishClaimAssociateEP = connect(
+    mapStateToProps
+)(AssociatePage);
+
+export default ConnectedEstablishClaimAssociateEP;

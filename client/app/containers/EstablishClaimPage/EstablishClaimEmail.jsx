@@ -6,18 +6,24 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
+import { connect } from 'react-redux';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 
-export default class EstablishClaimEmail extends BaseForm {
+export class EstablishClaimEmail extends BaseForm {
   constructor(props) {
     super(props);
     let {
-      appeal,
-      specialIssues
+      appeal
     } = props;
 
-    let selectedSpecialIssue = Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
+    let specialIssuesStatus = this.props.specialIssues;
+    let selectedSpecialIssue = [];
+
+    for (let key in SPECIAL_ISSUES) {
+      if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
+        selectedSpecialIssue.push(SPECIAL_ISSUES[key].display);
+      }
+    }
 
     // Add an and if there are multiple issues so that the last element
     // in the list has an and before it.
@@ -174,3 +180,15 @@ EstablishClaimEmail.propTypes = {
   regionalOffice: PropTypes.string,
   regionalOfficeEmail: PropTypes.arrayOf(PropTypes.string)
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const ConnectedEstablishClaimEmail = connect(
+    mapStateToProps
+)(EstablishClaimEmail);
+
+export default ConnectedEstablishClaimEmail;

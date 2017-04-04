@@ -7,8 +7,6 @@ import Example1 from './RadioFieldExamples/Example1';
 import Example2 from './RadioFieldExamples/Example2';
 import Example3 from './RadioFieldExamples/Example3';
 import Example4 from './RadioFieldExamples/Example4';
-import Example5 from './RadioFieldExamples/Example5';
-import Example6 from './RadioFieldExamples/Example6';
 
 export default class StyleGuideRadioField extends React.Component {
 
@@ -19,19 +17,17 @@ export default class StyleGuideRadioField extends React.Component {
         id="radios"
         link="StyleGuideRadioField.jsx"
       />
-      <p>Radio Buttons are used for selecting one of several choices.</p>
+      <p>Radio buttons largely follow the same design as those in the
+        US Web Design Standards but we also include horizontal radio buttons.
+        This layout is used when there are at most 2 options.</p>
+      <h3>Vertical Radio Button</h3>
       <Example1 />
+      <h3>Horizontal Radio Button</h3>
       <Example2 />
-      <p>
-        The component will automatically render two options
-        horizontally unless the <strong>vertical</strong> property
-        is <strong>true</strong>:
-      </p>
+      <h3>Horizontal Radio Button Forced Into Vertical Layout</h3>
       <Example3 />
+      <h3>Required Radio Button Errors</h3>
       <Example4 />
-      <Example5 />
-      <p>This field hides its label:</p>
-      <Example6 />
     </div>;
   }
 }
