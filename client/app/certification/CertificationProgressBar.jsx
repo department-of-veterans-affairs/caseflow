@@ -21,8 +21,8 @@ class UnconnectedCertificationProgressBar extends React.Component {
         value: progressBarSections.CONFIRM_HEARING
       },
       {
-        title: '4. Confirmation',
-        value: progressBarSections.CONFIRMATION
+        title: '4. Sign and Certify',
+        value: progressBarSections.SIGN_AND_CERTIFY
       }
     ];
   }

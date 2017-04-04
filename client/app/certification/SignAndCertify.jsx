@@ -100,7 +100,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: Constants.UPDATE_PROGRESS_BAR,
         payload: {
-          currentSection: Constants.progressBarSections.CONFIRMATION
+          currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
         }
       });
     },
