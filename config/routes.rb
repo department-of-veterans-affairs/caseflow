@@ -56,7 +56,7 @@ Rails.application.routes.draw do
 
   namespace :reader do
     get "pdf/:document_id", to: :pdf, as: :pdf
-    get "show/:document_id", to: :show, as: :show
+    get "/:vacols_id/show/:document_id", to: :show, as: :show
     get "/:vacols_id", to: :index, as: :index
   end
 
