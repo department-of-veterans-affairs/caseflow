@@ -222,40 +222,6 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def select_non_canceled_end_products_within_30_days(end_products)
-    # Find all EPs with relevant type codes that are not canceled.
-    end_products.select do |end_product|
-      claim_date = DateTime.strptime(end_product[:claim_receive_date], "%m/%d/%Y").in_time_zone
-      (claim_date - decision_date).abs < 30.days &&
-        end_product[:status_type_code] != "CAN"
-    end
-  end
-
-  def select_pending_eps(end_products)
-    # Find all pending EPs
-    end_products.select do |end_product|
-      end_product[:status_type_code] == "PEND"
-    end
-  end
-
-  def bgs
-    @bgs ||= BGSService.new
-  end
-
-  def pending_eps
-    end_products = Dispatch.filter_dispatch_end_products(
-      bgs.get_end_products(sanitized_vbms_id))
-
-    Dispatch.map_ep_values(select_pending_eps(end_products))
-  end
-
-  def non_canceled_end_products_within_30_days
-    end_products = Dispatch.filter_dispatch_end_products(
-      bgs.get_end_products(sanitized_vbms_id))
-
-    Dispatch.map_ep_values(select_non_canceled_end_products_within_30_days(end_products))
-  end
-
   def issues
     @issues ||= self.class.repository.issues(vacols_id: vacols_id)
   end
@@ -271,7 +237,21 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def pending_eps
+    end_products.select(&:dispatch_conflict?)
+  end
+
+  def non_canceled_end_products_within_30_days
+    end_products.select { |ep| ep.potential_match?(self) }
+  end
+
   private
+
+  # List of all end products for the appeal's veteran.
+  # NOTE: we cannot currently match end products to a specific appeal.
+  def end_products
+    @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
+  end
 
   def fetched_documents
     @fetched_documents ||= self.class.repository.fetch_documents_for(self)
@@ -288,6 +268,14 @@ class Appeal < ActiveRecord::Base
       appeal
     end
 
+    def fetch_end_products(vbms_id)
+      bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    end
+
+    def bgs
+      BGSService.new
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -300,10 +288,6 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal)
       repository.upload_document_to_vbms(appeal, form8)
       repository.clean_document(form8.pdf_location)
-    end
-
-    def map_end_product_value(code, mapping)
-      mapping[code] || code
     end
   end
 end

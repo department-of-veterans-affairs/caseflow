@@ -3,6 +3,10 @@ export const CHANGE_VBMS_HEARING_DOCUMENT = 'CHANGE_VBMS_HEARING_DOCUMENT';
 export const CHANGE_TYPE_OF_FORM9 = 'CHANGE_TYPE_OF_FORM9';
 export const CHANGE_TYPE_OF_HEARING = 'CHANGE_TYPE_OF_HEARING';
 
+export const CHANGE_REPRESENTATIVE_NAME = 'CHANGE_REPRESENTATIVE_NAME';
+export const CHANGE_REPRESENTATIVE_TYPE = 'CHANGE_REPRESENTATIVE_TYPE';
+
+export const CHANGE_SIGN_AND_CERTIFY_FORM = 'CHANGE_SIGN_AND_CERTIFY_FORM';
 
 // types of hearings
 //
@@ -27,17 +31,22 @@ export const form9Types = {
   INFORMAL_FORM9: 'INFORMAL_FORM9'
 };
 
+// representation for the appellant
+export const representativeTypes = {
+  ATTORNEY: 'ATTORNEY',
+  AGENT: 'AGENT',
+  ORGANIZATION: 'ORGANIZATION',
+  NONE: 'NONE',
+  // TODO: should "Other be a real type"?
+  OTHER: 'OTHER'
+};
+
+// was a hearing document found in VBMS?
 export const vbmsHearingDocument = {
   FOUND: 'FOUND',
   NOT_FOUND: 'NOT_FOUND'
 };
 
-
-export const CHANGE_CERTIFYING_OFFICIAL = 'CHANGE_CERTIFYING_OFFICIAL';
-export const CHANGE_CERTIFYING_USERNAME = 'CHANGE_CERTIFYING_USERNAME';
-export const CHANGE_CERTIFYING_OFFICIAL_NAME = 'CHANGE_CERTIFYING_OFFICIAL_NAME';
-
-export const CHANGE_CERTIFYING_OFFICIAL_TITLE = 'CHANGE_CERTIFYING_OFFICIAL_TITLE';
 export const certifyingOfficialTitles = {
   DECISION_REVIEW_OFFICER: 'DECISION_REVIEW_OFFICER',
   RATING_SPECIALIST: 'RATING_SPECIALIST',
@@ -45,5 +54,3 @@ export const certifyingOfficialTitles = {
   CLAIMS_ASSISTANT: 'CLAIMS_ASSISTANT',
   OTHER: 'OTHER'
 };
-
-export const CHANGE_CERTIFICATION_DATE = 'CHANGE_CERTIFICATION_DATE';

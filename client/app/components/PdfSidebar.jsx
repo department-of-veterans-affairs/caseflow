@@ -16,6 +16,7 @@ export default class PdfSidebar extends React.Component {
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
             onSaveCommentEdit={this.props.onSaveCommentEdit}
+            key={comment.comment}
           >
             {comment.comment}
           </EditComment>;
@@ -28,7 +29,8 @@ export default class PdfSidebar extends React.Component {
         onEditComment={this.props.onEditComment}
         uuid={comment.uuid}
         selected={comment.selected}
-        onClick={this.props.onJumpToComment}>
+        onClick={this.props.onJumpToComment}
+        key={comment.comment}>
           {comment.comment}
         </Comment>;
     });
@@ -48,7 +50,7 @@ export default class PdfSidebar extends React.Component {
           <div className="cf-heading-alt">
             Comments
             <span className="cf-right-side">
-              <a onClick={this.props.onAddComment}>+ Add a Comment</a>
+              <a href="#" onClick={this.props.onAddComment}>+ Add a Comment</a>
             </span>
           </div>
         </div>

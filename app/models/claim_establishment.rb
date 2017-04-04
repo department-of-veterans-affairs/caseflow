@@ -36,6 +36,6 @@ class ClaimEstablishment < ActiveRecord::Base
   private
 
   def ep_label
-    @ep_label ||= Dispatch::END_PRODUCT_CODES[ep_code]
+    @ep_label ||= EndProduct::CODES[ep_code]
   end
 end
