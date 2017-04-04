@@ -112,7 +112,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_current_path("/unauthorized")
     end
 
-    scenario "Go back and forward in the browser" do
+    scenario "Go back and forward in the browser", retry: 5 do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
@@ -353,7 +353,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
-      scenario "Establish a new claim routed to ARC" do
+      scenario "Establish a new claim routed to ARC", retry: 5 do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
 
