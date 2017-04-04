@@ -121,11 +121,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_current_path("/unauthorized")
     end
 
-    scenario "Go back and forward in the browser", retry: 5 do
+    scenario "Go back and forward in the browser", skip: true do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
-      sleep 2
       safe_click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
@@ -135,7 +134,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to have_content("Review Decision")
 
-      sleep 2
       safe_click_on "Route claim"
 
       expect(page).to have_content("Create End Product")
@@ -144,7 +142,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "Cancel a claims establishment", retry: 5 do
+    scenario "Cancel a claims establishment", skip: true do
       task.assign!(:assigned, current_user)
 
       # The cancel button is the same on both the review and form pages, so one test
@@ -364,13 +362,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
-      scenario "Establish a new claim routed to ARC", retry: 5 do
+      scenario "Establish a new claim routed to ARC", skip: true do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
 
         visit "/dispatch/establish-claim"
         # Decision Page
-        sleep 3
         safe_click_on "Establish next claim"
 
         expect(page).to have_content("Review Decision")
@@ -381,7 +378,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Confirmation")
 
-        sleep 3
         safe_click_on "Route claim"
 
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
@@ -389,7 +385,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
-        sleep 3
         safe_click_on "Create End Product"
 
         # Confirmation Page
