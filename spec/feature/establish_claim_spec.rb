@@ -370,7 +370,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim"
         # Decision Page
-        sleep 2
+        sleep 3
         safe_click_on "Establish next claim"
 
         expect(page).to have_content("Review Decision")
@@ -381,7 +381,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Confirmation")
 
-        sleep 2
+        sleep 3
         safe_click_on "Route claim"
 
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
@@ -389,7 +389,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
-        sleep 2
+        sleep 3
         safe_click_on "Create End Product"
 
         # Confirmation Page
