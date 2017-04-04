@@ -146,7 +146,7 @@ export default class PdfViewer extends React.Component {
       if (comment.uuid === uuid) {
         copy.selected = true;
       } else {
-        copy.selected = false;  
+        copy.selected = false;
       }
 
       return copy;
@@ -155,13 +155,9 @@ export default class PdfViewer extends React.Component {
   }
 
   componentDidMount = () => {
-    const { UI } = PDFJSAnnotate;
-
     this.onCommentChange();
 
     window.addEventListener('keydown', this.keyListener);
-
-    UI.enableEdit();
   }
 
   componentDidUpdate = () => {

@@ -96,6 +96,7 @@ export default class Pdf extends React.Component {
       pdfjsPages.push(page);
     }
 
+    this.needsFirstRender = true;
     this.setState({ pdfjsPages });
   }
 
@@ -135,19 +136,16 @@ export default class Pdf extends React.Component {
         isRendered: []
       });
       PDFJS.getDocument(file).then((pdfDocument) => {
-        // Setup array that tracks whether a given page has been rendered.
+        // Setup isRendered array that tracks whether a given page has been rendered.
         // This way as we scroll we know if we need to render a page that
         // has just come into view.
         this.setState({
-          isRendered: new Array(pdfDocument.pdfInfo.numPages)
-        });
-        this.setState({
+          isRendered: new Array(pdfDocument.pdfInfo.numPages),
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument
         }, () => {
           // Create but do not render all of the pages
           this.createPages(pdfDocument);
-
           resolve();
         });
 
@@ -157,7 +155,6 @@ export default class Pdf extends React.Component {
 
         // Scroll to the correct location on the page
         document.getElementById('scrollWindow').scrollTop = scrollLocation;
-        this.scrollEvent();
       });
     });
   }
@@ -237,6 +234,13 @@ export default class Pdf extends React.Component {
     }
 
     /* eslint-enable no-negated-condition */
+  }
+
+  componentDidUpdate = () => {
+    if (this.needsFirstRender) {
+      this.needsFirstRender = false;
+      this.renderPage(0);
+    }
   }
 
   // Record the start coordinates of a drag
