@@ -7,6 +7,8 @@ class EndProduct
     "CAN" => "Canceled"
   }.freeze
 
+  INACTIVE_STATUSES = %w(CAN CLR).freeze
+
   DISPATCH_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
@@ -82,7 +84,7 @@ class EndProduct
   end
 
   def active?
-    ["PEND", "RFD"].include?(status_type_code)
+    !INACTIVE_STATUSES.include?(status_type_code)
   end
 
   class << self
