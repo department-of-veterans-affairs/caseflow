@@ -97,20 +97,6 @@ export default class EstablishClaim extends BaseForm {
         )
       },
       cancelModalDisplay: false,
-      claimForm: {
-        // This is the decision date that gets mapped to the claim's creation date
-        date: new FormField(
-          formatDate(this.props.task.appeal.serialized_decision_date),
-          [
-            requiredValidator('Please enter the Decision Date.'),
-            dateValidator()
-          ]
-        ),
-        endProductModifier: new FormField(validModifiers[0]),
-        gulfWarRegistry: new FormField(false),
-        stationOfJurisdiction: new FormField('397 - AMC'),
-        suppressAcknowledgementLetter: new FormField(false)
-      },
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
@@ -175,6 +161,15 @@ export default class EstablishClaim extends BaseForm {
     window.location.href = window.location.pathname + window.location.search;
   }
 
+  establishClaimFormData = () => {
+    return Object.assign({},
+      {
+        date: formatDate(this.props.task.appeal.serialized_decision_date)
+      },
+      this.store.getState().establishClaimForm
+    );
+  }
+
   shouldReviewAfterEndProductCreate = () => {
     return this.containsRoutedOrRegionalOfficeSpecialIssues();
   }
@@ -183,12 +178,6 @@ export default class EstablishClaim extends BaseForm {
     let { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
-
-    this.formValidating();
-
-    if (!this.validateFormAndSetErrors(this.state.claimForm)) {
-      return;
-    }
 
     this.setState({
       loading: true
@@ -225,7 +214,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRoutingType = () => {
-    let stationOfJurisdiction = this.state.claimForm.stationOfJurisdiction.value;
+    let stationOfJurisdiction = this.store.getState().establishClaimForm.stationOfJurisdiction;
 
     return stationOfJurisdiction === '397 - ARC' ? "ARC" : "Routed";
   }
@@ -515,6 +504,10 @@ export default class EstablishClaim extends BaseForm {
     return constant[regionalOfficeKey];
   }
 
+  formattedDecisionDate = () => {
+    return formatDate(this.props.task.appeal.serialized_decision_date);
+  }
+
   getStationOfJurisdiction() {
     let stationKey = this.props.task.appeal.station_key;
     let regionalOfficeKey = this.props.task.appeal.regional_office_key;
@@ -541,13 +534,13 @@ export default class EstablishClaim extends BaseForm {
   }
 
   stationOfJurisdictionCode() {
-    return this.state.claimForm.stationOfJurisdiction.value.substring(0, 3);
+    return this.store.getState().establishClaimForm.stationOfJurisdiction.substring(0, 3);
   }
 
   prepareData() {
-    let claim = this.getFormValues(this.state.claimForm);
-
+    let claim = this.store.getState().establishClaimForm;
     claim.stationOfJurisdiction = this.stationOfJurisdictionCode();
+    claim.date = this.formattedDecisionDate();
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -609,7 +602,7 @@ export default class EstablishClaim extends BaseForm {
 
     let {
       pdfLink,
-      pdfjsLink
+      pdfjsLink,
     } = this.props;
 
     return (
@@ -652,8 +645,8 @@ export default class EstablishClaim extends BaseForm {
         { this.isFormPage() &&
         <EstablishClaimForm
           loading={this.state.loading}
-          claimForm={this.state.claimForm}
           claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+          decisionDate={this.formattedDecisionDate()}
           handleCancelTask={this.handleCancelTask}
           handleSubmit={this.handleFormPageSubmit}
           handleFieldChange={this.handleFieldChange}
@@ -663,7 +656,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isNotePage() &&
         <EstablishClaimNote
-          loading={this.state.loading}
+          loading={thisthis.state.loading}
           appeal={this.props.task.appeal}
           handleSubmit={this.handleNotePageSubmit}
           showNotePageAlert={this.state.showNotePageAlert}

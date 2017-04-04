@@ -252,11 +252,6 @@ const mapDispatchToProps = (dispatch) => {
               value: value
           }
       });
-
-      dispatch(
-        setStationOfJurisdictionAction(
-        )
-      );
     }
   }
 }

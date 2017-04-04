@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
+import * as Constants from '../../app/establishClaim/constants/constants';
 
 let func = function() {
   // empty function
@@ -168,8 +169,12 @@ describe('EstablishClaim', () => {
 
     context("when ARC EP", () => {
       beforeEach(() => {
-        wrapper.setState({
-          claimForm: { stationOfJurisdiction: { value: "397 - ARC" } }
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+          payload: {
+            field: 'stationOfJurisdiction',
+            value: '397 - ARC',
+          }
         });
       });
 
@@ -193,12 +198,6 @@ describe('EstablishClaim', () => {
     });
 
     context("when Routed EP", () => {
-      beforeEach(() => {
-        wrapper.setState({
-          claimForm: { stationOfJurisdiction: { value: "322 - Montgomery, AL" } }
-        });
-      });
-
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
         wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
         expect(wrapper.instance().getClaimTypeFromDecision()).to.

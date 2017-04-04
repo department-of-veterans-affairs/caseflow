@@ -8,11 +8,10 @@ import * as Constants from '../constants/constants';
 * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
 */
 export function setStationOfJurisdictionAction(specialIssues, stationKey) {
-  let station = '397';
+  let station = '397 - ARC';
 
   // Go through the special issues, and for any regional issues, set SOJ to RO
   specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-    debugger;
     if (specialIssues[issue.specialIssue]) {
       station = stationKey;
     }
@@ -28,6 +27,7 @@ export function setStationOfJurisdictionAction(specialIssues, stationKey) {
   return {
     type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
     payload: {
+      field: 'stationOfJurisdiction',
       value: station
     }
   }

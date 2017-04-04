@@ -1,4 +1,5 @@
 import { FULL_GRANT } from '../../containers/EstablishClaimPage/EstablishClaim';
+import * as Constants from '../constants/constants';
 
 const FULL_GRANT_MODIFIER_OPTIONS = [
   '172'
@@ -49,10 +50,21 @@ export function validModifiers(endProducts, decisionType) {
   return modifiers.filter((modifier) => !modifierHash[modifier]);
 }
 
-export function getEstablishClaimFormInitialState(props = {}) {
+export function getEstablishClaimFormInitialState(props) {
+  let initialModifier;
+
+  if (props) {
+    initialModifier = validModifiers(
+      props.task.appeal.pending_eps,
+      props.task.appeal.decision_type
+    )[0];
+  } else {
+    initialModifier = PARTIAL_GRANT_MODIFIER_OPTIONS[0];
+  }
+
   return {
     stationOfJurisdiction: null,
-    endProductModifier: validModifiers[0],
+    endProductModifier: initialModifier,
     gulfWarRegistry: false,
     suppressAcknowledgementLetter: false
   };

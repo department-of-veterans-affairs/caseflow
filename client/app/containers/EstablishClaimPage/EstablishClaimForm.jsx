@@ -6,18 +6,21 @@ import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
+import * as Constants from '../../establishClaim/constants/constants';
+import { connect } from 'react-redux';
+
 export const MODIFIER_OPTIONS = [
   '170',
   '172'
 ];
 
-export default class EstablishClaimForm extends React.Component {
-
+export class EstablishClaimForm extends React.Component {
   render() {
     let {
       loading,
       claimLabelValue,
-      claimForm,
+      decisionDate,
+      establishClaimForm,
       handleSubmit,
       handleCancelTask,
       handleFieldChange,
@@ -52,34 +55,33 @@ export default class EstablishClaimForm extends React.Component {
            label="Modifier"
            name="endProductModifier"
            options={validModifiers}
-           onChange={handleFieldChange('claimForm', 'endProductModifier')}
+           onChange={handleFieldChange('endProductModifier')}
            readOnly={validModifiers.length === 1}
-           {...claimForm.endProductModifier}
+           value={establishClaimForm.endProductModifier}
           />
           <DateSelector
            label="Decision Date"
            name="date"
-           onChange={handleFieldChange('claimForm', 'date')}
            readOnly={true}
-           {...claimForm.date}
+           value={decisionDate}
           />
           <TextField
            label="Station of Jurisdiction"
            name="stationOfJurisdiction"
            readOnly={true}
-           {...claimForm.stationOfJurisdiction}
+           value={establishClaimForm.stationOfJurisdiction}
           />
           <Checkbox
            label="Gulf War Registry Permit"
            name="gulfWarRegistry"
-           {...claimForm.gulfWarRegistry}
-           onChange={handleFieldChange('claimForm', 'gulfWarRegistry')}
+           value={establishClaimForm.gulfWarRegistry}
+           onChange={handleFieldChange('gulfWarRegistry')}
           />
           <Checkbox
            label="Suppress Acknowledgement Letter"
            name="suppressAcknowledgementLetter"
-           {...claimForm.suppressAcknowledgementLetter}
-           onChange={handleFieldChange('claimForm', 'suppressAcknowledgementLetter')}
+           value={establishClaimForm.suppressAcknowledgementLetter}
+           onChange={handleFieldChange('suppressAcknowledgementLetter')}
           />
         </div>
       </form>
@@ -110,10 +112,48 @@ export default class EstablishClaimForm extends React.Component {
 }
 
 EstablishClaimForm.propTypes = {
-  claimForm: PropTypes.object.isRequired,
+  establishClaimForm: PropTypes.object.isRequired,
   claimLabelValue: PropTypes.string.isRequired,
+  decisionDate: PropTypes.string.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
 };
+
+/*
+ * This function tells us which parts of the global
+ * application state should be passed in as props to
+ * the rendered component.
+ */
+const mapStateToProps = (state) => {
+  return {
+    establishClaimForm: state.establishClaimForm
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleFieldChange: (field) => (value) => {
+      dispatch({
+        type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+        payload: {
+          field,
+          value
+        }
+      });
+    }
+  }
+}
+
+/*
+ * Creates a component that's connected to the Redux store
+ * using the state & dispatch map functions and the
+ * ConfirmHearing function.
+ */
+const ConnectedEstablishClaimForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EstablishClaimForm);
+
+export default ConnectedEstablishClaimForm;
