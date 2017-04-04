@@ -15,13 +15,6 @@ import RadioField from '../components/RadioField';
 // putting content with them doesn't
 // cause file length bloat.
 
-const hearingCheckText = `Check the appellant's eFolder for a hearing
-cancellation or request added after 09/01/2017, the date the Form 9
-(or statement in lieu of Form 9) was uploaded.`;
-
-const hearingChangeQuestion = `Was a hearing cancellation or request added after
-09/01/2017?`;
-// TODO: make into constant?
 const hearingChangeAnswers = [
   { displayText: 'Yes',
     value: Constants.vbmsHearingDocument.FOUND },
@@ -115,6 +108,7 @@ const informalForm9HearingAnswers = [{
 *
  */
 // TODO: refactor to use shared components where helpful
+
 class UnconnectedConfirmHearing extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
@@ -127,11 +121,19 @@ class UnconnectedConfirmHearing extends React.Component {
     let { hearingDocumentIsInVbms,
       onHearingDocumentChange,
       form9Type,
+      form9Date,
       onTypeOfForm9Change,
       hearingType,
       onHearingTypeChange,
       match
     } = this.props;
+
+    const hearingCheckText = `Check the appellant's eFolder for a hearing
+    cancellation or request added after ${form9Date}, the date the Form 9
+    (or statement in lieu of Form 9) was uploaded.`;
+
+    const hearingChangeQuestion = `Was a hearing cancellation or request added after
+    ${form9Date}?`;
 
     const shouldDisplayHearingChangeFound =
       hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
@@ -293,6 +295,7 @@ const mapStateToProps = (state) => {
   return {
     hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
     form9Type: state.form9Type,
+    form9Date: state.form9Date,
     hearingType: state.hearingType
   };
 };
