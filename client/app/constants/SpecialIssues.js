@@ -97,7 +97,10 @@ const SPECIAL_ISSUES = [
   {
     display: 'Mustard Gas',
     specialIssue: 'mustardGas',
-    stationOfJurisdiction: '351 - Muskogee, OK',
+    stationOfJurisdiction: {
+      key: '351',
+      location: 'Muskogee, OK'
+    },
     unhandled: null
   },
   {

@@ -55,8 +55,7 @@ class EstablishClaimsController < TasksController
   def assign_existing_end_product
     Task.transaction do
       Dispatch.new(task: task)
-              .assign_existing_end_product!(end_product_id: params[:end_product_id],
-                                            special_issues: special_issues_params)
+              .assign_existing_end_product!(end_product_id: params[:end_product_id])
       task.update_claim_establishment!
     end
 

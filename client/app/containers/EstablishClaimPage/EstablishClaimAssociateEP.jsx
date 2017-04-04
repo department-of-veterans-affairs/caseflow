@@ -62,9 +62,9 @@ export class AssociatePage extends React.Component {
       epLoading: endProduct.benefit_claim_id
     });
 
-    let data = {
+    let data = ApiUtil.convertToSnakeCase({
       endProductId: endProduct.benefit_claim_id
-    };
+    });
 
     return ApiUtil.post(
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,

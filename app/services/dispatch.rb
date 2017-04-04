@@ -34,9 +34,8 @@ class Dispatch
                                                     vacols_note: vacols_note)
   end
 
-  def assign_existing_end_product!(end_product_id:, special_issues:)
+  def assign_existing_end_product!(end_product_id:)
     task.transaction do
-      task.appeal.update!(special_issues)
       task.assign_existing_end_product!(end_product_id)
       Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
     end
