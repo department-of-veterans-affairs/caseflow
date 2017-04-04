@@ -1,4 +1,6 @@
 // actions
+//
+export const UPDATE_PROGRESS_BAR = 'UPDATE_PROGRESS_BAR';
 export const CHANGE_VBMS_HEARING_DOCUMENT = 'CHANGE_VBMS_HEARING_DOCUMENT';
 export const CHANGE_TYPE_OF_FORM9 = 'CHANGE_TYPE_OF_FORM9';
 export const CHANGE_TYPE_OF_HEARING = 'CHANGE_TYPE_OF_HEARING';
@@ -45,6 +47,13 @@ export const representativeTypes = {
 export const vbmsHearingDocument = {
   FOUND: 'FOUND',
   NOT_FOUND: 'NOT_FOUND'
+};
+
+export const progressBarSections = {
+  CHECK_DOCUMENTS: 'CHECK_DOCUMENTS',
+  CONFIRM_CASE_DETAILS: 'CONFIRM_CASE_DETAILS',
+  CONFIRM_HEARING: 'CONFIRM_HEARING',
+  SIGN_AND_CERTIFY: 'SIGN_AND_CERTIFY'
 };
 
 export const certifyingOfficialTitles = {
