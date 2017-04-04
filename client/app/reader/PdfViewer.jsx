@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import PDFJSAnnotate from 'pdf-annotate.js';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 
@@ -44,7 +43,7 @@ export default class PdfViewer extends React.Component {
   onSaveCommentEdit = (comment) => {
     this.props.annotationStorage.getAnnotation(
       this.props.doc.id,
-      this.state.editingComment,
+      this.state.editingComment
     ).then((annotation) => {
       annotation.comment = comment;
       this.props.annotationStorage.editAnnotation(
@@ -106,6 +105,21 @@ export default class PdfViewer extends React.Component {
     });
   }
 
+  onIconMoved = (uuid, changeInCoordinates) => {
+    this.props.annotationStorage.getAnnotation(
+      this.props.doc.id,
+      uuid
+    ).then((annotation) => {
+      annotation.x += changeInCoordinates.deltaX;
+      annotation.y += changeInCoordinates.deltaY;
+      this.props.annotationStorage.editAnnotation(
+        this.props.doc.id,
+        annotation.uuid,
+        annotation
+      );
+    });
+  }
+
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
@@ -129,9 +143,10 @@ export default class PdfViewer extends React.Component {
     comments = comments.map((comment) => {
       let copy = { ...comment };
 
-      copy.selected = false;
       if (comment.uuid === uuid) {
         copy.selected = true;
+      } else {
+        copy.selected = false;
       }
 
       return copy;
@@ -140,13 +155,9 @@ export default class PdfViewer extends React.Component {
   }
 
   componentDidMount = () => {
-    const { UI } = PDFJSAnnotate;
-
     this.onCommentChange();
 
     window.addEventListener('keydown', this.keyListener);
-
-    UI.enableEdit();
   }
 
   componentDidUpdate = () => {
@@ -159,8 +170,7 @@ export default class PdfViewer extends React.Component {
 
   // Consider moving this down into Pdf.jsx
   onJumpToComment = (uuid) => {
-    PDFJSAnnotate.
-      getStoreAdapter().
+    this.props.annotationStorage.
       getAnnotation(this.props.doc.id, uuid).
       then((annotation) => {
         let page = document.getElementsByClassName('page');
@@ -211,6 +221,7 @@ export default class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
+            onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
             doc={this.props.doc}
