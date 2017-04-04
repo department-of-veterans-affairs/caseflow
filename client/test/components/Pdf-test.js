@@ -4,8 +4,7 @@ import { mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
 
-import PDFJSAnnotate from 'pdf-annotate.js';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import PdfJsStub from '../helpers/PdfJsStub';
 
 /* eslint-disable no-unused-expressions */
 describe('Pdf', () => {
@@ -20,37 +19,9 @@ describe('Pdf', () => {
   /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
     let wrapper;
-    let pdfjsRenderPage;
-    let pdfjsCreatePage;
-    let numPages = 3;
-    let pdfDocument = { pdfInfo: { numPages } };
 
     beforeEach(() => {
-      // We return a pdfInfo object that contains
-      // a field numPages.
-      let getDocument = sinon.stub(PDFJS, 'getDocument');
-
-      getDocument.resolves(pdfDocument);
-
-      // We return a promise that resolves to an object
-      // with a getViewport function.
-      pdfjsRenderPage = sinon.stub(PDFJSAnnotate.UI, 'renderPage');
-      pdfjsRenderPage.resolves([
-        {
-          getViewport: () => 0
-        }
-      ]);
-
-      // We return fake 'page' divs that the PDF component
-      // will add to the dom.
-      pdfjsCreatePage = sinon.stub(PDFJSAnnotate.UI, 'createPage');
-      pdfjsCreatePage.callsFake((index) => {
-        let div = document.createElement("div");
-
-        div.id = `pageContainer${index}`;
-
-        return div;
-      });
+      PdfJsStub.beforeEach();
 
       wrapper = mount(<Pdf
         comments={[]}
@@ -63,9 +34,8 @@ describe('Pdf', () => {
     });
 
     afterEach(() => {
-      PDFJS.getDocument.restore();
-      PDFJSAnnotate.UI.renderPage.restore();
-      PDFJSAnnotate.UI.createPage.restore();
+      wrapper.detach();
+      PdfJsStub.afterEach();
     });
 
     context('.render', () => {
@@ -97,10 +67,10 @@ describe('Pdf', () => {
           });
         });
 
-        it(`calls onPageChange with 1 and ${numPages}`, (done) => {
+        it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, (done) => {
           wrapper.instance().setupPdf("test.pdf").
             then(() => {
-              expect(onPageChange.calledWith(1, numPages)).to.be.true;
+              expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
               done();
             });
         });
@@ -110,16 +80,16 @@ describe('Pdf', () => {
     context('.createPages', () => {
       // reset any calls from mounting
       beforeEach(() => {
-        pdfjsCreatePage.resetHistory();
+        PdfJsStub.pdfjsCreatePage.resetHistory();
       });
 
-      it(`calls PDFJS createPage ${numPages} times`, () => {
-        wrapper.instance().createPages(pdfDocument);
-        expect(pdfjsCreatePage.callCount).to.equal(numPages);
+      it(`calls PDFJS createPage ${PdfJsStub.numPages} times`, () => {
+        wrapper.instance().createPages(PdfJsStub.pdfDocument);
+        expect(PdfJsStub.pdfjsCreatePage.callCount).to.equal(PdfJsStub.numPages);
       });
 
-      it(`creates ${numPages} pages`, () => {
-        wrapper.instance().createPages(pdfDocument);
+      it(`creates ${PdfJsStub.numPages} pages`, () => {
+        wrapper.instance().createPages(PdfJsStub.pdfDocument);
         expect(wrapper.html()).to.include('pageContainer1');
         expect(wrapper.html()).to.include('pageContainer2');
         expect(wrapper.html()).to.include('pageContainer3');
@@ -134,8 +104,8 @@ describe('Pdf', () => {
         });
 
         it('create page is not called', () => {
-          wrapper.instance().createPages(pdfDocument);
-          expect(pdfjsCreatePage.callCount).to.equal(0);
+          wrapper.instance().createPages(PdfJsStub.pdfDocument);
+          expect(PdfJsStub.pdfjsCreatePage.callCount).to.equal(0);
         });
 
         afterEach(() => {
@@ -146,17 +116,17 @@ describe('Pdf', () => {
 
     context('.renderPage', () => {
       it('creates a new page', () => {
-        expect(pdfjsRenderPage.callCount).to.equal(1);
+        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
         wrapper.instance().renderPage(1);
-        expect(pdfjsRenderPage.callCount).to.equal(2);
+        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(2);
       });
 
       it('only renders page once when called twice', (done) => {
-        expect(pdfjsRenderPage.callCount).to.equal(1);
+        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
         wrapper.instance().renderPage(1).
           then(() => {
             wrapper.instance().renderPage(1);
-            expect(pdfjsRenderPage.callCount).to.equal(2);
+            expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(2);
             done();
           }).
           catch(() => {
@@ -167,12 +137,12 @@ describe('Pdf', () => {
 
       context('mock renderPage to fail', (done) => {
         beforeEach(() => {
-          pdfjsRenderPage.resetBehavior();
-          pdfjsRenderPage.rejects();
+          PdfJsStub.pdfjsRenderPage.resetBehavior();
+          PdfJsStub.pdfjsRenderPage.rejects();
         });
 
         it('tries to render page twice when called twice', () => {
-          expect(pdfjsRenderPage.callCount).to.equal(1);
+          expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
           wrapper.instance().renderPage(1).
             then(() => {
               // Should never get here since the render is mocked to fail.
@@ -180,7 +150,7 @@ describe('Pdf', () => {
             }).
             catch(() => {
               wrapper.instance().renderPage(1);
-              expect(pdfjsRenderPage.callCount).to.equal(3);
+              expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(3);
               done();
             });
         });

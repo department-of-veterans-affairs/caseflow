@@ -151,6 +151,10 @@ export default class Pdf extends React.Component {
     });
   }
 
+  onCommentClick = (event) => {
+    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id'), 10));
+  }
+
   componentDidMount = () => {
     const { UI } = PDFJSAnnotate;
 
@@ -165,20 +169,13 @@ export default class Pdf extends React.Component {
 
     UI.enableEdit();
 
-    UI.addEventListener('annotation:click', (event) => {
-      let comments = [...this.props.comments];
+    UI.addEventListener('annotation:click', this.onCommentClick);
+  }
 
-      let filteredComments = comments.filter((comment) => {
-        return comment.uuid.toString() ===
-            event.getAttribute('data-pdf-annotate-id').toString();
-      });
+  componentWillUnmount = () => {
+    const { UI } = PDFJSAnnotate;
 
-      if (filteredComments.length === 1) {
-        this.props.onCommentClick(filteredComments[0]);
-      } else if (filteredComments.length !== 0) {
-        throw new Error('Multiple comments with same uuid');
-      }
-    });
+    UI.removeEventListener('annotation:click', this.onCommentClick);
   }
 
   // Calculates the symmetric difference between two sets.
@@ -203,41 +200,45 @@ export default class Pdf extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // In general I think this is a good lint rule. However,
+    // I think the below statements are clearer
+    // with negative conditions.
+    /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
       document.getElementById('scrollWindow').scrollTop = 0;
       this.setupPdf(nextProps.file);
-    }
-
-    if (nextProps.scale !== this.props.scale) {
+    } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
+    } else {
+      // Determine which comments have changed, and
+      // rerender the pages the changed comments are on.
+      // The symmetric difference gives us which comments
+      // were added or removed.
+      let symmetricDifference = this.symmetricDifference(
+        new Set(nextProps.comments.map((comment) => comment.uuid)),
+        new Set(this.props.comments.map((comment) => comment.uuid)));
+
+      let pagesToUpdate = new Set();
+      let allComments = [...nextProps.comments, ...this.props.comments];
+
+      // Find the pages for the added/removed comments
+      symmetricDifference.forEach((uuid) => {
+        let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
+
+        pagesToUpdate.add(page);
+      });
+
+      // Rerender all these pages to add/remove the comment boxes as necessary.
+      pagesToUpdate.forEach((page) => {
+        let index = page - 1;
+
+        this.rerenderPage(index);
+      });
     }
 
-    // Determine which comments have changed, and
-    // rerender the pages the changed comments are on.
-    // The symmetric difference gives us which comments
-    // were added or removed.
-    let symmetricDifference = this.symmetricDifference(
-      new Set(nextProps.comments.map((comment) => comment.uuid)),
-      new Set(this.props.comments.map((comment) => comment.uuid)));
-
-    let pagesToUpdate = new Set();
-    let allComments = [...nextProps.comments, ...this.props.comments];
-
-    // Find the pages for the added/removed comments
-    symmetricDifference.forEach((uuid) => {
-      let page = allComments.filter((comment) => comment.uuid === uuid)[0].page;
-
-      pagesToUpdate.add(page);
-    });
-
-    // Rerender all these pages to add/remove the comment boxes as necessary.
-    pagesToUpdate.forEach((page) => {
-      let index = page - 1;
-
-      this.rerenderPage(index);
-    });
+    /* eslint-enable no-negated-condition */
   }
 
   render() {
