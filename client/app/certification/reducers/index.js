@@ -35,6 +35,10 @@ const updateRepresentativeType = (state, action) => {
 
 export const certificationReducers = function(state = initialState, action = {}) {
   switch (action.type) {
+  case Constants.UPDATE_PROGRESS_BAR:
+    return Object.assign({}, state, {
+      currentSection: action.payload.currentSection
+    });
   case Constants.CHANGE_REPRESENTATIVE_NAME:
     return Object.assign({}, state, {
       representativeName: action.payload.representativeName
