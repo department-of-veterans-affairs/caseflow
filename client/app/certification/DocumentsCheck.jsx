@@ -8,6 +8,9 @@ import * as Constants from './constants/constants';
 
 // TODO: refactor to use shared components where helpful
 class UnconnectedDocumentsCheck extends React.Component {
+  // TODO: updating state in ComponentWillMount is
+  // sometimes thought of as an anti-pattern.
+  // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
   }

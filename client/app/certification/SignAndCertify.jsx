@@ -25,11 +25,14 @@ const certifyingOfficialTitleOptions = [{
 
 
 class UnconnectedSignAndCertify extends React.Component {
+  // TODO: updating state in ComponentWillMount is
+  // sometimes thought of as an anti-pattern.
+  // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
   }
 
-  render(){
+  render() {
     let {
       certifyingOffice,
       onCertifyingOfficeChange,
@@ -89,7 +92,7 @@ class UnconnectedSignAndCertify extends React.Component {
       </div>
     </div>;
   }
-};
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {

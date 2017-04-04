@@ -116,6 +116,9 @@ const informalForm9HearingAnswers = [{
  */
 // TODO: refactor to use shared components where helpful
 class UnconnectedConfirmHearing extends React.Component {
+  // TODO: updating state in ComponentWillMount is
+  // sometimes thought of as an anti-pattern.
+  // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
   }
@@ -224,7 +227,7 @@ class UnconnectedConfirmHearing extends React.Component {
         }/>
     </div>;
   }
-};
+}
 
 /*
  * CONNECTED COMPONENT STUFF:
