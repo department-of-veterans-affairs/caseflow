@@ -17,7 +17,7 @@ const CertificationProgressBar = () => {
         title: '3. Confirm Hearing'
       },
       {
-        title: '4. Confirmation'
+        title: '4. Sign and Certify'
       }
     ]
     }

@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
+import Footer from './Footer';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
@@ -34,7 +35,8 @@ const UnconnectedSignAndCertify = ({
     certifyingOfficialTitle,
     onCertifyingOfficialTitleChange,
     certificationDate,
-    onCertificationDateChange
+    onCertificationDateChange,
+    match
 }) => {
   return <div>
     <form noValidate id="end_product">
@@ -71,15 +73,9 @@ const UnconnectedSignAndCertify = ({
       </div>
     </form>
 
-    <div className="cf-app-segment">
-      <a href="#confirm-cancel-certification"
-        className="cf-action-openmodal cf-btn-link">
-        Cancel certification
-      </a>
-      <button type="button" className="cf-push-right">
-        Certify appeal
-      </button>
-    </div>
+    <Footer nextPageUrl={
+      `/certifications/${match.params.vacols_id}/success`
+    }/>
   </div>;
 };
 
