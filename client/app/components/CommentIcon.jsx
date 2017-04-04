@@ -7,6 +7,7 @@ export default class CommentIcon extends React.Component {
   }
 
   onDragStart = (event) => {
+    event.dataTransfer.setData('text/plain', 'Random Text');
     this.props.onDragStart(this.props.uuid, this.props.page, event);
   }
 
@@ -19,8 +20,7 @@ export default class CommentIcon extends React.Component {
       className="commentIcon-container"
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
-      onDragStart={this.onDragStart}
-      onDrag={this.props.onDrag} >
+      onDragStart={this.onDragStart} >
         {commentIcon(this.props.selected)}
       </div>;
   }
@@ -32,7 +32,6 @@ export default class CommentIcon extends React.Component {
 CommentIcon.propTypes = {
   selected: PropTypes.bool,
   onClick: PropTypes.func,
-  onDrag: PropTypes.func,
   onDragStart: PropTypes.func,
   position: PropTypes.shape({
     x: PropTypes.number,
