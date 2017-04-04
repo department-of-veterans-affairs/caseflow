@@ -33,6 +33,17 @@ class ExternalApi::BGSService
       end
   end
 
+  # This method checks to see if the current user has access to this case
+  # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
+  # higher than that of the current employee
+  def can_access?(vbms_id)
+    MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
+                          service: :bgs,
+                          name: "can_access?") do
+      client.can_access?(vbms_id)
+    end
+  end
+
   private
 
   def init_client
