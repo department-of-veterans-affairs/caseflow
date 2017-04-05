@@ -53,6 +53,9 @@ RSpec.feature "Certification Stats Dashboard" do
     User.authenticate!(roles: ["System Admin"])
   end
 
+  let(:leftarrow) { "d3.select(window).dispatch('keydown', { detail: { keyCode: 37 } })" }
+  let(:rightarrow) { "d3.select(window).dispatch('keydown', { detail: { keyCode: 39 } })" }
+
   scenario "Switching tab intervals" do
     visit "/certification/stats"
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
@@ -79,6 +82,9 @@ RSpec.feature "Certification Stats Dashboard" do
     expect(page).to have_content("Form 9 0 %")
   end
 
+  # The stats tests don't play well with Selenium Chrome
+  # The mouseover effect with the stat bars is erratic
+  # TODO: Augment stats to disable mouseover for the tests
   scenario "Check missing documents" do
     Certification.create(
       nod_matching_at:     45.minutes.ago,
@@ -102,7 +108,12 @@ RSpec.feature "Certification Stats Dashboard" do
       completed_at:        nil
     )
     CertificationStats.calculate_all!
+
     visit "/certification/stats/daily"
+
+    # Turn mousever events off on the Stats dashboard to not confuse Chrome
+    page.execute_script("window.Dashboard.mouseoverEvents = false;")
+
     expect(page).to have_content("Activity for January 1 (so far)")
     expect(page).to have_content("Certifications Started 6")
     expect(page).to have_content("Certifications Completed 3")
@@ -118,28 +129,28 @@ RSpec.feature "Certification Stats Dashboard" do
     expect(page).to have_content("Form 9 0 %")
   end
 
-  scenario "Toggle median to 95th percentile" do
+  scenario "Toggle median to 95th percentile and navigate to past periods" do
     visit "/certification/stats"
+
+    # Turn mousever events off on the Stats dashboard to not confuse Chrome
+    page.execute_script("window.Dashboard.mouseoverEvents = false;")
+
     click_on "Daily"
 
-    find('*[role="button"]', text: "Overall (median)").trigger("click")
+    find("#time-to-certify-toggle").click
+
     expect(page).to have_content("Overall (95th percentile) 120.00 min")
-    find('*[role="button"]', text: "Overall (95th percentile)").trigger("click")
+
+    # Scroll once more to see December 31 have no stats
+    page.driver.execute_script(leftarrow)
+    expect(page).to have_content("December 31")
+    expect(page).to have_content("Overall (95th percentile) ??")
+
+    find("#time-to-certify-toggle").click
+
+    # Scroll to the most recent time interval
+    page.driver.execute_script(rightarrow)
     expect(page).to have_content("Overall (median) 60.00 min")
-  end
-
-  scenario "Navigate to past periods with arrow keys" do
-    leftarrow = "d3.select(window).dispatch('keydown', { detail: { keyCode: 37 } })"
-
-    visit "/certification/stats"
-    click_on "Monthly"
-    expect(page).to have_content("Activity for January (so far)")
-
-    12.times do
-      page.driver.execute_script(leftarrow)
-    end
-
-    expect(page).to have_content("Activity for January 2014")
   end
 
   scenario "Unauthorized user access" do

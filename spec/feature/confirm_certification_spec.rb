@@ -20,22 +20,16 @@ RSpec.feature "Confirm Certification" do
 
   scenario "Screen reader user visits pdf link" do
     visit "certifications/5555C"
+
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
-
-    expect(page).to have_content("The PDF viewer in your browser may not be accessible.")
+    expect(page).to have_text(:all, "The PDF viewer in your browser may not be accessible.")
     expect(page).to have_css(".usa-sr-only", visible: false)
 
     # Sending click or keypress events to elements that are not in the DOM doesn't seem to work,
     # so let's find the hidden link's href and visit it manually to check that the pdf can be
     # found there.
-    pdf_href = page.find(:xpath, "//a[@id='sr-download-link']")[:href]
-    visit(pdf_href)
-
-    # Ensure that visiting is actually possible
-    # PDF might not be rendered for the page visit, but at least it should point us the right way
-    # Since the whole PDF is faked out, doing more will be testing the rendering and not the access
-    expect(page.response_headers).not_to be_nil
+    pdf_href = page.find("#sr-download-link", visible: false)[:href]
     expect(pdf_href).to include("/5555C/pdf")
   end
 
