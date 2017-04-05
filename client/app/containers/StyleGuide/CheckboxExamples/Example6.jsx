@@ -20,6 +20,7 @@ export default class Example6 extends React.Component {
     let state = this.state;
 
     state.values[event.target.getAttribute('id')] = event.target.checked;
+    state.errorMessage = null;
 
     this.setState(state);
   }
