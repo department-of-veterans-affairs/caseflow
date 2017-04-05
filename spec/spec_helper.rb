@@ -107,9 +107,7 @@ def find_label_for(val)
   find(:xpath, "//label[@for='#{val}']")
 end
 
-# PhantomJS sometimes crashes if an element in focus is removed from the DOM
-# This click action triggers a click event on a button without focusing on it.
+# TODO: This was to tip-toe around PhantomJS crashes, delete it when we are 100% with chrome
 def safe_click_on(text)
-  page.execute_script("$('#cf-logo-link').focus()")
-  find(:xpath, "//button[contains(., '#{text}')]").trigger("click")
+  click_on(text)
 end
