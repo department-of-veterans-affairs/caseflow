@@ -64,7 +64,7 @@ class EstablishClaimsController < TasksController
   end
 
   def update_employee_count
-    Rails.cache.write("employee_count", params[:count])
+    Rails.cache.write("employee_count", params[:count], expires_in: 48.hours)
     render json: {}
   end
 

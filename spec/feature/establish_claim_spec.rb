@@ -49,6 +49,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # two tasks assigned to her, has completed one, and has one remaining.
       expect(page).to have_content("Jane Smith 3 1 2")
       expect(page).to have_content("Employee Total 5 1 4")
+
+      # Employee count should be 0 after 48 hours
+      Timecop.freeze((48 * 60 * 60 + 1).seconds.from_now) do
+        visit "/dispatch/establish-claim"
+        expect(find_field("the number of people").value).to have_content("0")
+      end
     end
 
     scenario "View unprepared tasks page" do
