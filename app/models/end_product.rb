@@ -7,6 +7,8 @@ class EndProduct
     "CAN" => "Canceled"
   }.freeze
 
+  INACTIVE_STATUSES = %w(CAN CLR).freeze
+
   DISPATCH_CODES = {
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
@@ -41,12 +43,12 @@ class EndProduct
 
   # Does this EP have a modifier that might conflict with a new dispatch EP?
   def dispatch_conflict?
-    dispatch_modifier? && pending?
+    dispatch_modifier? && active?
   end
 
   # Is this a potential match to be an existing ep for the appeal?
   def potential_match?(appeal)
-    dispatch_code? && active? && near_decision_date_of?(appeal)
+    dispatch_code? && assignable? && near_decision_date_of?(appeal)
   end
 
   # TODO: change to more semantic names
@@ -77,12 +79,12 @@ class EndProduct
     DISPATCH_MODIFIERS.include?(modifier)
   end
 
-  def active?
+  def assignable?
     status_type_code != "CAN"
   end
 
-  def pending?
-    status_type_code == "PEND"
+  def active?
+    !INACTIVE_STATUSES.include?(status_type_code)
   end
 
   class << self
