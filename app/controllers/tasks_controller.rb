@@ -67,8 +67,13 @@ class TasksController < ApplicationController
   end
   helper_method :current_user_historical_tasks
 
+  # Before assigning the next task to the current user, we want to check and
+  # verify they have the right sensitivity level to access that case. If they
+  # don't, we skip it and move on to the next case
   def next_unassigned_task
-    @next_unassigned_task ||= scoped_tasks.unassigned.to_complete.first
+    @next_unassigned_task ||= scoped_tasks.unassigned.to_complete.find do |task|
+      task.appeal.can_be_accessed_by_current_user?
+    end
   end
   helper_method :next_unassigned_task
 

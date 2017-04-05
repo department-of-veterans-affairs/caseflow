@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 
+import Header from './Header';
+import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import AlreadyCertified from './AlreadyCertified';
 import NotReady from './NotReady';
@@ -50,14 +52,10 @@ const Certification = ({ certification }) => {
     <div>
       <BrowserRouter>
         <div>
+        <Header/>
         <CertificationProgressBar/>
         <Route path="/certifications/new/:vacols_id"
           component={EntryPointRedirect}/>
-          {/* TODO: Right now we're still using Rails to render the pages
-          we display in scenarios where the appeal is not ready
-          for certification (e.g. mismatched documents, already certified appeal).
-          when we finish implementing the rest of certification v2,
-          port those over here */}
         <Route path="/certifications/:vacols_id/check_documents"
           component={DocumentsCheck}/>
         <Route path="/certifications/:vacols_id/mismatched_documents"
@@ -72,6 +70,8 @@ const Certification = ({ certification }) => {
           component={ConfirmHearing}/>
         <Route path="/certifications/:vacols_id/sign_and_certify"
           component={SignAndCertify}/>
+        <Route path="/certifications/:vacols_id/success"
+          component={Success}/>
           {/* TODO: should we add the cancel certification link
           and continue links here, or keep them on their own page? */}
       </div>

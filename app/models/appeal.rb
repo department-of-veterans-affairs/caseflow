@@ -102,6 +102,10 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def can_be_accessed_by_current_user?
+    self.class.bgs.can_access?(sanitized_vbms_id)
+  end
+
   def task_header
     "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
