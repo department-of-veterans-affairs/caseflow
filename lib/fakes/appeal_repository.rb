@@ -62,9 +62,13 @@ class Fakes::AppealRepository
     return if appeal.full_grant?
   end
 
-  def self.upload_and_clean_document(appeal, form8)
+  def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
+  end
+
+  def self.clean_document(_location)
+    # noop
   end
 
   def self.load_vacols_data(appeal)
