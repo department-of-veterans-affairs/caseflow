@@ -20,9 +20,9 @@ but read out by screen readers. -->
 <div class="cf-form cf-app-segment" id="certification-buttons">
   <%= loading_indicator %>
 
-  <button type="button" class="usa-button-gray cf-action-back cf-push-left" onclick="window.history.back()">
-    &laquo; Go back and make edits
-  </button>
+  <%= link_to "< Go back and make edits",
+      new_certification_path(vacols_id: form8.vacols_id),
+      class: "usa-button-gray cf-action-back cf-push-left" %>
 
   <%= link_to "Upload and certify",
     confirm_certification_path(id: form8.vacols_id),
