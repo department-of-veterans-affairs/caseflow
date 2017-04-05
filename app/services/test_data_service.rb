@@ -74,7 +74,7 @@ class TestDataService
   def self.cancel_end_products(appeal)
     appeal.pending_eps.each do |end_product|
       log "Cancelling EP #{end_product.modifier} - #{end_product.claim_type_code}"
-      appeal.bgs.client.claims.cancel_end_product(
+      Appeal.bgs.client.claims.cancel_end_product(
         file_number: appeal.sanitized_vbms_id,
         end_product_code: end_product.claim_type_code,
         modifier: end_product.modifier
