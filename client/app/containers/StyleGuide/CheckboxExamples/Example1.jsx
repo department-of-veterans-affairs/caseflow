@@ -20,7 +20,7 @@ export default class Example1 extends React.Component {
 
   render = () => {
     return <Checkbox
-      label="Check me!"
+      label="Option"
       vertical={true}
       name="checkbox_example_1"
       onChange={this.onChange}
