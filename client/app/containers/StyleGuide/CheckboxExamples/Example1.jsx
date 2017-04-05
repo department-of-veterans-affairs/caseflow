@@ -8,19 +8,19 @@ export default class Example1 extends React.Component {
     super(props);
 
     this.state = {
-      value: null
+      value: false
     };
   }
 
-  onChange = (event) => {
+  onChange = (value) => {
     this.setState({
-      value: event.target.checked
+      value
     });
   }
 
   render = () => {
     return <Checkbox
-      label="Check me!"
+      label="Option"
       vertical={true}
       name="checkbox_example_1"
       onChange={this.onChange}
