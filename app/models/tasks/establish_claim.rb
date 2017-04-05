@@ -1,3 +1,5 @@
+require "vbms"
+
 class EstablishClaim < Task
   include CachedAttributes
 
@@ -39,7 +41,7 @@ class EstablishClaim < Task
   def perform!(claim_params)
     claim = Dispatch::Claim.new(claim_params)
 
-    raise InvalidClaimError unless claim.valid?
+    fail InvalidClaimError unless claim.valid?
 
     transaction do
       appeal.update!(dispatched_to_station: claim.station_of_jurisdiction)
@@ -53,7 +55,7 @@ class EstablishClaim < Task
   rescue VBMS::HTTPError => error
     raise parse_vbms_error(error)
   end
-    
+
   def actions_taken
     [
       decision_reviewed_action_description,

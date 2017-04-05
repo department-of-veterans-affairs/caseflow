@@ -15,8 +15,6 @@ class EstablishClaimsController < TasksController
 
   # This POST updates VACOLS & VBMS Note
   def review_complete
-    task.complete!(review_complete_params)
-
     Task.transaction do
       Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
       task.complete!(status: 0)
@@ -26,8 +24,6 @@ class EstablishClaimsController < TasksController
   end
 
   def email_complete
-    task.complete!(email_complete_params)
-
     task.complete!(status: Task.completion_status_code(:special_issue_emailed))
     task.update_claim_establishment!(
       email_recipient: email_params[:email_recipient],
