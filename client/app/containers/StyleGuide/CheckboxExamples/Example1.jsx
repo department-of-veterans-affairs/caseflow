@@ -8,13 +8,13 @@ export default class Example1 extends React.Component {
     super(props);
 
     this.state = {
-      value: null
+      value: false
     };
   }
 
-  onChange = (event) => {
+  onChange = (value) => {
     this.setState({
-      value: event.target.checked
+      value
     });
   }
 

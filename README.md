@@ -161,7 +161,7 @@ export VACOLS_PASSWORD=secret_password
 Finally, just run Rails in the staging environment!
 `$ rails s -e staging`
 
-### Changing between test users
+## Changing between test users
 Select 'Switch User' from the dropdown or navigate to
 [http://localhost:3000/dev/users](http://localhost:3000/test/users). You can use
 this page to switch to any user that is currently in the database. The users' names specify
@@ -172,7 +172,7 @@ should be a comma separated list of roles you want that user to have.
 This page also contains links to different parts of the site to make dev-ing faster. Please
 add more links and users as needed.
 
-### Running tests
+## Running tests
 
 To run the test suite:
 `$ rake`
@@ -182,7 +182,7 @@ For parallelized tests:
 
 `$ rake ci:all`
 
-### Feature Toggle
+## Feature Toggle
 
 To enable and disable features using `rails c`. Example usage:
 
