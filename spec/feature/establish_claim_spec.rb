@@ -460,6 +460,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Validate special issue text within vacols note
         expect(page).to have_content("Private Attorney or Agent, Rice Compliance")
 
+        # Validate note page shows correct decision type for claim in vbms note
+        expect(find_field("VBMS Note").value).to have_content("The BVA Partial Grant decision")
+
+        # Validate note page shows correct decision type for claim in vacols diary note
+        expect(page).to have_content("Add the diary note: The BVA Partial Grant decision")
+
         # Validate correct vacols location
         expect(page).to have_content("50")
 
