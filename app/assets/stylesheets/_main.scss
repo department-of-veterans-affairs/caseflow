@@ -186,11 +186,11 @@ select {
 
 // TODO: unify this with the styling in caseflow commons once all buttons are using React
 .cf-react-icon-loading-front {
-  @include animation(backwardspin 9s linear infinite);
+  @include animation(backwardspin 6s linear infinite);
 }
 
 .cf-react-icon-loading-back {
-  @include animation(spin 9s linear infinite);
+  @include animation(spin 6s linear infinite);
 }
 
 .cf-react-loading-indicator {
