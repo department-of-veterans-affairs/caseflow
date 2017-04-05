@@ -14,7 +14,8 @@ export default class CheckboxGroup extends React.Component {
       options,
       vertical,
       hideLabel,
-      values
+      values,
+      errorMessage
     } = this.props;
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
@@ -23,6 +24,8 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += "-inline";
     }
 
+    if (errorMessage) fieldClasses += " usa-input-error";
+
     let legendClasses = (hideLabel) ? "hidden-field" : "";
 
     return <fieldset className={fieldClasses}>
@@ -30,6 +33,8 @@ export default class CheckboxGroup extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {label || name}
       </legend>
+
+      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
 
       {options.map((option) =>
 
@@ -69,5 +74,6 @@ CheckboxGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
   vertical: PropTypes.bool,
-  values: PropTypes.arrayOf(PropTypes.string)
+  values: PropTypes.object,
+  errorMessage: PropTypes.string
 };

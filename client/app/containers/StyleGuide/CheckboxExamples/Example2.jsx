@@ -12,9 +12,9 @@ export default class Example2 extends React.Component {
     };
   }
 
-  onChange = (event) => {
+  onChange = (value) => {
     this.setState({
-      value: event.target.checked
+      value
     });
   }
 
