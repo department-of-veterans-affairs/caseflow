@@ -24,7 +24,9 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += "-inline";
     }
 
-    if (errorMessage) fieldClasses += " usa-input-error";
+    if (errorMessage) {
+      fieldClasses += " usa-input-error";
+    }
 
     let legendClasses = (hideLabel) ? "hidden-field" : "";
 
