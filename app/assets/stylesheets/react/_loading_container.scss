@@ -22,8 +22,13 @@
 .loadingContainer-content {
   position: relative;
   z-index: 1;
+
+  .cf-doc-embed {
+    display: block;
+  }
 }
 
 .loadingContainer-container {
   position: relative;
+  overflow: hidden;
 }
