@@ -12,23 +12,6 @@ class Dispatch
   end
   attr_accessor :task, :claim, :vacols_note
 
-  def validate_claim!
-    fail InvalidClaimError unless claim.valid?
-  end
-
-  # Core method responsible for API call to VBMS to create the end product
-  # On success will udpate the task with the end product's claim_id
-  def establish_claim!
-    validate_claim!
-    end_product = Appeal.repository.establish_claim!(claim: claim.to_hash,
-                                                     appeal: task.appeal)
-
-    task.review!(outgoing_reference_id: end_product.claim_id)
-
-  rescue VBMS::HTTPError => error
-    raise parse_vbms_error(error)
-  end
-
   def update_vacols!
     Appeal.repository.update_vacols_after_dispatch!(appeal: task.appeal,
                                                     vacols_note: vacols_note)
@@ -39,19 +22,6 @@ class Dispatch
       task.appeal.update!(special_issues)
       task.assign_existing_end_product!(end_product_id)
       Appeal.repository.update_location_after_dispatch!(appeal: task.appeal)
-    end
-  end
-
-  private
-
-  def parse_vbms_error(error)
-    case error.body
-    when /PIF is already in use/
-      return EndProductAlreadyExistsError
-    when /A duplicate claim for this EP code already exists/
-      return EndProductAlreadyExistsError
-    else
-      return error
     end
   end
 

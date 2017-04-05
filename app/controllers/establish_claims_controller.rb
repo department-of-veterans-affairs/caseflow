@@ -5,22 +5,18 @@ class EstablishClaimsController < TasksController
   before_action :set_application
 
   def perform
-    # If we've already created the EP, we want to send the user to the note page
-    return render json: {} if task.reviewed?
-
-    Task.transaction do
-      task.appeal.update!(appeal_params)
-      task.update_claim_establishment!(ep_code: establish_claim_params[:end_product_code])
-      Dispatch.new(claim: establish_claim_params, task: task).establish_claim!
-    end
+    # If we've already created the EP, no-op and send the user to the note page
+    task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
 
-  rescue Dispatch::EndProductAlreadyExistsError
+  rescue EstablishClaim::EndProductAlreadyExistsError
     render json: { error_code: "duplicate_ep" }, status: 422
   end
 
   # This POST updates VACOLS & VBMS Note
   def review_complete
+    task.complete!(review_complete_params)
+
     Task.transaction do
       Dispatch.new(task: task, vacols_note: vacols_note_params).update_vacols!
       task.complete!(status: 0)
@@ -30,11 +26,24 @@ class EstablishClaimsController < TasksController
   end
 
   def email_complete
+    task.complete!(email_complete_params)
+
     task.complete!(status: Task.completion_status_code(:special_issue_emailed))
     task.update_claim_establishment!(
       email_recipient: email_params[:email_recipient],
       email_ro_id: email_params[:email_ro_id]
     )
+
+    render json: {}
+  end
+
+  def assign_existing_end_product
+    Task.transaction do
+      Dispatch.new(task: task)
+              .assign_existing_end_product!(end_product_id: params[:end_product_id],
+                                            special_issues: special_issues_params)
+      task.update_claim_establishment!
+    end
 
     render json: {}
   end
@@ -52,33 +61,10 @@ class EstablishClaimsController < TasksController
   end
   # :nocov:
 
-  def assign_existing_end_product
-    Task.transaction do
-      Dispatch.new(task: task)
-              .assign_existing_end_product!(end_product_id: params[:end_product_id],
-                                            special_issues: special_issues_params)
-      task.update_claim_establishment!
-    end
-
-    render json: {}
-  end
-
   def update_employee_count
     Rails.cache.write("employee_count", params[:count])
     render json: {}
   end
-
-  def total_assigned_issues
-    if Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count").nil?
-      per_employee_quota = 0
-    else
-      employee_total = Rails.cache.read("employee_count").to_i
-      per_employee_quota = (@completed_count_today + @remaining_count_today) /
-                           employee_total
-    end
-    per_employee_quota
-  end
-  helper_method :total_assigned_issues
 
   def cancel
     Task.transaction do
@@ -114,6 +100,18 @@ class EstablishClaimsController < TasksController
   end
 
   private
+
+  def total_assigned_issues
+    if Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count").nil?
+      per_employee_quota = 0
+    else
+      employee_total = Rails.cache.read("employee_count").to_i
+      per_employee_quota = (@completed_count_today + @remaining_count_today) /
+                           employee_total
+    end
+    per_employee_quota
+  end
+  helper_method :total_assigned_issues
 
   # sets a task completion status and updates the claim establishment
   # for a task if it exists.

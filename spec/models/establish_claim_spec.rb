@@ -36,7 +36,95 @@ describe EstablishClaim do
   let(:special_issues) { {} }
   let(:ep_code) { nil }
 
-  context ".actions_taken" do
+  context "#perform!" do
+    # Stub the id of the end product being created
+    before do
+      Fakes::AppealRepository.end_product_claim_id = "12345"
+    end
+
+    let(:claim_params) do
+      {
+        date: "03/03/2017",
+        end_product_code: "172BVAG",
+        end_product_label: "BVA Grant",
+        end_product_modifier: claim_modifier,
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false,
+        station_of_jurisdiction: "499"
+      }
+    end
+
+    let(:dispatched_to_station) { nil }
+    let(:aasm_state) { :started }
+    let(:claim_modifier) { "170" }
+
+    subject { establish_claim.perform!(claim_params) }
+
+    context "when claim is valid" do
+      it "sets status to reviewed and saves appropriate records" do
+        subject
+
+        expect(establish_claim.reload.reviewed?).to be_truthy
+        expect(establish_claim.outgoing_reference_id).to eq("12345")
+        expect(appeal.reload.dispatched_to_station).to eq("499")
+        expect(claim_establishment.reload.ep_code).to eq("172BVAG")
+      end
+    end
+
+    context "when claim is invalid" do
+      let(:claim_modifier) { nil }
+
+      it "raises InvalidClaimError and rolls back DB changes" do
+        expect { subject }.to raise_error(EstablishClaim::InvalidClaimError)
+      end
+    end
+
+    context "when VBMS throws an error" do
+      before do
+        allow(Appeal.repository).to receive(:establish_claim!).and_raise(vbms_error)
+
+        # Save objects to test DB rollback stuff
+        establish_claim.save!
+        appeal.save!
+      end
+
+      let(:vbms_error) { VBMS::HTTPError.new("500", "some error") }
+
+      it "rolls back DB changes" do
+        expect { subject }.to raise_error(VBMS::HTTPError)
+
+        expect(establish_claim.reload).to_not be_reviewed
+        expect(establish_claim.outgoing_reference_id).to be_nil
+        expect(appeal.reload.dispatched_to_station).to be_nil
+        expect(claim_establishment.reload.ep_code).to be_nil
+      end
+
+      context "EP already exists error" do
+        let(:vbms_error) do
+          VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
+            "A duplicate claim for this EP code already exists in CorpDB. Please " \
+            "use a different EP code modifier. GUID: 13fcd</faultstring>")
+        end
+
+        it "raises EndProductAlreadyExistsError" do
+          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        end
+      end
+
+      context "EP already exists in BGS error" do
+        let(:vbms_error) do
+          VBMS::HTTPError.new("500", "<faultstring>Claim not established." \
+            " BGS code; PIF is already in use.</faultstring>")
+        end
+
+        it "raises EndProductAlreadyExistsError" do
+          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        end
+      end
+    end
+  end
+
+  context "#actions_taken" do
     subject { establish_claim.actions_taken }
 
     context "when complete" do

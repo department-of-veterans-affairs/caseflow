@@ -19,7 +19,7 @@ RSpec.feature "Start Certification" do
     expect(page).to have_current_path("/unauthorized")
   end
 
-  scenario "Starting a Certification v2" do
+  scenario "Starting a Certification v2", retry: 5 do
     User.authenticate!(roles: ["Certify Appeal", "CertificationV2"])
     Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
 
