@@ -261,3 +261,15 @@ select {
     margin-bottom: .75em;
   }
 }
+
+// caseflow-commons - replace exising rule with this one:
+.usa-input-error [type="radio"] {
+  + label::before {
+    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
+  }
+}
+
+// caseflow-commons
+.cf-secondary-disabled {
+  opacity: .25;
+}

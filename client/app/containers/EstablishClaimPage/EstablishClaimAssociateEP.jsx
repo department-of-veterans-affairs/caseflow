@@ -43,12 +43,30 @@ export default class AssociatePage extends React.Component {
           app="dispatch"
           id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
           name="Assign to Claim"
-          classNames={["usa-button-outline"]}
+          classNames={
+            this.getClassAssignButtonClasses(
+              this.state.epLoading,
+              endProduct.benefit_claim_id
+            )
+          }
           onClick={this.handleAssignEndProduct(endProduct)}
           loading={this.state.epLoading === endProduct.benefit_claim_id}
         />
     }
   ];
+
+  getClassAssignButtonClasses = (loadingFlag, claimId) => {
+    let classes = ["usa-button-outline"];
+
+    if (loadingFlag) {
+      classes.push("usa-button-disabled");
+      if (loadingFlag !== claimId) {
+        classes.push("cf-secondary-disabled");
+      }
+    }
+
+    return classes;
+  }
 
   handleAssignEndProduct = (endProduct) => (event) => {
     let { id } = this.props.task;
@@ -70,15 +88,18 @@ export default class AssociatePage extends React.Component {
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
       { data }).then(() => {
         window.location.reload();
-      }, () => {
         this.setState({
           epLoading: null
         });
+      }, () => {
         handleAlert(
           'error',
           'Error',
           'There was an error while assigning the EP. Please try again later'
         );
+        this.setState({
+          epLoading: null
+        });
       });
   }
 
@@ -159,7 +180,7 @@ export default class AssociatePage extends React.Component {
             app="dispatch"
             name="Create new EP"
             onClick={handleSubmit}
-            disabled={!hasAvailableModifers}
+            disabled={!hasAvailableModifers || (this.state.epLoading !== null)}
             loading={loading}
           />
         </div>

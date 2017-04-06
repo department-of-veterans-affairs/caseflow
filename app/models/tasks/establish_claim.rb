@@ -1,5 +1,10 @@
+require "vbms"
+
 class EstablishClaim < Task
   include CachedAttributes
+
+  class InvalidClaimError < StandardError; end
+  class EndProductAlreadyExistsError < StandardError; end
 
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
@@ -31,6 +36,26 @@ class EstablishClaim < Task
     )
   end
 
+  # Core method responsible for API call to VBMS to create the end product
+  # On success, will update the DB with the data related to the outcome
+  def perform!(claim_params)
+    claim = Dispatch::Claim.new(claim_params)
+
+    fail InvalidClaimError unless claim.valid?
+
+    transaction do
+      appeal.update!(dispatched_to_station: claim.station_of_jurisdiction)
+      update_claim_establishment!(ep_code: claim.end_product_code)
+
+      establish_claim_in_vbms(claim).tap do |end_product|
+        review!(outgoing_reference_id: end_product.claim_id)
+      end
+    end
+
+  rescue VBMS::HTTPError => error
+    raise parse_vbms_error(error)
+  end
+
   def actions_taken
     [
       decision_reviewed_action_description,
@@ -57,6 +82,21 @@ class EstablishClaim < Task
   end
 
   private
+
+  def establish_claim_in_vbms(claim)
+    Appeal.repository.establish_claim!(claim: claim.to_hash, appeal: appeal)
+  end
+
+  def parse_vbms_error(error)
+    case error.body
+    when /PIF is already in use/
+      return EndProductAlreadyExistsError
+    when /A duplicate claim for this EP code already exists/
+      return EndProductAlreadyExistsError
+    else
+      return error
+    end
+  end
 
   def decision_reviewed_action_description
     completed? ? "Reviewed #{cached_decision_type} decision" : nil

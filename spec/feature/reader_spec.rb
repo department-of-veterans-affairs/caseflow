@@ -45,8 +45,8 @@ RSpec.feature "Reader" do
     # Click on the link to the first file
     click_on documents[0].filename
 
-    # Ensure PDF content loads
-    expect(page).to have_content("Important Decision Document!!!")
+    # Ensure PDF content loads (using :all because the text is hidden)
+    expect(page).to have_content(:all, "Important Decision Document!!!")
 
     # Add a comment
     click_on "+ Add a Comment"
