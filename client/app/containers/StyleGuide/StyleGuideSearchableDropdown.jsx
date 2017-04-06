@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-const REQUIRED_ERROR_MESSAGE = "This field is required";
-
 class StyleGuideSearchableDropdown extends Component {
   constructor(props) {
     super(props);
@@ -13,8 +11,8 @@ class StyleGuideSearchableDropdown extends Component {
     };
   }
 
-  onChange(value) {
-    console.log(value);
+  onChange = (value) => {
+    return value;
   }
 
   render() {
