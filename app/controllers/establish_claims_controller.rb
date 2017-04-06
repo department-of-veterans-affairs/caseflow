@@ -58,7 +58,7 @@ class EstablishClaimsController < TasksController
   # :nocov:
 
   def update_employee_count
-    Rails.cache.write("employee_count", params[:count])
+    Rails.cache.write("employee_count", params[:count], expires_in: nil)
     render json: {}
   end
 
