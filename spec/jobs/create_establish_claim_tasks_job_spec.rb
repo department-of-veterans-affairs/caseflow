@@ -6,14 +6,22 @@ describe CreateEstablishClaimTasksJob do
 
     FeatureToggle.enable!(:dispatch_full_grants)
     FeatureToggle.enable!(:dispatch_partial_grants_remands)
-    @remand = Fakes::AppealRepository.new("123C", :appeal_remand_decided)
-    @full_grant = Fakes::AppealRepository.new("456D", :appeal_full_grant_decided, decision_date: 1.day.ago)
+  end
 
-    allow(AppealRepository).to receive(:remands_ready_for_claims_establishment).and_return([@remand])
-    allow(AppealRepository).to receive(:amc_full_grants).and_return([@full_grant])
+  let!(:remand) { Generators::Appeal.build({vacols_record: :remand_decided}) }
+
+  let!(:full_grant) do
+    Generators::Appeal.build({
+      vacols_record: {template: :full_grant_decided, decision_date: 1.day.ago}
+    })
   end
 
   context ".perform" do
+    before do
+      allow(AppealRepository).to receive(:remands_ready_for_claims_establishment).and_return([remand])
+      allow(AppealRepository).to receive(:amc_full_grants).and_return([full_grant])
+    end
+
     it "finds or creates tasks" do
       expect(EstablishClaim.count).to eq(0)
       CreateEstablishClaimTasksJob.perform_now

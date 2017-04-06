@@ -328,9 +328,13 @@ describe Task do
   context "#prepare_with_decision!" do
     subject { task.prepare_with_decision! }
 
+    let(:appeal) do
+      Generators::Appeal.create(
+        vacols_record: {template: :partial_grant_decided, decision_date: 7.days.ago},
+        documents: documents
+      )
+    end
     let(:task) { EstablishClaim.create(appeal: appeal) }
-    let(:appeal) { Generators::Appeal.create(vacols_record: vacols_record, documents: documents) }
-    let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
     context "if the task's appeal has no decisions" do
       let(:documents) { [] }

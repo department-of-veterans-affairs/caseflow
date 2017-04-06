@@ -7,14 +7,14 @@ describe PrepareEstablishClaimTasksJob do
 
   let!(:appeal_with_decision_document) do
     Generators::Appeal.create(
-      vacols_record: Fakes::AppealRepository.appeal_remand_decided,
+      vacols_record: {template: :remand_decided, decision_date: 7.days.ago},
       documents: [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
     )
   end
 
   let!(:appeal_without_decision_document) do
     Generators::Appeal.create(
-      vacols_record: Fakes::AppealRepository.appeal_remand_decided,
+      vacols_record: :remand_decided,
       documents: [Generators::Document.build(type: "BVA Decision", received_at: 31.days.ago)]
     )
   end

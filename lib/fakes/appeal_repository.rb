@@ -84,6 +84,7 @@ class Fakes::AppealRepository
 
     # This is bad. I'm sorry
     record.delete(:vbms_id) if Rails.env.development?
+
     appeal.assign_from_vacols(record)
   end
 
@@ -130,13 +131,11 @@ class Fakes::AppealRepository
   end
 
   def self.remands_ready_for_claims_establishment
-    [@records["321C"]]
+    []
   end
 
   def self.amc_full_grants(outcoded_after:)
-    # Technically we reference the outcoding date in this method, but for the sake
-    # of testing we can just compare to the appeal.decision_date
-    [@records["654C"]].select { |appeal| appeal.decision_date > outcoded_after }
+    []
   end
 
   def self.uncertify(_appeal)
@@ -255,56 +254,6 @@ class Fakes::AppealRepository
     }
   end
 
-  def self.appeal_remand_decided
-    {
-      vbms_id: "REMAND_VBMS_ID",
-      type: "Original",
-      status: "Remand",
-      disposition: "Remanded",
-      decision_date: 7.days.ago,
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "RO13"
-    }
-  end
-
-  def self.appeal_partial_grant_decided(vbms_id: "REMAND_VBMS_ID")
-    {
-      vbms_id: vbms_id,
-      type: "Original",
-      status: "Remand",
-      disposition: "Allowed",
-      decision_date: 7.days.ago,
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "RO13"
-    }
-  end
-
-  def self.appeal_full_grant_decided
-    {
-      vbms_id: "FULLGRANT_VBMS_ID",
-      type: "Post Remand",
-      status: "Complete",
-      disposition: "Allowed",
-      decision_date: 7.days.ago,
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "RO13",
-      documents: [nod_document, soc_document, form9_document, decision_document],
-      outcoding_date: 2.days.ago
-    }
-  end
-
   def self.issues(_vacols_id)
     [
       VACOLS::Issue.format(
@@ -321,31 +270,6 @@ class Fakes::AppealRepository
         "issdc" => "Allowed"
       )
     ]
-  end
-
-  def self.first_names
-    %w(George John Thomas James Andrew Martin)
-  end
-
-  def self.last_names
-    %w(Washington Adams Jefferson Madison Jackson VanBuren)
-  end
-
-  def self.appeals_for_tasks_types
-    [
-      appeal_full_grant_decided,
-      appeal_partial_grant_decided,
-      appeal_remand_decided
-    ]
-  end
-
-  def self.appeals_for_tasks(index)
-    appeal = appeals_for_tasks_types[index % 3]
-
-    appeal.merge(
-      veteran_last_name: last_names[index % last_names.length],
-      veteran_first_name: first_names[index % first_names.length]
-    )
   end
 
   def self.appeal_raises_vbms_error
@@ -432,41 +356,39 @@ class Fakes::AppealRepository
   end
 
   def self.seed!
-    unless Rails.env.test?
+    return if Rails.env.test?
 
-      self.records = {
-        "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
-        "124C" => Fakes::AppealRepository.appeal_ready_to_certify_with_informal_form9,
-        "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
-        "789C" => Fakes::AppealRepository.appeal_already_certified,
-        "321C" => Fakes::AppealRepository.appeal_remand_decided,
-        "654C" => Fakes::AppealRepository.appeal_full_grant_decided,
-        "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
-        "001ERR" => Fakes::AppealRepository.appeal_missing_data
-      }
-      documents = [
-        nod_document,
-        soc_document,
-        form9_document,
-        decision_document
-      ]
-      documents_multiple_decisions = documents.dup.push(decision_document2)
+    self.records = {
+      "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
+      "124C" => Fakes::AppealRepository.appeal_ready_to_certify_with_informal_form9,
+      "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
+      "789C" => Fakes::AppealRepository.appeal_already_certified,
+      "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
+      "001ERR" => Fakes::AppealRepository.appeal_missing_data
+    }
 
-      self.document_records ||= {}
+    seed_establish_claim_data!
+  end
 
-      50.times.each do |i|
-        @records["vacols_id#{i}"] = appeals_for_tasks(i)
-        # Make every other case have two decision documents
-        self.document_records["vbms_id#{i}"] =
-          if i.even?
-            documents
-          else
-            documents_multiple_decisions
-          end
-      end
+  private
 
-      self.document_records["FULLGRANT_VBMS_ID"] = documents_multiple_decisions
+  def self.establish_claim_documents
+    [nod_document, soc_document, form9_document, decision_document]
+  end
+
+  def self.   establish_claim_multiple_decisions
+    [nod_document, soc_document, form9_document, decision_document, decision_document2]
+  end
+
+  def self.seed_establish_claim_data!
+    # Make every other case have two decision documents
+    50.times.each do |i|
+      Generators::Appeal.build(
+        vacols_id: "vacols_id#{i}",
+        vbms_id: "vbms_id#{i}",
+        vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
+        documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
+      )
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end
