@@ -142,7 +142,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "Cancel a claims establishment", retry: 5 do
+    scenario "Cancel a claims establishment" do
       task.assign!(:assigned, current_user)
 
       # The cancel button is the same on both the review and form pages, so one test
@@ -263,7 +263,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
       end
 
-      scenario "Establish a new claim with special issue routed to ROJ", retry: 5 do
+      scenario "Establish a new claim with special issue routed to ROJ" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -534,7 +534,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP", retry: 5 do
+        scenario "Establish a new claim defaults to creating a 171 EP" do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           safe_click_on "Route claim"
