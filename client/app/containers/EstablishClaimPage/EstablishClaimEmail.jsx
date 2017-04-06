@@ -169,7 +169,7 @@ EstablishClaimEmail.propTypes = {
   appeal: PropTypes.object.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
-  backToDecisionReview: PropTypes.string.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleEmailSubmit: PropTypes.func.isRequired,
   handleNoEmailSubmit: PropTypes.func.isRequired,
   regionalOffice: PropTypes.string,

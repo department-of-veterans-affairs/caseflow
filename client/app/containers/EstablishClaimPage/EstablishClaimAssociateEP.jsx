@@ -196,7 +196,7 @@ AssociatePage.propTypes = {
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
-  backToDecisionReview: PropTypes.string.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,

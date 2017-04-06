@@ -114,7 +114,7 @@ EstablishClaimForm.propTypes = {
   claimForm: PropTypes.object.isRequired,
   claimLabelValue: PropTypes.string.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
-  backToDecisionReview: PropTypes.string.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
