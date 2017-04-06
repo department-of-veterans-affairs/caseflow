@@ -728,6 +728,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimNote
             loading={this.state.loading}
             appeal={this.props.task.appeal}
+            decisionType={this.state.reviewForm.decisionType.value}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
