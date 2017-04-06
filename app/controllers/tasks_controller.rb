@@ -17,6 +17,8 @@ class TasksController < ApplicationController
   end
 
   def update_appeal
+    return render json: { error_code: "task_already_completed" }, status: 500 if task.completed?
+
     task.appeal.update!(special_issues_params)
     render json: {}
   end
@@ -135,7 +137,7 @@ class TasksController < ApplicationController
   def verify_not_complete
     return true unless task.completed?
 
-    redirect_to complete_establish_claim_path(task)
+    render json: { error_code: "task_already_completed" }, status: 500
   end
 
   def cancel_feedback
