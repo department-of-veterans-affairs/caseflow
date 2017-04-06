@@ -7,6 +7,7 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -45,6 +46,9 @@ export default class StyleGuideIndex extends React.Component {
             <li>
               <a href="#text_input">Text Input</a>
             </li>
+            <li>
+              <a href="#searchable_dropdown">Searchable Dropdown</a>
+            </li>
           </ul>
       </div>
       <div className="cf-push-right cf-sg-content">
@@ -79,6 +83,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
         <div className="cf-help-divider"></div>
         <StyleGuideTextInput />
+        <div className="cf-help-divider"></div>
+        <StyleGuideSearchableDropdown />
     </div>
     </div>;
   }
