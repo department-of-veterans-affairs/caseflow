@@ -1,7 +1,7 @@
 require "rails_helper"
 require "vbms"
 
-RSpec.feature "Establish Claim - ARC Dispatch" do
+RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -11,6 +11,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
+
+    Capybara.current_driver = :poltergeist
   end
 
   let(:case_worker) do
@@ -125,6 +127,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
+
+      puts page.current_path
+      puts page.html
       safe_click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
