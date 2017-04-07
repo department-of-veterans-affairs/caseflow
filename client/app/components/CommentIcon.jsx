@@ -7,8 +7,14 @@ export default class CommentIcon extends React.Component {
   }
 
   onDragStart = (event) => {
-    event.dataTransfer.setData('text/plain', 'Random Text');
-    this.props.onDragStart(this.props.uuid, this.props.page, event);
+    let data = {
+      uuid: this.props.uuid,
+      iconCoordinates: {
+        x: event.pageX - event.target.getBoundingClientRect().left,
+        y: event.pageY - event.target.getBoundingClientRect().top
+      }
+    };
+    event.dataTransfer.setData('text', JSON.stringify(data));
   }
 
   render = () => {
@@ -32,7 +38,6 @@ export default class CommentIcon extends React.Component {
 CommentIcon.propTypes = {
   selected: PropTypes.bool,
   onClick: PropTypes.func,
-  onDragStart: PropTypes.func,
   position: PropTypes.shape({
     x: PropTypes.number,
     y: PropTypes.number

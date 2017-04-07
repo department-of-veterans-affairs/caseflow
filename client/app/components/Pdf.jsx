@@ -251,42 +251,25 @@ export default class Pdf extends React.Component {
     }
   }
 
-  // Record the start coordinates of a drag
-  onCommentDragStart = (uuid, page, event) => {
-    this.draggingComment = {
-      uuid,
-      page,
-      startCoordinates: {
-        x: event.pageX,
-        y: event.pageY
-      }
-    };
-  }
-
   // Move the comment when it's dropped on a page
-  onCommentDrop = (event) => {
+  onCommentDrop = (pageNumber) => (event) => {
     event.preventDefault();
+    let data = JSON.parse(event.dataTransfer.getData('text'));
+    let pageBox = document.getElementById(`pageContainer${pageNumber}`).getBoundingClientRect();
 
-    let scaledchangeInCoordinates = {
-      deltaX: (event.pageX - this.draggingComment.startCoordinates.x) /
-        this.props.scale,
-      deltaY: (event.pageY - this.draggingComment.startCoordinates.y) /
-        this.props.scale
+    let coordinates = {
+      x: (event.pageX - pageBox.left - data.iconCoordinates.x) / this.props.scale,
+      y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
 
-    this.props.onIconMoved(this.draggingComment.uuid, scaledchangeInCoordinates);
-    this.draggingComment = null;
+    this.props.onIconMoved(data.uuid, coordinates, pageNumber);
   }
 
-  onPageDragOver = (pageIndex) => (event) => {
-    // If the user is dragging a comment over the page the comment is on,
-    // we preventDefault in order to allow drops on that page.
-    // PreventDefault on dragOver event handlers mean this component can be
-    // dropped on. The cursor will display a + icon over droppable components.
-    // We only want the current page to be droppable.
-    if (pageIndex === this.draggingComment.page) {
-      event.preventDefault();
-    }
+  onPageDragOver = (event) => {
+    // The cursor will display a + icon over droppable components.
+    // To specify the component as droppable, we need to preventDefault
+    // on the event.
+    event.preventDefault();
   }
 
   render() {
@@ -308,8 +291,7 @@ export default class Pdf extends React.Component {
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
-          onClick={this.props.onCommentClick}
-          onDragStart={this.onCommentDragStart} />);
+          onClick={this.props.onCommentClick} />);
 
       return acc;
     }, {});
@@ -318,8 +300,8 @@ export default class Pdf extends React.Component {
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
         className="cf-pdf-pdfjs-container page"
-        onDragOver={this.onPageDragOver(pageNumber)}
-        onDrop={this.onCommentDrop}
+        onDragOver={this.onPageDragOver}
+        onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
         onClick={this.onPageClick(pageNumber)}
         id={`pageContainer${pageNumber}`}
