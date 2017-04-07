@@ -234,7 +234,7 @@ class Fakes::AppealRepository
 
   def self.seed_appeal_already_certified!
     Generators::Appeal.build(
-      vacols_id: "456C",
+      vacols_id: "789C",
       vacols_record: :certified
     )
   end
