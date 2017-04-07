@@ -88,7 +88,7 @@ export default class EstablishClaimEmail extends BaseForm {
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-left">
             <Button
-              name="< Back to Decision Review"
+              name={this.props.backToDecisionReviewText}
               onClick={this.props.handleBackToDecisionReview}
               classNames={["cf-btn-link"]}
             />
@@ -138,7 +138,7 @@ export default class EstablishClaimEmail extends BaseForm {
           <div className="cf-app-segment" id="establish-claim-buttons">
             <div className="cf-push-left">
               <Button
-                name="< Back to Decision Review"
+                name={this.props.backToDecisionReviewText}
                 onClick={this.props.handleBackToDecisionReview}
                 classNames={["cf-btn-link"]}
               />
@@ -169,6 +169,7 @@ EstablishClaimEmail.propTypes = {
   appeal: PropTypes.object.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleEmailSubmit: PropTypes.func.isRequired,
   handleNoEmailSubmit: PropTypes.func.isRequired,
   regionalOffice: PropTypes.string,
