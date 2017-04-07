@@ -29,6 +29,9 @@ class Generators::Appeal
       }
     end
 
+    # This is a method and not a constant because Datetime values need
+    # to be evaluated lazily. Would be nice to have a better solution
+    # rubocop:disable Metrics/MethodLength
     def vacols_record_templates
       {
         ready_to_certify: {
@@ -62,6 +65,7 @@ class Generators::Appeal
         }
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Build an appeal and set up the correct faked data in AppealRepository
     # @attrs - the hash of arguments passed into `Appeal#new` with a few exceptions:
