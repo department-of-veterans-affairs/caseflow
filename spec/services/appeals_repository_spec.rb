@@ -95,7 +95,6 @@ describe AppealRepository do
       allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     end
 
-
     subject do
       appeal = Appeal.new
       AppealRepository.set_vacols_values(
@@ -179,7 +178,7 @@ describe AppealRepository do
     before { Appeal.repository = Fakes::AppealRepository }
 
     let(:appeal) do
-      Generators::Appeal.build({vacols_record: vacols_record}.merge(special_issues))
+      Generators::Appeal.build({ vacols_record: vacols_record }.merge(special_issues))
     end
 
     let(:special_issues) { {} }

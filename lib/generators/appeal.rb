@@ -2,6 +2,18 @@ class Generators::Appeal
   extend Generators::Base
 
   VACOLS_RECORD_TEMPLATES = {
+    ready_to_certify: {
+      status: "Advance",
+      disposition: "Denied",
+      # Check that this doesn't actually come through as a number type
+      insurance_loan_number: "1234",
+      notification_date: 1.day.ago,
+      hearing_request_type: "Central office",
+      regional_office_key: "DSUSER"
+    },
+    certified: {
+      certification_date: 1.day.ago
+    },
     remand_decided: {
       status: "Remand",
       disposition: "Remanded",
@@ -19,7 +31,7 @@ class Generators::Appeal
       outcoding_date: 2.days.ago,
       decision_date: 7.days.ago
     }
-  }
+  }.freeze
 
   class << self
     def default_attrs
@@ -34,9 +46,13 @@ class Generators::Appeal
 
       {
         type: "Original",
+        file_type: "VBMS",
+        representative: "Military Order of the Purple Heart",
         veteran_first_name: generate_first_name,
+        veteran_middle_initial: "A",
         veteran_last_name: last_name,
         appellant_first_name: generate_first_name,
+        appellant_middle_initial: "A",
         appellant_last_name: last_name,
         appellant_relationship: "Child",
         regional_office_key: "RO13",
@@ -46,7 +62,7 @@ class Generators::Appeal
 
     # Build an appeal and set up the correct faked data in AppealRepository
     # @attrs - the hash of arguments passed into `Appeal#new` with a few exceptions:
-    #   - :vacols_record [Hash or Array] - 
+    #   - :vacols_record [Hash or Symbol] -
     #       Hash of the parsed values returned from AppealRepository from VACOLS or
     #       a symbol identifying the template used.
     #   - :documents [Array] - Array of `Document` objects returned from AppealsRepository from VBMS
@@ -58,15 +74,18 @@ class Generators::Appeal
     #
     # # Sets vacols_record with a custom first name + the defaults
     # Generators::Appeal.build({veteran_first_name: "Marky"})
-    # 
+    #
     # # Sets vacols_record with a custom decision_date + :remand_decided template + defaults
     # Generators::Appeal.build(vacols_record: {template: :remand_decided, decision_date: 1.day.ago})
     #
     def build(attrs = {})
       vacols_record = extract_vacols_record(attrs)
 
+      attrs = default_attrs.merge(attrs)
       documents = attrs.delete(:documents)
-      appeal = Appeal.new(default_attrs.merge(attrs))
+
+      cast_datetime_fields(attrs)
+      appeal = Appeal.new(attrs)
 
       vacols_record[:vbms_id] = appeal.vbms_id
 
@@ -81,14 +100,21 @@ class Generators::Appeal
 
     private
 
+    # Make sure Datetime fields are all casted correctly
+    def cast_datetime_fields(attrs)
+      [:nod_date, :soc_date, :form9_date].each do |date_field|
+        attrs[date_field] = attrs[date_field].to_datetime if attrs[date_field]
+      end
+    end
+
     def extract_vacols_record(attrs)
       vacols_record = attrs.delete(:vacols_record)
 
       template_key, vacols_record = if vacols_record.is_a?(Hash)
-        [vacols_record.delete(:template), vacols_record]
-      else
-        [vacols_record, {}]
-      end
+                                      [vacols_record.delete(:template), vacols_record]
+                                    else
+                                      [vacols_record, {}]
+                                    end
 
       template = VACOLS_RECORD_TEMPLATES[template_key] || {}
 

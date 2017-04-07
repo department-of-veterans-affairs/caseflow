@@ -8,12 +8,10 @@ describe CreateEstablishClaimTasksJob do
     FeatureToggle.enable!(:dispatch_partial_grants_remands)
   end
 
-  let!(:remand) { Generators::Appeal.build({vacols_record: :remand_decided}) }
+  let!(:remand) { Generators::Appeal.build(vacols_record: :remand_decided) }
 
   let!(:full_grant) do
-    Generators::Appeal.build({
-      vacols_record: {template: :full_grant_decided, decision_date: 1.day.ago}
-    })
+    Generators::Appeal.build(vacols_record: { template: :full_grant_decided, decision_date: 1.day.ago })
   end
 
   context ".perform" do

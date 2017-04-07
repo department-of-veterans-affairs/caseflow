@@ -79,7 +79,6 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
-    # RAISE_VACOLS_NOT_FOUND_ID == record[:vacols_id]
     fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
     # This is bad. I'm sorry
@@ -134,124 +133,12 @@ class Fakes::AppealRepository
     []
   end
 
-  def self.amc_full_grants(outcoded_after:)
+  def self.amc_full_grants(*)
     []
   end
 
   def self.uncertify(_appeal)
     # noop
-  end
-
-  # TODO(mdbenjam): refactor this to map appeals to VACOLS ids?
-  # rubocop:disable Metrics/MethodLength
-  def self.appeal_ready_to_certify
-    {
-      vbms_id: "VBMS-ID",
-      type: VACOLS::Case::TYPES["1"], # Original
-      file_type: "VBMS",
-      representative: VACOLS::Case::REPRESENTATIVES["F"][:full_name], # Military Order of the Purple Heart
-      veteran_first_name: "Davy",
-      veteran_middle_initial: "Q",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_middle_initial: "X",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      insurance_loan_number: "1234", # Check that this doesn't actually come through as a number type
-      notification_date: 1.day.ago,
-      nod_date: 3.days.ago,
-      soc_date: Date.new(1987, 9, 6),
-      form9_date: 1.day.ago,
-      hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES["1"], # Central office
-      regional_office_key: "DSUSER",
-      documents: [nod_document, soc_document, form9_document],
-      disposition: VACOLS::Case::DISPOSITIONS["4"], # Denied
-      status: VACOLS::Case::STATUS["ADV"] # Advance
-    }
-  end
-
-  def self.appeal_ready_to_certify_with_informal_form9
-    appeal = appeal_ready_to_certify.clone
-    appeal[:documents] = [nod_document, soc_document, informal_form9_document]
-    appeal
-  end
-
-  def self.appeal_mismatched_nod
-    {
-      type: "Original",
-      file_type: "VBMS",
-      vbms_id: "VBMS-ID",
-      representative: "Military Order of the Purple Heart",
-      nod_date: 4.days.ago,
-      soc_date: Date.new(1987, 9, 6),
-      form9_date: 1.day.ago,
-      notification_date: 1.day.ago,
-      documents: [nod_document, soc_document, form9_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
-    }
-  end
-
-  def self.appeal_mismatched_ssoc
-    {
-      type: "Original",
-      file_type: "VBMS",
-      representative: "Military Order of the Purple Heart",
-      nod_date: 3.days.ago,
-      soc_date: Date.new(1987, 9, 6),
-      form9_date: 1.day.ago,
-      ssoc_dates: [6.days.from_now, 7.days.from_now],
-      documents: [nod_document, soc_document, form9_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
-    }
-  end
-
-  def self.appeal_mismatched_docs
-    {
-      type: "Original",
-      file_type: "VBMS",
-      representative: "Military Order of the Purple Heart",
-      nod_date: 1.day.ago,
-      soc_date: Date.new(1987, 9, 7),
-      form9_date: 1.day.ago,
-      ssoc_dates: [6.days.from_now, 7.days.from_now],
-      documents: [nod_document, soc_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
-    }
-  end
-
-  def self.appeal_already_certified
-    {
-      type: :original,
-      file_type: :vbms,
-      vbms_id: "VBMS-ID",
-      representative: "Military Order of the Purple Heart",
-      nod_date: 3.days.ago,
-      soc_date: Date.new(1987, 9, 6),
-      certification_date: 1.day.ago,
-      form9_date: 1.day.ago,
-      documents: [nod_document, soc_document, form9_document],
-      veteran_first_name: "Davy",
-      veteran_last_name: "Crockett",
-      appellant_first_name: "Susie",
-      appellant_last_name: "Crockett",
-      appellant_relationship: "Daughter",
-      regional_office_key: "DSUSER"
-    }
   end
 
   def self.issues(_vacols_id)
@@ -272,112 +159,35 @@ class Fakes::AppealRepository
     ]
   end
 
-  def self.appeal_raises_vbms_error
-    a = appeal_ready_to_certify
-    a[:vbms_id] = RAISE_VBMS_ERROR_ID
-    a
-  end
-
-  def self.appeal_missing_data
-    a = appeal_ready_to_certify
-    a[:form9_date] = nil
-    a
-  end
-
-  def self.nod_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "73",
-        received_at: 3.days.ago,
-        document_id: "1",
-        filename: "My_NOD"
-      )
-    )
-  end
-
-  def self.form9_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "179",
-        received_at: 1.day.ago,
-        document_id: "2",
-        filename: "Form_9"
-      )
-    )
-  end
-
-  def self.informal_form9_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "179",
-        received_at: 1.day.ago,
-        document_id: "3",
-        filename: "Form_9"
-      )
-    )
-  end
-
-  def self.decision_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "27",
-        received_at: 7.days.ago,
-        document_id: "4",
-        filename: "My_Decision"
-      )
-    )
-  end
-
-  # TODO: get a mock SOC
-  def self.soc_document
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "95",
-        received_at: Date.new(1987, 9, 6),
-        document_id: "5",
-        filename: "My_SOC"
-      )
-    )
-  end
-
-  def self.decision_document2
-    Document.from_vbms_document(
-      OpenStruct.new(
-        doc_type: "27",
-        received_at: 8.days.ago,
-        document_id: "1001",
-        filename: "My_Decision2"
-      )
-    )
-  end
-
-  def self.set_vbms_documents!
-    @documents = [nod_document, soc_document, form9_document, decision_document]
-  end
+  ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
+  # TODO: pull seed scripts into seperate object/module?
 
   def self.seed!
     return if Rails.env.test?
 
-    self.records = {
-      "123C" => Fakes::AppealRepository.appeal_ready_to_certify,
-      "124C" => Fakes::AppealRepository.appeal_ready_to_certify_with_informal_form9,
-      "456C" => Fakes::AppealRepository.appeal_mismatched_docs,
-      "789C" => Fakes::AppealRepository.appeal_already_certified,
-      "000ERR" => Fakes::AppealRepository.appeal_raises_vbms_error,
-      "001ERR" => Fakes::AppealRepository.appeal_missing_data
-    }
-
+    seed_certification_data!
     seed_establish_claim_data!
   end
 
-  private
-
-  def self.establish_claim_documents
-    [nod_document, soc_document, form9_document, decision_document]
+  def self.certification_documents
+    [
+      Generators::Document.build(type: "NOD"),
+      Generators::Document.build(type: "SOC"),
+      Generators::Document.build(type: "Form 9")
+    ]
   end
 
-  def self.   establish_claim_multiple_decisions
-    [nod_document, soc_document, form9_document, decision_document, decision_document2]
+  def self.establish_claim_documents
+    certification_documents + [
+      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
+    ]
+  end
+
+  def self.establish_claim_multiple_decisions
+    certification_documents + [
+      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago),
+      Generators::Document.build(type: "BVA Decision", received_at: 8.days.ago)
+    ]
   end
 
   def self.seed_establish_claim_data!
@@ -390,5 +200,91 @@ class Fakes::AppealRepository
         documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
       )
     end
+  end
+
+  def self.seed_appeal_ready_to_certify!
+    nod, soc, form9 = certification_documents
+
+    Generators::Appeal.build(
+      vacols_id: "123C",
+      vacols_record: {
+        template: :ready_to_certify,
+        nod_date: nod.received_at,
+        soc_date: soc.received_at,
+        form9_date: form9.received_at
+      },
+      documents: [nod, soc, form9]
+    )
+  end
+
+  def self.seed_appeal_mismatched_documents!
+    nod, soc, form9 = certification_documents
+
+    Generators::Appeal.build(
+      vacols_id: "456C",
+      vacols_record: {
+        template: :ready_to_certify,
+        nod_date: nod.received_at,
+        soc_date: soc.received_at,
+        form9_date: form9.received_at
+      },
+      documents: [nod, soc]
+    )
+  end
+
+  def self.seed_appeal_already_certified!
+    Generators::Appeal.build(
+      vacols_id: "456C",
+      vacols_record: :certified
+    )
+  end
+
+  def self.seed_appeal_ready_to_certify_with_informal_form9!
+    nod, soc, form9 = certification_documents
+
+    form9.vbms_document_id = "3"
+
+    Generators::Appeal.build(
+      vacols_id: "124C",
+      vacols_record: {
+        template: :ready_to_certify,
+        nod_date: nod.received_at,
+        soc_date: soc.received_at,
+        form9_date: form9.received_at
+      },
+      documents: [nod, soc, form9]
+    )
+  end
+
+  def self.seed_appeal_raises_vbms_error!
+    nod, soc, form9 = certification_documents
+
+    Generators::Appeal.build(
+      vacols_id: "000ERR",
+      vbms_id: Fakes::AppealRepository::RAISE_VBMS_ERROR_ID,
+      vacols_record: {
+        template: :ready_to_certify,
+        nod_date: nod.received_at,
+        soc_date: soc.received_at,
+        form9_date: form9.received_at
+      },
+      documents: [nod, soc, form9]
+    )
+  end
+
+  def self.seed_appeal_not_ready!
+    Generators::Appeal.build(
+      vacols_id: "001ERR",
+      vacols_record: :not_ready_to_certify
+    )
+  end
+
+  def self.seed_certification_data!
+    seed_appeal_ready_to_certify!
+    seed_appeal_mismatched_documents!
+    seed_appeal_already_certified!
+    seed_appeal_ready_to_certify_with_informal_form9!
+    seed_appeal_raises_vbms_error!
+    seed_appeal_not_ready!
   end
 end

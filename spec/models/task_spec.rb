@@ -330,7 +330,7 @@ describe Task do
 
     let(:appeal) do
       Generators::Appeal.create(
-        vacols_record: {template: :partial_grant_decided, decision_date: 7.days.ago},
+        vacols_record: { template: :partial_grant_decided, decision_date: 7.days.ago },
         documents: documents
       )
     end

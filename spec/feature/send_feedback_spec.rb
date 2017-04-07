@@ -1,14 +1,11 @@
 require "rails_helper"
 
 RSpec.feature "Send feedback" do
-  before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-    Fakes::AppealRepository.records = { "ABCD" => Fakes::AppealRepository.appeal_ready_to_certify }
-  end
+  let!(:current_user) { User.authenticate! }
+  let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
   scenario "Sending feedback about Caseflow Certification" do
-    User.authenticate!
-    visit "certifications/new/ABCD"
+    visit "certifications/new/#{appeal.vacols_id}"
 
     expect(page).to have_link("Send feedback")
 
