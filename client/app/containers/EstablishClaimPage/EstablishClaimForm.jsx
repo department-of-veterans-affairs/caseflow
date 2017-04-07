@@ -38,6 +38,7 @@ export class EstablishClaimForm extends React.Component {
     // If there is no routed special issue override, use the default city/state
     if (!suffix) {
       let regionalOfficeKey = this.props.regionalOfficeKey;
+
       suffix = `${this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
           this.props.regionalOfficeCities[regionalOfficeKey].state}`;
     }
@@ -175,8 +176,8 @@ const mapDispatchToProps = (dispatch) => {
         }
       });
     }
-  }
-}
+  };
+};
 
 /*
  * Creates a component that's connected to the Redux store

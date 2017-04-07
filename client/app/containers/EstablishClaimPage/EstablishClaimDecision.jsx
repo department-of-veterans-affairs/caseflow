@@ -9,7 +9,6 @@ import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
 import * as Constants from '../../establishClaim/constants/constants';
-import { setStationOfJurisdictionAction } from '../../establishClaim/actions/actions';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {

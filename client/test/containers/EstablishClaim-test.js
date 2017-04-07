@@ -71,7 +71,7 @@ describe('EstablishClaim', () => {
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
-            value: '397',
+            value: '397'
           }
         });
         wrapper.setState({ page: FORM_PAGE });
@@ -188,7 +188,7 @@ describe('EstablishClaim', () => {
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
-            value: '397',
+            value: '397'
           }
         });
       });

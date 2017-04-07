@@ -5,11 +5,13 @@ describe('EstablishClaim Actions', () => {
   context('.setStationOfJurisdictionAction', () => {
     it('sets field key', () => {
       let action = Actions.setStationOfJurisdictionAction({}, '300');
+
       expect(action.payload.field).to.equal('stationOfJurisdiction');
     });
 
     it('defaults to ARC', () => {
       let action = Actions.setStationOfJurisdictionAction({}, '300');
+
       expect(action.payload.value).to.equal('397 - ARC');
     });
 
@@ -19,6 +21,7 @@ describe('EstablishClaim Actions', () => {
         { radiation: true },
         stationKey
       );
+
       expect(action.payload.value).to.equal(stationKey);
     });
 
@@ -27,6 +30,7 @@ describe('EstablishClaim Actions', () => {
         { foreignClaimCompensationClaimsDualClaimsAppeals: true },
         '300'
       );
+
       expect(action.payload.value).to.equal('311 - Pittsburgh, PA');
     });
 

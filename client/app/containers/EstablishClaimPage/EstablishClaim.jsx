@@ -14,7 +14,6 @@ import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
-import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
@@ -50,20 +49,6 @@ export const END_PRODUCT_INFO = {
   }
 };
 
-const FULL_GRANT_MODIFIER_OPTIONS = [
-  '172'
-];
-
-const PARTIAL_GRANT_MODIFIER_OPTIONS = [
-  '170',
-  '171',
-  '175',
-  '176',
-  '177',
-  '178',
-  '179'
-];
-
 const CREATE_EP_ERRORS = {
   "duplicate_ep": {
     header: 'At this time, we are unable to assign or create a new EP for this claim.',
@@ -97,8 +82,6 @@ export default class EstablishClaim extends BaseForm {
         decisionType: new FormField(decisionType)
       }
     };
-
-    let validModifiers = this.validModifiers();
 
     this.state = {
       ...this.state,
@@ -220,7 +203,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRoutingType = () => {
-    let stationOfJurisdiction = this.store.getState().establishClaimForm.stationOfJurisdiction;
+    let stationOfJurisdiction =
+      this.store.getState().establishClaimForm.stationOfJurisdiction;
 
     return stationOfJurisdiction === '397' ? "ARC" : "Routed";
   }
@@ -317,7 +301,7 @@ export default class EstablishClaim extends BaseForm {
     return validModifiers(
       this.props.task.appeal.pending_eps,
       this.props.task.appeal.decision_type
-    )
+    );
   }
 
 
@@ -528,6 +512,7 @@ export default class EstablishClaim extends BaseForm {
 
   prepareData() {
     let claim = this.store.getState().establishClaimForm;
+
     claim.date = this.formattedDecisionDate();
 
     // We have to add in the claimLabel separately, since it is derived from
@@ -589,7 +574,7 @@ export default class EstablishClaim extends BaseForm {
 
     let {
       pdfLink,
-      pdfjsLink,
+      pdfjsLink
     } = this.props;
 
     let specialIssues = this.store.getState().specialIssues;

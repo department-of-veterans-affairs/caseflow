@@ -35,7 +35,7 @@ const SPECIAL_ISSUES = [
     specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
     stationOfJurisdiction: {
       key: '311',
-      location:  'Pittsburgh, PA'
+      location: 'Pittsburgh, PA'
     },
     unhandled: null
   },
@@ -176,7 +176,7 @@ const SPECIAL_ISSUES = [
     display: 'U.S. Territory claim - Puerto Rico and Virgin Islands',
     specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
     stationOfJurisdiction: {
-      key:'355',
+      key: '355',
       location: 'San Juan, Puerto Rico'
     },
     unhandled: null

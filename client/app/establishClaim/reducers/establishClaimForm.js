@@ -17,11 +17,11 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
 ];
 
 export default function(state = getEstablishClaimFormInitialState(), action) {
-  switch(action.type) {
-    case Constants.CHANGE_ESTABLISH_CLAIM_FIELD:
-      return ReducerUtil.changeFieldValue(state, action);
-    default:
-      return state;
+  switch (action.type) {
+  case Constants.CHANGE_ESTABLISH_CLAIM_FIELD:
+    return ReducerUtil.changeFieldValue(state, action);
+  default:
+    return state;
   }
 }
 

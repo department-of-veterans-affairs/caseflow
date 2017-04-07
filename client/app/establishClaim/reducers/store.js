@@ -16,5 +16,5 @@ export const createEstablishClaimStore = (props) => {
       establishClaimForm: getEstablishClaimFormInitialState(props)
     },
     applyMiddleware(logger)
-  )
+  );
 };

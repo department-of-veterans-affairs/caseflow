@@ -30,5 +30,5 @@ export function setStationOfJurisdictionAction(specialIssues, stationKey) {
       field: 'stationOfJurisdiction',
       value: station
     }
-  }
+  };
 }
