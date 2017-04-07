@@ -9,6 +9,16 @@ class EstablishClaim < Task
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
+  class << self
+    def full_grant_tasks
+      joins(:claim_establishment).where(claim_establishments: {decision_type: 'Full Grant'})
+    end
+
+    def partial_grant_remand_tasks
+      joins(:claim_establishment).where(claim_establishments: {decision_type: ['Partial Grant', 'Remand']})
+    end
+  end
+
   cache_attribute :cached_decision_type do
     appeal.decision_type
   end
@@ -79,6 +89,11 @@ class EstablishClaim < Task
 
     claim_establishment.appeal = appeal
     claim_establishment.update!(attrs)
+  end
+
+  def time_to_establish_claim
+    return nil if !completed_at || !created_at
+    completed_at - created_at
   end
 
   private
