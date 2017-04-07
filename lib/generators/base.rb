@@ -17,6 +17,14 @@ module Generators::Base
     SecureRandom.hex[0..8]
   end
 
+  def generate_first_name
+    %w(George John Thomas James Andrew Martin Susan Barack Grace Anne).sample
+  end
+
+  def generate_last_name
+    %w(Washington King Jefferson Anthony Madison Jackson VanBuren Merica).sample
+  end
+
   def build(*)
     fail "#{self.class.name} must implement .build(attrs)"
   end
