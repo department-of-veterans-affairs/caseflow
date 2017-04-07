@@ -122,12 +122,11 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
     end
 
     scenario "Go back and forward in the browser" do
+      puts Fakes::AppealRepository.records.inspect
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
 
-      puts page.current_path
-      puts page.html
       safe_click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
