@@ -1,43 +1,12 @@
 class Generators::Appeal
   extend Generators::Base
 
-  VACOLS_RECORD_TEMPLATES = {
-    ready_to_certify: {
-      status: "Advance",
-      disposition: "Denied",
-      # Check that this doesn't actually come through as a number type
-      insurance_loan_number: "1234",
-      notification_date: 1.day.ago,
-      hearing_request_type: "Central office",
-      regional_office_key: "DSUSER"
-    },
-    certified: {
-      certification_date: 1.day.ago
-    },
-    remand_decided: {
-      status: "Remand",
-      disposition: "Remanded",
-      decision_date: 7.days.ago
-    },
-    partial_grant_decided: {
-      status: "Remand",
-      disposition: "Allowed",
-      decision_date: 7.days.ago
-    },
-    full_grant_decided: {
-      type: "Post Remand",
-      status: "Complete",
-      disposition: "Allowed",
-      outcoding_date: 2.days.ago,
-      decision_date: 7.days.ago
-    }
-  }.freeze
-
   class << self
     def default_attrs
       {
         vbms_id: generate_external_id,
-        vacols_id: generate_external_id
+        vacols_id: generate_external_id,
+        vacols_record: :ready_to_certify
       }
     end
 
@@ -60,6 +29,40 @@ class Generators::Appeal
       }
     end
 
+    def vacols_record_templates
+      {
+        ready_to_certify: {
+          status: "Advance",
+          disposition: "Denied",
+          # Check that this doesn't actually come through as a number type
+          insurance_loan_number: "1234",
+          notification_date: 1.day.ago,
+          hearing_request_type: "Central office",
+          regional_office_key: "DSUSER"
+        },
+        certified: {
+          certification_date: 1.day.ago
+        },
+        remand_decided: {
+          status: "Remand",
+          disposition: "Remanded",
+          decision_date: 7.days.ago
+        },
+        partial_grant_decided: {
+          status: "Remand",
+          disposition: "Allowed",
+          decision_date: 7.days.ago
+        },
+        full_grant_decided: {
+          type: "Post Remand",
+          status: "Complete",
+          disposition: "Allowed",
+          outcoding_date: 2.days.ago,
+          decision_date: 7.days.ago
+        }
+      }
+    end
+
     # Build an appeal and set up the correct faked data in AppealRepository
     # @attrs - the hash of arguments passed into `Appeal#new` with a few exceptions:
     #   - :vacols_record [Hash or Symbol] -
@@ -79,12 +82,12 @@ class Generators::Appeal
     # Generators::Appeal.build(vacols_record: {template: :remand_decided, decision_date: 1.day.ago})
     #
     def build(attrs = {})
-      vacols_record = extract_vacols_record(attrs)
-
       attrs = default_attrs.merge(attrs)
-      documents = attrs.delete(:documents)
 
+      vacols_record = extract_vacols_record(attrs)
+      documents = attrs.delete(:documents)
       cast_datetime_fields(attrs)
+
       appeal = Appeal.new(attrs)
 
       vacols_record[:vbms_id] = appeal.vbms_id
@@ -116,7 +119,7 @@ class Generators::Appeal
                                       [vacols_record, {}]
                                     end
 
-      template = VACOLS_RECORD_TEMPLATES[template_key] || {}
+      template = vacols_record_templates[template_key] || {}
 
       vacols_record_default_attrs.merge(template).merge(vacols_record)
     end

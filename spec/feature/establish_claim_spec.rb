@@ -225,7 +225,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Review Decision"
+        safe_click_on "< Back to Decision Review"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
@@ -542,7 +542,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          safe_click_on "< Back to Review Decision"
+          safe_click_on "< Back to Decision Review"
 
           expect(page).to have_content("Review Decision")
 

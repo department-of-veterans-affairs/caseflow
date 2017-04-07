@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Confirm Certification" do
+RSpec.feature "Confirm Certification", focus: true do
   let!(:current_user) { User.authenticate! }
 
   before do
