@@ -87,6 +87,8 @@ const CREATE_EP_ERRORS = {
   }
 };
 
+const BACK_TO_DECISION_REVIEW_TEXT = "< Back to Review Decision";
+
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
 // has been made. By establishing an EP, we ensure the appeal
@@ -735,6 +737,7 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             history={history}
             specialIssues={ApiUtil.convertToSnakeCase(
               this.getFormValues(this.state.specialIssues))}
@@ -749,6 +752,7 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             validModifiers={this.validModifiers()}
           />
         }
@@ -775,6 +779,7 @@ export default class EstablishClaim extends BaseForm {
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
         }
 
