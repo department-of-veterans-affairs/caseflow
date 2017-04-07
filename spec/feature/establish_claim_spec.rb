@@ -11,8 +11,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
 
     allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
-
-    Capybara.current_driver = :poltergeist
   end
 
   let(:case_worker) do
