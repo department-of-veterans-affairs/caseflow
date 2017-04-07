@@ -27,7 +27,7 @@ describe EstablishClaim do
     )
   end
 
-  let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+  let(:vacols_record) { :remand_decided }
   let(:dispatched_to_station) { "RO98" }
   let(:aasm_state) { :unassigned }
   let(:completion_status) { nil }
@@ -132,7 +132,7 @@ describe EstablishClaim do
       let(:completion_status) { :completed }
 
       context "when appeal is a Remand or Partial Grant" do
-        let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+        let(:vacols_record) { :remand_decided }
 
         it { is_expected.to include("Reviewed Remand decision") }
         it { is_expected.to include("VACOLS Updated: Changed Location to 98") }
@@ -154,7 +154,7 @@ describe EstablishClaim do
       end
 
       context "when appeal is a Full Grant" do
-        let(:vacols_record) { Fakes::AppealRepository.appeal_full_grant_decided }
+        let(:vacols_record) { :full_grant_decided }
 
         it { is_expected.to include("Reviewed Full Grant decision") }
         it { is_expected.to_not include(/VACOLS Updated/) }
