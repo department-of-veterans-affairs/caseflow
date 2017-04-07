@@ -1,7 +1,7 @@
 require "rails_helper"
 require "vbms"
 
-RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
+RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -122,7 +122,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
     end
 
     scenario "Go back and forward in the browser" do
-      puts Fakes::AppealRepository.records.inspect
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
@@ -225,7 +224,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Decision Review"
+        safe_click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
@@ -542,7 +541,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", focus: true do
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          safe_click_on "< Back to Decision Review"
+          safe_click_on "< Back to Review Decision"
 
           expect(page).to have_content("Review Decision")
 
