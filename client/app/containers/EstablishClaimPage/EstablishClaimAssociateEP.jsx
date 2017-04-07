@@ -44,12 +44,30 @@ export class AssociatePage extends React.Component {
           app="dispatch"
           id={`button-Assign-to-Claim${endProduct.benefit_claim_id}`}
           name="Assign to Claim"
-          classNames={["usa-button-outline"]}
+          classNames={
+            this.getClassAssignButtonClasses(
+              this.state.epLoading,
+              endProduct.benefit_claim_id
+            )
+          }
           onClick={this.handleAssignEndProduct(endProduct)}
           loading={this.state.epLoading === endProduct.benefit_claim_id}
         />
     }
   ];
+
+  getClassAssignButtonClasses = (loadingFlag, claimId) => {
+    let classes = ["usa-button-outline"];
+
+    if (loadingFlag) {
+      classes.push("usa-button-disabled");
+      if (loadingFlag !== claimId) {
+        classes.push("cf-secondary-disabled");
+      }
+    }
+
+    return classes;
+  }
 
   handleAssignEndProduct = (endProduct) => (event) => {
     let { id } = this.props.task;
@@ -71,15 +89,18 @@ export class AssociatePage extends React.Component {
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
       { data }).then(() => {
         window.location.reload();
-      }, () => {
         this.setState({
           epLoading: null
         });
+      }, () => {
         handleAlert(
           'error',
           'Error',
           'There was an error while assigning the EP. Please try again later'
         );
+        this.setState({
+          epLoading: null
+        });
       });
   }
 
@@ -95,6 +116,7 @@ export class AssociatePage extends React.Component {
       handleSubmit,
       handleCancelTask,
       handleBackToDecisionReview,
+      backToDecisionReviewText,
       hasAvailableModifers,
       loading
     } = this.props;
@@ -145,7 +167,7 @@ export class AssociatePage extends React.Component {
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-left">
           <Button
-            name="< Back to Decision Review"
+            name={backToDecisionReviewText}
             onClick={handleBackToDecisionReview}
             classNames={["cf-btn-link"]}
           />
@@ -160,7 +182,7 @@ export class AssociatePage extends React.Component {
             app="dispatch"
             name="Create new EP"
             onClick={handleSubmit}
-            disabled={!hasAvailableModifers}
+            disabled={!hasAvailableModifers || (this.state.epLoading !== null)}
             loading={loading}
           />
         </div>
@@ -175,6 +197,7 @@ AssociatePage.propTypes = {
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,

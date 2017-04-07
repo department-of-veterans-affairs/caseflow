@@ -1,22 +1,15 @@
 require "rails_helper"
 
 RSpec.feature "Admin" do
-  let(:full_grant_vacols_record) { Fakes::AppealRepository.appeal_full_grant_decided }
-  let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
-
   let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
-  let(:existing_task_vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
-  let!(:appeal_with_existing_task) { Generators::Appeal.create(vacols_record: vacols_record) }
+  let!(:appeal_missing_decision) { Generators::Appeal.create(documents: []) }
+  let!(:appeal_with_existing_task) { Generators::Appeal.create }
   let!(:existing_task) { EstablishClaim.create(appeal: appeal_with_existing_task, aasm_state: :unassigned) }
-
-  let!(:appeal_missing_decision) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: [])
-  end
 
   let!(:appeal) do
     Generators::Appeal.create(
-      vacols_record: full_grant_vacols_record,
+      vacols_record: :full_grant_decided,
       documents: [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
     )
   end

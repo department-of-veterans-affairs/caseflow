@@ -54,7 +54,7 @@ describe EndProduct do
       let(:modifier) { "170" }
 
       context "when active" do
-        let(:status_type_code) { "PEND" }
+        let(:status_type_code) { "RFD" }
         it { is_expected.to be_truthy }
       end
 
@@ -78,7 +78,7 @@ describe EndProduct do
     context "when it has a dispatch code" do
       let(:claim_type_code) { "170RMDAMC" }
 
-      context "when active" do
+      context "when assignable" do
         let(:status_type_code) { "PEND" }
 
         context "when claim date is 29 days ahead of the decision date" do
@@ -102,7 +102,7 @@ describe EndProduct do
         end
       end
 
-      context "when not active" do
+      context "when not assignable" do
         let(:status_type_code) { "CAN" }
         it { is_expected.to be_falsey }
       end

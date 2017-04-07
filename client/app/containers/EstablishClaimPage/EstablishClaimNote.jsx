@@ -25,7 +25,7 @@ export class EstablishClaimNote extends BaseForm {
         `and ${selectedSpecialIssues[selectedSpecialIssues.length - 1]}`;
     }
 
-    let vbmsNote = `The BVA Full Grant decision` +
+    let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
@@ -91,7 +91,7 @@ export class EstablishClaimNote extends BaseForm {
       return;
     }
 
-    return `The BVA Full Grant decision` +
+    return `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
       ` is being transfered from ARC as it contains: ` +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;

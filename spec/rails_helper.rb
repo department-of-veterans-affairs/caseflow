@@ -41,7 +41,7 @@ Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-conf
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
-    phantomjs_options: ["--disk-cache=true"]
+    browser: :chrome
   }
 
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
@@ -131,7 +131,9 @@ RSpec.configure do |config|
   if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
-  config.before(:all) { User.unauthenticate! }
+  config.before(:all) do
+    User.unauthenticate!
+  end
 
   config.after(:each) do
     Timecop.return

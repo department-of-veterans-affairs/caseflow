@@ -6,6 +6,10 @@ module UploadableDocument
   end
 
   # :nocov:
+  def upload_date
+    Time.zone.now
+  end
+
   def document_type
     fail "#{self.class} is missing document_type"
   end
