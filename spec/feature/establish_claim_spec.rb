@@ -142,6 +142,26 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
+    scenario "you cannot re-complete a completed task", focus: true do
+      task.assign!(:assigned, current_user)
+
+      visit "/dispatch/establish-claim/#{task.id}"
+      @first = windows.first
+      @newTab = open_new_window
+      within_window(@newTab) do
+        visit "/dispatch/establish-claim/#{task.id}"
+      end
+      within_window(@first) do
+        safe_click_on "Route claim"
+        safe_click_on "Create End Product"
+      end
+      #sleep 1
+      within_window(@newTab) do
+        safe_click_on "Route claim"
+        expect(page).to have_content("This task was already completed")
+      end
+    end
+
     scenario "Cancel a claims establishment" do
       task.assign!(:assigned, current_user)
 
