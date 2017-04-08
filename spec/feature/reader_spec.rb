@@ -9,7 +9,7 @@ def scroll_to(value)
 end
 
 RSpec.feature "Reader" do
-  let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+  let(:vacols_record) { :remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
   # files to load when we fetch content.
