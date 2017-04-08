@@ -193,10 +193,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def dispatched_to_arc?
-    appeal.dispatched_to_station == "397"
-  end
-
   def days_since_creation
     (Time.zone.now - created_at).to_i / 1.day
   end

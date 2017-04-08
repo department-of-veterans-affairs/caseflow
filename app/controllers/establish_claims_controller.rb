@@ -82,18 +82,6 @@ class EstablishClaimsController < TasksController
   end
   helper_method :total_assigned_issues
 
-  # sets a task completion status and updates the claim establishment
-  # for a task if it exists.
-  def handle_task_status_update(completion_status_code)
-    task.complete!(status: completion_status_code)
-    task.claim_stablishment.update!(decision_date: Time.zone.now) if task.claim_establishment
-    render json: {}
-  end
-
-  def appeal_params
-    { dispatched_to_station: establish_claim_params[:station_of_jurisdiction] }
-  end
-
   def review_complete_params
     { vacols_note: params[:vacols_note] }
   end
