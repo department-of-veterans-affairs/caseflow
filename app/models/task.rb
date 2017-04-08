@@ -201,10 +201,6 @@ class Task < ActiveRecord::Base
     (Time.zone.now - created_at).to_i / 1.day
   end
 
-  def no_review_completion_status(status:)
-    [:special_issue_emailed, :special_issue_not_emailed, :special_issue_vacols_routed].include?(status)
-  end
-
   def completion_status_text
     completion_status ? (COMPLETION_STATUS_TEXT[completion_status.to_sym] || completion_status.titleize) : ""
   end
