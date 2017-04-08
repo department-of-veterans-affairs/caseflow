@@ -10,19 +10,22 @@ class Task < ActiveRecord::Base
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
-  COMPLETION_STATUS_MAPPING = {
-    completed: 0,
+  enum completion_status: {
+    routed_to_arc: 0,
     canceled: 1,
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
     special_issue_emailed: 5,
-    special_issue_not_emailed: 6,
-    special_issue_vacols_routed: 7
-  }.freeze
+    special_issue_vacols_routed: 7,
+
+    # These statuses are not in use anymore
+    special_issue_not_emailed: 6
+  }
 
   # Use this to define status texts that don't properly titlize
-  COMPLETION_STATUS_TEXT_MAPPING = {
+  COMPLETION_STATUS_TEXT = {
+    routed_to_arc: "Completed",
     assigned_existing_ep: "Assigned Existing EP"
   }.freeze
 
@@ -70,10 +73,6 @@ class Task < ActiveRecord::Base
       to_complete.where(appeal: appeal)
     end
 
-    def completion_status_code(text)
-      COMPLETION_STATUS_MAPPING[text]
-    end
-
     def tasks_completed_by_users(tasks)
       tasks.each_with_object({}) do |task, user_numbers|
         user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
@@ -111,13 +110,30 @@ class Task < ActiveRecord::Base
     # action or review the external action. In the case of establish claim we're letting
     # them add a note to VBMS
     event :review do
-      transitions from: :started, to: :reviewed, after: proc { |*args| save_outgoing_reference(*args) }
+      before { |*args| assign_review_attributes(*args) }
+
+      transitions from: :started, to: :reviewed
     end
 
     event :complete do
-      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
-      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      before { |*args| assign_completion_attribtues(*args) }
+
+      transitions from: :reviewed, to: :completed
+      transitions from: :started, to: :completed
     end
+  end
+
+  def assign_review_attributes(outgoing_reference_id: nil)
+    assign_attributes(outgoing_reference_id: outgoing_reference_id)
+  end
+
+  def assign_completion_attribtues(status:, outgoing_reference_id: nil)
+    assign_review_attributes(outgoing_reference_id: outgoing_reference_id) unless reviewed?
+
+    assign_attributes(
+      completed_at: Time.now.utc,
+      completion_status: status
+    )
   end
 
   def before_assign
@@ -147,7 +163,7 @@ class Task < ActiveRecord::Base
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(:completed, status: self.class.completion_status_code(:canceled))
+      complete!(status: :canceled)
     end
   end
 
@@ -158,16 +174,9 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def assign_existing_end_product!(end_product_id)
-    Task.transaction do
-      review!(outgoing_reference_id: end_product_id) if may_review?
-      complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep))
-    end
-  end
-
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(:completed, status: self.class.completion_status_code(status_code))
+      complete!(status: status_code)
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -184,22 +193,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def canceled?
-    completion_status == self.class.completion_status_code(:canceled)
-  end
-
-  def assigned_existing_ep?
-    completion_status == self.class.completion_status_code(:assigned_existing_ep)
-  end
-
-  def special_issue_emailed?
-    completion_status == self.class.completion_status_code(:special_issue_emailed)
-  end
-
-  def special_issue_not_emailed?
-    completion_status == self.class.completion_status_code(:special_issue_not_emailed)
-  end
-
   def dispatched_to_arc?
     appeal.dispatched_to_station == "397"
   end
@@ -208,32 +201,12 @@ class Task < ActiveRecord::Base
     (Time.zone.now - created_at).to_i / 1.day
   end
 
-  # completion_status is 0 for success, or non-zero to specify another completed case
-  def save_completion_status(status:)
-    update!(
-      completed_at: Time.now.utc,
-      completion_status: status
-    )
-  end
-
   def no_review_completion_status(status:)
-    [
-      self.class.completion_status_code(:special_issue_emailed),
-      self.class.completion_status_code(:special_issue_not_emailed),
-      self.class.completion_status_code(:special_issue_vacols_routed)
-    ].include? status
-  end
-
-  def save_outgoing_reference(outgoing_reference_id: nil)
-    update!(
-      outgoing_reference_id: outgoing_reference_id
-    )
+    [:special_issue_emailed, :special_issue_not_emailed, :special_issue_vacols_routed].include?(status)
   end
 
   def completion_status_text
-    status = COMPLETION_STATUS_MAPPING.key(completion_status)
-    COMPLETION_STATUS_TEXT_MAPPING[status] ||
-      status.to_s.titleize
+    completion_status ? (COMPLETION_STATUS_TEXT[completion_status.to_sym] || completion_status.titleize) : ""
   end
 
   def no_open_tasks_for_appeal
