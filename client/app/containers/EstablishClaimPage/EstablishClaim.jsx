@@ -77,7 +77,7 @@ const CREATE_EP_ERRORS = {
           'page to release this claim and proceed to process it outside of Caseflow.'
   },
   "task_already_completed": {
-    header: 'This task was already completed by another user.',
+    header: 'This task was already completed.',
     body: establishNewClaim()
   },
   "default": {
