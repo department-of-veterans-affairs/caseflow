@@ -160,6 +160,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       within_window(windows.last) do
         safe_click_on "Route claim"
         expect(page).to have_content("This task was already completed")
+        page.execute_script "window.close()"
       end
     end
 
