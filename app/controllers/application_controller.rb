@@ -97,9 +97,9 @@ class ApplicationController < ActionController::Base
     Time.zone = current_user.timezone if current_user
   end
 
-  # This is essentially only used for development mode
-  # The config/initialized/fake_dependencies runs on app boot and covers production scenarios
-  # However, in dev mode with class reloading the initializer gets wiped away
+  # This is used in development mode to:
+  # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
+  # - Setup the default authenticated user
   def setup_fakes
     Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
   end
