@@ -2,6 +2,7 @@
 @import 'uswds/core/variables';
 
 $color-tab-text-hover: #1f5593;
+$cf-btn-link-background-color: #ffffff;
 
 .cf-sg-layout {
   padding-top: 30px;
@@ -103,14 +104,14 @@ pre {
 .cf-btn-link {
   &:hover,
   &.button-hover {
-    background-color: white;
+    background-color: $cf-btn-link-background-color;
     color: $color-primary-darker;
     text-decoration: underline;
   }
 
   &:active,
   &.button-active {
-    background-color: white;
+    background-color: $cf-btn-link-background-color;
     color: $color-primary-darkest;
     text-decoration: underline;
   }
