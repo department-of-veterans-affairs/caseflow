@@ -7,6 +7,7 @@ export default class TextField extends React.Component {
   render() {
     let {
       errorMessage,
+      className,
       label,
       name,
       readOnly,
@@ -18,7 +19,13 @@ export default class TextField extends React.Component {
       placeholder
     } = this.props;
 
-    return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
+    let textInputClass = className.concat(
+      invisible ? " cf-invisible" : ""
+    ).concat(
+      errorMessage ? "usa-input-error" : ""
+    );
+
+    return <div className={textInputClass.join(' ')}>
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
@@ -42,11 +49,13 @@ export default class TextField extends React.Component {
 
 TextField.defaultProps = {
   required: false,
-  type: 'text'
+  type: 'text',
+  className: ["cf-form-textinput"]
 };
 
 TextField.propTypes = {
   errorMessage: PropTypes.string,
+  className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
