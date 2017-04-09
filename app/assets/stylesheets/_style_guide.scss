@@ -97,3 +97,25 @@ pre {
     color: $color-gray-light;
   }
 }
+
+// Make a button look like a link */
+// move to commons
+.cf-btn-link {
+  &:hover,
+  &.button-hover {
+    background-color: white;
+    color: $color-primary-darker;
+    text-decoration: underline;
+  }
+
+  &:active,
+  &.button-active {
+    background-color: white;
+    color: $color-primary-darkest;
+    text-decoration: underline;
+  }
+}
+
+.button-header {
+  color: $color-gray;
+}
