@@ -93,12 +93,6 @@ pre {
   margin-right: 2rem;
 }
 
-.cf-btn-link {
-  &.usa-button-disabled {
-    color: $color-gray-light;
-  }
-}
-
 // Make a button look like a link */
 // move to commons
 .cf-btn-link {
@@ -114,6 +108,10 @@ pre {
     background-color: $cf-btn-link-background-color;
     color: $color-primary-darkest;
     text-decoration: underline;
+  }
+
+  &.usa-button-disabled {
+    color: $color-gray-light;
   }
 }
 
