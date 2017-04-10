@@ -2,15 +2,6 @@ Rails.application.routes.draw do
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-
   resources :sessions, only: [:new, :create]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
@@ -18,8 +9,8 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
   end
 
-  # routes to the certification v2 SPA. here so users can reload the page
-  # and stay in the same place.
+  # These routes are here so Certification v2 SPA can be launched if the
+  # user reloads the page.
   get 'certifications(/:vacols_id)/check_documents' => 'certifications#new'
   get 'certifications(/:vacols_id)/confirm_case_details' => 'certifications#new'
   get 'certifications(/:vacols_id)/confirm_hearing' => 'certifications#new'
