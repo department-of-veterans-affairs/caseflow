@@ -61,14 +61,6 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-const establishNewClaim = () => {
-  return <span>
-    Please return
-    to <a href="/dispatch/establish-claim/">Work History</a> to
-    establish the next claim.
-  </span>;
-};
-
 const CREATE_EP_ERRORS = {
   "duplicate_ep": {
     header: 'At this time, we are unable to assign or create a new EP for this claim.',
@@ -78,7 +70,11 @@ const CREATE_EP_ERRORS = {
   },
   "task_already_completed": {
     header: 'This task was already completed.',
-    body: establishNewClaim()
+    body: <span>
+            Please return
+            to <a href="/dispatch/establish-claim/">Work History</a> to
+            establish the next claim.
+          </span>
   },
   "default": {
     header: 'System Error',

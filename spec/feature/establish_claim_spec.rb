@@ -145,23 +145,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     scenario "you cannot re-complete a completed task" do
       task.assign!(:assigned, current_user)
+      task.start!(:started)
 
       visit "/dispatch/establish-claim/#{task.id}"
 
-      within_window(open_new_window) do
-        visit "/dispatch/establish-claim/#{task.id}"
-      end
+      task.complete!(status: 0)
 
-      within_window(windows.first) do
-        safe_click_on "Route claim"
-        safe_click_on "Create End Product"
-      end
-
-      within_window(windows.last) do
-        safe_click_on "Route claim"
-        expect(page).to have_content("This task was already completed")
-        page.execute_script "window.close()"
-      end
+      safe_click_on "Route claim"
+      expect(page).to have_content("This task was already completed")
     end
 
     scenario "Cancel a claims establishment" do
