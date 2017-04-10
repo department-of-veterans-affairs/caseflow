@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
   end
 
+  # routes to the certification v2 SPA. here so users can reload the page
+  # and stay in the same place.
   get 'certifications(/:vacols_id)/check_documents' => 'certifications#new'
   get 'certifications(/:vacols_id)/confirm_case_details' => 'certifications#new'
   get 'certifications(/:vacols_id)/confirm_hearing' => 'certifications#new'
