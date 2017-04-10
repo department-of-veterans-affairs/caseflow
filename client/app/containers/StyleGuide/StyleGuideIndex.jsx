@@ -47,7 +47,7 @@ export default class StyleGuideIndex extends React.Component {
               <a href="#text_input">Text Input</a>
             </li>
             <li>
-              <a href="#searchable_dropdown">Searchable Dropdown</a>
+              <a href="#searchable_dropdown">Search Dropdown</a>
             </li>
           </ul>
       </div>
