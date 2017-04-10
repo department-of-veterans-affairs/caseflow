@@ -10,11 +10,11 @@ class EstablishClaim < Task
   after_create :init_claim_establishment!
 
   class << self
-    def full_grant_tasks
+    def for_full_grant
       joins(:claim_establishment).where(claim_establishments: { decision_type: "Full Grant" })
     end
 
-    def partial_grant_remand_tasks
+    def for_partial_grant_or_remand
       joins(:claim_establishment).where(claim_establishments: { decision_type: ["Partial Grant", "Remand"] })
     end
   end
@@ -91,7 +91,7 @@ class EstablishClaim < Task
     claim_establishment.update!(attrs)
   end
 
-  def time_to_establish_claim
+  def time_to_complete
     return nil if !completed_at || !created_at
     completed_at - created_at
   end

@@ -145,7 +145,7 @@
             Full Grants (median)
           </h4>
           <div class="cf-stat-figure data-time" data-key="median_time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim_full_grants]) %>
           </div>
         </div>
         <div class="cf-stat-option data-chart" data-key="time_to_establish_claim">
@@ -153,7 +153,7 @@
             Full Grants (95th percentile)
           </h4>
           <div class="cf-stat-figure data-time" data-key="time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim_full_grants]) %>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@
             Partial Grants & Remands (median)
           </h4>
           <div class="cf-stat-figure data-time" data-key="median_time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim_partial_grants_remands]) %>
           </div>
         </div>
         <div class="cf-stat-option data-chart" data-key="time_to_establish_claim">
@@ -173,7 +173,7 @@
             Partial Grants & Remands (95th percentile)
           </h4>
           <div class="cf-stat-figure data-time" data-key="time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim_partial_grants_remands]) %>
           </div>
         </div>
       </div>
