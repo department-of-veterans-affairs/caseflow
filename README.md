@@ -12,7 +12,7 @@ Following are links to view the results for each product in Travis CI as well as
 
 # Caseflow Certification
 
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification)
+[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
 
 ## About
 
