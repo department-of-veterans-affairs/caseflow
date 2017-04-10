@@ -28,7 +28,8 @@ export default class Footer extends React.Component {
   render() {
     let cancelModalDisplay = this.state.modal;
     let {
-      nextPageUrl
+      nextPageUrl,
+      certificationId
     } = this.props;
 
     return <div>
@@ -44,6 +45,7 @@ export default class Footer extends React.Component {
       </Link>
       {cancelModalDisplay && <CancelCertificationModal
         title="Cancel Certification"
+        certificationId={certificationId}
         closeHandler={this.handleModalClose}>
       </CancelCertificationModal>
       }

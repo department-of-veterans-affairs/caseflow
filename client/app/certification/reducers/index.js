@@ -101,6 +101,7 @@ export const mapDataToInitialState = function(state) {
     socMatch: state.appeal['soc_match?'],
     socDate: state.appeal.soc_date,
     documentsMatch: state.appeal['documents_match?'],
+    certificationId: state.id,
 
     /* TODO: add ssoc_match and ssoc_dates */
     vbmsId: state.appeal.vbms_id,

@@ -46,6 +46,7 @@ const Certification = ({ certification }) => {
   const initialData = mapDataToInitialState(certification);
   let store = createStore(certificationReducers, initialData);
 
+
   return <Provider store={store}>
     <div>
       <BrowserRouter>

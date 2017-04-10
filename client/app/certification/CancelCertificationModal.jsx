@@ -109,7 +109,8 @@ export default class CancelCertificationModal extends BaseForm {
     let cancelModalDisplay = this.state.modal;
     let {
       title,
-      closeHandler
+      closeHandler,
+      certificationId
     } = this.props;
 
     let cancellationReasonOptions = [

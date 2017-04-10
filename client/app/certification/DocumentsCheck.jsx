@@ -17,7 +17,8 @@ const UnconnectedDocumentsCheck = ({
   socMatch,
   socDate,
   documentsMatch,
-  match
+  match,
+  certificationId
 
   /* TODO: add ssoc_match and ssoc_dates */
 }) => {
@@ -38,7 +39,8 @@ const UnconnectedDocumentsCheck = ({
       <Footer
         nextPageUrl={
           `/certifications/${match.params.vacols_id}/sign_and_certify`
-        }/>
+        }
+        certificationId={certificationId}/>
     </div>
 
   </div>;
@@ -52,7 +54,8 @@ const mapStateToProps = (state) => {
     nodDate: state.nodDate,
     socMatch: state.socMatch,
     socDate: state.socDate,
-    documentsMatch: state.documentsMatch
+    documentsMatch: state.documentsMatch,
+    certificationId: state.certificationId
 
     /* TODO: add ssoc_match and ssoc_dates */
   };
