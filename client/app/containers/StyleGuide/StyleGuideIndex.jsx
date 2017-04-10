@@ -12,32 +12,56 @@ import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 
 export default class StyleGuideIndex extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      height: 0
+    }
+  }
 
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
+  calcHeight = (node) => {
+    this.setState({
+      height: node.offsetHeight
+    })
+  }
+
+
   render() {
-
+    let {
+      height
+    } = this.props;
 /* eslint-disable max-len */
 
-    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-      <StickyNav>
+    let divStyle = {
+      height: this.state.height - 155
+    }
+    console.log(divStyle);
+
+    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt"
+      ref={(node) => this.calcHeight(node)}>
+      <StickyNav style={this.divStyle}>
         <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
         <NavLink anchor="#typography" name="Typography"></NavLink>
-        <ul className="usa-sidenav-sub_list">
-          <NavLink anchor="#headings_and_body" name="Headings and Body"></NavLink>
-          <NavLink anchor="#styles" name="Styles"></NavLink>
-        </ul>
         <NavLink anchor="#colors" name="Colors"></NavLink>
-        <NavLink anchor="#modals" name="Modals"></NavLink>
-        <NavLink anchor="#tabs" name="Tabs"></NavLink>
-        <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
-        <NavLink anchor="#radios" name="Radio Fields"></NavLink>
+        <NavLink anchor="#buttons" name="Buttons"></NavLink>
+        <NavLink anchor="#search" name="Search"></NavLink>
+        <NavLink anchor="#dropdown" name="Dropdown Menus"></NavLink>
         <NavLink anchor="#checkboxes" name="Checkboxes"></NavLink>
+        <NavLink anchor="#radios" name="Radio Fields"></NavLink>
+        <NavLink anchor="#date_input" name="Date Input"></NavLink>
         <NavLink anchor="#tables" name="Tables"></NavLink>
+        <NavLink anchor="#tabs" name="Tabs"></NavLink>
+        <NavLink anchor="#tabs" name="Accordions"></NavLink>
+        <NavLink anchor="#tabs" name="Form Fields"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Alerts"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Layout"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Messages"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Branding"></NavLink>
+        <NavLink anchor="#loading_buttons" name="Dashboard"></NavLink>
+        <NavLink anchor="#modals" name="Modals"></NavLink>
         <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
         <NavLink anchor="#text_input" name="Text Input"></NavLink>
-        <ul className="usa-sidenav-sub_list">
-          <NavLink anchor="#inline_form" name="Inline Form"></NavLink>
-        </ul>
       </StickyNav>
       <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
@@ -70,6 +94,50 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Colors"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Buttons"
+          id="buttons" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Search"
+          id="search" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Dropdown Menus"
+          id="dropdown" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Date Input"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Accordions"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Forms Fields"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Alerts"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Layout"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Messages"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Branding"
+          id="colors" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Dashboard"
           id="colors" />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />

@@ -5,6 +5,7 @@ $color-tab-text-hover: #1f5593;
 
 .cf-sg-layout {
   padding-top: 30px;
+  position: relative;
 }
 
 // Style Guide Sticky Menu
@@ -12,9 +13,12 @@ div {
   &[class$="-scrolling"] {
     position: fixed;
     top: 0;
+    overflow-y: scroll;
+    height: 95%;
   }
   &[class$="-not-scrolling"] {
-    position: relative;
+    position: absolute;
+    overflow-y: scroll;
   }
 }
 
