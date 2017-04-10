@@ -11,9 +11,7 @@ class StyleGuideSearchableDropdown extends Component {
     };
   }
 
-  onChange = (value) => {
-    return value;
-  }
+  onChange = (value) => value;
 
   render() {
     return (

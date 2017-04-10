@@ -31,7 +31,7 @@ class SearchableDropdown extends Component {
   }
 
   render() {
-    let {
+    const {
       options,
       placeholder,
       errorMessage,
@@ -53,7 +53,7 @@ class SearchableDropdown extends Component {
         onChange={this.onChange}
         placeholder={placeholder ? placeholder : "Select option"}
         clearable={false}
-        noResultsText={`Not an option`}
+        noResultsText="Not an option"
         disabled={readOnly}
       />
     </div>;
