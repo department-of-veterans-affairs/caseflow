@@ -18,6 +18,12 @@ Rails.application.routes.draw do
     post 'confirm', on: :member
   end
 
+  get 'certifications(/:vacols_id)/check_documents' => 'certifications#new'
+  get 'certifications(/:vacols_id)/confirm_case_details' => 'certifications#new'
+  get 'certifications(/:vacols_id)/confirm_hearing' => 'certifications#new'
+  get 'certifications(/:vacols_id)/sign_and_certify' => 'certifications#new'
+  get 'certifications(/:vacols_id)/success' => 'certifications#new'
+
   resources :certification_cancellations, only: [:show, :create]
 
   scope path: "/dispatch" do
