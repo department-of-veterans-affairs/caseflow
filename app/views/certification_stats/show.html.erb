@@ -70,8 +70,9 @@
     </div>
 
     <div class="cf-stats-section -timing">
-      <h3>Time to Certify <span class="data-date"></span></h3>
+      <h3 id="time-to-certify-header">Time to Certify <span class="data-date"></span></h3>
       <div class="cf-stat-panel -toggle"
+        id="time-to-certify-toggle"
         role="button" tabindex="0"
         aria-label="Switch between median and 95th percentile statistics">
         <div class="cf-stat-option active data-chart" data-key="median_time_to_certify">
@@ -93,6 +94,7 @@
       </div>
 
       <div class="cf-stat-panel -toggle"
+        id="missing-document-toggle"
         role="button" tabindex="0"
         aria-label="Switch between median and 95th percentile statistics">
         <div class="cf-stat-option active data-chart" data-key="median_missing_doc_time_to_certify">

@@ -102,6 +102,10 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def can_be_accessed_by_current_user?
+    self.class.bgs.can_access?(sanitized_vbms_id)
+  end
+
   def task_header
     "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{vbms_id})"
   end
@@ -286,7 +290,8 @@ class Appeal < ActiveRecord::Base
       fail "No Form 8 found for appeal being certified" unless form8
 
       repository.certify(appeal)
-      repository.upload_and_clean_document(appeal, form8)
+      repository.upload_document_to_vbms(appeal, form8)
+      repository.clean_document(form8.pdf_location)
     end
   end
 end

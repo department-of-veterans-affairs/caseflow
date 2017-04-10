@@ -27,7 +27,7 @@ class VACOLS::Note < VACOLS::Record
       WHERE TSKTKNM = #{case_id}
     SQL
 
-    count_res = MetricsService.timer "VACOLS: Note.generate_primary_key #{bfkey}" do
+    count_res = MetricsService.record "VACOLS: Note.generate_primary_key #{bfkey}" do
       conn.exec_query(query)
     end
     count = count_res.to_a.first["count"]
@@ -58,7 +58,7 @@ class VACOLS::Note < VACOLS::Record
          #{due_date}, #{case_id}, #{regional_office_key}, #{user_id}, #{user_id}, SYSDATE)
     SQL
 
-    MetricsService.timer "VACOLS: Note.create! #{case_id}" do
+    MetricsService.record "VACOLS: Note.create! #{case_id}" do
       conn.execute(query)
     end
 

@@ -124,14 +124,14 @@ svg[aria-hidden=true],
 
 .cf-pdf-header {
   position: absolute;
-  z-index: 10;
+  z-index: 15;
   opacity: 1;
   padding: 15px 20px;
 }
 
 .cf-pdf-footer {
   position: absolute;
-  z-index: 10;
+  z-index: 15;
   opacity: 1;
   bottom: 0;
   padding: 0 20px;
@@ -244,7 +244,7 @@ svg[aria-hidden=true],
 .cf-pdf-navigation {
   position: absolute;
   bottom: 50%;
-  z-index: 10;
+  z-index: 20;
   pointer-events: none;
   left: 15px;
   right: 15px;
@@ -282,4 +282,9 @@ svg[aria-hidden=true],
 
 .cf-pdf-bookmark-private-medical {
   color: $bookmark-yellow;
+}
+
+.cf-pdf-pdfjs-container {
+  display: inline-block;
+  position: relative;
 }

@@ -44,58 +44,76 @@ const representativeTypeOptions = [
  *
  */
 
-const UnconnectedConfirmCaseDetails = ({
-    representativeType,
-    onRepresentativeTypeChange,
-    representativeName,
-    onRepresentativeNameChange,
-    otherRepresentativeType,
-    onOtherRepresentativeTypeChange,
-    match
-}) => {
+class UnconnectedConfirmCaseDetails extends React.Component {
+  // TODO: updating state in ComponentWillMount is
+  // sometimes thought of as an anti-pattern.
+  // is there a better way to do this?
+  componentWillMount() {
+    this.props.updateProgressBar();
+  }
 
-  const shouldShowOtherTypeField =
-    representativeType === Constants.representativeTypes.OTHER;
+  render() {
+    let { representativeType,
+      onRepresentativeTypeChange,
+      representativeName,
+      onRepresentativeNameChange,
+      otherRepresentativeType,
+      onOtherRepresentativeTypeChange,
+      match
+    } = this.props;
 
-  return <div>
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h2>Confirm Case Details</h2>
+    const shouldShowOtherTypeField =
+      representativeType === Constants.representativeTypes.OTHER;
 
-        <div>
-          {`Review data from BGS about the appellant's
-            representative and make changes if necessary.`}
+    return <div>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h2>Confirm Case Details</h2>
+
+          <div>
+            {`Review data from BGS about the appellant's
+              representative and make changes if necessary.`}
+          </div>
+
+          <RadioField name="Representative type"
+            options={representativeTypeOptions}
+            value={representativeType}
+            onChange={onRepresentativeTypeChange}
+            required={true}/>
+
+          {
+            shouldShowOtherTypeField &&
+            <TextField
+              name="Specify other representative type"
+              value={otherRepresentativeType}
+              onChange={onOtherRepresentativeTypeChange}
+              required={true}/>
+          }
+
+          <TextField name="Representative name"
+            value={representativeName}
+            onChange={onRepresentativeNameChange}
+            required={true}/>
+
         </div>
 
-        <RadioField name="Representative type"
-          options={representativeTypeOptions}
-          value={representativeType}
-          onChange={onRepresentativeTypeChange}
-          required={true}/>
+        <Footer
+          nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
+        />
+    </div>;
 
-        {
-          shouldShowOtherTypeField &&
-          <TextField
-            name="Specify other representative type"
-            value={otherRepresentativeType}
-            onChange={onOtherRepresentativeTypeChange}
-            required={true}/>
-        }
-
-        <TextField name="Representative name"
-          value={representativeName}
-          onChange={onRepresentativeNameChange}
-          required={true}/>
-
-      </div>
-
-      <Footer
-        nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
-      />
-  </div>;
-};
+  }
+}
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    updateProgressBar: () => {
+      dispatch({
+        type: Constants.UPDATE_PROGRESS_BAR,
+        payload: {
+          currentSection: Constants.progressBarSections.CONFIRM_CASE_DETAILS
+        }
+      });
+    },
     onRepresentativeNameChange: (representativeName) => {
       dispatch({
         type: Constants.CHANGE_REPRESENTATIVE_NAME,
