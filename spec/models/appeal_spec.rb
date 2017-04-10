@@ -82,7 +82,7 @@ describe Appeal do
 
   context "#fetch_documents!" do
     let(:documents) do
-      [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document]
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
 
     let(:appeal) do

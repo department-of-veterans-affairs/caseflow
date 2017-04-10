@@ -37,7 +37,7 @@ describe Form8 do
 
   context "#update_from_appeal" do
     let(:form8) { Form8.new }
-    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
     it "populates _initial_ fields with the same values as their counterparts" do
       form8.assign_attributes_from_appeal(appeal)
@@ -52,7 +52,7 @@ describe Form8 do
 
   context "#attributes" do
     let(:form8) { Form8.new }
-    appeal = Appeal.new(Fakes::AppealRepository.appeal_ready_to_certify)
+    let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
     it "does not return initial attributes" do
       form8.assign_attributes_from_appeal(appeal)

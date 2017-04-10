@@ -56,12 +56,22 @@ const CREATE_EP_ERRORS = {
           'Try a different modifier or select Cancel at the bottom of the ' +
           'page to release this claim and proceed to process it outside of Caseflow.'
   },
+  "task_already_completed": {
+    header: 'This task was already completed.',
+    body: <span>
+            Please return
+            to <a href="/dispatch/establish-claim/">Work History</a> to
+            establish the next claim.
+          </span>
+  },
   "default": {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
           'Please try again later.'
   }
 };
+
+const BACK_TO_DECISION_REVIEW_TEXT = "< Back to Review Decision";
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -308,6 +318,7 @@ export default class EstablishClaim extends BaseForm {
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
+    let { handleAlert } = this.props;
     this.store.dispatch(
       Actions.setStationOfJurisdictionAction(
         this.store.getState().specialIssues,
@@ -343,6 +354,19 @@ export default class EstablishClaim extends BaseForm {
           this.handlePageChange(FORM_PAGE);
         }
 
+      }, (error) => {
+        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+                          CREATE_EP_ERRORS.default;
+
+        this.setState({
+          loading: false
+        });
+
+        handleAlert(
+          'error',
+          errorMessage.header,
+          errorMessage.body
+        );
       });
   }
 
@@ -600,6 +624,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isAssociatePage() &&
         <AssociatePage
+          backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           loading={this.state.loading}
           endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
           task={this.props.task}
@@ -615,6 +640,7 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isFormPage() &&
         <EstablishClaimForm
+          backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           loading={this.state.loading}
           claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
           decisionDate={this.formattedDecisionDate()}
@@ -631,6 +657,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimNote
             loading={this.state.loading}
             appeal={this.props.task.appeal}
+            decisionType={this.state.reviewForm.decisionType.value}
             handleSubmit={this.handleNotePageSubmit}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
@@ -649,6 +676,7 @@ export default class EstablishClaim extends BaseForm {
             regionalOfficeEmail={this.getSpecialIssuesEmail()}
             specialIssues={specialIssues}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
         }
 

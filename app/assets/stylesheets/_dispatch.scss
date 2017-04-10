@@ -42,3 +42,9 @@ input {
     }
   }
 }
+
+.cf-btn-link {
+  &:hover {
+    background: transparent;
+  }
+}

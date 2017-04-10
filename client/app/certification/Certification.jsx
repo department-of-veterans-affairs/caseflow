@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 
+import Header from './Header';
+import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import AlreadyCertified from './AlreadyCertified';
 import NotReady from './NotReady';
@@ -50,6 +52,7 @@ const Certification = ({ certification }) => {
     <div>
       <BrowserRouter>
         <div>
+        <Header/>
         <CertificationProgressBar/>
         <Route path="/certifications/new/:vacols_id"
           component={EntryPointRedirect}/>
@@ -67,6 +70,8 @@ const Certification = ({ certification }) => {
           component={ConfirmHearing}/>
         <Route path="/certifications/:vacols_id/sign_and_certify"
           component={SignAndCertify}/>
+        <Route path="/certifications/:vacols_id/success"
+          component={Success}/>
           {/* TODO: should we add the cancel certification link
           and continue links here, or keep them on their own page? */}
       </div>

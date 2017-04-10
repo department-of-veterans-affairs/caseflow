@@ -8,6 +8,7 @@ import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import _ from 'lodash';
 
 export class EstablishClaimNote extends BaseForm {
   constructor(props) {
@@ -25,7 +26,7 @@ export class EstablishClaimNote extends BaseForm {
         `and ${selectedSpecialIssues[selectedSpecialIssues.length - 1]}`;
     }
 
-    let vbmsNote = `The BVA Full Grant decision` +
+    let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
@@ -61,16 +62,13 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   selectedSpecialIssues() {
-    let result = [];
-    let specialIssuesStatus = this.props.specialIssues;
-
-    for (let key in SPECIAL_ISSUES) {
-      if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
-        result.push(SPECIAL_ISSUES[key].display);
+    return _.reduce(SPECIAL_ISSUES, (result, issue) => {
+      if (this.props.specialIssues[issue.specialIssue]) {
+        result.push(issue.display);
       }
-    }
 
-    return result;
+      return result;
+    }, []);
   }
 
   headerText() {
@@ -91,7 +89,7 @@ export class EstablishClaimNote extends BaseForm {
       return;
     }
 
-    return `The BVA Full Grant decision` +
+    return `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
       ` is being transfered from ARC as it contains: ` +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
@@ -131,7 +129,7 @@ export class EstablishClaimNote extends BaseForm {
         onChange={this.handleFieldChange('noteForm', 'noteField')}
         {...this.state.noteForm.noteField}
       />
-
+      <div></div>
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
           label="I confirm that I have created a VBMS note to help route this claim"

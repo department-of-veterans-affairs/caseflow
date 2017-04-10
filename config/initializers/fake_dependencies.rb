@@ -1,1 +1,1 @@
-Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
+Fakes::Initializer.load! if Rails.env.development? || Rails.env.demo?

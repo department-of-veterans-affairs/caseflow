@@ -9,7 +9,7 @@ def scroll_to(value)
 end
 
 RSpec.feature "Reader" do
-  let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+  let(:vacols_record) { :remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
   # files to load when we fetch content.
@@ -45,8 +45,8 @@ RSpec.feature "Reader" do
     # Click on the link to the first file
     click_on documents[0].filename
 
-    # Ensure PDF content loads
-    expect(page).to have_content("Important Decision Document!!!")
+    # Ensure PDF content loads (using :all because the text is hidden)
+    expect(page).to have_content(:all, "Important Decision Document!!!")
 
     # Add a comment
     click_on "+ Add a Comment"
