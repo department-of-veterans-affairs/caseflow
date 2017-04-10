@@ -304,6 +304,26 @@ describe Task do
     end
   end
 
+  context "#completed_success" do
+    let!(:successful_appeal) { Appeal.create(vacols_id: "123C") }
+    let!(:successful_task) { EstablishClaim.create(appeal: successful_appeal) }
+    let!(:canceled_appeal) { Appeal.create(vacols_id: "456D") }
+    let!(:canceled_task) { EstablishClaim.create(appeal: canceled_appeal) }
+    before do
+      successful_task.prepare!
+      successful_task.assign!(:assigned, @user)
+      successful_task.start!
+      successful_task.complete!(:completed, status: Task.completion_status_code(:assigned_existing_ep))
+      canceled_task.prepare!
+      canceled_task.assign(:assigned, @user)
+      canceled_task.start!
+      canceled_task.cancel!
+    end
+    it "returns only the successfully completed task" do
+      expect(Task.completed_success).to eq [successful_task]
+    end
+  end
+
   context "#cancel!" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -322,6 +342,11 @@ describe Task do
     it "saves feedback" do
       task.cancel!("Feedback")
       expect(task.reload.comment).to eq("Feedback")
+    end
+
+    it "returns canceled tasks" do
+      task.cancel!("Feedback")
+      expect(Task.canceled.count).to eq(1)
     end
   end
 
