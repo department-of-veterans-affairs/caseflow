@@ -9,12 +9,23 @@ import CommentIcon from './CommentIcon';
 export default class Pdf extends React.Component {
   constructor(props) {
     super(props);
+    // We use two variables to maintain the state of rendering.
+    // isRendering below is outside of the state variable.
+    // isRendering[pageNumber] is true when a page is currently
+    // being rendered by PDFJS. It is set to false when rendering
+    // is either successful or aborts.
+    // isRendered is in the state variable, since an update to
+    // isRendered should trigger a render update since we need to
+    // draw comments after a page is rendered. Once a page is
+    // successfully rendered we set isRendered[pageNumber] to be the
+    // filename of the rendered PDF. This way, if PDFs are changed
+    // we know which pages are stale. 
     this.state = {
       numPages: 0,
+      pdfDocument: null,
       isRendered: []
     };
 
-    // This keeps track of what pages are being rendered right now.
     this.isRendering = [];
   }
 
@@ -39,9 +50,7 @@ export default class Pdf extends React.Component {
   renderPage = (index) => {
     if (this.isRendering[index] ||
       this.state.isRendered[index] === this.state.pdfDocument) {
-      return new Promise((resolve) => {
-        resolve();
-      });
+      return Promise.resolve();
     }
 
     let pdfDocument = this.state.pdfDocument;
@@ -97,7 +106,10 @@ export default class Pdf extends React.Component {
 
             // After rendering everything, we check to see if
             // the PDF we just rendered is the same as the PDF
-            // in the current state
+            // in the current state. It is possible that the
+            // user switched between PDFs quickly and this
+            // condition is no longer true, in which case we
+            // should render this page again with the new file.
             if (pdfDocument === this.state.pdfDocument) {
               // If it is the same, then we mark this page as rendered
               this.setIsRendered(index, pdfDocument);
@@ -316,9 +328,7 @@ export default class Pdf extends React.Component {
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
         onClick={this.onPageClick(pageNumber)}
-        id={`pageContainer${pageNumber}`}
-        data-loaded={this.state.isRendered[pageNumber]}
-        data-page-number={pageNumber} >
+        id={`pageContainer${pageNumber}`}>
           <canvas id={`canvas${pageNumber}`} className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
             {commentIcons[pageNumber]}
