@@ -45,19 +45,16 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :document, only: [] do
-    patch 'set-label', on: :member
+  resources :document, only: [:update] do
+    get :pdf, on: :member
     patch 'mark-as-read', on: :member
+    resources :annotation, only: [:create, :destroy, :update]
   end
 
-  resources :annotation,
-          only: [:create, :destroy, :update],
-          on: :member
-
   namespace :reader do
-    get "pdf/:document_id", to: :pdf, as: :pdf
-    get "/:vacols_id/show/:document_id", to: :show, as: :show
-    get "/:vacols_id", to: :index, as: :index
+    resources :appeal, only: [] do
+      resources :documents, only: [:show, :index]
+    end
   end
 
   patch "certifications" => "certifications#create"

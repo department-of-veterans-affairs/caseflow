@@ -2,10 +2,27 @@ class DocumentController < ApplicationController
   before_action :verify_system_admin
 
   # :nocov:
-  def set_label
+  def update
     document = Document.find(params[:id])
-    document.update!(label: params[:label] || nil)
+    document.update!(update_params)
     render json: {}
+  end
+
+  def update_params
+    params.permit(:label)
+  end
+
+  # TODO: Scope this down so that users can only see documents
+  # associated with assigned appeals
+  def pdf
+    document = Document.find(params[:id])
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: "inline")
   end
 
   def mark_as_read
