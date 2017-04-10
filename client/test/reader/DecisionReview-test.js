@@ -10,8 +10,6 @@ import { asyncTest, pause } from '../helpers/AsyncTests';
 import ApiUtilStub from '../helpers/ApiUtilStub';
 
 import PdfJsStub from '../helpers/PdfJsStub';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
@@ -73,7 +71,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        console.log(setupPdf.lastCall.args[0]);
         expect(setupPdf.lastCall.calledWith(`url?id=${documents[1].id}`)).to.be.true;
 
         // Previous button moves us to the previous page

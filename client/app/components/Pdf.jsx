@@ -11,10 +11,10 @@ export default class Pdf extends React.Component {
     super(props);
     this.state = {
       numPages: 0,
-      pdfjsPages: [],
       isRendered: []
     };
 
+    // This keeps track of what pages are being rendered right now.
     this.isRendering = [];
   }
 
@@ -29,15 +29,24 @@ export default class Pdf extends React.Component {
     });
   }
 
+  setElementDimensions = (element, dimensions) => {
+    element.style.width = `${dimensions.width}px`;
+    element.style.height = `${dimensions.height}px`;
+  }
+
+  // This method is the worst. It is our main interaction with PDFJS, so it will
+  // likey remain complicated.
   renderPage = (index) => {
-    if (this.isRendering[index] || this.state.isRendered[index] === this.state.pdfDocument) {
+    if (this.isRendering[index] ||
+      this.state.isRendered[index] === this.state.pdfDocument) {
       return new Promise((resolve) => {
         resolve();
-      })
+      });
     }
 
     let pdfDocument = this.state.pdfDocument;
 
+    // Mark that we are rendering this page.
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
@@ -45,8 +54,15 @@ export default class Pdf extends React.Component {
         resolve();
       }
 
+      // Page numbers are one-indexed
       let pageNumber = index + 1;
+
+      // This method has a lot of statements because it needs to call
+      // into PDFJS. I don't think it lends itself to an easy refactor.
+      /* eslint-disable max-statements */
       this.state.pdfDocument.getPage(pageNumber).then((pdfPage) => {
+        // The viewport is a PDFJS concept that combines the size of the
+        // PDF pages with the scale go get the dimensions of the divs.
         let viewport = pdfPage.getViewport(this.props.scale);
         let canvas = document.getElementById(`canvas${pageNumber}`);
         let container = document.getElementById(`textLayer${pageNumber}`);
@@ -56,25 +72,22 @@ export default class Pdf extends React.Component {
           reject();
         }
 
+        // We need to set the width and heights of everything based on
+        // the width and height of the viewport.
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
-        let canvasContext = canvas.getContext('2d', {alpha: false});
-        let renderContext = {
-          canvasContext: canvasContext,
-          viewport: viewport
-        };
-        
-        container.style.width = `${viewport.width}px`;
-        container.style.height = `${viewport.height}px`;
+        this.setElementDimensions(container, viewport);
+        this.setElementDimensions(page, viewport);
         container.innerHTML = '';
 
-        page.style.width = `${viewport.width}px`;
-        page.style.height = `${viewport.height}px`;
-
-
-        pdfPage.render(renderContext).then(() => {
-          pdfPage.getTextContent().then(textContent => {
+        // Call PDFJS to actually render the page.
+        pdfPage.render({
+          canvasContext: canvas.getContext('2d', { alpha: false }),
+          viewport
+        }).then(() => {
+          // Get the text from the PDF and render it.
+          pdfPage.getTextContent().then((textContent) => {
             PDFJS.renderTextLayer({
               textContent,
               container,
@@ -82,22 +95,30 @@ export default class Pdf extends React.Component {
               textDivs: []
             });
 
-            if (pdfDocument !== this.state.pdfDocument) {
+            // After rendering everything, we check to see if
+            // the PDF we just rendered is the same as the PDF
+            // in the current state
+            if (pdfDocument === this.state.pdfDocument) {
+              // If it is the same, then we mark this page as rendered
+              this.setIsRendered(index, pdfDocument);
+              resolve();
+            } else {
+              // If it is not, then we try to render it again.
               this.isRendering[index] = false;
               this.renderPage(index).then(() => {
                 resolve();
-              }).catch(() => {
+              }).
+              catch(() => {
                 reject();
               });
-            } else {
-              this.setIsRendered(index, pdfDocument);
-              resolve();
             }
-          }).catch(() => {
+          }).
+          catch(() => {
             this.isRendering[index] = false;
             reject();
           });
-        }).catch(() => {
+        }).
+        catch(() => {
           this.isRendering[index] = false;
           reject();
         });
@@ -106,12 +127,15 @@ export default class Pdf extends React.Component {
         this.isRendering[index] = false;
         reject();
       });
+
+      /* eslint-enable max-statements */
     });
   }
 
   onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
-      let container = document.getElementById(`pageContainer${pageNumber}`).getBoundingClientRect();
+      let container = document.getElementById(`pageContainer${pageNumber}`).
+        getBoundingClientRect();
       let xPosition = (event.pageX - container.left) / this.props.scale;
       let yPosition = (event.pageY - container.top) / this.props.scale;
 
@@ -228,9 +252,10 @@ export default class Pdf extends React.Component {
     /* eslint-enable no-negated-condition */
   }
 
-  componentDidUpdate = (_prevProps, prevState) => {
+  componentDidUpdate = () => {
     for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
-      if (!this.state.isRendered[index] && document.getElementById(`pageContainer${index + 1}`)) {
+      if (!this.state.isRendered[index] &&
+        document.getElementById(`pageContainer${index + 1}`)) {
         this.renderPage(index, this.props.file);
       }
     }
@@ -238,10 +263,10 @@ export default class Pdf extends React.Component {
 
   // Move the comment when it's dropped on a page
   onCommentDrop = (pageNumber) => (event) => {
-    console.log('on comment drop');
     event.preventDefault();
     let data = JSON.parse(event.dataTransfer.getData('text'));
-    let pageBox = document.getElementById(`pageContainer${pageNumber}`).getBoundingClientRect();
+    let pageBox = document.getElementById(`pageContainer${pageNumber}`).
+      getBoundingClientRect();
 
     let coordinates = {
       x: (event.pageX - pageBox.left - data.iconCoordinates.x) / this.props.scale,
@@ -283,6 +308,7 @@ export default class Pdf extends React.Component {
     }, {});
 
     let pages = [];
+
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
         className="cf-pdf-pdfjs-container page"
@@ -299,7 +325,7 @@ export default class Pdf extends React.Component {
           </div>
           <div id={`textLayer${pageNumber}`} className="textLayer" />
         </div>);
-    };
+    }
 
     return <div id="scrollWindow" className="cf-pdf-scroll-view">
         <div

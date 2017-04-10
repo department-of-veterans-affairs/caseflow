@@ -1,5 +1,5 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
@@ -7,7 +7,6 @@ import sinon from 'sinon';
 import PdfJsStub from '../helpers/PdfJsStub';
 
 import { documents } from '../data/documents';
-import { annotations } from '../data/annotations';
 
 /* eslint-disable no-unused-expressions */
 describe('Pdf', () => {
@@ -43,7 +42,8 @@ describe('Pdf', () => {
 
     context('.render', () => {
       it(`renders the staging div`, () => {
-        expect(wrapper.find('.cf-pdf-pdfjs-container')).to.have.length(PdfJsStub.numPages);
+        expect(wrapper.find('.cf-pdf-pdfjs-container')).
+          to.have.length(PdfJsStub.numPages);
       });
     });
 
