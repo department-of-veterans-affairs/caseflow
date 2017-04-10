@@ -9,12 +9,13 @@
   },
   "scripts": {
     "test": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers js:babel-core/register",
-    "test:watch": "NODE_ENV=test mocha --recursive test/setup.js test/* --watch --compilers jsx:babel-core/register js:babel-core/register",
+    "test:watch": "npm run test -- --watch",
     "lint": "eslint . --ext .jsx --ext .js",
-    "lint:fix": "eslint . --fix --ext .jsx --ext .js",
-    "build:test": "NODE_ENV=test webpack --config webpack.config.js",
-    "build:production": "NODE_ENV=production webpack --config webpack.config.js",
-    "build:development": "webpack -w --config webpack.config.js"
+    "lint:fix": "npm run lint -- --fix",
+    "build": "webpack --config webpack.config.js",
+    "build:test": "NODE_ENV=test npm run build",
+    "build:production": "NODE_ENV=production npm run build",
+    "build:development": "npm run build -- -w"
   },
   "cacheDirectories": [
     "node_modules",
