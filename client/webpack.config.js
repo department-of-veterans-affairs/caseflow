@@ -17,6 +17,9 @@ const config = {
     path: '../app/assets/webpack'
   },
 
+  plugins: [
+    new webpack.EnvironmentPlugin(['NODE_ENV'])
+  ],
   resolve: {
     extensions: ['', '.js', '.jsx'],
     alias: {

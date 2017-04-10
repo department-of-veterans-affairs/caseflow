@@ -272,6 +272,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_button("Establish next claim", disabled: true)
 
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
       scenario "Establish a new claim with special issue routed to ROJ" do
@@ -295,6 +296,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Confirmation Page
         expect(page).to have_content("Success!")
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
+
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
       scenario "Establish a new claim with special issues by routing via email" do
@@ -311,23 +314,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
                                      "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
-      end
 
-      # There are no more issues that have no email addresses :)
-      # Skip this for now, but we'll clear it out when we finalize that decision
-      skip "Cancelling a claims establishment with special issues with no email routing" do
-        task.assign!(:assigned, current_user)
-
-        visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("vocationalRehab").click
-        safe_click_on "Route claim"
-
-        expect(page).to have_content("Please process this claim manually")
-
-        find_label_for("confirmEmail").click
-        safe_click_on "Release claim"
-
-        expect(page).to have_content("Processed case outside of Caseflow")
+        expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
       context "When there is an existing 172 EP" do
@@ -365,7 +353,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           task.reload
           expect(task.outgoing_reference_id).to eq("1")
           expect(task.appeal.reload.mustard_gas).to be_truthy
-          expect(task.completion_status).to eq(Task.completion_status_code(:assigned_existing_ep))
+          expect(task.completion_status).to eq("assigned_existing_ep")
         end
       end
     end
@@ -430,7 +418,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
         expect(task.reload.completed?).to be_truthy
-        expect(task.completion_status).to eq(0)
+        expect(task.completion_status).to eq("routed_to_arc")
         expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
         expect(task.appeal.reload.dispatched_to_station).to eq("397")
@@ -494,6 +482,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("VACOLS Updated: Added Diary Note on Private Attorney or Agent; Rice Compliance")
 
         expect(task.appeal.reload.rice_compliance).to be_truthy
+        expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
@@ -530,6 +519,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Valdiate correct vacols location
         expect(page).to have_content("50")
+
+        safe_click_on "Finish routing claim"
+
+        expect(page).to have_content("Success!")
+        expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
       end
 
       context "When there is an existing 170 EP" do
