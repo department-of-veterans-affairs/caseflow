@@ -8,6 +8,7 @@ import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
+import StyleGuideSearchableMultiselectDropdown from './StyleGuideSearchableMultiselectDropdown';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -85,6 +86,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideTextInput />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
+        <div className="cf-help-divider"></div>
+        <StyleGuideSearchableMultiselectDropdown />
     </div>
     </div>;
   }
