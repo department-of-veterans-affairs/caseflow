@@ -2,11 +2,11 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
-import StringUtil from '../../util/StringUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import BaseForm from '../BaseForm';
+
+import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -22,6 +22,7 @@ import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
 
 import { createHashHistory } from 'history';
+import { Provider } from 'react-redux';
 
 export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
@@ -68,6 +69,14 @@ const CREATE_EP_ERRORS = {
           'Try a different modifier or select Cancel at the bottom of the ' +
           'page to release this claim and proceed to process it outside of Caseflow.'
   },
+  "task_already_completed": {
+    header: 'This task was already completed.',
+    body: <span>
+            Please return
+            to <a href="/dispatch/establish-claim/">Work History</a> to
+            establish the next claim.
+          </span>
+  },
   "default": {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
@@ -85,6 +94,7 @@ const BACK_TO_DECISION_REVIEW_TEXT = "< Back to Review Decision";
 export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
+    this.store = createEstablishClaimStore(props);
     let decisionType = this.props.task.appeal.decision_type;
     // Set initial state on page render
 
@@ -130,17 +140,6 @@ export default class EstablishClaim extends BaseForm {
       specialIssuesEmail: '',
       specialIssuesRegionalOffice: ''
     };
-    SPECIAL_ISSUES.forEach((issue) => {
-
-      // Check special issue boxes based on what was sent from the database
-      let snakeCaseIssueSubstring =
-        StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
-
-      this.state.specialIssues[issue.specialIssue] =
-        new FormField(props.task.appeal[snakeCaseIssueSubstring]);
-
-      this.state.specialIssues[issue.specialIssue].issue = issue.display;
-    });
   }
 
   defaultPage() {
@@ -159,13 +158,13 @@ export default class EstablishClaim extends BaseForm {
 
   containsRoutedSpecialIssues = () => {
     return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.state.specialIssues[issue.specialIssue].value;
+      return this.store.getState().specialIssues[issue.specialIssue];
     });
   }
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.state.specialIssues[issue.specialIssue || issue].value;
+      return this.store.getState().specialIssues[issue.specialIssue || issue];
     });
   }
 
@@ -370,6 +369,8 @@ export default class EstablishClaim extends BaseForm {
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
+    let { handleAlert } = this.props;
+
     this.setStationState();
 
     this.setState({
@@ -400,6 +401,19 @@ export default class EstablishClaim extends BaseForm {
           this.handlePageChange(FORM_PAGE);
         }
 
+      }, (error) => {
+        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+                          CREATE_EP_ERRORS.default;
+
+        this.setState({
+          loading: false
+        });
+
+        handleAlert(
+          'error',
+          errorMessage.header,
+          errorMessage.body
+        );
       });
   }
 
@@ -511,14 +525,14 @@ export default class EstablishClaim extends BaseForm {
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
     specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         stateObject.claimForm.stationOfJurisdiction.value =
           this.getStationOfJurisdiction();
       }
     });
     // Go through all the special issues, this time looking for routed issues
     specialIssueFilters.routedSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
       }
     });
@@ -596,7 +610,7 @@ export default class EstablishClaim extends BaseForm {
     // them to the backend.
     let shortenedObject = {};
     let formValues = ApiUtil.convertToSnakeCase(
-      this.getFormValues(this.state.specialIssues)
+      this.store.getState().specialIssues
     );
 
     Object.keys(formValues).forEach((key) => {
@@ -635,7 +649,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -657,7 +671,7 @@ export default class EstablishClaim extends BaseForm {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.state.specialIssues[issue.specialIssue].value) {
+      if (this.store.getState().specialIssues[issue.specialIssue]) {
         willCreateEndProduct = false;
       }
     });
@@ -679,7 +693,8 @@ export default class EstablishClaim extends BaseForm {
     } = this.props;
 
     return (
-      <div>
+      <Provider store={this.store}>
+        <div>
         <EstablishClaimProgressBar
           isReviewDecision={this.isDecisionPage()}
           isRouteClaim={!this.isDecisionPage()}
@@ -688,6 +703,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={this.state.reviewForm.decisionType}
+            handleAlert={this.props.handleAlert}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
@@ -786,7 +802,8 @@ export default class EstablishClaim extends BaseForm {
             {...this.state.cancelModal.cancelFeedback}
           />
         </Modal>}
-      </div>
+        </div>
+      </Provider>
     );
   }
 }

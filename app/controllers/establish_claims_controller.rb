@@ -1,6 +1,6 @@
 class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
-  before_action :verify_not_complete, only: [:perform]
+  before_action :verify_not_complete, only: [:perform, :update_appeal]
   before_action :verify_manager_access, only: [:unprepared_tasks, :update_employee_count]
   before_action :set_application
 
