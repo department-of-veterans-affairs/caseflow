@@ -7,6 +7,7 @@ export default class CommentIcon extends React.Component {
   }
 
   onDragStart = (event) => {
+    console.log('drag starting');
     let data = {
       uuid: this.props.uuid,
       iconCoordinates: {

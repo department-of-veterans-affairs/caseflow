@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-import PDFJSAnnotate from 'pdf-annotate.js';
 
 import CommentIcon from './CommentIcon';
 
@@ -48,7 +47,7 @@ export default class Pdf extends React.Component {
 
       let pageNumber = index + 1;
       this.state.pdfDocument.getPage(pageNumber).then((pdfPage) => {
-        let viewport = pdfPage.getViewport(this.props.scale)
+        let viewport = pdfPage.getViewport(this.props.scale);
         let canvas = document.getElementById(`canvas${pageNumber}`);
         let container = document.getElementById(`textLayer${pageNumber}`);
         let page = document.getElementById(`pageContainer${pageNumber}`);
@@ -124,20 +123,6 @@ export default class Pdf extends React.Component {
         }
       );
     }
-  }
-
-  createPages = (pdfDocument) => {
-    const { UI } = PDFJSAnnotate;
-    let pdfjsPages = [];
-
-    for (let i = 0; i < pdfDocument.pdfInfo.numPages; i++) {
-      let page = UI.createPage(i + 1);
-
-      pdfjsPages.push(page);
-    }
-
-    this.needsFirstRender = true;
-    this.setState({ pdfjsPages });
   }
 
   scrollEvent = () => {
@@ -253,6 +238,7 @@ export default class Pdf extends React.Component {
 
   // Move the comment when it's dropped on a page
   onCommentDrop = (pageNumber) => (event) => {
+    console.log('on comment drop');
     event.preventDefault();
     let data = JSON.parse(event.dataTransfer.getData('text'));
     let pageBox = document.getElementById(`pageContainer${pageNumber}`).getBoundingClientRect();
