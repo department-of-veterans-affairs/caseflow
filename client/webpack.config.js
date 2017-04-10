@@ -23,9 +23,9 @@ const config = {
   resolve: {
     extensions: ['', '.js', '.jsx'],
     alias: {
-      react: path.resolve('./node_modules/react'),
-      'react-dom': path.resolve('./node_modules/react-dom'),
-      'ie': 'component-ie'
+      // This does not actually appear to be necessary, but it does silence 
+      // a warning from superagent-no-cache.
+      ie: 'component-ie'
     }
   },
   plugins: [
