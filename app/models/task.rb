@@ -72,13 +72,13 @@ class Task < ActiveRecord::Base
 
     def completed_success
       where(completion_status: [
-        completion_status_code(:completed),
-        completion_status_code(:routed_to_ro),
-        completion_status_code(:assigned_existing_ep),
-        completion_status_code(:special_issue_emailed),
-        completion_status_code(:special_issue_not_emailed),
-        completion_status_code(:special_issue_vacols_routed)
-      ])
+              completion_status_code(:completed),
+              completion_status_code(:routed_to_ro),
+              completion_status_code(:assigned_existing_ep),
+              completion_status_code(:special_issue_emailed),
+              completion_status_code(:special_issue_not_emailed),
+              completion_status_code(:special_issue_vacols_routed)
+            ])
     end
 
     def to_complete_task_for_appeal(appeal)

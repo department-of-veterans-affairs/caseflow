@@ -11,11 +11,11 @@ class EstablishClaim < Task
 
   class << self
     def full_grant_tasks
-      joins(:claim_establishment).where(claim_establishments: {decision_type: 'Full Grant'})
+      joins(:claim_establishment).where(claim_establishments: { decision_type: "Full Grant" })
     end
 
     def partial_grant_remand_tasks
-      joins(:claim_establishment).where(claim_establishments: {decision_type: ['Partial Grant', 'Remand']})
+      joins(:claim_establishment).where(claim_establishments: { decision_type: ["Partial Grant", "Remand"] })
     end
   end
 

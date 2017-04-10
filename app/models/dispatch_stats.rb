@@ -13,7 +13,7 @@ class DispatchStats < Caseflow::Stats
     end,
 
     establish_claim_active_users: lambda do |range|
-      EstablishClaim.where(completed_at: range).uniq.pluck(:user).count
+      EstablishClaim.where(completed_at: range).pluck(:user).uniq.count
     end,
 
     establish_claim_started: lambda do |range|
@@ -73,11 +73,13 @@ class DispatchStats < Caseflow::Stats
     end,
 
     time_to_establish_claim_partial_grants_remands: lambda do |range|
-      DispatchStats.percentile(:time_to_establish_claim, EstablishClaim.where(completed_at: range).partial_grant_remand_tasks, 95)
+      DispatchStats.percentile(:time_to_establish_claim, EstablishClaim.where(completed_at: range)
+          .partial_grant_remand_tasks, 95)
     end,
 
     median_time_to_establish_claim_partial_grants_remands: lambda do |range|
-      DispatchStats.percentile(:time_to_establish_claim, EstablishClaim.where(completed_at: range).partial_grant_remand_tasks, 50)
+      DispatchStats.percentile(:time_to_establish_claim, EstablishClaim.where(completed_at: range)
+          .partial_grant_remand_tasks, 50)
     end
   }.freeze
 end
