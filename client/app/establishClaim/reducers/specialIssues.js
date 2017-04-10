@@ -13,7 +13,8 @@ export let getSpecialIssuesInitialState = function(props = {}) {
       StringUtil.camelCaseToSnakeCase(issue.specialIssue).substring(0, 60);
 
     if (props.task) {
-      initialState[issue.specialIssue] = props.task.appeal[snakeCaseIssueSubstring] || false;
+      initialState[issue.specialIssue] =
+        props.task.appeal[snakeCaseIssueSubstring] || false;
     } else {
       initialState[issue.specialIssue] = false;
     }

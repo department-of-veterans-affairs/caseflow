@@ -66,6 +66,7 @@ export class EstablishClaimNote extends BaseForm {
       if (this.props.specialIssues[issue.specialIssue]) {
         result.push(issue.display);
       }
+
       return result;
     }, []);
   }

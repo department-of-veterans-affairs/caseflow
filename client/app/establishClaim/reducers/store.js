@@ -1,13 +1,14 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import logger from 'redux-logger';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
+import ConfigUtil from '../../util/ConfigUtil';
 
 export const createEstablishClaimStore = (props) => {
   let middleware = [];
 
 
   // Avoid all the log spam when running the tests
-  if (process.env.NODE_ENV !== 'test') {
+  if (!ConfigUtil.test()) {
     middleware.push(logger);
   }
 
