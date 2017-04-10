@@ -134,8 +134,7 @@ class TasksController < ApplicationController
 
   def verify_not_complete
     return true unless task.completed?
-
-    redirect_to complete_establish_claim_path(task)
+    render json: { error_code: "task_already_completed" }, status: 422
   end
 
   def cancel_feedback

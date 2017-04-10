@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
+import * as Constants from '../../app/establishClaim/constants/constants';
 
 let func = function() {
   // empty function
@@ -118,7 +119,13 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimNote', () => {
       beforeEach(() => {
-        wrapper.getNode().handleFieldChange('specialIssues', 'mustardGas')(true);
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_SPECIAL_ISSUE,
+          payload: {
+            specialIssue: 'mustardGas',
+            value: true
+          }
+        });
         wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
         wrapper.setState({ page: NOTE_PAGE });
       });

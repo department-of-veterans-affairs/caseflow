@@ -25,7 +25,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
   end
 
-  let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+  let(:vacols_record) { :remand_decided }
 
   context "As a manager" do
     let!(:current_user) do
@@ -125,6 +125,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
+
       safe_click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
@@ -140,6 +141,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate that the state was saved from the earlier checkbox click
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
+    end
+
+    scenario "you cannot re-complete a completed task" do
+      task.assign!(:assigned, current_user)
+      task.start!(:started)
+
+      visit "/dispatch/establish-claim/#{task.id}"
+
+      task.complete!(status: 0)
+
+      safe_click_on "Route claim"
+      expect(page).to have_content("This task was already completed")
     end
 
     scenario "Cancel a claims establishment" do
@@ -223,17 +236,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Decision Review"
+        safe_click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
 
     context "For a full grant" do
       let(:vacols_record) do
-        Fakes::AppealRepository.appeal_full_grant_decided.merge(
-          # Specify RO to test ROJ routing
-          regional_office_key: "RO21"
-        )
+        # Specify RO to test ROJ routing
+        { template: :full_grant_decided, regional_office_key: "RO21" }
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -360,7 +371,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     context "For a partial grant" do
-      let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
+      let(:vacols_record) { :partial_grant_decided }
 
       scenario "Establish a new claim routed to ARC" do
         # Mock the claim_id returned by VBMS's create end product
@@ -460,6 +471,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Validate special issue text within vacols note
         expect(page).to have_content("Private Attorney or Agent, Rice Compliance")
 
+        # Validate note page shows correct decision type for claim in vbms note
+        expect(find_field("VBMS Note").value).to have_content("The BVA Partial Grant decision")
+
+        # Validate note page shows correct decision type for claim in vacols diary note
+        expect(page).to have_content("Add the diary note: The BVA Partial Grant decision")
+
         # Validate correct vacols location
         expect(page).to have_content("50")
 
@@ -536,7 +553,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          safe_click_on "< Back to Decision Review"
+          safe_click_on "< Back to Review Decision"
 
           expect(page).to have_content("Review Decision")
 

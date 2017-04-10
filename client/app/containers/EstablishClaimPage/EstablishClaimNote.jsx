@@ -6,8 +6,11 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
+import { connect } from 'react-redux';
+import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import _ from 'lodash';
 
-export default class EstablishClaimNote extends BaseForm {
+export class EstablishClaimNote extends BaseForm {
   constructor(props) {
     super(props);
     let {
@@ -23,7 +26,7 @@ export default class EstablishClaimNote extends BaseForm {
         `and ${selectedSpecialIssues[selectedSpecialIssues.length - 1]}`;
     }
 
-    let vbmsNote = `The BVA Full Grant decision` +
+    let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
@@ -43,9 +46,9 @@ export default class EstablishClaimNote extends BaseForm {
   updatedVacolsLocationCode() {
     let specialIssues = this.props.specialIssues;
 
-    if (specialIssues.vamc.value) {
+    if (specialIssues.vamc) {
       return "54";
-    } else if (specialIssues.nationalCemeteryAdministration.value) {
+    } else if (specialIssues.nationalCemeteryAdministration) {
       return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
       return "98";
@@ -59,11 +62,13 @@ export default class EstablishClaimNote extends BaseForm {
   }
 
   selectedSpecialIssues() {
-    let specialIssues = this.props.specialIssues;
+    return _.reduce(SPECIAL_ISSUES, (result, issue) => {
+      if (this.props.specialIssues[issue.specialIssue]) {
+        result.push(issue.display);
+      }
 
-    return Object.keys(specialIssues).
-      filter((key) => specialIssues[key].value).
-      map((key) => specialIssues[key].issue);
+      return result;
+    }, []);
   }
 
   headerText() {
@@ -84,7 +89,7 @@ export default class EstablishClaimNote extends BaseForm {
       return;
     }
 
-    return `The BVA Full Grant decision` +
+    return `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
       ` is being transfered from ARC as it contains: ` +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
@@ -191,3 +196,15 @@ EstablishClaimNote.propTypes = {
   displayVbmsNote: PropTypes.bool.isRequired,
   handleSubmit: PropTypes.func.isRequired
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const ConnectedEstablishClaimNote = connect(
+    mapStateToProps
+)(EstablishClaimNote);
+
+export default ConnectedEstablishClaimNote;

@@ -4,8 +4,9 @@ import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import { connect } from 'react-redux';
 
-export default class AssociatePage extends React.Component {
+export class AssociatePage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -115,6 +116,7 @@ export default class AssociatePage extends React.Component {
       handleSubmit,
       handleCancelTask,
       handleBackToDecisionReview,
+      backToDecisionReviewText,
       hasAvailableModifers,
       loading
     } = this.props;
@@ -165,7 +167,7 @@ export default class AssociatePage extends React.Component {
       <div className="cf-app-segment" id="establish-claim-buttons">
         <div className="cf-push-left">
           <Button
-            name="< Back to Decision Review"
+            name={backToDecisionReviewText}
             onClick={handleBackToDecisionReview}
             classNames={["cf-btn-link"]}
           />
@@ -195,8 +197,21 @@ AssociatePage.propTypes = {
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
+  backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const ConnectedEstablishClaimAssociateEP = connect(
+    mapStateToProps
+)(AssociatePage);
+
+export default ConnectedEstablishClaimAssociateEP;
