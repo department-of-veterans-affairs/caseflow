@@ -101,6 +101,11 @@ class EstablishClaim < Task
     ].reject(&:nil?)
   end
 
+  def time_to_complete
+    return nil if !completed_at || !created_at
+    completed_at - created_at
+  end
+
   private
 
   def init_claim_establishment!
@@ -116,13 +121,6 @@ class EstablishClaim < Task
     claim_establishment.update!(attrs)
   end
 
-  def time_to_complete
-    return nil if !completed_at || !created_at
-    completed_at - created_at
-  end
-
-  private
-  
   def establish_claim_in_vbms(claim)
     Appeal.repository.establish_claim!(claim: claim.to_hash, appeal: appeal)
   end
