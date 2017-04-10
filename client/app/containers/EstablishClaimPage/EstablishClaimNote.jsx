@@ -8,6 +8,7 @@ import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import _ from 'lodash';
 
 export class EstablishClaimNote extends BaseForm {
   constructor(props) {
@@ -61,16 +62,12 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   selectedSpecialIssues() {
-    let result = [];
-    let specialIssuesStatus = this.props.specialIssues;
-
-    for (let key in SPECIAL_ISSUES) {
-      if (specialIssuesStatus[SPECIAL_ISSUES[key].specialIssue]) {
-        result.push(SPECIAL_ISSUES[key].display);
+    return _.reduce(SPECIAL_ISSUES, (result, issue) => {
+      if (this.props.specialIssues[issue.specialIssue]) {
+        result.push(issue.display);
       }
-    }
-
-    return result;
+      return result;
+    }, []);
   }
 
   headerText() {
