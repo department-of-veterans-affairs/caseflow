@@ -16,7 +16,6 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     get 'form9_pdf', on: :member
     post 'confirm', on: :member
-    get 'cancel', on: :member
   end
 
   resources :certification_cancellations, only: [:show, :create]
