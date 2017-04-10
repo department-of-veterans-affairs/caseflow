@@ -37,8 +37,6 @@ export default class BaseForm extends React.Component {
             formCopy
         );
 
-
-
     return allValid;
   };
 

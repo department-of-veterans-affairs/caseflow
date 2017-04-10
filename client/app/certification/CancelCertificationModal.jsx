@@ -1,7 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
-import Button from '../components/Button';
 import BaseForm from '../containers/BaseForm';
 import TextareaField from '../components/TextareaField';
 import RadioField from '../components/RadioField';
@@ -10,7 +8,6 @@ import requiredValidator from '../util/validators/RequiredValidator';
 import emailValidator from '../util/validators/EmailValidator';
 import TextField from '../components/TextField';
 import ApiUtil from '../util/ApiUtil';
-
 
 
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
@@ -42,45 +39,49 @@ export default class CancelCertificationModal extends BaseForm {
 
   onCancellationReasonChange = (event) => {
     this.setState({
-      cancellationReasonValue: event.target.value,
+      cancellationReasonValue: event.target.value
     });
 
     if (event.target.value === "Other") {
       this.setState({
         shouldShowOtherReason: true
-      })
-    }
-    else {
+      });
+    } else {
       this.setState({
         shouldShowOtherReason: false
       });
     }
 
-    this.handleFieldChange('certificationCancellationForm', 'cancellationReason')(event.target.value);
-    this.validateFormAndSetErrors({ cancellationReason: this.state.certificationCancellationForm.cancellationReason});
+    this.handleFieldChange('certificationCancellationForm',
+      'cancellationReason')(event.target.value);
+    this.validateFormAndSetErrors(
+      { cancellationReason:
+        this.state.certificationCancellationForm.cancellationReason });
   }
 
   onOtherReasonChange = (value) => {
     this.setState({
-      otherReasonValue: value,
+      otherReasonValue: value
     });
 
     this.handleFieldChange('certificationCancellationForm', 'otherReason')(value);
 
     if (this.state.certificationCancellationForm.otherReason.errorMessage) {
-      this.validateFormAndSetErrors({ otherReason: this.state.certificationCancellationForm.otherReason});
+      this.validateFormAndSetErrors(
+        { otherReason: this.state.certificationCancellationForm.otherReason });
     }
   }
 
   onEmailChange = (value) => {
     this.setState({
-      emailValue: value,
+      emailValue: value
     });
 
     this.handleFieldChange('certificationCancellationForm', 'email')(value);
 
     if (this.state.certificationCancellationForm.email.errorMessage) {
-      this.validateFormAndSetErrors({ email: this.state.certificationCancellationForm.email});
+      this.validateFormAndSetErrors(
+        { email: this.state.certificationCancellationForm.email });
     }
   }
 
@@ -88,16 +89,20 @@ export default class CancelCertificationModal extends BaseForm {
     if (this.state.cancellationReasonValue === "Other") {
       return this.validateFormAndSetErrors(this.state.certificationCancellationForm);
     }
-    return this.validateFormAndSetErrors({ cancellationReason: this.state.certificationCancellationForm.cancellationReason, email: this.state.certificationCancellationForm.email});
+
+    return this.validateFormAndSetErrors(
+      { cancellationReason: this.state.certificationCancellationForm.cancellationReason,
+        email: this.state.certificationCancellationForm.email });
   }
 
   prepareData = () => {
-    let certificationCancellation = this.getFormValues(this.state.certificationCancellationForm);
+    let certificationCancellation =
+      this.getFormValues(this.state.certificationCancellationForm);
 
     certificationCancellation = {
-        ...certificationCancellation,
-        certificationId: this.props.certificationId
-      };
+      ...certificationCancellation,
+      certificationId: this.props.certificationId
+    };
 
     return ApiUtil.convertToSnakeCase(certificationCancellation);
   }
@@ -114,20 +119,15 @@ export default class CancelCertificationModal extends BaseForm {
       then(() => {
         this.props.closeHandler();
 
-      }, (error) => {
-        console.log(error);
-
       });
 
   }
 
   render() {
 
-    let cancelModalDisplay = this.state.modal;
     let {
       title,
-      closeHandler,
-      certificationId
+      closeHandler
     } = this.props;
 
     let cancellationReasonOptions = [
@@ -138,7 +138,7 @@ export default class CancelCertificationModal extends BaseForm {
       { displayText: "Pending FOIA request",
         value: "Pending FOIA request" },
       { displayText: "Other",
-        value: "Other" },
+        value: "Other" }
     ];
 
     return <div>
@@ -157,7 +157,9 @@ export default class CancelCertificationModal extends BaseForm {
             closeHandler={closeHandler}
             title={title}>
             <p>
-              Please explain why this case cannot be certified with Caseflow. Once you click <strong>Cancel certification</strong>, changes made to this case in Caseflow will not be saved.
+              Please explain why this case cannot be certified with Caseflow.
+              Once you click <strong>Cancel certification</strong>,
+              changes made to this case in Caseflow will not be saved.
             </p>
             <RadioField
               name="Why can't be this case certified in Caseflow"
@@ -165,13 +167,15 @@ export default class CancelCertificationModal extends BaseForm {
               value={this.state.cancellationReasonValue}
               required={true}
               onChange={this.onCancellationReasonChange}
-              errorMessage={this.state.certificationCancellationForm.cancellationReason.errorMessage}/>
+              errorMessage={this.state.
+                certificationCancellationForm.cancellationReason.errorMessage}/>
             {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
                 required={true}
                 onChange={this.onOtherReasonChange}
-                errorMessage={this.state.certificationCancellationForm.otherReason.errorMessage}
+                errorMessage={this.state.
+                  certificationCancellationForm.otherReason.errorMessage}
                 value={this.state.otherReasonValue}
               />
             }

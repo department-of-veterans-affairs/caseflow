@@ -1,11 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Modal from '../components/Modal';
 import Button from '../components/Button';
-import CancelCertificationModal from './CancelCertificationModal'
-
-
-
+import CancelCertificationModal from './CancelCertificationModal';
 
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
 // then delete this comment :)
@@ -13,7 +9,7 @@ export default class Footer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      modal: false
     };
   }
 

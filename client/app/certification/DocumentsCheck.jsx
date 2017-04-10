@@ -2,10 +2,8 @@ import React from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Footer from './Footer';
-
 
 
 // TODO: refactor to use shared components where helpful
