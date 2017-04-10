@@ -228,7 +228,7 @@ describe EstablishClaim do
       )
     end
 
-    context "when a DB write raises exception" do
+    context "when completing the task raises an exception" do
       before do
         allow(establish_claim).to receive(:complete!).and_raise("Error")
       end
