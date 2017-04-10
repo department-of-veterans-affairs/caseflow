@@ -23,7 +23,7 @@ export default class CancelCertificationModal extends BaseForm {
       cancellationReasonValue: "",
       otherReasonValue: "",
       emailValue: "",
-      cancellationForm: {
+      certificationCancellationForm: {
         cancellationReason: new FormField(
           '',
           requiredValidator('Make sure you’ve selected an option below.')
@@ -40,7 +40,7 @@ export default class CancelCertificationModal extends BaseForm {
     };
   }
 
-  onRadioFieldChange = (event) => {
+  onCancellationReasonChange = (event) => {
     this.setState({
       cancellationReasonValue: event.target.value,
     });
@@ -56,19 +56,19 @@ export default class CancelCertificationModal extends BaseForm {
       });
     }
 
-    this.handleFieldChange('cancellationForm', 'cancellationReason')(event.target.value);
-    this.validateFormAndSetErrors({ cancellationReason: this.state.cancellationForm.cancellationReason});
+    this.handleFieldChange('certificationCancellationForm', 'cancellationReason')(event.target.value);
+    this.validateFormAndSetErrors({ cancellationReason: this.state.certificationCancellationForm.cancellationReason});
   }
 
-  onTextareaChange = (value) => {
+  onOtherReasonChange = (value) => {
     this.setState({
       otherReasonValue: value,
     });
 
-    this.handleFieldChange('cancellationForm', 'otherReason')(value);
+    this.handleFieldChange('certificationCancellationForm', 'otherReason')(value);
 
-    if (this.state.cancellationForm.otherReason.errorMessage) {
-      this.validateFormAndSetErrors({ otherReason: this.state.cancellationForm.otherReason});
+    if (this.state.certificationCancellationForm.otherReason.errorMessage) {
+      this.validateFormAndSetErrors({ otherReason: this.state.certificationCancellationForm.otherReason});
     }
   }
 
@@ -77,34 +77,51 @@ export default class CancelCertificationModal extends BaseForm {
       emailValue: value,
     });
 
-    this.handleFieldChange('cancellationForm', 'email')(value);
+    this.handleFieldChange('certificationCancellationForm', 'email')(value);
 
-    if (this.state.cancellationForm.email.errorMessage) {
-      this.validateFormAndSetErrors({ email: this.state.cancellationForm.email});
+    if (this.state.certificationCancellationForm.email.errorMessage) {
+      this.validateFormAndSetErrors({ email: this.state.certificationCancellationForm.email});
     }
+  }
+
+  validateForm = () => {
+    if (this.state.cancellationReasonValue === "Other") {
+      return this.validateFormAndSetErrors(this.state.certificationCancellationForm);
+    }
+    return this.validateFormAndSetErrors({ cancellationReason: this.state.certificationCancellationForm.cancellationReason, email: this.state.certificationCancellationForm.email});
+  }
+
+  prepareData = () => {
+    let certificationCancellation = this.getFormValues(this.state.certificationCancellationForm);
+
+    certificationCancellation = {
+        ...certificationCancellation,
+        certificationId: this.props.certificationId
+      };
+
+    return ApiUtil.convertToSnakeCase(certificationCancellation);
   }
 
   submitForm = () => {
-    if (this.state.cancellationReasonValue === "Other") {
-      if (!this.validateFormAndSetErrors(this.state.cancellationForm)) {
-        return;
-      }
-      else {
-        // ApiUtil.post(`/certification_cancellations`, { data })
-      }
+
+    if (!this.validateForm()) {
+      return;
     }
-    else {
-      if (!this.validateFormAndSetErrors({ cancellationReason: this.state.cancellationForm.cancellationReason, email: this.state.cancellationForm.email})) {
-        return;
-      }
-      else {
-        // ApiUtil.post(`/certification_cancellations`, { data })
-      }
-    }
+
+    let data = this.prepareData();
+
+    return ApiUtil.post(`/certification_cancellations`, { data }).
+      then(() => {
+        this.props.closeHandler();
+
+      }, (error) => {
+        console.log(error);
+
+      });
+
   }
 
   render() {
-        console.log(this.state);
 
     let cancelModalDisplay = this.state.modal;
     let {
@@ -147,21 +164,21 @@ export default class CancelCertificationModal extends BaseForm {
               options={cancellationReasonOptions}
               value={this.state.cancellationReasonValue}
               required={true}
-              onChange={this.onRadioFieldChange}
-              errorMessage={this.state.cancellationForm.cancellationReason.errorMessage}/>
+              onChange={this.onCancellationReasonChange}
+              errorMessage={this.state.certificationCancellationForm.cancellationReason.errorMessage}/>
             {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
                 required={true}
-                onChange={this.onTextareaChange}
-                errorMessage={this.state.cancellationForm.otherReason.errorMessage}
+                onChange={this.onOtherReasonChange}
+                errorMessage={this.state.certificationCancellationForm.otherReason.errorMessage}
                 value={this.state.otherReasonValue}
               />
             }
             <TextField
             name="What's your VA email address?"
             onChange={this.onEmailChange}
-            errorMessage={this.state.cancellationForm.email.errorMessage}
+            errorMessage={this.state.certificationCancellationForm.email.errorMessage}
             value={this.state.emailValue}
             required={true}/>
       </Modal>

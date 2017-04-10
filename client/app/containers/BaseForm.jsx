@@ -25,7 +25,6 @@ export default class BaseForm extends React.Component {
       allValid = allValid && !errorMessage;
 
       formCopy[key].errorMessage = errorMessage;
-                console.log(form[key]);
     });
 
     if (allValid) {
