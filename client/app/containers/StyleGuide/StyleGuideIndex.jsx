@@ -7,6 +7,7 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuideDropdownMenu from './StyleGuideDropdownMenu';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -79,6 +80,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
         <div className="cf-help-divider"></div>
         <StyleGuideTextInput />
+        <div className="cf-help-divider"></div>
+        <StyleGuideDropdownMenu />
     </div>
     </div>;
   }
