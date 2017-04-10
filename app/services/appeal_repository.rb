@@ -1,5 +1,3 @@
-require "vbms"
-
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
@@ -307,11 +305,11 @@ class AppealRepository
       @vbms_client.send_request(request)
     end
 
-  # rethrow as application-level error
   rescue VBMS::ClientError => e
     Raven.capture_exception(e)
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
-    raise VBMSError
+
+    raise e
   end
 
   def self.fetch_documents_for(appeal)

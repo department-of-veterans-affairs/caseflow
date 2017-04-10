@@ -83,7 +83,7 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
-    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
     # This is bad. I'm sorry
     record.delete(:vbms_id) if Rails.env.development?
