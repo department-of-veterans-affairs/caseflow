@@ -23,10 +23,12 @@ class Task < ActiveRecord::Base
     special_issue_not_emailed: 6
   }
 
-  # Use this to define status texts that don't properly titlize
+  # Use this to define custom completion status texts
   COMPLETION_STATUS_TEXT = {
-    routed_to_arc: "Completed",
-    assigned_existing_ep: "Assigned Existing EP"
+    routed_to_arc: "EP created for ARC - 397",
+    assigned_existing_ep: "Assigned Existing EP",
+    special_issue_vacols_routed: "Routed in VACOLS",
+    expired: "Released to Work Queue"
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
@@ -38,6 +40,10 @@ class Task < ActiveRecord::Base
 
     def unprepared
       where(aasm_state: "unprepared")
+    end
+
+    def completed_by(user)
+      where(user_id: user.id, aasm_state: "completed")
     end
 
     def assigned_not_completed
@@ -77,6 +83,12 @@ class Task < ActiveRecord::Base
       tasks.each_with_object({}) do |task, user_numbers|
         user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
       end
+    end
+
+    # Generic relation method for joining the product of the task
+    # ie: EstablishClaim.joins(:claim_establishment)
+    def joins_product
+      fail MustImplementInSubclassError
     end
   end
 

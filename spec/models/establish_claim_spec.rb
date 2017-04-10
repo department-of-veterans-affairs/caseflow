@@ -380,6 +380,32 @@ describe EstablishClaim do
     end
   end
 
+  context "#completion_status_text" do
+    subject { establish_claim.completion_status_text }
+
+    context "when completion status is routed_to_ro" do
+      let(:completion_status) { :routed_to_ro }
+      let(:dispatched_to_station) { "344" }
+
+      it { is_expected.to eq("EP created for RO Station 344 - Los Angeles") }
+    end
+
+    context "when completion status is special_issue_emailed" do
+      let(:completion_status) { :special_issue_emailed }
+      let(:special_issues) { { vamc: true, radiation: true } }
+
+      it { is_expected.to eq("Emailed - Radiation; VAMC Issue(s)") }
+    end
+
+    context "when completion_status doesn't need additional information" do
+      let(:completion_status) { :routed_to_arc }
+
+      it "uses value from Task#completion_status_text" do
+        is_expected.to eq("EP created for ARC - 397")
+      end
+    end
+  end
+
   describe EstablishClaim::Claim do
     let(:claim_hash) do
       {
