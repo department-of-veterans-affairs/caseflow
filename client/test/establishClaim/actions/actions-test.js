@@ -12,7 +12,7 @@ describe('EstablishClaim Actions', () => {
     it('defaults to ARC', () => {
       let action = Actions.setStationOfJurisdictionAction({}, '300');
 
-      expect(action.payload.value).to.equal('397 - ARC');
+      expect(action.payload.value).to.equal('397');
     });
 
     it('sets SOJ to regional office', () => {
@@ -31,7 +31,7 @@ describe('EstablishClaim Actions', () => {
         '300'
       );
 
-      expect(action.payload.value).to.equal('311 - Pittsburgh, PA');
+      expect(action.payload.value).to.equal('311');
     });
 
   });

@@ -319,6 +319,7 @@ export default class EstablishClaim extends BaseForm {
 
   handleDecisionPageSubmit = () => {
     let { handleAlert } = this.props;
+
     this.store.dispatch(
       Actions.setStationOfJurisdictionAction(
         this.store.getState().specialIssues,

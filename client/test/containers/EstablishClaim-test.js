@@ -64,7 +64,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context.only('EstablishClaimForm', () => {
+    context('EstablishClaimForm', () => {
       beforeEach(() => {
         // Force component to Form page
         wrapper.node.store.dispatch({

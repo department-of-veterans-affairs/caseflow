@@ -16,22 +16,13 @@ const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '179'
 ];
 
-export default function(state = getEstablishClaimFormInitialState(), action) {
-  switch (action.type) {
-  case Constants.CHANGE_ESTABLISH_CLAIM_FIELD:
-    return ReducerUtil.changeFieldValue(state, action);
-  default:
-    return state;
-  }
-}
-
 /*
  * This function gets the set of unused modifiers. For a full grant, only one
  * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
  * are all potentially valid. This removes any modifiers that have already been
  * used in previous EPs.
  */
-export function validModifiers(endProducts, decisionType) {
+export const validModifiers = (endProducts, decisionType) => {
   let modifiers = [];
 
   if (decisionType === FULL_GRANT) {
@@ -47,9 +38,9 @@ export function validModifiers(endProducts, decisionType) {
   }, {});
 
   return modifiers.filter((modifier) => !modifierHash[modifier]);
-}
+};
 
-export function getEstablishClaimFormInitialState(props) {
+export const getEstablishClaimFormInitialState = (props) => {
   let initialModifier;
 
   if (props) {
@@ -67,4 +58,16 @@ export function getEstablishClaimFormInitialState(props) {
     gulfWarRegistry: false,
     suppressAcknowledgementLetter: false
   };
-}
+};
+
+export const establishClaimFormReducer =
+  (state = getEstablishClaimFormInitialState(), action) => {
+    switch (action.type) {
+    case Constants.CHANGE_ESTABLISH_CLAIM_FIELD:
+      return ReducerUtil.changeFieldValue(state, action);
+    default:
+      return state;
+    }
+  };
+
+export default establishClaimFormReducer;

@@ -1,7 +1,8 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import logger from 'redux-logger';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
-import establishClaimFormReducer, { getEstablishClaimFormInitialState } from './establishClaimForm';
+import establishClaimFormReducer,
+  { getEstablishClaimFormInitialState } from './establishClaimForm';
 import ConfigUtil from '../../util/ConfigUtil';
 
 export const createEstablishClaimStore = (props) => {
