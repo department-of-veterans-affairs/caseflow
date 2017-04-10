@@ -14,8 +14,9 @@ class UnconnectedDocumentsCheck extends React.Component {
   componentWillMount() {
     this.props.updateProgressBar();
   }
-    
+
   render() {
+
     /* TODO: add ssoc_match and ssoc_dates */
     let {
       form9Match,
@@ -51,7 +52,7 @@ class UnconnectedDocumentsCheck extends React.Component {
       </div>
     </div>;
   }
-};
+}
 
 const mapStateToProps = (state) => {
   return {
