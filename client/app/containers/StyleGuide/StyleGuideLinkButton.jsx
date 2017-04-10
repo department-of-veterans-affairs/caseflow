@@ -3,6 +3,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 let StyleGuideLinkButton = () => {
   return <div>
+    <br/>
     <StyleGuideComponentTitle
       title="Link buttons"
       id="link_buttons"
@@ -25,6 +26,7 @@ let StyleGuideLinkButton = () => {
         <button className="cf-btn-link button-active">Signup</button>
       </div>
     </div>
+    <br/>
   </div>;
 };
 
