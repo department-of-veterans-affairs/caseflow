@@ -319,7 +319,7 @@ export default class DecisionReviewer extends React.Component {
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
 
     return (
-      <div>
+      <div className="section--document-list">
         {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}

@@ -17,7 +17,8 @@ export default class PdfListView extends React.Component {
       className = "fa-caret-up";
     }
 
-    let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
+    let sortIcon = <i className={`fa ${className} tableIcon`} aria-hidden="true"></i>;
+    let filterIcon = <i className="fa fa-filter tableIcon" aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -32,6 +33,11 @@ export default class PdfListView extends React.Component {
     // is triggered when a middle mouse button is clicked while onClick isn't.
     return [
       {
+        header: <div
+          id="receipt-date-header"
+          onClick={this.props.changeSortState('date')}>
+          Categories {filterIcon}
+        </div>,
         valueFunction: (doc) => {
           return <span>
             {doc.label && <i
@@ -42,6 +48,29 @@ export default class PdfListView extends React.Component {
         }
       },
       {
+        header: <div
+          id="receipt-date-header"
+          onClick={this.props.changeSortState('date')}>
+          Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+        </div>,
+        valueFunction: (doc) =>
+          boldUnreadContent(formatDate(doc.receivedAt), doc)
+      },
+      {
+        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
+          Document Type {this.props.sortBy === 'date' ? sortIcon : ' '}
+        </div>,
+        valueFunction: (doc, index) => boldUnreadContent(
+          <a
+            href={linkToSingleDocumentView(doc)}
+            onMouseUp={this.props.showPdf(index)}>
+            {doc.type}
+          </a>, doc)
+      },
+      {
+        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
+          Issue Tags {filterIcon}
+        </div>,
         valueFunction: (doc) => {
           let numberOfComments = this.props.annotationStorage.
             getAnnotationByDocumentId(doc.id).length;
@@ -59,24 +88,24 @@ export default class PdfListView extends React.Component {
         }
       },
       {
-        header: <div
-          id="receipt-date-header"
-          onClick={this.props.changeSortState('date')}>
-          Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
-        </div>,
-        valueFunction: (doc) =>
-          boldUnreadContent(formatDate(doc.receivedAt), doc)
-      },
-      {
         header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-          Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
+          Comments {this.props.sortBy === 'type' ? sortIcon : ' '}
         </div>,
-        valueFunction: (doc, index) => boldUnreadContent(
-          <a
-            href={linkToSingleDocumentView(doc)}
-            onMouseUp={this.props.showPdf(index)}>
-            {doc.type}
-          </a>, doc)
+        valueFunction: (doc) => {
+          let numberOfComments = this.props.annotationStorage.
+            getAnnotationByDocumentId(doc.id).length;
+
+          return <span className="fa-stack fa-3x cf-pdf-comment-indicator">
+            { numberOfComments > 0 &&
+                <span>
+                  <i className="fa fa-comment-o fa-stack-2x"></i>
+                  <strong className="fa-stack-1x fa-stack-text">
+                    {numberOfComments}
+                  </strong>
+                </span>
+            }
+          </span>;
+        }
       }
     ];
   }
