@@ -25,6 +25,8 @@ class Fakes::AppealRepository
     attr_accessor :document_records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :end_product_claim_id
+    attr_accessor :vacols_dispatch_update
+    attr_accessor :location_updated_for
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
@@ -52,14 +54,16 @@ class Fakes::AppealRepository
     Rails.logger.info("Claim data:\n #{claim}")
 
     # return fake end product
-    OpenStruct.new(claim_id: @end_product_claim_id)
+    OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
   end
 
-  def self.update_vacols_after_dispatch!(*)
+  def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
+    self.vacols_dispatch_update = { appeal: appeal, vacols_note: vacols_note }
   end
 
   def self.update_location_after_dispatch!(appeal:)
     return if appeal.full_grant?
+    self.location_updated_for = appeal
   end
 
   def self.upload_document_to_vbms(appeal, form8)

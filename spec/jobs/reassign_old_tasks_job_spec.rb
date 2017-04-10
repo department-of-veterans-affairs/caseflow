@@ -6,7 +6,7 @@ describe ReassignOldTasksJob do
   let!(:user1) { User.create(station_id: "123", css_id: "abc") }
   let!(:user2) { User.create(station_id: "123", css_id: "def") }
   let!(:unfinished_task) { EstablishClaim.create(appeal_id: appeal1.id) }
-  let!(:status_code) { Task.completion_status_code(:expired) }
+  let!(:status_code) { :expired }
 
   let!(:finished_task) do
     EstablishClaim.create(appeal_id: appeal2.id)
