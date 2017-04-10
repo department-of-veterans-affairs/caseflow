@@ -7,13 +7,8 @@ class VBMSCaseflowLogger
     when :request
       status = data[:response_code]
       name = data[:request].class.name.split("::").last
-      app = RequestStore[:application] || "other"
-      PrometheusService.completed_vbms_requests.increment(status: status,
-                                                          app: app,
-                                                          name: name)
 
       if status != 200
-        PrometheusService.vbms_errors.increment
         Rails.logger.error(
           "VBMS HTTP Error #{status} " \
           "(#{name}) #{data[:response_body]}"
@@ -31,12 +26,11 @@ class AppealRepository
   ).freeze
 
   def self.load_vacols_data(appeal)
-    case_record = MetricsService.timer("VACOLS: load_vacols_data #{appeal.vacols_id}",
-                                       service: :vacols,
-                                       name: "load_vacols_data") do
+    case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
+                                        service: :vacols,
+                                        name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
-
     set_vacols_values(appeal: appeal, case_record: case_record)
 
     appeal
@@ -53,9 +47,9 @@ class AppealRepository
                    VACOLS::Case.includes(:folder, :correspondent)
                  end
 
-    case_records = MetricsService.timer("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
-                                        service: :vacols,
-                                        name: "load_vacols_data_by_vbms_id") do
+    case_records = MetricsService.record("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
+                                         service: :vacols,
+                                         name: "load_vacols_data_by_vbms_id") do
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
@@ -121,9 +115,9 @@ class AppealRepository
 
   # :nocov:
   def self.remands_ready_for_claims_establishment
-    remands = MetricsService.timer("VACOLS: remands_ready_for_claims_establishment",
-                                   service: :vacols,
-                                   name: "remands_ready_for_claims_establishment") do
+    remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
+                                    service: :vacols,
+                                    name: "remands_ready_for_claims_establishment") do
       VACOLS::Case.remands_ready_for_claims_establishment
     end
 
@@ -131,9 +125,9 @@ class AppealRepository
   end
 
   def self.amc_full_grants(outcoded_after:)
-    full_grants = MetricsService.timer("VACOLS:  amc_full_grants #{outcoded_after}",
-                                       service: :vacols,
-                                       name: "amc_full_grants") do
+    full_grants = MetricsService.record("VACOLS:  amc_full_grants #{outcoded_after}",
+                                        service: :vacols,
+                                        name: "amc_full_grants") do
       VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
     end
 
@@ -235,9 +229,9 @@ class AppealRepository
 
     appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
 
-    MetricsService.timer("VACOLS: certify #{appeal.vacols_id}",
-                         service: :vacols,
-                         name: "certify") do
+    MetricsService.record("VACOLS: certify #{appeal.vacols_id}",
+                          service: :vacols,
+                          name: "certify") do
       appeal.case_record.save!
     end
   end
@@ -250,23 +244,49 @@ class AppealRepository
     appeal.case_record.save!
   end
 
-  def self.upload_and_clean_document(appeal, form8)
-    upload_document(appeal, form8)
-    File.delete(form8.pdf_location)
+  def self.upload_document_to_vbms(appeal, form8)
+    @vbms_client ||= init_vbms_client
+    document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                 response = initialize_upload(appeal, form8)
+                 upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
+               else
+                 upload_document_deprecated(appeal, form8)
+               end
+    document
   end
 
-  def self.upload_document(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
+  def self.clean_document(location)
+    File.delete(location)
+  end
 
-    request = upload_documents_request(appeal, uploadable_document)
-
+  def self.initialize_upload(appeal, uploadable_document)
+    content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
+    filename = File.basename(uploadable_document.pdf_location)
+    request = VBMS::Requests::InitializeUpload.new(
+      content_hash: content_hash,
+      filename: filename,
+      file_number: appeal.sanitized_vbms_id,
+      va_receive_date: uploadable_document.upload_date,
+      doc_type: uploadable_document.document_type_id,
+      source: "VACOLS",
+      subject: uploadable_document.document_type,
+      new_mail: true
+    )
     send_and_log_request(appeal.vbms_id, request)
   end
 
-  def self.upload_documents_request(appeal, uploadable_document)
-    VBMS::Requests::UploadDocumentWithAssociations.new(
+  def self.upload_document(vbms_id, upload_token, filepath)
+    request = VBMS::Requests::UploadDocument.new(
+      upload_token: upload_token,
+      filepath: filepath
+    )
+    send_and_log_request(vbms_id, request)
+  end
+
+  def self.upload_document_deprecated(appeal, uploadable_document)
+    request = VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
-      Time.zone.now,
+      uploadable_document.upload_date,
       appeal.veteran_first_name,
       appeal.veteran_middle_initial,
       appeal.veteran_last_name,
@@ -276,13 +296,14 @@ class AppealRepository
       "VACOLS",
       true
     )
+    send_and_log_request(appeal.vbms_id, request)
   end
 
   def self.send_and_log_request(vbms_id, request)
     name = request.class.name.split("::").last
-    MetricsService.timer("sent VBMS request #{request.class} for #{vbms_id}",
-                         service: :vbms,
-                         name: name) do
+    MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
+                          service: :vbms,
+                          name: name) do
       @vbms_client.send_request(request)
     end
 
@@ -297,7 +318,11 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
-    request = VBMS::Requests::ListDocuments.new(sanitized_id)
+    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                VBMS::Requests::FindDocumentSeriesReference.new(sanitized_id)
+              else
+                VBMS::Requests::ListDocuments.new(sanitized_id)
+              end
     documents = send_and_log_request(sanitized_id, request)
 
     documents.map do |vbms_document|
@@ -309,7 +334,11 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     vbms_id = document.vbms_document_id
-    request = VBMS::Requests::FetchDocumentById.new(vbms_id)
+    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                VBMS::Requests::GetDocumentContent.new(vbms_id)
+              else
+                VBMS::Requests::FetchDocumentById.new(vbms_id)
+              end
     result = send_and_log_request(vbms_id, request)
     result && result.content
   end

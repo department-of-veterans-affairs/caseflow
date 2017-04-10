@@ -27,11 +27,11 @@ export default class Example5 extends React.Component {
     let options = [
       {
         id: "checkboxExample51",
-        label: "Check me!"
+        label: "Option 1"
       },
       {
         id: "checkboxExample52",
-        label: "No me!"
+        label: "Option 2"
       }
     ];
 
