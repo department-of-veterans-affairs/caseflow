@@ -69,6 +69,14 @@ const CREATE_EP_ERRORS = {
           'Try a different modifier or select Cancel at the bottom of the ' +
           'page to release this claim and proceed to process it outside of Caseflow.'
   },
+  "task_already_completed": {
+    header: 'This task was already completed.',
+    body: <span>
+            Please return
+            to <a href="/dispatch/establish-claim/">Work History</a> to
+            establish the next claim.
+          </span>
+  },
   "default": {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
@@ -361,6 +369,8 @@ export default class EstablishClaim extends BaseForm {
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
+    let { handleAlert } = this.props;
+
     this.setStationState();
 
     this.setState({
@@ -391,6 +401,19 @@ export default class EstablishClaim extends BaseForm {
           this.handlePageChange(FORM_PAGE);
         }
 
+      }, (error) => {
+        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+                          CREATE_EP_ERRORS.default;
+
+        this.setState({
+          loading: false
+        });
+
+        handleAlert(
+          'error',
+          errorMessage.header,
+          errorMessage.body
+        );
       });
   }
 
@@ -680,6 +703,7 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={this.state.reviewForm.decisionType}
+            handleAlert={this.props.handleAlert}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
