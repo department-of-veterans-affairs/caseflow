@@ -52,7 +52,7 @@ class AppealRepository
     end
 
     fail ActiveRecord::RecordNotFound if case_records.empty?
-    fail MultipleAppealsByVBMSIDError if case_records.length > 1
+    fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
