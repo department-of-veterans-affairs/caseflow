@@ -1,6 +1,9 @@
 class DocumentController < ApplicationController
   before_action :verify_system_admin
 
+  # Currently update is being used for labels which will
+  # be removed/changed soon. When we're using this for
+  # a final feature, we'll add in a feature test to cover it
   # :nocov:
   def update
     document = Document.find(params[:id])
@@ -11,6 +14,7 @@ class DocumentController < ApplicationController
   def update_params
     params.permit(:label)
   end
+  # :nocov:
 
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
@@ -33,5 +37,4 @@ class DocumentController < ApplicationController
     end
     render json: {}
   end
-  # :nocov:
 end

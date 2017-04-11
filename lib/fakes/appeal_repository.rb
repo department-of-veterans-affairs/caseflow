@@ -310,7 +310,7 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith",
+        veteran_last_name: "Smith"
       },
       documents: reader_documents
     )

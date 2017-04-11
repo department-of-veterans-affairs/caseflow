@@ -145,8 +145,8 @@ describe('PdfUI', () => {
 
       context('document name', () => {
         it('tries to open document in new tab', () => {
-          let url = `/decision/review/show?id=${doc.id}&type=${doc.type}` +
-            `&received_at=${doc.receivedAt}&filename=${doc.filename}`;
+          let url = `${window.location.href}/${doc.id}?type=${doc.type}` +
+            `&received_at=${doc.receivedAt}&filename=${doc.filename}`; 
           let open = sinon.spy(window, 'open');
 
           wrapper.find('Button').find({ name: 'newTab' }).

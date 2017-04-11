@@ -2,7 +2,7 @@ class Reader::DocumentsController < ApplicationController
   before_action :verify_system_admin
 
   private
-  # :nocov:
+
   def appeal
     Appeal.find_or_create_by_vacols_id(appeal_id)
   end
@@ -45,5 +45,4 @@ class Reader::DocumentsController < ApplicationController
   def logo_path
     reader_appeal_documents_path(appeal_id: appeal_id)
   end
-  # :nocov:
 end

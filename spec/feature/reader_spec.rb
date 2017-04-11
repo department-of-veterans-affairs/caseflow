@@ -8,7 +8,7 @@ def scroll_to(value)
   page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
-RSpec.feature "Reader", focus: true do
+RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
@@ -64,20 +64,20 @@ RSpec.feature "Reader", focus: true do
 
     # Edit the comment
     click_on "Edit"
-    fill_in "editComment", with: "Bar"
+    fill_in "editComment", with: "FooBar"
     click_on "Save"
 
     # Expect edited comment to be visible on opage
-    expect(page).to have_content("Bar")
+    expect(page).to have_content("FooBar")
 
     # Expect comment to be in database
-    expect(documents[0].reload.annotations.first.comment).to eq("Bar")
+    expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
 
     # Delete the comment
     click_on "Delete"
 
     # Expect the comment to be removed from the page
-    expect(page).to_not have_content("Bar")
+    expect(page).to_not have_content("FooBar")
 
     # Expect the comment to be removed from teh database
     expect(documents[0].reload.annotations.count).to eq(0)
@@ -123,5 +123,12 @@ RSpec.feature "Reader", focus: true do
     expect(page).to_not have_content("Banana. Banana who")
     scroll_to(500)
     expect(page).to have_content("Banana. Banana who")
+  end
+
+  scenario "Open single document view" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+    # Expect only the first page of the pdf to be rendered
+    expect(page).to_not have_content("Important Decision Document!!!")
   end
 end
