@@ -6,6 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# We need this because the autoload pathing to VBMS::HTTPError is messed up in connect_vbms
+require "vbms"
+
 module CaseflowCertification
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

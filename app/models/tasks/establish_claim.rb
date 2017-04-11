@@ -1,5 +1,3 @@
-require "vbms"
-
 class EstablishClaim < Task
   include CachedAttributes
 
