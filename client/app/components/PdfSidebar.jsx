@@ -6,6 +6,7 @@ import ReaderBlueCategory from '../svg/reader-blue-category.svg';
 import ReaderGreenCategory from '../svg/reader-green-category.svg';
 import ReaderPinkCategory from '../svg/reader-pink-category.svg';
 import _ from 'lodash';
+import Checkbox from '../components/Checkbox';
 
 const documentCategories = {
   procedural: {
@@ -22,16 +23,23 @@ const documentCategories = {
   }
 }
 
-function CategorySelector({category}) {
+function CategorySelector({category, categoryName}) {
   const Svg = category.svg;
-  return <p><Svg /> {category.humanName}</p>;
+  const label = <div className="cf-category-selector">
+      <Svg />
+      <span className="cf-category-name">{category.humanName}</span>
+  </div>
+  return <div>
+    <Checkbox name={categoryName} onChange={_.noop} label={label} />
+  </div>;
 }
 
 CategorySelector.propTypes = {
-  categoryName: PropTypes.shape({
+  category: PropTypes.shape({
     humanName: PropTypes.string.isRequired,
-    svg: PropTypes.object.isRequired
-  })
+    svg: PropTypes.func.isRequired
+  }).isRequired,
+  categoryName: PropTypes.string.isRequired
 }
 
 // PdfSidebar shows relevant document information and comments.
@@ -78,11 +86,11 @@ export default class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
-          <ul>
+          <ul className="cf-document-category-picker">
             {
               _.map(
                 documentCategories, 
-                (category, categoryName) => <li key={categoryName}><CategorySelector category={category} /></li>
+                (category, categoryName) => <li key={categoryName}><CategorySelector category={category} categoryName={categoryName} /></li>
               )
             }
           </ul>

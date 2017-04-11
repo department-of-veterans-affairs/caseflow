@@ -288,3 +288,19 @@ svg[aria-hidden=true],
   display: inline-block;
   position: relative;
 }
+
+.cf-document-category-picker {
+  list-style-type: none;
+  padding-left: 0;
+
+  .cf-category-selector {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+
+    .cf-category-name {
+      line-height: 1;
+      padding-left: 7px;
+    }
+  }
+}
