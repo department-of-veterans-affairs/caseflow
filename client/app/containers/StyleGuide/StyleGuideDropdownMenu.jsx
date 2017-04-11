@@ -3,22 +3,24 @@ import DropdownMenu from '../../components/DropdownMenu';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideDropdownMenu extends React.Component {
-  render(){
-    let options = [
+  options = () => {
+    return [
       {
         title: 'Change Location',
-        link: '#'
+        link: '#dropdown_menu'
       },
       {
         title: 'Escalate to Coach',
-        link: '#'
+        link: '#dropdown_menu'
       },
       {
         title: 'Cancel',
-        link: '#'
+        link: '#dropdown_menu'
       }
-    ]
+    ];
+  }
 
+  render() {
     return <div>
       <br />
       <StyleGuideComponentTitle
@@ -27,8 +29,9 @@ export default class StyleGuideDropdownMenu extends React.Component {
         link="StyleGuideDropdownMenu.jsx"
       />
     <DropdownMenu
-      options={options}
-      label="JANE AUSTEN" />
-    </div>
+      options={this.options()}
+      label="JANE AUSTIN"
+      />
+    </div>;
   }
 }
