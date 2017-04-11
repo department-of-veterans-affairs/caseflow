@@ -21,6 +21,7 @@ class SeedDB
         )
     end
     @appeals.push(*appeals)
+    @appeals.push(Appeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
   end
 
   def create_users(number, deterministic = true)

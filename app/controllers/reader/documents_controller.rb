@@ -1,6 +1,7 @@
 class Reader::DocumentsController < ApplicationController
   before_action :verify_system_admin
 
+  private
   # :nocov:
   def appeal
     Appeal.find_or_create_by_vacols_id(appeal_id)

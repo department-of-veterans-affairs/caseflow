@@ -171,6 +171,7 @@ class Fakes::AppealRepository
 
     seed_certification_data!
     seed_establish_claim_data!
+    seed_reader_data!
   end
 
   def self.certification_documents
@@ -290,5 +291,28 @@ class Fakes::AppealRepository
     seed_appeal_ready_to_certify_with_informal_form9!
     seed_appeal_raises_vbms_error!
     seed_appeal_not_ready!
+  end
+
+  def self.reader_documents
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
+      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago),
+      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago)
+    ]
+  end
+
+  def self.seed_reader_data!
+    Generators::Appeal.build(
+      vacols_id: "reader_id1",
+      vbms_id: "reader_id1",
+      vacols_record: {
+        template: :ready_to_certify,
+        veteran_first_name: "Joe",
+        veteran_last_name: "Smith",
+      },
+      documents: reader_documents
+    )
   end
 end

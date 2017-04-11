@@ -2,9 +2,7 @@ class AnnotationController < ApplicationController
   before_action :verify_system_admin
 
   def create
-    annotation = Annotation.create!(annotation_params) do |t|
-      t.document_id = params[:document_id]
-    end
+    annotation = Annotation.create!(annotation_params)
     render json: { id: annotation.id }
   end
 
@@ -14,13 +12,13 @@ class AnnotationController < ApplicationController
   end
 
   def update
-    Annotation.find(params[:id]).update!(annotation_params) do |t|
-      t.document_id = params[:document_id]
-    end
+    Annotation.find(params[:id]).update!(annotation_params)
     render json: {}
   end
 
   def annotation_params
-    params.require(:annotation).permit(:page, :x, :y, :comment)
+    params.require(:annotation).permit(:page, :x, :y, :comment).merge(
+      document_id: params[:document_id]
+    )
   end
 end
