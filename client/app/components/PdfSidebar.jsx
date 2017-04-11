@@ -23,18 +23,24 @@ const documentCategories = {
     humanName: 'Other Evidence',
     svg: ReaderGreenCategory
   }
-}
+};
 
-function CategorySelector({category, categoryName, handleCategoryToggle}) {
-  const Svg = category.svg;
-  const label = <div className="cf-category-selector">
-      <Svg />
-      <span className="cf-category-name">{category.humanName}</span>
-  </div>
+const CategorySelector = (props) => {
+  const { category, categoryName, handleCategoryToggle, docId, documents } = props;
+  const { toggleState } = _.get(documents, [docId, categoryName], {}),
+    Svg = category.svg,
+    label = <div className="cf-category-selector">
+        <Svg />
+        <span className="cf-category-name">{category.humanName}</span>
+      </div>;
+
+  const handleChange = (checked) => handleCategoryToggle(categoryName, checked, docId);
+
   return <div>
-    <Checkbox name={categoryName} onChange={() => handleCategoryToggle(categoryName, true)} label={label} />
+    <Checkbox name={categoryName} onChange={handleChange}
+      label={label} value={toggleState} />
   </div>;
-}
+};
 
 CategorySelector.propTypes = {
   category: PropTypes.shape({
@@ -42,22 +48,23 @@ CategorySelector.propTypes = {
     svg: PropTypes.func.isRequired
   }).isRequired,
   categoryName: PropTypes.string.isRequired
-}
+};
 
 const ConnectedCategorySelector = connect(
-  null,
+  (state) => _.pick(state, 'documents'),
   (dispatch) => ({
-    handleCategoryToggle(categoryName, toggleState) {
+    handleCategoryToggle(categoryName, toggleState, docId) {
       dispatch({
         type: Constants.TOGGLE_DOCUMENT_CATEGORY,
         payload: {
           categoryName,
-          toggleState
+          toggleState,
+          docId
         }
       });
     }
   })
-)(CategorySelector)
+)(CategorySelector);
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
@@ -106,9 +113,10 @@ export default class PdfSidebar extends React.Component {
           <ul className="cf-document-category-picker">
             {
               _.map(
-                documentCategories, 
+                documentCategories,
                 (category, categoryName) => <li key={categoryName}>
-                  <ConnectedCategorySelector category={category} categoryName={categoryName} />
+                  <ConnectedCategorySelector category={category}
+                    categoryName={categoryName} docId={this.props.doc.id} />
                 </li>
               )
             }
