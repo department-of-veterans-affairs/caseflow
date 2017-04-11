@@ -13,14 +13,16 @@ RSpec.feature "Dispatch Stats Dashboard" do
   scenario "Page loads correctly with tabs" do
     User.authenticate!(roles: ["Manage Claim Establishment"])
     visit "/dispatch/stats"
-    expect(page).to have_content("Establish Claim Tasks Identified All 2")
+    expect(page).to have_content("Establish Claim Tasks Identified")
+    expect(page).to have_content("All 2")
     expect(page).to have_content("Establish Claim Task Activity")
     expect(page).to have_content("Establish Claim Task Completion Rate")
     expect(page).to have_content("Time to Claim Establishment")
     expect(page).to have_content("Establish Claim Tasks Canceled")
 
     click_on "Daily"
-    expect(page).to have_content("Establish Claim Tasks Identified All 2")
+    expect(page).to have_content("Establish Claim Tasks Identified")
+    expect(page).to have_content("All 2")
   end
 
   scenario "Users without manager permissions cannot view page" do
