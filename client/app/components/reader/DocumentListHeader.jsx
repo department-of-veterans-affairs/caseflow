@@ -28,7 +28,7 @@ const DocumentListHeader = (props) => {
 DocumentListHeader.propTypes = {
   filterBy: PropTypes.string.isRequired,
   onFilter: PropTypes.func.isRequired,
-  numberOfDocuments: PropTypes.number.isRequired,
+  numberOfDocuments: PropTypes.number.isRequired
 };
 
 export default DocumentListHeader;
