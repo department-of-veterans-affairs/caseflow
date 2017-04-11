@@ -258,27 +258,27 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
-  onHearingDocumentChange: (event) => {
+  onHearingDocumentChange: (hearingDocumentIsInVbms) => {
     dispatch({
       type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
       payload: {
-        hearingDocumentIsInVbms: event.target.value
+        hearingDocumentIsInVbms
       }
     });
   },
-  onTypeOfForm9Change: (event) => {
+  onTypeOfForm9Change: (form9Type) => {
     dispatch({
       type: Constants.CHANGE_TYPE_OF_FORM9,
       payload: {
-        form9Type: event.target.value
+        form9Type
       }
     });
   },
-  onHearingTypeChange: (event) => {
+  onHearingTypeChange: (hearingType) => {
     dispatch({
       type: Constants.CHANGE_TYPE_OF_HEARING,
       payload: {
-        hearingType: event.target.value
+        hearingType
       }
     });
   }

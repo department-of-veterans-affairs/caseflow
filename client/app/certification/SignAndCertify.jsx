@@ -43,7 +43,6 @@ class UnconnectedSignAndCertify extends React.Component {
       match
     } = this.props;
 
-
     return <div>
       <form>
         <div className="cf-app-segment cf-app-segment--alt">

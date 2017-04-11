@@ -121,11 +121,11 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
-  onRepresentativeTypeChange: (event) => {
+  onRepresentativeTypeChange: (representativeType) => {
     dispatch({
       type: Constants.CHANGE_REPRESENTATIVE_TYPE,
       payload: {
-        representativeType: event.target.value
+        representativeType
       }
     });
   },
