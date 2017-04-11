@@ -19,6 +19,7 @@ export default class PdfListView extends React.Component {
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`} aria-hidden="true"></i>;
     let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon" aria-hidden="true"></i>;
+    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon" aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -51,7 +52,7 @@ export default class PdfListView extends React.Component {
         header: <div
           id="receipt-date-header"
           onClick={this.props.changeSortState('date')}>
-          Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+          Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
         </div>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
@@ -60,7 +61,7 @@ export default class PdfListView extends React.Component {
       },
       {
         header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-          Document Type {this.props.sortBy === 'date' ? sortIcon : ' '}
+          Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
         </div>,
         valueFunction: (doc, index) => boldUnreadContent(
           <a
@@ -74,7 +75,12 @@ export default class PdfListView extends React.Component {
           Issue Tags {filterIcon}
         </div>,
         valueFunction: (doc) => {
+          let tags = ['SC - Knee', 'Dislocated Shoulder', 'Hearing Transcript'];
+          let tagItems = tags.map((tag) =>		
+           <span className="document-list-issue-tag">{tag}</span>		
+          );
           return <div className="document-list-issue-tags">
+            
           </div>;
         }
       },
@@ -83,8 +89,7 @@ export default class PdfListView extends React.Component {
           Comments
         </div>,
         valueFunction: (doc) => {
-          let numberOfComments = this.props.annotationStorage.
-            getAnnotationByDocumentId(doc.id).length;
+          let numberOfComments = 3;
 
           return <span className="document-list-comments-indicator">
             { numberOfComments > 0 &&
@@ -135,5 +140,6 @@ PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   filterBy: PropTypes.string.isRequired,
   numberOfDocuments: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired
+  onFilter: PropTypes.func.isRequired,
+  sortBy: PropTypes.string
 };
