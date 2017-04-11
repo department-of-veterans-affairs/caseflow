@@ -17,6 +17,7 @@ export default class SearchBar extends React.Component {
       <input id={id} onChange={this.onChange} type="search" name="search" value={value}/>
       <button onClick={onClick} type="submit">
         <i className="fa fa-search" aria-hidden="true"></i>
+        <span className="usa-sr-only">Search</span>
       </button>
     </span>;
   }
