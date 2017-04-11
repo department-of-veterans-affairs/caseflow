@@ -19,7 +19,7 @@ export default class Pdf extends React.Component {
     // draw comments after a page is rendered. Once a page is
     // successfully rendered we set isRendered[pageNumber] to be the
     // filename of the rendered PDF. This way, if PDFs are changed
-    // we know which pages are stale. 
+    // we know which pages are stale.
     this.state = {
       numPages: 0,
       pdfDocument: null,
@@ -65,21 +65,18 @@ export default class Pdf extends React.Component {
 
       // Page numbers are one-indexed
       let pageNumber = index + 1;
+      let canvas = document.getElementById(`canvas${pageNumber}`);
+      let container = document.getElementById(`textLayer${pageNumber}`);
+      let page = document.getElementById(`pageContainer${pageNumber}`);
 
-      // This method has a lot of statements because it needs to call
-      // into PDFJS. I don't think it lends itself to an easy refactor.
-      /* eslint-disable max-statements */
+      if (!canvas || !container || !page) {
+        reject();
+      }
+
       this.state.pdfDocument.getPage(pageNumber).then((pdfPage) => {
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
         let viewport = pdfPage.getViewport(this.props.scale);
-        let canvas = document.getElementById(`canvas${pageNumber}`);
-        let container = document.getElementById(`textLayer${pageNumber}`);
-        let page = document.getElementById(`pageContainer${pageNumber}`);
-
-        if (!canvas || !container || !page) {
-          reject();
-        }
 
         // We need to set the width and heights of everything based on
         // the width and height of the viewport.
@@ -91,56 +88,69 @@ export default class Pdf extends React.Component {
         container.innerHTML = '';
 
         // Call PDFJS to actually render the page.
-        pdfPage.render({
-          canvasContext: canvas.getContext('2d', { alpha: false }),
-          viewport
-        }).then(() => {
-          // Get the text from the PDF and render it.
-          pdfPage.getTextContent().then((textContent) => {
-            PDFJS.renderTextLayer({
-              textContent,
-              container,
-              viewport,
-              textDivs: []
+        return new Promise((resolveRender, rejectRender) => {
+          pdfPage.render({
+            canvasContext: canvas.getContext('2d', { alpha: false }),
+            viewport
+          }).
+          then(() => {
+            resolveRender({
+              pdfPage,
+              viewport
             });
-
-            // After rendering everything, we check to see if
-            // the PDF we just rendered is the same as the PDF
-            // in the current state. It is possible that the
-            // user switched between PDFs quickly and this
-            // condition is no longer true, in which case we
-            // should render this page again with the new file.
-            if (pdfDocument === this.state.pdfDocument) {
-              // If it is the same, then we mark this page as rendered
-              this.setIsRendered(index, pdfDocument);
-              resolve();
-            } else {
-              // If it is not, then we try to render it again.
-              this.isRendering[index] = false;
-              this.renderPage(index).then(() => {
-                resolve();
-              }).
-              catch(() => {
-                reject();
-              });
-            }
           }).
           catch(() => {
-            this.isRendering[index] = false;
+            rejectRender();
+          });
+        });
+      }).
+      then(({ pdfPage, viewport }) => {
+        // Get the text from the PDF and render it.
+        return new Promise((resolveTextContent, rejectTextContent) => {
+          pdfPage.getTextContent().then((textContent) => {
+            resolveTextContent({
+              textContent,
+              viewport
+            });
+          }).
+          catch(() => {
+            rejectTextContent();
+          });
+        });
+      }).
+      then(({ textContent, viewport }) => {
+        PDFJS.renderTextLayer({
+          textContent,
+          container,
+          viewport,
+          textDivs: []
+        });
+
+        // After rendering everything, we check to see if
+        // the PDF we just rendered is the same as the PDF
+        // in the current state. It is possible that the
+        // user switched between PDFs quickly and this
+        // condition is no longer true, in which case we
+        // should render this page again with the new file.
+        if (pdfDocument === this.state.pdfDocument) {
+          // If it is the same, then we mark this page as rendered
+          this.setIsRendered(index, pdfDocument);
+          resolve();
+        } else {
+          // If it is not, then we try to render it again.
+          this.isRendering[index] = false;
+          this.renderPage(index).then(() => {
+            resolve();
+          }).
+          catch(() => {
             reject();
           });
-        }).
-        catch(() => {
-          this.isRendering[index] = false;
-          reject();
-        });
+        }
       }).
       catch(() => {
         this.isRendering[index] = false;
         reject();
       });
-
-      /* eslint-enable max-statements */
     });
   }
 
