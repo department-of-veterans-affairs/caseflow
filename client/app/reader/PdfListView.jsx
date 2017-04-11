@@ -2,10 +2,10 @@ import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
-import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import DocumentListHeader from './DocumentListHeader';
 
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {
@@ -17,8 +17,8 @@ export default class PdfListView extends React.Component {
       className = "fa-caret-up";
     }
 
-    let sortIcon = <i className={`fa ${className} tableIcon`} aria-hidden="true"></i>;
-    let filterIcon = <i className="fa fa-filter tableIcon" aria-hidden="true"></i>;
+    let sortIcon = <i className={`fa fa-1 ${className} table-icon`} aria-hidden="true"></i>;
+    let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon" aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -35,7 +35,7 @@ export default class PdfListView extends React.Component {
       {
         header: <div
           id="receipt-date-header"
-          onClick={this.props.changeSortState('date')}>
+          onClick={() => { console.log("Categories filter clicked.")}}>
           Categories {filterIcon}
         </div>,
         valueFunction: (doc) => {
@@ -54,7 +54,9 @@ export default class PdfListView extends React.Component {
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
         </div>,
         valueFunction: (doc) =>
-          boldUnreadContent(formatDate(doc.receivedAt), doc)
+          <span className="document-list-receipt-date">
+           {formatDate(doc.receivedAt)}
+          </span>
       },
       {
         header: <div id="type-header" onClick={this.props.changeSortState('type')}>
@@ -68,7 +70,7 @@ export default class PdfListView extends React.Component {
           </a>, doc)
       },
       {
-        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
+        header: <div id="type-header" onClick={() => console.log("Issue tags filter clicked.")}>
           Issue Tags {filterIcon}
         </div>,
         valueFunction: (doc) => {
@@ -88,8 +90,8 @@ export default class PdfListView extends React.Component {
         }
       },
       {
-        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-          Comments {this.props.sortBy === 'type' ? sortIcon : ' '}
+        header: <div id="type-header">
+          Comments
         </div>,
         valueFunction: (doc) => {
           let numberOfComments = this.props.annotationStorage.
@@ -122,38 +124,12 @@ export default class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <div className="usa-grid-full">
-            <div className="usa-width-one-third">
-              <SearchBar
-                id="searchBar"
-                onChange={this.props.onFilter}
-                value={this.props.filterBy}
-              />
-            </div>
-            <div className="usa-width-one-third">
-              <span>
-                Show only:
-                <DocumentLabels
-                  onClick={this.props.selectLabel}
-                  selectedLabels={this.props.selectedLabels} />
-              </span>
-              <span>
-                <Button
-                  name="comment-selector"
-                  onClick={this.props.selectComments}
-                  classNames={commentSelectorClassNames}
-                  ariaLabel={"Filter by comments"}>
-                  <i className="fa fa-comment-o fa-lg"></i>
-                </Button>
-              </span>
-            </div>
-            <div className="usa-width-one-third">
-              <span className="cf-right-side">
-                Showing {`${this.props.documents.length} out of ` +
-                `${this.props.numberOfDocuments}`} documents
-              </span>
-            </div>
-          </div>
+          <DocumentListHeader
+            documents={this.props.documents}
+            onFilter={this.props.onFilter}
+            filterBy={this.props.filterBy}
+            numberOfDocuments={this.props.numberOfDocuments}
+          />
           <div>
             <Table
               columns={this.getDocumentColumns()}

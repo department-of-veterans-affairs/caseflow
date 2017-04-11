@@ -1,5 +1,24 @@
 .section--document-list {
-  .tableIcon {
+  .table-icon {
     margin: 1px;
+    cursor: pointer;
+  }
+
+  .bordered-icon {
+    border: 2px solid grey;
+    padding: 1px 2px 0 2px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .document-list-header {
+    .num-of-documents{
+      color: #6b7079;
+      padding: 5px;
+    }
+  }
+
+  .document-list-receipt-date {
+    color: #6b7079;
   }
 }
