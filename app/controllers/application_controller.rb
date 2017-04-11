@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :verify_authentication
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from VBMSError, with: :on_vbms_error
+  rescue_from VBMS::ClientError, with: :on_vbms_error
 
   def unauthorized
     render status: 403

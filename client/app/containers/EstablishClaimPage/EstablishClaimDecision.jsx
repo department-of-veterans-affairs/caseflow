@@ -7,8 +7,10 @@ import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
+import { connect } from 'react-redux';
+import * as Constants from '../../establishClaim/constants/constants';
 
-export default class EstablishClaimDecision extends React.Component {
+export class EstablishClaimDecision extends React.Component {
   constructor(props) {
     super(props);
     let endProductButtonText;
@@ -39,7 +41,7 @@ export default class EstablishClaimDecision extends React.Component {
       decisionType,
       handleSubmit,
       handleCancelTask,
-      handleFieldChange,
+      handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -191,9 +193,9 @@ export default class EstablishClaimDecision extends React.Component {
                   id={issue.specialIssue}
                   label={issue.node || issue.display}
                   name={issue.specialIssue}
-                  onChange={handleFieldChange('specialIssues', issue.specialIssue)}
-                    key={index}
-                    {...specialIssues[issue.specialIssue]}
+                  onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
+                  key={index}
+                  value={specialIssues[issue.specialIssue]}
                 />;
               })
             }
@@ -222,10 +224,36 @@ export default class EstablishClaimDecision extends React.Component {
 EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.object.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
-  handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => {
+  return {
+    specialIssues: state.specialIssues
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSpecialIssueFieldChange: (specialIssue) => (value) => {
+      dispatch({
+        type: Constants.CHANGE_SPECIAL_ISSUE,
+        payload: {
+          specialIssue,
+          value
+        }
+      });
+    }
+  };
+};
+
+const ConnectedEstablishClaimDecision = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(EstablishClaimDecision);
+
+export default ConnectedEstablishClaimDecision;

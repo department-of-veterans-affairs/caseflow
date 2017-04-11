@@ -59,7 +59,7 @@ class SeedDB
     tasks[2].assign!(@users[2])
     tasks[2].start!
     tasks[2].review!
-    tasks[2].complete!(status: 0)
+    tasks[2].complete!(status: :routed_to_arc)
 
     # Create one task with no decision documents
     EstablishClaim.create(
