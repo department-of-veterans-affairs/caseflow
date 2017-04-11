@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
-import * as Constants from '../../app/establishClaim/constants/constants';
+import * as Constants from '../../app/establishClaim/constants';
 
 let func = function() {
   // empty function
@@ -25,15 +25,19 @@ describe('EstablishClaim', () => {
           non_canceled_end_products_within_30_days: [],
           pending_eps: [],
           station_key: '397',
-          regional_office_key: 'RO97'
+          regional_office_key: 'RO11'
         },
         user: 'a'
       };
 
       /* eslint-enable camelcase */
 
+      const regionalOfficeCities = {
+        'RO11': { city: 'Pittsburgh', state: 'PA', timezone: 'America/New_York' }
+      };
+
       wrapper = mount(<EstablishClaim
-        regionalOfficeCities={{}}
+        regionalOfficeCities={regionalOfficeCities}
         pdfLink=""
         pdfjsLink=""
         handleAlert={func}
@@ -66,7 +70,6 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimForm', () => {
       beforeEach(() => {
-        // Force component to Form page
         wrapper.node.store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
@@ -74,6 +77,7 @@ describe('EstablishClaim', () => {
             value: '397'
           }
         });
+        // Force component to Form page
         wrapper.setState({ page: FORM_PAGE });
       });
 

@@ -4,11 +4,12 @@ import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
+import { FULL_GRANT } from '../../establishClaim/constants';
 import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
-import { validModifiers } from '../../establishClaim/reducers/establishClaimForm';
-import * as Actions from '../../establishClaim/actions/actions';
+import { validModifiers } from '../../establishClaim/util';
+import * as Actions from '../../establishClaim/actions';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -30,10 +31,6 @@ export const ASSOCIATE_PAGE = 'associate';
 export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
-
-export const FULL_GRANT = 'Full Grant';
-export const PARTIAL_GRANT = 'Partial Grant';
-export const REMAND = 'Remand';
 
 
 export const END_PRODUCT_INFO = {

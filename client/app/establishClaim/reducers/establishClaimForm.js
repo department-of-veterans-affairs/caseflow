@@ -1,44 +1,6 @@
-import { FULL_GRANT } from '../../containers/EstablishClaimPage/EstablishClaim';
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 import ReducerUtil from '../../util/ReducerUtil';
-
-const FULL_GRANT_MODIFIER_OPTIONS = [
-  '172'
-];
-
-const PARTIAL_GRANT_MODIFIER_OPTIONS = [
-  '170',
-  '171',
-  '175',
-  '176',
-  '177',
-  '178',
-  '179'
-];
-
-/*
- * This function gets the set of unused modifiers. For a full grant, only one
- * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
- * are all potentially valid. This removes any modifiers that have already been
- * used in previous EPs.
- */
-export const validModifiers = (endProducts, decisionType) => {
-  let modifiers = [];
-
-  if (decisionType === FULL_GRANT) {
-    modifiers = FULL_GRANT_MODIFIER_OPTIONS;
-  } else {
-    modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
-  }
-
-  let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
-    modifierObject[endProduct.end_product_type_code] = true;
-
-    return modifierObject;
-  }, {});
-
-  return modifiers.filter((modifier) => !modifierHash[modifier]);
-};
+import { validModifiers } from '../util';
 
 export const getEstablishClaimFormInitialState = (props) => {
   let initialModifier;
@@ -48,8 +10,6 @@ export const getEstablishClaimFormInitialState = (props) => {
       props.task.appeal.pending_eps,
       props.task.appeal.decision_type
     )[0];
-  } else {
-    initialModifier = PARTIAL_GRANT_MODIFIER_OPTIONS[0];
   }
 
   return {

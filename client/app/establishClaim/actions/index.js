@@ -1,5 +1,5 @@
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 
 /*
 * This function takes the special issues from the review page and sets the station

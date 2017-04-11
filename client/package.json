@@ -9,7 +9,7 @@
     "npm": "2.14.4"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers js:babel-core/register",
+    "test": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers jsx:babel-core/register js:babel-core/register",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint . --ext .jsx --ext .js",
     "lint:fix": "npm run lint -- --fix",
