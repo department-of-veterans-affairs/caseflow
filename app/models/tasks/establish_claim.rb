@@ -93,9 +93,12 @@ class EstablishClaim < Task
 
   def completion_status_text
     case completion_status
-    when "routed_to_ro" then "EP created for RO #{ep_ro_description}"
-    when "special_issue_emailed" then "Emailed - #{special_issues} Issue(s)"
-    else super
+    when "routed_to_ro"
+      "EP created for RO #{ep_ro_description}"
+    when "special_issue_emailed"
+      "Emailed - #{special_issues} Issue(s)"
+    else
+      super
     end
   end
 
@@ -211,7 +214,7 @@ class EstablishClaim < Task
   end
 
   class << self
-    def joins_product
+    def joins_task_result
       joins(:claim_establishment)
     end
   end

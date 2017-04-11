@@ -63,7 +63,7 @@ class TasksController < ApplicationController
   helper_method :to_complete_count
 
   def current_user_historical_tasks
-    tasks.completed_by(current_user).newest_first.joins_product.limit(10)
+    tasks.completed_by(current_user).newest_first.joins_task_result.limit(10)
   end
   helper_method :current_user_historical_tasks
 

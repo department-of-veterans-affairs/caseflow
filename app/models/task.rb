@@ -85,9 +85,9 @@ class Task < ActiveRecord::Base
       end
     end
 
-    # Generic relation method for joining the product of the task
+    # Generic relation method for joining the result of the task
     # ie: EstablishClaim.joins(:claim_establishment)
-    def joins_product
+    def joins_task_result
       fail MustImplementInSubclassError
     end
   end
