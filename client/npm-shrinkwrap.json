@@ -3020,7 +3020,7 @@
     },
     "imports-loader": {
       "version": "0.7.1",
-      "from": "imports-loader@latest",
+      "from": "imports-loader@>=0.7.1 <0.8.0",
       "resolved": "https://registry.npmjs.org/imports-loader/-/imports-loader-0.7.1.tgz",
       "dev": true,
       "dependencies": {
