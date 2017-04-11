@@ -8,7 +8,7 @@ def scroll_to(value)
   page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
-RSpec.feature "Reader" do
+RSpec.feature "Reader", focus: true do
   let(:vacols_record) { :remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
@@ -39,8 +39,8 @@ RSpec.feature "Reader" do
   end
 
   scenario "Add comment" do
-    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
-    expect(page).to have_content("Caseflow Decision")
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    expect(page).to have_content("Caseflow Reader")
 
     # Click on the link to the first file
     click_on documents[0].filename
@@ -92,7 +92,7 @@ RSpec.feature "Reader" do
     end
 
     scenario "Scroll to comment" do
-      visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].filename
 
@@ -112,7 +112,7 @@ RSpec.feature "Reader" do
   end
 
   scenario "Scrolling renders pages" do
-    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
     click_on documents[0].filename
     expect(page).to have_css(".page")
