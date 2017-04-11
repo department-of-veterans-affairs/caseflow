@@ -1,10 +1,8 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 import Table from '../components/Table';
-import DocumentLabels from '../components/DocumentLabels';
-import { formatDate } from '../util/DateUtil';
+import {formatDate} from '../util/DateUtil';
 import StringUtil from '../util/StringUtil';
-import Button from '../components/Button';
-import { linkToSingleDocumentView } from '../components/PdfUI';
+import {linkToSingleDocumentView} from '../components/PdfUI';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 
 export default class PdfListView extends React.Component {
@@ -30,75 +28,78 @@ export default class PdfListView extends React.Component {
     };
 
     // We have blank headers for the comment indicator and label indicator columns.
-    // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
-    // is triggered when a middle mouse button is clicked while onClick isn't.
+    // We use onMouseUp instead of onClick for filename event handler since
+    // OnMouseUp is triggered when a middle mouse button is clicked while onClick
+    // isn't.
     return [
       {
         header: <div
           id="receipt-date-header"
-          onClick={() => { console.log("Categories filter clicked.")}}>
+          onClick={() => {
+          console.log("Categories filter clicked.")
+        }}>
           Categories {filterIcon}
         </div>,
         valueFunction: (doc) => {
           return <span>
             {doc.label && <i
-            className={`fa fa-bookmark cf-pdf-bookmark-` +
-              `${StringUtil.camelCaseToDashCase(doc.label)}`}
-            aria-hidden="true"></i> }
+              className={`fa fa-bookmark cf-pdf-bookmark-` + `${StringUtil.camelCaseToDashCase(doc.label)}`}
+              aria-hidden="true"></i>}
           </span>;
         }
-      },
-      {
+      }, {
         header: <div
           id="receipt-date-header"
-          onClick={this.props.changeSortState('date')}>
-          Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
+          onClick={this
+          .props
+          .changeSortState('date')}>
+          Receipt Date {this.props.sortBy === 'date'
+            ? sortIcon
+            : notsortedIcon}
         </div>,
-        valueFunction: (doc) =>
-          <span className="document-list-receipt-date">
-           {formatDate(doc.receivedAt)}
+        valueFunction: (doc) => <span className="document-list-receipt-date">
+            {formatDate(doc.receivedAt)}
           </span>
-      },
-      {
-        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-          Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
+      }, {
+        header: <div
+          id="type-header"
+          onClick={this
+          .props
+          .changeSortState('type')}>
+          Document Type {this.props.sortBy === 'type'
+            ? sortIcon
+            : notsortedIcon}
         </div>,
         valueFunction: (doc, index) => boldUnreadContent(
           <a
-            href={linkToSingleDocumentView(doc)}
-            onMouseUp={this.props.showPdf(index)}>
-            {doc.type}
-          </a>, doc)
-      },
-      {
+          href={linkToSingleDocumentView(doc)}
+          onMouseUp={this
+          .props
+          .showPdf(index)}>
+          {doc.type}
+        </a>, doc)
+      }, {
         header: <div id="type-header" onClick={() => console.log("Issue tags filter clicked.")}>
           Issue Tags {filterIcon}
         </div>,
-        valueFunction: (doc) => {
-          let tags = ['SC - Knee', 'Dislocated Shoulder', 'Hearing Transcript'];
-          let tagItems = tags.map((tag) =>		
-           <span className="document-list-issue-tag">{tag}</span>		
-          );
-          return <div className="document-list-issue-tags">
-            
-          </div>;
+        valueFunction: () => {
+          return <div className="document-list-issue-tags"></div>;
         }
-      },
-      {
+      }, {
         header: <div id="type-header">
           Comments
         </div>,
         valueFunction: (doc) => {
-          let numberOfComments = 3;
+          let numberOfComments = this.props.annotationStorage.
+            getAnnotationByDocumentId(doc.id).length;;
 
           return <span className="document-list-comments-indicator">
-            { numberOfComments > 0 &&
-              <span>
-                <a href="#">{numberOfComments}
-                  <i className="fa fa-3 fa-angle-down document-list-comments-indicator-icon"/>
-                </a>
-              </span>
-            }
+            {numberOfComments > 0 && <span>
+              <a href="#">{numberOfComments}
+                <i className="fa fa-3 fa-angle-down document-list-comments-indicator-icon"/>
+              </a>
+            </span>
+}
           </span>;
         }
       }
@@ -121,14 +122,12 @@ export default class PdfListView extends React.Component {
             documents={this.props.documents}
             onFilter={this.props.onFilter}
             filterBy={this.props.filterBy}
-            numberOfDocuments={this.props.numberOfDocuments}
-          />
+            numberOfDocuments={this.props.numberOfDocuments}/>
           <div>
             <Table
               columns={this.getDocumentColumns()}
               rowObjects={this.props.documents}
-              summary="Document list"
-            />
+              summary="Document list"/>
           </div>
         </div>
       </div>
@@ -137,7 +136,9 @@ export default class PdfListView extends React.Component {
 }
 
 PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  documents: PropTypes
+    .arrayOf(PropTypes.object)
+    .isRequired,
   filterBy: PropTypes.string.isRequired,
   numberOfDocuments: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
