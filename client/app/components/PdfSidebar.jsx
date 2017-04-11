@@ -7,6 +7,8 @@ import ReaderGreenCategory from '../svg/reader-green-category.svg';
 import ReaderPinkCategory from '../svg/reader-pink-category.svg';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import { connect } from 'react-redux';
+import * as Constants from '../reader/constants';
 
 const documentCategories = {
   procedural: {
@@ -23,14 +25,14 @@ const documentCategories = {
   }
 }
 
-function CategorySelector({category, categoryName}) {
+function CategorySelector({category, categoryName, handleCategoryToggle}) {
   const Svg = category.svg;
   const label = <div className="cf-category-selector">
       <Svg />
       <span className="cf-category-name">{category.humanName}</span>
   </div>
   return <div>
-    <Checkbox name={categoryName} onChange={_.noop} label={label} />
+    <Checkbox name={categoryName} onChange={() => handleCategoryToggle(categoryName, true)} label={label} />
   </div>;
 }
 
@@ -41,6 +43,21 @@ CategorySelector.propTypes = {
   }).isRequired,
   categoryName: PropTypes.string.isRequired
 }
+
+const ConnectedCategorySelector = connect(
+  null,
+  (dispatch) => ({
+    handleCategoryToggle(categoryName, toggleState) {
+      dispatch({
+        type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+        payload: {
+          categoryName,
+          toggleState
+        }
+      });
+    }
+  })
+)(CategorySelector)
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
@@ -90,7 +107,9 @@ export default class PdfSidebar extends React.Component {
             {
               _.map(
                 documentCategories, 
-                (category, categoryName) => <li key={categoryName}><CategorySelector category={category} categoryName={categoryName} /></li>
+                (category, categoryName) => <li key={categoryName}>
+                  <ConnectedCategorySelector category={category} categoryName={categoryName} />
+                </li>
               )
             }
           </ul>

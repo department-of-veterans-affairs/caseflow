@@ -1,0 +1,2 @@
+// actions
+export const TOGGLE_DOCUMENT_CATEGORY = 'TOGGLE_DOCUMENT_CATEGORY';
