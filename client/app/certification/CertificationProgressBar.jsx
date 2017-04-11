@@ -43,11 +43,9 @@ class UnconnectedCertificationProgressBar extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    currentSection: state.currentSection
-  };
-};
+const mapStateToProps = (state) => ({
+  currentSection: state.currentSection
+});
 
 const CertificationProgressBar = connect(
   mapStateToProps

@@ -43,7 +43,6 @@ class UnconnectedSignAndCertify extends React.Component {
       match
     } = this.props;
 
-
     return <div>
       <form>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -84,36 +83,32 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
-        }
-      });
-    },
-    onSignAndCertifyFormChange: (fieldName, value) => {
-      dispatch({
-        type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
-        payload: {
-          [fieldName]: value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
+      }
+    });
+  },
+  onSignAndCertifyFormChange: (fieldName, value) => {
+    dispatch({
+      type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
+      payload: {
+        [fieldName]: value
+      }
+    });
+  }
+});
 
-const mapStateToProps = (state) => {
-  return {
-    certifyingOffice: state.certifyingOffice,
-    certifyingUsername: state.certifyingUsername,
-    certifyingOfficialName: state.certifyingOfficialName,
-    certifyingOfficialTitle: state.certifyingOfficialTitle,
-    certificationDate: state.certificationDate
-  };
-};
+const mapStateToProps = (state) => ({
+  certifyingOffice: state.certifyingOffice,
+  certifyingUsername: state.certifyingUsername,
+  certifyingOfficialName: state.certifyingOfficialName,
+  certifyingOfficialTitle: state.certifyingOfficialTitle,
+  certificationDate: state.certificationDate
+});
 
 const SignAndCertify = connect(
   mapStateToProps,
