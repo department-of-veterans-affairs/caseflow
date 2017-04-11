@@ -291,15 +291,12 @@ const mapDispatchToProps = (dispatch) => {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state) => {
-  return {
-    hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
-    form9Type: state.form9Type,
-    form9Date: state.form9Date,
-    hearingType: state.hearingType
-  };
-};
-
+const mapStateToProps = (state) => ({
+  hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
+  form9Type: state.form9Type,
+  form9Date: state.form9Date,
+  hearingType: state.hearingType
+});
 
 /*
  * Creates a component that's connected to the Redux store

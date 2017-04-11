@@ -105,15 +105,13 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => {
-  return {
-    certifyingOffice: state.certifyingOffice,
-    certifyingUsername: state.certifyingUsername,
-    certifyingOfficialName: state.certifyingOfficialName,
-    certifyingOfficialTitle: state.certifyingOfficialTitle,
-    certificationDate: state.certificationDate
-  };
-};
+const mapStateToProps = (state) => ({
+  certifyingOffice: state.certifyingOffice,
+  certifyingUsername: state.certifyingUsername,
+  certifyingOfficialName: state.certifyingOfficialName,
+  certifyingOfficialTitle: state.certifyingOfficialTitle,
+  certificationDate: state.certificationDate
+});
 
 const SignAndCertify = connect(
   mapStateToProps,
