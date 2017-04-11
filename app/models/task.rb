@@ -74,7 +74,7 @@ class Task < ActiveRecord::Base
     end
 
     def completed_success
-      where(completion_status: [ 0, 3, 4, 5, 7 ])
+      where(completion_status: [0, 3, 4, 5, 7])
     end
 
     def to_complete_task_for_appeal(appeal)

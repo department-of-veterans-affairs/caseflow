@@ -337,20 +337,8 @@ describe Task do
   end
 
   context "#completed_success" do
-    let!(:successful_appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:successful_task) { EstablishClaim.create(appeal: successful_appeal) }
-    let!(:canceled_appeal) { Appeal.create(vacols_id: "456D") }
-    let!(:canceled_task) { EstablishClaim.create(appeal: canceled_appeal) }
-    before do
-      successful_task.prepare!
-      successful_task.assign!(:assigned, @user)
-      successful_task.start!
-      successful_task.complete!(:completed, status: Task.completion_status_code(:assigned_existing_ep))
-      canceled_task.prepare!
-      canceled_task.assign(:assigned, @user)
-      canceled_task.start!
-      canceled_task.cancel!
-    end
+    let!(:successful_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 0) }
+    let!(:canceled_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1) }
     it "returns only the successfully completed task" do
       expect(Task.completed_success).to eq [successful_task]
     end
@@ -375,9 +363,13 @@ describe Task do
       task.cancel!("Feedback")
       expect(task.reload.comment).to eq("Feedback")
     end
+  end
 
+  context ".canceled" do
+    before do
+      Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1)
+    end
     it "returns canceled tasks" do
-      task.cancel!("Feedback")
       expect(Task.canceled.count).to eq(1)
     end
   end
