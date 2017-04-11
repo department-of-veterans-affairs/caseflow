@@ -11,9 +11,6 @@ class DocumentController < ApplicationController
     render json: {}
   end
 
-  def update_params
-    params.permit(:label)
-  end
   # :nocov:
 
   # TODO: Scope this down so that users can only see documents
@@ -36,5 +33,10 @@ class DocumentController < ApplicationController
       t.update!(first_viewed_at: Time.zone.now) unless t.first_viewed_at
     end
     render json: {}
+  end
+
+  private
+  def update_params
+    params.permit(:label)
   end
 end
