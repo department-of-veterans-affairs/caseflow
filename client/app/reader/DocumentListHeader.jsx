@@ -1,4 +1,4 @@
-import React, { Proptypes } from 'React';
+import React, { Proptypes } from 'react';
 import SearchBar from '../components/SearchBar';
 import Button from '../components/Button';
 
