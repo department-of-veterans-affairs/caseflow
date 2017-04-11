@@ -34,11 +34,9 @@ const UnconnectedEntryPointRedirect = ({ certificationStatus, match }) => {
   }
 };
 
-const mapStateToProps = (state) => {
-  return {
-    certificationStatus: state.certificationStatus
-  };
-};
+const mapStateToProps = (state) => ({
+  certificationStatus: state.certificationStatus
+});
 
 const EntryPointRedirect = connect(
   mapStateToProps
