@@ -9,8 +9,9 @@ import {
   PARTIAL_GRANT_MODIFIER_OPTIONS
 } from '../../../app/establishClaim/constants';
 
-context.only('establishClaimUtil', () => {
+context('establishClaimUtil', () => {
   let result;
+
   beforeEach(() => {
     result = null;
   });
@@ -20,7 +21,11 @@ context.only('establishClaimUtil', () => {
 
     beforeEach(() => {
       regionalOfficeCities = {
-        'RO01': { city: 'Boston', state: 'MA', timezone: 'America/New_York' },
+        'RO01': {
+          city: 'Boston',
+          state: 'MA',
+          timezone: 'America/New_York'
+        }
       };
     });
 
@@ -53,8 +58,6 @@ context.only('establishClaimUtil', () => {
   });
 
   context('.validModifiers', () => {
-    beforeEach(() => {
-    });
     it('returns full grant modifiers', () => {
       result = validModifiers([], FULL_GRANT);
       expect(result).to.eql(FULL_GRANT_MODIFIER_OPTIONS);
@@ -66,6 +69,7 @@ context.only('establishClaimUtil', () => {
     });
 
     it('filters modifiers based on existing end products', () => {
+      /* eslint-disable camelcase */
       result = validModifiers(
         [
           {
@@ -74,8 +78,11 @@ context.only('establishClaimUtil', () => {
         ],
         'partial grants'
       );
+      /* eslint-enable camelcase */
+
       let modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS.slice();
       // Remove first modifier since it's taken
+
       modifiers.shift();
       expect(result).to.eql(modifiers);
     });

@@ -609,47 +609,47 @@ export default class EstablishClaim extends BaseForm {
           isRouteClaim={!this.isDecisionPage()}
         />
         { this.isDecisionPage() &&
-        <EstablishClaimDecision
-          loading={this.state.loading}
-          decisionType={this.state.reviewForm.decisionType}
-          handleCancelTask={this.handleCancelTask}
-          handleFieldChange={this.handleFieldChange}
-          handleSubmit={this.handleDecisionPageSubmit}
-          pdfLink={pdfLink}
-          pdfjsLink={pdfjsLink}
-          task={this.props.task}
-        />
+          <EstablishClaimDecision
+            loading={this.state.loading}
+            decisionType={this.state.reviewForm.decisionType}
+            handleCancelTask={this.handleCancelTask}
+            handleFieldChange={this.handleFieldChange}
+            handleSubmit={this.handleDecisionPageSubmit}
+            pdfLink={pdfLink}
+            pdfjsLink={pdfjsLink}
+            task={this.props.task}
+          />
         }
         { this.isAssociatePage() &&
-        <AssociatePage
-          backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
-          loading={this.state.loading}
-          endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
-          task={this.props.task}
-          decisionType={this.state.reviewForm.decisionType.value}
-          handleAlert={this.props.handleAlert}
-          handleAlertClear={this.props.handleAlertClear}
-          handleCancelTask={this.handleCancelTask}
-          handleSubmit={this.handleAssociatePageSubmit}
-          hasAvailableModifers={this.hasAvailableModifers()}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-          history={history}
-        />
+          <AssociatePage
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
+            loading={this.state.loading}
+            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            task={this.props.task}
+            decisionType={this.state.reviewForm.decisionType.value}
+            handleAlert={this.props.handleAlert}
+            handleAlertClear={this.props.handleAlertClear}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleAssociatePageSubmit}
+            hasAvailableModifers={this.hasAvailableModifers()}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            history={history}
+          />
         }
         { this.isFormPage() &&
-        <EstablishClaimForm
-          backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
-          loading={this.state.loading}
-          claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
-          decisionDate={this.formattedDecisionDate()}
-          handleCancelTask={this.handleCancelTask}
-          handleSubmit={this.handleFormPageSubmit}
-          handleFieldChange={this.handleFieldChange}
-          handleBackToDecisionReview={this.handleBackToDecisionReview}
-          regionalOfficeKey={this.props.task.appeal.regional_office_key}
-          regionalOfficeCities={this.props.regionalOfficeCities}
-          validModifiers={this.validModifiers()}
-        />
+          <EstablishClaimForm
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
+            loading={this.state.loading}
+            claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            decisionDate={this.formattedDecisionDate()}
+            handleCancelTask={this.handleCancelTask}
+            handleSubmit={this.handleFormPageSubmit}
+            handleFieldChange={this.handleFieldChange}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            regionalOfficeKey={this.props.task.appeal.regional_office_key}
+            regionalOfficeCities={this.props.regionalOfficeCities}
+            validModifiers={this.validModifiers()}
+          />
         }
         { this.isNotePage() &&
           <EstablishClaimNote
