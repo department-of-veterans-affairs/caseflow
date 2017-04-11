@@ -1,8 +1,8 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Table from '../components/Table';
-import {formatDate} from '../util/DateUtil';
+import { formatDate } from '../util/DateUtil';
 import StringUtil from '../util/StringUtil';
-import {linkToSingleDocumentView} from '../components/PdfUI';
+import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 
 export default class PdfListView extends React.Component {
@@ -15,9 +15,12 @@ export default class PdfListView extends React.Component {
       className = "fa-caret-up";
     }
 
-    let sortIcon = <i className={`fa fa-1 ${className} table-icon`} aria-hidden="true"></i>;
-    let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon" aria-hidden="true"></i>;
-    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon" aria-hidden="true"></i>;
+    let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
+      aria-hidden="true"></i>;
+    let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon"
+      aria-hidden="true"></i>;
+    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
+      aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -28,78 +31,73 @@ export default class PdfListView extends React.Component {
     };
 
     // We have blank headers for the comment indicator and label indicator columns.
-    // We use onMouseUp instead of onClick for filename event handler since
-    // OnMouseUp is triggered when a middle mouse button is clicked while onClick
-    // isn't.
+    // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
+    // is triggered when a middle mouse button is clicked while onClick isn't.
     return [
       {
         header: <div
           id="receipt-date-header"
-          onClick={() => {
-          console.log("Categories filter clicked.")
-        }}>
+          onClick={() => { console.log("Categories filter clicked.") }}>
           Categories {filterIcon}
         </div>,
         valueFunction: (doc) => {
           return <span>
             {doc.label && <i
-              className={`fa fa-bookmark cf-pdf-bookmark-` + `${StringUtil.camelCaseToDashCase(doc.label)}`}
+              className={`fa fa-bookmark cf-pdf-bookmark-` +
+                `${StringUtil.camelCaseToDashCase(doc.label)}`}
               aria-hidden="true"></i>}
           </span>;
         }
-      }, {
+      },
+      {
         header: <div
           id="receipt-date-header"
-          onClick={this
-          .props
-          .changeSortState('date')}>
-          Receipt Date {this.props.sortBy === 'date'
-            ? sortIcon
-            : notsortedIcon}
+          onClick={this.props.changeSortState('date')}>
+          Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
         </div>,
-        valueFunction: (doc) => <span className="document-list-receipt-date">
+        valueFunction: (doc) =>
+          <span className="document-list-receipt-date">
             {formatDate(doc.receivedAt)}
           </span>
-      }, {
-        header: <div
-          id="type-header"
-          onClick={this
-          .props
-          .changeSortState('type')}>
-          Document Type {this.props.sortBy === 'type'
-            ? sortIcon
-            : notsortedIcon}
+      },
+      {
+        header: <div id="type-header" onClick={this.props.changeSortState('type')}>
+          Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
         </div>,
         valueFunction: (doc, index) => boldUnreadContent(
           <a
-          href={linkToSingleDocumentView(doc)}
-          onMouseUp={this
-          .props
-          .showPdf(index)}>
-          {doc.type}
-        </a>, doc)
-      }, {
-        header: <div id="type-header" onClick={() => console.log("Issue tags filter clicked.")}>
+            href={linkToSingleDocumentView(doc)}
+            onMouseUp={this.props.showPdf(index)}>
+            {doc.type}
+          </a>, doc)
+      },
+      {
+        header: <div id="type-header" onClick={() =>
+          console.log("Issue tags filter clicked.")}>
           Issue Tags {filterIcon}
         </div>,
         valueFunction: () => {
-          return <div className="document-list-issue-tags"></div>;
+          return <div className="document-list-issue-tags">
+          </div>;
         }
-      }, {
+      },
+      {
         header: <div id="type-header">
           Comments
         </div>,
         valueFunction: (doc) => {
           let numberOfComments = this.props.annotationStorage.
-            getAnnotationByDocumentId(doc.id).length;;
+            getAnnotationByDocumentId(doc.id).length;
 
           return <span className="document-list-comments-indicator">
-            {numberOfComments > 0 && <span>
-              <a href="#">{numberOfComments}
-                <i className="fa fa-3 fa-angle-down document-list-comments-indicator-icon"/>
-              </a>
-            </span>
-}
+            {numberOfComments > 0 &&
+              <span>
+                <a href="#">{numberOfComments}
+                  <i className=
+                    "fa fa-3 fa-angle-down document-list-comments-indicator-icon" />
+                </a>
+              </span>
+            }
           </span>;
         }
       }
@@ -122,12 +120,14 @@ export default class PdfListView extends React.Component {
             documents={this.props.documents}
             onFilter={this.props.onFilter}
             filterBy={this.props.filterBy}
-            numberOfDocuments={this.props.numberOfDocuments}/>
+            numberOfDocuments={this.props.numberOfDocuments}
+          />
           <div>
             <Table
               columns={this.getDocumentColumns()}
               rowObjects={this.props.documents}
-              summary="Document list"/>
+              summary="Document list"
+            />
           </div>
         </div>
       </div>
@@ -136,9 +136,7 @@ export default class PdfListView extends React.Component {
 }
 
 PdfListView.propTypes = {
-  documents: PropTypes
-    .arrayOf(PropTypes.object)
-    .isRequired,
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   filterBy: PropTypes.string.isRequired,
   numberOfDocuments: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
