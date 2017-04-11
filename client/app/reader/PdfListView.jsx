@@ -74,9 +74,9 @@ export default class PdfListView extends React.Component {
           Issue Tags {filterIcon}
         </div>,
         valueFunction: (doc) => {
-          let tags = ['SC - Knee', 'Dislocated Shoulder'];
+          let tags = ['SC - Knee', 'Dislocated Shoulder', 'Hearing Transcript'];
           let tagItems = tags.map((tag) =>
-            <span className="document-list-issue-tag">tag</span>
+            <span className="document-list-issue-tag">{tag}</span>
           );
           console.log(tagItems);
           return <div className="document-list-issue-tags">
