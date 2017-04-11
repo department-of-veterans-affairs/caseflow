@@ -249,42 +249,40 @@ class UnconnectedConfirmHearing extends React.Component {
  * that causes the reducer in reducers/index.js
  * to return a new state object.
  */
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.CONFIRM_HEARING
-        }
-      });
-    },
-    onHearingDocumentChange: (event) => {
-      dispatch({
-        type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
-        payload: {
-          hearingDocumentIsInVbms: event.target.value
-        }
-      });
-    },
-    onTypeOfForm9Change: (event) => {
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_FORM9,
-        payload: {
-          form9Type: event.target.value
-        }
-      });
-    },
-    onHearingTypeChange: (event) => {
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_HEARING,
-        payload: {
-          hearingType: event.target.value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.CONFIRM_HEARING
+      }
+    });
+  },
+  onHearingDocumentChange: (event) => {
+    dispatch({
+      type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
+      payload: {
+        hearingDocumentIsInVbms: event.target.value
+      }
+    });
+  },
+  onTypeOfForm9Change: (event) => {
+    dispatch({
+      type: Constants.CHANGE_TYPE_OF_FORM9,
+      payload: {
+        form9Type: event.target.value
+      }
+    });
+  },
+  onHearingTypeChange: (event) => {
+    dispatch({
+      type: Constants.CHANGE_TYPE_OF_HEARING,
+      payload: {
+        hearingType: event.target.value
+      }
+    });
+  }
+});
 
 /*
  * This function tells us which parts of the global

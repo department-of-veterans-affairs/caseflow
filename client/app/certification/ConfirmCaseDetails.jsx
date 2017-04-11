@@ -104,50 +104,46 @@ class UnconnectedConfirmCaseDetails extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.CONFIRM_CASE_DETAILS
-        }
-      });
-    },
-    onRepresentativeNameChange: (representativeName) => {
-      dispatch({
-        type: Constants.CHANGE_REPRESENTATIVE_NAME,
-        payload: {
-          representativeName
-        }
-      });
-    },
-    onRepresentativeTypeChange: (event) => {
-      dispatch({
-        type: Constants.CHANGE_REPRESENTATIVE_TYPE,
-        payload: {
-          representativeType: event.target.value
-        }
-      });
-    },
-    onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
-      dispatch({
-        type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
-        payload: {
-          otherRepresentativeType
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.CONFIRM_CASE_DETAILS
+      }
+    });
+  },
+  onRepresentativeNameChange: (representativeName) => {
+    dispatch({
+      type: Constants.CHANGE_REPRESENTATIVE_NAME,
+      payload: {
+        representativeName
+      }
+    });
+  },
+  onRepresentativeTypeChange: (event) => {
+    dispatch({
+      type: Constants.CHANGE_REPRESENTATIVE_TYPE,
+      payload: {
+        representativeType: event.target.value
+      }
+    });
+  },
+  onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
+    dispatch({
+      type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
+      payload: {
+        otherRepresentativeType
+      }
+    });
+  }
+});
 
-const mapStateToProps = (state) => {
-  return {
-    representativeType: state.representativeType,
-    representativeName: state.representativeName,
-    otherRepresentativeType: state.otherRepresentativeType
-  };
-};
+const mapStateToProps = (state) => ({
+  representativeType: state.representativeType,
+  representativeName: state.representativeName,
+  otherRepresentativeType: state.otherRepresentativeType
+});
 
 const ConfirmCaseDetails = connect(
   mapStateToProps,

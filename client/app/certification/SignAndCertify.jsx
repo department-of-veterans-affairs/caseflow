@@ -84,26 +84,24 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
-        }
-      });
-    },
-    onSignAndCertifyFormChange: (fieldName, value) => {
-      dispatch({
-        type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
-        payload: {
-          [fieldName]: value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
+      }
+    });
+  },
+  onSignAndCertifyFormChange: (fieldName, value) => {
+    dispatch({
+      type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
+      payload: {
+        [fieldName]: value
+      }
+    });
+  }
+});
 
 const mapStateToProps = (state) => ({
   certifyingOffice: state.certifyingOffice,
