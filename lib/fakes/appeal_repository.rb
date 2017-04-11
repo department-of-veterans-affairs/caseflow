@@ -83,7 +83,7 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
-    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
     # This is bad. I'm sorry
     record.delete(:vbms_id) if Rails.env.development?
@@ -98,7 +98,7 @@ class Fakes::AppealRepository
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
-    fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+    fail Caseflow::Error::MultipleAppealsByVBMSID if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do

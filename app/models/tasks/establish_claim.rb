@@ -1,5 +1,3 @@
-require "vbms"
-
 class EstablishClaim < Task
   include CachedAttributes
 
@@ -104,6 +102,17 @@ class EstablishClaim < Task
   def time_to_complete
     return nil if !completed_at || !created_at
     completed_at - created_at
+  end
+
+  def completion_status_text
+    case completion_status
+    when "routed_to_ro"
+      "EP created for RO #{ep_ro_description}"
+    when "special_issue_emailed"
+      "Emailed - #{special_issues} Issue(s)"
+    else
+      super
+    end
   end
 
   private
@@ -215,6 +224,12 @@ class EstablishClaim < Task
     return :special_issue_vacols_routed unless ep_created?
 
     appeal.special_issues? ? :routed_to_ro : :routed_to_arc
+  end
+
+  class << self
+    def joins_task_result
+      joins(:claim_establishment)
+    end
   end
 end
 
