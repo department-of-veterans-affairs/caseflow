@@ -4,20 +4,24 @@ import React from 'react';
 import DecisionReviewer from './DecisionReviewer';
 import logger from 'redux-logger';
 import * as Constants from './constants';
+import _ from 'lodash';
 
 const readerReducer = (state = {}, action = {}) => {
   switch (action.type) {
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return {
-      ...state,
-      document: {
-        [action.payload.docId]: {
-          categories: {
-            [action.payload.categoryName]: action.payload.toggleState
+    return _.merge(
+      {},
+      state,
+      {
+        document: {
+          [action.payload.docId]: {
+            categories: {
+              [action.payload.categoryName]: action.payload.toggleState
+            }
           }
         }
       }
-    };
+    );
   default:
     return state;
   }
