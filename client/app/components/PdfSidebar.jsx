@@ -2,10 +2,41 @@ import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import EditComment from '../components/EditComment';
+import ReaderBlueCategory from '../svg/reader-blue-category.svg';
+import ReaderGreenCategory from '../svg/reader-green-category.svg';
+import ReaderPinkCategory from '../svg/reader-pink-category.svg';
+import _ from 'lodash';
+
+const documentCategories = {
+  procedural: {
+    humanName: 'Procedural',
+    svg: ReaderBlueCategory
+  },
+  medical: {
+    humanName: 'Medical',
+    svg: ReaderPinkCategory
+  },
+  other: {
+    humanName: 'Other Evidence',
+    svg: ReaderGreenCategory
+  }
+}
+
+function CategorySelector({category}) {
+  const Svg = category.svg;
+  return <p><Svg /> {category.humanName}</p>;
+}
+
+CategorySelector.propTypes = {
+  categoryName: PropTypes.shape({
+    humanName: PropTypes.string.isRequired,
+    svg: PropTypes.object.isRequired
+  })
+}
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
-// show a PDF with it's corresponding information.
+// show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
   render() {
     let comments = [];
@@ -47,6 +78,14 @@ export default class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
+          <ul>
+            {
+              _.map(
+                documentCategories, 
+                (category, categoryName) => <li key={categoryName}><CategorySelector category={category} /></li>
+              )
+            }
+          </ul>
           <div className="cf-heading-alt">
             Comments
             <span className="cf-right-side">
