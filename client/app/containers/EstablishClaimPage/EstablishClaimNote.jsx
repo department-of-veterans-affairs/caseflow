@@ -125,6 +125,18 @@ export default class EstablishClaimNote extends BaseForm {
         {...this.state.noteForm.noteField}
       />
 
+      <div className="cf-app-segment" id="establish-claim-buttons">
+       <div className="cf-push-left">
+        <Button
+         label="Copy note"
+         name="Copynote"
+         classNames={["usa-button-outline"]} >
+         <i className="fa fa-files-o" aria-hidden="true"></i>
+       </Button>
+      </div>
+     </div>
+    
+     
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
           label="I confirm that I have created a VBMS note to help route this claim"
