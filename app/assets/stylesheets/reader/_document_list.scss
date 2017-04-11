@@ -1,3 +1,7 @@
+$bordered-icon-border-color: #808080;
+$gray-font-color: #6b7079;
+$tag-backgrond-color: #d6d7d9;
+
 .section--document-list {
   .table-icon {
     margin: 1px;
@@ -5,25 +9,18 @@
   }
 
   i {
-    margin: 0px;
+    margin: 0;
   }
 
   .bordered-icon {
-    border: 2px solid grey;
-    padding: 1px 2px 0 2px;
+    border: 2px solid $bordered-icon-border-color;
+    padding: 1px 2px;
     border-radius: 5px;
     font-size: 15px;
   }
 
-  .document-list-header {
-    .num-of-documents{
-      color: #6b7079;
-      padding: 5px;
-    }
-  }
-
   .document-list-receipt-date {
-    color: #6b7079;
+    color: $gray-font-color;
   }
 
   .document-list-comments-indicator {
@@ -37,10 +34,19 @@
 
   .document-list-issue-tag {
     display: inline-block;
-    background: #d6d7d9;
+    background: $tag-backgrond-color;
     border-radius: 3px;
-    padding: 2px 5px 2px 5px;
+    padding: 2px 5px;
     text-align: center;
-    margin: 3px;  
+    margin: 3px;
+  }
+
+}
+
+.document-list-header {
+  .num-of-documents {
+    color: $gray-font-color;
+    padding: 5px;
   }
 }
+
