@@ -100,8 +100,8 @@ class EstablishClaim < Task
   end
 
   def time_to_complete
-    return nil if !completed_at || !created_at
-    completed_at - created_at
+    return nil if !appeal.outcoding_date || !created_at
+    completed_at - appeal.outcoding_date
   end
 
   def completion_status_text

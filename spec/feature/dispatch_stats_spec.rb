@@ -3,20 +3,24 @@ require "rails_helper"
 RSpec.feature "Dispatch Stats Dashboard" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
+
+    Generators::EstablishClaim.create(started_at: 30.minutes.ago)
+    Generators::EstablishClaim.create(started_at: 30.minutes.ago)
+
     DispatchStats.calculate_all!
   end
 
   scenario "Page loads correctly with tabs" do
     User.authenticate!(roles: ["Manage Claim Establishment"])
     visit "/dispatch/stats"
-    expect(page).to have_content("Establish Claim Tasks Identified for 12:00–12:59 EST (so far)")
-    expect(page).to have_content("Establish Claim Task Activity for 12:00–12:59 EST (so far)")
-    expect(page).to have_content("Establish Claim Task Completion Rate for 12:00–12:59 EST (so far)")
-    expect(page).to have_content("Time to Claim Establishment for 12:00–12:59 EST (so far)")
-    expect(page).to have_content("Establish Claim Tasks Canceled for 12:00–12:59 EST (so far)")
+    expect(page).to have_content("Establish Claim Tasks Identified All 2")
+    expect(page).to have_content("Establish Claim Task Activity")
+    expect(page).to have_content("Establish Claim Task Completion Rate")
+    expect(page).to have_content("Time to Claim Establishment")
+    expect(page).to have_content("Establish Claim Tasks Canceled")
 
     click_on "Daily"
-    expect(page).to have_content("Establish Claim Tasks Identified for January 1 (so far)")
+    expect(page).to have_content("Establish Claim Tasks Identified All 2")
   end
 
   scenario "Users without manager permissions cannot view page" do
