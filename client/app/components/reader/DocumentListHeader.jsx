@@ -1,6 +1,6 @@
-import React, { Proptypes } from 'react';
-import SearchBar from '../components/SearchBar';
-import Button from '../components/Button';
+import React, { PropTypes } from 'react';
+import SearchBar from '../SearchBar';
+import Button from '../Button';
 
 const DocumentListHeader = (props) => {
   return <div className="usa-grid-full document-list-header">
@@ -23,6 +23,12 @@ const DocumentListHeader = (props) => {
       </span>
     </div>
   </div>;
+};
+
+DocumentListHeader.propTypes = {
+  filterBy: PropTypes.string.isRequired,
+  onFilter: PropTypes.func.isRequired,
+  numberOfDocuments: PropTypes.number.isRequired,
 };
 
 export default DocumentListHeader;
