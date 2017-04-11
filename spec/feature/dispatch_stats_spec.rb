@@ -25,7 +25,7 @@ RSpec.feature "Dispatch Stats Dashboard" do
 
   context ".show" do
     before do
-      Generators::EstablishClaim.create(started_at: 30.minutes.ago)
+      Generators::EstablishClaim.create(started_at: 30.minutes.ago, completed_at: 15.minutes.ago, completion_status: 0)
       Generators::EstablishClaim.create(started_at: 30.minutes.ago)
 
       DispatchStats.calculate_all!

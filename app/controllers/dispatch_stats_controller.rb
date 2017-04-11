@@ -35,7 +35,7 @@ class DispatchStatsController < ApplicationController
                 else
                   (@dispatch_stats[0].values[num] / @dispatch_stats[0].values[denom] * 100).round
                 end
-    (rate_stat + "<span class=\"cf-stat-unit\">%</span>").html_safe
+    (rate_stat.to_s + "<span class=\"cf-stat-unit\">%</span>").html_safe
   end
   helper_method :format_rate_stat
 
