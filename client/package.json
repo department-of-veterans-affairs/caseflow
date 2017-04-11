@@ -69,7 +69,5 @@
     "react-addons-test-utils": "^15.4.2",
     "sinon": "^2.1.0"
   },
-  "optionalDependencies": {
-    "fsevents": "*"
-  }
+  "optionalDependencies": {}
 }
