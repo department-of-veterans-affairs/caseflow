@@ -74,18 +74,7 @@ export default class PdfListView extends React.Component {
           Issue Tags {filterIcon}
         </div>,
         valueFunction: (doc) => {
-          let numberOfComments = this.props.annotationStorage.
-            getAnnotationByDocumentId(doc.id).length;
-
-          return <span className="fa-stack fa-3x cf-pdf-comment-indicator">
-            { numberOfComments > 0 &&
-                <span>
-                  <i className="fa fa-comment-o fa-stack-2x"></i>
-                  <strong className="fa-stack-1x fa-stack-text">
-                    {numberOfComments}
-                  </strong>
-                </span>
-            }
+          return <span className="document-list-issue-tags">
           </span>;
         }
       },
