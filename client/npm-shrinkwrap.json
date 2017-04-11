@@ -2140,9 +2140,10 @@
       "dev": true
     },
     "expose-loader": {
-      "version": "0.7.1",
-      "from": "https://registry.npmjs.org/expose-loader/-/expose-loader-0.7.1.tgz",
-      "resolved": "https://registry.npmjs.org/expose-loader/-/expose-loader-0.7.1.tgz"
+      "version": "0.7.3",
+      "from": "expose-loader@latest",
+      "resolved": "https://registry.npmjs.org/expose-loader/-/expose-loader-0.7.3.tgz",
+      "dev": true
     },
     "fast-levenshtein": {
       "version": "2.0.5",
