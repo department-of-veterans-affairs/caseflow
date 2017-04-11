@@ -1,5 +1,4 @@
 require "rails_helper"
-require "vbms"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
