@@ -37,12 +37,12 @@ export default class CancelCertificationModal extends BaseForm {
     };
   }
 
-  onCancellationReasonChange = (event) => {
+  onCancellationReasonChange = (value) => {
     this.setState({
-      cancellationReasonValue: event.target.value
+      cancellationReasonValue: value
     });
 
-    if (event.target.value === "Other") {
+    if (value === "Other") {
       this.setState({
         shouldShowOtherReason: true
       });
@@ -53,7 +53,7 @@ export default class CancelCertificationModal extends BaseForm {
     }
 
     this.handleFieldChange('certificationCancellationForm',
-      'cancellationReason')(event.target.value);
+      'cancellationReason')(value);
     this.validateFormAndSetErrors(
       { cancellationReason:
         this.state.certificationCancellationForm.cancellationReason });
