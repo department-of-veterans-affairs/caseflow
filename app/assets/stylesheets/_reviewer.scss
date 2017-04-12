@@ -315,4 +315,8 @@ svg[aria-hidden=true],
   li {
     float: left;
   }
+
+  li:not(:first-child) {
+    padding-left: 10px;
+  }
 }
