@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
+import Modal from '../components/Modal';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -26,6 +27,7 @@ export default class PdfViewer extends React.Component {
   }
 
   onDeleteComment = (uuid) => {
+
     this.props.annotationStorage.deleteAnnotation(
       this.props.doc.id,
       uuid
@@ -237,6 +239,22 @@ export default class PdfViewer extends React.Component {
             onEditComment={this.onEditComment}
             onJumpToComment={this.onJumpToComment}
           />
+          <Modal
+          buttons={[
+            { classNames: ["cf-modal-link", "cf-btn-link"],
+              name: 'Close',
+              onClick: () => { }
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+              name: 'Stop processing claim',
+              onClick: () => { }
+            }
+          ]}
+          visible={true}
+          closeHandler={() => {}}
+          title="Stop Processing Claim">
+            Hello World
+          </Modal>
         </div>
       </div>
     );
