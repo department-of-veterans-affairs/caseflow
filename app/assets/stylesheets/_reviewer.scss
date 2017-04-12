@@ -304,3 +304,15 @@ svg[aria-hidden=true],
     }
   }
 }
+
+.cf-document-category-icons {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  float: left;
+
+  li {
+    float: left;
+  }
+}

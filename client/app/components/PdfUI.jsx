@@ -7,7 +7,7 @@ import _ from 'lodash';
 import * as Constants from '../reader/constants';
 
 const DocumentCategoryIcons = ({ document, docId }) => {
-  return <ul>
+  return <ul className="cf-document-category-icons">
     {
       _(_.get(document, [docId, 'categories'])).
         pickBy(_.identity).
