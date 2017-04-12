@@ -21,7 +21,7 @@ task :lint do
 
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
-  eslint_result = ShellCommand.run("npm run #{eslint_cmd}")
+  eslint_result = ShellCommand.run("cd ./client && npm run #{eslint_cmd}")
 
   puts "\n"
   if scss_result && rubocop_result && jshint_result && eslint_result
