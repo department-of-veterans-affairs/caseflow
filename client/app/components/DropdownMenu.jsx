@@ -21,7 +21,7 @@ export default class DropdownMenu extends React.Component {
     };
 
     let DropdownMenuList = () => {
-      <ul id="dropdown-menu" className="cf-dropdown-menu active"
+      return <ul id="dropdown-menu" className="cf-dropdown-menu active"
         aria-labelledby="menu-trigger">
         {options.map((option, index) =>
           <li key={index}>
