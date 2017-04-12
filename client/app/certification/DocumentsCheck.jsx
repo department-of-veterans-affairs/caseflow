@@ -54,33 +54,28 @@ class UnconnectedDocumentsCheck extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    form9Match: state.form9Match,
-    form9Date: state.form9Date,
-    nodMatch: state.nodMatch,
-    nodDate: state.nodDate,
-    socMatch: state.socMatch,
-    socDate: state.socDate,
-    documentsMatch: state.documentsMatch,
-    certificationId: state.certificationId
-
+const mapStateToProps = (state) => ({
+  form9Match: state.form9Match,
+  form9Date: state.form9Date,
+  nodMatch: state.nodMatch,
+  nodDate: state.nodDate,
+  socMatch: state.socMatch,
+  socDate: state.socDate,
+  documentsMatch: state.documentsMatch
+  certificationId: state.certificationId
     /* TODO: add ssoc_match and ssoc_dates */
-  };
-};
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.CHECK_DOCUMENTS
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.CHECK_DOCUMENTS
+      }
+    });
+  }
+});
 
 /*
  * Creates a component that's connected to the Redux store
