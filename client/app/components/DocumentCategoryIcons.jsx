@@ -25,5 +25,5 @@ DocumentCategoryIcons.propTypes = {
 };
 
 export default connect(
-  (state) => ({ document: state && state.document })
+  (state) => _.pick(state, 'document')
 )(DocumentCategoryIcons);
