@@ -9,7 +9,6 @@ import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 import { validModifiers } from '../../establishClaim/util';
-import * as Actions from '../../establishClaim/actions';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -316,13 +315,6 @@ export default class EstablishClaim extends BaseForm {
 
   handleDecisionPageSubmit = () => {
     let { handleAlert } = this.props;
-
-    this.store.dispatch(
-      Actions.setStationOfJurisdictionAction(
-        this.store.getState().specialIssues,
-        this.props.task.appeal.station_key
-      )
-    );
 
     this.setState({
       loading: true
@@ -648,6 +640,7 @@ export default class EstablishClaim extends BaseForm {
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
+            stationKey={this.props.task.appeal.station_key}
             validModifiers={this.validModifiers()}
           />
         }

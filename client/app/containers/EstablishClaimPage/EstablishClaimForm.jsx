@@ -8,6 +8,8 @@ import DateSelector from '../../components/DateSelector';
 
 import { formattedStationOfJurisdiction } from '../../establishClaim/util';
 import * as Constants from '../../establishClaim/constants';
+import { getStationOfJurisdiction } from '../../establishClaim/selectors';
+
 import { connect } from 'react-redux';
 
 export const MODIFIER_OPTIONS = [
@@ -18,7 +20,7 @@ export const MODIFIER_OPTIONS = [
 export class EstablishClaimForm extends React.Component {
   formattedStationOfJurisdiction() {
     return formattedStationOfJurisdiction(
-      this.props.establishClaimForm.stationOfJurisdiction,
+      this.props.stationOfJurisdiction,
       this.props.regionalOfficeKey,
       this.props.regionalOfficeCities
     );
@@ -129,6 +131,7 @@ EstablishClaimForm.propTypes = {
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  stationKey: PropTypes.string.isRequired,
   regionalOfficeKey: PropTypes.string.isRequired,
   regionalOfficeCities: PropTypes.object.isRequired,
   validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
@@ -139,9 +142,13 @@ EstablishClaimForm.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    establishClaimForm: state.establishClaimForm
+    establishClaimForm: state.establishClaimForm,
+    stationOfJurisdiction: getStationOfJurisdiction(
+      state.specialIssues,
+      ownProps.stationKey
+    )
   };
 };
 
