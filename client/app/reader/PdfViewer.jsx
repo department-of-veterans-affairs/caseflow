@@ -40,7 +40,8 @@ export default class PdfViewer extends React.Component {
         uuid
       );
       this.closeConfirmDeleteModal();
-    }
+    };
+
     this.setState({
       onConfirmDelete
     });
