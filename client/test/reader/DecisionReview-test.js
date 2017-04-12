@@ -228,7 +228,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-save').simulate('click');
         await pause();
 
-        console.log(ApiUtilStub.apiPost.lastCall.args);
         // Verify the api is called to add a comment
         expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
           sinon.match({ data: { annotation: firstComment } }))).to.be.true;
@@ -250,7 +249,8 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(`/document/${documents[0].id}/annotation/${commentId}`,
+        expect(ApiUtilStub.apiPatch.calledWith(
+          `/document/${documents[0].id}/annotation/${commentId}`,
           sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button

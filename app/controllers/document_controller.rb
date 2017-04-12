@@ -36,6 +36,7 @@ class DocumentController < ApplicationController
   end
 
   private
+
   def update_params
     params.permit(:label)
   end
