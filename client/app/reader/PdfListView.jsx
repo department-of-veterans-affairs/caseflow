@@ -36,7 +36,7 @@ export default class PdfListView extends React.Component {
     return [
       {
         header: <div
-          id="receipt-date-header"
+          id="categories-header"
           onClick={() => {
             // on click actions here
           }}>
@@ -74,7 +74,7 @@ export default class PdfListView extends React.Component {
           </a>, doc)
       },
       {
-        header: <div id="type-header" onClick={() => {
+        header: <div id="issue-tags-header" onClick={() => {
           // on click handler here
         }}>
           Issue Tags {filterIcon}
@@ -85,7 +85,7 @@ export default class PdfListView extends React.Component {
         }
       },
       {
-        header: <div id="type-header">
+        header: <div id="comments-header">
           Comments
         </div>,
         valueFunction: (doc) => {
