@@ -94,13 +94,17 @@ export default class PdfSidebar extends React.Component {
           </p>
           <ul className="cf-document-category-picker">
             {
-              _.map(
-                Constants.documentCategories,
-                (category, categoryName) => <li key={categoryName}>
-                  <ConnectedCategorySelector category={category}
-                    categoryName={categoryName} docId={this.props.doc.id} />
-                </li>
-              )
+              _(Constants.documentCategories).
+                toPairs().
+                // eslint-disable-next-line no-unused-vars
+                sortBy(([name, category]) => category.renderOrder).
+                map(
+                  ([categoryName, category]) => <li key={categoryName}>
+                    <ConnectedCategorySelector category={category}
+                      categoryName={categoryName} docId={this.props.doc.id} />
+                  </li>
+                ).
+                value()
             }
           </ul>
           <div className="cf-heading-alt">

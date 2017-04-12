@@ -9,6 +9,7 @@ export const DocumentCategoryIcons = ({ document, docId }) => {
       _(_.get(document, [docId, 'categories'])).
         pickBy(_.identity).
         keys().
+        sortBy((categoryName) => Constants.documentCategories[categoryName].renderOrder).
         map((categoryName) => {
           const Svg = Constants.documentCategories[categoryName].svg;
 
