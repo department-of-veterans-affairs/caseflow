@@ -47,6 +47,13 @@ const StringUtil = {
 
   html5CompliantId(str) {
     return str.replace(/[^A-Za-z0-9-]/g, "-").replace(/-+/g, "-");
+  },
+
+  sanitizedVbmsId(vbmsId) {
+    let num = vbmsId.replace(/\D/g, '');
+
+    // ensure 8 digits if "C"-type id
+    return (vbmsId.endsWith("C")) ? (`00000000${num}`).slice(-8) : num;
   }
 };
 

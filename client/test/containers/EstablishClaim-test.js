@@ -18,6 +18,7 @@ describe('EstablishClaim', () => {
       /* eslint-disable camelcase */
       const task = {
         appeal: {
+          vbms_id: '516517691',
           decision_type: 'Remand',
           decisions: [{
             label: null
@@ -152,6 +153,7 @@ describe('EstablishClaim', () => {
       /* eslint-disable camelcase */
       const task = {
         appeal: {
+          vbms_id: '516517691',
           decision_type: 'Remand',
           decisions: [{
             label: null

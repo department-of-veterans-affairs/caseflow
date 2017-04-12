@@ -94,7 +94,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
-      expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")
       expect(page).to have_content("Routed in VACOLS")
 
       # The oldest task (task local var) is now set to a higher security level so

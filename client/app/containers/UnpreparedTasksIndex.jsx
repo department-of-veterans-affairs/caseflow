@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
+import StringUtil from '../util/StringUtil';
 
 
 export default class UnpreparedTasksIndex extends React.Component {
@@ -13,7 +14,7 @@ export default class UnpreparedTasksIndex extends React.Component {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.cached_veteran_name} (${task.vbms_id})`
+          `${task.cached_veteran_name} (${StringUtil.sanitizedVbmsId(task.vbms_id)})`
       },
       {
         header: 'Decision Type',

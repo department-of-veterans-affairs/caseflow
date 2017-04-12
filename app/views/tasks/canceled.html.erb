@@ -5,7 +5,7 @@
   buttonText: start_text,
   employeeCount: Rails.cache.read('employee_count') || '0',
   page: "EstablishClaimCancel",
-  secondHeader: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch.",
+  secondHeader: "We’ve recorded your explanation for halting the routing of claim " + task.appeal.sanitized_vbms_id + ". It has been removed from the queue and must now be processed outside of Caseflow Dispatch.",
   totalCasesCompleted: user_completed_today,
   totalCasesToComplete: to_complete_count
 }) %>
