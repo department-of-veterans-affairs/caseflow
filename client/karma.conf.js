@@ -4,13 +4,14 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha'],
+    singleRun: true,
 
     files: [
-      { pattern: 'test/**/*-test.js' }
+      { pattern: 'test/**/specialIssues-test.js' }
     ],
 
     preprocessors: {
-      'test/**/*-test.js': ['webpack', 'sourcemap']
+      'test/**/specialIssues-test.js': ['webpack', 'sourcemap']
     },
 
     webpack: webpackConfig
