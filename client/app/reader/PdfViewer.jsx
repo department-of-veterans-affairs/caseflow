@@ -105,13 +105,14 @@ export default class PdfViewer extends React.Component {
     });
   }
 
-  onIconMoved = (uuid, changeInCoordinates) => {
+  onIconMoved = (uuid, coordinates, page) => {
     this.props.annotationStorage.getAnnotation(
       this.props.doc.id,
       uuid
     ).then((annotation) => {
-      annotation.x += changeInCoordinates.deltaX;
-      annotation.y += changeInCoordinates.deltaY;
+      annotation.x = coordinates.x;
+      annotation.y = coordinates.y;
+      annotation.page = page;
       this.props.annotationStorage.editAnnotation(
         this.props.doc.id,
         annotation.uuid,

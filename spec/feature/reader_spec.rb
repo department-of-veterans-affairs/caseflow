@@ -39,8 +39,8 @@ RSpec.feature "Reader" do
   end
 
   scenario "Add comment" do
-    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
-    expect(page).to have_content("Caseflow Decision")
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    expect(page).to have_content("Caseflow Reader")
 
     # Click on the link to the first file
     click_on documents[0].filename
@@ -64,20 +64,20 @@ RSpec.feature "Reader" do
 
     # Edit the comment
     click_on "Edit"
-    fill_in "editComment", with: "Bar"
+    fill_in "editComment", with: "FooBar"
     click_on "Save"
 
     # Expect edited comment to be visible on opage
-    expect(page).to have_content("Bar")
+    expect(page).to have_content("FooBar")
 
     # Expect comment to be in database
-    expect(documents[0].reload.annotations.first.comment).to eq("Bar")
+    expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
 
     # Delete the comment
     click_on "Delete"
 
     # Expect the comment to be removed from the page
-    expect(page).to_not have_content("Bar")
+    expect(page).to_not have_content("FooBar")
 
     # Expect the comment to be removed from teh database
     expect(documents[0].reload.annotations.count).to eq(0)
@@ -92,7 +92,7 @@ RSpec.feature "Reader" do
     end
 
     scenario "Scroll to comment" do
-      visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].filename
 
@@ -112,7 +112,7 @@ RSpec.feature "Reader" do
   end
 
   scenario "Scrolling renders pages" do
-    visit "/decision/review?vacols_id=#{appeal.vacols_id}"
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
     click_on documents[0].filename
     expect(page).to have_css(".page")
@@ -123,5 +123,12 @@ RSpec.feature "Reader" do
     expect(page).to_not have_content("Banana. Banana who")
     scroll_to(500)
     expect(page).to have_content("Banana. Banana who")
+  end
+
+  scenario "Open single document view" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+    # Expect only the first page of the pdf to be rendered
+    expect(page).to_not have_content("Important Decision Document!!!")
   end
 end

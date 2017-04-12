@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
@@ -40,7 +39,6 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
@@ -51,7 +49,7 @@ export default class DecisionReviewer extends React.Component {
   }
 
   documentUrl = (doc) => {
-    return `${this.props.url}?id=${doc.id}`;
+    return `/document/${doc.id}/pdf`;
   }
 
   onNextPdf = () => {
@@ -268,7 +266,7 @@ export default class DecisionReviewer extends React.Component {
     let data = { label: StringUtil.camelCaseToSnakeCase(setLabel) };
     let documentId = this.state.documents[pdfNumber].id;
 
-    ApiUtil.patch(`/document/${documentId}/set-label`, { data }).
+    ApiUtil.patch(`/document/${documentId}`, { data }).
       then(() => {
         this.setDocumentAttribute(pdfNumber, 'label', setLabel);
       }, () => {
@@ -319,7 +317,7 @@ export default class DecisionReviewer extends React.Component {
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
 
     return (
-      <div>
+      <div className="section--document-list">
         {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}

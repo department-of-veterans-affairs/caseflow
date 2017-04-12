@@ -42,7 +42,7 @@ export default class AnnotationStorage {
       this.storedAnnotations[documentId] = allAnnotations.sort(this.sortAnnotations);
       let data = ApiUtil.convertToSnakeCase({ annotation });
 
-      ApiUtil.post(`/decision/review/annotation`, { data }).
+      ApiUtil.post(`/document/${documentId}/annotation`, { data }).
           then((response) => {
 
             let responseObject = JSON.parse(response.text);
@@ -61,7 +61,7 @@ export default class AnnotationStorage {
   })
 
   deleteAnnotation = (documentId, annotationId) => new Promise((resolve, reject) => {
-    ApiUtil.delete(`/decision/review/annotation/${annotationId}`).
+    ApiUtil.delete(`/document/${documentId}/annotation/${annotationId}`).
         then(() => {
           let index = this.findAnnotation(documentId, annotationId);
 
@@ -99,13 +99,13 @@ export default class AnnotationStorage {
 
       let data = ApiUtil.convertToSnakeCase({ annotation });
 
-      ApiUtil.patch(`/decision/review/annotation/${annotationId}`, { data }).
-          then(() => {
-            resolve(annotation);
-            this.onCommentChange();
-          }, () => {
-            reject();
-          });
+      ApiUtil.patch(`/document/${documentId}/annotation/${annotationId}`, { data }).
+        then(() => {
+          resolve(annotation);
+          this.onCommentChange();
+        }, () => {
+          reject();
+        });
     })
 
   getAnnotation = (documentId, annotationId) => new Promise((resolve) => {
