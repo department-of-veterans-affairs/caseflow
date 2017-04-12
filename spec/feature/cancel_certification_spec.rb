@@ -159,4 +159,26 @@ RSpec.feature "Cancel certification" do
     end
     expect(page).to have_content("The certification has been cancelled")
   end
+
+  describe "Test json format of CerticationCancellationController" do
+    before(:each) do
+      @current_driver = Capybara.current_driver
+      Capybara.current_driver = :rack_test
+    end
+
+    after(:each) do
+      Capybara.current_driver = @current_driver
+    end
+
+    it "should response to json" do
+      page.driver.post "/certification_cancellations", { "certification_cancellation" =>
+        { "cancellation_reason" => "VBMS and VACOLS dates didn't match and couldn't be changed",
+          "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "2" } }, format: :json
+      expect(page.driver.status_code).to be 302
+      page.driver.post "/certification_cancellations", { "certification_cancellation" =>
+        { "cancellation_reason" => "VBMS and VACOLS dates didn't match and couldn't be changed",
+          "other_reason" => "", "email" => "test@gmail", "certification_id" => "2" } }, format: :json
+      expect(page.driver.status_code).to be 500
+    end
+  end
 end
