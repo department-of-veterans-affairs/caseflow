@@ -283,19 +283,18 @@ select {
 
 // Make a button look like a link
 // caseflow commons
-$cf-btn-link-background-color: #ffffff;
 
 .cf-btn-link {
   &:hover,
   &.button-hover {
-    background-color: $cf-btn-link-background-color;
+    background-color: $color-white;
     color: $color-primary-darker;
     text-decoration: underline;
   }
 
   &:active,
   &.button-active {
-    background-color: $cf-btn-link-background-color;
+    background-color: $color-white;
     color: $color-primary-darkest;
     text-decoration: underline;
   }
