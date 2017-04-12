@@ -1,4 +1,6 @@
-$bordered-icon-border-color: #808080;
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
 $gray-font-color: #6b7079;
 $tag-backgrond-color: #d6d7d9;
 
@@ -13,7 +15,7 @@ $tag-backgrond-color: #d6d7d9;
   }
 
   .bordered-icon {
-    border: 2px solid $bordered-icon-border-color;
+    border: 2px solid $color-gray;
     padding: 1px 2px;
     border-radius: 5px;
     font-size: 15px;
