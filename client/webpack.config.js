@@ -14,15 +14,18 @@ const config = {
 
   output: {
     filename: 'webpack-bundle.js',
-    path: '../app/assets/webpack'
+    path: path.join(__dirname, '../app/assets/webpack')
   },
 
+  plugins: [
+    new webpack.EnvironmentPlugin(['NODE_ENV'])
+  ],
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
     alias: {
-      react: path.resolve('./node_modules/react'),
-      'react-dom': path.resolve('./node_modules/react-dom'),
-      'ie': 'component-ie'
+      // This does not actually appear to be necessary, but it does silence 
+      // a warning from superagent-no-cache.
+      ie: 'component-ie'
     }
   },
   plugins: [
@@ -36,7 +39,7 @@ const config = {
     loaders: [
       {
         test: require.resolve('react'),
-        loader: 'imports?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
+        loader: 'imports-loader?shim=es5-shim/es5-shim&sham=es5-shim/es5-sham'
       },
       {
         test: /\.jsx?$/,
@@ -53,8 +56,5 @@ if (devBuild) {
   console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
   module.exports.devtool = 'eval-source-map';
 } else {
-  config.plugins.push(
-    new webpack.optimize.DedupePlugin()
-  );
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
 }
