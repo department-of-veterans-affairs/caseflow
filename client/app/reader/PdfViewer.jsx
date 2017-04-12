@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
+import GrayOut from '../components/GrayOut';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -14,7 +15,8 @@ export default class PdfViewer extends React.Component {
       editingComment: null,
       isAddingComment: false,
       isPlacingNote: false,
-      onSaveCommentAdd: null
+      onSaveCommentAdd: null,
+      onConfirmDelete: null
     };
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
@@ -26,12 +28,23 @@ export default class PdfViewer extends React.Component {
     });
   }
 
-  onDeleteComment = (uuid) => {
+  closeConfirmDeleteModal = () => {
+    this.setState({
+      onConfirmDelete: null
+    });
+  }
 
-    this.props.annotationStorage.deleteAnnotation(
-      this.props.doc.id,
-      uuid
-    );
+  onDeleteComment = (uuid) => {
+    let onConfirmDelete = () => {
+      this.props.annotationStorage.deleteAnnotation(
+        this.props.doc.id,
+        uuid
+      );
+      this.closeConfirmDeleteModal();
+    }
+    this.setState({
+      onConfirmDelete
+    });
   }
 
   onEditComment = (uuid) => {
@@ -239,23 +252,22 @@ export default class PdfViewer extends React.Component {
             onEditComment={this.onEditComment}
             onJumpToComment={this.onJumpToComment}
           />
-          <Modal
+        </div>
+        {this.state.onConfirmDelete && <Modal
           buttons={[
             { classNames: ["cf-modal-link", "cf-btn-link"],
-              name: 'Close',
-              onClick: () => { }
+              name: 'Cancel',
+              onClick: this.closeConfirmDeleteModal
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Stop processing claim',
-              onClick: () => { }
+              name: 'Confirm Delete',
+              onClick: this.state.onConfirmDelete
             }
           ]}
-          visible={true}
-          closeHandler={() => {}}
-          title="Stop Processing Claim">
-            Hello World
-          </Modal>
-        </div>
+          closeHandler={this.closeConfirmDeleteModal}
+          title="Delete Comment">
+          Are you sure you want to delete this comment?
+        </Modal>}
       </div>
     );
   }
