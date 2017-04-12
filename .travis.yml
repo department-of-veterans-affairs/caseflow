@@ -1,10 +1,8 @@
-language: node_js
+language: ruby
 dist: trusty
 sudo: required
 rvm:
   - 2.2.4
-node_js:
-  - "7.7.4"
 
 branches:
     only:
