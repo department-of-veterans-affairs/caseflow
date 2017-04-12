@@ -14,6 +14,11 @@ describe Task do
     @user2 = User.create(station_id: "ABC", css_id: "456", full_name: "Jane Doe")
   end
 
+  let(:appeal) { Generators::Appeal.create }
+  let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state) }
+  let(:user) { User.create(station_id: "ABC", css_id: "ROBBY", full_name: "Robert Smith") }
+  let(:aasm_state) { :unassigned }
+
   context ".newest_first" do
     let!(:appeal1) { Appeal.create(vacols_id: "123C") }
     let!(:task1) { EstablishClaim.create(appeal: appeal1) }
@@ -194,7 +199,7 @@ describe Task do
   context ".special_issue_not_emailed?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
-    let!(:completion_status) { Task.completion_status_code(:special_issue_not_emailed) }
+    let!(:completion_status) { :special_issue_not_emailed }
     subject { task }
     before do
       task.prepare!
@@ -245,29 +250,57 @@ describe Task do
   end
 
   context "#complete!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-      task.review!
+    subject { task.complete!(params) }
+    let(:params) { { status: :routed_to_ro, outgoing_reference_id: "123WOO" } }
+
+    context "when in a non-completable state" do
+      let(:aasm_state) { :unassigned }
+
+      it "raises error and doesn't save completion_status" do
+        expect { subject }.to raise_error(AASM::InvalidTransition)
+
+        expect(task.reload.completed_at).to be_nil
+        expect(task.completion_status).to be_nil
+      end
     end
 
-    it "completes the task" do
-      task.complete!(:completed, status: 3)
-      expect(task.reload.completed_at).to be_truthy
-      expect(task.completion_status).to eq(3)
+    context "when started" do
+      let(:aasm_state) { :started }
+
+      it "completes the task with outgoing_reference_id" do
+        subject
+
+        expect(task.reload).to have_attributes(
+          completed_at: Time.zone.now,
+          completion_status: "routed_to_ro",
+          outgoing_reference_id: "123WOO"
+        )
+      end
     end
 
-    it "errors if already complete" do
-      task.complete!(:completed, status: 3)
+    context "when reviewed" do
+      let(:aasm_state) { :reviewed }
 
-      expect { task.complete!(:completed, status: 2) }.to raise_error(AASM::InvalidTransition)
+      it "completes the task without outgoing_reference_id" do
+        subject
 
-      # Confirm complete values are still the original
-      expect(task.reload.completed_at).not_to be_nil
-      expect(task.completion_status).to eq(3)
+        expect(task.reload).to have_attributes(
+          completed_at: Time.zone.now,
+          completion_status: "routed_to_ro",
+          outgoing_reference_id: nil
+        )
+      end
+    end
+
+    context "when completed" do
+      let(:aasm_state) { :completed }
+
+      it "raises error and doesn't save completion_status" do
+        expect { subject }.to raise_error(AASM::InvalidTransition)
+
+        expect(task.reload.completed_at).to be_nil
+        expect(task.completion_status).to be_nil
+      end
     end
   end
 
@@ -291,7 +324,7 @@ describe Task do
     it "closes unfinished tasks" do
       task.expire!
       expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(task.reload.completion_status).to eq("expired")
       expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
     end
 
@@ -299,7 +332,7 @@ describe Task do
       task.review!
       task.expire!
       expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:expired))
+      expect(task.reload.completion_status).to eq("expired")
       expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
     end
   end
@@ -315,7 +348,7 @@ describe Task do
     it "closes canceled tasks" do
       task.cancel!
       expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq(Task.completion_status_code(:canceled))
+      expect(task.reload.completion_status).to eq("canceled")
       expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
     end
 
@@ -328,9 +361,13 @@ describe Task do
   context "#prepare_with_decision!" do
     subject { task.prepare_with_decision! }
 
+    let(:appeal) do
+      Generators::Appeal.create(
+        vacols_record: { template: :partial_grant_decided, decision_date: 7.days.ago },
+        documents: documents
+      )
+    end
     let(:task) { EstablishClaim.create(appeal: appeal) }
-    let(:appeal) { Generators::Appeal.create(vacols_record: vacols_record, documents: documents) }
-    let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
 
     context "if the task's appeal has no decisions" do
       let(:documents) { [] }
@@ -417,19 +454,6 @@ describe Task do
     end
   end
 
-  context "#no_review_completion_status" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    let!(:no_review_status) { Task.completion_status_code(:special_issue_not_emailed) }
-    let!(:review_status) { Task.completion_status_code(:completed) }
-    it "returns true if no_review_status" do
-      expect(task.no_review_completion_status(status: no_review_status)).to eq(true)
-    end
-    it "returns false if status has to be reviewed" do
-      expect(task.no_review_completion_status(status: review_status)).to eq(false)
-    end
-  end
-
   context "#tasks_completed_by_users" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:tasks) do
@@ -456,6 +480,46 @@ describe Task do
 
     it "returns hash with each user and their completed number of tasks" do
       expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
+    end
+  end
+
+  context ".completed_by" do
+    subject { FakeTask.completed_by(user) }
+
+    let(:other_user) { User.create(station_id: "ABC", css_id: "JANEY", full_name: "Jane Doe") }
+
+    let!(:incomplete_task) do
+      FakeTask.create(user: user, appeal: appeal)
+    end
+
+    let!(:task_completed_by_other_user) do
+      FakeTask.create(aasm_state: :completed, user: other_user, appeal: appeal)
+    end
+
+    let!(:task_completed_by_user) do
+      FakeTask.create(aasm_state: :completed, user: user, appeal: appeal)
+    end
+
+    it { is_expected.to eq([task_completed_by_user]) }
+  end
+
+  context "#completion_status_text" do
+    subject { task.completion_status_text }
+    let(:task) { FakeTask.new(completion_status: completion_status) }
+
+    context "when completion_status is nil" do
+      let(:completion_status) { nil }
+      it { is_expected.to eq("") }
+    end
+
+    context "when completion_status does not have special text" do
+      let(:completion_status) { :special_issue_emailed }
+      it { is_expected.to eq("Special Issue Emailed") }
+    end
+
+    context "when completion_status has special text" do
+      let(:completion_status) { :assigned_existing_ep }
+      it { is_expected.to eq("Assigned Existing EP") }
     end
   end
 end

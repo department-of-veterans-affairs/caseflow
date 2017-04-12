@@ -12,11 +12,20 @@ export default class TextField extends React.Component {
       readOnly,
       required,
       type,
-      value = '',
+      value,
       validationError,
       invisible,
       placeholder
     } = this.props;
+
+    // Use empty string instead of null or undefined,
+    // otherwise React displays the following error:
+    //
+    // "`value` prop on `input` should not be null.
+    // Consider using the empty string to clear the component
+    // or `undefined` for uncontrolled components."
+    //
+    value = (value === null || typeof value === 'undefined') ? '' : value;
 
     return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
       <label className="question-label" htmlFor={name}>

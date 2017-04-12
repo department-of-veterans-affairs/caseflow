@@ -15,7 +15,7 @@ describe('Pdf', () => {
   // Note, these tests use mount rather than shallow.
   // In order to get that working, we must stub out
   // our endpoints in PDFJS and PDFJSAnnotate.
-  // To appraoch reality, our stubbed out versions
+  // To approach reality, our stubbed out versions
   // also add divs representing PDF 'pages' to the dom.
 
   /* eslint-disable max-statements */

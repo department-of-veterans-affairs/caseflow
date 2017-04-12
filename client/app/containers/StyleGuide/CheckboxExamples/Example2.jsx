@@ -12,15 +12,15 @@ export default class Example2 extends React.Component {
     };
   }
 
-  onChange = (event) => {
+  onChange = (value) => {
     this.setState({
-      value: event.target.checked
+      value
     });
   }
 
   render = () => {
     return <Checkbox
-      label="Check me!"
+      label="Option"
       vertical={true}
       name="checkbox_example_2"
       onChange={this.onChange}

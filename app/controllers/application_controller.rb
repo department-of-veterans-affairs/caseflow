@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :verify_authentication
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from VBMSError, with: :on_vbms_error
+  rescue_from VBMS::ClientError, with: :on_vbms_error
 
   def unauthorized
     render status: 403
@@ -97,9 +97,9 @@ class ApplicationController < ActionController::Base
     Time.zone = current_user.timezone if current_user
   end
 
-  # This is essentially only used for development mode
-  # The config/initialized/fake_dependencies runs on app boot and covers production scenarios
-  # However, in dev mode with class reloading the initializer gets wiped away
+  # This is used in development mode to:
+  # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
+  # - Setup the default authenticated user
   def setup_fakes
     Fakes::Initializer.development! if Rails.env.development? || Rails.env.demo?
   end

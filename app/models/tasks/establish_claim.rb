@@ -1,6 +1,9 @@
 class EstablishClaim < Task
   include CachedAttributes
 
+  class InvalidClaimError < StandardError; end
+  class EndProductAlreadyExistsError < StandardError; end
+
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
@@ -31,6 +34,49 @@ class EstablishClaim < Task
     )
   end
 
+  # Core method responsible for API call to VBMS to create the end product
+  # On success, will update the DB with the data related to the outcome
+  def perform!(claim_params)
+    claim = EstablishClaim::Claim.new(claim_params)
+
+    fail InvalidClaimError unless claim.valid?
+
+    transaction do
+      appeal.update!(dispatched_to_station: claim.station_of_jurisdiction)
+      update_claim_establishment!(ep_code: claim.end_product_code)
+
+      establish_claim_in_vbms(claim).tap do |end_product|
+        review!(outgoing_reference_id: end_product.claim_id)
+      end
+    end
+
+  rescue VBMS::HTTPError => error
+    raise parse_vbms_error(error)
+  end
+
+  def complete_with_review!(vacols_note:)
+    transaction do
+      update_claim_establishment!
+      complete!(status: completion_status_after_review)
+      Appeal.repository.update_vacols_after_dispatch!(appeal: appeal, vacols_note: vacols_note)
+    end
+  end
+
+  def complete_with_email!(email_recipient:, email_ro_id:)
+    transaction do
+      update_claim_establishment!(email_recipient: email_recipient, email_ro_id: email_ro_id)
+      complete!(status: :special_issue_emailed)
+    end
+  end
+
+  def assign_existing_end_product!(end_product_id)
+    transaction do
+      update_claim_establishment!
+      complete!(status: :assigned_existing_ep, outgoing_reference_id: end_product_id)
+      Appeal.repository.update_location_after_dispatch!(appeal: appeal)
+    end
+  end
+
   def actions_taken
     [
       decision_reviewed_action_description,
@@ -42,6 +88,19 @@ class EstablishClaim < Task
       not_emailed_action_description
     ].reject(&:nil?)
   end
+
+  def completion_status_text
+    case completion_status
+    when "routed_to_ro"
+      "EP created for RO #{ep_ro_description}"
+    when "special_issue_emailed"
+      "Emailed - #{special_issues} Issue(s)"
+    else
+      super
+    end
+  end
+
+  private
 
   def init_claim_establishment!
     create_claim_establishment(appeal: appeal)
@@ -56,7 +115,20 @@ class EstablishClaim < Task
     claim_establishment.update!(attrs)
   end
 
-  private
+  def establish_claim_in_vbms(claim)
+    Appeal.repository.establish_claim!(claim: claim.to_hash, appeal: appeal)
+  end
+
+  def parse_vbms_error(error)
+    case error.body
+    when /PIF is already in use/
+      return EndProductAlreadyExistsError
+    when /A duplicate claim for this EP code already exists/
+      return EndProductAlreadyExistsError
+    else
+      return error
+    end
+  end
 
   def decision_reviewed_action_description
     completed? ? "Reviewed #{cached_decision_type} decision" : nil
@@ -112,9 +184,7 @@ class EstablishClaim < Task
   end
 
   def ep_created?
-    completed? && [:completed, :routed_to_ro].any? do |status|
-      completion_status == Task.completion_status_code(status)
-    end
+    outgoing_reference_id && !assigned_existing_ep?
   end
 
   def established_ep_description
@@ -133,5 +203,86 @@ class EstablishClaim < Task
   def ep_ro
     possible_ros = [VACOLS::RegionalOffice::STATIONS[appeal.dispatched_to_station]].flatten
     possible_ros && VACOLS::RegionalOffice::CITIES[possible_ros.first]
+  end
+
+  def completion_status_after_review
+    return :special_issue_vacols_routed unless ep_created?
+
+    appeal.special_issues? ? :routed_to_ro : :routed_to_arc
+  end
+
+  class << self
+    def joins_task_result
+      joins(:claim_establishment)
+    end
+  end
+end
+
+# Class used for validating the claim object
+class EstablishClaim::Claim
+  include ActiveModel::Validations
+
+  # This is a list of the "variable attrs" that are returned from the
+  # browser's End Product form
+  PRESENT_VARIABLE_ATTRS =
+    %i(date station_of_jurisdiction end_product_modifier end_product_code end_product_label).freeze
+  BOOLEAN_VARIABLE_ATTRS =
+    %i(gulf_war_registry suppress_acknowledgement_letter).freeze
+  VARIABLE_ATTRS = PRESENT_VARIABLE_ATTRS + BOOLEAN_VARIABLE_ATTRS
+
+  attr_accessor(*VARIABLE_ATTRS)
+
+  validates(*PRESENT_VARIABLE_ATTRS, presence: true)
+  validates(*BOOLEAN_VARIABLE_ATTRS, inclusion: { in: [true, false] })
+  validate :end_product_code_and_label_match
+
+  def initialize(attributes = {})
+    attributes.each do |k, v|
+      instance_variable_set("@#{k}", v)
+    end
+  end
+
+  # TODO(jd): Consider moving this to date util in the future
+  def formatted_date
+    Date.strptime(date, "%m/%d/%Y")
+  end
+
+  def to_hash
+    initial_hash = default_values.merge(dynamic_values)
+
+    result = VARIABLE_ATTRS.each_with_object(initial_hash) do |attr, hash|
+      val = instance_variable_get("@#{attr}")
+      hash[attr] = val unless val.nil?
+    end
+
+    # override date attr, ensuring it's properly formatted
+    result[:date] = formatted_date
+
+    result
+  end
+
+  def dynamic_values
+    {
+      # TODO(jd): Make this attr dynamic in future PR once
+      # we support routing a claim based on special issues
+      # station_of_jurisdiction: "317"
+    }
+  end
+
+  private
+
+  def default_values
+    {
+      benefit_type_code: "1",
+      payee_code: "00",
+      predischarge: false,
+      claim_type: "Claim"
+    }
+  end
+
+  def end_product_code_and_label_match
+    unless EndProduct::CODES[end_product_code] == end_product_label
+      errors.add(:end_product_label, "must match end_product_code")
+    end
   end
 end

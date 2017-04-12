@@ -24,7 +24,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
   end
 
-  let(:vacols_record) { Fakes::AppealRepository.appeal_remand_decided }
+  let(:vacols_record) { :remand_decided }
 
   context "As a manager" do
     let!(:current_user) do
@@ -75,34 +75,47 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Assign the correct new task to myself" do
+      # Create a newer task, that the current user can access
+      appeal_with_access = Generators::Appeal.create(vacols_record: vacols_record)
+      task_with_access = Generators::EstablishClaim.create(appeal_id: appeal_with_access.id,
+                                                           aasm_state: :unassigned)
+
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
       # Create a task already completed by me
-      completed_task = Generators::EstablishClaim.create(user_id: current_user.id, aasm_state: :completed)
+      completed_task = Generators::EstablishClaim.create(
+        user_id: current_user.id,
+        aasm_state: :completed,
+        completion_status: :special_issue_vacols_routed
+      )
 
       visit "/dispatch/establish-claim"
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("Routed in VACOLS")
 
+      # The oldest task (task local var) is now set to a higher security level so
+      # it will be skipped for task_with_access
+      BGSService.can_access_on_next_call = false
       safe_click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-      expect(task.reload.user).to eq(current_user)
-      expect(task).to be_started
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
+      expect(task_with_access.reload.user).to eq(current_user)
+      expect(task_with_access).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
-      expect(task.claim_establishment).to be_remand
+      expect(task_with_access.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task_with_access.claim_establishment).to be_remand
 
       visit "/dispatch/establish-claim"
       safe_click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -116,6 +129,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       task.assign!(:assigned, current_user)
 
       visit "/dispatch/establish-claim/#{task.id}"
+
       safe_click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
@@ -133,7 +147,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "Cancel a claims establishment", retry: 5 do
+    scenario "you cannot re-complete a completed task" do
+      task.assign!(:assigned, current_user)
+      task.start!(:started)
+
+      visit "/dispatch/establish-claim/#{task.id}"
+
+      task.complete!(status: 0)
+
+      safe_click_on "Route claim"
+      expect(page).to have_content("This task was already completed")
+    end
+
+    scenario "Cancel a claims establishment" do
       task.assign!(:assigned, current_user)
 
       # The cancel button is the same on both the review and form pages, so one test
@@ -214,17 +240,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Multiple Decision Documents")
         safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Decision Review"
+        safe_click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
 
     context "For a full grant" do
       let(:vacols_record) do
-        Fakes::AppealRepository.appeal_full_grant_decided.merge(
-          # Specify RO to test ROJ routing
-          regional_office_key: "RO21"
-        )
+        # Specify RO to test ROJ routing
+        { template: :full_grant_decided, regional_office_key: "RO21" }
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -252,9 +276,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_button("Establish next claim", disabled: true)
 
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
-      scenario "Establish a new claim with special issue routed to ROJ", retry: 5 do
+      scenario "Establish a new claim with special issue routed to ROJ" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -275,6 +300,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Confirmation Page
         expect(page).to have_content("Success!")
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
+
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
       scenario "Establish a new claim with special issues by routing via email" do
@@ -291,23 +318,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
                                      "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
-      end
 
-      # There are no more issues that have no email addresses :)
-      # Skip this for now, but we'll clear it out when we finalize that decision
-      skip "Cancelling a claims establishment with special issues with no email routing" do
-        task.assign!(:assigned, current_user)
-
-        visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("vocationalRehab").click
-        safe_click_on "Route claim"
-
-        expect(page).to have_content("Please process this claim manually")
-
-        find_label_for("confirmEmail").click
-        safe_click_on "Release claim"
-
-        expect(page).to have_content("Processed case outside of Caseflow")
+        expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
       context "When there is an existing 172 EP" do
@@ -345,13 +357,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           task.reload
           expect(task.outgoing_reference_id).to eq("1")
           expect(task.appeal.reload.mustard_gas).to be_truthy
-          expect(task.completion_status).to eq(Task.completion_status_code(:assigned_existing_ep))
+          expect(task.completion_status).to eq("assigned_existing_ep")
         end
       end
     end
 
     context "For a partial grant" do
-      let(:vacols_record) { Fakes::AppealRepository.appeal_partial_grant_decided }
+      let(:vacols_record) { :partial_grant_decided }
 
       scenario "Establish a new claim routed to ARC" do
         # Mock the claim_id returned by VBMS's create end product
@@ -410,7 +422,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
         expect(task.reload.completed?).to be_truthy
-        expect(task.completion_status).to eq(0)
+        expect(task.completion_status).to eq("routed_to_arc")
         expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
         expect(task.appeal.reload.dispatched_to_station).to eq("397")
@@ -451,6 +463,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Validate special issue text within vacols note
         expect(page).to have_content("Private Attorney or Agent, Rice Compliance")
 
+        # Validate note page shows correct decision type for claim in vbms note
+        expect(find_field("VBMS Note").value).to have_content("The BVA Partial Grant decision")
+
+        # Validate note page shows correct decision type for claim in vacols diary note
+        expect(page).to have_content("Add the diary note: The BVA Partial Grant decision")
+
         # Validate correct vacols location
         expect(page).to have_content("50")
 
@@ -468,6 +486,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("VACOLS Updated: Added Diary Note on Private Attorney or Agent; Rice Compliance")
 
         expect(task.appeal.reload.rice_compliance).to be_truthy
+        expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
@@ -504,6 +523,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Valdiate correct vacols location
         expect(page).to have_content("50")
+
+        safe_click_on "Finish routing claim"
+
+        expect(page).to have_content("Success!")
+        expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
       end
 
       context "When there is an existing 170 EP" do
@@ -519,7 +543,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP", retry: 5 do
+        scenario "Establish a new claim defaults to creating a 171 EP" do
           visit "/dispatch/establish-claim"
           safe_click_on "Establish next claim"
           safe_click_on "Route claim"
@@ -527,7 +551,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          safe_click_on "< Back to Decision Review"
+          safe_click_on "< Back to Review Decision"
 
           expect(page).to have_content("Review Decision")
 

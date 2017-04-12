@@ -3,15 +3,29 @@ require "rails_helper"
 RSpec.feature "Save Certification" do
   before do
     User.authenticate!
+    Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
   end
 
-  scenario "Submit form while missing required values" do
-    Fakes::AppealRepository.records = {
-      "1234C" => Fakes::AppealRepository.appeal_ready_to_certify
+  let(:nod) { Generators::Document.build(type: "NOD") }
+  let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
+  let(:form9) { Generators::Document.build(type: "Form 9") }
+  let(:vacols_record) do
+    {
+      template: :ready_to_certify,
+      nod_date: nod.received_at,
+      soc_date: soc.received_at,
+      form9_date: form9.received_at,
+      notification_date: 1.day.ago
     }
+  end
 
-    visit "certifications/new/1234C"
+  let(:appeal) do
+    Generators::Appeal.build(vacols_record: vacols_record, documents: [nod, soc, form9])
+  end
+
+  scenario "Submit form while missing required values" do
+    visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_css("#question3 label .cf-required")
     expect(page).to have_css("#question10A legend .cf-required")
 
@@ -21,7 +35,7 @@ RSpec.feature "Save Certification" do
     end
     click_on "Preview Completed Form 8"
 
-    expect(page).to have_current_path(new_certification_path(vacols_id: "1234C"))
+    expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
 
     expect(find("#question3 .usa-input-error-message")).to(
       have_content("Please enter the veteran's full name.")
@@ -47,12 +61,7 @@ RSpec.feature "Save Certification" do
   end
 
   scenario "Repopulates form 8 values with saved values" do
-    Form8.pdf_service = FakePdfService
-    Fakes::AppealRepository.records = {
-      "5555C" => Fakes::AppealRepository.appeal_ready_to_certify
-    }
-
-    visit "certifications/new/5555C"
+    visit "certifications/new/#{appeal.vacols_id}"
 
     fill_in "5A Service connection for", with: "Wonderful World"
     expect(find_field("5B Date of notification of action appealed").value).to eq "02/01/2017"
@@ -95,7 +104,7 @@ RSpec.feature "Save Certification" do
 
     click_on "Preview Completed Form 8"
 
-    visit "certifications/new/5555C"
+    visit "certifications/new/#{appeal.vacols_id}"
     expect(find_field("Full Veteran Name").value).to eq("Joe Patriot")
 
     expect(find_field("5A Service connection for").value).to eq "Wonderful World"
@@ -133,47 +142,11 @@ RSpec.feature "Save Certification" do
     end
 
     click_on "Preview Completed Form 8"
-    expect(page).to have_current_path(certification_path(id: "5555C"))
-  end
-
-  scenario "Does not repopulate saved form for another appeal" do
-    Form8.pdf_service = FakePdfService
-    Fakes::AppealRepository.records = {
-      "5555C" => Fakes::AppealRepository.appeal_ready_to_certify,
-      "6666C" => Fakes::AppealRepository.appeal_ready_to_certify
-    }
-
-    visit "certifications/new/5555C"
-    fill_in "Full Veteran Name", with: "Joe Patriot"
-    fill_in "8A Representative Name", with: "Jane Patriot"
-    within_fieldset("8A Representative Type") do
-      find("label", text: "Attorney").click
-    end
-    within_fieldset("10A Was BVA hearing requested?") do
-      find("label", text: "No").click
-    end
-    within_fieldset("11A Are contested claims procedures applicable in this case?") do
-      find("label", text: "No").click
-    end
-    within_fieldset("12B Supplemental statement of the case") do
-      find("label", text: "Not required").click
-    end
-    fill_in "17A Name of certifying official", with: "Gieuseppe"
-    within_fieldset("17B Title of certifying official") do
-      find("label", text: "Decision Review Officer").click
-    end
-    click_on "Preview Completed Form 8"
-
-    visit "certifications/new/6666C"
-    expect(find_field("Full Veteran Name").value).to eq("Crockett, Davy, Q")
+    expect(page).to have_current_path(certification_path(id: appeal.vacols_id))
   end
 
   scenario "Saving a certification and go back and make edits" do
-    Fakes::AppealRepository.records = {
-      "12345C" => Fakes::AppealRepository.appeal_ready_to_certify
-    }
-
-    visit "certifications/new/12345C"
+    visit "certifications/new/#{appeal.vacols_id}"
 
     fill_in "5A Service connection for", with: "Wonderful World"
     page.execute_script("$('#question5B input').val('08/08/2016')")
@@ -218,18 +191,13 @@ RSpec.feature "Save Certification" do
     end
     click_on "Preview Completed Form 8"
 
-    form8 = Form8.find_by(vacols_id: "12345C")
+    form8 = Form8.find_by(vacols_id: appeal.vacols_id)
     expect(form8.record_outpatient_f.to_b).to eq false
     expect(form8.record_clinical_rec.to_b).to eq false
   end
 
   scenario "Saving a certification passes the correct values into the PDF service" do
-    Form8.pdf_service = FakePdfService
-    Fakes::AppealRepository.records = {
-      "12345C" => Fakes::AppealRepository.appeal_ready_to_certify
-    }
-
-    visit "certifications/new/12345C"
+    visit "certifications/new/#{appeal.vacols_id}"
 
     fill_in "Name of Appellant", with: "Shane Bobby"
     fill_in "Relationship to Veteran", with: "Brother"
@@ -282,7 +250,7 @@ RSpec.feature "Save Certification" do
     expect(FakePdfService.saved_form8).to have_attributes(
       appellant_name: "Shane Bobby",
       appellant_relationship: "Brother",
-      file_number: "VBMS-ID",
+      file_number: appeal.vbms_id,
       veteran_name: "Micah Bobby",
       insurance_loan_number: "INSURANCE-NO",
       service_connection_for: "service connection stuff",
@@ -302,19 +270,19 @@ RSpec.feature "Save Certification" do
       certifying_official_title_specify_other: "Ray Romano"
     )
 
-    expect(page).to have_current_path(certification_path(id: "12345C"))
+    expect(page).to have_current_path(certification_path(id: appeal.vacols_id))
   end
 
   scenario "Saving a certification saves PDF form to correct location" do
-    appeal = Fakes::AppealRepository.appeal_ready_to_certify
-    expected_form8 = Form8.new(vacols_id: "2222C")
+    # Don't fake the Form8PdfService for this one
+    Form8.pdf_service = Form8PdfService
+
+    expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
     form8_location = Form8PdfService.output_location_for(expected_form8)
 
-    Fakes::AppealRepository.records = { "2222C" => appeal }
-    Form8.pdf_service = Form8PdfService
     File.delete(form8_location) if File.exist?(form8_location)
 
-    visit "certifications/new/2222C"
+    visit "certifications/new/#{appeal.vacols_id}"
 
     fill_in "Full Veteran Name", with: "Micah Bobby"
     fill_in "8A Representative Name", with: "Orington Roberts"
