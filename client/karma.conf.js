@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha'],
-    singleRun: true,
+    // singleRun: true,
 
     files: [
       { pattern: 'test/**/*.js' }
@@ -15,6 +15,12 @@ module.exports = function(config) {
       'test/**/*.js': ['webpack', 'sourcemap']
     },
 
+    // Note that karma-webpack will ignore the `entry` value for
+    // our webpack config, and will instead run the compiler for
+    // each file matched by the test pattern specified above.
+    // This means that our other entry points, which we use
+    // for shims and polyfills, need to be manually imported
+    // in the tests.
     webpack: _.merge({
       externals: {
         cheerio: 'window',
