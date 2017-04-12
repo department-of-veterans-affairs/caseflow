@@ -2,6 +2,29 @@ import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import DocumentLabels from '../components/DocumentLabels';
 import Pdf from '../components/Pdf';
+import { connect } from 'react-redux';
+import _ from 'lodash';
+import * as Constants from '../reader/constants';
+
+const DocumentCategoryIcons = ({ document, docId }) => {
+  return <ul>
+    {
+      _(_.get(document, [docId, 'categories'])).
+        pickBy(_.identity).
+        keys().
+        map((categoryName) => {
+          const Svg = Constants.documentCategories[categoryName].svg;
+
+          return <li key={categoryName}><Svg /></li>;
+        }).
+        value()
+    }
+  </ul>;
+};
+
+const ConnectedDocumentCategoryIcons = connect(
+  (state) => ({ document: state && state.document })
+)(DocumentCategoryIcons);
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -74,6 +97,7 @@ export default class PdfUI extends React.Component {
               </Button> }
           </span>
           <span className="cf-right-side">
+            <ConnectedDocumentCategoryIcons docId={this.props.doc.id} />
             <Button
               name="newTab"
               classNames={["cf-pdf-button"]}

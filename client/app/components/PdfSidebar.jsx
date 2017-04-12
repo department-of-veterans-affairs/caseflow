@@ -2,28 +2,10 @@ import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import EditComment from '../components/EditComment';
-import ReaderBlueCategory from '../svg/reader-blue-category.svg';
-import ReaderGreenCategory from '../svg/reader-green-category.svg';
-import ReaderPinkCategory from '../svg/reader-pink-category.svg';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-
-const documentCategories = {
-  procedural: {
-    humanName: 'Procedural',
-    svg: ReaderBlueCategory
-  },
-  medical: {
-    humanName: 'Medical',
-    svg: ReaderPinkCategory
-  },
-  other: {
-    humanName: 'Other Evidence',
-    svg: ReaderGreenCategory
-  }
-};
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -113,7 +95,7 @@ export default class PdfSidebar extends React.Component {
           <ul className="cf-document-category-picker">
             {
               _.map(
-                documentCategories,
+                Constants.documentCategories,
                 (category, categoryName) => <li key={categoryName}>
                   <ConnectedCategorySelector category={category}
                     categoryName={categoryName} docId={this.props.doc.id} />
