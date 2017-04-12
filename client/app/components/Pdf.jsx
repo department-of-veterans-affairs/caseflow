@@ -88,35 +88,27 @@ export default class Pdf extends React.Component {
         container.innerHTML = '';
 
         // Call PDFJS to actually render the page.
-        return new Promise((resolveRender, rejectRender) => {
-          pdfPage.render({
-            canvasContext: canvas.getContext('2d', { alpha: false }),
+
+        //return new Promise((resolveRender, rejectRender) => {
+        return pdfPage.render({
+          canvasContext: canvas.getContext('2d', { alpha: false }),
+          viewport
+        }).
+        then(() => {
+          return Promise.resolve({
+            pdfPage,
             viewport
-          }).
-          then(() => {
-            resolveRender({
-              pdfPage,
-              viewport
-            });
-          }).
-          catch(() => {
-            rejectRender();
           });
         });
       }).
       then(({ pdfPage, viewport }) => {
         // Get the text from the PDF and render it.
-        return new Promise((resolveTextContent, rejectTextContent) => {
-          pdfPage.getTextContent().then((textContent) => {
-            resolveTextContent({
-              textContent,
-              viewport
-            });
-          }).
-          catch(() => {
-            rejectTextContent();
+        return pdfPage.getTextContent().then((textContent) => {
+          return Promise.resolve({
+            textContent,
+            viewport
           });
-        });
+        })
       }).
       then(({ textContent, viewport }) => {
         PDFJS.renderTextLayer({
