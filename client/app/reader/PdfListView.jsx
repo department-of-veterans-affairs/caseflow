@@ -6,6 +6,7 @@ import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {
@@ -31,6 +32,10 @@ export default class PdfListView extends React.Component {
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
     return [
+      {
+        header: <div>Categories</div>,
+        valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
+      },
       {
         valueFunction: (doc) => {
           return <span>
