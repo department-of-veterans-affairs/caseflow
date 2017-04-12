@@ -52,7 +52,7 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-> $ nvm install node v7.1.0
+> $ nvm install node v4.1.2
 
 > $ nvm use && npm install
 
