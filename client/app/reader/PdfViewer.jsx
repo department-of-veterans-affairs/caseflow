@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
-import GrayOut from '../components/GrayOut';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
