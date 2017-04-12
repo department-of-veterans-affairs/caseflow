@@ -8,10 +8,10 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 
 const CategorySelector = (props) => {
-  const { category, categoryName, handleCategoryToggle, docId, documents } = props;
-  const { toggleState } = _.get(documents, [docId, categoryName], {}),
-    Svg = category.svg,
-    label = <div className="cf-category-selector">
+  const { category, categoryName, handleCategoryToggle, docId, document } = props;
+  const toggleState = _.get(document, [docId, 'categories', categoryName], false);
+  const Svg = category.svg;
+  const label = <div className="cf-category-selector">
         <Svg />
         <span className="cf-category-name">{category.humanName}</span>
       </div>;
@@ -33,7 +33,7 @@ CategorySelector.propTypes = {
 };
 
 const ConnectedCategorySelector = connect(
-  (state) => _.pick(state, 'documents'),
+  (state) => _.pick(state, 'document'),
   (dispatch) => ({
     handleCategoryToggle(categoryName, toggleState, docId) {
       dispatch({
