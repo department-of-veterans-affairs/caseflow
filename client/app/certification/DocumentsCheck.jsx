@@ -61,7 +61,7 @@ const mapStateToProps = (state) => ({
   nodDate: state.nodDate,
   socMatch: state.socMatch,
   socDate: state.socDate,
-  documentsMatch: state.documentsMatch
+  documentsMatch: state.documentsMatch,
   certificationId: state.certificationId
     /* TODO: add ssoc_match and ssoc_dates */
 });
