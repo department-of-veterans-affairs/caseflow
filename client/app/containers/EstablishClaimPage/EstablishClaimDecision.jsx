@@ -35,6 +35,85 @@ export class EstablishClaimDecision extends React.Component {
     return this.props.task.appeal.decisions.length > 1;
   }
 
+  hasOneDecision() {
+    return this.props.task.appeal.decisions.length === 1;
+  }
+
+  decisions() {
+    // Sort in reverse chronological order
+    return this.props.task.appeal.decisions.sort((decision1, decision2) =>
+      new Date(decision2.received_at) - new Date(decision1.received_at));
+  }
+
+  decisionTabs() {
+    return this.decisions().map((decision, index) => {
+      let tab = {};
+
+      tab.disable = false;
+
+      tab.label = `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
+
+      /* This link is here for 508 compliance, and shouldn't be visible to sighted
+        users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
+        is the accessibility standard and is used across gov't, so we'll recommend it
+        for now. The usa-sr-only class will place an element off screen without
+        affecting its placement in tab order, thus making it invisible onscreen
+        but read out by screen readers. */
+
+      tab.page = <div>
+         <a
+           className="usa-sr-only"
+           id="sr-download-link"
+           href={`${this.props.pdfLink}&decision_number=${index}`}
+           download
+           target="_blank">
+           The PDF viewer in your browser may not be accessible. Click to download
+           the Decision PDF so you can preview it in a reader with accessibility features
+           such as Adobe Acrobat.
+         </a>
+         <a className="usa-sr-only" href="#establish-claim-buttons">
+           If you are using a screen reader and have downloaded and verified the Decision
+           PDF, click this link to skip past the browser PDF viewer to the
+           establish-claim buttons.
+         </a>
+         <div>
+           <LoadingContainer>
+             <iframe
+               aria-label="The PDF embedded here is not accessible. Please use the above
+                 link to download the PDF and view it in a PDF reader. Then use the
+                 buttons below to go back and make edits or upload and certify
+                 the document."
+               className="cf-doc-embed cf-iframe-with-loading"
+               title="Form8 PDF"
+               src={`${this.props.pdfjsLink}&decision_number=${index}`}>
+             </iframe>
+           </LoadingContainer>
+         </div>
+       </div>;
+
+      return tab;
+    });
+  }
+
+  renderDecisions() {
+
+    if (this.hasMultipleDecisions()) {
+      return <div>
+        <h2>Select a Decision Document</h2>
+        <p>Use the tabs to review the decision documents below and
+        select the decision that best fits the VACOLS Decision Criteria.</p>
+        <TabWindow
+          tabs={this.decisionTabs()}
+          onChange={this.onTabSelected}/>
+      </div>;
+    } else if (this.hasOneDecision()) {
+      return this.decisionTabs()[0].page;
+    }
+
+    return <p>This decision has no documents</p>;
+
+  }
+
   render() {
     let {
       loading,
@@ -42,8 +121,6 @@ export class EstablishClaimDecision extends React.Component {
       handleSubmit,
       handleCancelTask,
       handleSpecialIssueFieldChange,
-      pdfLink,
-      pdfjsLink,
       specialIssues,
       task
     } = this.props;
@@ -74,58 +151,6 @@ export class EstablishClaimDecision extends React.Component {
     let decisionDateEnd = formatDate(
       addDays(new Date(task.appeal.serialized_decision_date), 3)
     );
-
-    // Sort in reverse chronological order
-    let decisions = task.appeal.decisions.sort((decision1, decision2) =>
-      new Date(decision2.received_at) - new Date(decision1.received_at));
-
-    let tabs = decisions.map((decision, index) => {
-      let tab = {};
-
-      tab.disable = false;
-
-      tab.label = `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
-
-      /* This link is here for 508 compliance, and shouldn't be visible to sighted
-        users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
-        is the accessibility standard and is used across gov't, so we'll recommend it
-        for now. The usa-sr-only class will place an element off screen without
-        affecting its placement in tab order, thus making it invisible onscreen
-        but read out by screen readers. */
-
-      tab.page = <div>
-         <a
-           className="usa-sr-only"
-           id="sr-download-link"
-           href={`${pdfLink}&decision_number=${index}`}
-           download
-           target="_blank">
-           The PDF viewer in your browser may not be accessible. Click to download
-           the Decision PDF so you can preview it in a reader with accessibility features
-           such as Adobe Acrobat.
-         </a>
-         <a className="usa-sr-only" href="#establish-claim-buttons">
-           If you are using a screen reader and have downloaded and verified the Decision
-           PDF, click this link to skip past the browser PDF viewer to the
-           establish-claim buttons.
-         </a>
-         <div>
-           <LoadingContainer>
-             <iframe
-               aria-label="The PDF embedded here is not accessible. Please use the above
-                 link to download the PDF and view it in a PDF reader. Then use the
-                 buttons below to go back and make edits or upload and certify
-                 the document."
-               className="cf-doc-embed cf-iframe-with-loading"
-               title="Form8 PDF"
-               src={`${pdfjsLink}&decision_number=${index}`}>
-             </iframe>
-           </LoadingContainer>
-         </div>
-       </div>;
-
-      return tab;
-    });
 
     return (
       <div>
@@ -165,15 +190,7 @@ export class EstablishClaimDecision extends React.Component {
          but read out by screen readers. */
         }
         <div className="cf-app-segment cf-app-segment--alt">
-          {this.hasMultipleDecisions() && <div>
-            <h2>Select a Decision Document</h2>
-            <p>Use the tabs to review the decision documents below and
-            select the decision that best fits the VACOLS Decision Criteria.</p>
-            <TabWindow
-              tabs={tabs}
-              onChange={this.onTabSelected}/>
-          </div>}
-          {!this.hasMultipleDecisions() && tabs[0].page}
+          {this.renderDecisions()}
 
           <div className="usa-width-one-half">
             <TextField
