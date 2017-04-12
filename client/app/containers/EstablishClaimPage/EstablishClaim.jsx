@@ -9,6 +9,7 @@ import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 import { validModifiers } from '../../establishClaim/util';
+import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
@@ -528,6 +529,10 @@ export default class EstablishClaim extends BaseForm {
     let claim = this.store.getState().establishClaimForm;
 
     claim.date = this.formattedDecisionDate();
+    claim.stationOfJurisdiction = getStationOfJurisdiction(
+      this.store.getState().specialIssues,
+      this.props.task.appeal.station_key
+    );
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
