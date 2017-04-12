@@ -147,7 +147,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "you cannot re-complete a completed task" do
+    scenario "Cannot re-complete a completed task" do
       task.assign!(:assigned, current_user)
       task.start!(:started)
 
