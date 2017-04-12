@@ -140,7 +140,7 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.true;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: 'decisions' } }))).to.be.true;
 
           // Click on a different label
@@ -152,7 +152,7 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.true;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: 'procedural' } }))).to.be.true;
 
           // Click on the same label
@@ -165,7 +165,7 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.false;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: null } }))).to.be.true;
         }));
     });
@@ -229,7 +229,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Verify the api is called to add a comment
-        expect(ApiUtilStub.apiPost.calledWith('/decision/review/annotation',
+        expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
           sinon.match({ data: { annotation: firstComment } }))).to.be.true;
         await pause();
 
@@ -249,7 +249,8 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(`/decision/review/annotation/${commentId}`,
+        expect(ApiUtilStub.apiPatch.calledWith(
+          `/document/${documents[0].id}/annotation/${commentId}`,
           sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
@@ -258,7 +259,7 @@ describe('DecisionReviewer', () => {
 
         // Verify the api is called to delete a comment
         expect(ApiUtilStub.apiDelete.
-          calledWith(`/decision/review/annotation/${commentId}`)).
+          calledWith(`/document/${documents[0].id}/annotation/${commentId}`)).
           to.be.true;
       }));
 
