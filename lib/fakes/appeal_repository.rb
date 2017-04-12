@@ -193,9 +193,10 @@ class Fakes::AppealRepository
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
     50.times.each do |i|
+      vid = Fakes::VeteranId.get(i)
       Generators::Appeal.build(
-        vacols_id: "vacols_id#{i}",
-        vbms_id: "vbms_id#{i}",
+        vacols_id: vid.gsub(/\D/, ""),
+        vbms_id: vid,
         vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
         documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
       )
