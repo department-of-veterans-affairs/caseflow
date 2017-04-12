@@ -85,8 +85,13 @@ class Fakes::AppealRepository
 
     fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
 
-    # This is bad. I'm sorry
-    record.delete(:vbms_id) if Rails.env.development?
+    # For testing dispatch appeals, the seed data in the record
+    # has a randomly generated vbms id from our appeal generator,
+    # and the appeal already has a vbms id from db seed data.
+    # Don't overwrite the appeal vbms id if it already has one.
+    # TODO: figure out a way to untangle this. Perhaps we shouldn't
+    # be using randomly generated VBMS ids?
+    record.delete(:vbms_id) if appeal.vbms_id
 
     appeal.assign_from_vacols(record)
   end
@@ -212,6 +217,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "123C",
+      vbms_id: "1111",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -251,6 +257,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "124C",
+      vbms_id: "1112",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
