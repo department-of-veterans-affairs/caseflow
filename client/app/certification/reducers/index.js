@@ -93,6 +93,8 @@ export const mapDataToInitialState = function(state) {
     nodDate: state.appeal.nod_date,
     socMatch: state.appeal['soc_match?'],
     socDate: state.appeal.soc_date,
+    ssocMatch: state.appeal['ssoc_match?'],
+    ssocDates: state.appeal.ssoc_dates,
     documentsMatch: state.appeal['documents_match?'],
 
     /* TODO: add ssoc_match and ssoc_dates */

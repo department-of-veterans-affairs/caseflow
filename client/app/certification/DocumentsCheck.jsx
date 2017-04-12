@@ -24,6 +24,8 @@ class UnconnectedDocumentsCheck extends React.Component {
       nodDate,
       socMatch,
       socDate,
+      ssocMatch,
+      ssocDates,
       documentsMatch,
       match } = this.props;
 
@@ -37,6 +39,8 @@ class UnconnectedDocumentsCheck extends React.Component {
           nodDate={nodDate}
           socMatch={socMatch}
           socDate={socDate}
+          ssoc_match={ssocMatch}
+          ssoc_dates={ssocDates}
           documentsMatch={documentsMatch}/>
       </div>
 
@@ -63,6 +67,8 @@ const mapStateToProps = (state) => ({
   nodDate: state.nodDate,
   socMatch: state.socMatch,
   socDate: state.socDate,
+  ssocMatch: state.ssocMatch,
+  ssocDates: state.ssocDates,
   documentsMatch: state.documentsMatch
 
     /* TODO: add ssoc_match and ssoc_dates */
