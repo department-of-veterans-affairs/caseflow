@@ -88,8 +88,6 @@ export default class Pdf extends React.Component {
         container.innerHTML = '';
 
         // Call PDFJS to actually render the page.
-
-        //return new Promise((resolveRender, rejectRender) => {
         return pdfPage.render({
           canvasContext: canvas.getContext('2d', { alpha: false }),
           viewport
@@ -108,7 +106,7 @@ export default class Pdf extends React.Component {
             textContent,
             viewport
           });
-        })
+        });
       }).
       then(({ textContent, viewport }) => {
         PDFJS.renderTextLayer({
