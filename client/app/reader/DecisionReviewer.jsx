@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import PDFJSAnnotate from 'pdf-annotate.js';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
@@ -40,7 +39,6 @@ export default class DecisionReviewer extends React.Component {
     };
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    PDFJSAnnotate.setStoreAdapter(new PDFJSAnnotate.LocalStoreAdapter());
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
