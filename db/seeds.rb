@@ -22,6 +22,7 @@ class SeedDB
       )
     end
     @appeals.push(*appeals)
+    @appeals.push(Appeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
   end
 
   def create_users(number, deterministic = true)
@@ -60,7 +61,7 @@ class SeedDB
     tasks[2].assign!(@users[2])
     tasks[2].start!
     tasks[2].review!
-    tasks[2].complete!(status: 0)
+    tasks[2].complete!(status: :routed_to_arc)
 
     # Create one task with no decision documents
     EstablishClaim.create(

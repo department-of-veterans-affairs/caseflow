@@ -1,5 +1,3 @@
-require "vbms_error"
-
 class CertificationsController < ApplicationController
   before_action :verify_access
   before_action :set_application
@@ -52,10 +50,6 @@ class CertificationsController < ApplicationController
     @certification.complete!(current_user.id)
 
     redirect_to certification_path(id: appeal.vacols_id, confirm: true)
-  end
-
-  def cancel
-    render layout: "application"
   end
 
   def set_application
