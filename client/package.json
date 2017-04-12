@@ -39,6 +39,7 @@
     "react-select": "^1.0.0-rc.3",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.0",
+    "reselect": "^3.0.0",
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0"
   },
