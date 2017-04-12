@@ -91,7 +91,7 @@ class Fakes::AppealRepository
     # Don't overwrite the appeal vbms id if it already has one.
     # TODO: figure out a way to untangle this. Perhaps we shouldn't
     # be using randomly generated VBMS ids?
-    record.delete(:vbms_id) if appeal.vbms_id
+    record.delete(:vbms_id) unless appeal.vbms_id.nil?
 
     appeal.assign_from_vacols(record)
   end
