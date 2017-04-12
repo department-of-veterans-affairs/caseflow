@@ -172,20 +172,9 @@ export default class EstablishClaim extends BaseForm {
     let { history } = this.state;
 
     history.listen((location) => {
-      // If we are on the note page and you try to move to
-      // a previous page in the flow then we bump you back
-      // to the note page.
-      if (this.state.page === NOTE_PAGE &&
-        location.pathname.substring(1) !== NOTE_PAGE) {
-        this.handlePageChange(NOTE_PAGE);
-        this.setState({
-          showNotePageAlert: true
-        });
-      } else {
-        this.setState({
-          page: location.pathname.substring(1) || DECISION_PAGE
-        });
-      }
+      this.setState({
+        page: location.pathname.substring(1) || DECISION_PAGE
+      });
     });
 
     history.replace(this.defaultPage());
@@ -754,6 +743,8 @@ export default class EstablishClaim extends BaseForm {
             specialIssues={specialIssues}
             displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
         }
         { this.isEmailPage() &&
