@@ -1,26 +1,13 @@
 import React, { PropTypes } from 'react';
 
 export default class DropdownMenu extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
   render() {
     let {
       label,
       options
     } = this.props;
 
-    let handleMenuClick = () => {
-      this.setState((prevState) => ({
-        menu: !prevState.menu
-      }));
-    };
-
-    let DropdownMenuList = () => {
+    let dropdownMenuList = () => {
       return <ul id="dropdown-menu" className="cf-dropdown-menu active"
         aria-labelledby="menu-trigger">
         {options.map((option, index) =>
@@ -28,17 +15,15 @@ export default class DropdownMenu extends React.Component {
             {options.length - 1 === index && <div className="dropdown-border"></div>}
             <a href={option.link}>{option.title}</a>
           </li>)}
-      </ul>
-    }
+      </ul>;
+    };
 
     return <div className="cf-dropdown">
       <a href="#dropdown-menu"
-        className="cf-dropdown-trigger"
-        onClick={handleMenuClick}
-        onBlur={handleMenuClick}>
+        className="cf-dropdown-trigger">
         {label}
       </a>
-      {this.state.menu && DropdownMenuList() }
+      {this.state.menu && dropdownMenuList() }
     </div>;
   }
 }

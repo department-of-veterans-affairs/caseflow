@@ -3,6 +3,19 @@ import DropdownMenu from '../../components/DropdownMenu';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideDropdownMenu extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      menu: false
+    };
+  }
+
+  handleMenuClick = () => {
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
   options = () => {
     return [
       {
@@ -30,6 +43,8 @@ export default class StyleGuideDropdownMenu extends React.Component {
       />
     <DropdownMenu
       options={this.options()}
+      onClick={this.handleMenuClick()}
+      onBlur={this.handleMenuClick()}
       label="JANE AUSTIN"
       />
     </div>;
