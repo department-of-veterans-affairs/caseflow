@@ -249,57 +249,52 @@ class UnconnectedConfirmHearing extends React.Component {
  * that causes the reducer in reducers/index.js
  * to return a new state object.
  */
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateProgressBar: () => {
-      dispatch({
-        type: Constants.UPDATE_PROGRESS_BAR,
-        payload: {
-          currentSection: Constants.progressBarSections.CONFIRM_HEARING
-        }
-      });
-    },
-    onHearingDocumentChange: (event) => {
-      dispatch({
-        type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
-        payload: {
-          hearingDocumentIsInVbms: event.target.value
-        }
-      });
-    },
-    onTypeOfForm9Change: (event) => {
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_FORM9,
-        payload: {
-          form9Type: event.target.value
-        }
-      });
-    },
-    onHearingTypeChange: (event) => {
-      dispatch({
-        type: Constants.CHANGE_TYPE_OF_HEARING,
-        payload: {
-          hearingType: event.target.value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  updateProgressBar: () => {
+    dispatch({
+      type: Constants.UPDATE_PROGRESS_BAR,
+      payload: {
+        currentSection: Constants.progressBarSections.CONFIRM_HEARING
+      }
+    });
+  },
+  onHearingDocumentChange: (hearingDocumentIsInVbms) => {
+    dispatch({
+      type: Constants.CHANGE_VBMS_HEARING_DOCUMENT,
+      payload: {
+        hearingDocumentIsInVbms
+      }
+    });
+  },
+  onTypeOfForm9Change: (form9Type) => {
+    dispatch({
+      type: Constants.CHANGE_TYPE_OF_FORM9,
+      payload: {
+        form9Type
+      }
+    });
+  },
+  onHearingTypeChange: (hearingType) => {
+    dispatch({
+      type: Constants.CHANGE_TYPE_OF_HEARING,
+      payload: {
+        hearingType
+      }
+    });
+  }
+});
 
 /*
  * This function tells us which parts of the global
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state) => {
-  return {
-    hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
-    form9Type: state.form9Type,
-    form9Date: state.form9Date,
-    hearingType: state.hearingType
-  };
-};
-
+const mapStateToProps = (state) => ({
+  hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
+  form9Type: state.form9Type,
+  form9Date: state.form9Date,
+  hearingType: state.hearingType
+});
 
 /*
  * Creates a component that's connected to the Redux store
