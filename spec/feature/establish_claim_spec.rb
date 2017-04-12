@@ -84,13 +84,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
 
       # Create a task already completed by me
-      completed_task = Generators::EstablishClaim.create(user_id: current_user.id, aasm_state: :completed)
+      completed_task = Generators::EstablishClaim.create(
+        user_id: current_user.id,
+        aasm_state: :completed,
+        completion_status: :special_issue_vacols_routed
+      )
 
       visit "/dispatch/establish-claim"
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("Routed in VACOLS")
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access

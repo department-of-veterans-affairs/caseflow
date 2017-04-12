@@ -89,6 +89,17 @@ class EstablishClaim < Task
     ].reject(&:nil?)
   end
 
+  def completion_status_text
+    case completion_status
+    when "routed_to_ro"
+      "EP created for RO #{ep_ro_description}"
+    when "special_issue_emailed"
+      "Emailed - #{special_issues} Issue(s)"
+    else
+      super
+    end
+  end
+
   private
 
   def init_claim_establishment!
@@ -198,6 +209,12 @@ class EstablishClaim < Task
     return :special_issue_vacols_routed unless ep_created?
 
     appeal.special_issues? ? :routed_to_ro : :routed_to_arc
+  end
+
+  class << self
+    def joins_task_result
+      joins(:claim_establishment)
+    end
   end
 end
 

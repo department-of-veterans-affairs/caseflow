@@ -50,6 +50,10 @@ class EstablishClaimsController < TasksController
 
   private
 
+  def tasks
+    EstablishClaim
+  end
+
   def verify_manager_access
     verify_authorized_roles("Manage Claim Establishment")
   end

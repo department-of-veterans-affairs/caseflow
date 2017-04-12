@@ -20,14 +20,8 @@ export default class DropdownMenu extends React.Component {
       }));
     };
 
-    return <div className="cf-dropdown">
-      <a href="#dropdown-menu"
-        className="cf-dropdown-trigger"
-        onClick={handleMenuClick}
-        onBlur={handleMenuClick}>
-        {label}
-      </a>
-      {this.state.menu && <ul id="dropdown-menu" className="cf-dropdown-menu active"
+    let DropdownMenuList = () => {
+      <ul id="dropdown-menu" className="cf-dropdown-menu active"
         aria-labelledby="menu-trigger">
         {options.map((option, index) =>
           <li key={index}>
@@ -36,6 +30,15 @@ export default class DropdownMenu extends React.Component {
           </li>)}
       </ul>
     }
+
+    return <div className="cf-dropdown">
+      <a href="#dropdown-menu"
+        className="cf-dropdown-trigger"
+        onClick={handleMenuClick}
+        onBlur={handleMenuClick}>
+        {label}
+      </a>
+      {this.state.menu && DropdownMenuList() }
     </div>;
   }
 }

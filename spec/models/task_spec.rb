@@ -16,6 +16,7 @@ describe Task do
 
   let(:appeal) { Generators::Appeal.create }
   let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state) }
+  let(:user) { User.create(station_id: "ABC", css_id: "ROBBY", full_name: "Robert Smith") }
   let(:aasm_state) { :unassigned }
 
   context ".newest_first" do
@@ -480,6 +481,26 @@ describe Task do
     it "returns hash with each user and their completed number of tasks" do
       expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
     end
+  end
+
+  context ".completed_by" do
+    subject { FakeTask.completed_by(user) }
+
+    let(:other_user) { User.create(station_id: "ABC", css_id: "JANEY", full_name: "Jane Doe") }
+
+    let!(:incomplete_task) do
+      FakeTask.create(user: user, appeal: appeal)
+    end
+
+    let!(:task_completed_by_other_user) do
+      FakeTask.create(aasm_state: :completed, user: other_user, appeal: appeal)
+    end
+
+    let!(:task_completed_by_user) do
+      FakeTask.create(aasm_state: :completed, user: user, appeal: appeal)
+    end
+
+    it { is_expected.to eq([task_completed_by_user]) }
   end
 
   context "#completion_status_text" do
