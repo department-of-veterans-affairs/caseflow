@@ -1,2 +1,0 @@
-class DipatchHelpController < ApplicationController
-end
