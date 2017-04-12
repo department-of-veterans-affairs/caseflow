@@ -71,13 +71,15 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(setupPdf.lastCall.calledWith(`/document/${documents[1].id}/pdf`)).to.be.true;
+        expect(setupPdf.lastCall.calledWith(
+          `/document/${documents[1].id}/pdf`)).to.be.true;
 
         // Previous button moves us to the previous page
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(setupPdf.lastCall.calledWith(`/document/${documents[0].id}/pdf`)).to.be.true;
+        expect(setupPdf.lastCall.calledWith(
+          `/document/${documents[0].id}/pdf`)).to.be.true;
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
