@@ -1,5 +1,3 @@
-require "vbms"
-
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
@@ -31,7 +29,6 @@ class AppealRepository
                                         name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
-
     set_vacols_values(appeal: appeal, case_record: case_record)
 
     appeal
@@ -55,7 +52,7 @@ class AppealRepository
     end
 
     fail ActiveRecord::RecordNotFound if case_records.empty?
-    fail MultipleAppealsByVBMSIDError if case_records.length > 1
+    fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
@@ -245,23 +242,49 @@ class AppealRepository
     appeal.case_record.save!
   end
 
-  def self.upload_and_clean_document(appeal, form8)
-    upload_document(appeal, form8)
-    File.delete(form8.pdf_location)
+  def self.upload_document_to_vbms(appeal, form8)
+    @vbms_client ||= init_vbms_client
+    document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                 response = initialize_upload(appeal, form8)
+                 upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
+               else
+                 upload_document_deprecated(appeal, form8)
+               end
+    document
   end
 
-  def self.upload_document(appeal, uploadable_document)
-    @vbms_client ||= init_vbms_client
+  def self.clean_document(location)
+    File.delete(location)
+  end
 
-    request = upload_documents_request(appeal, uploadable_document)
-
+  def self.initialize_upload(appeal, uploadable_document)
+    content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
+    filename = File.basename(uploadable_document.pdf_location)
+    request = VBMS::Requests::InitializeUpload.new(
+      content_hash: content_hash,
+      filename: filename,
+      file_number: appeal.sanitized_vbms_id,
+      va_receive_date: uploadable_document.upload_date,
+      doc_type: uploadable_document.document_type_id,
+      source: "VACOLS",
+      subject: uploadable_document.document_type,
+      new_mail: true
+    )
     send_and_log_request(appeal.vbms_id, request)
   end
 
-  def self.upload_documents_request(appeal, uploadable_document)
-    VBMS::Requests::UploadDocumentWithAssociations.new(
+  def self.upload_document(vbms_id, upload_token, filepath)
+    request = VBMS::Requests::UploadDocument.new(
+      upload_token: upload_token,
+      filepath: filepath
+    )
+    send_and_log_request(vbms_id, request)
+  end
+
+  def self.upload_document_deprecated(appeal, uploadable_document)
+    request = VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
-      Time.zone.now,
+      uploadable_document.upload_date,
       appeal.veteran_first_name,
       appeal.veteran_middle_initial,
       appeal.veteran_last_name,
@@ -271,6 +294,7 @@ class AppealRepository
       "VACOLS",
       true
     )
+    send_and_log_request(appeal.vbms_id, request)
   end
 
   def self.send_and_log_request(vbms_id, request)
@@ -281,18 +305,22 @@ class AppealRepository
       @vbms_client.send_request(request)
     end
 
-  # rethrow as application-level error
   rescue VBMS::ClientError => e
     Raven.capture_exception(e)
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
-    raise VBMSError
+
+    raise e
   end
 
   def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
-    request = VBMS::Requests::ListDocuments.new(sanitized_id)
+    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                VBMS::Requests::FindDocumentSeriesReference.new(sanitized_id)
+              else
+                VBMS::Requests::ListDocuments.new(sanitized_id)
+              end
     documents = send_and_log_request(sanitized_id, request)
 
     documents.map do |vbms_document|
@@ -304,7 +332,11 @@ class AppealRepository
     @vbms_client ||= init_vbms_client
 
     vbms_id = document.vbms_document_id
-    request = VBMS::Requests::FetchDocumentById.new(vbms_id)
+    request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
+                VBMS::Requests::GetDocumentContent.new(vbms_id)
+              else
+                VBMS::Requests::FetchDocumentById.new(vbms_id)
+              end
     result = send_and_log_request(vbms_id, request)
     result && result.content
   end

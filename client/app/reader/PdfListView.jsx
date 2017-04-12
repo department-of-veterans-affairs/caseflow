@@ -1,13 +1,11 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
-import DocumentLabels from '../components/DocumentLabels';
 import { formatDate } from '../util/DateUtil';
-import SearchBar from '../components/SearchBar';
 import StringUtil from '../util/StringUtil';
 import Button from '../components/Button';
 import Comment from '../components/Comment';
-
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import DocumentListHeader from '../components/reader/DocumentListHeader';
 
 export default class PdfListView extends React.Component {
   constructor(props) {
@@ -35,7 +33,12 @@ export default class PdfListView extends React.Component {
       className = "fa-caret-up";
     }
 
-    let sortIcon = <i className={`fa ${className}`} aria-hidden="true"></i>;
+    let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
+      aria-hidden="true"></i>;
+    let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon"
+      aria-hidden="true"></i>;
+    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
+      aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -73,27 +76,42 @@ export default class PdfListView extends React.Component {
           }
         }]
       }
-      return [{
+      return [
+        {
+          header: <div
+            id="categories-header"
+            className="document-list-header-categories"
+            onClick={() => {
+              // on click actions here
+            }}>
+            Categories {filterIcon}
+          </div>,
           valueFunction: (doc) => {
             return <span>
               {doc.label && <i
-              className={`fa fa-bookmark cf-pdf-bookmark-` +
-                `${StringUtil.camelCaseToDashCase(doc.label)}`}
-              aria-hidden="true"></i> }
+                className={`fa fa-bookmark cf-pdf-bookmark-` +
+                  `${StringUtil.camelCaseToDashCase(doc.label)}`}
+                aria-hidden="true"></i>}
             </span>;
           }
         },
         {
-          header: <div onClick={this.props.changeSortState('date')}>
-            Receipt Date {this.props.sortBy === 'date' ? sortIcon : ' '}
+          header: <div
+            id="receipt-date-header"
+            className="document-list-header-recepit-date"
+            onClick={this.props.changeSortState('date')}>
+            Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
           </div>,
-          valueFunction: (doc) => boldUnreadContent(formatDate(doc.receivedAt), doc)
+          valueFunction: (doc) =>
+            <span className="document-list-receipt-date">
+              {formatDate(doc.receivedAt)}
+            </span>
         },
         {
           header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-            Document Type {this.props.sortBy === 'type' ? sortIcon : ' '}
+            Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
-          valueFunction: (doc) => boldUnreadContent(
+          valueFunction: (doc, index) => boldUnreadContent(
             <a
               href={linkToSingleDocumentView(doc)}
               onMouseUp={this.props.showPdf(doc.id)}>
@@ -101,25 +119,43 @@ export default class PdfListView extends React.Component {
             </a>, doc)
         },
         {
-          header: "Comments",
+          header: <div id="issue-tags-header"
+            className="document-list-header-issue-tags"
+            onClick={() => {
+              // on click handler here
+            }}>
+            Issue Tags {filterIcon}
+          </div>,
+          valueFunction: () => {
+            return <div className="document-list-issue-tags">
+            </div>;
+          }
+        },
+        {
+          header: <div
+            id="comments-header"
+            className="document-list-header-comments"
+          >
+            Comments
+          </div>,
           valueFunction: (doc) => {
-            let comments = this.props.annotationStorage.
-              getAnnotationByDocumentId(doc.id);
-            let numberOfComments = comments.length;
+            let numberOfComments = this.props.annotationStorage.
+              getAnnotationByDocumentId(doc.id).length;
 
-            if (numberOfComments === 0) {
-              return;
-            }
-
-            return boldUnreadContent(
-              <a
-                href="#"
-                onClick={this.toggleComments(doc.id)}>
-                {numberOfComments} Comments
-              </a>, doc);
+            return <span className="document-list-comments-indicator">
+              {numberOfComments > 0 &&
+                <span>
+                  <a href="#" onClick={this.toggleComments(doc.id)}>{numberOfComments}
+                    <i className=
+                      "fa fa-3 fa-angle-down document-list-comments-indicator-icon" />
+                  </a>
+                </span>
+              }
+            </span>;
           }
         }
-      ]};
+      ];
+    }
   }
 
   render() {
@@ -144,38 +180,12 @@ export default class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <div className="usa-grid-full">
-            <div className="usa-width-one-third">
-              <SearchBar
-                id="searchBar"
-                onChange={this.props.onFilter}
-                value={this.props.filterBy}
-              />
-            </div>
-            <div className="usa-width-one-third">
-              <span>
-                Show only:
-                <DocumentLabels
-                  onClick={this.props.selectLabel}
-                  selectedLabels={this.props.selectedLabels} />
-              </span>
-              <span>
-                <Button
-                  name="comment-selector"
-                  onClick={this.props.selectComments}
-                  classNames={commentSelectorClassNames}
-                  ariaLabel={"Filter by comments"}>
-                  <i className="fa fa-comment-o fa-lg"></i>
-                </Button>
-              </span>
-            </div>
-            <div className="usa-width-one-third">
-              <span className="cf-right-side">
-                Showing {`${this.props.documents.length} out of ` +
-                `${this.props.numberOfDocuments}`} documents
-              </span>
-            </div>
-          </div>
+          <DocumentListHeader
+            documents={this.props.documents}
+            onFilter={this.props.onFilter}
+            filterBy={this.props.filterBy}
+            numberOfDocuments={this.props.numberOfDocuments}
+          />
           <div>
             <Table
               columns={this.getDocumentColumns()}
@@ -195,5 +205,6 @@ PdfListView.propTypes = {
   filterBy: PropTypes.string.isRequired,
   numberOfDocuments: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
-  onJumpToComment: PropTypes.func
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string
 };

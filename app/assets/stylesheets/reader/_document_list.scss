@@ -1,0 +1,54 @@
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+$gray-font-color: #6b7079;
+$tag-backgrond-color: #d6d7d9;
+
+.section--document-list {
+  .table-icon {
+    margin: 1px;
+    cursor: pointer;
+  }
+
+  i {
+    margin: 0;
+  }
+
+  .bordered-icon {
+    border: 2px solid $color-gray;
+    padding: 1px 2px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .document-list-receipt-date {
+    color: $gray-font-color;
+  }
+
+  .document-list-comments-indicator {
+    padding-left: 35px;
+  }
+
+  .document-list-comments-indicator-icon {
+    font-weight: bold;
+    margin: 3px;
+  }
+
+  .document-list-issue-tag {
+    display: inline-block;
+    background: $tag-backgrond-color;
+    border-radius: 3px;
+    padding: 2px 5px;
+    text-align: center;
+    margin: 3px;
+  }
+
+}
+
+.document-list-header {
+  .num-of-documents {
+    color: $gray-font-color;
+    padding: 5px;
+  }
+}
+

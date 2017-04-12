@@ -9,7 +9,7 @@ import EditComment from '../components/EditComment';
 export default class PdfSidebar extends React.Component {
   render() {
     let comments = [];
-
+    debugger;
     comments = this.props.comments.map((comment, index) => {
       if (comment.uuid === this.props.editingComment) {
         return <EditComment

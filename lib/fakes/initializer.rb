@@ -1,6 +1,12 @@
 class Fakes::Initializer
-  def self.development!
+  def self.load!
     User.authentication_service = Fakes::AuthenticationService
+    Appeal.repository = Fakes::AppealRepository
+  end
+
+  def self.development!
+    load!
+
     User.authentication_service.vacols_regional_offices = {
       "DSUSER" => "DSUSER",
       "RO13" => "RO13"
@@ -14,7 +20,6 @@ class Fakes::Initializer
       "name" => "Cave Johnson"
     }
 
-    Appeal.repository = Fakes::AppealRepository
     Fakes::AppealRepository.seed!
   end
 end

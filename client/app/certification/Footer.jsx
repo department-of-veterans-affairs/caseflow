@@ -11,13 +11,12 @@ const Footer = ({ nextPageUrl }) => {
         className="cf-action-openmodal cf-btn-link">
         Cancel Certification
       </a>
-    </div>
-
     <Link to={nextPageUrl}>
       <button type="button" className="cf-push-right">
         Continue
       </button>
     </Link>
+    </div>
   </div>;
 };
 

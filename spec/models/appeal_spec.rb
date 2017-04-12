@@ -82,7 +82,7 @@ describe Appeal do
 
   context "#fetch_documents!" do
     let(:documents) do
-      [Fakes::AppealRepository.nod_document, Fakes::AppealRepository.soc_document]
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
 
     let(:appeal) do
@@ -380,22 +380,6 @@ describe Appeal do
 
   context "#non_canceled_end_products_within_30_days" do
     let(:appeal) { Generators::Appeal.build(decision_date: 1.day.ago) }
-
-    let(:end_products) do
-      [
-        {
-          claim_receive_date: twenty_days_ago,
-          claim_type_code: "Grant of Benefits",
-          status_type_code: "Pending"
-        },
-        {
-          claim_receive_date: yesterday,
-          claim_type_code: "Remand",
-          status_type_code: "Cleared"
-        }
-      ]
-    end
-
     let(:result) { appeal.non_canceled_end_products_within_30_days }
 
     before do

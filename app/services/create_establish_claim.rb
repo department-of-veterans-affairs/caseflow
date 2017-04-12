@@ -22,7 +22,7 @@ class CreateEstablishClaim
 
     establish_claim.prepare!
 
-  rescue MultipleAppealsByVBMSIDError
+  rescue Caseflow::Error::MultipleAppealsByVBMSID
     @error_message = "There were multiple appeals matching this VBMS ID."
   rescue ActiveRecord::RecordNotFound
     @error_message = "Appeal not found for that decision type." \

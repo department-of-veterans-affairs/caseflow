@@ -3,7 +3,6 @@ describe AppealRepository do
     @old_repo = Appeal.repository
     Appeal.repository = AppealRepository
 
-    allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
     allow_any_instance_of(VACOLS::Case::ActiveRecord_Relation).to receive(:find).and_return(nil)
   end
   after { Appeal.repository = @old_repo }
@@ -55,6 +54,10 @@ describe AppealRepository do
   end
 
   context ".build_appeal" do
+    before do
+      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+    end
+
     subject { AppealRepository.build_appeal(case_record) }
 
     it "returns a new appeal" do
@@ -87,7 +90,10 @@ describe AppealRepository do
   end
 
   context ".set_vacols_values" do
-    before { Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0)) }
+    before do
+      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
+    end
 
     subject do
       appeal = Appeal.new
@@ -169,63 +175,49 @@ describe AppealRepository do
   end
 
   context "#location_after_dispatch" do
-    before do
-      Appeal.repository = Fakes::AppealRepository
+    before { Appeal.repository = Fakes::AppealRepository }
 
-      Fakes::AppealRepository.records = {
-        "123" => Fakes::AppealRepository.appeal_remand_decided,
-        "456" => Fakes::AppealRepository.appeal_partial_grant_decided,
-        "789" => Fakes::AppealRepository.appeal_full_grant_decided
-      }
-
-      # Clear the mock set for Appeal used in all the other AppealRepository tests
-      allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_call_original
+    let(:appeal) do
+      Generators::Appeal.build({ vacols_record: vacols_record }.merge(special_issues))
     end
+
+    let(:special_issues) { {} }
+
     subject { AppealRepository.location_after_dispatch(appeal: appeal) }
 
-    context "full grant" do
-      let(:appeal) { Appeal.create(vacols_id: "789") }
-
-      it "returns nil" do
-        expect(subject).to eq(nil)
-      end
+    context "when appeal is a full grant" do
+      let(:vacols_record) { :full_grant_decided }
+      it { is_expected.to be_nil }
     end
 
-    context "partial grant" do
-      let(:appeal) { Appeal.create(vacols_id: "456") }
+    context "when appeal is a partial grant" do
+      let(:vacols_record) { :partial_grant_decided }
 
-      it "handles vamc special issue" do
-        expect(appeal.partial_grant?).to eq(true)
-        appeal.vamc = true
-        expect(subject).to eq("54")
+      context "when no special issues" do
+        it { is_expected.to eq("98") }
       end
 
-      it "handles appeal.national_cemetery_administration special issue" do
-        expect(appeal.partial_grant?).to eq(true)
-        appeal.update!(national_cemetery_administration: true)
-        expect(subject).to eq("53")
+      context "when vamc is true" do
+        let(:special_issues) { { vamc: true } }
+        it { is_expected.to eq("54") }
       end
 
-      it "handles no special issue" do
-        expect(appeal.partial_grant?).to eq(true)
-        expect(appeal.special_issues?).to eq(false)
-        expect(subject).to eq("98")
+      context "when national_cemetery_administration is true" do
+        let(:special_issues) { { national_cemetery_administration: true } }
+        it { is_expected.to eq("53") }
       end
 
-      it "handles special issues" do
-        expect(appeal.partial_grant?).to eq(true)
-        appeal.radiation = true
-        expect(subject).to eq "50"
+      context "when a special issue besides vamc and national_cemetery_administration is true" do
+        let(:special_issues) { { radiation: true } }
+        it { is_expected.to eq("50") }
       end
     end
 
     context "remand" do
-      let(:appeal) { Appeal.create(vacols_id: "123") }
+      let(:vacols_record) { :remand }
 
-      it "mirrors partial grant" do
-        expect(appeal.remand?).to eq(true)
-        expect(appeal.special_issues?).to eq(false)
-        expect(subject).to eq("98")
+      context "when no special issues" do
+        it { is_expected.to eq("98") }
       end
     end
   end

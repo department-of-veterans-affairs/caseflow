@@ -22,6 +22,13 @@
   background-size: 32px 32px;
 }
 
+.cf-logo-image-reader {
+  background-image: url(asset-path('caseflow-reader-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
 .cf-stats {
   margin-top: 0;
 
@@ -186,11 +193,11 @@ select {
 
 // TODO: unify this with the styling in caseflow commons once all buttons are using React
 .cf-react-icon-loading-front {
-  @include animation(backwardspin 9s linear infinite);
+  @include animation(backwardspin 6s linear infinite);
 }
 
 .cf-react-icon-loading-back {
-  @include animation(spin 9s linear infinite);
+  @include animation(spin 6s linear infinite);
 }
 
 .cf-react-loading-indicator {
@@ -260,4 +267,16 @@ select {
   legend {
     margin-bottom: .75em;
   }
+}
+
+// caseflow-commons - replace exising rule with this one:
+.usa-input-error [type="radio"] {
+  + label::before {
+    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
+  }
+}
+
+// caseflow-commons
+.cf-secondary-disabled {
+  opacity: .25;
 }
