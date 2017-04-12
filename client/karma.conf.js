@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
 module.exports = function(config) {
@@ -7,13 +8,20 @@ module.exports = function(config) {
     singleRun: true,
 
     files: [
-      { pattern: 'test/**/specialIssues-test.js' }
+      { pattern: 'test/**/*.js' }
     ],
 
     preprocessors: {
-      'test/**/specialIssues-test.js': ['webpack', 'sourcemap']
+      'test/**/*.js': ['webpack', 'sourcemap']
     },
 
-    webpack: webpackConfig
+    webpack: _.merge({
+      externals: {
+        cheerio: 'window',
+        'react/addons': true,
+        'react/lib/ExecutionEnvironment': true,
+        'react/lib/ReactContext': true
+      }
+    }, webpackConfig)
   });
 };
