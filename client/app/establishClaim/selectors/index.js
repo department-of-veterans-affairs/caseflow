@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 
 const getSpecialIssues = (specialIssues) => specialIssues;
@@ -22,6 +22,7 @@ export const getStationOfJurisdiction = createSelector(
         station = issue.stationOfJurisdiction.key;
       }
     });
+
     return station;
   }
-)
+);
