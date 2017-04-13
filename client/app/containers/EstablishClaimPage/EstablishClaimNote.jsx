@@ -8,6 +8,7 @@ import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import InlineForm from '../../components/InlineForm';
 import _ from 'lodash';
 
 export class EstablishClaimNote extends BaseForm {
@@ -37,8 +38,25 @@ export class EstablishClaimNote extends BaseForm {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
       }
+      // copyField: {
+      //   value: '',
+      //   copied: false
+      // }
     };
   }
+
+  // onChangeCopy({target:{value}}){
+  //   this.setState({
+  //     value,
+  //     copied: false
+  //   })
+  // }
+
+  // onCopy() {
+  //   this.setState({
+  //     copied: true
+  //   })
+  // }
 
   // This is a copy of the logic from
   // AppealRepository.update_location_after_dispatch!
@@ -123,20 +141,20 @@ export class EstablishClaimNote extends BaseForm {
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
-      <TextareaField
+     <TextareaField
         label="VBMS Note:"
         name="vbmsNote"
         onChange={this.handleFieldChange('noteForm', 'noteField')}
         {...this.state.noteForm.noteField}
       />
 
-      <div className="cf-app-segment" id="establish-claim-buttons">
+      <div className="cf-app-segment" id="copy-note-button">
        <div className="cf-push-left">
         <Button
-         label="Copy note"
-         name="Copynote"
-         classNames={["usa-button-outline"]} >
+        name="copyNote"
+         classNames={["usa-button-outline"]}>
          <i className="fa fa-files-o" aria-hidden="true"></i>
+         Copy note
        </Button>
       </div>
      </div>
@@ -154,6 +172,7 @@ export class EstablishClaimNote extends BaseForm {
       </div>
     </div>;
   }
+
 
   handleSubmit = () => {
     this.props.handleSubmit(this.vacolsNoteText());
