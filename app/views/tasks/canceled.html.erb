@@ -1,7 +1,7 @@
 <% content_for :page_title do task.appeal.task_header end %>
 
 <%= react_component("BaseContainer", props: {
-  availableTasks: !!current_user_next_task,
+  availableTasks: tasks.any_assignable_to?(current_user),
   buttonText: start_text,
   employeeCount: Rails.cache.read('employee_count') || '0',
   page: "EstablishClaimCancel",
