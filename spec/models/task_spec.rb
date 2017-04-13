@@ -308,61 +308,6 @@ describe Task do
     end
   end
 
-  context ".canceled" do
-    before do
-      Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1)
-    end
-    it "returns canceled tasks" do
-      expect(Task.canceled.count).to eq(1)
-    end
-  end
-
-  context "#prepare_with_decision!" do
-    subject { task.prepare_with_decision! }
-
-    let(:appeal) do
-      Generators::Appeal.create(
-        vacols_record: { template: :partial_grant_decided, decision_date: 7.days.ago },
-        documents: documents
-      )
-    end
-    let(:task) { EstablishClaim.create(appeal: appeal) }
-
-    context "if the task's appeal has no decisions" do
-      let(:documents) { [] }
-      it { is_expected.to be_falsey }
-    end
-
-    context "if the task's appeal has decisions" do
-      let(:documents) { [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)] }
-      let(:filename) { appeal.decisions.first.file_name }
-
-      context "if the task's appeal errors out on decision content load" do
-        before do
-          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
-        end
-
-        it "propogates exception and does not prepare" do
-          expect { subject }.to raise_error("VBMS 500")
-          expect(task.reload).to_not be_unassigned
-        end
-      end
-
-      context "if the task caches decision content successfully" do
-        before do
-          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
-        end
-
-        it "prepares task and caches decision document content" do
-          expect(subject).to be_truthy
-
-          expect(task.reload).to be_unassigned
-          expect(S3Service.files[filename]).to eq("yay content!")
-        end
-      end
-    end
-  end
-
   context ".canceled?" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
