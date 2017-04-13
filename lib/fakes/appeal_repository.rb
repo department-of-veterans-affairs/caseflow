@@ -75,6 +75,10 @@ class Fakes::AppealRepository
     # noop
   end
 
+  def self.raise_vbms_error_if_necessary(record)
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+  end
+
   def self.load_vacols_data(appeal)
     return unless @records
 
@@ -83,7 +87,7 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id].dup || fail(ActiveRecord::RecordNotFound)
     end
 
-    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    self.raise_vbms_error_if_necessary(record)
 
     # For testing dispatch appeals, the seed data in the record
     # has a randomly generated vbms id from our appeal generator,
@@ -91,7 +95,9 @@ class Fakes::AppealRepository
     # Don't overwrite the appeal vbms id if it already has one.
     # TODO: figure out a way to untangle this. Perhaps we shouldn't
     # be using randomly generated VBMS ids?
-    record.delete(:vbms_id) unless appeal.vbms_id.nil?
+    if Rails.env.development? && !appeal.vbms_id.nil?
+      record.delete(:vbms_id)
+    end
 
     appeal.assign_from_vacols(record)
   end
@@ -111,7 +117,11 @@ class Fakes::AppealRepository
       @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
     end
 
+
     fail ActiveRecord::RecordNotFound unless record
+
+    # clone just in case
+    record = record.dup
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
