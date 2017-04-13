@@ -228,6 +228,15 @@ describe('DecisionReviewer', () => {
 
         // Click on the delete button
         wrapper.find('#button-delete').simulate('click');
+
+        // Click on the cancel delete in the modal
+        wrapper.find('#Delete-Comment-button-id-0').simulate('click');
+
+        // Re-open delete modal
+        wrapper.find('#button-delete').simulate('click');
+
+        // Click on the confirm delete in the modal
+        wrapper.find('#Delete-Comment-button-id-1').simulate('click');
         await pause();
 
         // Verify the api is called to delete a comment
