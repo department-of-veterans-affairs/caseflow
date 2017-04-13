@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
-import ApiUtil from '../util/ApiUtil';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
