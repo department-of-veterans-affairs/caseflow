@@ -173,7 +173,11 @@ RSpec.feature "Cancel certification" do
     scenario "should respond to json" do
       page.driver.post "/certification_cancellations", { "certification_cancellation" =>
         { "cancellation_reason" => "VBMS and VACOLS dates didn't match and couldn't be changed",
-          "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "2" } }, format: :json
+          "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "2" } }, format: :html
+      expect(page.driver.status_code).to be 302
+      page.driver.post "/certification_cancellations", { "certification_cancellation" =>
+        { "cancellation_reason" => "VBMS and VACOLS dates didn't match and couldn't be changed",
+          "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "3" } }, format: :json
       expect(page.driver.status_code).to be 302
       page.driver.post "/certification_cancellations", { "certification_cancellation" =>
         { "cancellation_reason" => "VBMS and VACOLS dates didn't match and couldn't be changed",
