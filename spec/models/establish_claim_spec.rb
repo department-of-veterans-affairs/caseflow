@@ -42,6 +42,78 @@ describe EstablishClaim do
   let(:ep_code) { nil }
   let(:outgoing_reference_id) { nil }
 
+  context "#should_invalidate?" do
+    subject { establish_claim.should_invalidate? }
+    it { is_expected.to be_falsey }
+
+    context "appeal status is active" do
+      let(:vacols_record) { { template: :remand_decided, status: "Active" } }
+      it { is_expected.to be_truthy }
+    end
+
+    context "appeal decision date is nil" do
+      let(:vacols_record) { { template: :remand_decided, decision_date: nil } }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#prepare_with_decision!" do
+    subject { establish_claim.prepare_with_decision! }
+
+    let(:appeal) do
+      Generators::Appeal.create(
+        vacols_record: { template: :partial_grant_decided, decision_date: decision_date },
+        documents: documents
+      )
+    end
+    let(:decision_date) { 7.days.ago }
+    let(:documents) { [] }
+    let(:aasm_state) { :unprepared }
+
+    context "if the task is invalid" do
+      let(:decision_date) { nil }
+
+      it "returns false and invalidates the task" do
+        is_expected.to be_falsey
+        expect(establish_claim.reload).to be_invalidated
+      end
+    end
+
+    context "if the task's appeal has no decisions" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "if the task's appeal has decisions" do
+      let(:documents) { [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)] }
+      let(:filename) { appeal.decisions.first.file_name }
+
+      context "if the task's appeal errors out on decision content load" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
+          establish_claim.save!
+        end
+
+        it "propogates exception and does not prepare" do
+          expect { subject }.to raise_error("VBMS 500")
+          expect(establish_claim.reload).to_not be_unassigned
+        end
+      end
+
+      context "if the task caches decision content successfully" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
+        end
+
+        it "prepares task and caches decision document content" do
+          expect(subject).to be_truthy
+
+          expect(establish_claim.reload).to be_unassigned
+          expect(S3Service.files[filename]).to eq("yay content!")
+        end
+      end
+    end
+  end
+
   context "#perform!" do
     # Stub the id of the end product being created
     before do
