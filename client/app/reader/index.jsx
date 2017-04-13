@@ -5,8 +5,11 @@ import DecisionReviewer from './DecisionReviewer';
 import logger from 'redux-logger';
 import * as Constants from './constants';
 import _ from 'lodash';
+import { categoryFieldNameOfCategoryName } from './utils';
 
 const readerReducer = (state = {}, action = {}) => {
+  let categoryKey;
+
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
     return _.merge(
@@ -20,13 +23,15 @@ const readerReducer = (state = {}, action = {}) => {
       }
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
+    categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
+
     return _.merge(
       {},
       state,
       {
         documents: {
           [action.payload.docId]: {
-            [`category_${action.payload.categoryName}`]: action.payload.toggleState
+            [categoryKey]: action.payload.toggleState
           }
         }
       }

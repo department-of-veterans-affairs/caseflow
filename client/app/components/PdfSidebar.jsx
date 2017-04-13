@@ -7,10 +7,15 @@ import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
+import { categoryFieldNameOfCategoryName } from '../reader/utils';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
-  const toggleState = _.get(documents, [docId, 'categories', categoryName], false);
+  const toggleState = _.get(
+    documents,
+    [docId, categoryFieldNameOfCategoryName(categoryName)],
+    false
+  );
   const Svg = category.svg;
   const label = <div className="cf-category-selector">
       <Svg />
