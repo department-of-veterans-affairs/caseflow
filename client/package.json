@@ -9,15 +9,14 @@
     "npm": "3.10.10"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers js:babel-core/register",
+    "test": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers jsx:babel-core/register js:babel-core/register",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint . --ext .jsx --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test npm run build",
     "build:production": "NODE_ENV=production npm run build",
-    "build:development": "npm run build -- -w",
-    "dev": "rm ../app/assets/webpack/* || true && npm run build:development"
+    "dev": "rm ../app/assets/webpack/* || true && npm run build -- -w"
   },
   "cacheDirectories": [
     "node_modules",
@@ -40,8 +39,10 @@
     "react-select": "^1.0.0-rc.3",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.0",
+    "reselect": "^3.0.0",
     "superagent": "^3.0.0",
-    "superagent-no-cache": "^0.1.0"
+    "superagent-no-cache": "^0.1.0",
+    "webpack": "^2.3.3"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
@@ -60,8 +61,7 @@
     "imports-loader": "^0.7.1",
     "mocha": "^3.1.2",
     "react-addons-test-utils": "^15.4.2",
-    "sinon": "^2.1.0",
-    "webpack": "^2.3.3"
+    "sinon": "^2.1.0"
   },
   "optionalDependencies": {
     "fsevents": "*"

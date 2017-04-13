@@ -1,6 +1,6 @@
 class Fakes::BGSService
   cattr_accessor :end_product_data
-  cattr_accessor :can_access_on_next_call
+  cattr_accessor :inaccessible_appeal_vbms_ids
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -249,11 +249,7 @@ class Fakes::BGSService
     }
   end
 
-  def can_access?(_)
-    # Save the intended return, then wipe it for future calls
-    value = self.class.can_access_on_next_call
-    self.class.can_access_on_next_call = nil
-
-    value.nil? ? true : value
+  def can_access?(vbms_id)
+    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 end

@@ -3,10 +3,12 @@ import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
+import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuideDropdownMenu from './StyleGuideDropdownMenu';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default class StyleGuideIndex extends React.Component {
@@ -32,6 +34,9 @@ export default class StyleGuideIndex extends React.Component {
               <a href="#loading_buttons">Loading Buttons</a>
             </li>
             <li>
+              <a href="#link_buttons">Link Buttons</a>
+            </li>
+            <li>
               <a href="#radios">Radio Fields</a>
             </li>
             <li>
@@ -48,6 +53,9 @@ export default class StyleGuideIndex extends React.Component {
             </li>
             <li>
               <a href="#searchable_dropdown">Search Dropdown</a>
+            </li>
+            <li>
+              <a href="#dropdown_menu">Dropdown Menu</a>
             </li>
           </ul>
       </div>
@@ -74,6 +82,8 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
+        <StyleGuideLinkButton />
+        <div className="cf-help-divider"></div>
         <StyleGuideRadioField />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
@@ -83,6 +93,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
         <div className="cf-help-divider"></div>
         <StyleGuideTextInput />
+        <div className="cf-help-divider"></div>
+        <StyleGuideDropdownMenu />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
     </div>
