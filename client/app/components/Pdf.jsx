@@ -23,7 +23,8 @@ export default class Pdf extends React.Component {
     this.state = {
       numPages: 0,
       pdfDocument: null,
-      isRendered: []
+      isRendered: [],
+      setupPdfFile: null
     };
 
     this.isRendering = [];
@@ -197,6 +198,7 @@ export default class Pdf extends React.Component {
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument,
+          setupPdfFile: file,
           isRendered: []
         }, () => {
           resolve();
@@ -214,6 +216,9 @@ export default class Pdf extends React.Component {
 
   // Consider moving this down into Pdf.jsx
   onJumpToComment = (comments, uuid) => {
+    if (!uuid) {
+      return;
+    }
     let comment = comments.filter((comment => comment.id === uuid));
 
     if (comment.length === 1) {
@@ -241,18 +246,13 @@ export default class Pdf extends React.Component {
   }
 
   componentDidMount = () => {
-    
+    PDFJS.workerSrc = this.props.pdfWorker;    
+    this.setupPdf(this.props.file);
+
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
-  }
-
-  componentDidUpdate = (_prevProps, prevState) => {
-    if (this.state.pdfjsPages !== prevState.pdfjsPages) {
-      this.renderPage(0);
-      this.onJumpToComment(this.props.comments, this.props.scrollToComment);
-    }
   }
 
   // Calculates the symmetric difference between two sets.
@@ -298,12 +298,18 @@ export default class Pdf extends React.Component {
     /* eslint-enable no-negated-condition */
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps, prevState) => {
     for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
       if (!this.state.isRendered[index] &&
         document.getElementById(`pageContainer${index + 1}`)) {
         this.renderPage(index, this.props.file);
       }
+    }
+    if (this.state.setupPdfFile && (
+      this.state.setupPdfFile !== prevState.setupPdfFile ||
+      this.props.scrollToComment !== prevProps.scrollToComment)) {
+      this.onJumpToComment(this.props.comments, this.props.scrollToComment);
+      this.props.onCommentScrolledTo();
     }
   }
 
@@ -332,7 +338,7 @@ export default class Pdf extends React.Component {
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (this.state.isRendered[comment.page] !== this.state.pdfDocument) {
+      if (this.state.isRendered[comment.page - 1] !== this.state.pdfDocument) {
         return acc;
       }
       if (!acc[comment.page]) {
@@ -400,6 +406,7 @@ Pdf.propTypes = {
   onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
   onCommentClick: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.number,
   onIconMoved: PropTypes.func
 };

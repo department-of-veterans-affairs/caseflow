@@ -28,7 +28,7 @@ export default class Comment extends React.Component {
     if (this.props.onEditComment) {
       editButtons.push(<Button
         name="edit"
-        classNames={["cf-btn-link comment-control-button"]}
+        classNames={["cf-no-padding-btn-link comment-control-button"]}
         onClick={this.onEditComment}>
         Edit
       </Button>);
@@ -41,7 +41,7 @@ export default class Comment extends React.Component {
     if (this.props.onDeleteComment) {
      editButtons.push(<Button
         name="delete"
-        classNames={["cf-btn-link comment-control-button"]}
+        classNames={["cf-no-padding-btn-link comment-control-button"]}
         onClick={this.onDeleteComment}>
         Delete
       </Button>);
@@ -52,22 +52,18 @@ export default class Comment extends React.Component {
     if (this.props.onJumpToComment) {
       jumpToSectionButton = <Button
           name="jumpToComment"
-          classNames={["cf-btn-link comment-control-button"]}
+          classNames={["cf-no-padding-btn-link comment-control-button"]}
           onClick={this.props.onJumpToComment}>
           Jump to Section
         </Button>;
     }
 
-    return <div>
+    let commentToRender = <div>
         <div className="comment-control-button-container">
-          <span className="cf-left-side">
-            Pg. {this.props.page} {jumpToSectionButton}
+          <span className="cf-right-side">
+            {editButtons}
           </span>
-          <span>
-            <span className="cf-right-side">
-              {editButtons}
-            </span>
-          </span>
+          <b>Page {this.props.page} {jumpToSectionButton}</b>
         </div>
         <div
           className={className}
@@ -77,6 +73,27 @@ export default class Comment extends React.Component {
           {this.props.children}
         </div>
       </div>;
+
+    if (this.props.horizontalLayout) {
+      className = `${className} comment-horizontal-container`;
+      commentToRender = <div>
+        <span className="comment-horizontal-spacing">
+          <b>Page {this.props.page}</b>
+        </span>
+        <span className="comment-horizontal-spacing">
+          <b>{jumpToSectionButton}</b>
+        </span>
+        <div
+          className={className}
+          key={this.props.children.toString()}
+          id={this.props.id}
+          onClick={this.onClick}>
+          {this.props.children}
+        </div>
+      </div>;
+    }
+
+    return commentToRender;
   }
 }
 
@@ -93,5 +110,6 @@ Comment.propTypes = {
   onJumpToComment: PropTypes.func,
   onClick: PropTypes.func,
   page: PropTypes.number,
-  uuid: PropTypes.number
+  uuid: PropTypes.number,
+  horizontalLayout: PropTypes.bool
 };

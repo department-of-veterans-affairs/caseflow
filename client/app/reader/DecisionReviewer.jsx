@@ -330,6 +330,12 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
+  onCommentScrolledTo = () => {
+    this.setState({
+      scrollToComment: null
+    });
+  }
+
   render() {
     let {
       documents,
@@ -368,7 +374,8 @@ export default class DecisionReviewer extends React.Component {
           onSetLabel={this.onSetLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label}
           scrollToComment={this.state.scrollToComment}
-          onScrollToComment={this.onScrollToComment} />}
+          onScrollToComment={this.onScrollToComment}
+          onCommentScrolledTo={this.onCommentScrolledTo} />}
       </div>
     );
   }
@@ -377,5 +384,6 @@ export default class DecisionReviewer extends React.Component {
 DecisionReviewer.propTypes = {
   annotations: PropTypes.arrayOf(PropTypes.object),
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
-  pdfWorker: PropTypes.string
+  pdfWorker: PropTypes.string,
+  onCommentScrolledTo: PropTypes.func
 };

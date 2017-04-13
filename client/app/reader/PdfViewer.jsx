@@ -198,6 +198,7 @@ export default class PdfViewer extends React.Component {
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
             scrollToComment={this.props.scrollToComment}
+            onCommentScrolledTo={this.props.onCommentScrolledTo}
             onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
@@ -228,5 +229,6 @@ PdfViewer.propTypes = {
   pdfWorker: PropTypes.string,
   onSetLabel: PropTypes.func.isRequired,
   scrollToComment: PropTypes.number,
-  onScrollToComment: PropTypes.func
+  onScrollToComment: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func
 };

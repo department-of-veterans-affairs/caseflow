@@ -63,7 +63,8 @@ export default class PdfListView extends React.Component {
                 selected={false}
                 page={comment.page}
                 onJumpToComment={this.props.onJumpToComment(doc.id, comment.uuid)}
-                uuid={comment.uuid}>
+                uuid={comment.uuid}
+                horizontalLayout={true}>
                   {comment.comment}
                 </Comment>;
             });
