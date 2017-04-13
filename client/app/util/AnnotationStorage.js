@@ -46,7 +46,8 @@ export default class AnnotationStorage {
             allAnnotations.push(annotation);
 
             // Keep the array sorted
-            this.storedAnnotations[documentId] = allAnnotations.sort(this.sortAnnotations);
+            this.storedAnnotations[documentId] =
+              allAnnotations.sort(this.sortAnnotations);
             resolve(annotation);
             this.onCommentChange();
           }, () => {

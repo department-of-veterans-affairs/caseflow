@@ -283,6 +283,28 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF list view', () => {
+    context('when expanded comments', () => {
+      it('can view comments', () => {
+        expect(wrapper.text()).to.not.include('Test Comment');
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        expect(wrapper.text()).to.include('Test Comment');
+      });
+
+      it('can jump to comment', asyncTest(async() => {
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        wrapper.find('#button-jumpToComment').simulate('click');
+
+        let scrolledTo = sinon.spy(wrapper.getNode(), 'onCommentScrolledTo');
+
+        // verify the page is on the pdf view
+        expect(wrapper.text()).to.include('View all documents');
+        await pause();
+
+        // Make sure post scroll callback is called
+        expect(scrolledTo.calledOnce).to.be.true;
+      }));
+    });
+
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
         expect(wrapper.find('#receipt-date-header').

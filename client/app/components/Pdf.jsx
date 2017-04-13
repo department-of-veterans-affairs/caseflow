@@ -214,30 +214,22 @@ export default class Pdf extends React.Component {
     });
   }
 
-  // Consider moving this down into Pdf.jsx
-  onJumpToComment = (comments, uuid) => {
-    if (!uuid) {
-      return;
-    }
-    let comment = comments.filter((comment => comment.id === uuid));
-
-    if (comment.length === 1) {
-      let pageNumber = comment[0].page;  
-      let yPosition = comment[0].y;
+  onJumpToComment = (comment) => {
+    if (comment) {
+      let pageNumber = comment.page;
+      let yPosition = comment.y;
 
       this.renderPage(pageNumber - 1).then(() => {
         let pageElement = document.getElementById(`pageContainer${pageNumber}`);
         let scrollWindow = document.getElementById('scrollWindow');
-
         let height = (scrollWindow.getBoundingClientRect().bottom -
           scrollWindow.getBoundingClientRect().top);
+        let halfHeight = height / 2;
 
         scrollWindow.scrollTop =
           pageElement.getBoundingClientRect().top +
-          yPosition + scrollWindow.scrollTop - height / 2;
+          yPosition + scrollWindow.scrollTop - halfHeight;
       });
-    } else {
-      throw new Error(`Cannot scroll to comment ${uuid}`);
     }
   }
 
@@ -246,34 +238,13 @@ export default class Pdf extends React.Component {
   }
 
   componentDidMount = () => {
-    PDFJS.workerSrc = this.props.pdfWorker;    
+    PDFJS.workerSrc = this.props.pdfWorker;
     this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
     let scrollWindow = document.getElementById('scrollWindow');
 
     scrollWindow.addEventListener('scroll', this.scrollEvent);
-  }
-
-  // Calculates the symmetric difference between two sets.
-  // The symmetric difference are all the elements that are
-  // in exactly one of the sets. (In one but not the other.)
-  symmetricDifference = (set1, set2) => {
-    let symmetricDifference = new Set();
-
-    set1.forEach((element) => {
-      if (!set2.has(element)) {
-        symmetricDifference.add(element);
-      }
-    });
-
-    set2.forEach((element) => {
-      if (!set1.has(element)) {
-        symmetricDifference.add(element);
-      }
-    });
-
-    return symmetricDifference;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -289,12 +260,6 @@ export default class Pdf extends React.Component {
       // so we call setupPdf again.
       this.setupPdf(nextProps.file);
     }
-
-
-    // if (nextProps.scrollToComment !== this.props.scrollToComment) {
-    //   this.onJumpToComment(nextProps.comments, nextProps.scrollToComment);
-    // }
-
     /* eslint-enable no-negated-condition */
   }
 
@@ -305,10 +270,9 @@ export default class Pdf extends React.Component {
         this.renderPage(index, this.props.file);
       }
     }
-    if (this.state.setupPdfFile && (
-      this.state.setupPdfFile !== prevState.setupPdfFile ||
-      this.props.scrollToComment !== prevProps.scrollToComment)) {
-      this.onJumpToComment(this.props.comments, this.props.scrollToComment);
+    if (this.state.setupPdfFile !== prevState.setupPdfFile ||
+      this.props.scrollToComment !== prevProps.scrollToComment) {
+      this.onJumpToComment(this.props.scrollToComment);
       this.props.onCommentScrolledTo();
     }
   }

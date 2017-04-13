@@ -16,35 +16,39 @@ export default class Comment extends React.Component {
     this.props.onEditComment(this.props.uuid);
   }
 
-  render() {
-    let className = 'comment-container';
-
-    if (this.props.selected) {
-      className = `${className} comment-container-selected`;
-    }
-
-    let editButtons = [];
+  controlButtons = () => {
+    let controlButtons = [];
 
     if (this.props.onEditComment) {
-      editButtons.push(<Button
+      controlButtons.push(<Button
         name="edit"
         classNames={["cf-no-padding-btn-link comment-control-button"]}
         onClick={this.onEditComment}>
         Edit
       </Button>);
       if (this.props.onDeleteComment) {
-        editButtons.push(<span className="comment-control-button-divider">
+        controlButtons.push(<span className="comment-control-button-divider">
             |
           </span>);
       }
     }
     if (this.props.onDeleteComment) {
-     editButtons.push(<Button
+      controlButtons.push(<Button
         name="delete"
         classNames={["cf-no-padding-btn-link comment-control-button"]}
         onClick={this.onDeleteComment}>
         Delete
       </Button>);
+    }
+
+    return controlButtons;
+  }
+
+  render() {
+    let className = 'comment-container';
+
+    if (this.props.selected) {
+      className = `${className} comment-container-selected`;
     }
 
     let jumpToSectionButton = null;
@@ -61,7 +65,7 @@ export default class Comment extends React.Component {
     let commentToRender = <div>
         <div className="comment-control-button-container">
           <span className="cf-right-side">
-            {editButtons}
+            {this.controlButtons()}
           </span>
           <b>Page {this.props.page} {jumpToSectionButton}</b>
         </div>
@@ -98,8 +102,8 @@ export default class Comment extends React.Component {
 }
 
 Comment.defaultProps = {
-  onClick: () => {}
-}
+  onClick: () => { /* do nothing */ }
+};
 
 Comment.propTypes = {
   children: React.PropTypes.string,

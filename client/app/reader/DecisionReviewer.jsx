@@ -91,12 +91,13 @@ export default class DecisionReviewer extends React.Component {
         return i;
       }
     }
+
     return null;
   }
 
   showPdf = (pdfId) => (event) => {
     let pdfNumber = this.pdfNumberFromId(pdfId);
-    
+
     // If the user is trying to open the link in a new tab/window
     // then follow the link. Otherwise if they just clicked the link
     // keep them contained within the SPA.
@@ -319,14 +320,14 @@ export default class DecisionReviewer extends React.Component {
     return this.state.currentPdfIndex > 0;
   }
 
-  onJumpToComment = (pdfId, uuid) => () => {
+  onJumpToComment = (pdfId, comment) => () => {
     this.setPage(this.pdfNumberFromId(pdfId));
-    this.onScrollToComment(uuid)();
+    this.onScrollToComment(comment)();
   }
 
-  onScrollToComment = (uuid) => () => {
+  onScrollToComment = (comment) => () => {
     this.setState({
-      scrollToComment: uuid
+      scrollToComment: comment
     });
   }
 

@@ -37,6 +37,14 @@ export default class Table extends React.Component {
       return alignmentClasses[column.align];
     };
 
+    let getColumns = (props) => {
+      if (typeof props.columns === 'function') {
+        return props.columns(props.rowObject);
+      }
+
+      return props.columns;
+    };
+
     let HeaderRow = (props) => {
       return <thead>
         <tr>
@@ -63,25 +71,20 @@ export default class Table extends React.Component {
     let getCellSpan = (rowObject, column) => {
       if (column.span) {
         return column.span(rowObject);
-      } else {
-        return 1;
       }
-    }
 
-    let getColumns = (props) => {
-      if (typeof props.columns === 'function') {
-        return props.columns(props.rowObject);
-      } else {
-        return props.columns;
-      }
-    }
+      return 1;
+    };
 
     let Row = (props) => {
       let rowId = props.footer ? "footer" : props.rowNumber;
 
       return <tr id={`table-row-${rowId}`}>
         {getColumns(props).map((column, columnNumber) =>
-          <td key={columnNumber} className={cellClasses(column)} colSpan={getCellSpan(props.rowObject, column)}>
+          <td
+            key={columnNumber}
+            className={cellClasses(column)}
+            colSpan={getCellSpan(props.rowObject, column)}>
             {props.footer ?
               column.footer :
               getCellValue(props.rowObject, props.rowNumber, column)}

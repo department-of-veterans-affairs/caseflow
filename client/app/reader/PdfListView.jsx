@@ -2,10 +2,12 @@ import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
 import StringUtil from '../util/StringUtil';
-import Button from '../components/Button';
 import Comment from '../components/Comment';
+import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+
+const NUMBER_OF_COLUMNS = 5;
 
 export default class PdfListView extends React.Component {
   constructor(props) {
@@ -13,11 +15,14 @@ export default class PdfListView extends React.Component {
 
     this.state = {
       commentsOpened: {}
-    }
+    };
   }
 
   toggleComments = (id) => () => {
-    let commentsOpened = {...this.state.commentsOpened, [id]: !this.state.commentsOpened[id]};
+    let commentsOpened = {
+      ...this.state.commentsOpened,
+      [id]: !this.state.commentsOpened[id]
+    };
 
     this.setState({
       commentsOpened
@@ -62,21 +67,23 @@ export default class PdfListView extends React.Component {
                 id={`comment${doc.id}-${commentIndex}`}
                 selected={false}
                 page={comment.page}
-                onJumpToComment={this.props.onJumpToComment(doc.id, comment.uuid)}
+                onJumpToComment={this.props.onJumpToComment(doc.id, comment)}
                 uuid={comment.uuid}
                 horizontalLayout={true}>
                   {comment.comment}
                 </Comment>;
             });
+
             return <div>
               {commentNodes}
             </div>;
           },
-          span: (doc) => {
-            return 5;
+          span: () => {
+            return NUMBER_OF_COLUMNS;
           }
-        }]
+        }];
       }
+
       return [
         {
           header: <div
@@ -112,7 +119,7 @@ export default class PdfListView extends React.Component {
           header: <div id="type-header" onClick={this.props.changeSortState('type')}>
             Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
-          valueFunction: (doc, index) => boldUnreadContent(
+          valueFunction: (doc) => boldUnreadContent(
             <a
               href={linkToSingleDocumentView(doc)}
               onMouseUp={this.props.showPdf(doc.id)}>
@@ -142,21 +149,29 @@ export default class PdfListView extends React.Component {
           valueFunction: (doc) => {
             let numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
+            let icon = `fa fa-3 ${this.state.commentsOpened[row.id] ?
+              'fa-angle-up' : 'fa-angle-down'}`;
+            let name = `expand ${numberOfComments} comments`;
 
             return <span className="document-list-comments-indicator">
               {numberOfComments > 0 &&
                 <span>
-                  <a href="#" onClick={this.toggleComments(doc.id)}>{numberOfComments}
-                    <i className=
-                      "fa fa-3 fa-angle-down document-list-comments-indicator-icon" />
-                  </a>
+                  <Button
+                    classNames={["cf-btn-link"]}
+                    href="#"
+                    ariaLabel={name}
+                    name={name}
+                    id={`expand-${doc.id}-comments-button`}
+                    onClick={this.toggleComments(doc.id)}>{numberOfComments}
+                    <i className={`document-list-comments-indicator-icon ${icon}`}/>
+                  </Button>
                 </span>
               }
             </span>;
           }
         }
       ];
-    }
+    };
   }
 
   render() {
@@ -171,10 +186,12 @@ export default class PdfListView extends React.Component {
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
       if (this.state.commentsOpened[row.id]) {
-        let commentRow = {...row};
+        let commentRow = { ...row };
+
         commentRow.isComment = true;
         acc.push(commentRow);
       }
+
       return acc;
     }, []);
 
