@@ -386,12 +386,7 @@
 }
 
 .Select--multi .Select-value-icon:hover,
-.Select--multi .Select-value-icon:focus {
-  //background-color: #d8eafd;
-  /* Fallback color for IE 8 */
-  //background-color: rgba(0, 113, 230, 0.08);
-  //color: #0071e6;
-}
+.Select--multi .Select-value-icon:focus {}
 
 .Select--multi .Select-value-icon:active {
   background-color: #c2e0ff;
