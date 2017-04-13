@@ -272,7 +272,6 @@ class Task < ActiveRecord::Base
     )
   end
 
-  # This goes around aasm because it can be invalidated from any state
   def before_invalidation
     assign_attributes(completion_status: :invalidated)
   end
