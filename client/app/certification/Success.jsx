@@ -36,12 +36,10 @@ const UnconnectedSuccess = ({
   </div>;
 };
 
-const mapStateToProps = (state) => {
-  return {
-    veteranName: state.veteranName,
-    vbmsId: state.vbmsId
-  };
-};
+const mapStateToProps = (state) => ({
+  veteranName: state.veteranName,
+  vbmsId: state.vbmsId
+});
 
 const Success = connect(
   mapStateToProps

@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "e7ad3478a3bd"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "498e6fe"
 
 gem "moment_timezone-rails"
 
@@ -131,7 +131,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
 
-  # Include the IANA Time Zone Database on Windows, where Windows doens't ship with a timezone database.
+  # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
   gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 end

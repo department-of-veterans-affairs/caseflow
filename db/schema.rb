@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170324120538) do
+ActiveRecord::Schema.define(version: 20170411202724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,9 +79,19 @@ ActiveRecord::Schema.define(version: 20170324120538) do
     t.datetime "ssocs_matching_at"
     t.datetime "form8_started_at"
     t.datetime "completed_at"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.integer  "user_id"
+    t.string   "bgs_representative_type"
+    t.string   "bgs_representative_name"
+    t.string   "vacols_representative_type"
+    t.string   "vacols_representative_name"
+    t.string   "representative_type"
+    t.string   "representative_name"
+    t.boolean  "hearing_change_doc_found_in_vbms"
+    t.string   "form9_type"
+    t.string   "vacols_hearing_preference"
+    t.string   "hearing_preference"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree

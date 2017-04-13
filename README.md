@@ -12,7 +12,7 @@ Following are links to view the results for each product in Travis CI as well as
 
 # Caseflow Certification
 
-[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow-certification)
+[![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
 
 ## About
 
@@ -52,7 +52,7 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-> $ nvm install node v7.1.0
+> $ nvm install node v4.1.2
 
 > $ nvm use && npm install
 
