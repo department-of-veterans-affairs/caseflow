@@ -32,21 +32,22 @@ CategorySelector.propTypes = {
   categoryName: PropTypes.string.isRequired
 };
 
+const mapPropsToState = (state) => _.pick(state, 'documents');
+const mapDispatchToState = (dispatch) => ({
+  handleCategoryToggle(categoryName, toggleState, docId) {
+    dispatch({
+      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+      payload: {
+        categoryName,
+        toggleState,
+        docId
+      }
+    });
+  }
+});
 const ConnectedCategorySelector = connect(
-  (state) => _.pick(state, 'documents'),
-  (dispatch) => ({
-    handleCategoryToggle(categoryName, toggleState, docId) {
-      dispatch({
-        type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-        payload: {
-          categoryName,
-          toggleState,
-          docId
-        }
-      });
-    }
-  })
-)(CategorySelector);
+    mapPropsToState, mapDispatchToState
+  )(CategorySelector);
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to

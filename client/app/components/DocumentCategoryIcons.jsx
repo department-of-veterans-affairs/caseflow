@@ -25,6 +25,6 @@ DocumentCategoryIcons.propTypes = {
   docId: PropTypes.number
 };
 
-export default connect(
-  (state) => _.pick(state, 'documents')
-)(DocumentCategoryIcons);
+const mapPropsToState = (state) => _.pick(state, 'documents');
+
+export default connect(mapPropsToState)(DocumentCategoryIcons);
