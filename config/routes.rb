@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     get 'form9_pdf', on: :member
     post 'confirm', on: :member
+    put 'update', on: :member
   end
 
   # These routes are here so Certification v2 SPA can be launched if the

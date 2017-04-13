@@ -52,6 +52,53 @@ class UnconnectedConfirmCaseDetails extends React.Component {
     this.props.updateProgressBar();
   }
 
+  getErroredFields() {
+    const erroredFields = [];
+
+    if (!this.props.representativeName) {
+      erroredFields.push('representativeName');
+    }
+
+    if (!this.props.representativeType) {
+      erroredFields.push('representativeType');
+    }
+
+    if (this.representativeTypeIsOther() && !this.props.otherRepresentativeType) {
+      erroredFields.push('otherRepresentativeType');
+    }
+
+    return erroredFields;
+  }
+
+  representativeTypeIsOther() {
+    return this.props.representativeType === Constants.representativeTypes.OTHER;
+  }
+
+  getRepresentativeType() {
+    return this.representativeTypeIsOther() ?
+      this.otherRepresentativeType : this.representativeType;
+  }
+
+  // beforeContinue() {
+  //   const erroredFields = this.getErroredFields();
+
+  //   if (erroredFields.length) {
+  //     this.props.onValidationError(erroredFields);
+  //   }
+
+  //   const data = {
+  //     representativeType: this.props.representativeType,
+  //     representativeName: this.props.representativeName
+  //   }
+  //   // // dispatch
+  //   // return ApiUtil.post(`/certifiactions/update/${vacols_id}`, { data }).
+  //   //   then(() => {
+  //   //     // handle success.
+  //   //   }, (error) => {
+  //   //     // handle failure.
+  //   //   });
+  // }
+
   render() {
     let { representativeType,
       onRepresentativeTypeChange,
