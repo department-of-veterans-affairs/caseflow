@@ -210,6 +210,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
     end
 
+    context "Appeal with no documents" do
+      let(:appeal) do
+        Generators::Appeal.create(vacols_record: vacols_record, documents: [])
+      end
+
+      scenario "View a claim with no decision documents" do
+        visit "/dispatch/establish-claim"
+        safe_click_on "Establish next claim"
+        expect(page).to have_content("This decision has no documents")
+      end
+    end
+
     context "For an appeal with multiple possible decision documents in VBMS" do
       let(:documents) do
         [
