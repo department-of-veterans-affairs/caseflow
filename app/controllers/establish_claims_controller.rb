@@ -59,8 +59,6 @@ class EstablishClaimsController < TasksController
   end
   helper_method :tasks
 
-  end
-
   def start_text
     "Establish next claim"
   end
