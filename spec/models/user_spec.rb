@@ -247,4 +247,53 @@ describe User do
       it { is_expected.to be_nil }
     end
   end
+
+  context ".current_task" do
+    class FakeTask < Task; end
+    class AnotherFakeTask < Task; end
+
+    subject { user.current_task(FakeTask) }
+
+    context "when there is no current task of the task class" do
+      let(:another_user) { User.create!(station_id: "ABC", css_id: "ROBBY") }
+
+      let!(:task_assigned_to_another_user) do
+        FakeTask.create!(
+          user: another_user,
+          aasm_state: :unassigned,
+          appeal: Generators::Appeal.create
+        )
+      end
+
+      let!(:task_of_another_type) do
+        AnotherFakeTask.create!(
+          user: user,
+          aasm_state: :unassigned,
+          appeal: Generators::Appeal.create
+        )
+      end
+
+      let!(:inactive_task) do
+        FakeTask.create!(
+          user: user,
+          aasm_state: :completed,
+          appeal: Generators::Appeal.create
+        )
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when user has a current task" do
+      let!(:current_task) do
+        FakeTask.create!(
+          user: user,
+          aasm_state: :started,
+          appeal: Generators::Appeal.create
+        )
+      end
+
+      it { is_expected.to eq(current_task) }
+    end
+  end
 end
