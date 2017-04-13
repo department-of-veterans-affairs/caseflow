@@ -160,7 +160,7 @@ RSpec.feature "Cancel certification" do
     expect(page).to have_content("The certification has been cancelled")
   end
 
-  context "Test json format of CerticationCancellationController", :focus => true do
+  context "Test json format of CerticationCancellationController" do
     before(:each) do
       @current_driver = Capybara.current_driver
       Capybara.current_driver = :rack_test
