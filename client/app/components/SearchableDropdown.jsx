@@ -1,6 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 
+const TAG_ALREADY_EXISTS_MSG = "Tag already exists";
+const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION = (label) => {return `Create a tag for "${label}"`};
+const DEFAULT_PLACEHOLDER = "Select option";
+
 class SearchableDropdown extends Component {
 
   constructor(props) {
@@ -20,14 +24,14 @@ class SearchableDropdown extends Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-
-    if (Array.isArray(value) && value.length <= 0) {
+    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
     }
+    console.log(newValue);
     this.setState({ value: newValue });
     if (this.props.onChange) {
       this.props.onChange(newValue);
-    }
+    } 
   }
 
   render() {
@@ -36,31 +40,50 @@ class SearchableDropdown extends Component {
       placeholder,
       errorMessage,
       label,
+      multi,
       name,
+      noResultsText,
       required,
-      readOnly
+      readOnly,
+      creatable,
+      creatableOptions
     } = this.props;
+
+    let Component = creatable ? Select.Creatable : Select;
+    let addCreatableOptions = {};
+
+    if (creatable) {
+      addCreatableOptions = {
+        noResultsText: (creatableOptions && creatableOptions.tagAlreadyExistsMsg) ?
+          creatableOptions.tagAlreadyExistsMsg : TAG_ALREADY_EXISTS_MSG,
+        promptTextCreator: (creatableOptions && creatableOptions.promptTextCreator) ?
+          creatableOptions.promptTextCreator : DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION          
+      }
+    }
 
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <Select
+      <Component
         id={name}
         value={this.state.value}
         options={options}
         onChange={this.onChange}
-        placeholder={placeholder ? placeholder : "Select option"}
+        placeholder={placeholder ? placeholder : DEFAULT_PLACEHOLDER}
         clearable={false}
-        noResultsText="Not an option"
+        noResultsText={noResultsText ? noResultsText : TAG_ALREADY_EXISTS_MSG}
         disabled={readOnly}
+        multi={multi}
+        {...addCreatableOptions}
       />
     </div>;
   }
 }
 
 SearchableDropdown.propTypes = {
+  creatable: PropTypes.bool,
   errorMessage: PropTypes.string,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
@@ -68,7 +91,11 @@ SearchableDropdown.propTypes = {
   options: PropTypes.array,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  creatableOptions: PropTypes.shape({
+    tagAlreadyExistsMsg: PropTypes.string,
+    promptTextCreator: PropTypes.func
+  })
 };
 
 export default SearchableDropdown;
