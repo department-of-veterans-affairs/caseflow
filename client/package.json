@@ -38,6 +38,7 @@
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
     "react-select": "^1.0.0-rc.3",
+    "react-zeroclipboard": "^0.4.1",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.0",
     "superagent": "^3.0.0",

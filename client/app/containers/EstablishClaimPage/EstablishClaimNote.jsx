@@ -9,6 +9,7 @@ import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import InlineForm from '../../components/InlineForm';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import _ from 'lodash';
 
 export class EstablishClaimNote extends BaseForm {
@@ -37,27 +38,31 @@ export class EstablishClaimNote extends BaseForm {
       noteForm: {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
-      } ;
-
-       copyField: {
-        value: '',
-         copied: false
-       }
+      },
+      value: '',
+      copied: false
     };
+     console.log("Here",this.state.noteForm.noteField, new Date());
+
   }
 
      onChangeCopy({target:{value}}){
-     this.setState({
-       value,
-     copied: false
+      this.setState({
+        value: '',
+          copied: false
     })
    }
 
   onCopy() {
-    this.setState({
+    console.log("Here",this.state, new Date());
+     this.setState({
        copied: true
     })
-   }
+  }
+
+ // onCopy = () => {
+  //  console.log("HERE *********", this.state.noteForm.noteField.value);
+  //}
 
   // This is a copy of the logic from
   // AppealRepository.update_location_after_dispatch!
@@ -137,8 +142,9 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   vbmsSection() {
-    return <div>
+  console.log("code", this.state.noteForm.noteField, new Date());
 
+    return <div>
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
@@ -151,14 +157,10 @@ export class EstablishClaimNote extends BaseForm {
 
       <div className="cf-app-segment" id="copy-note-button">
        <div className="cf-push-left">
-          <CopyToClipboard text={this.state.noteForm}
-          onCopy={() => this.state.noteForm({copied: true})}>
-        </CopyToClipboard>
-
-       <CopyToClipboard text={this.state.noteForm.noteField}
-          onCopy={() => this.state.noteForm({copied: true})}>
+       <CopyToClipboard text={this.state.noteForm.noteField.value}
+       onCopy={this.onCopy}>
         <Button
-        name="copyNote"
+         name="copyNote"
          classNames={["usa-button-outline"]}>
          <i className="fa fa-files-o" aria-hidden="true"></i>
          Copy note
@@ -166,7 +168,8 @@ export class EstablishClaimNote extends BaseForm {
        </CopyToClipboard>
       </div>
      </div>
-    
+
+
      
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
