@@ -17,15 +17,13 @@ class UnconnectedDocumentsCheck extends React.Component {
 
   render() {
 
-    /* TODO: add ssoc_match and ssoc_dates */
     let { form9Match,
       form9Date,
       nodMatch,
       nodDate,
       socMatch,
       socDate,
-      ssocMatch,
-      ssocDates,
+      ssocDatesWithMatches,
       documentsMatch,
       match } = this.props;
 
@@ -39,8 +37,7 @@ class UnconnectedDocumentsCheck extends React.Component {
           nodDate={nodDate}
           socMatch={socMatch}
           socDate={socDate}
-          ssoc_match={ssocMatch}
-          ssoc_dates={ssocDates}
+          ssocDatesWithMatches={ssocDatesWithMatches}
           documentsMatch={documentsMatch}/>
       </div>
 
@@ -67,11 +64,9 @@ const mapStateToProps = (state) => ({
   nodDate: state.nodDate,
   socMatch: state.socMatch,
   socDate: state.socDate,
-  ssocMatch: state.ssocMatch,
-  ssocDates: state.ssocDates,
+  ssocDatesWithMatches: state.ssocDatesWithMatches,
   documentsMatch: state.documentsMatch
 
-    /* TODO: add ssoc_match and ssoc_dates */
 });
 
 const mapDispatchToProps = (dispatch) => ({
