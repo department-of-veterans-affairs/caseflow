@@ -337,6 +337,14 @@ describe Task do
     end
   end
 
+  context "#completed_success" do
+    let!(:successful_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 0) }
+    let!(:canceled_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1) }
+    it "returns only the successfully completed task" do
+      expect(Task.completed_success).to eq [successful_task]
+    end
+  end
+
   context "#cancel!" do
     let!(:appeal) { Appeal.create(vacols_id: "123C") }
     let!(:task) { EstablishClaim.create(appeal: appeal) }
@@ -355,6 +363,15 @@ describe Task do
     it "saves feedback" do
       task.cancel!("Feedback")
       expect(task.reload.comment).to eq("Feedback")
+    end
+  end
+
+  context ".canceled" do
+    before do
+      Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1)
+    end
+    it "returns canceled tasks" do
+      expect(Task.canceled.count).to eq(1)
     end
   end
 
