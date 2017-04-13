@@ -75,6 +75,14 @@ class Task < ActiveRecord::Base
       where(aasm_state: "completed")
     end
 
+    def canceled
+      where(completion_status: 1)
+    end
+
+    def completed_success
+      where(completion_status: [0, 3, 4, 5, 7])
+    end
+
     def to_complete_task_for_appeal(appeal)
       to_complete.where(appeal: appeal)
     end

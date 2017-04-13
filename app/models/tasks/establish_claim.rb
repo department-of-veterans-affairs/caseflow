@@ -7,6 +7,16 @@ class EstablishClaim < Task
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
+  class << self
+    def for_full_grant
+      joins(:claim_establishment).where(claim_establishments: { decision_type: 1 })
+    end
+
+    def for_partial_grant_or_remand
+      joins(:claim_establishment).where(claim_establishments: { decision_type: [2, 3] })
+    end
+  end
+
   cache_attribute :cached_decision_type do
     appeal.decision_type
   end
@@ -87,6 +97,11 @@ class EstablishClaim < Task
       email_sent_action_description,
       not_emailed_action_description
     ].reject(&:nil?)
+  end
+
+  def time_to_complete
+    return nil if !appeal.outcoding_date || !created_at
+    completed_at - appeal.outcoding_date
   end
 
   def completion_status_text
