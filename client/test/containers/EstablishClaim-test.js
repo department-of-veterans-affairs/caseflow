@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../app/containers/EstablishClaimPage/EstablishClaim';
-import * as Constants from '../../app/establishClaim/constants/constants';
+import * as Constants from '../../app/establishClaim/constants';
 
 let func = function() {
   // empty function
@@ -24,15 +24,25 @@ describe('EstablishClaim', () => {
             label: null
           }],
           non_canceled_end_products_within_30_days: [],
-          pending_eps: []
+          pending_eps: [],
+          station_key: '397',
+          regional_office_key: 'RO11'
         },
         user: 'a'
       };
 
       /* eslint-enable camelcase */
 
+      const regionalOfficeCities = {
+        RO11: {
+          city: 'Pittsburgh',
+          state: 'PA',
+          timezone: 'America/New_York'
+        }
+      };
+
       wrapper = mount(<EstablishClaim
-        regionalOfficeCities={{}}
+        regionalOfficeCities={regionalOfficeCities}
         pdfLink=""
         pdfjsLink=""
         handleAlert={func}
@@ -65,6 +75,13 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimForm', () => {
       beforeEach(() => {
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+          payload: {
+            field: 'stationOfJurisdiction',
+            value: '397'
+          }
+        });
         // Force component to Form page
         wrapper.setState({ page: FORM_PAGE });
       });
@@ -177,8 +194,12 @@ describe('EstablishClaim', () => {
 
     context("when ARC EP", () => {
       beforeEach(() => {
-        wrapper.setState({
-          claimForm: { stationOfJurisdiction: { value: "397 - ARC" } }
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+          payload: {
+            field: 'stationOfJurisdiction',
+            value: '397'
+          }
         });
       });
 
@@ -202,12 +223,6 @@ describe('EstablishClaim', () => {
     });
 
     context("when Routed EP", () => {
-      beforeEach(() => {
-        wrapper.setState({
-          claimForm: { stationOfJurisdiction: { value: "322 - Montgomery, AL" } }
-        });
-      });
-
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
         wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
