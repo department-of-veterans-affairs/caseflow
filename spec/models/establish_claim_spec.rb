@@ -152,8 +152,8 @@ describe EstablishClaim do
     context "when claim is invalid" do
       let(:claim_modifier) { nil }
 
-      it "raises InvalidClaimError and rolls back DB changes" do
-        expect { subject }.to raise_error(EstablishClaim::InvalidClaimError)
+      it "raises InvalidEndProductError and rolls back DB changes" do
+        expect { subject }.to raise_error(EstablishClaim::InvalidEndProductError)
       end
     end
 
@@ -474,86 +474,6 @@ describe EstablishClaim do
 
       it "uses value from Task#completion_status_text" do
         is_expected.to eq("EP created for ARC - 397")
-      end
-    end
-  end
-
-  describe EstablishClaim::Claim do
-    let(:claim_hash) do
-      {
-        date: "03/03/2017",
-        end_product_code: "172BVAG",
-        end_product_label: "BVA Grant",
-        end_product_modifier: claim_modifier,
-        gulf_war_registry: false,
-        suppress_acknowledgement_letter: false,
-        station_of_jurisdiction: "499"
-      }
-    end
-
-    let(:claim) { EstablishClaim::Claim.new(claim_hash) }
-    let(:claim_modifier) { "170" }
-
-    context "#valid?" do
-      subject { claim.valid? }
-
-      it "is true for a claim with proper end_product values" do
-        is_expected.to be_truthy
-      end
-
-      it "is false for a claim missing end_product_modifier" do
-        claim_hash.delete(:end_product_modifier)
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_modifier)
-      end
-
-      it "is false for a claim missing end_product_code" do
-        claim_hash.delete(:end_product_modifier)
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_modifier)
-      end
-
-      it "is false for a claim with mismatched end_product code & label" do
-        claim_hash[:end_product_label] = "invalid label"
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_label)
-      end
-    end
-
-    context "#dynamic_values" do
-      subject { claim.dynamic_values }
-
-      it "returns a hash" do
-        is_expected.to be_an_instance_of(Hash)
-      end
-    end
-
-    context "#formatted_date" do
-      subject { claim.formatted_date }
-      it "returns a date object" do
-        is_expected.to be_an_instance_of(Date)
-      end
-    end
-
-    context "#to_hash" do
-      subject { claim.to_hash }
-      it "returns a hash" do
-        is_expected.to be_an_instance_of(Hash)
-      end
-
-      it "includes default_values" do
-        is_expected.to include(:benefit_type_code)
-      end
-
-      it "includes dynamic_values" do
-        is_expected.to include(:date)
-      end
-
-      it "includes variable values" do
-        is_expected.to include(:end_product_code)
       end
     end
   end
