@@ -11,8 +11,7 @@ import * as Constants from '../constants/constants';
 const initialState = {
   hearingDocumentIsInVbms: null,
   form9Type: null,
-  hearingType: null,
-  changeAndCertifyForm: null
+  hearingType: null
 };
 
 // TODO: break this out into a separate actions file.
@@ -103,8 +102,6 @@ export const mapDataToInitialState = function(state) {
 
     certifyingOffice: state.form8.certifying_office,
     certifyingUsername: state.form8.certifying_username,
-    certifyingOfficialName: state.form8.certifying_official_name,
-    certifyingOfficialTitle: state.form8.certifying_official_title,
     certificationDate: state.form8.certification_date
   };
 };
