@@ -3,11 +3,12 @@ import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
-import StringUtil from '../util/StringUtil';
+import { connect } from 'react-redux';
+import * as Constants from './constants';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
-export default class DecisionReviewer extends React.Component {
+export class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -37,10 +38,16 @@ export default class DecisionReviewer extends React.Component {
       })
     };
 
+    this.props.onReceiveDocs(this.props.appealDocuments);
+
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.props.onReceiveDocs(nextProps.appealDocuments);
   }
 
   onPreviousPdf = () => {
@@ -326,3 +333,14 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  onReceiveDocs(documents) {
+    dispatch({
+      type: Constants.RECEIVE_DOCUMENTS,
+      payload: documents
+    });
+  }
+});
+
+export default connect(null, mapDispatchToProps)(DecisionReviewer);

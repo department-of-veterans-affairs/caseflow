@@ -2,6 +2,7 @@ import { docCategoryIcon } from '../components/RenderFunctions';
 
 // actions
 export const TOGGLE_DOCUMENT_CATEGORY = 'TOGGLE_DOCUMENT_CATEGORY';
+export const RECEIVE_DOCUMENTS = 'RECEIVE_DOCUMENTS';
 
 export const documentCategories = {
   procedural: {

@@ -8,6 +8,17 @@ import _ from 'lodash';
 
 const readerReducer = (state = {}, action = {}) => {
   switch (action.type) {
+  case Constants.RECEIVE_DOCUMENTS:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: _(action.payload).
+          map((doc) => [doc.id, doc]).
+          fromPairs().
+          value()
+      }
+    );
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return _.merge(
       {},
@@ -15,9 +26,7 @@ const readerReducer = (state = {}, action = {}) => {
       {
         documents: {
           [action.payload.docId]: {
-            categories: {
-              [action.payload.categoryName]: action.payload.toggleState
-            }
+            [`category_${action.payload.categoryName}`]: action.payload.toggleState
           }
         }
       }

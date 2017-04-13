@@ -4,16 +4,21 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 export const DocumentCategoryIcons = ({ documents, docId }) => {
+  const doc = _.get(documents, docId);
+
+  if (!doc) {
+    return null;
+  }
+
   return <ul className="cf-document-category-icons">
     {
-      _(_.get(documents, [docId, 'categories'])).
-        pickBy(_.identity).
-        keys().
-        sortBy((categoryName) => Constants.documentCategories[categoryName].renderOrder).
-        map((categoryName) => {
-          const Svg = Constants.documentCategories[categoryName].svg;
-
-          return <li key={categoryName}><Svg /></li>;
+      _(Constants.documentCategories).
+        filter((category, categoryName) => doc[`category_${categoryName}`]).
+        sortBy('renderOrder').
+        map((category) => {
+          const Svg = category.svg;
+          
+          return <li key={category.renderOrder}><Svg /></li>;
         }).
         value()
     }
