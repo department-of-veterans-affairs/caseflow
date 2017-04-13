@@ -80,7 +80,7 @@ class Fakes::AppealRepository
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
-      @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
+      @records[appeal.vacols_id].dup || fail(ActiveRecord::RecordNotFound)
     end
 
     fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
