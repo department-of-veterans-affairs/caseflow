@@ -56,28 +56,6 @@ describe('DecisionReviewer', () => {
       }));
     });
 
-    context('zooming buttons', () => {
-      it('render pdf at different scales', asyncTest(async () => {
-        // Click on first document link
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
-
-        // Verify when we click zoom in, we render the PDF zoomed in
-        wrapper.find('#button-zoomIn').simulate('click');
-        await pause();
-        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
-          sinon.match({ scale: 1.3 }))).to.be.true;
-
-        // Verify when we click zoom out, we render the PDF zoomed out
-        wrapper.find('#button-zoomOut').simulate('click');
-        await pause();
-
-        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
-          sinon.match({ scale: 1 }))).to.be.true;
-      }));
-    });
-
     context('navigation buttons', () => {
       it('move to the next and previous pdfs', asyncTest(async() => {
         // Click on first document link
@@ -86,22 +64,22 @@ describe('DecisionReviewer', () => {
           simulate('mouseUp');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.alwaysCalledWith(sinon.match.number,
-          sinon.match({ documentId: documents[0].id }))).to.be.true;
+        let pdf = wrapper.find('Pdf').getNode();
+        let setupPdf = sinon.spy(pdf, 'setupPdf');
 
         // Next button moves us to the next page
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
-          sinon.match({ documentId: documents[1].id }))).to.be.true;
+        expect(setupPdf.lastCall.calledWith(
+          `/document/${documents[1].id}/pdf`)).to.be.true;
 
         // Previous button moves us to the previous page
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(PdfJsStub.pdfjsRenderPage.lastCall.calledWith(sinon.match.number,
-          sinon.match({ documentId: documents[0].id }))).to.be.true;
+        expect(setupPdf.lastCall.calledWith(
+          `/document/${documents[0].id}/pdf`)).to.be.true;
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
@@ -140,7 +118,7 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.true;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: 'decisions' } }))).to.be.true;
 
           // Click on a different label
@@ -152,7 +130,7 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.true;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: 'procedural' } }))).to.be.true;
 
           // Click on the same label
@@ -165,19 +143,15 @@ describe('DecisionReviewer', () => {
             parent().
             hasClass('cf-selected-label')).to.be.false;
           expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}/set-label`,
+            calledWith(`/document/${documents[0].id}`,
             sinon.match({ data: { label: null } }))).to.be.true;
         }));
     });
 
     context('comments', () => {
       let event = {
-        offsetX: 10,
-        offsetY: 10,
-        target: {
-          offsetLeft: 20,
-          offsetTop: 30
-        }
+        pageX: 10,
+        pageY: 20
       };
 
       it('can be added, edited, and deleted', asyncTest(async() => {
@@ -186,8 +160,8 @@ describe('DecisionReviewer', () => {
           class: 'Annotation',
           page: 1,
           type: 'point',
-          x: 30,
-          y: 40,
+          x: 10,
+          y: 20,
           comment: 'hello',
           document_id: 1
         };
@@ -195,8 +169,8 @@ describe('DecisionReviewer', () => {
           class: 'Annotation',
           page: 1,
           type: 'point',
-          x: 30,
-          y: 40,
+          x: 10,
+          y: 20,
           comment: 'hello world',
           document_id: 1,
           uuid: commentId
@@ -217,8 +191,7 @@ describe('DecisionReviewer', () => {
           simulate('click');
 
         // Click on the pdf at the location specified by event
-        wrapper.find('Pdf').getNode().
-          onPageClick(1)(event);
+        wrapper.find('#pageContainer1').simulate('click', event);
 
         // Add text to the comment text box.
         wrapper.find('#addComment').simulate('change',
@@ -229,7 +202,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Verify the api is called to add a comment
-        expect(ApiUtilStub.apiPost.calledWith('/decision/review/annotation',
+        expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
           sinon.match({ data: { annotation: firstComment } }))).to.be.true;
         await pause();
 
@@ -249,16 +222,26 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(`/decision/review/annotation/${commentId}`,
+        expect(ApiUtilStub.apiPatch.calledWith(
+          `/document/${documents[0].id}/annotation/${commentId}`,
           sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
         wrapper.find('#button-delete').simulate('click');
+
+        // Click on the cancel delete in the modal
+        wrapper.find('#Delete-Comment-button-id-0').simulate('click');
+
+        // Re-open delete modal
+        wrapper.find('#button-delete').simulate('click');
+
+        // Click on the confirm delete in the modal
+        wrapper.find('#Delete-Comment-button-id-1').simulate('click');
         await pause();
 
         // Verify the api is called to delete a comment
         expect(ApiUtilStub.apiDelete.
-          calledWith(`/decision/review/annotation/${commentId}`)).
+          calledWith(`/document/${documents[0].id}/annotation/${commentId}`)).
           to.be.true;
       }));
 
@@ -276,8 +259,9 @@ describe('DecisionReviewer', () => {
         wrapper.find('a').findWhere(
           (link) => link.text() === '+ Add a Comment').
           simulate('click');
-        wrapper.find('Pdf').getNode().
-          onPageClick(1)(event);
+
+        await pause();
+        wrapper.find('#pageContainer1').simulate('click', event);
 
         wrapper.find('#addComment').simulate('change', { target: { value: 'hello' } });
 
