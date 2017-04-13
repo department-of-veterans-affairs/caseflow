@@ -259,7 +259,7 @@ class AppealRepository
 
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = File.basename(uploadable_document.pdf_location)
+    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,
