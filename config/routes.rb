@@ -43,24 +43,15 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :document, only: [] do
-    patch 'set-label', on: :member
+  resources :document, only: [:update] do
+    get :pdf, on: :member
     patch 'mark-as-read', on: :member
+    resources :annotation, only: [:create, :destroy, :update]
   end
 
-  scope path: "/decision" do
-    get "/", to: redirect("/decision/review")
-
-    resources :annotation,
-              path: "/review/annotation",
-              only: [:create, :destroy, :update],
-              on: :member
-
-    resources :review,
-              path: "/review",
-              only: [:index] do
-      get 'pdf', on: :collection
-      get 'show', on: :collection
+  namespace :reader do
+    resources :appeal, only: [] do
+      resources :documents, only: [:show, :index]
     end
   end
 
