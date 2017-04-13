@@ -1426,18 +1426,6 @@
             }
           }
         },
-        "rc": {
-          "version": "1.1.7",
-          "from": "rc@>=1.1.6 <1.2.0",
-          "resolved": "https://registry.npmjs.org/rc/-/rc-1.1.7.tgz",
-          "dependencies": {
-            "minimist": {
-              "version": "1.2.0",
-              "from": "minimist@>=1.2.0 <2.0.0",
-              "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz"
-            }
-          }
-        },
         "getpass": {
           "version": "0.1.6",
           "from": "getpass@>=0.1.1 <0.2.0",
@@ -1447,6 +1435,18 @@
               "version": "1.0.0",
               "from": "assert-plus@>=1.0.0 <2.0.0",
               "resolved": "https://registry.npmjs.org/assert-plus/-/assert-plus-1.0.0.tgz"
+            }
+          }
+        },
+        "rc": {
+          "version": "1.1.7",
+          "from": "rc@>=1.1.6 <1.2.0",
+          "resolved": "https://registry.npmjs.org/rc/-/rc-1.1.7.tgz",
+          "dependencies": {
+            "minimist": {
+              "version": "1.2.0",
+              "from": "minimist@>=1.2.0 <2.0.0",
+              "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz"
             }
           }
         },
@@ -2126,14 +2126,7 @@
         "tough-cookie": {
           "version": "2.3.2",
           "from": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.2.tgz",
-          "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.2.tgz",
-          "dependencies": {
-            "punycode": {
-              "version": "1.4.1",
-              "from": "https://registry.npmjs.org/punycode/-/punycode-1.4.1.tgz",
-              "resolved": "https://registry.npmjs.org/punycode/-/punycode-1.4.1.tgz"
-            }
-          }
+          "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.2.tgz"
         },
         "webidl-conversions": {
           "version": "3.0.1",
@@ -2768,11 +2761,6 @@
                 }
               }
             },
-            "setimmediate": {
-              "version": "1.0.5",
-              "from": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz",
-              "resolved": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz"
-            },
             "ua-parser-js": {
               "version": "0.7.12",
               "from": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz",
@@ -2845,11 +2833,6 @@
                 }
               }
             },
-            "setimmediate": {
-              "version": "1.0.5",
-              "from": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz",
-              "resolved": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz"
-            },
             "ua-parser-js": {
               "version": "0.7.12",
               "from": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz",
@@ -2917,18 +2900,6 @@
               "version": "3.0.1",
               "from": "https://registry.npmjs.org/js-tokens/-/js-tokens-3.0.1.tgz",
               "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-3.0.1.tgz"
-            }
-          }
-        },
-        "path-to-regexp": {
-          "version": "1.7.0",
-          "from": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-1.7.0.tgz",
-          "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-1.7.0.tgz",
-          "dependencies": {
-            "isarray": {
-              "version": "0.0.1",
-              "from": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz",
-              "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz"
             }
           }
         },
@@ -3043,7 +3014,7 @@
     },
     "reselect": {
       "version": "3.0.0",
-      "from": "reselect@*",
+      "from": "https://registry.npmjs.org/reselect/-/reselect-3.0.0.tgz",
       "resolved": "https://registry.npmjs.org/reselect/-/reselect-3.0.0.tgz"
     },
     "resolve": {
@@ -3450,6 +3421,18 @@
       "version": "1.3.1",
       "from": "https://registry.npmjs.org/watchpack/-/watchpack-1.3.1.tgz",
       "resolved": "https://registry.npmjs.org/watchpack/-/watchpack-1.3.1.tgz"
+    },
+    "webpack": {
+      "version": "2.3.3",
+      "from": "https://registry.npmjs.org/webpack/-/webpack-2.3.3.tgz",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-2.3.3.tgz",
+      "dependencies": {
+        "supports-color": {
+          "version": "3.2.3",
+          "from": "https://registry.npmjs.org/supports-color/-/supports-color-3.2.3.tgz",
+          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-3.2.3.tgz"
+        }
+      }
     },
     "webpack-sources": {
       "version": "0.2.3",
