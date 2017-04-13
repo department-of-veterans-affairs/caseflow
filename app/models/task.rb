@@ -242,10 +242,15 @@ class Task < ActiveRecord::Base
           :decision_type,
           :station_key,
           :regional_office_key,
-          :issues
+          :issues,
+          :sanitized_vbms_id
         ] }],
       methods: [:progress_status, :aasm_state]
     )
+  end
+
+  def vbms_id
+    appeal.sanitized_vbms_id
   end
 
   private

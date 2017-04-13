@@ -5,7 +5,6 @@ import BaseForm from '../BaseForm';
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
-import StringUtil from '../../util/StringUtil';
 
 export default class CaseWorkerIndex extends BaseForm {
   constructor(props) {
@@ -46,7 +45,7 @@ export default class CaseWorkerIndex extends BaseForm {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.cached_veteran_name} (${StringUtil.sanitizedVbmsId(task.vbms_id)})`
+          `${task.cached_veteran_name} (${task.vbms_id})`
       },
       {
         header: 'Decision Date',

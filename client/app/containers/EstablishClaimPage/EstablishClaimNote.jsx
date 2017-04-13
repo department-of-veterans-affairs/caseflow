@@ -6,7 +6,6 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
-import StringUtil from '../../util/StringUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import _ from 'lodash';
@@ -30,7 +29,7 @@ export class EstablishClaimNote extends BaseForm {
     let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name},` +
-      ` ID #${StringUtil.sanitizedVbmsId(appeal.vbms_id)}, was sent to the ARC but` +
+      ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
