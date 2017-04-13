@@ -18,6 +18,7 @@ class Task < ActiveRecord::Base
     assigned_existing_ep: 4,
     special_issue_emailed: 5,
     special_issue_vacols_routed: 7,
+    invalidated: 8,
 
     # These statuses are not in use anymore
     special_issue_not_emailed: 6
@@ -34,8 +35,14 @@ class Task < ActiveRecord::Base
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
-    def unassigned
-      where(user_id: nil)
+    # Returns either the users currently assigned task, or
+    # assigns the next assignable task to the user.
+    def assign_next_to!(user)
+      user.current_task(self) || find_and_assign_next!(user)
+    end
+
+    def any_assignable_to?(user)
+      user.current_task(self) || next_assignable
     end
 
     def unprepared
@@ -90,6 +97,20 @@ class Task < ActiveRecord::Base
     def joins_task_result
       fail MustImplementInSubclassError
     end
+
+    private
+
+    def find_and_assign_next!(user)
+      next_assignable.tap { |task| task && task.assign!(user) }
+    end
+
+    def next_assignable
+      assignable.oldest_first.find(&:should_assign?)
+    end
+
+    def assignable
+      where(user_id: nil, aasm_state: "unassigned")
+    end
   end
 
   aasm do
@@ -105,12 +126,9 @@ class Task < ActiveRecord::Base
     end
 
     event :assign do
-      transitions from: :unassigned, to: :assigned, after: (proc do |*args|
-        assign_user(*args)
+      before { |*args| assign_user(*args) }
 
-        # Temporarily needed while there are tasks created that don't have claim establishments
-        init_claim_establishment!
-      end)
+      transitions from: :unassigned, to: :assigned
     end
 
     event :start do
@@ -148,13 +166,10 @@ class Task < ActiveRecord::Base
     )
   end
 
-  def before_assign
-    # Test hook for testing race conditions
-  end
-
   def assign_user(user)
     fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-    update!(
+
+    assign_attributes(
       user: user,
       assigned_at: Time.now.utc
     )
@@ -162,14 +177,6 @@ class Task < ActiveRecord::Base
 
   def start_time
     update!(started_at: Time.now.utc)
-  end
-
-  def prepare_with_decision!
-    return false if appeal.decisions.empty?
-
-    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-
-    prepare!
   end
 
   def cancel!(feedback = nil)
@@ -223,6 +230,12 @@ class Task < ActiveRecord::Base
     super.merge(type: type)
   end
 
+  # There are some additional criteria we need to know from our dependencies
+  # whether a task is assignable by the current_user.
+  def should_assign?
+    appeal.can_be_accessed_by_current_user? && !check_invalidated!
+  end
+
   def to_hash_with_bgs_call
     serializable_hash(
       include: [:user, appeal: {
@@ -242,5 +255,23 @@ class Task < ActiveRecord::Base
         ] }],
       methods: [:progress_status, :aasm_state]
     )
+  end
+
+  private
+
+  def check_invalidated!
+    invalidate! if should_invalidate?
+    invalidated?
+  end
+
+  # Changes in VACOLS or VBMS can cause tasks to become invalid.
+  # This is a method for determining that. It can be overridden by subclasses.
+  def should_invalidate?
+    false
+  end
+
+  # This goes around aasm because it can be invalidated from any state
+  def invalidate!
+    update!(aasm_state: :completed, completion_status: :invalidated)
   end
 end

@@ -77,6 +77,15 @@ class EstablishClaim < Task
     end
   end
 
+  def prepare_with_decision!
+    return false if check_invalidated!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
+  end
+
   def actions_taken
     [
       decision_reviewed_action_description,
@@ -98,6 +107,10 @@ class EstablishClaim < Task
     else
       super
     end
+  end
+
+  def should_invalidate?
+    !appeal.decision_date || appeal.status == "Active"
   end
 
   private

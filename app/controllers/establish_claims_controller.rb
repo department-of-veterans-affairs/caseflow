@@ -45,17 +45,20 @@ class EstablishClaimsController < TasksController
 
   # Index of all tasks that are unprepared
   def unprepared_tasks
-    @unprepared_tasks ||= EstablishClaim.unprepared.oldest_first
+    @unprepared_tasks = EstablishClaim.unprepared.oldest_first
   end
 
   private
 
+  def verify_manager_access
+    verify_authorized_roles("Manage Claim Establishment")
+  end
+
   def tasks
     EstablishClaim
   end
+  helper_method :tasks
 
-  def verify_manager_access
-    verify_authorized_roles("Manage Claim Establishment")
   end
 
   def start_text
