@@ -3,10 +3,10 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-export const DocumentCategoryIcons = ({ document, docId }) => {
+export const DocumentCategoryIcons = ({ documents, docId }) => {
   return <ul className="cf-document-category-icons">
     {
-      _(_.get(document, [docId, 'categories'])).
+      _(_.get(documents, [docId, 'categories'])).
         pickBy(_.identity).
         keys().
         sortBy((categoryName) => Constants.documentCategories[categoryName].renderOrder).
@@ -21,10 +21,10 @@ export const DocumentCategoryIcons = ({ document, docId }) => {
 };
 
 DocumentCategoryIcons.propTypes = {
-  document: PropTypes.object,
+  documents: PropTypes.object,
   docId: PropTypes.number
 };
 
 export default connect(
-  (state) => _.pick(state, 'document')
+  (state) => _.pick(state, 'documents')
 )(DocumentCategoryIcons);

@@ -13,7 +13,7 @@ const readerReducer = (state = {}, action = {}) => {
       {},
       state,
       {
-        document: {
+        documents: {
           [action.payload.docId]: {
             categories: {
               [action.payload.categoryName]: action.payload.toggleState
