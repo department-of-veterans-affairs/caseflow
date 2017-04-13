@@ -7,6 +7,16 @@ class EstablishClaim < Task
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
+  class << self
+    def for_full_grant
+      joins(:claim_establishment).where(claim_establishments: { decision_type: 1 })
+    end
+
+    def for_partial_grant_or_remand
+      joins(:claim_establishment).where(claim_establishments: { decision_type: [2, 3] })
+    end
+  end
+
   cache_attribute :cached_decision_type do
     appeal.decision_type
   end
@@ -77,6 +87,15 @@ class EstablishClaim < Task
     end
   end
 
+  def prepare_with_decision!
+    return false if check_and_invalidate!
+    return false if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare!
+  end
+
   def actions_taken
     [
       decision_reviewed_action_description,
@@ -89,6 +108,11 @@ class EstablishClaim < Task
     ].reject(&:nil?)
   end
 
+  def time_to_complete
+    return nil if !appeal.outcoding_date || !created_at
+    completed_at - appeal.outcoding_date
+  end
+
   def completion_status_text
     case completion_status
     when "routed_to_ro"
@@ -98,6 +122,10 @@ class EstablishClaim < Task
     else
       super
     end
+  end
+
+  def should_invalidate?
+    !appeal.decision_date || appeal.status == "Active"
   end
 
   private
