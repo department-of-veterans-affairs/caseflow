@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
-import DocumentLabels from '../components/DocumentLabels';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 
@@ -125,12 +124,9 @@ export default class PdfUI extends React.Component {
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
         <div className="usa-grid-full">
-          <div className="usa-width-one-third cf-pdf-buttons-left">
-            { this.props.onSetLabel && <DocumentLabels
-              onClick={this.props.onSetLabel}
-              selectedLabels={selectedLabels}/> }
+          <div className="usa-width-one-third">
           </div>
-          <div className="usa-width-one-third cf-pdf-buttons-center">
+          <div className="usa-width-one-third cf-pdf-buttons-center cf-pull-right-one-third">
             Page {this.state.currentPage} of {this.state.numPages}
           </div>
           <div className="usa-width-one-third cf-pdf-buttons-right">
