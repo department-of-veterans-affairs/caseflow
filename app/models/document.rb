@@ -24,14 +24,6 @@ class Document < ActiveRecord::Base
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  enum label: {
-    decisions: 0,
-    veteran_submitted: 1,
-    procedural: 2,
-    va_medial: 3,
-    layperson: 4,
-    private_medical: 5
-  }
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 
   def type?(type)
@@ -94,7 +86,7 @@ class Document < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      methods: [:vbms_document_id, :type, :received_at, :filename, :label]
+      methods: [:vbms_document_id, :type, :received_at, :filename, :category]
     )
   end
 

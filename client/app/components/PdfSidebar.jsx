@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import ApiUtil from '../util/ApiUtil';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -35,6 +36,14 @@ CategorySelector.propTypes = {
 const mapPropsToState = (state) => _.pick(state, 'documents');
 const mapDispatchToState = (dispatch) => ({
   handleCategoryToggle(categoryName, toggleState, docId) {
+    ApiUtil.patch(
+      `/document/${docId}`,
+      { categoryName: toggleState ? categoryName : null }
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Saving document category failed', err);
+    });
+
     dispatch({
       type: Constants.TOGGLE_DOCUMENT_CATEGORY,
       payload: {
