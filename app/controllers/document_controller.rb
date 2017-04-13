@@ -38,6 +38,6 @@ class DocumentController < ApplicationController
   private
 
   def update_params
-    params.permit(:category)
+    params.permit(:category_procedural, :category_medical, :category_other)
   end
 end

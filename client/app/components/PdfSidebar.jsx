@@ -41,9 +41,11 @@ CategorySelector.propTypes = {
 const mapPropsToState = (state) => _.pick(state, 'documents');
 const mapDispatchToState = (dispatch) => ({
   handleCategoryToggle(categoryName, toggleState, docId) {
+    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
+
     ApiUtil.patch(
       `/document/${docId}`,
-      { categoryName: toggleState ? categoryName : null }
+      { data: { [categoryKey]: toggleState } }
     ).catch((err) => {
       // eslint-disable-next-line no-console
       console.log('Saving document category failed', err);
