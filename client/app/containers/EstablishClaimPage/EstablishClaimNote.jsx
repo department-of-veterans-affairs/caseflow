@@ -37,26 +37,27 @@ export class EstablishClaimNote extends BaseForm {
       noteForm: {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
-      }
-      // copyField: {
-      //   value: '',
-      //   copied: false
-      // }
+      } ;
+
+       copyField: {
+        value: '',
+         copied: false
+       }
     };
   }
 
-  // onChangeCopy({target:{value}}){
-  //   this.setState({
-  //     value,
-  //     copied: false
-  //   })
-  // }
+     onChangeCopy({target:{value}}){
+     this.setState({
+       value,
+     copied: false
+    })
+   }
 
-  // onCopy() {
-  //   this.setState({
-  //     copied: true
-  //   })
-  // }
+  onCopy() {
+    this.setState({
+       copied: true
+    })
+   }
 
   // This is a copy of the logic from
   // AppealRepository.update_location_after_dispatch!
@@ -150,12 +151,19 @@ export class EstablishClaimNote extends BaseForm {
 
       <div className="cf-app-segment" id="copy-note-button">
        <div className="cf-push-left">
+          <CopyToClipboard text={this.state.noteForm}
+          onCopy={() => this.state.noteForm({copied: true})}>
+        </CopyToClipboard>
+
+       <CopyToClipboard text={this.state.noteForm.noteField}
+          onCopy={() => this.state.noteForm({copied: true})}>
         <Button
         name="copyNote"
          classNames={["usa-button-outline"]}>
          <i className="fa fa-files-o" aria-hidden="true"></i>
          Copy note
        </Button>
+       </CopyToClipboard>
       </div>
      </div>
     
