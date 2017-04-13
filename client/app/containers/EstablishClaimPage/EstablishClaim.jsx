@@ -77,6 +77,16 @@ const CREATE_EP_ERRORS = {
             establish the next claim.
           </span>
   },
+  "missing_ssn": {
+    header: 'The EP for this claim must be created outside Caseflow.',
+    body: <span>
+            This veteran does not have a social security number, so their
+            claim cannot be established in Caseflow.
+            <br/>
+            Select Cancel at the bottom of the page to release this claim and
+            proceed to process it outside of Caseflow.
+          </span>
+  },
   "default": {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
