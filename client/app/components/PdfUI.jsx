@@ -126,7 +126,8 @@ export default class PdfUI extends React.Component {
         <div className="usa-grid-full">
           <div className="usa-width-one-third">
           </div>
-          <div className="usa-width-one-third cf-pdf-buttons-center cf-pull-right-one-third">
+          <div
+            className="usa-width-one-third cf-pdf-buttons-center cf-pull-right-one-third">
             Page {this.state.currentPage} of {this.state.numPages}
           </div>
           <div className="usa-width-one-third cf-pdf-buttons-right">

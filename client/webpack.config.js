@@ -45,11 +45,6 @@ const config = {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         exclude: /node_modules/
-      },
-      {
-        test: /\.svg$/,
-        loader: 'babel-loader!react-svg-loader',
-        exclude: /node_modules/
       }
     ]
   }

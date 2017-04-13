@@ -1,6 +1,4 @@
-import ReaderBlueCategory from '../svg/reader-blue-category.svg';
-import ReaderGreenCategory from '../svg/reader-green-category.svg';
-import ReaderPinkCategory from '../svg/reader-pink-category.svg';
+import { docCategoryIcon } from '../components/RenderFunctions';
 
 // actions
 export const TOGGLE_DOCUMENT_CATEGORY = 'TOGGLE_DOCUMENT_CATEGORY';
@@ -9,16 +7,16 @@ export const documentCategories = {
   procedural: {
     renderOrder: 0,
     humanName: 'Procedural',
-    svg: ReaderBlueCategory
+    svg: docCategoryIcon('#4A90E2')
   },
   medical: {
     renderOrder: 1,
     humanName: 'Medical',
-    svg: ReaderPinkCategory
+    svg: docCategoryIcon('#FF6868')
   },
   other: {
     renderOrder: 2,
     humanName: 'Other Evidence',
-    svg: ReaderGreenCategory
+    svg: docCategoryIcon('#5BD998')
   }
 };
