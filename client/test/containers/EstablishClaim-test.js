@@ -33,7 +33,7 @@ describe('EstablishClaim', () => {
       /* eslint-enable camelcase */
 
       const regionalOfficeCities = {
-        'RO11': {
+        RO11: {
           city: 'Pittsburgh',
           state: 'PA',
           timezone: 'America/New_York'

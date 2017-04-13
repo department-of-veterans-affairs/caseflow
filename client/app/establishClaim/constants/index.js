@@ -16,5 +16,5 @@ export const PARTIAL_GRANT_MODIFIER_OPTIONS = [
   '178',
   '179'
 ];
-
+export const ARC_STATION_OF_JURISDICTION = '397';
 

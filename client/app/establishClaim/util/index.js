@@ -19,11 +19,11 @@ export const formattedStationOfJurisdiction = (
   let suffix;
 
   SPECIAL_ISSUES.forEach((issue) => {
-    let issuekey = issue.stationOfJurisdiction && issue.stationOfJurisdiction.key;
+    let issueKey = issue.stationOfJurisdiction && issue.stationOfJurisdiction.key;
 
     // If the assigned stationOfJurisdiction matches a routed special issue, use the
     // routed station's location
-    if (issuekey && issuekey === stationOfJurisdiction) {
+    if (issueKey && issueKey === stationOfJurisdiction) {
       suffix = issue.stationOfJurisdiction.location;
     }
   });

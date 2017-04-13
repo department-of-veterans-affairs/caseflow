@@ -10,8 +10,8 @@ describe('EstablishClaim selectors', () => {
     });
 
     it('sets SOJ to regional office', () => {
-      let stationKey = '300';
-      let result = getStationOfJurisdiction(
+      const stationKey = '300';
+      const result = getStationOfJurisdiction(
         { radiation: true },
         stationKey
       );
@@ -20,7 +20,7 @@ describe('EstablishClaim selectors', () => {
     });
 
     it('sets SOJ to special issue\'s station', () => {
-      let result = getStationOfJurisdiction(
+      const result = getStationOfJurisdiction(
         { foreignClaimCompensationClaimsDualClaimsAppeals: true },
         '300'
       );

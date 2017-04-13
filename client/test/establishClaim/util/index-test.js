@@ -69,16 +69,14 @@ context('establishClaimUtil', () => {
     });
 
     it('filters modifiers based on existing end products', () => {
-      /* eslint-disable camelcase */
       result = validModifiers(
         [
           {
-            end_product_type_code: '170'
+            'end_product_type_code': '170'
           }
         ],
         'partial grants'
       );
-      /* eslint-enable camelcase */
 
       let modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS.slice();
       // Remove first modifier since it's taken

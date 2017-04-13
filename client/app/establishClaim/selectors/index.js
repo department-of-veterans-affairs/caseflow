@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
+import { ARC_STATION_OF_JURISDICTION } from '../constants';
 
 const getSpecialIssues = (specialIssues) => specialIssues;
 const getStationKey = (_, stationKey) => stationKey;
@@ -7,7 +8,7 @@ const getStationKey = (_, stationKey) => stationKey;
 export const getStationOfJurisdiction = createSelector(
   [getSpecialIssues, getStationKey],
   (specialIssues, stationKey) => {
-    let station = '397';
+    let station = ARC_STATION_OF_JURISDICTION;
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
     specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
