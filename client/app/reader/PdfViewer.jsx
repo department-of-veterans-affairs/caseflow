@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
+import Modal from '../components/Modal';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -13,7 +14,8 @@ export default class PdfViewer extends React.Component {
       editingComment: null,
       isAddingComment: false,
       isPlacingNote: false,
-      onSaveCommentAdd: null
+      onSaveCommentAdd: null,
+      onConfirmDelete: null
     };
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
@@ -25,11 +27,24 @@ export default class PdfViewer extends React.Component {
     });
   }
 
+  closeConfirmDeleteModal = () => {
+    this.setState({
+      onConfirmDelete: null
+    });
+  }
+
   onDeleteComment = (uuid) => {
-    this.props.annotationStorage.deleteAnnotation(
-      this.props.doc.id,
-      uuid
-    );
+    let onConfirmDelete = () => {
+      this.props.annotationStorage.deleteAnnotation(
+        this.props.doc.id,
+        uuid
+      );
+      this.closeConfirmDeleteModal();
+    };
+
+    this.setState({
+      onConfirmDelete
+    });
   }
 
   onEditComment = (uuid) => {
@@ -239,6 +254,21 @@ export default class PdfViewer extends React.Component {
             onJumpToComment={this.onJumpToComment}
           />
         </div>
+        {this.state.onConfirmDelete && <Modal
+          buttons={[
+            { classNames: ["cf-modal-link", "cf-btn-link"],
+              name: 'Cancel',
+              onClick: this.closeConfirmDeleteModal
+            },
+            { classNames: ["usa-button", "usa-button-secondary"],
+              name: 'Confirm Delete',
+              onClick: this.state.onConfirmDelete
+            }
+          ]}
+          closeHandler={this.closeConfirmDeleteModal}
+          title="Delete Comment">
+          Are you sure you want to delete this comment?
+        </Modal>}
       </div>
     );
   }
