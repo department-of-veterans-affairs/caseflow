@@ -269,10 +269,10 @@ export default class DecisionReviewer extends React.Component {
     ApiUtil.patch(`/document/${documentId}`, { data }).
       then(() => {
         this.setDocumentAttribute(pdfNumber, 'label', setLabel);
-      }, () => {
+      }, (err) => {
 
         /* eslint-disable no-console */
-        console.log('Error setting label');
+        console.log('Error setting label', err);
 
         /* eslint-enable no-console */
       });
