@@ -159,28 +159,11 @@ class Task < ActiveRecord::Base
       transitions from: :reviewed, to: :completed
       transitions from: :started, to: :completed
     end
-  end
 
-  def assign_review_attributes(outgoing_reference_id: nil)
-    assign_attributes(outgoing_reference_id: outgoing_reference_id)
-  end
-
-  def assign_completion_attribtues(status:, outgoing_reference_id: nil)
-    assign_review_attributes(outgoing_reference_id: outgoing_reference_id) unless reviewed?
-
-    assign_attributes(
-      completed_at: Time.now.utc,
-      completion_status: status
-    )
-  end
-
-  def assign_user(user)
-    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-
-    assign_attributes(
-      user: user,
-      assigned_at: Time.now.utc
-    )
+    event :invalidate do
+      before :before_invalidation
+      transitions to: :completed
+    end
   end
 
   def start_time
@@ -241,7 +224,7 @@ class Task < ActiveRecord::Base
   # There are some additional criteria we need to know from our dependencies
   # whether a task is assignable by the current_user.
   def should_assign?
-    appeal.can_be_accessed_by_current_user? && !check_invalidated!
+    appeal.can_be_accessed_by_current_user? && !check_and_invalidate!
   end
 
   def to_hash_with_bgs_call
@@ -267,7 +250,34 @@ class Task < ActiveRecord::Base
 
   private
 
-  def check_invalidated!
+  def assign_review_attributes(outgoing_reference_id: nil)
+    assign_attributes(outgoing_reference_id: outgoing_reference_id)
+  end
+
+  def assign_completion_attribtues(status:, outgoing_reference_id: nil)
+    assign_review_attributes(outgoing_reference_id: outgoing_reference_id) unless reviewed?
+
+    assign_attributes(
+      completed_at: Time.now.utc,
+      completion_status: status
+    )
+  end
+
+  def assign_user(user)
+    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
+
+    assign_attributes(
+      user: user,
+      assigned_at: Time.now.utc
+    )
+  end
+
+  # This goes around aasm because it can be invalidated from any state
+  def before_invalidation
+    assign_attributes(completion_status: :invalidated)
+  end
+
+  def check_and_invalidate!
     invalidate! if should_invalidate?
     invalidated?
   end
@@ -276,10 +286,5 @@ class Task < ActiveRecord::Base
   # This is a method for determining that. It can be overridden by subclasses.
   def should_invalidate?
     false
-  end
-
-  # This goes around aasm because it can be invalidated from any state
-  def invalidate!
-    update!(aasm_state: :completed, completion_status: :invalidated)
   end
 end

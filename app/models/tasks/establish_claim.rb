@@ -88,7 +88,7 @@ class EstablishClaim < Task
   end
 
   def prepare_with_decision!
-    return false if check_invalidated!
+    return false if check_and_invalidate!
     return false if appeal.decisions.empty?
 
     appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
