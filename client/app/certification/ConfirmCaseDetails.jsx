@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+import { Redirect } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
@@ -44,7 +45,7 @@ const representativeTypeOptions = [
  *
  */
 
-class UnconnectedConfirmCaseDetails extends React.Component {
+class ConfirmCaseDetails extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -79,25 +80,22 @@ class UnconnectedConfirmCaseDetails extends React.Component {
       this.otherRepresentativeType : this.representativeType;
   }
 
-  // beforeContinue() {
-  //   const erroredFields = this.getErroredFields();
+  onClickContinue() {
+    const erroredFields = this.getErroredFields();
 
-  //   if (erroredFields.length) {
-  //     this.props.onValidationError(erroredFields);
-  //   }
+    if (erroredFields.length) {
+      this.props.onValidationFail(erroredFields);
 
-  //   const data = {
-  //     representativeType: this.props.representativeType,
-  //     representativeName: this.props.representativeName
-  //   }
-  //   // // dispatch
-  //   // return ApiUtil.post(`/certifiactions/update/${vacols_id}`, { data }).
-  //   //   then(() => {
-  //   //     // handle success.
-  //   //   }, (error) => {
-  //   //     // handle failure.
-  //   //   });
-  // }
+      return;
+    }
+
+    const data = {
+      representativeType: this.props.representativeType,
+      representativeName: this.props.representativeName
+    };
+
+    this.props.startRequest(data);
+  }
 
   render() {
     let { representativeType,
@@ -106,8 +104,24 @@ class UnconnectedConfirmCaseDetails extends React.Component {
       onRepresentativeNameChange,
       otherRepresentativeType,
       onOtherRepresentativeTypeChange,
+      validationFailed,
+      invalidFields,
+      loading,
+      updateFailed,
+      updateSucceeded,
       match
     } = this.props;
+
+    if (updateSucceeded) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
+    }
+
+    console.log('failed', updateFailed);
+
+    if (updateFailed) {
+      return <div>500 500 error error</div>;
+    }
 
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
@@ -145,9 +159,11 @@ class UnconnectedConfirmCaseDetails extends React.Component {
 
         <Footer
           nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
+          disableContinue={validationFailed}
+          loading={loading}
+          onClickContinue={this.onClickContinue.bind(this)}
         />
     </div>;
-
   }
 }
 
@@ -183,18 +199,47 @@ const mapDispatchToProps = (dispatch) => ({
         otherRepresentativeType
       }
     });
+  },
+  onValidationFail: (invalidFields) => {
+    dispatch({
+      type: Constants.FAILED_VALIDATION,
+      payload: {
+        invalidFields,
+        validationFailed: true
+      }
+    });
+  },
+  startRequest: (data) => {
+    dispatch({
+      type: Constants.CERTIFICATION_UPDATE_REQUEST,
+      payload: {
+        data,
+        onComplete: (err) => {
+          if (err) {
+            return dispatch({
+              type: Constants.CERTIFICATION_UPDATE_FAILURE
+            });
+          }
+          dispatch({
+            type: Constants.CERTIFICATION_UPDATE_SUCCESS
+          });
+        }
+      }
+    });
   }
+
 });
 
 const mapStateToProps = (state) => ({
   representativeType: state.representativeType,
   representativeName: state.representativeName,
-  otherRepresentativeType: state.otherRepresentativeType
+  otherRepresentativeType: state.otherRepresentativeType,
+  validationFailed: state.validationFailed,
+  invalidFields: state.invalidFields,
+  loading: state.loading
 });
 
-const ConfirmCaseDetails = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedConfirmCaseDetails);
-
-export default ConfirmCaseDetails;
+)(ConfirmCaseDetails);

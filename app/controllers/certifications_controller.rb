@@ -21,6 +21,9 @@ class CertificationsController < ApplicationController
   end
 
   def update
+    p "PARAMS"
+    p params
+    p "DATA", params[:data]
     params.require(:data).permit(
       :representative_name,
       :representative_type,
@@ -28,7 +31,6 @@ class CertificationsController < ApplicationController
       :form9_type,
       :hearing_preference
     )
-
     certification.update!(params[:data])
   end
 

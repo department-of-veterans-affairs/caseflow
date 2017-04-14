@@ -1,21 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-
+import Button from '../components/Button';
 
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
 // then delete this comment :)
-const Footer = ({ nextPageUrl }) => {
+const Footer = ({ onClickContinue, disableContinue, loading }) => {
   return <div>
     <div className="cf-app-segment">
       <a href="#confirm-cancel-certification"
         className="cf-action-openmodal cf-btn-link">
         Cancel Certification
       </a>
-    <Link to={nextPageUrl}>
-      <button type="button" className="cf-push-right">
+      <Button type="button"
+        name="Continue"
+        classNames={["cf-push-right"]}
+        onClick={onClickContinue}
+        loading={loading}
+        disabled={disableContinue}>
         Continue
-      </button>
-    </Link>
+      </Button>
     </div>
   </div>;
 };

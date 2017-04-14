@@ -1,3 +1,4 @@
+import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../constants/constants';
 
 /*
@@ -39,6 +40,20 @@ const changeSignAndCertifyForm = (state, action) => {
   return Object.assign({}, state, update);
 };
 
+const updateCertification = (state, action) => {
+  const data = action.payload.data;
+
+  ApiUtil.put(`/certifications/${state.vacolsId}/update`, { data }).
+    then(() => {
+      action.payload.onComplete();
+    }, () => {
+      action.payload.onComplete('err');
+    });
+
+  return Object.assign({}, state, {
+    loading: true
+  });
+};
 
 export const certificationReducers = function(state = initialState, action = {}) {
   switch (action.type) {
@@ -80,6 +95,23 @@ export const certificationReducers = function(state = initialState, action = {})
     });
   case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
     return changeSignAndCertifyForm(state, action);
+  case Constants.FAILED_VALIDATION:
+    return Object.assign({}, state, {
+      invalidFields: action.payload.invalidFields,
+      validationFailed: action.payload.validationFailed
+    });
+  case Constants.CERTIFICATION_UPDATE_REQUEST:
+    return updateCertification(state, action);
+  case Constants.CERTIFICATION_UPDATE_FAILURE:
+    return Object.assign({}, state, {
+      updateFailed: true,
+      loading: false
+    });
+  case Constants.CERTIFICATION_UPDATE_SUCCESS:
+    return Object.assign({}, state, {
+      updateSucceeded: true,
+      loading: false
+    });
   default:
     return state;
   }
