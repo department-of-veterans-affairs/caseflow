@@ -51,15 +51,13 @@ export class EstablishClaimNote extends BaseForm {
     })
    }
 
+//callback, will be called when text is copied
   onCopy() {
      this.setState({
        copied: true
     })
   }
 
- // onCopy = () => {
-  //  console.log("HERE *********", this.state.noteForm.noteField.value);
-  //}
 
   // This is a copy of the logic from
   // AppealRepository.update_location_after_dispatch!
