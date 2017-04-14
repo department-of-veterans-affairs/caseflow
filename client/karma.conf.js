@@ -8,11 +8,11 @@ module.exports = function(config) {
     singleRun: true,
 
     files: [
-      { pattern: 'test/karma/**/*.js' }
+      { pattern: 'test/karma/**/Pdf-test.js' }
     ],
 
     preprocessors: {
-      'test/karma/**/*.js': ['webpack', 'sourcemap']
+      'test/karma/**/Pdf-test.js': ['webpack', 'sourcemap']
     },
 
     // Note that karma-webpack will ignore the `entry` value for
