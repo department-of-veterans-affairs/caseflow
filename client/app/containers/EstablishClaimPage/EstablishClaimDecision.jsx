@@ -110,7 +110,14 @@ export class EstablishClaimDecision extends React.Component {
       return this.decisionTabs()[0].page;
     }
 
-    return <p>This decision has no documents</p>;
+    //TODO(marian) turn into React component
+    return <div className="usa-alert usa-alert-error cf-app-segment" role="alert">
+      <div className="usa-alert-body">
+        <h3 className="usa-alert-heading">This decision has no documents.</h3>
+        <p className="usa-alert-text">Please click "cancel" and establish a new claim in
+          <a href="/dispatch/establish-claim/"> Work History</a></p>
+      </div>
+    </div>;
 
   }
 
