@@ -3,8 +3,10 @@ import Select from 'react-select';
 
 const TAG_ALREADY_EXISTS_MSG = "Tag already exists";
 const NO_RESULTS_TEXT = "Not an option";
-const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION = 
-  (label) => {return `Create a tag for "${label}"`};
+const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION =
+  (label) => {
+    return `Create a tag for "${label}"`;
+  };
 const DEFAULT_PLACEHOLDER = "Select option";
 
 class SearchableDropdown extends Component {
@@ -32,7 +34,7 @@ class SearchableDropdown extends Component {
     this.setState({ value: newValue });
     if (this.props.onChange) {
       this.props.onChange(newValue);
-    } 
+    }
   }
 
   render() {
@@ -50,7 +52,7 @@ class SearchableDropdown extends Component {
       creatableOptions
     } = this.props;
 
-    let Component = creatable ? Select.Creatable : Select;
+    let SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
 
     if (creatable) {
@@ -58,8 +60,8 @@ class SearchableDropdown extends Component {
         noResultsText: (creatableOptions && creatableOptions.tagAlreadyExistsMsg) ?
           creatableOptions.tagAlreadyExistsMsg : TAG_ALREADY_EXISTS_MSG,
         promptTextCreator: (creatableOptions && creatableOptions.promptTextCreator) ?
-          creatableOptions.promptTextCreator : DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION          
-      }
+          creatableOptions.promptTextCreator : DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION
+      };
     }
 
     return <div className="cf-form-dropdown">
@@ -67,7 +69,7 @@ class SearchableDropdown extends Component {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <Component
+      <SelectComponent
         id={name}
         value={this.state.value}
         options={options}

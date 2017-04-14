@@ -16,23 +16,25 @@ class StyleGuideSearchableDropdown extends Component {
   render() {
     const creatableOptions = {
       tagAlreadyExistsMsg: "Tag already exists",
-      promptTextCreator: (label) => {return `Create a tag for "${label}"`}
+      promptTextCreator: (label) => {
+        return `Create a tag for "${label}"`;
+      }
     };
 
     const options = [{ value: 'unitedstates',
-            label: 'United States' },
-          { value: 'germany',
-            label: 'Germany' },
-          { value: 'france',
-            label: 'France' },
-          { value: 'russia',
-            label: 'Russia' },
-          { value: 'china',
-            label: 'China' },
-          { value: 'india',
-            label: 'India' },
-          { value: 'uae',
-            label: 'United Arab Emrites' }];
+      label: 'United States' },
+    { value: 'germany',
+      label: 'Germany' },
+    { value: 'france',
+      label: 'France' },
+    { value: 'russia',
+      label: 'Russia' },
+    { value: 'china',
+      label: 'China' },
+    { value: 'india',
+      label: 'India' },
+    { value: 'uae',
+      label: 'United Arab Emrites' }];
 
     return (
       <div>
