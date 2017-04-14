@@ -261,12 +261,12 @@ export default class PdfViewer extends React.Component {
               onClick: this.closeConfirmDeleteModal
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Confirm Delete',
+              name: 'Confirm delete',
               onClick: this.state.onConfirmDelete
             }
           ]}
           closeHandler={this.closeConfirmDeleteModal}
-          title="Delete comment">
+          title="Delete Comment">
           Are you sure you want to delete this comment?
         </Modal>}
       </div>
