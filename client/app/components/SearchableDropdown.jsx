@@ -3,7 +3,8 @@ import Select from 'react-select';
 
 const TAG_ALREADY_EXISTS_MSG = "Tag already exists";
 const NO_RESULTS_TEXT = "Not an option";
-const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION = (label) => {return `Create a tag for "${label}"`};
+const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION = 
+  (label) => {return `Create a tag for "${label}"`};
 const DEFAULT_PLACEHOLDER = "Select option";
 
 class SearchableDropdown extends Component {
