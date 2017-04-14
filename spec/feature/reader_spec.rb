@@ -147,28 +147,30 @@ RSpec.feature "Reader" do
       end
     end
 
-    doc1Categories = get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc1Categories).to eq(["Procedural"])
+    doc_1_categories =
+      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+    expect(doc_1_categories).to eq(["Procedural"])
 
-    doc2Categories = get_aria_labels all(".section--document-list table tr:last-child .cf-document-category-icons li")
-    expect(doc2Categories).to eq(["Medical", "Other Evidence"])
+    doc_2_categories = get_aria_labels all(".section--document-list table tr:last-child .cf-document-category-icons li")
+    expect(doc_2_categories).to eq(["Medical", "Other Evidence"])
 
     click_on documents[0].filename
 
-    expect(get_aria_labels all(".cf-document-category-icons li")).to eq(["Procedural"])
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
 
     find(".checkbox-wrapper-procedural").click
     find(".checkbox-wrapper-medical").click
 
-    expect(get_aria_labels all(".cf-document-category-icons li")).to eq(["Medical"])
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
 
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-    doc1Categories = get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc1Categories).to eq(["Medical"])
+    doc_1_categories =
+      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+    expect(doc_1_categories).to eq(["Medical"])
 
     click_on documents[1].filename
-    
-    expect(get_aria_labels all(".cf-document-category-icons li")).to eq(["Medical", "Other Evidence"])
+
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
   end
 end
