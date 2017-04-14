@@ -152,6 +152,12 @@ class Appeal < ActiveRecord::Base
     ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
   end
 
+  # This will return an array containing hash of ssoc_dates and ssoc_match?es.
+  # I.e. [{"date"=>"01/01/2010", "match"=>"true"}, {"date"=>"02/02/2012", "match"=>"true"}]
+  def ssoc_dates_with_matches
+    ssoc_dates.map { |item| { date: item, match: ssoc_match?(item) } }
+  end
+
   def documents_match?
     nod_match? && soc_match? && form9_match? && ssoc_all_match?
   end
