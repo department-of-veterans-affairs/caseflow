@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 498e6fe3e2bbb5b734a08c59ca80e369d605dc9e
-  ref: 498e6fe
+  revision: e7ad3478a3bd08a8423dcd66d31954182b63e009
+  ref: e7ad3478a3bd
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -365,7 +365,7 @@ GEM
       redis-namespace (>= 1.5.2)
       rufus-scheduler (>= 2.0.24)
       sidekiq (>= 4.2.1)
-    simplecov (0.14.0)
+    simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
@@ -470,7 +470,7 @@ DEPENDENCIES
   sentry-raven
   sidekiq
   sidekiq-cron (~> 0.4.0)
-  simplecov (= 0.14.0)
+  simplecov (= 0.12.0)
   sniffybara!
   sqlite3
   therubyracer

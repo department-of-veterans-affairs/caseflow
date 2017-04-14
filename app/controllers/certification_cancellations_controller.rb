@@ -28,6 +28,7 @@ class CertificationCancellationsController < ApplicationController
     verify_authorized_roles("Certify Appeal")
   end
 
+  # :nocov:
   def logo_name
     "Certification"
   end
