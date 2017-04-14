@@ -86,7 +86,8 @@ class Document < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      methods: [:vbms_document_id, :type, :received_at, :filename, :category]
+      methods: [:vbms_document_id, :type, :received_at, :filename, 
+        :category_procedural, :category_medical, :category_other]
     )
   end
 
