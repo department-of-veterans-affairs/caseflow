@@ -55,18 +55,18 @@ export class EstablishClaimEmail extends BaseForm {
   }
 
 
-  //  onChangeCopy({target:{value}}){
-  //     this.setState({
-  //       value: '',
-  //         copied: false
-  //   })
-  //  }
+     onChangeCopy({target:{value}}){
+       this.setState({
+         value: '',
+          copied: false
+     })
+    }
 
-  // onCopy() {
-  //    this.setState({
-  //      copied: true
-  //   })
-  // }
+     onCopy() {
+     this.setState({
+      copied: true
+     })
+   }
 
 
   render() {
@@ -103,13 +103,15 @@ export class EstablishClaimEmail extends BaseForm {
 
         <div className="cf-app-segment" id="copy-note-button">
             <div className="cf-push-left">
-           
+           <CopyToClipboard text={this.state.emailForm.emailField.value}
+            onCopy={this.onCopy}>
             <Button
            name="copyNote"
            classNames={["usa-button-outline"]}>
          <i className="fa fa-files-o" aria-hidden="true"></i>
          Copy note
        </Button>
+       </CopyToClipboard>
       </div>
      </div>
 
