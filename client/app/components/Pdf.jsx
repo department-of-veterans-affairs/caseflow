@@ -163,7 +163,7 @@ export default class Pdf extends React.Component {
 
   scrollEvent = () => {
     let page = document.getElementsByClassName('page');
-    let { scrollWindow } = this;
+    let scrollWindow = document.getElementById('scrollWindow');
 
     Array.prototype.forEach.call(page, (ele, index) => {
       let boundingRect = ele.getBoundingClientRect();
@@ -207,7 +207,7 @@ export default class Pdf extends React.Component {
         }
 
         // Scroll to the correct location on the page
-        this.scrollWindow.scrollTop = scrollLocation;
+        document.getElementById('scrollWindow').scrollTop = scrollLocation;
       });
     });
   }
@@ -221,7 +221,9 @@ export default class Pdf extends React.Component {
     this.setupPdf(this.props.file);
 
     // Scroll event to render pages as they come into view
-    this.scrollWindow.addEventListener('scroll', this.scrollEvent);
+    let scrollWindow = document.getElementById('scrollWindow');
+
+    scrollWindow.addEventListener('scroll', this.scrollEvent);
   }
 
   // Calculates the symmetric difference between two sets.
@@ -251,7 +253,7 @@ export default class Pdf extends React.Component {
     // with negative conditions.
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
-      this.scrollWindow.scrollTop = 0;
+      document.getElementById('scrollWindow').scrollTop = 0;
       this.setupPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
@@ -291,10 +293,6 @@ export default class Pdf extends React.Component {
     // To specify the component as droppable, we need to preventDefault
     // on the event.
     event.preventDefault();
-  }
-
-  getScrollWindow(scrollWindow) {
-    this.scrollWindow = scrollWindow;
   }
 
   render() {
@@ -339,8 +337,7 @@ export default class Pdf extends React.Component {
         </div>);
     }
 
-    return <div id="scrollWindow"
-      className="cf-pdf-scroll-view" ref={this.getScrollWindow.bind(this)}>
+    return <div id="scrollWindow" className="cf-pdf-scroll-view">
         <div
           id={this.props.file}
           className={`cf-pdf-page pdfViewer singlePageView`}>
