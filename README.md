@@ -31,13 +31,13 @@ Then run the following:
 
 > $ gem install bundler
 
-You'll need PhantomJS, Postgres, and Redis if you don't have them.
+You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
 > $ brew install postgresql
 
 > $ brew install redis
 
-> $ brew install phantomjs
+> $ brew install chromedriver
 
 You may want to have Redis and Postgres run on startup. Let brew tell you how to do that:
 
@@ -52,9 +52,9 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-> $ nvm install node v7.1.0
+> $ nvm install v6.10.2
 
-> $ nvm use && npm install
+> $ cd client && nvm use && npm install
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
@@ -74,7 +74,7 @@ Or to run the rails server and frontend webpack server separately:
 
 `$ rails s`
 
-`$ nvm use && npm run dev`
+`$ cd client && nvm use && npm run dev`
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
