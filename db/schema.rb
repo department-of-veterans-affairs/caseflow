@@ -195,6 +195,13 @@ ActiveRecord::Schema.define(version: 20170413191800) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
+  create_table "tags", force: :cascade do |t|
+    t.string   "text"
+    t.integer  "document_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",             null: false
     t.string   "type",                  null: false
