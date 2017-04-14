@@ -42,8 +42,6 @@ export class EstablishClaimNote extends BaseForm {
       value: '',
       copied: false
     };
-     console.log("Here",this.state.noteForm.noteField, new Date());
-
   }
 
      onChangeCopy({target:{value}}){
@@ -54,7 +52,6 @@ export class EstablishClaimNote extends BaseForm {
    }
 
   onCopy() {
-    console.log("Here",this.state, new Date());
      this.setState({
        copied: true
     })
