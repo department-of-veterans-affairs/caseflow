@@ -7,7 +7,6 @@ class CertificationCancellationsController < ApplicationController
 
     # Response to JSON format was introduced for CancelCertificationModal react component
     # Old cancellation modal is using HTML format
-    # :nocov:
     respond_to do |format|
       if @certification_cancellation.save
         format.html { redirect_to @certification_cancellation }
@@ -17,6 +16,7 @@ class CertificationCancellationsController < ApplicationController
         format.html { redirect_to "errors/500", layout: "application", status: 500 }
         format.json { render json: { is_cancelled: false }.to_json }
       end
+    # :nocov:
     end
   end
 
