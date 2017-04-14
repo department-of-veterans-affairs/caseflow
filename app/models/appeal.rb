@@ -155,7 +155,7 @@ class Appeal < ActiveRecord::Base
   # This will return an array containing hash of ssoc_dates and ssoc_match?es.
   # I.e. [{"date"=>"01/01/2010", "match"=>"true"}, {"date"=>"02/02/2012", "match"=>"true"}]
   def ssoc_dates_with_matches
-    ssoc_dates.map { |item| [["date", item], ["match", ssoc_match?(item)]] }.map { |item| Hash[item] }
+    ssoc_dates.map { |item| { date: item, match: ssoc_match?(item) } }
   end
 
   def documents_match?
