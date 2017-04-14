@@ -9,8 +9,11 @@
     "npm": "2.14.4"
   },
   "scripts": {
-    "test": "NODE_ENV=test karma start",
-    "test:watch": "npm run test -- --watch",
+    "test": "npm run test:karma && npm run test:legacy",
+    "test:legacy": "NODE_ENV=test mocha --recursive test/setup.js test/* --compilers jsx:babel-core/register js:babel-core/register",
+    "test:karma": "NODE_ENV=test karma start",
+    "test:karma:watch": "npm run test:karma -- --watch",
+    "test:legacy:watch": "npm run test:legacy -- --watch",
     "lint": "eslint . --ext .jsx --ext .js",
     "lint:fix": "npm run lint -- --fix",
     "build": "webpack --config webpack.config.js",
