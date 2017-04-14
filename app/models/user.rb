@@ -85,6 +85,10 @@ class User < ActiveRecord::Base
     enable ? admin_roles << role : admin_roles.delete(role)
   end
 
+  def current_task(task_type)
+    tasks.to_complete.find_by(type: task_type)
+  end
+
   private
 
   def station_offices

@@ -8,7 +8,7 @@ import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
-import * as Constants from '../../establishClaim/constants/constants';
+import * as Constants from '../../establishClaim/constants';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
