@@ -5,14 +5,14 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha'],
-    // singleRun: true,
+    singleRun: true,
 
     files: [
-      { pattern: 'test/**/*.js' }
+      { pattern: 'test/karma/**/*.js' }
     ],
 
     preprocessors: {
-      'test/**/*.js': ['webpack', 'sourcemap']
+      'test/karma/**/*.js': ['webpack', 'sourcemap']
     },
 
     // Note that karma-webpack will ignore the `entry` value for
