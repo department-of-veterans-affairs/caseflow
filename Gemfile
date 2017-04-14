@@ -113,7 +113,7 @@ group :development, :test do
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "selenium"
-  gem 'simplecov', '0.12.0', require: false
+  gem 'simplecov', '0.14.0', require: false
   gem 'timecop'
 
   gem 'poltergeist' # For legacy JS tests. Remove when we're all React
