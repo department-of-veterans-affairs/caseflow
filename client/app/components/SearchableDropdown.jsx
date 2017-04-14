@@ -55,11 +55,11 @@ class SearchableDropdown extends Component {
     let SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
 
-    /* If the creatable option is passed in, these additonal props are added to 
+    /* If the creatable option is passed in, these additonal props are added to
      * the select component.
      * tagAlreadyExistsMsg: This message is used to as a message to show when a
      * custom tag entered already exits.
-     * promptTextCreator: this is a function called to show the text when a tag 
+     * promptTextCreator: this is a function called to show the text when a tag
      * entered doesn't exist in the current list of options.
     */
     if (creatable) {
