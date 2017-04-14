@@ -42,6 +42,8 @@
   background-position: right 1.3rem center;
   background-repeat: no-repeat;
   background-size: 1.3rem;
+  border-left: 1px solid #5b616b;
+  padding-left: 30px;
 }
 
 .Select-control {
@@ -227,7 +229,6 @@
 .Select-arrow-zone {
   cursor: pointer;
   display: table-cell;
-  position: relative;
   text-align: center;
   vertical-align: middle;
   width: 30px;
