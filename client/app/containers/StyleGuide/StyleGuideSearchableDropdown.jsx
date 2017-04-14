@@ -14,10 +14,25 @@ class StyleGuideSearchableDropdown extends Component {
   onChange = (value) => value;
 
   render() {
-    let options = {
+    const creatableOptions = {
       tagAlreadyExistsMsg: "Tag already exists",
       promptTextCreator: (label) => {return `Create a tag for "${label}"`}
     };
+
+    const options = [{ value: 'unitedstates',
+            label: 'United States' },
+          { value: 'germany',
+            label: 'Germany' },
+          { value: 'france',
+            label: 'France' },
+          { value: 'russia',
+            label: 'Russia' },
+          { value: 'china',
+            label: 'China' },
+          { value: 'india',
+            label: 'India' },
+          { value: 'uae',
+            label: 'United Arab Emrites' }];
 
     return (
       <div>
@@ -30,20 +45,7 @@ class StyleGuideSearchableDropdown extends Component {
         <SearchableDropdown
           label="Searchable dropdown"
           name="countries"
-          options={[{ value: 'unitedstates',
-            label: 'United States' },
-          { value: 'germany',
-            label: 'Germany' },
-          { value: 'france',
-            label: 'France' },
-          { value: 'russia',
-            label: 'Russia' },
-          { value: 'china',
-            label: 'China' },
-          { value: 'india',
-            label: 'India' },
-          { value: 'uae',
-            label: 'United Arab Emrites' }]}
+          options={options}
           onChange={this.onChange}
           required={true}
         />
@@ -52,25 +54,12 @@ class StyleGuideSearchableDropdown extends Component {
           creatable={true}
           label="Click in the box below to select, type, or add in issue(s)"
           name="countries"
-          options={[{ value: 'unitedstates',
-            label: 'United States' },
-          { value: 'germany',
-            label: 'Germany' },
-          { value: 'france',
-            label: 'France' },
-          { value: 'russia',
-            label: 'Russia' },
-          { value: 'china',
-            label: 'China' },
-          { value: 'india',
-            label: 'India' },
-          { value: 'uae',
-            label: 'United Arab Emrites' }]}
+          options={options}
           required={true}
           multi={true}
           placeholder="Select options"
           creatable={true}
-          creatableOptions={options}
+          creatableOptions={creatableOptions}
         />
         <p>The searchable dropdowns provide more context to users' choices.
           This is helpful in cases where there is a large dropdown menu with many options.
