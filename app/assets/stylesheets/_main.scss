@@ -280,3 +280,26 @@ select {
 .cf-secondary-disabled {
   opacity: .25;
 }
+
+// Make a button look like a link
+// caseflow commons
+
+.cf-btn-link {
+  &:hover,
+  &.button-hover {
+    background-color: $color-white;
+    color: $color-primary-darker;
+    text-decoration: underline;
+  }
+
+  &:active,
+  &.button-active {
+    background-color: $color-white;
+    color: $color-primary-darkest;
+    text-decoration: underline;
+  }
+
+  &.usa-button-disabled {
+    color: $color-gray-light;
+  }
+}

@@ -1,5 +1,6 @@
 class EndProduct
   include ActiveModel::Model
+  include ActiveModel::Validations
 
   STATUSES = {
     "PEND" => "Pending",
@@ -31,7 +32,13 @@ class EndProduct
   FULL_GRANT_MODIFIER = "172".freeze
   DISPATCH_MODIFIERS = %w(170 171 175 176 177 178 179 172).freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+                :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
+
+  # Validators are used for validating the EP before we create it in VBMS
+  validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
+  validates :claim_type_code, inclusion: { in: DISPATCH_CODES.keys }
+  validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
   def claim_type
     DISPATCH_CODES[claim_type_code] || claim_type_code
@@ -60,6 +67,22 @@ class EndProduct
       claim_type_code: claim_type,
       end_product_type_code: modifier,
       status_type_code: status_type
+    }
+  end
+
+  def to_vbms_hash
+    {
+      benefit_type_code: "1",
+      payee_code: "00",
+      predischarge: false,
+      claim_type: "Claim",
+      end_product_modifier: modifier,
+      end_product_code: claim_type_code,
+      end_product_label: claim_type,
+      station_of_jurisdiction: station_of_jurisdiction,
+      date: claim_date.to_date,
+      suppress_acknowledgement_letter: suppress_acknowledgement_letter,
+      gulf_war_registry: gulf_war_registry
     }
   end
 
@@ -95,6 +118,17 @@ class EndProduct
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code]
+      )
+    end
+
+    def from_establish_claim_params(hash)
+      new(
+        claim_date: parse_claim_date(hash[:date]),
+        claim_type_code: hash[:end_product_code],
+        modifier: hash[:end_product_modifier],
+        suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
+        gulf_war_registry: hash[:gulf_war_registry],
+        station_of_jurisdiction: hash[:station_of_jurisdiction]
       )
     end
 

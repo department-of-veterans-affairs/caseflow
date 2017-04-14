@@ -73,6 +73,8 @@ class Generators::Appeal
     #       Hash of the parsed values returned from AppealRepository from VACOLS or
     #       a symbol identifying the template used.
     #   - :documents [Array] - Array of `Document` objects returned from AppealsRepository from VBMS
+    #   - :inaccessible [Boolean] - pass true and BGS will return that this appeal is
+    #       not accessible by the current user
     #
     # Examples
     #
@@ -91,6 +93,7 @@ class Generators::Appeal
       vacols_record = extract_vacols_record(attrs)
       documents = attrs.delete(:documents)
       cast_datetime_fields(attrs)
+      inaccessible = attrs.delete(:inaccessible)
 
       appeal = Appeal.new(attrs)
 
@@ -102,10 +105,17 @@ class Generators::Appeal
       Fakes::AppealRepository.document_records ||= {}
       Fakes::AppealRepository.document_records[appeal.vbms_id] = documents
 
+      add_inaccessible_appeal(appeal) if inaccessible
+
       appeal
     end
 
     private
+
+    def add_inaccessible_appeal(appeal)
+      Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
+      Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.sanitized_vbms_id
+    end
 
     # Make sure Datetime fields are all casted correctly
     def cast_datetime_fields(attrs)

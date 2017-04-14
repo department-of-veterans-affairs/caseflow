@@ -1,4 +1,4 @@
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import StringUtil from '../../util/StringUtil';
 
