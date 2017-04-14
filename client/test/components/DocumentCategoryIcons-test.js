@@ -33,10 +33,65 @@ describe('DocumentCategoryIcons', () => {
                               documents={documents}
                               docId={3} />);
 
-    console.log(wrapper.html());
+    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
+    expect(wrapper.find('.cf-document-category-icons li').
+        at(0).
+        prop('aria-label')
+      ).
+      to.equal('Procedural');
+  });
+
+  it('renders an icon when the doc is in category_other', () => {
+    const documents = {
+      3: {
+        category_other: true // eslint-disable-line camelcase
+      }
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons
+                              documents={documents}
+                              docId={3} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
-    expect(wrapper.find('.cf-document-category-icons li').at(0).prop('aria-label')).
-      to.equal('Procedural');
+    expect(wrapper.find('.cf-document-category-icons li').
+        at(0).
+        prop('aria-label')
+      ).
+      to.equal('Other Evidence');
+  });
+
+  it('renders an icon when the doc is in category_medical', () => {
+    const documents = {
+      3: {
+        category_medical: true // eslint-disable-line camelcase
+      }
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons
+                              documents={documents}
+                              docId={3} />);
+
+    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
+    expect(wrapper.find('.cf-document-category-icons li').
+        at(0).
+        prop('aria-label')
+      ).
+      to.equal('Medical');
+  });
+
+  it('renders three icons when the doc is in all categories', () => {
+    const documents = {
+      3: {
+        category_medical: true, // eslint-disable-line camelcase
+        category_procedural: true, // eslint-disable-line camelcase
+        category_other: true // eslint-disable-line camelcase
+      }
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons
+                              documents={documents}
+                              docId={3} />);
+
+    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(3);
   });
 });
