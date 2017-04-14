@@ -2,7 +2,9 @@ From now, if you want to add a label, you need to run it by the team, so everyon
 
 ##Labels Definitions
 - **discussion** An issue used for the team to discuss solutions and ideas related to a high level problem. The team can discuss on the issue for some amount of time, and possibly come together in person to determine the outcome.
-- **bug** - A bug that has been found with code in production. Any bugs with stories that have not yet been completed should be handled on that issue.
+- **bug-high-priority** - A bug that has been found with code in production. Data loss, data corruption or system unavailable  
+- **bug-medium-priority** - A bug that has been found with code in production. Important functionality is unavailable but there is a workaround
+- **bug-low-priority** - A bug that has been found with code or design in production. Cosemtic issues with minor effects on functionality.
 - **starter-task** - An issue that would be good for a new developer to work on. Because it's easy.
 - **tech-improvement** - An issue that has to do with removing technical debt, or improving a technical issue with the application (e.g. upgrading the version of Ruby), and may not have a visible effect in the UX.
 - **feature-definition** - An issue that needs more definition before it can be developed.
