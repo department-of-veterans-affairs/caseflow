@@ -5,7 +5,6 @@ class Task < ActiveRecord::Base
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
-  delegate :vbms_id, to: :appeal
 
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end

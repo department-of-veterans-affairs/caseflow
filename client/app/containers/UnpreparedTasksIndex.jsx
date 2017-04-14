@@ -13,7 +13,7 @@ export default class UnpreparedTasksIndex extends React.Component {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.cached_veteran_name} (${task.sanitized_vbms_id})`
+          `${task.cached_veteran_name} (${task.vbms_id})`
       },
       {
         header: 'Decision Type',
