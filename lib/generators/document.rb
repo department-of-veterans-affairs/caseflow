@@ -9,11 +9,11 @@ class Generators::Document
         received_at: 3.days.ago,
         tags: [
           {
-            text:"hello there", 
+            text:"Service Connected", 
             created_at: 3.days.ago
           },
           {
-            text:"This is it", 
+            text:"Right Knee", 
             created_at: 3.days.ago
           }
         ]
