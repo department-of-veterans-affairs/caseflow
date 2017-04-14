@@ -11,12 +11,13 @@ class CertificationCancellationsController < ApplicationController
       if @certification_cancellation.save
         format.html { redirect_to @certification_cancellation }
         format.json { render json: { is_cancelled: true }.to_json }
-    # :nocov:
+
       else
         format.html { redirect_to "errors/500", layout: "application", status: 500 }
+        # :nocov:
         format.json { render json: { is_cancelled: false }.to_json }
+        # :nocov:
       end
-    # :nocov:
     end
   end
 
