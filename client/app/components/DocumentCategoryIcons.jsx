@@ -11,7 +11,7 @@ export const DocumentCategoryIcons = ({ documents, docId }) => {
     return null;
   }
 
-  return <ul className="cf-document-category-icons">
+  return <ul className="cf-document-category-icons" aria-label="document categories">
     {
       _(Constants.documentCategories).
         filter(
@@ -21,7 +21,9 @@ export const DocumentCategoryIcons = ({ documents, docId }) => {
         map((category) => {
           const Svg = category.svg;
 
-          return <li key={category.renderOrder}><Svg /></li>;
+          return <li key={category.renderOrder} aria-label={category.humanName}>
+            <Svg />
+          </li>;
         }).
         value()
     }
