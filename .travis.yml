@@ -9,6 +9,11 @@ branches:
       - master
 
 before_install:
+  - mkdir travis-node
+  - wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
+  - tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
+  - export PATH=$PWD/travis-node/node-v6.10.2-linux-x64/bin:$PATH
+  - node -v
   - sudo apt-get update
   - sudo apt-get install chromium-chromedriver
 
