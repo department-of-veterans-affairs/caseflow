@@ -507,6 +507,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         visit "/dispatch/establish-claim/#{task.id}"
 
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+
+        # Ensure user clicks on copy note button
+        find_label_for("copyNote").click
+
+        # Validate copynote button copies correct decision type for claim in vbms note
+        expect(find_field("VBMS Note").value).to have_copied("The BVA Partial Grant decision")
+
         find_label_for("confirmNote").click
 
         safe_click_on "Finish routing claim"

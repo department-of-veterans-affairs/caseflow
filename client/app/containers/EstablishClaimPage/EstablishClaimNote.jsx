@@ -143,6 +143,7 @@ export class EstablishClaimNote extends BaseForm {
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
+
      <TextareaField
         label="VBMS Note:"
         name="vbmsNote"
@@ -155,6 +156,7 @@ export class EstablishClaimNote extends BaseForm {
        <CopyToClipboard text={this.state.noteForm.noteField.value}
        onCopy={this.onCopy}>
         <Button
+        label = "Copy note"
          name="copyNote"
          classNames={["usa-button-outline"]}>
          <i className="fa fa-files-o" aria-hidden="true"></i>
