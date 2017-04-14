@@ -266,7 +266,7 @@ export default class PdfViewer extends React.Component {
             }
           ]}
           closeHandler={this.closeConfirmDeleteModal}
-          title="Delete Comment">
+          title="Delete comment">
           Are you sure you want to delete this comment?
         </Modal>}
       </div>
