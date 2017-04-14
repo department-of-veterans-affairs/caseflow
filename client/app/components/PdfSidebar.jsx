@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import EditComment from '../components/EditComment';
+import Button from '../components/Button';
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
@@ -36,13 +37,24 @@ export default class PdfSidebar extends React.Component {
     });
 
     return <div className="cf-sidebar-wrapper">
+        <div className="cf-sidebar-header">
+          <Button
+            name="hide menu"
+            classNames={["cf-pdf-button"]}>
+            <strong>Hide Menu ></strong>
+          </Button>
+        </div>
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">Document</div>
           <p className="cf-pdf-meta-title">
-            <b>Filename:</b> {this.props.doc.filename}
-          </p>
-          <p className="cf-pdf-meta-title">
             <b>Document Type:</b> {this.props.doc.type}
+            <Button
+              name="download"
+              classNames={["cf-btn-link"]}
+              ariaLabel="download"
+            >
+              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+            </Button>
           </p>
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}

@@ -62,8 +62,8 @@ export default class PdfUI extends React.Component {
 
     return <div className="cf-pdf-container">
       <div className="cf-pdf-header cf-pdf-toolbar">
-        <div>
-          <span className="cf-pdf-buttons-left">
+        <div className="usa-grid-full">
+          <span className="usa-width-one-third cf-pdf-buttons-left">
             { this.props.onShowList &&
               <Button
                 name="backToDocuments"
@@ -73,14 +73,37 @@ export default class PdfUI extends React.Component {
                 &nbsp; View all documents
               </Button> }
           </span>
-          <span className="cf-right-side">
+          <span className="usa-width-one-third cf-pdf-buttons-center">
+            <Button
+              name="zoomOut"
+              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+              onClick={this.zoom(-0.3)}
+              ariaLabel="zoom out">
+              <i className="fa fa-minus" aria-hidden="true"></i>
+            </Button>
+            <Button
+              name="fit"
+              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+              onClick={this.zoom(1)}
+              ariaLabel="fit to screen">
+              <i className="fa fa-arrows-alt" aria-hidden="true"></i>
+            </Button>
+            <Button
+              name="zoomIn"
+              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+              onClick={this.zoom(0.3)}
+              ariaLabel="zoom in">
+              <i className="fa fa-plus" aria-hidden="true"></i>
+            </Button>
+          </span>
+          <span className="usa-width-one-third cf-right-side">
             <Button
               name="newTab"
               classNames={["cf-pdf-button"]}
               ariaLabel="open document in new tab"
               onClick={() => window.open(
                 linkToSingleDocumentView(this.props.doc), '_blank')}>
-              {this.props.doc.filename}
+              {this.props.doc.type}
             </Button>
           </span>
         </div>
@@ -122,44 +145,9 @@ export default class PdfUI extends React.Component {
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
-        <div className="usa-grid-full">
-          <div className="usa-width-one-third cf-pdf-buttons-left">
-            { this.props.onSetLabel && <DocumentLabels
-              onClick={this.props.onSetLabel}
-              selectedLabels={selectedLabels}/> }
-          </div>
-          <div className="usa-width-one-third cf-pdf-buttons-center">
+        <div>
+          <div className="cf-pdf-buttons-center">
             Page {this.state.currentPage} of {this.state.numPages}
-          </div>
-          <div className="usa-width-one-third cf-pdf-buttons-right">
-            <Button
-              name="download"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              ariaLabel="download"
-            >
-              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="zoomOut"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(-0.3)}
-              ariaLabel="zoom out">
-              <i className="fa fa-minus" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="fit"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(1)}
-              ariaLabel="fit to screen">
-              <i className="fa fa-arrows-alt" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="zoomIn"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(0.3)}
-              ariaLabel="zoom in">
-              <i className="fa fa-plus" aria-hidden="true"></i>
-            </Button>
           </div>
         </div>
       </div>
