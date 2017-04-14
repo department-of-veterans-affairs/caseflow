@@ -27,7 +27,6 @@ class SearchableDropdown extends Component {
     if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
     }
-    console.log(newValue);
     this.setState({ value: newValue });
     if (this.props.onChange) {
       this.props.onChange(newValue);
