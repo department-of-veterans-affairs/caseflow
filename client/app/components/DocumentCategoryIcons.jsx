@@ -31,8 +31,8 @@ export const DocumentCategoryIcons = ({ documents, docId }) => {
 };
 
 DocumentCategoryIcons.propTypes = {
-  documents: PropTypes.object,
-  docId: PropTypes.number
+  documents: PropTypes.object.isRequired,
+  docId: PropTypes.number.isRequired
 };
 
 const mapPropsToState = (state) => _.pick(state, 'documents');

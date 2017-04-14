@@ -4,6 +4,12 @@ import { mount } from 'enzyme';
 import { DocumentCategoryIcons } from '../../app/components/DocumentCategoryIcons';
 
 describe('DocumentCategoryIcons', () => {
+  it('renders nothing when the document is not found', () => {
+    const wrapper = mount(<DocumentCategoryIcons documents={{}} id={3} />);
+
+    expect(wrapper.html()).to.equal(null);
+  });
+
   it('renders no icons when the doc is not in any categories', () => {
     const documents = {
       3: {}
@@ -11,7 +17,7 @@ describe('DocumentCategoryIcons', () => {
 
     const wrapper = mount(<DocumentCategoryIcons
                               documents={documents}
-                              id={3} />);
+                              docId={3} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(0);
   });
@@ -25,12 +31,12 @@ describe('DocumentCategoryIcons', () => {
 
     const wrapper = mount(<DocumentCategoryIcons
                               documents={documents}
-                              id={3} />);
+                              docId={3} />);
 
     console.log(wrapper.html());
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
-    expect(wrapper.find('.cf-document-category-icons li').get(0).ariaLabel).
+    expect(wrapper.find('.cf-document-category-icons li').at(0).prop('aria-label')).
       to.equal('Procedural');
   });
 });
