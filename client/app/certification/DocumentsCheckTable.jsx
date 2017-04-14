@@ -26,19 +26,19 @@ const DocumentsCheckTable = (props) => {
           <td>{props.form9Match ? <FoundIcon/> : <NotFoundIcon/>}</td>
           <td>Form 9</td>
           <td>{props.form9Date}</td>
-          <td>{props.form9Date}</td>
+          <td>{props.form9Match ? props.form9Date : "Not Found"}</td>
         </tr>
         <tr id="nod-match">
           <td>{props.nodMatch ? <FoundIcon/> : <NotFoundIcon/>}</td>
           <td>NOD</td>
           <td>{props.nodDate}</td>
-          <td>{props.nodDate}</td>
+          <td>{props.nodMatch ? props.nodDate : "Not Found"}</td>
         </tr>
         <tr id="soc-match">
           <td>{props.socMatch ? <FoundIcon/> : <NotFoundIcon/>}</td>
           <td>SOC</td>
           <td>{props.socDate}</td>
-          <td>{props.socDate}</td>
+          <td>{props.socMatch ? props.socDate : "Not Found"}</td>
         </tr>
         { typeof props.ssocDatesWithMatches !== 'undefined' &&
           props.ssocDatesWithMatches.length > 0 &&
@@ -47,7 +47,7 @@ const DocumentsCheckTable = (props) => {
                 <td>{ssocDateWithMatch.match ? <FoundIcon/> : <NotFoundIcon/>}</td>
                 <td>SSOC {index + 1}</td>
                 <td>{ssocDateWithMatch.date}</td>
-                <td>{ssocDateWithMatch.date}</td>
+                <td>{ssocDateWithMatch.match ? ssocDateWithMatch.date : "Not Found"}</td>
               </tr>
             )
         }
