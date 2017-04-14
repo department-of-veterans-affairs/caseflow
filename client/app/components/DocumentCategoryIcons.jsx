@@ -31,7 +31,7 @@ export const DocumentCategoryIcons = ({ documents, docId }) => {
 };
 
 DocumentCategoryIcons.propTypes = {
-  documents: PropTypes.object.isRequired,
+  documents: PropTypes.object,
   docId: PropTypes.number.isRequired
 };
 

@@ -1,10 +1,13 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import DecisionReviewer from '../../app/reader/DecisionReviewer';
+import { DecisionReviewer } from '../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
 import { documents } from '../data/documents';
 import { annotations } from '../data/annotations';
+import _ from 'lodash';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 import { asyncTest, pause } from '../helpers/AsyncTests';
 import ApiUtilStub from '../helpers/ApiUtilStub';
@@ -21,12 +24,16 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
-    wrapper = mount(<DecisionReviewer
-      appealDocuments={documents}
-      annotations={annotations}
-      pdfWorker="worker"
-      url="url"
-    />, { attachTo: document.getElementById('app') });
+    wrapper = mount(
+      <Provider store={createStore(_.identity)}>
+        <DecisionReviewer
+          appealDocuments={documents}
+          annotations={annotations}
+          onReceiveDocs={_.noop}
+          pdfWorker="worker"
+          url="url"
+        />
+      </Provider>, { attachTo: document.getElementById('app') });
   });
 
   afterEach(() => {
@@ -99,53 +106,6 @@ describe('DecisionReviewer', () => {
         // Verify there is still has a back to documents button
         expect(wrapper.find('#button-backToDocuments')).to.have.length(1);
       });
-    });
-
-    context('labels', () => {
-      it('send the correct data when clicked and highlights the right label',
-        asyncTest(async() => {
-          // Enter the pdf view
-          wrapper.find('a').findWhere(
-            (link) => link.text() === documents[0].type).
-            simulate('mouseUp');
-
-          // Click on the decision label
-          wrapper.find('.cf-pdf-bookmark-decisions').simulate('click');
-          await pause();
-
-          // Verify the decisions label is selected, and that we send an api request
-          expect(wrapper.find('.cf-pdf-bookmark-decisions').
-            parent().
-            hasClass('cf-selected-label')).to.be.true;
-          expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}`,
-            sinon.match({ data: { label: 'decisions' } }))).to.be.true;
-
-          // Click on a different label
-          wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
-          await pause();
-
-          // Verify the procedural label is selected, and that we send an api request
-          expect(wrapper.find('.cf-pdf-bookmark-procedural').
-            parent().
-            hasClass('cf-selected-label')).to.be.true;
-          expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}`,
-            sinon.match({ data: { label: 'procedural' } }))).to.be.true;
-
-          // Click on the same label
-          wrapper.find('.cf-pdf-bookmark-procedural').simulate('click');
-          await pause();
-
-          // Verify the procedural label is not selected,
-          // and that we send an api request to deselect
-          expect(wrapper.find('.cf-pdf-bookmark-procedural').
-            parent().
-            hasClass('cf-selected-label')).to.be.false;
-          expect(ApiUtilStub.apiPatch.lastCall.
-            calledWith(`/document/${documents[0].id}`,
-            sinon.match({ data: { label: null } }))).to.be.true;
-        }));
     });
 
     context('comments', () => {
