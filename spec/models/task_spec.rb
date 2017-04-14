@@ -415,7 +415,7 @@ describe Task do
         FakeTask.create!(aasm_state: :started, user: user, appeal: Generators::Appeal.create)
       end
 
-      it { is_expected.to be_truthy }
+      it { is_expected.to eq(true) }
     end
 
     context "when there are assignable tasks" do
@@ -423,7 +423,7 @@ describe Task do
         FakeTask.create!(aasm_state: :unassigned, appeal: Generators::Appeal.create)
       end
 
-      it { is_expected.to be_truthy }
+      it { is_expected.to eq(true) }
     end
 
     context "when there are no assignable tasks" do
@@ -431,7 +431,7 @@ describe Task do
         FakeTask.create!(aasm_state: :completed, appeal: Generators::Appeal.create)
       end
 
-      it { is_expected.to be_falsey }
+      it { is_expected.to eq(false) }
     end
 
     context "when there is an invalid task" do
@@ -443,7 +443,7 @@ describe Task do
       end
 
       it "invalidates that task and returns false" do
-        is_expected.to be_falsey
+        is_expected.to eq(false)
 
         expect(invalid_task.reload).to have_attributes(
           aasm_state: "completed",
