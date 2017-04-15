@@ -53,6 +53,10 @@ Rails.application.routes.draw do
     resources :appeal, only: [] do
       resources :documents, only: [:show, :index]
     end
+
+    resources :documents, only: [] do
+      resources :tags, only: [:create, :index]
+    end
   end
 
   patch "certifications" => "certifications#create"
