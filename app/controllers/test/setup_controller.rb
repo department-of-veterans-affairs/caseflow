@@ -1,12 +1,11 @@
 class Test::SetupController < ApplicationController
-  before_action :require_uat, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
+  before_action :require_non_prod, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
 
   def index
     @certification_appeal = "UNCERTIFY_ME"
     @dispatch_appeal = "DISPATCH_ME"
   end
 
-  # Used for resetting data in UAT for certification
   def uncertify_appeal
     test_appeal_id = params["UNCERTIFY_ME"][:vacols_id]
     unless certification_ids.include?(test_appeal_id)
@@ -23,7 +22,6 @@ class Test::SetupController < ApplicationController
     redirect_to new_certification_path(vacols_id: test_appeal_id)
   end
 
-  # Used for resetting data in UAT for claims establishment
   def appeal_location_date_reset
     test_appeal_id = params["DISPATCH_ME"][:vacols_id]
     if full_grant_ids.include?(test_appeal_id)
@@ -58,7 +56,7 @@ class Test::SetupController < ApplicationController
   private
 
   # :nocov:
-  def require_uat
+  def require_non_prod
     redirect_to "/unauthorized" unless test_user?
   end
 
