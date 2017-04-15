@@ -16,7 +16,7 @@ class Test::SetupController < ApplicationController
     @certification = Certification.find_by(vacols_id: test_appeal_id)
     Form8.delete_all(vacols_id: test_appeal_id)
     appeal = Appeal.find_by(vacols_id: test_appeal_id)
-    AppealRepository.uncertify(appeal)
+    AppealRepository.uncertify(appeal) unless appeal.nil?
     Certification.delete_all(vacols_id: test_appeal_id)
 
     redirect_to new_certification_path(vacols_id: test_appeal_id)
