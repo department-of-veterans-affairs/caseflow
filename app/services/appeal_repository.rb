@@ -32,6 +32,9 @@ class AppealRepository
     set_vacols_values(appeal: appeal, case_record: case_record)
 
     appeal
+
+  rescue ActiveRecord::RecordNotFound
+    return false
   end
 
   # :nocov:
@@ -51,7 +54,7 @@ class AppealRepository
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
-    fail ActiveRecord::RecordNotFound if case_records.empty?
+    return false if case_records.empty?
     fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
