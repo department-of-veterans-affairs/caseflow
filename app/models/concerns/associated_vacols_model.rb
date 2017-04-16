@@ -16,7 +16,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          check_and_load_vacols_data!
+          check_and_load_vacols_data! unless vacols_loading?
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
@@ -32,16 +32,37 @@ module AssociatedVacolsModel
     end
   end
 
-  # TODO(jd): consider adding a more sophisticated caching mechanism.
-  # Right now we are setting the @fetched_vacols_data to true before knowing
-  # if the DB request to VACOLS succeeded. This is required to avoid an infinite
-  # loop within the setters, but will not properly handle the case of VACOLS
-  # returning an error
   def check_and_load_vacols_data!
-    return if @fetched_vacols_data
+    perform_vacols_request unless vacols_complete?
+
+    vacols_success?
+  end
+
+  def vacols_record_exists?
+    check_and_load_vacols_data!
+  end
+
+  private
+
+  def perform_vacols_request
+    # Use :loading status to prevent infinite loop
+    @vacols_load_status = :loading
 
     # Fetch and cache values from VACOLS
-    @fetched_vacols_data = true
-    self.class.repository.load_vacols_data(self)
+    # self.class.repository.load_vacols_data(self) should return truthy or false
+    # which is used to store the outcome of the load
+    @vacols_load_status = self.class.repository.load_vacols_data(self) ? :success : :failed
+  end
+
+  def vacols_loading?
+    @vacols_load_status == :loading
+  end
+
+  def vacols_complete?
+    @vacols_load_status && (@vacols_load_status != :loading)
+  end
+
+  def vacols_success?
+    @vacols_load_status == :success
   end
 end
