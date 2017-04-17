@@ -74,7 +74,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def veteran
-    @veteran ||= Veteran.new(appeal: self).load_bgs_record!
+    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
   def veteran_name

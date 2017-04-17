@@ -12,7 +12,6 @@ class Veteran
 
   MILITARY_ADDRESS_STATES = %w(AE AA AP).freeze
 
-  attr_accessor :appeal
   attr_accessor(*BGS_ATTRIBUTES)
 
   # Convert to hash used in AppealRepository.establish_claim!
@@ -33,12 +32,16 @@ class Veteran
     self
   end
 
+  def self.bgs
+    @bgs ||= BGSService.new
+  end
+
   private
 
   def address_type
     return "OVR" if MILITARY_ADDRESS_STATES.include?(state)
     return "INT" if country != "USA"
-    ""
+    "" # Empty string means the address doesn't have a special type
   end
 
   def bgs_record
@@ -46,7 +49,7 @@ class Veteran
   end
 
   def fetch_bgs_record
-    BGSService.new.fetch_veteran_info(appeal.sanitized_vbms_id)
+    Veteran.bgs.fetch_veteran_info(file_number)
   end
 
   def vbms_attributes

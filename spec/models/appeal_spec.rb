@@ -512,7 +512,7 @@ describe Appeal do
     end
 
     it "returns veteran loaded with BGS values" do
-      is_expected.to have_attributes(appeal: appeal, first_name: "Ed", last_name: "Merica")
+      is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
     end
   end
 end

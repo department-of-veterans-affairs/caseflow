@@ -1,8 +1,7 @@
 require "rails_helper"
 
 describe Veteran do
-  let(:appeal) { Generators::Appeal.build }
-  let(:veteran) { Veteran.new({ appeal: appeal }.merge(veteran_attrs)) }
+  let(:veteran) { Veteran.new({ file_number: "445566" }.merge(veteran_attrs)) }
   let(:veteran_attrs) { {} }
 
   context "#load_bgs_record!" do
@@ -10,7 +9,7 @@ describe Veteran do
 
     let(:veteran_record) do
       {
-        file_number: "123456789",
+        file_number: "445566",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
@@ -29,12 +28,12 @@ describe Veteran do
     end
 
     before do
-      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+      Fakes::BGSService.veteran_records = { "445566" => veteran_record }
     end
 
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
-        file_number: "123456789",
+        file_number: "445566",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
@@ -55,7 +54,6 @@ describe Veteran do
 
     let(:veteran_attrs) do
       {
-        file_number: "123456789",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
@@ -75,7 +73,7 @@ describe Veteran do
 
     it "returns the correct values" do
       is_expected.to eq(
-        file_number: "123456789",
+        file_number: "445566",
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
