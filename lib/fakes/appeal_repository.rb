@@ -49,9 +49,10 @@ class Fakes::AppealRepository
     VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
-  def self.establish_claim!(claim:, appeal:)
-    Rails.logger.info("Submitting claim to VBMS for appeal: #{appeal.id}")
-    Rails.logger.info("Claim data:\n #{claim}")
+  def self.establish_claim!(claim_hash:, veteran_hash:)
+    Rails.logger.info("Submitting claim to VBMS...")
+    Rails.logger.info("Veteran data:\n #{veteran_hash}")
+    Rails.logger.info("Claim data:\n #{claim_hash}")
 
     # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
@@ -204,8 +205,7 @@ class Fakes::AppealRepository
   end
 
   def self.establish_claim_multiple_decisions
-    certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago),
+    establish_claim_documents + [
       Generators::Document.build(type: "BVA Decision", received_at: 8.days.ago)
     ]
   end
