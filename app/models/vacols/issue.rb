@@ -4,6 +4,18 @@ class VACOLS::Issue < VACOLS::Record
   self.primary_key = "isskey"
 
   # :nocov:
+  def new_material?
+    issprog == '02' && isscode == '15' && isslev1 == '04'
+  end
+
+  def non_new_matrial_allowed?
+    !new_material && allowed?
+  end
+
+  def allowed?
+    issdc == '1'
+  end
+
   def self.format(issue)
     description = ["#{issue['isscode']} - #{issue['isscode_label']}"]
     description.push("#{issue['isslev1']} - #{issue['isslev1_label']}") if issue["isslev1"]

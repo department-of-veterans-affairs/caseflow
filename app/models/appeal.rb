@@ -187,15 +187,15 @@ class Appeal < ActiveRecord::Base
   end
 
   def partial_grant?
-    status == "Remand" && disposition == "Allowed"
+    status == "Remand" && issues.all?(&:non_new_matrial_allowed?)
   end
 
   def full_grant?
-    status == "Complete"
+    status == "Complete" && issues.all?(&:non_new_matrial_allowed?)
   end
 
   def remand?
-    status == "Remand" && disposition == "Remanded"
+    status == "Remand" &&issues.none?(&:non_new_matrial_allowed?)
   end
 
   def decision_type

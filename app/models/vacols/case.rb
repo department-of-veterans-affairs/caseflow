@@ -103,11 +103,21 @@ class VACOLS::Case < VACOLS::Record
   # supported in VACOLS
   VALID_UPDATE_LOCATIONS = %w(50 51 53 54 98).freeze
 
-  JOIN_ISSUE_CNT_REMAND = "
+  JOIN_ISSUE_CNT_ALLOWED = "
     inner join
     (
       select ISSKEY,
-      count(case when ISSDC = '3' then 1 end) ISSUE_CNT_REMAND
+
+      count(case when
+      (
+        ISSDC = '1' and not
+          (
+            ISSPROG = '02' and
+            ISSCODE = '15' and
+            ISSLEV1 = '04'
+          )
+        )
+        then 1 end) ISSUE_CNT_ALLOWED
 
       from ISSUES
       group by ISSKEY
@@ -127,8 +137,7 @@ class VACOLS::Case < VACOLS::Record
   ".freeze
 
   WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE = %{
-    BFDC = '1'
-    -- Cases marked with the disposition Allowed, which have at least one grant.
+    BFMPRO = 'HIS'
 
     and TIOCTIME >= to_date(?, 'YYYY-MM-DD HH24:MI')
     -- As all full grants are in HIS status, we must time bracket our requests.
@@ -139,7 +148,7 @@ class VACOLS::Case < VACOLS::Record
     and BFSO <> 'T'
     -- Exclude cases with a private attorney.
 
-    and ISSUE_CNT_REMAND = 0
+    and ISSUE_CNT_ALLOWED > 0
     -- Check that there are no remands on the case. Denials can be included.
   }.freeze
 
@@ -152,7 +161,7 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(outcoded_after:)
-    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_REMAND)
+    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_ALLOWED)
                 .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
                 .order("BFDDEC ASC")
   end
