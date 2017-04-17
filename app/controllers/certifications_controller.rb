@@ -20,18 +20,23 @@ class CertificationsController < ApplicationController
     end
   end
 
+  def assemble_updates
+    updateable_fields = %w(representative_name
+                           representative_type
+                           hearing_change_doc_found_in_vbms
+                           form9_type
+                           hearing_preference)
+    updates = {}
+
+    updateable_fields.each do |field_name|
+      updates[field_name] = params[field_name] if params[field_name]
+    end
+  end
+
   def update
-    p "PARAMS"
-    p params
-    p "DATA", params[:data]
-    params.require(:data).permit(
-      :representative_name,
-      :representative_type,
-      :hearing_change_doc_found_in_vbms,
-      :form9_type,
-      :hearing_preference
-    )
-    certification.update!(params[:data])
+    updates = assemble_updates
+    certification.update!(updates)
+    render json: {}
   end
 
   # TODO: update for certification v2- should we use hidden form params?

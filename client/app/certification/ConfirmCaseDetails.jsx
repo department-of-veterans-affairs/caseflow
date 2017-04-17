@@ -56,7 +56,7 @@ class ConfirmCaseDetails extends React.Component {
   getErroredFields() {
     const erroredFields = [];
 
-    if (!this.props.representativeName) {
+    if (!this.props.representativeName && !this.representativeTypeIsNone()) {
       erroredFields.push('representativeName');
     }
 
@@ -69,6 +69,10 @@ class ConfirmCaseDetails extends React.Component {
     }
 
     return erroredFields;
+  }
+
+  representativeTypeIsNone() {
+    return this.props.representativeType === Constants.representativeTypes.NONE;
   }
 
   representativeTypeIsOther() {
@@ -89,10 +93,14 @@ class ConfirmCaseDetails extends React.Component {
       return;
     }
 
+    // Translate camelcase React names into snake case
+    // Rails key names.
+    /* eslint-disable camelcase */
     const data = {
-      representativeType: this.props.representativeType,
-      representativeName: this.props.representativeName
+      representative_type: this.props.representativeType,
+      representative_name: this.props.representativeName
     };
+    /* eslint-enable "camelcase" */
 
     this.props.startRequest(data);
   }
@@ -105,7 +113,6 @@ class ConfirmCaseDetails extends React.Component {
       otherRepresentativeType,
       onOtherRepresentativeTypeChange,
       validationFailed,
-      invalidFields,
       loading,
       updateFailed,
       updateSucceeded,
@@ -117,9 +124,8 @@ class ConfirmCaseDetails extends React.Component {
         to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
     }
 
-    console.log('failed', updateFailed);
-
     if (updateFailed) {
+      // TODO: add real error handling and validated error states etc.
       return <div>500 500 error error</div>;
     }
 
@@ -231,6 +237,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
+  updateSucceeded: state.updateSucceeded,
+  updateFailed: state.updateFailed,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,

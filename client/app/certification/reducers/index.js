@@ -59,7 +59,11 @@ export const certificationReducers = function(state = initialState, action = {})
   switch (action.type) {
   case Constants.UPDATE_PROGRESS_BAR:
     return Object.assign({}, state, {
-      currentSection: action.payload.currentSection
+      currentSection: action.payload.currentSection,
+      // reset some parts of state so we don't skip pages or end up in loops
+      updateFailed: null,
+      updateSucceeded: null,
+      loading: false
     });
   case Constants.CHANGE_REPRESENTATIVE_NAME:
     return Object.assign({}, state, {
@@ -119,6 +123,8 @@ export const certificationReducers = function(state = initialState, action = {})
 
 export const mapDataToInitialState = function(state) {
   return {
+    representativeType: state.representative_type,
+    representativeName: state.representative_name,
     form9Match: state.appeal['form9_match?'],
     form9Date: state.appeal.form9_date,
     nodMatch: state.appeal['nod_match?'],
