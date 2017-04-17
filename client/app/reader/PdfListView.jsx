@@ -54,6 +54,8 @@ export class PdfListView extends React.Component {
       return content;
     };
 
+    const toggleCategoryFilter = () => this.props.toggleCategoryFilter('category');
+
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
@@ -67,10 +69,11 @@ export class PdfListView extends React.Component {
             getRef={(categoryFilterIcon) => {
               this.categoryFilterIcon = categoryFilterIcon;
             }}
-            handleActivate={() => this.props.toggleCategoryFilter('category')} />
+            handleActivate={toggleCategoryFilter} />
 
           {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
-            <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}>
+            <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}
+              handleClose={toggleCategoryFilter}>
               <DocCategoryPicker
                 categoryToggleStates={this.props.pdfList.filters.category} />
             </DropdownFilter>

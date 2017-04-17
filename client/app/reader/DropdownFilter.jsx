@@ -33,7 +33,10 @@ class DropdownFilter extends React.PureComponent {
       this.rootElem = rootElem;
     }}>
       <div>
-        Clear category filter <i className="fa fa-times fa-1"></i>
+        Clear category filter
+          <i className="fa fa-times fa-1" onClick={this.props.handleClose}
+            tabindex="0"
+            role="button" aria-label="close"></i>
       </div>
       {children}
     </div>;
