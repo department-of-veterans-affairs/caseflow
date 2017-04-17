@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :verify_authentication
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
-  rescue_from VBMSError, with: :on_vbms_error
+  rescue_from VBMS::ClientError, with: :on_vbms_error
 
   def unauthorized
     render status: 403
@@ -105,7 +105,7 @@ class ApplicationController < ActionController::Base
   end
 
   def test_user?
-    (Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)) && current_user.css_id == ENV["TEST_USER_ID"]
+    !Rails.deploy_env?(:prod) && current_user.css_id == ENV["TEST_USER_ID"]
   end
   helper_method :test_user?
 

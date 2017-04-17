@@ -10,31 +10,47 @@ class Task < ActiveRecord::Base
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
-  COMPLETION_STATUS_MAPPING = {
-    completed: 0,
+  enum completion_status: {
+    routed_to_arc: 0,
     canceled: 1,
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
     special_issue_emailed: 5,
-    special_issue_not_emailed: 6,
-    special_issue_vacols_routed: 7
-  }.freeze
+    special_issue_vacols_routed: 7,
+    invalidated: 8,
 
-  # Use this to define status texts that don't properly titlize
-  COMPLETION_STATUS_TEXT_MAPPING = {
-    assigned_existing_ep: "Assigned Existing EP"
+    # These statuses are not in use anymore
+    special_issue_not_emailed: 6
+  }
+
+  # Use this to define custom completion status texts
+  COMPLETION_STATUS_TEXT = {
+    routed_to_arc: "EP created for ARC - 397",
+    assigned_existing_ep: "Assigned Existing EP",
+    special_issue_vacols_routed: "Routed in VACOLS",
+    expired: "Released to Work Queue"
   }.freeze
 
   REASSIGN_OLD_TASKS = [:EstablishClaim].freeze
 
   class << self
-    def unassigned
-      where(user_id: nil)
+    # Returns either the users currently assigned task, or
+    # assigns the next assignable task to the user.
+    def assign_next_to!(user)
+      user.current_task(self) || find_and_assign_next!(user)
+    end
+
+    def any_assignable_to?(user)
+      !(user.current_task(self).nil? && next_assignable.nil?)
     end
 
     def unprepared
       where(aasm_state: "unprepared")
+    end
+
+    def completed_by(user)
+      where(user_id: user.id, aasm_state: "completed")
     end
 
     def assigned_not_completed
@@ -66,18 +82,42 @@ class Task < ActiveRecord::Base
       where(aasm_state: "completed")
     end
 
-    def to_complete_task_for_appeal(appeal)
-      to_complete.where(appeal: appeal)
+    def canceled
+      where(completion_status: 1)
     end
 
-    def completion_status_code(text)
-      COMPLETION_STATUS_MAPPING[text]
+    def completed_success
+      where(completion_status: [0, 3, 4, 5, 7])
+    end
+
+    def to_complete_task_for_appeal(appeal)
+      to_complete.where(appeal: appeal)
     end
 
     def tasks_completed_by_users(tasks)
       tasks.each_with_object({}) do |task, user_numbers|
         user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
       end
+    end
+
+    # Generic relation method for joining the result of the task
+    # ie: EstablishClaim.joins(:claim_establishment)
+    def joins_task_result
+      fail MustImplementInSubclassError
+    end
+
+    private
+
+    def find_and_assign_next!(user)
+      next_assignable.tap { |task| task && task.assign!(user) }
+    end
+
+    def next_assignable
+      assignable.oldest_first.find(&:should_assign?)
+    end
+
+    def assignable
+      where(user_id: nil, aasm_state: "unassigned")
     end
   end
 
@@ -94,12 +134,9 @@ class Task < ActiveRecord::Base
     end
 
     event :assign do
-      transitions from: :unassigned, to: :assigned, after: (proc do |*args|
-        assign_user(*args)
+      before { |*args| assign_user(*args) }
 
-        # Temporarily needed while there are tasks created that don't have claim establishments
-        init_claim_establishment!
-      end)
+      transitions from: :unassigned, to: :assigned
     end
 
     event :start do
@@ -111,43 +148,32 @@ class Task < ActiveRecord::Base
     # action or review the external action. In the case of establish claim we're letting
     # them add a note to VBMS
     event :review do
-      transitions from: :started, to: :reviewed, after: proc { |*args| save_outgoing_reference(*args) }
+      before { |*args| assign_review_attributes(*args) }
+
+      transitions from: :started, to: :reviewed
     end
 
     event :complete do
-      transitions from: :reviewed, to: :completed, after: proc { |*args| save_completion_status(*args) }
-      transitions from: :started, to: :completed, after: proc { |*args| save_completion_status(*args) }
+      before { |*args| assign_completion_attribtues(*args) }
+
+      transitions from: :reviewed, to: :completed
+      transitions from: :started, to: :completed
     end
-  end
 
-  def before_assign
-    # Test hook for testing race conditions
-  end
-
-  def assign_user(user)
-    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
-    update!(
-      user: user,
-      assigned_at: Time.now.utc
-    )
+    event :invalidate do
+      before :before_invalidation
+      transitions to: :completed
+    end
   end
 
   def start_time
     update!(started_at: Time.now.utc)
   end
 
-  def prepare_with_decision!
-    return false if appeal.decisions.empty?
-
-    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-
-    prepare!
-  end
-
   def cancel!(feedback = nil)
     transaction do
       update!(comment: feedback)
-      complete!(:completed, status: self.class.completion_status_code(:canceled))
+      complete!(status: :canceled)
     end
   end
 
@@ -158,16 +184,9 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def assign_existing_end_product!(end_product_id)
-    Task.transaction do
-      review!(outgoing_reference_id: end_product_id) if may_review?
-      complete!(:completed, status: self.class.completion_status_code(:assigned_existing_ep))
-    end
-  end
-
   def complete_and_recreate!(status_code)
     transaction do
-      complete!(:completed, status: self.class.completion_status_code(status_code))
+      complete!(status: status_code)
       self.class.create!(appeal_id: appeal_id, type: type)
     end
   end
@@ -184,56 +203,12 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def canceled?
-    completion_status == self.class.completion_status_code(:canceled)
-  end
-
-  def assigned_existing_ep?
-    completion_status == self.class.completion_status_code(:assigned_existing_ep)
-  end
-
-  def special_issue_emailed?
-    completion_status == self.class.completion_status_code(:special_issue_emailed)
-  end
-
-  def special_issue_not_emailed?
-    completion_status == self.class.completion_status_code(:special_issue_not_emailed)
-  end
-
-  def dispatched_to_arc?
-    appeal.dispatched_to_station == "397"
-  end
-
   def days_since_creation
     (Time.zone.now - created_at).to_i / 1.day
   end
 
-  # completion_status is 0 for success, or non-zero to specify another completed case
-  def save_completion_status(status:)
-    update!(
-      completed_at: Time.now.utc,
-      completion_status: status
-    )
-  end
-
-  def no_review_completion_status(status:)
-    [
-      self.class.completion_status_code(:special_issue_emailed),
-      self.class.completion_status_code(:special_issue_not_emailed),
-      self.class.completion_status_code(:special_issue_vacols_routed)
-    ].include? status
-  end
-
-  def save_outgoing_reference(outgoing_reference_id: nil)
-    update!(
-      outgoing_reference_id: outgoing_reference_id
-    )
-  end
-
   def completion_status_text
-    status = COMPLETION_STATUS_MAPPING.key(completion_status)
-    COMPLETION_STATUS_TEXT_MAPPING[status] ||
-      status.to_s.titleize
+    completion_status ? (COMPLETION_STATUS_TEXT[completion_status.to_sym] || completion_status.titleize) : ""
   end
 
   def no_open_tasks_for_appeal
@@ -244,6 +219,12 @@ class Task < ActiveRecord::Base
 
   def attributes
     super.merge(type: type)
+  end
+
+  # There are some additional criteria we need to know from our dependencies
+  # whether a task is assignable by the current_user.
+  def should_assign?
+    appeal.can_be_accessed_by_current_user? && !check_and_invalidate!
   end
 
   def to_hash_with_bgs_call
@@ -265,5 +246,44 @@ class Task < ActiveRecord::Base
         ] }],
       methods: [:progress_status, :aasm_state]
     )
+  end
+
+  private
+
+  def assign_review_attributes(outgoing_reference_id: nil)
+    assign_attributes(outgoing_reference_id: outgoing_reference_id)
+  end
+
+  def assign_completion_attribtues(status:, outgoing_reference_id: nil)
+    assign_review_attributes(outgoing_reference_id: outgoing_reference_id) unless reviewed?
+
+    assign_attributes(
+      completed_at: Time.now.utc,
+      completion_status: status
+    )
+  end
+
+  def assign_user(user)
+    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
+
+    assign_attributes(
+      user: user,
+      assigned_at: Time.now.utc
+    )
+  end
+
+  def before_invalidation
+    assign_attributes(completion_status: :invalidated)
+  end
+
+  def check_and_invalidate!
+    invalidate! if should_invalidate?
+    invalidated?
+  end
+
+  # Changes in VACOLS or VBMS can cause tasks to become invalid.
+  # This is a method for determining that. It can be overridden by subclasses.
+  def should_invalidate?
+    false
   end
 end

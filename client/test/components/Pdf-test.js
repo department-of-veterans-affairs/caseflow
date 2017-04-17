@@ -1,10 +1,12 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
 import Pdf from '../../app/components/Pdf';
 import sinon from 'sinon';
 
 import PdfJsStub from '../helpers/PdfJsStub';
+
+import { documents } from '../data/documents';
 
 /* eslint-disable no-unused-expressions */
 describe('Pdf', () => {
@@ -13,7 +15,7 @@ describe('Pdf', () => {
   // Note, these tests use mount rather than shallow.
   // In order to get that working, we must stub out
   // our endpoints in PDFJS and PDFJSAnnotate.
-  // To appraoch reality, our stubbed out versions
+  // To approach reality, our stubbed out versions
   // also add divs representing PDF 'pages' to the dom.
 
   /* eslint-disable max-statements */
@@ -25,7 +27,7 @@ describe('Pdf', () => {
 
       wrapper = mount(<Pdf
         comments={[]}
-        documentId={1}
+        documentId={documents[0].id}
         file="test.pdf"
         id={pdfId}
         pdfWorker="noworker"
@@ -40,21 +42,12 @@ describe('Pdf', () => {
 
     context('.render', () => {
       it(`renders the staging div`, () => {
-        expect(wrapper.find(`#${pdfId}`)).to.have.length(1);
+        expect(wrapper.find('.cf-pdf-pdfjs-container')).
+          to.have.length(PdfJsStub.numPages);
       });
     });
 
     context('.setuppdf', () => {
-      it('calls createPages', (done) => {
-        let createPageSpy = sinon.spy(wrapper.instance(), 'createPages');
-
-        wrapper.instance().setupPdf("test.pdf").
-          then(() => {
-            expect(createPageSpy.callCount).to.equal(1);
-            done();
-          });
-      });
-
       context('onPageChange set', () => {
         let onPageChange;
 
@@ -69,66 +62,6 @@ describe('Pdf', () => {
           wrapper.instance().setupPdf("test.pdf").
             then(() => {
               expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
-              done();
-            });
-        });
-      });
-    });
-
-    context('.createPages', () => {
-      // reset any calls from mounting
-      beforeEach(() => {
-        PdfJsStub.pdfjsCreatePage.resetHistory();
-      });
-
-      it(`calls PDFJS createPage ${PdfJsStub.numPages} times`, () => {
-        wrapper.instance().createPages(PdfJsStub.pdfDocument);
-        expect(PdfJsStub.pdfjsCreatePage.callCount).to.equal(PdfJsStub.numPages);
-      });
-
-      it(`creates ${PdfJsStub.numPages} pages`, () => {
-        wrapper.instance().createPages(PdfJsStub.pdfDocument);
-        expect(wrapper.state('pdfjsPages')).to.have.length(3);
-      });
-    });
-
-    context('.renderPage', () => {
-      it('creates a new page', () => {
-        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
-        wrapper.instance().renderPage(1);
-        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(2);
-      });
-
-      it('only renders page once when called twice', (done) => {
-        expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
-        wrapper.instance().renderPage(1).
-          then(() => {
-            wrapper.instance().renderPage(1);
-            expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(2);
-            done();
-          }).
-          catch(() => {
-            // Should never get here since the render is mocked to succeed.
-            assert.fail();
-          });
-      });
-
-      context('mock renderPage to fail', (done) => {
-        beforeEach(() => {
-          PdfJsStub.pdfjsRenderPage.resetBehavior();
-          PdfJsStub.pdfjsRenderPage.rejects();
-        });
-
-        it('tries to render page twice when called twice', () => {
-          expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(1);
-          wrapper.instance().renderPage(1).
-            then(() => {
-              // Should never get here since the render is mocked to fail.
-              assert.fail();
-            }).
-            catch(() => {
-              wrapper.instance().renderPage(1);
-              expect(PdfJsStub.pdfjsRenderPage.callCount).to.equal(3);
               done();
             });
         });
@@ -162,43 +95,6 @@ describe('Pdf', () => {
         it('pages are not redrawn (no-op)', () => {
           wrapper.setProps({ id: 'newId' });
           expect(draw.callCount).to.equal(0);
-        });
-      });
-    });
-
-    context('.onPageClick', () => {
-      context('supplied with props.onPageClick', () => {
-        let onPageClick;
-
-        beforeEach(() => {
-          onPageClick = sinon.spy();
-          wrapper.setProps({
-            onPageClick,
-            scale: 2
-          });
-        });
-
-        it('calls onPageClick prop', () => {
-          let event = {
-            offsetX: 10,
-            offsetY: 10,
-            target: {
-              offsetLeft: 20,
-              offsetTop: 30
-            }
-          };
-
-          // The expected coordinate is
-          // (( offsetX + offsetLeft ) / scale, (offsetY + offsetTop) / scale)
-          // (( 10 + 20) / 2, (10 + 30) / 2)
-          // (15, 20)
-          let coordinate = {
-            xPosition: 15,
-            yPosition: 20
-          };
-
-          wrapper.instance().onPageClick(0)(event);
-          expect(onPageClick.calledWith(0, coordinate)).to.be.true;
         });
       });
     });

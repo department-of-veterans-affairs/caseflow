@@ -1,5 +1,4 @@
 require "rails_helper"
-require "vbms"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
@@ -66,7 +65,22 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
-      Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
+      Generators::EstablishClaim.create(
+        created_at: 3.days.ago,
+        appeal_id: appeal.id,
+        aasm_state: "unassigned"
+      )
+    end
+
+    let(:invalid_appeal) do
+      Generators::Appeal.create(
+        vacols_record: { template: :remand_decided, decision_date: nil },
+        documents: documents
+      )
+    end
+
+    let(:inaccessible_appeal) do
+      Generators::Appeal.create(vacols_record: vacols_record, inaccessible: true)
     end
 
     let(:ep_already_exists_error) do
@@ -75,43 +89,72 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "use a different EP code modifier. GUID: 13fcd</faultstring>")
     end
 
+    let(:missing_ssn_error) do
+      VBMS::HTTPError.new("500", "<fieldName>PersonalInfo SSN</fieldName>" \
+        "<errorType>MINIMUM_LENGTH_NOT_SATISFIED</errorType><message>The " \
+        "minimum data length for the PersonalInfo SSN within the veteran " \
+        "was not satisfied: The PersonalInfo SSN must not be empty." \
+        "</message></formFieldErrors>")
+    end
+
     scenario "Assign the correct new task to myself" do
-      # Create a newer task, that the current user can access
-      appeal_with_access = Generators::Appeal.create(vacols_record: vacols_record)
-      task_with_access = Generators::EstablishClaim.create(appeal_id: appeal_with_access.id,
-                                                           aasm_state: :unassigned)
+      # Create an older task with an inaccessible appeal
+      Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        aasm_state: :unassigned,
+        appeal: inaccessible_appeal
+      )
 
       # Create a task already assigned to another user
-      Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
+      Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        user_id: case_worker.id,
+        aasm_state: :started
+      )
 
       # Create a task already completed by me
-      completed_task = Generators::EstablishClaim.create(user_id: current_user.id, aasm_state: :completed)
+      completed_task = Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        user_id: current_user.id,
+        aasm_state: :completed,
+        completion_status: :special_issue_vacols_routed
+      )
+
+      # Create an invalid task, this should be invalidated and skipped
+      invalid_task = Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        aasm_state: :unassigned,
+        appeal: invalid_appeal
+      )
 
       visit "/dispatch/establish-claim"
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("Routed in VACOLS")
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access
-      BGSService.can_access_on_next_call = false
       safe_click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
-      expect(task_with_access.reload.user).to eq(current_user)
-      expect(task_with_access).to be_started
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(task.reload.user).to eq(current_user)
+      expect(task).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task_with_access.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
-      expect(task_with_access.claim_establishment).to be_remand
+      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task.claim_establishment).to be_remand
+
+      # Validate the invalid task was invalidated
+      expect(invalid_task.reload).to be_invalidated
 
       visit "/dispatch/establish-claim"
       safe_click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -143,7 +186,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find("#gulfWarRegistry", visible: false)).to be_checked
     end
 
-    scenario "you cannot re-complete a completed task" do
+    scenario "Cannot re-complete a completed task" do
       task.assign!(:assigned, current_user)
       task.start!(:started)
 
@@ -195,6 +238,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Error establishing claim" do
+      # Duplicate EP error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
       task.assign!(:assigned, current_user)
@@ -204,6 +248,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+
+      # Missing SSN error
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
+
+      click_on "Create End Product"
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("This veteran does not have a social security number")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
@@ -272,6 +323,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_button("Establish next claim", disabled: true)
 
         expect(task.appeal.reload.dispatched_to_station).to eq("351")
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
       scenario "Establish a new claim with special issue routed to ROJ" do
@@ -295,6 +347,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Confirmation Page
         expect(page).to have_content("Success!")
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
+
+        expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
       scenario "Establish a new claim with special issues by routing via email" do
@@ -311,23 +365,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
                                      "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
-      end
 
-      # There are no more issues that have no email addresses :)
-      # Skip this for now, but we'll clear it out when we finalize that decision
-      skip "Cancelling a claims establishment with special issues with no email routing" do
-        task.assign!(:assigned, current_user)
-
-        visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("vocationalRehab").click
-        safe_click_on "Route claim"
-
-        expect(page).to have_content("Please process this claim manually")
-
-        find_label_for("confirmEmail").click
-        safe_click_on "Release claim"
-
-        expect(page).to have_content("Processed case outside of Caseflow")
+        expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
       context "When there is an existing 172 EP" do
@@ -365,7 +404,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           task.reload
           expect(task.outgoing_reference_id).to eq("1")
           expect(task.appeal.reload.mustard_gas).to be_truthy
-          expect(task.completion_status).to eq(Task.completion_status_code(:assigned_existing_ep))
+          expect(task.completion_status).to eq("assigned_existing_ep")
         end
       end
     end
@@ -430,7 +469,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
         expect(task.reload.completed?).to be_truthy
-        expect(task.completion_status).to eq(0)
+        expect(task.completion_status).to eq("routed_to_arc")
         expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
         expect(task.appeal.reload.dispatched_to_station).to eq("397")
@@ -494,6 +533,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("VACOLS Updated: Added Diary Note on Private Attorney or Agent; Rice Compliance")
 
         expect(task.appeal.reload.rice_compliance).to be_truthy
+        expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
           claim: {
@@ -530,6 +570,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Valdiate correct vacols location
         expect(page).to have_content("50")
+
+        safe_click_on "Finish routing claim"
+
+        expect(page).to have_content("Success!")
+        expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
       end
 
       context "When there is an existing 170 EP" do

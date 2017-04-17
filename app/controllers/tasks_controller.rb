@@ -41,13 +41,10 @@ class TasksController < ApplicationController
   end
 
   def assign
-    # Doesn't assign if user has a task of the same type already assigned.
-    next_task = current_user_next_task
-    return not_found unless next_task
+    assigned_task = tasks.assign_next_to!(current_user)
 
-    next_task.assign!(:assigned, current_user) if next_task.may_assign?
-
-    render json: { next_task_id: next_task.id }
+    return not_found unless assigned_task
+    render json: { next_task_id: assigned_task.id }
   end
 
   private
@@ -63,31 +60,9 @@ class TasksController < ApplicationController
   helper_method :to_complete_count
 
   def current_user_historical_tasks
-    current_user.tasks.completed.newest_first.limit(10)
+    tasks.completed_by(current_user).newest_first.joins_task_result.limit(10)
   end
   helper_method :current_user_historical_tasks
-
-  # Before assigning the next task to the current user, we want to check and
-  # verify they have the right sensitivity level to access that case. If they
-  # don't, we skip it and move on to the next case
-  def next_unassigned_task
-    @next_unassigned_task ||= scoped_tasks.unassigned.to_complete.find do |task|
-      task.appeal.can_be_accessed_by_current_user?
-    end
-  end
-  helper_method :next_unassigned_task
-
-  # This method returns the next task this user should work on. Either,
-  # a previously assigned task that was never completed, or a new
-  # unassigned task.
-  def current_user_next_task
-    current_user.tasks.to_complete.where(type: type).first || next_unassigned_task
-  end
-  helper_method :current_user_next_task
-
-  def scoped_tasks
-    Task.where(type: type).oldest_first
-  end
 
   def type
     params[:task_type] || (task && task.type.to_sym)

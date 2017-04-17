@@ -25,6 +25,8 @@ class Fakes::AppealRepository
     attr_accessor :document_records
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :end_product_claim_id
+    attr_accessor :vacols_dispatch_update
+    attr_accessor :location_updated_for
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
@@ -52,14 +54,16 @@ class Fakes::AppealRepository
     Rails.logger.info("Claim data:\n #{claim}")
 
     # return fake end product
-    OpenStruct.new(claim_id: @end_product_claim_id)
+    OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
   end
 
-  def self.update_vacols_after_dispatch!(*)
+  def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
+    self.vacols_dispatch_update = { appeal: appeal, vacols_note: vacols_note }
   end
 
   def self.update_location_after_dispatch!(appeal:)
     return if appeal.full_grant?
+    self.location_updated_for = appeal
   end
 
   def self.upload_document_to_vbms(appeal, form8)
@@ -71,6 +75,10 @@ class Fakes::AppealRepository
     # noop
   end
 
+  def self.raise_vbms_error_if_necessary(record)
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+  end
+
   def self.load_vacols_data(appeal)
     return unless @records
 
@@ -79,10 +87,18 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
-    fail VBMSError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    # clone this since we mutate it later
+    record = record.dup
 
-    # This is bad. I'm sorry
-    record.delete(:vbms_id) if Rails.env.development?
+    raise_vbms_error_if_necessary(record)
+
+    # For testing dispatch appeals, the seed data in the record
+    # has a randomly generated vbms id from our appeal generator,
+    # and the appeal already has a vbms id from db seed data.
+    # Don't overwrite the appeal vbms id if it already has one.
+    # TODO: figure out a way to untangle this. Perhaps we shouldn't
+    # be using randomly generated VBMS ids?
+    record.delete(:vbms_id) if Rails.env.development? && !appeal.vbms_id.nil?
 
     appeal.assign_from_vacols(record)
   end
@@ -94,7 +110,7 @@ class Fakes::AppealRepository
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
-    fail MultipleAppealsByVBMSIDError if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+    fail Caseflow::Error::MultipleAppealsByVBMSID if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
@@ -103,6 +119,9 @@ class Fakes::AppealRepository
     end
 
     fail ActiveRecord::RecordNotFound unless record
+
+    # clone this in case it accidentally gets mutated later
+    record = record.dup
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
@@ -167,6 +186,7 @@ class Fakes::AppealRepository
 
     seed_certification_data!
     seed_establish_claim_data!
+    seed_reader_data!
   end
 
   def self.certification_documents
@@ -207,6 +227,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "123C",
+      vbms_id: "1111",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -246,6 +267,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "124C",
+      vbms_id: "1112",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -286,5 +308,28 @@ class Fakes::AppealRepository
     seed_appeal_ready_to_certify_with_informal_form9!
     seed_appeal_raises_vbms_error!
     seed_appeal_not_ready!
+  end
+
+  def self.reader_documents
+    [
+      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
+      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago),
+      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago)
+    ]
+  end
+
+  def self.seed_reader_data!
+    Generators::Appeal.build(
+      vacols_id: "reader_id1",
+      vbms_id: "reader_id1",
+      vacols_record: {
+        template: :ready_to_certify,
+        veteran_first_name: "Joe",
+        veteran_last_name: "Smith"
+      },
+      documents: reader_documents
+    )
   end
 end

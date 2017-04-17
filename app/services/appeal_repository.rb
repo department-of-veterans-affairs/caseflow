@@ -1,5 +1,3 @@
-require "vbms"
-
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
@@ -54,7 +52,7 @@ class AppealRepository
     end
 
     fail ActiveRecord::RecordNotFound if case_records.empty?
-    fail MultipleAppealsByVBMSIDError if case_records.length > 1
+    fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
@@ -239,6 +237,7 @@ class AppealRepository
   # Reverses the certification of an appeal.
   # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
   def self.uncertify(appeal)
+    appeal.case_record.bftbind = nil
     appeal.case_record.bfdcertool = nil
     appeal.case_record.bf41stat = nil
     appeal.case_record.save!
@@ -261,7 +260,7 @@ class AppealRepository
 
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = File.basename(uploadable_document.pdf_location)
+    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,
@@ -307,11 +306,11 @@ class AppealRepository
       @vbms_client.send_request(request)
     end
 
-  # rethrow as application-level error
   rescue VBMS::ClientError => e
     Raven.capture_exception(e)
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
-    raise VBMSError
+
+    raise e
   end
 
   def self.fetch_documents_for(appeal)

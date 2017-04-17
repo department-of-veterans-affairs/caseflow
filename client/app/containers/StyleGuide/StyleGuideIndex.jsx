@@ -3,6 +3,7 @@ import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
+import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
@@ -10,6 +11,8 @@ import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
+import StyleGuideDropdownMenu from './StyleGuideDropdownMenu';
+import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default class StyleGuideIndex extends React.Component {
   constructor(props){
@@ -146,6 +149,8 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
+        <StyleGuideLinkButton />
+        <div className="cf-help-divider"></div>
         <StyleGuideRadioField />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
@@ -155,6 +160,10 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
         <div className="cf-help-divider"></div>
         <StyleGuideTextInput />
+        <div className="cf-help-divider"></div>
+        <StyleGuideDropdownMenu />
+        <div className="cf-help-divider"></div>
+        <StyleGuideSearchableDropdown />
     </div>
     </div>;
   }
