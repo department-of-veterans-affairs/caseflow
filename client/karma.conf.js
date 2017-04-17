@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
+const karmaTestPattern = 'test/karma/**/*-test.js';
+
 module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
@@ -8,11 +10,11 @@ module.exports = function(config) {
     singleRun: true,
 
     files: [
-      { pattern: 'test/karma/**/Pdf-test.js' }
+      { pattern: karmaTestPattern }
     ],
 
     preprocessors: {
-      'test/karma/**/Pdf-test.js': ['webpack', 'sourcemap']
+      [karmaTestPattern]: ['webpack', 'sourcemap']
     },
 
     // Note that karma-webpack will ignore the `entry` value for

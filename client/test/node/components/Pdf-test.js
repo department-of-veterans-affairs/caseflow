@@ -25,11 +25,6 @@ describe('Pdf', () => {
     beforeEach(() => {
       PdfJsStub.beforeEach();
 
-      const appElem = document.createElement('div');
-
-      appElem.id = 'app';
-      document.getElementsByTagName('body')[0].appendChild(appElem);
-
       wrapper = mount(<Pdf
         comments={[]}
         documentId={documents[0].id}
