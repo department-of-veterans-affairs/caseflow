@@ -21,8 +21,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 7e3192a502563ff4afc8241161bdd8678080236f
-  ref: 7e3192a
+  revision: f561599c8b68806ae838530b2fc02d481157b02a
+  ref: f561599c8b68806ae838530b2fc02d481157b02a
   specs:
     connect_vbms (1.0.0)
       httpclient (~> 2.8.0)
@@ -419,6 +419,8 @@ GEM
       nokogiri (~> 1.5)
     xpath (2.0.0)
       nokogiri (~> 1.3)
+    zero_downtime_migrations (0.0.7)
+      activerecord
 
 PLATFORMS
   ruby
@@ -481,6 +483,7 @@ DEPENDENCIES
   wannabe_bool
   web-console (~> 2.0)
   where-or
+  zero_downtime_migrations
 
 BUNDLED WITH
    1.14.6

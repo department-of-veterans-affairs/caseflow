@@ -18,11 +18,6 @@ end
 # :nocov:
 
 class AppealRepository
-  ESTABLISH_CLAIM_VETERAN_ATTRIBUTES = %i(
-    file_number sex first_name last_name ssn address_line1 address_line2
-    address_line3 city state country zip_code
-  ).freeze
-
   # :nocov:
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
@@ -173,18 +168,12 @@ class AppealRepository
   end
   # :nocov:
 
-  def self.establish_claim!(appeal:, claim:)
+  def self.establish_claim!(veteran_hash:, claim_hash:)
     @vbms_client ||= init_vbms_client
 
-    sanitized_id = appeal.sanitized_vbms_id
-    raw_veteran_record = BGSService.new.fetch_veteran_info(sanitized_id)
+    request = VBMS::Requests::EstablishClaim.new(veteran_hash, claim_hash)
 
-    # Reduce keys in raw response down to what we specifically need for
-    # establish claim
-    veteran_record = parse_veteran_establish_claim_info(raw_veteran_record)
-
-    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
-    send_and_log_request(sanitized_id, request)
+    send_and_log_request(veteran_hash[:file_number], request)
   end
 
   def self.update_vacols_after_dispatch!(appeal:, vacols_note: nil)
@@ -216,12 +205,6 @@ class AppealRepository
     "98"
   end
 
-  def self.parse_veteran_establish_claim_info(veteran_record)
-    veteran_record.select do |key, _|
-      ESTABLISH_CLAIM_VETERAN_ATTRIBUTES.include?(key)
-    end
-  end
-
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -240,6 +223,7 @@ class AppealRepository
   # Reverses the certification of an appeal.
   # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
   def self.uncertify(appeal)
+    appeal.case_record.bftbind = nil
     appeal.case_record.bfdcertool = nil
     appeal.case_record.bf41stat = nil
     appeal.case_record.save!

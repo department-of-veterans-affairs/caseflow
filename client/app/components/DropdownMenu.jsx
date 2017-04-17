@@ -4,7 +4,10 @@ export default class DropdownMenu extends React.Component {
   render() {
     let {
       label,
-      options
+      onBlur,
+      onClick,
+      options,
+      menu
     } = this.props;
 
     let dropdownMenuList = () => {
@@ -20,10 +23,12 @@ export default class DropdownMenu extends React.Component {
 
     return <div className="cf-dropdown">
       <a href="#dropdown-menu"
-        className="cf-dropdown-trigger">
+        className="cf-dropdown-trigger"
+        onClick={onClick}
+        onBlur={onBlur}>
         {label}
       </a>
-      {this.state.menu && dropdownMenuList() }
+      {menu && dropdownMenuList() }
     </div>;
   }
 }
@@ -33,5 +38,7 @@ DropdownMenu.propTypes = {
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired
   })),
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
+  onBlur: PropTypes.func,
+  onClick: PropTypes.func
 };

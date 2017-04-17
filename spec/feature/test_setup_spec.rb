@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.feature "Test Setup" do
   context "Access control" do
     scenario "non-Test User unable to access" do
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       User.authenticate!
 
       visit "test/setup"
@@ -11,12 +11,12 @@ RSpec.feature "Test Setup" do
     end
 
     scenario "unable to acces in non-UAT environment" do
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(false)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true)
       User.clear_stub!
       User.tester!
 
       visit "test/setup"
-      expect(page).to have_content("500")
+      expect(page).to have_content("Unauthorized")
     end
   end
 
@@ -42,7 +42,7 @@ RSpec.feature "Test Setup" do
 
     scenario "Deletes all tasks" do
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
 
       visit "test/setup"
       expect(page).to have_content("Clear Data")
@@ -58,7 +58,7 @@ RSpec.feature "Test Setup" do
 
     scenario "Uncertifies an appeal" do
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
 
       visit "test/setup"
       expect(page).to have_content("Uncertify Appeal")
@@ -69,7 +69,7 @@ RSpec.feature "Test Setup" do
 
     scenario "Fails to uncertify an appeal" do
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
 
       visit "test/setup"
       expect(page).to have_content("Uncertify Appeal")
@@ -85,7 +85,7 @@ RSpec.feature "Test Setup" do
       )
 
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
 
       visit "test/setup"
@@ -105,7 +105,7 @@ RSpec.feature "Test Setup" do
       )
 
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
 
       visit "test/setup"
@@ -120,7 +120,7 @@ RSpec.feature "Test Setup" do
 
     scenario "Fails to reset date and location" do
       # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:uat).and_return(true)
+      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
 
       visit "test/setup"
