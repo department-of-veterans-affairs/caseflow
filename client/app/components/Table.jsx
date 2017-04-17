@@ -6,7 +6,7 @@ import _ from 'lodash';
  * The required props are:
  * - @columns {array[string]} array of objects that define the properties
  *   of the columns. Possible attributes for each column include:
- *   - @header {string} header cell value for the column
+ *   - @header {string|component} header cell value for the column
  *   - @align {sting} alignment of the column ("left", "right", or "center")
  *   - @valueFunction {function(rowObject)} function that takes `rowObject` as
  *     an argument and returns the value of the cell for that column.

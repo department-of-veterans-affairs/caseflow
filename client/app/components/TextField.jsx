@@ -7,6 +7,7 @@ export default class TextField extends React.Component {
   render() {
     let {
       errorMessage,
+      className,
       label,
       name,
       readOnly,
@@ -18,6 +19,12 @@ export default class TextField extends React.Component {
       placeholder
     } = this.props;
 
+    let textInputClass = className.concat(
+      invisible ? " cf-invisible" : ""
+    ).concat(
+      errorMessage ? "usa-input-error" : ""
+    );
+
     // Use empty string instead of null or undefined,
     // otherwise React displays the following error:
     //
@@ -27,13 +34,13 @@ export default class TextField extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
-    return <div className={`cf-form-textinput${invisible ? " cf-invisible" : ""}`}>
+    return <div className={textInputClass.join(' ')}>
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <input
-        className="cf-form-textinput"
+        className={className}
         name={name}
         id={name}
         onChange={this.onChange}
@@ -51,11 +58,13 @@ export default class TextField extends React.Component {
 
 TextField.defaultProps = {
   required: false,
-  type: 'text'
+  type: 'text',
+  className: ["cf-form-textinput"]
 };
 
 TextField.propTypes = {
   errorMessage: PropTypes.string,
+  className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
