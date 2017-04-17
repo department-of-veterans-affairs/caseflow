@@ -19,12 +19,11 @@ class Test::SetupController < ApplicationController
 
   def appeal_location_date_reset
     test_appeal_id = params["DISPATCH_ME"][:vacols_id]
-    decision_type = params["DISPATCH_ME"][:decision_type]
-    if decision_type == "Full Grant"
-      decision_type = :full
-    else
-      decision_type = :partial
-    end
+    decision_type = if params["DISPATCH_ME"][:decision_type] == "Full Grant"
+                      :full
+                    else
+                      :partial
+                    end
 
     # Cancel existing EPs and reset the dates
     cancel_eps = params["DISPATCH_ME"][:cancel_eps] == "Yes" ? true : false

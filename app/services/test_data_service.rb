@@ -32,13 +32,13 @@ class TestDataService
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
     fail WrongEnvironmentError if Rails.deploy_env?(:prod)
-    
+
     # Cancel EPs
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
     cancel_end_products(appeal) if cancel_eps
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
     vacols_case = VACOLS::Case.find(vacols_id)
-    
+
     if decision_type == :full
       dec_date = AppealRepository.dateshift_to_utc(2.days.ago)
     else
