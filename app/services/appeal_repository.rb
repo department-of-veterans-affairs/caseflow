@@ -23,6 +23,8 @@ class AppealRepository
     address_line3 city state country zip_code
   ).freeze
 
+
+  # :nocov:
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
@@ -37,7 +39,6 @@ class AppealRepository
     return false
   end
 
-  # :nocov:
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
