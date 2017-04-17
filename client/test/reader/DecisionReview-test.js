@@ -207,7 +207,7 @@ describe('DecisionReviewer', () => {
 
       it('can be clicked on to jump to icon', asyncTest(async() => {
         let commentId = 1;
-        let jumpTo = sinon.spy(wrapper.getNode(), 'onJumpToComment');
+        let jumpTo = sinon.spy(wrapper.find('DecisionReviewer').getNode(), 'onJumpToComment');
 
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
@@ -262,7 +262,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#expand-2-comments-button').simulate('click');
         wrapper.find('#button-jumpToComment').simulate('click');
 
-        let scrolledTo = sinon.spy(wrapper.getNode(), 'onCommentScrolledTo');
+        let scrolledTo = sinon.spy(wrapper.find('DecisionReviewer').getNode(), 'onCommentScrolledTo');
 
         // verify the page is on the pdf view
         expect(wrapper.text()).to.include('View all documents');

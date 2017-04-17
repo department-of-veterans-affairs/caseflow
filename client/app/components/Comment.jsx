@@ -17,7 +17,7 @@ export default class Comment extends React.Component {
     this.props.onEditComment(this.props.uuid);
   }
 
-  controlButtons = () => {
+  getControlButtons = () => {
     if (!this.props.onEditComment || !this.props.onDeleteComment) {
       return;
     }
@@ -62,7 +62,7 @@ export default class Comment extends React.Component {
     let commentToRender = <div>
         <div className="comment-control-button-container">
           <span className="cf-right-side">
-            {this.controlButtons()}
+            {this.getControlButtons()}
           </span>
           <strong>Page {this.props.page} {jumpToSectionButton}</strong>
         </div>
@@ -98,9 +98,7 @@ export default class Comment extends React.Component {
 }
 
 Comment.defaultProps = {
-  onClick: () => {
-    return _.noop;
-  }
+  onClick: _.noop
 };
 
 Comment.propTypes = {

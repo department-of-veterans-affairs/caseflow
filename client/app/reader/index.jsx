@@ -36,6 +36,16 @@ const readerReducer = (state = {}, action = {}) => {
         }
       }
     );
+  case Constants.SET_CURRENT_RENDERED_FILE:
+    return {
+      ...state,
+      currentRenderedFile: action.payload
+    };
+  case Constants.SCROLL_TO_COMMENT:
+    return {
+      ...state,
+      scrollToComment: action.payload
+    };
   default:
     return state;
   }

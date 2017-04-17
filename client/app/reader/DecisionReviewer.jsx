@@ -33,7 +33,6 @@ export class DecisionReviewer extends React.Component {
       selectedLabels,
       sortBy: 'date',
       sortDirection: 'ascending',
-      scrollToComment: null,
       unsortedDocuments: this.props.appealDocuments.map((doc) => {
         doc.receivedAt = doc.received_at;
 
@@ -50,7 +49,9 @@ export class DecisionReviewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.props.onReceiveDocs(nextProps.appealDocuments);
+    if (this.props.appealDocuments !== nextProps.appealDocuments) {
+      this.props.onReceiveDocs(nextProps.appealDocuments);
+    }
   }
 
   onPreviousPdf = () => {
@@ -298,15 +299,11 @@ export class DecisionReviewer extends React.Component {
 
   onJumpToComment = (comment) => () => {
     this.setPage(this.pdfNumberFromId(comment.documentId));
-    this.setState({
-      scrollToComment: comment
-    });
+    this.props.onScrollToComment(comment);
   }
 
   onCommentScrolledTo = () => {
-    this.setState({
-      scrollToComment: null
-    });
+    this.props.onScrollToComment(null);
   }
 
   render() {
@@ -345,7 +342,7 @@ export class DecisionReviewer extends React.Component {
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
           label={documents[this.state.currentPdfIndex].label}
-          scrollToComment={this.state.scrollToComment}
+          scrollToComment={this.props.scrollToComment}
           onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
         }
@@ -358,8 +355,16 @@ DecisionReviewer.propTypes = {
   annotations: PropTypes.arrayOf(PropTypes.object),
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
+  onScrollToComment: PropTypes.func,
+  scrollToComment: PropTypes.shape({
+    id: React.PropTypes.number,
+    page: React.PropTypes.number,
+    y: React.PropTypes.number
+  }),
   onCommentScrolledTo: PropTypes.func
 };
+
+const mapsStateToProps = (state) => _.pick(state, 'scrollToComment');
 
 const mapDispatchToProps = (dispatch) => ({
   onReceiveDocs(documents) {
@@ -367,7 +372,13 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.RECEIVE_DOCUMENTS,
       payload: documents
     });
+  },
+  onScrollToComment(scrollToComment) {
+    dispatch({
+      type: Constants.SCROLL_TO_COMMENT,
+      payload: scrollToComment
+    })
   }
 });
 
-export default connect(null, mapDispatchToProps)(DecisionReviewer);
+export default connect(mapsStateToProps, mapDispatchToProps)(DecisionReviewer);
