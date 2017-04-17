@@ -70,7 +70,7 @@ describe AppealRepository do
     subject { AppealRepository.load_vacols_data(appeal) }
     it do
       expect(AppealRepository).to receive(:set_vacols_values).exactly(1).times
-      is_expected.to eq(appeal)
+      is_expected.to eq(true)
     end
   end
 

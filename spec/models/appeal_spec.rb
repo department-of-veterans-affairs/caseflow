@@ -122,11 +122,51 @@ describe Appeal do
   end
 
   context ".find_or_create_by_vacols_id" do
-    before do
-      allow(Appeal.repository).to receive(:load_vacols_data).and_return(nil)
+    let!(:vacols_appeal) do
+      Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
     end
 
     subject { Appeal.find_or_create_by_vacols_id("123C") }
+
+    context "when no appeal exists for VACOLS id" do
+      context "when no VACOLS data exists for that appeal" do
+        before { Fakes::AppealRepository.clean! }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "when VACOLS data exists for that appeal" do
+        it "saves and returns that appeal with updated VACOLS data loaded" do
+          is_expected.to be_persisted
+          expect(subject.vbms_id).to eq("456VBMS")
+        end
+      end
+    end
+
+    context "when appeal with VACOLS id exists in the DB" do
+      before { vacols_appeal.save! }
+
+      context "when no VACOLS data exists for that appeal" do
+        before { Fakes::AppealRepository.clean! }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "when VACOLS data exists for that appeal" do
+        let!(:updated_vacols_appeal) do
+          Generators::Appeal.build(vacols_id: "123C", vbms_id: "789VBMS")
+        end
+
+        it "saves and returns that appeal with updated VACOLS data loaded" do
+          expect(subject.reload.id).to eq(vacols_appeal.id)
+          expect(subject.vbms_id).to eq("789VBMS")
+        end
+      end
+    end
 
     context "sets the vacols_id" do
       before do

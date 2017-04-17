@@ -183,9 +183,6 @@ RSpec.feature "Start Certification" do
     end
 
     scenario "404's if appeal doesn't exist in VACOLS" do
-      # It's awkward that we have to do this in order to trigger a RecordNotFound
-      Fakes::AppealRepository.records = {}
-
       visit "certifications/new/4444NNNN"
       expect(page).to have_content("Page not found")
     end
