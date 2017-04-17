@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { DocumentCategoryIcons } from '../../app/components/DocumentCategoryIcons';
+import { DocumentCategoryIcons } from '../../../app/components/DocumentCategoryIcons';
 
 describe('DocumentCategoryIcons', () => {
   it('renders nothing when the document is not found', () => {
