@@ -27,6 +27,9 @@ If you run into any errors with extraneous files run:
 When doing a fresh `npm install` of all packages, if a valid `npm-shrinkwrap.json` file exists, it will be used to deterministically install packaged.
 Please make sure to commit changes to the package.json and npm-shrinkwrap.json together.
 
+### Deps v. devDeps
+Dependencies needed to build the frontend JS go in `dependencies`, not `devDependencies`. `devDependencies` are only for running JS tests, like `mocha` and `karma`. This is because Travis runs tests, and uses a full `npm install`, whereas Jenkins only needs to build JS (but not run tests) and thus uses `npm install --production`. 
+
 ## Styling
 
 CSS styling continues to be handled by Rails and the asset pipeline. To add new styling:
