@@ -100,8 +100,9 @@ svg[aria-hidden=true],
 
 .cf-sidebar-header {
   height: 50px;
-  background-color: $color-gray-warm-light;
+  background-color: $color-gray-lightest;
   line-height: 50px;
+  color: $color-gray-dark;
 }
 
 .cf-document-info-wrapper {

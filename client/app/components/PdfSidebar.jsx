@@ -41,7 +41,9 @@ export default class PdfSidebar extends React.Component {
           <Button
             name="hide menu"
             classNames={["cf-pdf-button"]}>
-            <strong>Hide Menu ></strong>
+            <strong>
+              Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </strong>
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
