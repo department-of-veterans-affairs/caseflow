@@ -220,6 +220,8 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.CERTIFICATION_UPDATE_REQUEST,
       payload: {
         data,
+        // TODO: this nested bit is a bit complex. Can we refactor this to be
+        // a little more legible?
         onComplete: (err) => {
           if (err) {
             return dispatch({
