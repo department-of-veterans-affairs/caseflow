@@ -285,7 +285,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Text on the tab
         expect(page).to have_content("Decision 1 (")
-        find("#tab-1").click
+        find("#main-tab-1").click
 
         expect(page).to have_content("Route claim for Decision 2")
         safe_click_on "Route claim for Decision 2"
