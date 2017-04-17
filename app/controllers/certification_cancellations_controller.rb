@@ -3,8 +3,20 @@ class CertificationCancellationsController < ApplicationController
   before_action :verify_access
 
   def create
-    @certification_cancellation = CertificationCancellation.create(certification_cancellation_params)
-    redirect_to @certification_cancellation
+    @certification_cancellation = CertificationCancellation.new(certification_cancellation_params)
+
+    # Response to JSON format was introduced for CancelCertificationModal react component
+    # Old cancellation modal is using HTML format
+    respond_to do |format|
+      if @certification_cancellation.save
+        format.html { redirect_to @certification_cancellation }
+        format.json { render json: { is_cancelled: true }, status: 201 }
+
+      else
+        format.html { redirect_to "errors/500", layout: "application", status: 500 }
+        format.json { render json: { is_cancelled: false }, status: 422 }
+      end
+    end
   end
 
   private
