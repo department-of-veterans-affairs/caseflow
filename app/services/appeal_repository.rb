@@ -23,7 +23,6 @@ class AppealRepository
     address_line3 city state country zip_code
   ).freeze
 
-
   # :nocov:
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",

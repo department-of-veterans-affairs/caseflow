@@ -16,7 +16,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          check_and_load_vacols_data! unless vacols_loading?
+          check_and_load_vacols_data!
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
@@ -33,7 +33,7 @@ module AssociatedVacolsModel
   end
 
   def check_and_load_vacols_data!
-    perform_vacols_request unless vacols_complete?
+    perform_vacols_request unless @vacols_load_status
 
     vacols_success?
   end
@@ -52,14 +52,6 @@ module AssociatedVacolsModel
     # self.class.repository.load_vacols_data(self) should return truthy or false
     # which is used to store the outcome of the load
     @vacols_load_status = self.class.repository.load_vacols_data(self) ? :success : :failed
-  end
-
-  def vacols_loading?
-    @vacols_load_status == :loading
-  end
-
-  def vacols_complete?
-    @vacols_load_status && (@vacols_load_status != :loading)
   end
 
   def vacols_success?
