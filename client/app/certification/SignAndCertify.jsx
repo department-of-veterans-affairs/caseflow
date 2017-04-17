@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
@@ -114,5 +114,15 @@ const SignAndCertify = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedSignAndCertify);
+
+SignAndCertify.propTypes = {
+  onSignAndCertifyFormChange: PropTypes.func,
+  certifyingOffice: PropTypes.string,
+  certifyingUsername: PropTypes.string,
+  certifyingOfficialName: PropTypes.string,
+  certifyingOfficialTitle: PropTypes.string,
+  certificationDate: PropTypes.string,
+  match: PropTypes.object.isRequired
+};
 
 export default SignAndCertify;
