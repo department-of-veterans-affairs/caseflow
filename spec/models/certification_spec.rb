@@ -257,7 +257,7 @@ describe Certification do
       before do
         @certification = Certification.create(vacols_id: vacols_id)
         CertificationCancellation.create(certification_id: @certification.id, cancellation_reason: "test",
-          email: "test@gmail.com")
+                                         email: "test@gmail.com")
       end
 
       it "creates a new certification" do
