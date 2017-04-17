@@ -192,15 +192,15 @@ class Fakes::AppealRepository
 
   def self.certification_documents
     [
-      Generators::Document.build(type: "NOD"),
+      Generators::Document.build(type: "NOD", category_procedural: true),
       Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9")
+      Generators::Document.build(type: "Form 9", category_medical: true)
     ]
   end
 
   def self.establish_claim_documents
     certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
+      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago, category_other: true)
     ]
   end
 
@@ -312,11 +312,14 @@ class Fakes::AppealRepository
 
   def self.reader_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
-      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago)
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9",
+                                 category_medical: true, category_procedural: true),
+      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago,
+                                 category_other: true),
+      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+                                 category_medical: true, category_procedural: true, category_other: true)
     ]
   end
 

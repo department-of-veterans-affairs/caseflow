@@ -11,14 +11,14 @@ import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
-import DecisionReviewer from '../reader/DecisionReviewer';
+import Reader from '../reader/index.jsx';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 
 const Pages = {
   CaseWorkerIndex,
-  DecisionReviewer,
+  DecisionReviewer: Reader,
   EstablishClaim,
   EstablishClaimCancel,
   EstablishClaimComplete,
