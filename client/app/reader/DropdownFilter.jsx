@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { closeSymbolHtml } from '../components/RenderFunctions';
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -34,7 +33,7 @@ class DropdownFilter extends React.PureComponent {
       this.rootElem = rootElem;
     }}>
       <div>
-        Clear category filter {closeSymbolHtml()}
+        Clear category filter <i className="fa fa-times fa-1"></i>
       </div>
       {children}
     </div>;

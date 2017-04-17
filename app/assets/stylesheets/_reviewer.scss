@@ -294,8 +294,21 @@ svg[aria-hidden=true],
   position: absolute;
   border: 1px solid #d6d7d9;
   background: white;
-  padding: 5px;
+  padding: 10px;
   box-shadow: 5px 5px 4px -3px #d6d7d9;
+  font-weight: normal;
+
+  .cf-document-category-picker {
+    margin-bottom: 0;
+
+    li:last-child .cf-form-checkboxes {
+      margin-bottom: 0;
+
+      .cf-category-selector {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
 .cf-document-category-picker {
