@@ -311,6 +311,23 @@ svg[aria-hidden=true],
   }
 }
 
+.cf-text-button {
+  background: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+
+  &:hover {
+    color: inherit;
+    background: inherit;
+  }
+
+  &.disabled {
+    cursor: default;
+  }
+}
+
 .cf-document-category-picker {
   list-style-type: none;
   padding-left: 0;

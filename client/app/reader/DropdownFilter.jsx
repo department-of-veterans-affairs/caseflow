@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import IconButton from '../components/IconButton';
+import classnames from 'classnames';
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -30,12 +31,17 @@ class DropdownFilter extends React.PureComponent {
       style = { left: '-99999px' };
     }
 
+    const buttonClasses =
+      classnames('cf-text-button', { disabled: !this.props.isClearEnabled });
+
     return <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
       <div>
-        Clear category filter{' '}
-          <IconButton iconName="fa-times" handleActivate={this.props.handleClose} />
+        <button className={buttonClasses} onClick={this.props.clearFilters}>
+          Clear category filter
+        </button>
+        <IconButton iconName="fa-times" handleActivate={this.props.handleClose} />
       </div>
       {children}
     </div>;

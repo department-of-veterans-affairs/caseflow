@@ -54,6 +54,7 @@
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "chai": "^3.5.0",
+    "classnames": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz",
     "enzyme": "^2.6.0",
     "eslint": "^3.11.1",
     "eslint-plugin-mocha": "^4.7.0",

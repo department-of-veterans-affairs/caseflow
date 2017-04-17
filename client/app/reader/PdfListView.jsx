@@ -47,6 +47,19 @@ export class PdfListView extends React.Component {
     const toggleCategoryDropdownFilterVisiblity = () =>
       this.props.toggleDropdownFilterVisiblity('category');
 
+    const clearFilters = () => {
+      _(Constants.documentCategories).keys().
+        forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
+    };
+
+    // filter out false
+    const anyCategoryFiltersAreSet = Boolean(
+      _(this.props.pdfList.filters.category).
+        values().
+        compact().
+        size()
+      );
+
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
@@ -64,6 +77,8 @@ export class PdfListView extends React.Component {
 
           {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
             <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}
+              clearFilters={clearFilters}
+              isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={toggleCategoryDropdownFilterVisiblity}>
               <DocCategoryPicker
                 categoryToggleStates={this.props.pdfList.filters.category}
