@@ -1,6 +1,7 @@
 class Fakes::BGSService
   cattr_accessor :end_product_data
   cattr_accessor :inaccessible_appeal_vbms_ids
+  cattr_accessor :veteran_records
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -175,7 +176,17 @@ class Fakes::BGSService
     end_product_data || self.class.no_grants
   end
 
-  def fetch_veteran_info(_)
+  def fetch_veteran_info(vbms_id)
+    (self.class.veteran_records || {})[vbms_id] || default_veteran_record
+  end
+
+  def can_access?(vbms_id)
+    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+  end
+
+  private
+
+  def default_veteran_record
     {
       address_line1: "1234 FAKE ST",
       address_line2: nil,
@@ -247,9 +258,5 @@ class Fakes::BGSService
       power_of_atty_code2: "00",
       sex: "F"
     }
-  end
-
-  def can_access?(vbms_id)
-    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 end
