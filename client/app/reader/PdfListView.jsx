@@ -44,7 +44,8 @@ export class PdfListView extends React.Component {
       return content;
     };
 
-    const toggleCategoryFilter = () => this.props.toggleCategoryFilter('category');
+    const toggleCategoryDropdownFilterVisiblity = () =>
+      this.props.toggleDropdownFilterVisiblity('category');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -59,13 +60,14 @@ export class PdfListView extends React.Component {
             getRef={(categoryFilterIcon) => {
               this.categoryFilterIcon = categoryFilterIcon;
             }}
-            handleActivate={toggleCategoryFilter} />
+            handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
           {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
             <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}
-              handleClose={toggleCategoryFilter}>
+              handleClose={toggleCategoryDropdownFilterVisiblity}>
               <DocCategoryPicker
-                categoryToggleStates={this.props.pdfList.filters.category} />
+                categoryToggleStates={this.props.pdfList.filters.category}
+                handleCategoryToggle={this.props.setCategoryFilter} />
             </DropdownFilter>
           }
 
@@ -174,7 +176,7 @@ PdfListView.propTypes = {
 
 const mapStateToProps = (state) => _.pick(state.ui, 'pdfList');
 const mapDispatchToProps = (dispatch) => ({
-  toggleCategoryFilter(filterName) {
+  toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
@@ -188,6 +190,15 @@ const mapDispatchToProps = (dispatch) => ({
       payload: {
         filterName,
         boundingRect
+      }
+    });
+  },
+  setCategoryFilter(categoryName, checked) {
+    dispatch({
+      type: Constants.SET_CATEGORY_FILTER,
+      payload: {
+        categoryName,
+        checked
       }
     });
   }

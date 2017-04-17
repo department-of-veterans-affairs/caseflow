@@ -84,6 +84,22 @@ const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_CATEGORY_FILTER:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdfList: {
+            filters: {
+              category: {
+                [action.payload.categoryName]: action.payload.checked
+              }
+            }
+          }
+        }
+      }
+    );
   default:
     return state;
   }
