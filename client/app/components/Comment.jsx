@@ -18,31 +18,27 @@ export default class Comment extends React.Component {
   }
 
   controlButtons = () => {
-    let controlButtons = [];
-
-    if (this.props.onEditComment) {
-      controlButtons.push(<Button
-        name="edit"
-        classNames={["cf-no-padding-btn-link comment-control-button"]}
-        onClick={this.onEditComment}>
-        Edit
-      </Button>);
-      if (this.props.onDeleteComment) {
-        controlButtons.push(<span className="comment-control-button-divider">
-            |
-          </span>);
-      }
-    }
-    if (this.props.onDeleteComment) {
-      controlButtons.push(<Button
-        name="delete"
-        classNames={["cf-no-padding-btn-link comment-control-button"]}
-        onClick={this.onDeleteComment}>
-        Delete
-      </Button>);
+    if (!this.props.onEditComment || !this.props.onDeleteComment) {
+      return;
     }
 
-    return controlButtons;
+    return <div>
+        <Button
+          name="edit"
+          classNames={["cf-btn-link comment-control-button"]}
+          onClick={this.onEditComment}>
+          Edit
+        </Button>
+        <span className="comment-control-button-divider">
+          |
+        </span>
+        <Button
+          name="delete"
+          classNames={["cf-btn-link comment-control-button"]}
+          onClick={this.onDeleteComment}>
+          Delete
+        </Button>
+      </div>;
   }
 
   render() {
@@ -57,7 +53,7 @@ export default class Comment extends React.Component {
     if (this.props.onJumpToComment) {
       jumpToSectionButton = <Button
           name="jumpToComment"
-          classNames={["cf-no-padding-btn-link comment-control-button"]}
+          classNames={["cf-btn-link comment-control-button"]}
           onClick={this.props.onJumpToComment}>
           Jump to Section
         </Button>;

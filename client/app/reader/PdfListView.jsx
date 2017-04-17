@@ -62,9 +62,9 @@ export default class PdfListView extends React.Component {
       if (row && row.isComment) {
         return [{
           valueFunction: (doc) => {
-            let comments = this.props.annotationStorage.
+            const comments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id);
-            let commentNodes = comments.map((comment, commentIndex) => {
+            const commentNodes = comments.map((comment, commentIndex) => {
               return <Comment
                 key={comment.uuid}
                 id={`comment${doc.id}-${commentIndex}`}
@@ -77,7 +77,7 @@ export default class PdfListView extends React.Component {
                 </Comment>;
             });
 
-            return <ul className="cf-no-styling-list" ariaLabel="Document comments">
+            return <ul className="cf-no-styling-list" aria-label="Document comments">
               {commentNodes}
             </ul>;
           },
@@ -135,11 +135,11 @@ export default class PdfListView extends React.Component {
             Comments
           </div>,
           valueFunction: (doc) => {
-            let numberOfComments = this.props.annotationStorage.
+            const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            let icon = `fa fa-3 ${this.state.commentsOpened[row.id] ?
+            const icon = `fa fa-3 ${this.state.commentsOpened[row.id] ?
               'fa-angle-up' : 'fa-angle-down'}`;
-            let name = `expand ${numberOfComments} comments`;
+            const name = `expand ${numberOfComments} comments`;
 
             return <span className="document-list-comments-indicator">
               {numberOfComments > 0 &&

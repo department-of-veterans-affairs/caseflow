@@ -371,6 +371,10 @@ Pdf.propTypes = {
   onPageChange: PropTypes.func,
   onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  scrollToComment: PropTypes.number,
+  scrollToComment: PropTypes.shape({
+    id: React.PropTypes.number,
+    page: React.PropTypes.number,
+    y: React.PropTypes.number
+  }),
   onIconMoved: PropTypes.func
 };

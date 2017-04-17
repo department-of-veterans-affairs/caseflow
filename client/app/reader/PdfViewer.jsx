@@ -255,7 +255,9 @@ PdfViewer.propTypes = {
   file: PropTypes.string.isRequired,
   label: PropTypes.string,
   pdfWorker: PropTypes.string,
-  scrollToComment: PropTypes.number,
+  scrollToComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func
 };

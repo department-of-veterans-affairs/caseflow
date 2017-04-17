@@ -187,7 +187,9 @@ PdfUI.propTypes = {
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
-  scrollToComment: PropTypes.number,
+  scrollToComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
   onCommentScrolledTo: PropTypes.func,
   onIconMoved: PropTypes.func
 };
