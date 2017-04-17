@@ -184,8 +184,11 @@ describe EstablishClaim do
             "use a different EP code modifier. GUID: 13fcd</faultstring>")
         end
 
-        it "raises EndProductAlreadyExistsError" do
-          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        it "raises duplicate_ep VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("duplicate_ep")
+          end
         end
       end
 
@@ -195,8 +198,25 @@ describe EstablishClaim do
             " BGS code; PIF is already in use.</faultstring>")
         end
 
-        it "raises EndProductAlreadyExistsError" do
-          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        it "raises duplicate_ep VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("duplicate_ep")
+          end
+        end
+      end
+
+      context "Veteran missing SSN error" do
+        let(:vbms_error) do
+          VBMS::HTTPError.new("500", "<faultstring>The PersonalInfo " \
+            "SSN must not be empty.</faultstring>")
+        end
+
+        it "raises missing_ssn VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("missing_ssn")
+          end
         end
       end
     end
