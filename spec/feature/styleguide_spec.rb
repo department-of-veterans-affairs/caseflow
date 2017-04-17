@@ -4,8 +4,8 @@ require "rails_helper"
 # :nocov:
 RSpec.feature "Style Guide" do
   skip "renders and is accessible" do
-     visit "/styleguide"
-     expect(page).to have_content("Caseflow Commons")
+    visit "/styleguide"
+    expect(page).to have_content("Caseflow Commons")
   end
 end
 # :nocov:

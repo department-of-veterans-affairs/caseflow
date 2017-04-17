@@ -48,7 +48,7 @@ export default class TabWindow extends React.Component {
   // For pages with only one set of tabs or a non-specified tab group name
   // the name returns "undefined". This appends the word "main" to the tab group.
   getTabGroupName = (name) => {
-    return name ? name : "main"
+    return name ? name : "main";
   }
 
   render() {
