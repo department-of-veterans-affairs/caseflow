@@ -1,8 +1,7 @@
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import React from 'react';
 import DecisionReviewer from './DecisionReviewer';
-import logger from 'redux-logger';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
@@ -41,7 +40,11 @@ const readerReducer = (state = {}, action = {}) => {
   }
 };
 
-const store = createStore(readerReducer, null, applyMiddleware(logger));
+const store = createStore(
+  readerReducer,
+  // eslint-disable-next-line no-underscore-dangle
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 const Reader = (props) => {
   return <Provider store={store}>
