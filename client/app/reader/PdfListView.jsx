@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
-import StringUtil from '../util/StringUtil';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 
 export default class PdfListView extends React.Component {
@@ -37,25 +37,14 @@ export default class PdfListView extends React.Component {
       {
         header: <div
           id="categories-header"
-          className="document-list-header-categories"
-          onClick={() => {
-            // on click actions here
-          }}>
+          className="document-list-header-categories">
           Categories {filterIcon}
         </div>,
-        valueFunction: (doc) => {
-          return <span>
-            {doc.label && <i
-              className={`fa fa-bookmark cf-pdf-bookmark-` +
-                `${StringUtil.camelCaseToDashCase(doc.label)}`}
-              aria-hidden="true"></i>}
-          </span>;
-        }
+        valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
       },
       {
         header: <div
           id="receipt-date-header"
-          className="document-list-header-recepit-date"
           onClick={this.props.changeSortState('date')}>
           Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
         </div>,
