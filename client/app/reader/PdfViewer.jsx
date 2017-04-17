@@ -228,9 +228,7 @@ export default class PdfViewer extends React.Component {
             file={this.props.file}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
-            label={this.props.label}
             onPageClick={this.placeComment}
-            onSetLabel={this.props.onSetLabel}
             onShowList={this.props.onShowList}
             onNextPdf={this.props.onNextPdf}
             onPreviousPdf={this.props.onPreviousPdf}
@@ -261,7 +259,7 @@ export default class PdfViewer extends React.Component {
               onClick: this.closeConfirmDeleteModal
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Confirm Delete',
+              name: 'Confirm delete',
               onClick: this.state.onConfirmDelete
             }
           ]}
@@ -278,7 +276,5 @@ PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   file: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  pdfWorker: PropTypes.string,
-  onSetLabel: PropTypes.func.isRequired
+  pdfWorker: PropTypes.string
 };

@@ -1,4 +1,5 @@
 describe Appeal do
+  let(:appeal) { Generators::Appeal.build }
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
@@ -493,7 +494,6 @@ describe Appeal do
 
   context "#special_issues" do
     subject { appeal.special_issues }
-    let(:appeal) { Appeal.new }
 
     context "when no special issues are true" do
       it { is_expected.to eq([]) }
@@ -519,6 +519,20 @@ describe Appeal do
       it { is_expected.to include("Vocational Rehab") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+    end
+  end
+
+  context "#veteran" do
+    subject { appeal.veteran }
+
+    let(:veteran_record) { { first_name: "Ed", last_name: "Merica" } }
+
+    before do
+      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+    end
+
+    it "returns veteran loaded with BGS values" do
+      is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
     end
   end
 end

@@ -49,9 +49,10 @@ class Fakes::AppealRepository
     VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
-  def self.establish_claim!(claim:, appeal:)
-    Rails.logger.info("Submitting claim to VBMS for appeal: #{appeal.id}")
-    Rails.logger.info("Claim data:\n #{claim}")
+  def self.establish_claim!(claim_hash:, veteran_hash:)
+    Rails.logger.info("Submitting claim to VBMS...")
+    Rails.logger.info("Veteran data:\n #{veteran_hash}")
+    Rails.logger.info("Claim data:\n #{claim_hash}")
 
     # return fake end product
     OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
@@ -191,21 +192,20 @@ class Fakes::AppealRepository
 
   def self.certification_documents
     [
-      Generators::Document.build(type: "NOD"),
+      Generators::Document.build(type: "NOD", category_procedural: true),
       Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9")
+      Generators::Document.build(type: "Form 9", category_medical: true)
     ]
   end
 
   def self.establish_claim_documents
     certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
+      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago, category_other: true)
     ]
   end
 
   def self.establish_claim_multiple_decisions
-    certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago),
+    establish_claim_documents + [
       Generators::Document.build(type: "BVA Decision", received_at: 8.days.ago)
     ]
   end
@@ -312,11 +312,14 @@ class Fakes::AppealRepository
 
   def self.reader_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
-      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago)
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9",
+                                 category_medical: true, category_procedural: true),
+      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago,
+                                 category_other: true),
+      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+                                 category_medical: true, category_procedural: true, category_other: true)
     ]
   end
 

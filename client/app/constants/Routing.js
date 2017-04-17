@@ -201,7 +201,7 @@ const ROUTING_INFORMATION =
       RO80: ['nancy.encarnado@va.gov'],
       RO81: ['PMCAPPEALS.VBAPHI@va.gov', 'matthew.wright@va.gov'],
       RO82: ['PMCAppeals.VBAMIW@va.gov', 'tammy.boggs@va.gov'],
-      RO83: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
+      RO83: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       RO84: ['cowc.vbaphi@va.gov', 'Sohail.Atoum@va.gov'],
       RO85: ['cow.vbamiw@va.gov', 'bryan.carroll@va.gov'],
       RO86: ['smtpfin.vab.spl@va.gov', 'vernon.anderson@va.gov'],
