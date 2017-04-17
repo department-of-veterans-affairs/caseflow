@@ -3,7 +3,6 @@ import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
-import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
@@ -377,7 +376,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({
       type: Constants.SCROLL_TO_COMMENT,
       payload: scrollToComment
-    })
+    });
   }
 });
 

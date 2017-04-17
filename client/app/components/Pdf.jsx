@@ -264,7 +264,7 @@ export class Pdf extends React.Component {
     /* eslint-enable no-negated-condition */
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = () => {
     for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
       if (!this.state.isRendered[index] &&
         document.getElementById(`pageContainer${index + 1}`)) {

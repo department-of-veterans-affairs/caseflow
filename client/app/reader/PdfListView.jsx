@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
-import StringUtil from '../util/StringUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
