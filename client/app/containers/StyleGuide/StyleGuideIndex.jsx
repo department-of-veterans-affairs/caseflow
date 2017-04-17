@@ -38,10 +38,10 @@ export default class StyleGuideIndex extends React.Component {
     let divStyle = {
       height: this.state.height - 155
     }
-    console.log(divStyle);
+    // console.log(divStyle.height);
+    // console.log(window.scrollY);
 
-    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt"
-      ref={(node) => this.calcHeight(node)}>
+    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav style={this.divStyle}>
         <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
         <NavLink anchor="#typography" name="Typography"></NavLink>
@@ -66,7 +66,7 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
         <NavLink anchor="#text_input" name="Text Input"></NavLink>
       </StickyNav>
-      <div className="cf-push-right cf-sg-content">
+      <div className="cf-push-right cf-sg-content" ref={(node) => this.calcHeight(node)}>
       <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.
@@ -160,8 +160,6 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
         <div className="cf-help-divider"></div>
         <StyleGuideTextInput />
-        <div className="cf-help-divider"></div>
-        <StyleGuideDropdownMenu />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
     </div>

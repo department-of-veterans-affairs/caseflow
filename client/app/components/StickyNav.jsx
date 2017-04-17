@@ -22,11 +22,11 @@ export default class StickyNav extends React.Component {
 
   handleScroll = () => {
     // Nav bar will attach to top of page if the user scrolls down by 100px
-    if (window.scrollY > 100) {
+    if (window.scrollY > 150) {
       this.setState({
         className: "cf-sg-nav-scrolling"
       });
-    } else if (window.scrollY < 100) {
+    } else if (window.scrollY < 150) {
       this.setState({
         className: "cf-sg-nav-not-scrolling"
       });
