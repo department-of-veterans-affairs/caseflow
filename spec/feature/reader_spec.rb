@@ -83,7 +83,7 @@ RSpec.feature "Reader" do
     expect(documents[0].reload.annotations.count).to eq(0)
   end
 
-  context "When there is an existing annotation", focus: true do
+  context "When there is an existing annotation" do
     let!(:annotation) do
       Generators::Annotation.create(
         comment: "hello world",
@@ -108,12 +108,7 @@ RSpec.feature "Reader" do
       find("#comment0").click
       after_click_scroll = scroll_position
 
-      # This is a very specific number. It is the current scroll value,
-      # it might be better to just check if it's greater than zero.
-      # But I think there is value in knowing when code changes the
-      # amount scrolled. Feel free to change this if it starts failing
-      # on a regular basis.
-      expect(after_click_scroll - original_scroll).to eq(546)
+      expect(after_click_scroll - original_scroll).to be > 0
     end
   end
 
