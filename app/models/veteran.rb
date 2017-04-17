@@ -49,7 +49,7 @@ class Veteran
   end
 
   def fetch_bgs_record
-    Veteran.bgs.fetch_veteran_info(file_number)
+    self.class.bgs.fetch_veteran_info(file_number)
   end
 
   def vbms_attributes
