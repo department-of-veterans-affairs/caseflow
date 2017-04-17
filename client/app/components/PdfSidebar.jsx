@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import DocCategoryPicker from '../reader/DocCategoryPicker';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -109,21 +110,7 @@ export default class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
-          <ul className="cf-document-category-picker">
-            {
-              _(Constants.documentCategories).
-                toPairs().
-                // eslint-disable-next-line no-unused-vars
-                sortBy(([name, category]) => category.renderOrder).
-                map(
-                  ([categoryName, category]) => <li key={categoryName}>
-                    <ConnectedCategorySelector category={category}
-                      categoryName={categoryName} docId={this.props.doc.id} />
-                  </li>
-                ).
-                value()
-            }
-          </ul>
+          <DocCategoryPicker />
           <div className="cf-heading-alt">
             Comments
             <span className="cf-right-side">
