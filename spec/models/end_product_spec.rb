@@ -10,7 +10,10 @@ describe EndProduct do
       claim_date: claim_date,
       claim_type_code: claim_type_code,
       status_type_code: status_type_code,
-      modifier: modifier
+      modifier: modifier,
+      station_of_jurisdiction: station_of_jurisdiction,
+      gulf_war_registry: gulf_war_registry,
+      suppress_acknowledgement_letter: suppress_acknowledgement_letter
     )
   end
 
@@ -18,6 +21,9 @@ describe EndProduct do
   let(:status_type_code) { nil }
   let(:modifier) { nil }
   let(:claim_date) { Time.zone.now }
+  let(:station_of_jurisdiction) { "489" }
+  let(:gulf_war_registry) { false }
+  let(:suppress_acknowledgement_letter) { true }
 
   context "#claim_type" do
     subject { end_product.claim_type }
@@ -119,6 +125,53 @@ describe EndProduct do
     end
   end
 
+  context "#valid?" do
+    subject { end_product.valid? }
+
+    let(:modifier) { "170" }
+    let(:claim_type_code) { "400CORRCPMC" }
+    let(:station_of_jurisdiction) { "489" }
+    let(:gulf_war_registry) { false }
+    let(:suppress_acknowledgement_letter) { true }
+
+    it { is_expected.to be_truthy }
+
+    context "when modifier is missing" do
+      let(:modifier) { nil }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when claim_type_code is missing" do
+      let(:claim_type_code) { nil }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when claim_type_code is invalid" do
+      let(:claim_type_code) { "WHATWHO" }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when station_of_jurisdiction is missing" do
+      let(:station_of_jurisdiction) { nil }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when claim_date is missing" do
+      let(:claim_date) { nil }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when gulf_war_registry is not a boolean" do
+      let(:gulf_war_registry) { "shane" }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when suppress_acknowledgement_letter is not a boolean" do
+      let(:suppress_acknowledgement_letter) { "shane" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#serializable_hash" do
     let(:result) do
       EndProduct.new(
@@ -131,11 +184,40 @@ describe EndProduct do
     end
 
     it "serializes the hash correctly" do
-      expect(result).to eq(benefit_claim_id: "SHAQ123",
-                           claim_receive_date: "09/06/2017",
-                           claim_type_code: "Grant of Benefits",
-                           end_product_type_code: "172",
-                           status_type_code: "Pending")
+      expect(result).to eq(
+        benefit_claim_id: "SHAQ123",
+        claim_receive_date: "09/06/2017",
+        claim_type_code: "Grant of Benefits",
+        end_product_type_code: "172",
+        status_type_code: "Pending"
+      )
+    end
+  end
+
+  context "#to_vbms_hash" do
+    subject { end_product.to_vbms_hash }
+
+    let(:modifier) { "170" }
+    let(:claim_type_code) { "930RC" }
+    let(:station_of_jurisdiction) { "313" }
+    let(:gulf_war_registry) { true }
+    let(:suppress_acknowledgement_letter) { false }
+    let(:claim_date) { 7.days.from_now }
+
+    it "maps attributes correctly" do
+      is_expected.to eq(
+        benefit_type_code: "1",
+        payee_code: "00",
+        predischarge: false,
+        claim_type: "Claim",
+        end_product_modifier: "170",
+        end_product_code: "930RC",
+        end_product_label: "Rating Control",
+        station_of_jurisdiction: "313",
+        date: 7.days.from_now.to_date,
+        suppress_acknowledgement_letter: false,
+        gulf_war_registry: true
+      )
     end
   end
 
@@ -158,6 +240,33 @@ describe EndProduct do
         claim_type_code: "170RMD",
         modifier: "170",
         status_type_code: "PEND"
+      )
+    end
+  end
+
+  context ".from_establish_claim_params" do
+    subject { EndProduct.from_establish_claim_params(params) }
+
+    let(:params) do
+      {
+        date: 14.days.from_now.to_formatted_s(:short_date),
+        end_product_code: "172BVAG",
+        end_product_modifier: "170",
+        gulf_war_registry: true,
+        suppress_acknowledgement_letter: true,
+        station_of_jurisdiction: "499"
+      }
+    end
+
+    it "maps attributes correctly" do
+      is_expected.to have_attributes(
+        claim_date: 14.days.from_now.beginning_of_day,
+        claim_type_code: "172BVAG",
+        claim_type: "BVA Grant",
+        modifier: "170",
+        gulf_war_registry: true,
+        suppress_acknowledgement_letter: true,
+        station_of_jurisdiction: "499"
       )
     end
   end

@@ -19,13 +19,16 @@ RSpec.feature "Reader" do
         filename: "BVA Decision",
         type: "BVA Decision",
         received_at: 7.days.ago,
-        vbms_document_id: 5
+        vbms_document_id: 5,
+        category_procedural: true
       ),
       Generators::Document.create(
         filename: "Form 9",
         type: "Form 9",
         received_at: 5.days.ago,
-        vbms_document_id: 2
+        vbms_document_id: 2,
+        category_medical: true,
+        category_other: true
       )
     ]
   end
@@ -75,6 +78,9 @@ RSpec.feature "Reader" do
 
     # Delete the comment
     click_on "Delete"
+
+    # Confirm the delete
+    click_on "Confirm delete"
 
     # Expect the comment to be removed from the page
     expect(page).to_not have_content("FooBar")
@@ -130,5 +136,41 @@ RSpec.feature "Reader" do
 
     # Expect only the first page of the pdf to be rendered
     expect(page).to_not have_content("Important Decision Document!!!")
+  end
+
+  scenario "Categories" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+    def get_aria_labels(elems)
+      elems.map do |elem|
+        elem["aria-label"]
+      end
+    end
+
+    doc_1_categories =
+      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+    expect(doc_1_categories).to eq(["Procedural"])
+
+    doc_2_categories = get_aria_labels all(".section--document-list table tr:last-child .cf-document-category-icons li")
+    expect(doc_2_categories).to eq(["Medical", "Other Evidence"])
+
+    click_on documents[0].filename
+
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
+
+    find(".checkbox-wrapper-procedural").click
+    find(".checkbox-wrapper-medical").click
+
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
+
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+    doc_1_categories =
+      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+    expect(doc_1_categories).to eq(["Medical"])
+
+    click_on documents[1].filename
+
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
   end
 end

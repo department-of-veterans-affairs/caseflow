@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 import { Redirect } from 'react-router-dom';
@@ -45,7 +45,7 @@ const representativeTypeOptions = [
  *
  */
 
-class ConfirmCaseDetails extends React.Component {
+export class ConfirmCaseDetails extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -172,6 +172,17 @@ class ConfirmCaseDetails extends React.Component {
     </div>;
   }
 }
+
+ConfirmCaseDetails.propTypes = {
+  representativeType: PropTypes.string,
+  onRepresentativeTypeChange: PropTypes.func,
+  representativeName: PropTypes.string,
+  onRepresentativeNameChange: PropTypes.func,
+  otherRepresentativeType: PropTypes.string,
+  onOtherRepresentativeTypeChange: PropTypes.func,
+  match: PropTypes.object.isRequired
+};
+
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
