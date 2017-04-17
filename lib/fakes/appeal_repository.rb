@@ -221,7 +221,7 @@ class Fakes::AppealRepository
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
         vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
-        documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
+        documents: i.even? ? establish_claim_one_decision : establish_claim_multiple_decisions
       )
     end
   end
