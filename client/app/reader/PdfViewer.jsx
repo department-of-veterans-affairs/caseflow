@@ -255,7 +255,6 @@ PdfViewer.propTypes = {
   file: PropTypes.string.isRequired,
   label: PropTypes.string,
   pdfWorker: PropTypes.string,
-  onSetLabel: PropTypes.func.isRequired,
   scrollToComment: PropTypes.number,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func

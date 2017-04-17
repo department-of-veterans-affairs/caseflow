@@ -344,7 +344,6 @@ export class DecisionReviewer extends React.Component {
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
-          onSetLabel={this.onSetLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label}
           scrollToComment={this.state.scrollToComment}
           onJumpToComment={this.onJumpToComment}
