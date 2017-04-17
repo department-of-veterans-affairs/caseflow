@@ -1193,11 +1193,6 @@
       "resolved": "https://registry.npmjs.org/circular-json/-/circular-json-0.3.1.tgz",
       "dev": true
     },
-    "classnames": {
-      "version": "2.2.5",
-      "from": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz",
-      "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
-    },
     "cli-cursor": {
       "version": "1.0.2",
       "from": "cli-cursor@>=1.0.1 <2.0.0",
