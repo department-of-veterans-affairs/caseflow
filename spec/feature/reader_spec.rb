@@ -80,7 +80,7 @@ RSpec.feature "Reader" do
     click_on "Delete"
 
     # Confirm the delete
-    click_on "Confirm Delete"
+    click_on "Confirm delete"
 
     # Expect the comment to be removed from the page
     expect(page).to_not have_content("FooBar")
