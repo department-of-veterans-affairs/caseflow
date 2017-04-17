@@ -60,7 +60,7 @@ export default class PdfListView extends React.Component {
         valueFunction: (doc, index) => boldUnreadContent(
           <a
             href={linkToSingleDocumentView(doc)}
-            onMouseUp={this.props.showPdf(index)}>
+            onMouseUp={this.props.showPdf(index, document)}>
             {doc.type}
           </a>, doc)
       },

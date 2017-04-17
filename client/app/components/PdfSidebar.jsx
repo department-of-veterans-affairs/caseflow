@@ -71,6 +71,12 @@ const ConnectedCategorySelector = connect(
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    
+  }
+  
   generateOptionsFromTags = (tags) => {
     if (!tags || tags.length <= 0) {
       return {};
@@ -111,7 +117,8 @@ export default class PdfSidebar extends React.Component {
           {comment.comment}
         </Comment>;
     });
-
+    console.log(doc.id);
+    console.log(doc.tags);
     return <div className="cf-sidebar-wrapper">
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">
@@ -124,7 +131,10 @@ export default class PdfSidebar extends React.Component {
             creatable={true}
             options={this.generateOptionsFromTags(doc.tags)}
             placeholder="Select or type issue"
-            classNames={[]}
+            value={this.generateOptionsFromTags(doc.tags)}
+            onChange={(values) => {
+              this.props.addNewTag(doc, values);
+            }}
           />
           <div className="cf-heading-alt">Document</div>
           <p className="cf-pdf-meta-title">

@@ -1,10 +1,13 @@
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux'
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
+import _ from 'lodash';
+import * as ReaderActions from './actions';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
@@ -47,7 +50,7 @@ export class DecisionReviewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.props.onReceiveDocs(nextProps.appealDocuments);
+    //this.props.onReceiveDocs(nextProps.appealDocuments);
   }
 
   onPreviousPdf = () => {
@@ -295,8 +298,13 @@ export class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
+    const reduxDouments = this.props.documents;
+    
+    console.log(reduxDouments);
+
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
+    
 
     return (
       <div className="section--document-list">
@@ -315,6 +323,7 @@ export class DecisionReviewer extends React.Component {
           selectComments={this.selectComments}
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
+          addNewTag={this.props.addNewTag}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={documents[this.state.currentPdfIndex]}
@@ -334,13 +343,19 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  onReceiveDocs(documents) {
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: documents
-    });
+const mapStateToProps = (state) => {
+  return {
+    documents: state.documents || {}
   }
-});
+}
 
-export default connect(null, mapDispatchToProps)(DecisionReviewer);
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(ReaderActions, dispatch)
+};
+
+//export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);
+
+export default connect((state => {
+    console.log(state);
+    return {documents: state.documents || {}};
+}), mapDispatchToProps)(DecisionReviewer);

@@ -238,7 +238,8 @@ export default class PdfViewer extends React.Component {
             onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
-            doc={this.props.doc}
+            addNewTag={this.props.addNewTag}
+            
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
             isAddingComment={this.state.isAddingComment}

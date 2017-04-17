@@ -55,7 +55,7 @@ Rails.application.routes.draw do
     end
 
     resources :documents, only: [] do
-      resources :tags, only: [:create, :index]
+      resources :tags, only: [:create, :index, :destroy]
     end
   end
 
