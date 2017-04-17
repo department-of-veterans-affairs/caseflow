@@ -7,6 +7,7 @@ import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 
 export class EstablishClaimEmail extends BaseForm {
@@ -47,9 +48,26 @@ export class EstablishClaimEmail extends BaseForm {
         confirmBox: new FormField(false),
         emailField: new FormField(email)
       },
-      noEmailNote: note
+      noEmailNote: note,
+      value: '',
+      copied: false
     };
   }
+
+
+     onChangeCopy({target:{value}}){
+       this.setState({
+         value: '',
+          copied: false
+     })
+    }
+
+     onCopy() {
+     this.setState({
+      copied: true
+     })
+   }
+
 
   render() {
     return <div>
@@ -81,6 +99,22 @@ export class EstablishClaimEmail extends BaseForm {
               onChange={this.handleFieldChange('emailForm', 'emailField')}
               {...this.state.emailForm.emailField}
           />
+           
+
+        <div className="cf-app-segment" id="copy-note-button">
+            <div className="cf-push-left">
+           <CopyToClipboard text={this.state.emailForm.emailField.value}
+            onCopy={this.onCopy}>
+            <Button
+           name="copyNote"
+           classNames={["usa-button-outline"]}>
+         <i className="fa fa-files-o" aria-hidden="true"></i>
+         Copy note
+       </Button>
+       </CopyToClipboard>
+      </div>
+     </div>
+
 
           <Checkbox
               label="I confirm that I have sent an email to route this claim."
