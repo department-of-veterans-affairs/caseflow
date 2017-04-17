@@ -6,6 +6,7 @@ import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import _ from 'lodash';
 
 const NUMBER_OF_COLUMNS = 5;
 
@@ -64,23 +65,22 @@ export default class PdfListView extends React.Component {
               getAnnotationByDocumentId(doc.id);
             let commentNodes = comments.map((comment, commentIndex) => {
               return <Comment
+                key={comment.uuid}
                 id={`comment${doc.id}-${commentIndex}`}
                 selected={false}
                 page={comment.page}
-                onJumpToComment={this.props.onJumpToComment(doc.id, comment)}
+                onJumpToComment={this.props.onJumpToComment(comment)}
                 uuid={comment.uuid}
                 horizontalLayout={true}>
                   {comment.comment}
                 </Comment>;
             });
 
-            return <div>
+            return <ul ariaLabel="Document comments">
               {commentNodes}
-            </div>;
+            </ul>;
           },
-          span: () => {
-            return NUMBER_OF_COLUMNS;
-          }
+          span: _.constant(NUMBER_OF_COLUMNS)
         }];
       }
 
@@ -88,10 +88,7 @@ export default class PdfListView extends React.Component {
         {
           header: <div
             id="categories-header"
-            className="document-list-header-categories"
-            onClick={() => {
-              // on click actions here
-            }}>
+            className="document-list-header-categories">
             Categories {filterIcon}
           </div>,
           valueFunction: (doc) => {
@@ -128,10 +125,7 @@ export default class PdfListView extends React.Component {
         },
         {
           header: <div id="issue-tags-header"
-            className="document-list-header-issue-tags"
-            onClick={() => {
-              // on click handler here
-            }}>
+            className="document-list-header-issue-tags">
             Issue Tags {filterIcon}
           </div>,
           valueFunction: () => {
@@ -186,10 +180,10 @@ export default class PdfListView extends React.Component {
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
       if (this.state.commentsOpened[row.id]) {
-        let commentRow = { ...row };
-
-        commentRow.isComment = true;
-        acc.push(commentRow);
+        acc.push({
+          ...row,
+          isComment: true
+        });
       }
 
       return acc;

@@ -4,6 +4,7 @@ import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
+import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
@@ -85,15 +86,7 @@ export default class DecisionReviewer extends React.Component {
     });
   }
 
-  pdfNumberFromId = (pdfId) => {
-    for (let i = 0; i < this.state.documents.length; i++) {
-      if (this.state.documents[i].id === pdfId) {
-        return i;
-      }
-    }
-
-    return null;
-  }
+  pdfNumberFromId = (pdfId) => _.findIndex(this.state.documents, { id: pdfId })
 
   showPdf = (pdfId) => (event) => {
     let pdfNumber = this.pdfNumberFromId(pdfId);
@@ -320,12 +313,8 @@ export default class DecisionReviewer extends React.Component {
     return this.state.currentPdfIndex > 0;
   }
 
-  onJumpToComment = (pdfId, comment) => () => {
-    this.setPage(this.pdfNumberFromId(pdfId));
-    this.onScrollToComment(comment)();
-  }
-
-  onScrollToComment = (comment) => () => {
+  onJumpToComment = (comment) => () => {
+    this.setPage(this.pdfNumberFromId(comment.documentId));
     this.setState({
       scrollToComment: comment
     });
@@ -375,7 +364,7 @@ export default class DecisionReviewer extends React.Component {
           onSetLabel={this.onSetLabel(this.state.currentPdfIndex)}
           label={documents[this.state.currentPdfIndex].label}
           scrollToComment={this.state.scrollToComment}
-          onScrollToComment={this.onScrollToComment}
+          onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
       </div>
     );

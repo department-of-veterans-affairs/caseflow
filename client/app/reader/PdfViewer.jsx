@@ -213,7 +213,7 @@ export default class PdfViewer extends React.Component {
             onCancelCommentEdit={this.onCancelCommentEdit}
             onDeleteComment={this.onDeleteComment}
             onEditComment={this.onEditComment}
-            onScrollToComment={this.props.onScrollToComment}
+            onJumpToComment={this.props.onJumpToComment}
           />
         </div>
       </div>

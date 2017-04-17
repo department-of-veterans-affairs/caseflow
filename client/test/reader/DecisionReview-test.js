@@ -238,14 +238,13 @@ describe('DecisionReviewer', () => {
 
       it('can be clicked on to jump to icon', asyncTest(async() => {
         let commentId = 1;
+        let jumpTo = sinon.spy(wrapper.getNode(), 'onJumpToComment');
 
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
-        let pdfViewer = wrapper.find('PdfViewer').getNode();
-        let jumpTo = sinon.spy(pdfViewer, 'onJumpToComment');
 
         wrapper.find('a').findWhere(
           (link) => link.text() === '+ Add a Comment').
@@ -260,7 +259,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         wrapper.find('#comment0').simulate('click');
-        expect(jumpTo.calledWith(commentId)).to.be.true;
+        expect(jumpTo.calledWith(sinon.match({ id: commentId }))).to.be.true;
       }));
 
       it('highlighted by clicking on the icon', asyncTest(async() => {
@@ -301,7 +300,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Make sure post scroll callback is called
-        expect(scrolledTo.calledOnce).to.be.true;
+        expect(scrolledTo.called).to.be.true;
       }));
     });
 

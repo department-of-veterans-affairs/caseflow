@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
+import _ from 'lodash';
 
 // A rounded rectangle with a user's comment inside.
 // Comes with edit and delete buttons
@@ -67,11 +68,10 @@ export default class Comment extends React.Component {
           <span className="cf-right-side">
             {this.controlButtons()}
           </span>
-          <b>Page {this.props.page} {jumpToSectionButton}</b>
+          <strong>Page {this.props.page} {jumpToSectionButton}</strong>
         </div>
         <div
           className={className}
-          key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
           {this.props.children}
@@ -82,10 +82,10 @@ export default class Comment extends React.Component {
       className = `${className} comment-horizontal-container`;
       commentToRender = <div>
         <span className="comment-horizontal-spacing">
-          <b>Page {this.props.page}</b>
+          <strong>Page {this.props.page}</strong>
         </span>
         <span className="comment-horizontal-spacing">
-          <b>{jumpToSectionButton}</b>
+          <strong>{jumpToSectionButton}</strong>
         </span>
         <div
           className={className}
@@ -102,7 +102,9 @@ export default class Comment extends React.Component {
 }
 
 Comment.defaultProps = {
-  onClick: () => { /* do nothing */ }
+  onClick: () => {
+    return _.noop;
+  }
 };
 
 Comment.propTypes = {

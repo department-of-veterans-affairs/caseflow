@@ -38,11 +38,8 @@ export default class Table extends React.Component {
     };
 
     let getColumns = (props) => {
-      if (typeof props.columns === 'function') {
-        return props.columns(props.rowObject);
-      }
-
-      return props.columns;
+      return _.isFunction(props.columns) ?
+        props.columns(props.rowObject) : props.columns;
     };
 
     let HeaderRow = (props) => {
