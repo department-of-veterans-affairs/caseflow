@@ -6,7 +6,16 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
-const readerReducer = (state = {}, action = {}) => {
+const initialState = {
+  ui: {
+    pdfList: {
+      filters: {
+        category: {}
+      }
+    }
+  }
+};
+const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {

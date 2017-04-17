@@ -6,6 +6,9 @@ import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import * as Constants from './constants';
+import DropdownFilter from './DropdownFilter';
+import _ from 'lodash';
+import DocCategoryPicker from './DocCategoryPicker';
 
 const FilterIcon = ({ handleActivate, label }) => {
   const handleKeyDown = (event) => {
@@ -54,6 +57,14 @@ export class PdfListView extends React.Component {
           Categories <FilterIcon
             label="Filter by category"
             handleActivate={() => this.props.toggleCategoryFilter('category')} />
+
+          {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
+            <DropdownFilter>
+              <DocCategoryPicker
+                categoryToggleStates={this.props.pdfList.filters.category} />
+            </DropdownFilter>
+          }
+
         </div>,
         valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
       },
@@ -157,6 +168,7 @@ PdfListView.propTypes = {
   sortBy: PropTypes.string
 };
 
+const mapStateToProps = (state) => _.pick(state.ui, 'pdfList');
 const mapDispatchToProps = (dispatch) => ({
   toggleCategoryFilter(filterName) {
     dispatch({
@@ -168,4 +180,4 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-export default connect(null, mapDispatchToProps)(PdfListView);
+export default connect(mapStateToProps, mapDispatchToProps)(PdfListView);
