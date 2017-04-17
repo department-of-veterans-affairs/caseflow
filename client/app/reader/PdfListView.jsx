@@ -1,13 +1,15 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import * as Constants from './constants';
 
 const FilterIcon = ({ handleActivate, label }) => {
   const handleKeyDown = (event) => {
-    if (event.key === ' ' || event.key === 'enter') {
+    if (event.key === ' ' || event.key === 'Enter') {
       handleActivate(event);
       event.preventDefault();
     }
@@ -18,7 +20,7 @@ const FilterIcon = ({ handleActivate, label }) => {
       onClick={handleActivate} onKeyDown={handleKeyDown}></i>;
 };
 
-export default class PdfListView extends React.Component {
+export class PdfListView extends React.Component {
   getDocumentColumns = () => {
     let className;
 
@@ -49,7 +51,9 @@ export default class PdfListView extends React.Component {
         header: <div
           id="categories-header"
           className="document-list-header-categories">
-          Categories <FilterIcon label="Filter by category" />
+          Categories <FilterIcon
+            label="Filter by category"
+            handleActivate={() => this.props.toggleCategoryFilter('category')} />
         </div>,
         valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
       },
@@ -152,3 +156,16 @@ PdfListView.propTypes = {
   onFilter: PropTypes.func.isRequired,
   sortBy: PropTypes.string
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  toggleCategoryFilter(filterName) {
+    dispatch({
+      type: Constants.TOGGLE_FILTER_DROPDOWN,
+      payload: {
+        filterName
+      }
+    });
+  }
+});
+
+export default connect(null, mapDispatchToProps)(PdfListView);
