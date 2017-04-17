@@ -35,6 +35,28 @@ const readerReducer = (state = {}, action = {}) => {
         }
       }
     );
+  case Constants.TOGGLE_FILTER_DROPDOWN:
+    return (() => {
+      const originalValue = _.get(
+        state,
+        ['ui', 'pdfList', 'dropdowns', action.payload.filterName],
+        false
+      );
+
+      return _.merge(
+        {},
+        state,
+        {
+          ui: {
+            pdfList: {
+              dropdowns: {
+                [action.payload.filterName]: !originalValue
+              }
+            }
+          }
+        }
+      );
+    })();
   default:
     return state;
   }
