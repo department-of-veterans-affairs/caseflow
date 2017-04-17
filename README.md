@@ -31,13 +31,13 @@ Then run the following:
 
 > $ gem install bundler
 
-You'll need PhantomJS, Postgres, and Redis if you don't have them.
+You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
 > $ brew install postgresql
 
 > $ brew install redis
 
-> $ brew install phantomjs
+> $ brew install chromedriver
 
 You may want to have Redis and Postgres run on startup. Let brew tell you how to do that:
 

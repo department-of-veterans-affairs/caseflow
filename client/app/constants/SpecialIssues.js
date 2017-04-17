@@ -44,7 +44,7 @@ const SPECIAL_ISSUES = [
     specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribb',
     stationOfJurisdiction: null,
     unhandled: {
-      emailAddress: ['PMC/PMCIPC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
+      emailAddress: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       regionalOffice: 'RO83'
     }
   },
