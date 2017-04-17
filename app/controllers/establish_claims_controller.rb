@@ -9,8 +9,8 @@ class EstablishClaimsController < TasksController
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
 
-  rescue EstablishClaim::EndProductAlreadyExistsError
-    render json: { error_code: "duplicate_ep" }, status: 422
+  rescue EstablishClaim::VBMSError => e
+    render json: { error_code: e.error_code }, status: 422
   end
 
   # This POST updates VACOLS & VBMS Note

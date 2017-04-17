@@ -42,7 +42,7 @@ class Task < ActiveRecord::Base
     end
 
     def any_assignable_to?(user)
-      user.current_task(self) || next_assignable
+      !(user.current_task(self).nil? && next_assignable.nil?)
     end
 
     def unprepared

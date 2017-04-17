@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
-import DocumentLabels from '../components/DocumentLabels';
 import Pdf from '../components/Pdf';
+import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -25,8 +25,6 @@ export const linkToSingleDocumentView = (doc) => {
 //   a user to be able to navigate to, pass in handlers for onNextPdf
 //   and onPreviousPdf. If one is not supplied, or is null, then the
 //   corresponding arrow will be missing.
-// Color labels: If you want users to be able to see/select color labels
-//   on the document pass in the onSetLabel handler.
 export default class PdfUI extends React.Component {
   constructor(props) {
     super(props);
@@ -97,6 +95,7 @@ export default class PdfUI extends React.Component {
             </Button>
           </span>
           <span className="usa-width-one-third cf-right-side">
+            <DocumentCategoryIcons docId={this.props.doc.id} />
             <Button
               name="newTab"
               classNames={["cf-pdf-button"]}
@@ -175,7 +174,6 @@ PdfUI.propTypes = {
   onShowList: PropTypes.func,
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
-  onSetLabel: PropTypes.func,
   onCommentClick: PropTypes.func,
   onIconMoved: PropTypes.func
 };

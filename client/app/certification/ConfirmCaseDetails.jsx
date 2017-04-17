@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
@@ -149,5 +149,15 @@ const ConfirmCaseDetails = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedConfirmCaseDetails);
+
+ConfirmCaseDetails.propTypes = {
+  representativeType: PropTypes.string,
+  onRepresentativeTypeChange: PropTypes.func,
+  representativeName: PropTypes.string,
+  onRepresentativeNameChange: PropTypes.func,
+  otherRepresentativeType: PropTypes.string,
+  onOtherRepresentativeTypeChange: PropTypes.func,
+  match: PropTypes.object.isRequired
+};
 
 export default ConfirmCaseDetails;
