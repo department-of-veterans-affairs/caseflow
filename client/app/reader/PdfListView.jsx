@@ -9,20 +9,10 @@ import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
+import IconButton from '../components/IconButton';
 
-const FilterIcon = ({ handleActivate, label, getRef }) => {
-  const handleKeyDown = (event) => {
-    if (event.key === ' ' || event.key === 'Enter') {
-      handleActivate(event);
-      event.preventDefault();
-    }
-  };
-
-  return <i className="fa fa-1 fa-filter table-icon bordered-icon"
-      role="button" aria-label={label} tabIndex="0"
-      ref={getRef}
-      onClick={handleActivate} onKeyDown={handleKeyDown}></i>;
-};
+const FilterIcon = (props) =>
+  <IconButton {...props} className={'table-icon bordered-icon'} iconName="fa-filter" />;
 
 export class PdfListView extends React.Component {
 

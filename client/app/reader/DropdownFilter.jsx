@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import IconButton from '../components/IconButton';
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -33,10 +34,8 @@ class DropdownFilter extends React.PureComponent {
       this.rootElem = rootElem;
     }}>
       <div>
-        Clear category filter
-          <i className="fa fa-times fa-1" onClick={this.props.handleClose}
-            tabindex="0"
-            role="button" aria-label="close"></i>
+        Clear category filter{' '}
+          <IconButton iconName="fa-times" handleActivate={this.props.handleClose} />
       </div>
       {children}
     </div>;
