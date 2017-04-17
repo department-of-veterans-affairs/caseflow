@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
@@ -17,13 +17,13 @@ class UnconnectedDocumentsCheck extends React.Component {
 
   render() {
 
-    /* TODO: add ssoc_match and ssoc_dates */
     let { form9Match,
       form9Date,
       nodMatch,
       nodDate,
       socMatch,
       socDate,
+      ssocDatesWithMatches,
       documentsMatch,
       match } = this.props;
 
@@ -37,6 +37,7 @@ class UnconnectedDocumentsCheck extends React.Component {
           nodDate={nodDate}
           socMatch={socMatch}
           socDate={socDate}
+          ssocDatesWithMatches={ssocDatesWithMatches}
           documentsMatch={documentsMatch}/>
       </div>
 
@@ -63,9 +64,9 @@ const mapStateToProps = (state) => ({
   nodDate: state.nodDate,
   socMatch: state.socMatch,
   socDate: state.socDate,
+  ssocDatesWithMatches: state.ssocDatesWithMatches,
   documentsMatch: state.documentsMatch
 
-    /* TODO: add ssoc_match and ssoc_dates */
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -88,5 +89,15 @@ const DocumentsCheck = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedDocumentsCheck);
+
+DocumentsCheck.propTypes = {
+  form9Date: PropTypes.string,
+  nodMatch: PropTypes.bool,
+  nodDate: PropTypes.string,
+  socMatch: PropTypes.bool,
+  socDate: PropTypes.string,
+  documentsMatch: PropTypes.bool,
+  match: PropTypes.object.isRequired
+};
 
 export default DocumentsCheck;
