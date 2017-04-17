@@ -101,6 +101,8 @@ class Fakes::AppealRepository
     raise_vbms_error_if_necessary(record)
 
     appeal.assign_from_vacols(record)
+
+    true
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)

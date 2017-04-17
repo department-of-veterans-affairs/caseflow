@@ -19,15 +19,17 @@ end
 
 class AppealRepository
   # :nocov:
+  # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
+
     set_vacols_values(appeal: appeal, case_record: case_record)
 
-    appeal
+    true
 
   rescue ActiveRecord::RecordNotFound
     return false
