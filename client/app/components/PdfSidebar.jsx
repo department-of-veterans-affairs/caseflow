@@ -11,11 +11,10 @@ import { categoryFieldNameOfCategoryName } from '../reader/utils';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
-  const toggleState = _.get(
+  const toggleState = Boolean(_.get(
     documents,
-    [docId, categoryFieldNameOfCategoryName(categoryName)],
-    false
-  );
+    [docId, categoryFieldNameOfCategoryName(categoryName)]
+  ));
   const Svg = category.svg;
   const label = <div className="cf-category-selector">
       <Svg />
