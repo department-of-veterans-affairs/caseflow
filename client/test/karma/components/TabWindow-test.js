@@ -35,7 +35,7 @@ describe('TabWindow', () => {
 
     expect(wrapper.find('#pageOne')).to.have.length(1);
     expect(wrapper.find('#pageTwo')).to.have.length(0);
-    wrapper.find('#tab-1').simulate('click');
+    wrapper.find('#main-tab-1').simulate('click');
     expect(wrapper.find('#pageOne')).to.have.length(0);
     expect(wrapper.find('#pageTwo')).to.have.length(1);
   });
@@ -75,7 +75,7 @@ describe('TabWindow', () => {
       ]}
       onChange={onChange}/>);
 
-    wrapper.find('#tab-1').simulate('click');
+    wrapper.find('#main-tab-1').simulate('click');
     expect(tabSelected).to.be.eq(1);
   });
 });

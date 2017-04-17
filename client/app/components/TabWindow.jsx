@@ -7,6 +7,9 @@ import React, { PropTypes } from 'react';
  * of the window
  * - @pages {array[node]} array of nodes displayed when the corresponding
  * tab is selected
+ * Optional props:
+ * - @name {string} used in each tab ID to differentiate multiple sets of tabs
+ * on a page. This is for accessibility purposes.
 */
 export default class TabWindow extends React.Component {
   constructor(props) {
@@ -42,8 +45,15 @@ export default class TabWindow extends React.Component {
     return className;
   }
 
+  // For pages with only one set of tabs or a non-specified tab group name
+  // the name returns "undefined". This appends the word "main" to the tab group.
+  getTabGroupName = (name) => {
+    return name ? name : "main";
+  }
+
   render() {
     let {
+      name,
       tabs,
       fullPage
     } = this.props;
@@ -56,7 +66,7 @@ export default class TabWindow extends React.Component {
             <button
               className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
               key={i}
-              id={`tab-${i}`}
+              id={`${this.getTabGroupName(name)}-tab-${i}`}
               onClick={this.onTabClick(i)}
               disabled={Boolean(tab.disable)}>
               <span>
