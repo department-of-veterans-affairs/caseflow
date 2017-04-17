@@ -83,7 +83,7 @@ const readerReducer = (state = initialState, action = {}) => {
           }
         }
       }
-    )
+    );
   default:
     return state;
   }
