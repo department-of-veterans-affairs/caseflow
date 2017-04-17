@@ -5,6 +5,19 @@ import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 
+const FilterIcon = ({ handleActivate, label }) => {
+  const handleKeyDown = (event) => {
+    if (event.key === ' ' || event.key === 'enter') {
+      handleActivate(event);
+      event.preventDefault();
+    }
+  };
+
+  return <i className="fa fa-1 fa-filter table-icon bordered-icon"
+      role="button" aria-label={label} tabIndex="0"
+      onClick={handleActivate} onKeyDown={handleKeyDown}></i>;
+};
+
 export default class PdfListView extends React.Component {
   getDocumentColumns = () => {
     let className;
@@ -16,8 +29,6 @@ export default class PdfListView extends React.Component {
     }
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
-      aria-hidden="true"></i>;
-    let filterIcon = <i className="fa fa-1 fa-filter table-icon bordered-icon"
       aria-hidden="true"></i>;
     let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
       aria-hidden="true"></i>;
@@ -38,7 +49,7 @@ export default class PdfListView extends React.Component {
         header: <div
           id="categories-header"
           className="document-list-header-categories">
-          Categories {filterIcon}
+          Categories <FilterIcon label="Filter by category" />
         </div>,
         valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
       },
@@ -70,7 +81,7 @@ export default class PdfListView extends React.Component {
           onClick={() => {
             // on click handler here
           }}>
-          Issue Tags {filterIcon}
+          Issue Tags <FilterIcon label="Filter by issue" />
         </div>,
         valueFunction: () => {
           return <div className="document-list-issue-tags">

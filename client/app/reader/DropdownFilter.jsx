@@ -4,7 +4,7 @@ import { closeSymbolHtml } from '../components/RenderFunctions';
 import _ from 'lodash';
 
 const DropdownFilter = () => {
-  return <div>
+  return <div className="cf-form-dropdown">
     <div>
       Clear category filter {closeSymbolHtml()}
     </div>
