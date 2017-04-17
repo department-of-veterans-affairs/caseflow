@@ -34,7 +34,7 @@ export default class NavigationBar extends React.Component {
     ];
   }
 
-  render(){
+  render() {
     let {
       name
     } = this.props;
@@ -42,7 +42,8 @@ export default class NavigationBar extends React.Component {
     return <div>
       <nav className="cf-nav">
         <a href="#" id="cf-logo-link">
-          <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-default"></span>Caseflow</h1>
+          <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-default">
+          </span>Caseflow</h1>
         </a>
         <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
         <div className="cf-dropdown cf-nav-dropdown">
@@ -56,6 +57,6 @@ export default class NavigationBar extends React.Component {
         </div>
     </nav>
     <br />
-  </div>
+  </div>;
   }
 }

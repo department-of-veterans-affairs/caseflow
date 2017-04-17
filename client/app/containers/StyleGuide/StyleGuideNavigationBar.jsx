@@ -2,39 +2,8 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import NavigationBar from '../../components/NavigationBar';
 
-export default class StyleGuideNavigationBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
-  handleMenuClick = () => {
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
-
-  options = () => {
-    return [
-      {
-        title: 'Help',
-        link: '#navigation_bar'
-      },
-      {
-        title: 'Send feedback',
-        link: '#navigation_bar'
-      },
-      {
-        title: 'Sign out',
-        link: '#navigation_bar'
-      }
-    ];
-  }
-
-  render(){
-    return <div>
+export default function StyleGuideNavigationBar() {
+  return <div>
       <StyleGuideComponentTitle
         title="Navigation Bar"
         id="navigation_bar"
@@ -52,9 +21,9 @@ export default class StyleGuideNavigationBar extends React.Component {
       view the application’s help page, see newly launched features, and log out.
     </p>
     <p>
-      The navigation bar is a total of 90px tall with a 1px border-bottom colored grey-lighter.
+      The navigation bar is a total of 90px tall with a 1px border-bottom colored
+      grey-lighter.
     </p>
       <NavigationBar name="App Bar" />
-  </div>
-  }
+  </div>;
 }
