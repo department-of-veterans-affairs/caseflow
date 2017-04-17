@@ -1928,9 +1928,8 @@
     },
     "expose-loader": {
       "version": "0.7.3",
-      "from": "expose-loader@>=0.7.3 <0.8.0",
-      "resolved": "https://registry.npmjs.org/expose-loader/-/expose-loader-0.7.3.tgz",
-      "dev": true
+      "from": "expose-loader@latest",
+      "resolved": "https://registry.npmjs.org/expose-loader/-/expose-loader-0.7.3.tgz"
     },
     "extend": {
       "version": "3.0.0",
