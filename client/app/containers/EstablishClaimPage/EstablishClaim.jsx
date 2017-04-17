@@ -4,15 +4,17 @@ import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
+import { FULL_GRANT } from '../../establishClaim/constants';
 import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
+import { validModifiers } from '../../establishClaim/util';
+import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import Modal from '../../components/Modal';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
-import dateValidator from '../../util/validators/DateValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
@@ -30,10 +32,6 @@ export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
 
-export const FULL_GRANT = 'Full Grant';
-export const PARTIAL_GRANT = 'Partial Grant';
-export const REMAND = 'Remand';
-
 
 export const END_PRODUCT_INFO = {
   'ARC': {
@@ -48,20 +46,6 @@ export const END_PRODUCT_INFO = {
   }
 };
 
-const FULL_GRANT_MODIFIER_OPTIONS = [
-  '172'
-];
-
-const PARTIAL_GRANT_MODIFIER_OPTIONS = [
-  '170',
-  '171',
-  '175',
-  '176',
-  '177',
-  '178',
-  '179'
-];
-
 const CREATE_EP_ERRORS = {
   "duplicate_ep": {
     header: 'At this time, we are unable to assign or create a new EP for this claim.',
@@ -75,6 +59,16 @@ const CREATE_EP_ERRORS = {
             Please return
             to <a href="/dispatch/establish-claim/">Work History</a> to
             establish the next claim.
+          </span>
+  },
+  "missing_ssn": {
+    header: 'The EP for this claim must be created outside Caseflow.',
+    body: <span>
+            This veteran does not have a social security number, so their
+            claim cannot be established in Caseflow.
+            <br/>
+            Select Cancel at the bottom of the page to release this claim and
+            proceed to process it outside of Caseflow.
           </span>
   },
   "default": {
@@ -106,8 +100,6 @@ export default class EstablishClaim extends BaseForm {
       }
     };
 
-    let validModifiers = this.validModifiers();
-
     this.state = {
       ...this.state,
       cancelModal: {
@@ -117,20 +109,6 @@ export default class EstablishClaim extends BaseForm {
         )
       },
       cancelModalDisplay: false,
-      claimForm: {
-        // This is the decision date that gets mapped to the claim's creation date
-        date: new FormField(
-          formatDate(this.props.task.appeal.serialized_decision_date),
-          [
-            requiredValidator('Please enter the Decision Date.'),
-            dateValidator()
-          ]
-        ),
-        endProductModifier: new FormField(validModifiers[0]),
-        gulfWarRegistry: new FormField(false),
-        stationOfJurisdiction: new FormField('397 - AMC'),
-        suppressAcknowledgementLetter: new FormField(false)
-      },
       history: createHashHistory(),
       loading: false,
       modalSubmitLoading: false,
@@ -199,16 +177,10 @@ export default class EstablishClaim extends BaseForm {
     return this.containsRoutedOrRegionalOfficeSpecialIssues();
   }
 
-  handleSubmit = () => {
+  handleFormPageSubmit = () => {
     let { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
-
-    this.formValidating();
-
-    if (!this.validateFormAndSetErrors(this.state.claimForm)) {
-      return;
-    }
 
     this.setState({
       loading: true
@@ -248,9 +220,10 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRoutingType = () => {
-    let stationOfJurisdiction = this.state.claimForm.stationOfJurisdiction.value;
+    let stationOfJurisdiction =
+      this.store.getState().establishClaimForm.stationOfJurisdiction;
 
-    return stationOfJurisdiction === '397 - ARC' ? "ARC" : "Routed";
+    return stationOfJurisdiction === '397' ? "ARC" : "Routed";
   }
 
   getClaimTypeFromDecision = () => {
@@ -341,37 +314,18 @@ export default class EstablishClaim extends BaseForm {
     return this.state.page === EMAIL_PAGE;
   }
 
-  /*
-   * This function gets the set of unused modifiers. For a full grant, only one
-   * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
-   * are all potentially valid. This removes any modifiers that have already been
-   * used in previous EPs.
-   */
   validModifiers = () => {
-    let modifiers = [];
-    let endProducts = this.props.task.appeal.pending_eps;
-
-    if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
-      modifiers = FULL_GRANT_MODIFIER_OPTIONS;
-    } else {
-      modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
-    }
-
-    let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
-      modifierObject[endProduct.end_product_type_code] = true;
-
-      return modifierObject;
-    }, {});
-
-    return modifiers.filter((modifier) => !modifierHash[modifier]);
+    return validModifiers(
+      this.props.task.appeal.pending_eps,
+      this.props.task.appeal.decision_type
+    );
   }
+
 
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
     let { handleAlert } = this.props;
-
-    this.setStationState();
 
     this.setState({
       loading: true
@@ -415,10 +369,6 @@ export default class EstablishClaim extends BaseForm {
           errorMessage.body
         );
       });
-  }
-
-  handleFormPageSubmit = () => {
-    this.handleSubmit();
   }
 
   handleNotePageSubmit = (vacolsNote) => {
@@ -511,36 +461,6 @@ export default class EstablishClaim extends BaseForm {
     this.handlePageChange(DECISION_PAGE);
   }
 
-  /*
-   * This function takes the special issues from the review page and sets the station
-   * of jurisdiction in the form page. Special issues that all go to the same spot are
-   * defined in the constant ROUTING_SPECIAL_ISSUES. Special issues that go back to the
-   * regional office are defined in REGIONAL_OFFICE_SPECIAL_ISSUES.
-   */
-  setStationState() {
-    let stateObject = this.state;
-
-    // default needs to be reset in case the user has navigated back in the form
-    stateObject.claimForm.stationOfJurisdiction.value = '397 - ARC';
-
-    // Go through the special issues, and for any regional issues, set SOJ to RO
-    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
-        stateObject.claimForm.stationOfJurisdiction.value =
-          this.getStationOfJurisdiction();
-      }
-    });
-    // Go through all the special issues, this time looking for routed issues
-    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
-        stateObject.claimForm.stationOfJurisdiction.value = issue.stationOfJurisdiction;
-      }
-    });
-    this.setState({
-      stateObject
-    });
-  }
-
   getSpecialIssuesEmail() {
     if (this.state.specialIssuesEmail === 'PMC') {
       return this.getEmailFromConstant(ROUTING_INFORMATION.PMC);
@@ -595,13 +515,8 @@ export default class EstablishClaim extends BaseForm {
     return constant[regionalOfficeKey];
   }
 
-  getStationOfJurisdiction() {
-    let stationKey = this.props.task.appeal.station_key;
-    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
-
-    return `${stationKey} - ${
-        this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
-        this.props.regionalOfficeCities[regionalOfficeKey].state}`;
+  formattedDecisionDate = () => {
+    return formatDate(this.props.task.appeal.serialized_decision_date);
   }
 
   prepareSpecialIssues() {
@@ -620,14 +535,14 @@ export default class EstablishClaim extends BaseForm {
     return shortenedObject;
   }
 
-  stationOfJurisdictionCode() {
-    return this.state.claimForm.stationOfJurisdiction.value.substring(0, 3);
-  }
-
   prepareData() {
-    let claim = this.getFormValues(this.state.claimForm);
+    let claim = this.store.getState().establishClaimForm;
 
-    claim.stationOfJurisdiction = this.stationOfJurisdictionCode();
+    claim.date = this.formattedDecisionDate();
+    claim.stationOfJurisdiction = getStationOfJurisdiction(
+      this.store.getState().specialIssues,
+      this.props.task.appeal.station_key
+    );
 
     // We have to add in the claimLabel separately, since it is derived from
     // the form value on the review page.
@@ -683,14 +598,15 @@ export default class EstablishClaim extends BaseForm {
     let {
       cancelModalDisplay,
       history,
-      modalSubmitLoading,
-      specialIssues
+      modalSubmitLoading
     } = this.state;
 
     let {
       pdfLink,
       pdfjsLink
     } = this.props;
+
+    let specialIssues = this.store.getState().specialIssues;
 
     return (
       <Provider store={this.store}>
@@ -703,18 +619,17 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={this.state.reviewForm.decisionType}
-            handleAlert={this.props.handleAlert}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
-            specialIssues={specialIssues}
             task={this.props.task}
           />
         }
         { this.isAssociatePage() &&
           <AssociatePage
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
@@ -725,22 +640,22 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
-            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             history={history}
-            specialIssues={ApiUtil.convertToSnakeCase(
-              this.getFormValues(this.state.specialIssues))}
           />
         }
         { this.isFormPage() &&
           <EstablishClaimForm
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             loading={this.state.loading}
-            claimForm={this.state.claimForm}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
+            decisionDate={this.formattedDecisionDate()}
             handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
-            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
+            regionalOfficeKey={this.props.task.appeal.regional_office_key}
+            regionalOfficeCities={this.props.regionalOfficeCities}
+            stationKey={this.props.task.appeal.station_key}
             validModifiers={this.validModifiers()}
           />
         }

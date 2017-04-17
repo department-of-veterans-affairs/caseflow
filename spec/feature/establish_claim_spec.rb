@@ -65,7 +65,22 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
-      Generators::EstablishClaim.create(appeal_id: appeal.id, aasm_state: "unassigned")
+      Generators::EstablishClaim.create(
+        created_at: 3.days.ago,
+        appeal_id: appeal.id,
+        aasm_state: "unassigned"
+      )
+    end
+
+    let(:invalid_appeal) do
+      Generators::Appeal.create(
+        vacols_record: { template: :remand_decided, decision_date: nil },
+        documents: documents
+      )
+    end
+
+    let(:inaccessible_appeal) do
+      Generators::Appeal.create(vacols_record: vacols_record, inaccessible: true)
     end
 
     let(:ep_already_exists_error) do
@@ -74,20 +89,42 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "use a different EP code modifier. GUID: 13fcd</faultstring>")
     end
 
+    let(:missing_ssn_error) do
+      VBMS::HTTPError.new("500", "<fieldName>PersonalInfo SSN</fieldName>" \
+        "<errorType>MINIMUM_LENGTH_NOT_SATISFIED</errorType><message>The " \
+        "minimum data length for the PersonalInfo SSN within the veteran " \
+        "was not satisfied: The PersonalInfo SSN must not be empty." \
+        "</message></formFieldErrors>")
+    end
+
     scenario "Assign the correct new task to myself" do
-      # Create a newer task, that the current user can access
-      appeal_with_access = Generators::Appeal.create(vacols_record: vacols_record)
-      task_with_access = Generators::EstablishClaim.create(appeal_id: appeal_with_access.id,
-                                                           aasm_state: :unassigned)
+      # Create an older task with an inaccessible appeal
+      Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        aasm_state: :unassigned,
+        appeal: inaccessible_appeal
+      )
 
       # Create a task already assigned to another user
-      Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
+      Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        user_id: case_worker.id,
+        aasm_state: :started
+      )
 
       # Create a task already completed by me
       completed_task = Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
         user_id: current_user.id,
         aasm_state: :completed,
         completion_status: :special_issue_vacols_routed
+      )
+
+      # Create an invalid task, this should be invalidated and skipped
+      invalid_task = Generators::EstablishClaim.create(
+        created_at: 4.days.ago,
+        aasm_state: :unassigned,
+        appeal: invalid_appeal
       )
 
       visit "/dispatch/establish-claim"
@@ -99,23 +136,25 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access
-      BGSService.can_access_on_next_call = false
       safe_click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
-      expect(task_with_access.reload.user).to eq(current_user)
-      expect(task_with_access).to be_started
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(task.reload.user).to eq(current_user)
+      expect(task).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task_with_access.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
-      expect(task_with_access.claim_establishment).to be_remand
+      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task.claim_establishment).to be_remand
+
+      # Validate the invalid task was invalidated
+      expect(invalid_task.reload).to be_invalidated
 
       visit "/dispatch/establish-claim"
       safe_click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
-      expect(page).to have_current_path("/dispatch/establish-claim/#{task_with_access.id}")
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
@@ -199,6 +238,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Error establishing claim" do
+      # Duplicate EP error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
       task.assign!(:assigned, current_user)
@@ -208,6 +248,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+
+      # Missing SSN error
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
+
+      click_on "Create End Product"
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("This veteran does not have a social security number")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
@@ -226,7 +273,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Text on the tab
         expect(page).to have_content("Decision 1 (")
-        find("#tab-1").click
+        find("#main-tab-1").click
 
         expect(page).to have_content("Route claim for Decision 2")
         safe_click_on "Route claim for Decision 2"
@@ -403,7 +450,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -416,7 +463,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
 
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
@@ -489,7 +536,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -502,7 +549,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
       end
 
@@ -562,7 +609,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Success!")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-            claim: {
+            claim_hash: {
               benefit_type_code: "1",
               payee_code: "00",
               predischarge: false,
@@ -576,7 +623,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false
             },
-            appeal: task.appeal
+            veteran_hash: task.appeal.veteran.to_vbms_hash
           )
         end
       end

@@ -73,6 +73,10 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  def veteran
+    @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+  end
+
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
@@ -150,6 +154,12 @@ class Appeal < ActiveRecord::Base
   def ssoc_match?(date)
     ssoc_documents = documents_with_type("SSOC")
     ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
+  end
+
+  # This will return an array containing hash of ssoc_dates and ssoc_match?es.
+  # I.e. [{"date"=>"01/01/2010", "match"=>"true"}, {"date"=>"02/02/2012", "match"=>"true"}]
+  def ssoc_dates_with_matches
+    ssoc_dates.map { |item| { date: item, match: ssoc_match?(item) } }
   end
 
   def documents_match?
