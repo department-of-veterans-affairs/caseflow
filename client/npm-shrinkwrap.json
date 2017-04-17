@@ -139,8 +139,7 @@
     "asap": {
       "version": "2.0.5",
       "from": "asap@>=2.0.3 <2.1.0",
-      "resolved": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz"
     },
     "asn1.js": {
       "version": "4.9.1",
@@ -1634,8 +1633,7 @@
     "encoding": {
       "version": "0.1.12",
       "from": "encoding@>=0.1.11 <0.2.0",
-      "resolved": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz"
     },
     "engine.io": {
       "version": "1.8.3",
@@ -1951,13 +1949,11 @@
       "version": "0.8.12",
       "from": "fbjs@>=0.8.9 <0.9.0",
       "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.12.tgz",
-      "dev": true,
       "dependencies": {
         "core-js": {
           "version": "1.2.7",
           "from": "core-js@>=1.0.0 <2.0.0",
-          "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz",
-          "dev": true
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz"
         }
       }
     },
@@ -2915,8 +2911,7 @@
     "iconv-lite": {
       "version": "0.4.15",
       "from": "iconv-lite@>=0.4.13 <0.5.0",
-      "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz"
     },
     "ieee754": {
       "version": "1.1.8",
@@ -3109,8 +3104,7 @@
     "is-stream": {
       "version": "1.1.0",
       "from": "is-stream@>=1.0.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz"
     },
     "is-subset": {
       "version": "0.1.1",
@@ -3154,8 +3148,7 @@
     "isomorphic-fetch": {
       "version": "2.2.1",
       "from": "isomorphic-fetch@>=2.1.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz"
     },
     "js-tokens": {
       "version": "2.0.0",
@@ -4024,8 +4017,7 @@
     "node-fetch": {
       "version": "1.6.3",
       "from": "node-fetch@>=1.0.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz"
     },
     "node-libs-browser": {
       "version": "2.0.0",
@@ -4331,14 +4323,12 @@
     "promise": {
       "version": "7.1.1",
       "from": "promise@>=7.1.1 <8.0.0",
-      "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
     "prop-types": {
       "version": "15.5.8",
       "from": "prop-types@>=15.5.4 <16.0.0",
-      "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz"
     },
     "prr": {
       "version": "0.0.0",
@@ -4406,76 +4396,9 @@
       "dev": true
     },
     "react": {
-      "version": "15.4.2",
-      "from": "https://registry.npmjs.org/react/-/react-15.4.2.tgz",
-      "resolved": "https://registry.npmjs.org/react/-/react-15.4.2.tgz",
-      "dependencies": {
-        "fbjs": {
-          "version": "0.8.9",
-          "from": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.9.tgz",
-          "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.9.tgz",
-          "dependencies": {
-            "core-js": {
-              "version": "1.2.7",
-              "from": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz",
-              "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz"
-            },
-            "isomorphic-fetch": {
-              "version": "2.2.1",
-              "from": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-              "resolved": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-              "dependencies": {
-                "node-fetch": {
-                  "version": "1.6.3",
-                  "from": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz",
-                  "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz",
-                  "dependencies": {
-                    "encoding": {
-                      "version": "0.1.12",
-                      "from": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz",
-                      "resolved": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz",
-                      "dependencies": {
-                        "iconv-lite": {
-                          "version": "0.4.15",
-                          "from": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz",
-                          "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz"
-                        }
-                      }
-                    },
-                    "is-stream": {
-                      "version": "1.1.0",
-                      "from": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz",
-                      "resolved": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz"
-                    }
-                  }
-                },
-                "whatwg-fetch": {
-                  "version": "2.0.3",
-                  "from": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz",
-                  "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz"
-                }
-              }
-            },
-            "promise": {
-              "version": "7.1.1",
-              "from": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz",
-              "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz",
-              "dependencies": {
-                "asap": {
-                  "version": "2.0.5",
-                  "from": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz",
-                  "resolved": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz"
-                }
-              }
-            },
-            "ua-parser-js": {
-              "version": "0.7.12",
-              "from": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz",
-              "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
-            }
-          }
-        }
-      }
+      "version": "15.5.4",
+      "from": "react@latest",
+      "resolved": "https://registry.npmjs.org/react/-/react-15.5.4.tgz"
     },
     "react-addons-test-utils": {
       "version": "15.5.1",
@@ -4484,76 +4407,9 @@
       "dev": true
     },
     "react-dom": {
-      "version": "15.4.2",
-      "from": "https://registry.npmjs.org/react-dom/-/react-dom-15.4.2.tgz",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.4.2.tgz",
-      "dependencies": {
-        "fbjs": {
-          "version": "0.8.9",
-          "from": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.9.tgz",
-          "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.9.tgz",
-          "dependencies": {
-            "core-js": {
-              "version": "1.2.7",
-              "from": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz",
-              "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz"
-            },
-            "isomorphic-fetch": {
-              "version": "2.2.1",
-              "from": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-              "resolved": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-              "dependencies": {
-                "node-fetch": {
-                  "version": "1.6.3",
-                  "from": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz",
-                  "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-1.6.3.tgz",
-                  "dependencies": {
-                    "encoding": {
-                      "version": "0.1.12",
-                      "from": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz",
-                      "resolved": "https://registry.npmjs.org/encoding/-/encoding-0.1.12.tgz",
-                      "dependencies": {
-                        "iconv-lite": {
-                          "version": "0.4.15",
-                          "from": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz",
-                          "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.15.tgz"
-                        }
-                      }
-                    },
-                    "is-stream": {
-                      "version": "1.1.0",
-                      "from": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz",
-                      "resolved": "https://registry.npmjs.org/is-stream/-/is-stream-1.1.0.tgz"
-                    }
-                  }
-                },
-                "whatwg-fetch": {
-                  "version": "2.0.3",
-                  "from": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz",
-                  "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz"
-                }
-              }
-            },
-            "promise": {
-              "version": "7.1.1",
-              "from": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz",
-              "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz",
-              "dependencies": {
-                "asap": {
-                  "version": "2.0.5",
-                  "from": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz",
-                  "resolved": "https://registry.npmjs.org/asap/-/asap-2.0.5.tgz"
-                }
-              }
-            },
-            "ua-parser-js": {
-              "version": "0.7.12",
-              "from": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz",
-              "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
-            }
-          }
-        }
-      }
+      "version": "15.5.4",
+      "from": "react-dom@latest",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.5.4.tgz"
     },
     "react-input-autosize": {
       "version": "1.1.0",
@@ -4632,6 +4488,11 @@
       "version": "1.0.0-rc.3",
       "from": "https://registry.npmjs.org/react-select/-/react-select-1.0.0-rc.3.tgz",
       "resolved": "https://registry.npmjs.org/react-select/-/react-select-1.0.0-rc.3.tgz"
+    },
+    "react-test-renderer": {
+      "version": "15.5.4",
+      "from": "react-test-renderer@latest",
+      "resolved": "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-15.5.4.tgz"
     },
     "read-pkg": {
       "version": "1.1.0",
@@ -5279,8 +5140,7 @@
     "ua-parser-js": {
       "version": "0.7.12",
       "from": "ua-parser-js@>=0.7.9 <0.8.0",
-      "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
     },
     "uglify-js": {
       "version": "2.8.22",
@@ -5412,8 +5272,7 @@
     "whatwg-fetch": {
       "version": "2.0.3",
       "from": "whatwg-fetch@>=0.10.0",
-      "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz"
     },
     "which": {
       "version": "1.2.14",
