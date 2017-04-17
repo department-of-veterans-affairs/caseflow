@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-export default ({ handleActivate, label, getRef, iconName, className = '' }) => {
+const IconButton = ({ handleActivate, label, getRef, iconName, className = '' }) => {
   const handleKeyDown = (event) => {
     if (event.key === ' ' || event.key === 'Enter') {
       handleActivate(event);
@@ -13,3 +13,7 @@ export default ({ handleActivate, label, getRef, iconName, className = '' }) => 
       ref={getRef}
       onClick={handleActivate} onKeyDown={handleKeyDown}></i>;
 };
+
+IconButton.displayName = 'IconButton';
+
+export default IconButton;

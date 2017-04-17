@@ -15,10 +15,20 @@ const FilterIcon = (props) =>
   <IconButton {...props} className={'table-icon bordered-icon'} iconName="fa-filter" />;
 
 export class PdfListView extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      filterPositions: {}
+    };
+  }
 
   componentDidMount() {
     if (this.categoryFilterIcon) {
-      this.props.setPosition('category', this.categoryFilterIcon.getBoundingClientRect());
+      this.setState({
+        filterPositions: {
+          category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
+        }
+      });
     }
   }
 
@@ -76,7 +86,7 @@ export class PdfListView extends React.Component {
             handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
           {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
-            <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}
+            <DropdownFilter baseCoordinates={this.state.filterPositions.category}
               clearFilters={clearFilters}
               isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={toggleCategoryDropdownFilterVisiblity}>
@@ -196,15 +206,6 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
         filterName
-      }
-    });
-  },
-  setPosition(filterName, boundingRect) {
-    dispatch({
-      type: Constants.SET_FILTER_POSITION,
-      payload: {
-        filterName,
-        boundingRect
       }
     });
   },
