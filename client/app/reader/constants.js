@@ -4,6 +4,7 @@ import { docCategoryIcon } from '../components/RenderFunctions';
 export const TOGGLE_DOCUMENT_CATEGORY = 'TOGGLE_DOCUMENT_CATEGORY';
 export const RECEIVE_DOCUMENTS = 'RECEIVE_DOCUMENTS';
 export const TOGGLE_FILTER_DROPDOWN = 'TOGGLE_FILTER_DROPDOWN';
+export const SET_FILTER_POSITION = 'SET_FILTER_POSITION';
 
 export const documentCategories = {
   procedural: {

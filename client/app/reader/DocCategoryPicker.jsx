@@ -29,7 +29,7 @@ CategorySelector.propTypes = {
 };
 
 const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle }) => {
-  return <ul>
+  return <ul className="cf-document-category-picker">
     {
       _(Constants.documentCategories).
         toPairs().

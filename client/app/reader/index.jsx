@@ -11,7 +11,8 @@ const initialState = {
     pdfList: {
       filters: {
         category: {}
-      }
+      },
+      filterPositions: {}
     }
   }
 };
@@ -66,6 +67,23 @@ const readerReducer = (state = initialState, action = {}) => {
         }
       );
     })();
+  case Constants.SET_FILTER_POSITION:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdfList: {
+            filterPositions: {
+              // elem.getBoundingClientRect is a ClientRect, and if we just
+              // insert it into this object, it wll show up as an empty object.
+              // We can convert it to a plain object with _.merge.
+              [action.payload.filterName]: _.merge({}, action.payload.boundingRect)
+            }
+          }
+        }
+      }
+    )
   default:
     return state;
   }

@@ -10,7 +10,7 @@ import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 
-const FilterIcon = ({ handleActivate, label }) => {
+const FilterIcon = ({ handleActivate, label, getRef }) => {
   const handleKeyDown = (event) => {
     if (event.key === ' ' || event.key === 'Enter') {
       handleActivate(event);
@@ -20,10 +20,18 @@ const FilterIcon = ({ handleActivate, label }) => {
 
   return <i className="fa fa-1 fa-filter table-icon bordered-icon"
       role="button" aria-label={label} tabIndex="0"
+      ref={getRef}
       onClick={handleActivate} onKeyDown={handleKeyDown}></i>;
 };
 
 export class PdfListView extends React.Component {
+
+  componentDidMount() {
+    if (this.categoryFilterIcon) {
+      this.props.setPosition('category', this.categoryFilterIcon.getBoundingClientRect());
+    }
+  }
+
   getDocumentColumns = () => {
     let className;
 
@@ -56,10 +64,13 @@ export class PdfListView extends React.Component {
           className="document-list-header-categories">
           Categories <FilterIcon
             label="Filter by category"
+            getRef={(categoryFilterIcon) => {
+              this.categoryFilterIcon = categoryFilterIcon;
+            }}
             handleActivate={() => this.props.toggleCategoryFilter('category')} />
 
           {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
-            <DropdownFilter>
+            <DropdownFilter baseCoordinates={this.props.pdfList.filterPositions.category}>
               <DocCategoryPicker
                 categoryToggleStates={this.props.pdfList.filters.category} />
             </DropdownFilter>
@@ -175,6 +186,15 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
         filterName
+      }
+    });
+  },
+  setPosition(filterName, boundingRect) {
+    dispatch({
+      type: Constants.SET_FILTER_POSITION,
+      payload: {
+        filterName,
+        boundingRect
       }
     });
   }
