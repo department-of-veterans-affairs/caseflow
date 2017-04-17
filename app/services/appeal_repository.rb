@@ -105,13 +105,13 @@ class AppealRepository
     appeal
   end
 
+  # :nocov:
   def self.issues(vacols_id:)
     VACOLS::Issue.descriptions(vacols_id).map do |issue|
       VACOLS::Issue.format(issue)
     end
   end
 
-  # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
                                     service: :vacols,
