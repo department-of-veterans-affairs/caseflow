@@ -9,11 +9,19 @@ class Generators::Document
         received_at: 3.days.ago,
         tags: [
           {
+<<<<<<< HEAD
             text:"Service Connected", 
             created_at: 3.days.ago
           },
           {
             text:"Right Knee", 
+=======
+            text:"hello there", 
+            created_at: 3.days.ago
+          },
+          {
+            text:"This is it", 
+>>>>>>> origin/issue-1515
             created_at: 3.days.ago
           }
         ]
