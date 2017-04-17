@@ -40,13 +40,14 @@ const DocumentsCheckTable = (props) => {
           <td>{props.socDate}</td>
           <td>{props.socDate}</td>
         </tr>
-        { typeof props.ssocDates !== 'undefined' && props.ssocDates.length > 0 &&
-          props.ssocDates.map((ssocDate, index) =>
+        { typeof props.ssocDatesWithMatches !== 'undefined' &&
+          props.ssocDatesWithMatches.length > 0 &&
+          props.ssocDatesWithMatches.map((ssocDateWithMatch, index) =>
               <tr id={`ssoc-${index + 1}-match`} key={index}>
-                <td><FoundIcon/></td>
+                <td>{ssocDateWithMatch.match ? <FoundIcon/> : <NotFoundIcon/>}</td>
                 <td>SSOC {index + 1}</td>
-                <td>{ssocDate}</td>
-                <td>{ssocDate}</td>
+                <td>{ssocDateWithMatch.date}</td>
+                <td>{ssocDateWithMatch.date}</td>
               </tr>
             )
         }

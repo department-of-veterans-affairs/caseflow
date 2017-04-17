@@ -5,10 +5,12 @@ import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import StringUtil from '../util/StringUtil';
 import _ from 'lodash';
+import { connect } from 'react-redux';
+import * as Constants from './constants';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
-export default class DecisionReviewer extends React.Component {
+export class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -33,17 +35,22 @@ export default class DecisionReviewer extends React.Component {
       sortDirection: 'ascending',
       scrollToComment: null,
       unsortedDocuments: this.props.appealDocuments.map((doc) => {
-        doc.label = doc.label ? StringUtil.snakeCaseToCamelCase(doc.label) : null;
         doc.receivedAt = doc.received_at;
 
         return doc;
       })
     };
 
+    this.props.onReceiveDocs(this.props.appealDocuments);
+
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
 
     this.state.documents = this.filterDocuments(
       this.sortDocuments(this.state.unsortedDocuments));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.props.onReceiveDocs(nextProps.appealDocuments);
   }
 
   onPreviousPdf = () => {
@@ -260,30 +267,6 @@ export default class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  onSetLabel = (pdfNumber) => (label) => {
-    let setLabel = label;
-
-    // If the label was the same as originally set, we
-    // un-set the label.
-    if (label === this.state.documents[pdfNumber].label) {
-      setLabel = null;
-    }
-
-    let data = { label: StringUtil.camelCaseToSnakeCase(setLabel) };
-    let documentId = this.state.documents[pdfNumber].id;
-
-    ApiUtil.patch(`/document/${documentId}`, { data }).
-      then(() => {
-        this.setDocumentAttribute(pdfNumber, 'label', setLabel);
-      }, () => {
-
-        /* eslint-disable no-console */
-        console.log('Error setting label');
-
-        /* eslint-enable no-console */
-      });
-  }
-
   onFilter = (filterBy) => {
     this.setState({
       filterBy
@@ -366,6 +349,7 @@ export default class DecisionReviewer extends React.Component {
           scrollToComment={this.state.scrollToComment}
           onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
+        }
       </div>
     );
   }
@@ -377,3 +361,14 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   onCommentScrolledTo: PropTypes.func
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  onReceiveDocs(documents) {
+    dispatch({
+      type: Constants.RECEIVE_DOCUMENTS,
+      payload: documents
+    });
+  }
+});
+
+export default connect(null, mapDispatchToProps)(DecisionReviewer);

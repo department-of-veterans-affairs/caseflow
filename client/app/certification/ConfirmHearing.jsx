@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
@@ -289,6 +289,7 @@ const mapDispatchToProps = (dispatch) => ({
  * application state should be passed in as props to
  * the rendered component.
  */
+
 const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
@@ -305,5 +306,16 @@ const ConfirmHearing = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedConfirmHearing);
+
+ConfirmHearing.propTypes = {
+  hearingDocumentIsInVbms: PropTypes.string,
+  onHearingDocumentChange: PropTypes.func,
+  form9Type: PropTypes.string,
+  form9Date: PropTypes.string,
+  onTypeOfForm9Change: PropTypes.func,
+  hearingType: PropTypes.string,
+  onHearingTypeChange: PropTypes.func,
+  match: PropTypes.object.isRequired
+};
 
 export default ConfirmHearing;

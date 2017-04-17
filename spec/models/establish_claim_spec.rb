@@ -42,6 +42,78 @@ describe EstablishClaim do
   let(:ep_code) { nil }
   let(:outgoing_reference_id) { nil }
 
+  context "#should_invalidate?" do
+    subject { establish_claim.should_invalidate? }
+    it { is_expected.to be_falsey }
+
+    context "appeal status is active" do
+      let(:vacols_record) { { template: :remand_decided, status: "Active" } }
+      it { is_expected.to be_truthy }
+    end
+
+    context "appeal decision date is nil" do
+      let(:vacols_record) { { template: :remand_decided, decision_date: nil } }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#prepare_with_decision!" do
+    subject { establish_claim.prepare_with_decision! }
+
+    let(:appeal) do
+      Generators::Appeal.create(
+        vacols_record: { template: :partial_grant_decided, decision_date: decision_date },
+        documents: documents
+      )
+    end
+    let(:decision_date) { 7.days.ago }
+    let(:documents) { [] }
+    let(:aasm_state) { :unprepared }
+
+    context "if the task is invalid" do
+      let(:decision_date) { nil }
+
+      it "returns false and invalidates the task" do
+        is_expected.to be_falsey
+        expect(establish_claim.reload).to be_invalidated
+      end
+    end
+
+    context "if the task's appeal has no decisions" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "if the task's appeal has decisions" do
+      let(:documents) { [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)] }
+      let(:filename) { appeal.decisions.first.file_name }
+
+      context "if the task's appeal errors out on decision content load" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
+          establish_claim.save!
+        end
+
+        it "propogates exception and does not prepare" do
+          expect { subject }.to raise_error("VBMS 500")
+          expect(establish_claim.reload).to_not be_unassigned
+        end
+      end
+
+      context "if the task caches decision content successfully" do
+        before do
+          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
+        end
+
+        it "prepares task and caches decision document content" do
+          expect(subject).to be_truthy
+
+          expect(establish_claim.reload).to be_unassigned
+          expect(S3Service.files[filename]).to eq("yay content!")
+        end
+      end
+    end
+  end
+
   context "#perform!" do
     # Stub the id of the end product being created
     before do
@@ -80,8 +152,8 @@ describe EstablishClaim do
     context "when claim is invalid" do
       let(:claim_modifier) { nil }
 
-      it "raises InvalidClaimError and rolls back DB changes" do
-        expect { subject }.to raise_error(EstablishClaim::InvalidClaimError)
+      it "raises InvalidEndProductError and rolls back DB changes" do
+        expect { subject }.to raise_error(EstablishClaim::InvalidEndProductError)
       end
     end
 
@@ -112,8 +184,11 @@ describe EstablishClaim do
             "use a different EP code modifier. GUID: 13fcd</faultstring>")
         end
 
-        it "raises EndProductAlreadyExistsError" do
-          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        it "raises duplicate_ep VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("duplicate_ep")
+          end
         end
       end
 
@@ -123,8 +198,25 @@ describe EstablishClaim do
             " BGS code; PIF is already in use.</faultstring>")
         end
 
-        it "raises EndProductAlreadyExistsError" do
-          expect { subject }.to raise_error(EstablishClaim::EndProductAlreadyExistsError)
+        it "raises duplicate_ep VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("duplicate_ep")
+          end
+        end
+      end
+
+      context "Veteran missing SSN error" do
+        let(:vbms_error) do
+          VBMS::HTTPError.new("500", "<faultstring>The PersonalInfo " \
+            "SSN must not be empty.</faultstring>")
+        end
+
+        it "raises missing_ssn VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("missing_ssn")
+          end
         end
       end
     end
@@ -402,86 +494,6 @@ describe EstablishClaim do
 
       it "uses value from Task#completion_status_text" do
         is_expected.to eq("EP created for ARC - 397")
-      end
-    end
-  end
-
-  describe EstablishClaim::Claim do
-    let(:claim_hash) do
-      {
-        date: "03/03/2017",
-        end_product_code: "172BVAG",
-        end_product_label: "BVA Grant",
-        end_product_modifier: claim_modifier,
-        gulf_war_registry: false,
-        suppress_acknowledgement_letter: false,
-        station_of_jurisdiction: "499"
-      }
-    end
-
-    let(:claim) { EstablishClaim::Claim.new(claim_hash) }
-    let(:claim_modifier) { "170" }
-
-    context "#valid?" do
-      subject { claim.valid? }
-
-      it "is true for a claim with proper end_product values" do
-        is_expected.to be_truthy
-      end
-
-      it "is false for a claim missing end_product_modifier" do
-        claim_hash.delete(:end_product_modifier)
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_modifier)
-      end
-
-      it "is false for a claim missing end_product_code" do
-        claim_hash.delete(:end_product_modifier)
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_modifier)
-      end
-
-      it "is false for a claim with mismatched end_product code & label" do
-        claim_hash[:end_product_label] = "invalid label"
-
-        is_expected.to be_falsey
-        expect(claim.errors.keys).to include(:end_product_label)
-      end
-    end
-
-    context "#dynamic_values" do
-      subject { claim.dynamic_values }
-
-      it "returns a hash" do
-        is_expected.to be_an_instance_of(Hash)
-      end
-    end
-
-    context "#formatted_date" do
-      subject { claim.formatted_date }
-      it "returns a date object" do
-        is_expected.to be_an_instance_of(Date)
-      end
-    end
-
-    context "#to_hash" do
-      subject { claim.to_hash }
-      it "returns a hash" do
-        is_expected.to be_an_instance_of(Hash)
-      end
-
-      it "includes default_values" do
-        is_expected.to include(:benefit_type_code)
-      end
-
-      it "includes dynamic_values" do
-        is_expected.to include(:date)
-      end
-
-      it "includes variable values" do
-        is_expected.to include(:end_product_code)
       end
     end
   end

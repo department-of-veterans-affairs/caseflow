@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "e7ad3478a3bd"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "498e6fe"
 
 gem "moment_timezone-rails"
 
@@ -122,6 +122,8 @@ group :development, :test do
   gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
+  # catch problematic migrations at development/test time
+  gem "zero_downtime_migrations"
 end
 
 group :development do

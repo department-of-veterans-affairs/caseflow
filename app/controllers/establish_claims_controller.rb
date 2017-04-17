@@ -9,8 +9,8 @@ class EstablishClaimsController < TasksController
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
 
-  rescue EstablishClaim::EndProductAlreadyExistsError
-    render json: { error_code: "duplicate_ep" }, status: 422
+  rescue EstablishClaim::VBMSError => e
+    render json: { error_code: e.error_code }, status: 422
   end
 
   # This POST updates VACOLS & VBMS Note
@@ -45,18 +45,19 @@ class EstablishClaimsController < TasksController
 
   # Index of all tasks that are unprepared
   def unprepared_tasks
-    @unprepared_tasks ||= EstablishClaim.unprepared.oldest_first
+    @unprepared_tasks = EstablishClaim.unprepared.oldest_first
   end
 
   private
 
-  def tasks
-    EstablishClaim
-  end
-
   def verify_manager_access
     verify_authorized_roles("Manage Claim Establishment")
   end
+
+  def tasks
+    EstablishClaim
+  end
+  helper_method :tasks
 
   def start_text
     "Establish next claim"
@@ -96,7 +97,7 @@ class EstablishClaimsController < TasksController
 
   def establish_claim_params
     params.require(:claim)
-          .permit(:modifier, :end_product_code, :end_product_label, :end_product_modifier, :gulf_war_registry,
+          .permit(:end_product_code, :end_product_label, :end_product_modifier, :gulf_war_registry,
                   :suppress_acknowledgement_letter, :station_of_jurisdiction, :date)
   end
 end

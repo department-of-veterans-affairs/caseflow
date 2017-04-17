@@ -237,6 +237,7 @@ class AppealRepository
   # Reverses the certification of an appeal.
   # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
   def self.uncertify(appeal)
+    appeal.case_record.bftbind = nil
     appeal.case_record.bfdcertool = nil
     appeal.case_record.bf41stat = nil
     appeal.case_record.save!
@@ -259,7 +260,7 @@ class AppealRepository
 
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = File.basename(uploadable_document.pdf_location)
+    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,

@@ -5,6 +5,7 @@ import StringUtil from '../util/StringUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import _ from 'lodash';
 
@@ -91,14 +92,7 @@ export default class PdfListView extends React.Component {
             className="document-list-header-categories">
             Categories {filterIcon}
           </div>,
-          valueFunction: (doc) => {
-            return <span>
-              {doc.label && <i
-                className={`fa fa-bookmark cf-pdf-bookmark-` +
-                  `${StringUtil.camelCaseToDashCase(doc.label)}`}
-                aria-hidden="true"></i>}
-            </span>;
-          }
+          valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
         },
         {
           header: <div

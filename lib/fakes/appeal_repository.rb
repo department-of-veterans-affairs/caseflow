@@ -75,6 +75,10 @@ class Fakes::AppealRepository
     # noop
   end
 
+  def self.raise_vbms_error_if_necessary(record)
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+  end
+
   def self.load_vacols_data(appeal)
     return unless @records
 
@@ -83,10 +87,18 @@ class Fakes::AppealRepository
       @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
     end
 
-    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    # clone this since we mutate it later
+    record = record.dup
 
-    # This is bad. I'm sorry
-    record.delete(:vbms_id) if Rails.env.development?
+    raise_vbms_error_if_necessary(record)
+
+    # For testing dispatch appeals, the seed data in the record
+    # has a randomly generated vbms id from our appeal generator,
+    # and the appeal already has a vbms id from db seed data.
+    # Don't overwrite the appeal vbms id if it already has one.
+    # TODO: figure out a way to untangle this. Perhaps we shouldn't
+    # be using randomly generated VBMS ids?
+    record.delete(:vbms_id) if Rails.env.development? && !appeal.vbms_id.nil?
 
     appeal.assign_from_vacols(record)
   end
@@ -107,6 +119,9 @@ class Fakes::AppealRepository
     end
 
     fail ActiveRecord::RecordNotFound unless record
+
+    # clone this in case it accidentally gets mutated later
+    record = record.dup
 
     appeal.vacols_id = record[0]
     appeal.assign_from_vacols(record[1])
@@ -176,15 +191,15 @@ class Fakes::AppealRepository
 
   def self.certification_documents
     [
-      Generators::Document.build(type: "NOD"),
+      Generators::Document.build(type: "NOD", category_procedural: true),
       Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9")
+      Generators::Document.build(type: "Form 9", category_medical: true)
     ]
   end
 
   def self.establish_claim_documents
     certification_documents + [
-      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
+      Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago, category_other: true)
     ]
   end
 
@@ -212,6 +227,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "123C",
+      vbms_id: "1111",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -251,6 +267,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "124C",
+      vbms_id: "1112",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -295,11 +312,14 @@ class Fakes::AppealRepository
 
   def self.reader_documents
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD"),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC"),
-      Generators::Document.build(vbms_document_id: 3, type: "Form 9"),
-      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago)
+      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
+      Generators::Document.build(vbms_document_id: 3, type: "Form 9",
+                                 category_medical: true, category_procedural: true),
+      Generators::Document.build(vbms_document_id: 4, type: "BVA Decision", received_at: 7.days.ago,
+                                 category_other: true),
+      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+                                 category_medical: true, category_procedural: true, category_other: true)
     ]
   end
 
