@@ -76,7 +76,7 @@ export default class PdfListView extends React.Component {
                 </Comment>;
             });
 
-            return <ul ariaLabel="Document comments">
+            return <ul className="cf-no-styling-list" ariaLabel="Document comments">
               {commentNodes}
             </ul>;
           },
