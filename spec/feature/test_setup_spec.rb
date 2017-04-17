@@ -21,15 +21,16 @@ RSpec.feature "Test Setup" do
   end
 
   context "Data Reset" do
-    before(:each) do
+    before do
       ENV["TEST_APPEAL_IDS"].split(",").each_with_index do |appeal_id, i|
-        appeal = Appeal.create(
+        appeal = Generators::Appeal.create(
           vacols_id: appeal_id,
           vbms_id: "#{appeal_id}_id"
         )
         task = EstablishClaim.create(appeal: appeal)
         task.prepare!
-        appeal = Appeal.create(
+
+        appeal = Generators::Appeal.create(
           vacols_id: "#{appeal_id}_#{i}",
           vbms_id: "#{appeal_id}_id#{i}"
         )
@@ -67,6 +68,11 @@ RSpec.feature "Test Setup" do
     end
 
     scenario "Resets date and location for a Full Grant" do
+      Generators::Appeal.create(
+        vacols_id: "VACOLS123",
+        vacols_record: :full_grant_decided
+      )
+
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
@@ -83,6 +89,11 @@ RSpec.feature "Test Setup" do
     end
 
     scenario "Resets date and location for a Partial Grant" do
+      Generators::Appeal.create(
+        vacols_id: "VACOLS321",
+        vacols_record: :partial_grant_decided
+      )
+
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
