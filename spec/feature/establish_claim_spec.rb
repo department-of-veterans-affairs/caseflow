@@ -89,6 +89,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "use a different EP code modifier. GUID: 13fcd</faultstring>")
     end
 
+    let(:missing_ssn_error) do
+      VBMS::HTTPError.new("500", "<fieldName>PersonalInfo SSN</fieldName>" \
+        "<errorType>MINIMUM_LENGTH_NOT_SATISFIED</errorType><message>The " \
+        "minimum data length for the PersonalInfo SSN within the veteran " \
+        "was not satisfied: The PersonalInfo SSN must not be empty." \
+        "</message></formFieldErrors>")
+    end
+
     scenario "Assign the correct new task to myself" do
       # Create an older task with an inaccessible appeal
       Generators::EstablishClaim.create(
@@ -230,6 +238,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Error establishing claim" do
+      # Duplicate EP error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
       task.assign!(:assigned, current_user)
@@ -239,6 +248,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+
+      # Missing SSN error
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
+
+      click_on "Create End Product"
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("This veteran does not have a social security number")
     end
 
     context "Appeal with no documents" do

@@ -77,16 +77,6 @@ describe('PdfUI', () => {
           expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(1);
         });
       });
-
-      context('when onSetLabel function is supplied', () => {
-        it('renders the Document Labels component', () => {
-          expect(wrapper.find('DocumentLabels')).to.have.length(0);
-          let onSetLabel = sinon.spy();
-
-          wrapper.setProps({ onSetLabel });
-          expect(wrapper.find('DocumentLabels')).to.have.length(1);
-        });
-      });
     });
 
     context('.onPageChange', () => {

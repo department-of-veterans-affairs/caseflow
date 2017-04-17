@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ProgressBar from '../components/ProgressBar';
 import { progressBarSections } from './constants/constants';
@@ -50,5 +50,9 @@ const mapStateToProps = (state) => ({
 const CertificationProgressBar = connect(
   mapStateToProps
 )(UnconnectedCertificationProgressBar);
+
+CertificationProgressBar.propTypes = {
+  currentSection: PropTypes.string
+};
 
 export default CertificationProgressBar;
