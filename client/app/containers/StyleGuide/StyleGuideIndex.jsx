@@ -15,34 +15,11 @@ import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default class StyleGuideIndex extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      height: 0
-    }
-  }
-
-  calcHeight = (node) => {
-    this.setState({
-      height: node.offsetHeight
-    })
-  }
-
-
   render() {
-    let {
-      height
-    } = this.props;
 /* eslint-disable max-len */
 
-    let divStyle = {
-      height: this.state.height - 155
-    }
-    // console.log(divStyle.height);
-    // console.log(window.scrollY);
-
     return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-      <StickyNav style={this.divStyle}>
+      <StickyNav>
         <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
         <NavLink anchor="#typography" name="Typography"></NavLink>
         <NavLink anchor="#colors" name="Colors"></NavLink>

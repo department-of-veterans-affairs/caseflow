@@ -11,7 +11,7 @@ export default class NavLink extends React.Component {
 
     if (subsection === true) {
       return <ul className="usa-sidenav-sub_list">
-        <li><a href={anchor}>{name}</a></li>
+        { React.cloneElement(<li><a href={anchor}>{name}</a></li>) }
       </ul>
     }
     return <li><a href={anchor}>{name}</a></li>
