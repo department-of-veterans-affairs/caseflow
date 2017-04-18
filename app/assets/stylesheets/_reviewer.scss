@@ -102,10 +102,14 @@ svg[aria-hidden=true],
   padding: 0 30px;
 }
 
+.cf-comment-headding {
+  margin-bottom: 10px;
+}
+
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 345px;
+  top: 400px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;

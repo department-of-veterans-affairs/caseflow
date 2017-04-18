@@ -4,10 +4,12 @@ import Comment from '../components/Comment';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import { plusIcon } from './RenderFunctions';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -124,12 +126,14 @@ export default class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-alt">
+          <div className="cf-heading-alt cf-comment-headding">
             Comments
-            <span className="cf-right-side">
-              <a href="#" onClick={this.props.onAddComment}>+ Add a Comment</a>
-            </span>
           </div>
+          <Button
+            name="AddComment"
+            onClick={this.props.onAddComment}>
+            { plusIcon() } Add a Comment
+          </Button>
         </div>
 
         <div className="cf-comment-wrapper">

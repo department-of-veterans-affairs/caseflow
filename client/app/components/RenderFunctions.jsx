@@ -185,6 +185,18 @@ export let GithubIcon = function() {
   );
 };
 
+export let plusIcon = function() {
+  return <svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1">
+      <g id="Iteration-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-size="14" font-family="FontAwesome" font-weight="normal">
+          <g id="Artboard-2" fill="#FFFFFF">
+              <text id="">
+                  <tspan x="2" y="13"></tspan>
+              </text>
+          </g>
+      </g>
+    </svg>;
+}
+
 export const docCategoryIcon = (color) => () =>
   <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
