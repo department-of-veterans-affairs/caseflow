@@ -109,7 +109,6 @@ export default class PdfSidebar extends React.Component {
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
-          <div className="cf-heading-alt">Document</div>
           <p className="cf-pdf-meta-title">
             <b>Document Type:</b> {this.props.doc.type}
             <Button
