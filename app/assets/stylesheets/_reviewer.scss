@@ -301,9 +301,18 @@ svg[aria-hidden=true],
   padding-top: $dropdown-interior-padding;
   padding-bottom: $dropdown-interior-padding;
 
+  @mixin hover {
+    &:hover {
+      background-color: #5B616B;
+      color: white;  
+    }
+  }
+
   .cf-clear-filter-row {
     padding-left: $dropdown-interior-padding;
     padding-right: $dropdown-interior-padding;
+
+    @include hover;
   }
 
   .cf-document-category-picker {
@@ -314,6 +323,8 @@ svg[aria-hidden=true],
     li {
       padding-left: $dropdown-interior-padding;
       padding-right: $dropdown-interior-padding;
+
+      @include hover;
     }
 
     li:last-child .cf-form-checkboxes {
@@ -322,11 +333,6 @@ svg[aria-hidden=true],
       .cf-category-selector {
         margin-bottom: 0;
       }
-    }
-
-    li:hover {
-      background-color: #5B616B;
-      color: white;
     }
   }
 }
