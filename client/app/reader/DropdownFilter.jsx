@@ -8,6 +8,7 @@ class DropdownFilter extends React.PureComponent {
       rootElemWidth: null
     };
   }
+
   render() {
     const { children, baseCoordinates } = this.props;
 
@@ -43,10 +44,35 @@ class DropdownFilter extends React.PureComponent {
   }
 
   componentDidMount() {
+    document.addEventListener('click', this.onGlobalClick);
+
     if (this.rootElem) {
       this.setState({
         rootElemWidth: this.rootElem.clientWidth
       });
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onGlobalClick);
+  }
+
+  onGlobalClick = () => {
+    const clickIsInsideThisComponent = () => {
+      let node = event.target;
+
+      // eslint-disable-next-line no-cond-assign
+      while (node = node.parentNode) {
+        if (node === this.rootElem) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    if (!clickIsInsideThisComponent()) {
+      this.props.handleClose();
     }
   }
 }
