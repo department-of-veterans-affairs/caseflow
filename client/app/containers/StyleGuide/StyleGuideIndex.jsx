@@ -42,7 +42,7 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#modals" name="Modals"></NavLink>
         <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
       </StickyNav>
-      <div className="cf-push-right cf-sg-content" ref={(node) => this.calcHeight(node)}>
+      <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.

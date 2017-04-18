@@ -12,7 +12,7 @@ export default class NavLink extends React.Component {
     // This is to add subsections within the navigation
     if (subsection === true) {
       return <ul className="usa-sidenav-sub_list">
-        { React.cloneElement(<li><a href={anchor}>{name}</a></li>) }
+        <li><a href={anchor}>{name}</a></li>)
       </ul>;
     }
 
