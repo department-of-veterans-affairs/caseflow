@@ -68,15 +68,16 @@ const ConnectedCategorySelector = connect(
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
-// show a PDF with its corresponding information.
+// show a PDF with it's corresponding information.
 export default class PdfSidebar extends React.Component {
-
   generateOptionsFromTags = (tags) => {
     if (!tags || tags.length <= 0) {
       return {};
     }
+
     return tags.map((tag) => {
-      return { value: tag.text, label: tag.text }
+      return { value: tag.text,
+        label: tag.text };
     });
   };
 
@@ -111,20 +112,24 @@ export default class PdfSidebar extends React.Component {
           {comment.comment}
         </Comment>;
     });
-
+    console.log(doc.id);
+    console.log(doc.tags);
     return <div className="cf-sidebar-wrapper">
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">
             Related Issues
           </div>
-          <SearchableDropdown 
+          <SearchableDropdown
             name="tags"
             label="Click in the box below to select, type, or add in issue(s)" 
             multi={true}
             creatable={true}
             options={this.generateOptionsFromTags(doc.tags)}
             placeholder="Select or type issue"
-            classNames={[]}
+            value={this.generateOptionsFromTags(doc.tags)}
+            onChange={(values) => {
+              this.props.addNewTag(doc, values);
+            }}
           />
           <div className="cf-heading-alt">Document</div>
           <p className="cf-pdf-meta-title">
@@ -136,21 +141,6 @@ export default class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
-          <ul className="cf-document-category-picker">
-            {
-              _(Constants.documentCategories).
-                toPairs().
-                // eslint-disable-next-line no-unused-vars
-                sortBy(([name, category]) => category.renderOrder).
-                map(
-                  ([categoryName, category]) => <li key={categoryName}>
-                    <ConnectedCategorySelector category={category}
-                      categoryName={categoryName} docId={this.props.doc.id} />
-                  </li>
-                ).
-                value()
-            }
-          </ul>
           <div className="cf-heading-alt">
             Comments
             <span className="cf-right-side">

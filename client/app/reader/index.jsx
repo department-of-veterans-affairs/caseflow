@@ -1,6 +1,6 @@
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import React from 'react';
+import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import logger from 'redux-logger';
 import * as Constants from './constants';
