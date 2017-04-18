@@ -13,10 +13,6 @@ import * as Constants from './constants';
 const NUMBER_OF_COLUMNS = 5;
 
 export class PdfListView extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   toggleComments = (id) => () => {
     this.props.handleToggleCommentOpened(id, !this.props.reduxDocuments[id].listComments);
   }
@@ -198,7 +194,7 @@ export class PdfListView extends React.Component {
 
 // Should be merged with documents when we finish integrating redux
 const mapStateToProps = (state) => {
-  return { reduxDocuments: _.get(state, 'documents') }
+  return { reduxDocuments: _.get(state, 'documents') };
 };
 
 const mapDispatchToProps = (dispatch) => ({

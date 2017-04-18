@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import Pdf from '../../app/components/Pdf';
+import { Pdf } from '../../app/components/Pdf';
 import sinon from 'sinon';
 
 import PdfJsStub from '../helpers/PdfJsStub';

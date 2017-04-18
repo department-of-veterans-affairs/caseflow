@@ -11,10 +11,12 @@ const initialState = {
   ui: {
     pdf: {
     }
+  },
+  documents: {
   }
 };
 
-const readerReducer = (state = initialState, action = {}) => {
+export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -84,7 +86,7 @@ const readerReducer = (state = initialState, action = {}) => {
   }
 };
 
-const store = createStore(readerReducer, null, applyMiddleware(logger));
+const store = createStore(readerReducer, initialState, applyMiddleware(logger));
 
 const Reader = (props) => {
   return <Provider store={store}>

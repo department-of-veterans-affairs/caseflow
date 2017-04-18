@@ -1,7 +1,7 @@
 import React from 'react';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
-import { DecisionReviewer } from '../../app/reader/DecisionReviewer';
+import DecisionReviewer from '../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
 import { documents } from '../data/documents';
 import { annotations } from '../data/annotations';
@@ -13,6 +13,7 @@ import { asyncTest, pause } from '../helpers/AsyncTests';
 import ApiUtilStub from '../helpers/ApiUtilStub';
 
 import PdfJsStub from '../helpers/PdfJsStub';
+import { readerReducer } from '../../app/reader/index';
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
@@ -25,7 +26,7 @@ describe('DecisionReviewer', () => {
     ApiUtilStub.beforeEach();
 
     wrapper = mount(
-      <Provider store={createStore(_.identity)}>
+      <Provider store={createStore(readerReducer)}>
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
@@ -229,7 +230,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         wrapper.find('#comment0').simulate('click');
-        expect(jumpTo.calledWith(sinon.match({ id: commentId }))).to.be.true;
+        assert(jumpTo.calledWith(sinon.match({ id: commentId })));
       }));
 
       it('highlighted by clicking on the icon', asyncTest(async() => {

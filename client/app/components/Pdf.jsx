@@ -203,11 +203,11 @@ export class Pdf extends React.Component {
           resolve();
         });
 
-        this.props.handleSetCurrentRenderedFile(this.props.documentId);
-
         if (this.props.onPageChange) {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
+
+        this.props.handleSetCurrentRenderedFile(this.props.documentId);
 
         // Scroll to the correct location on the page
         this.scrollWindow.scrollTop = scrollLocation;
