@@ -1,5 +1,4 @@
 import React from 'react';
-import NavLink from './NavLink';
 
 // mostly copy pasted this answer from Stack Overflow: http://stackoverflow.com/a/33555276
 
@@ -7,7 +6,7 @@ export default class StickyNav extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      className: "cf-sg-nav-not-scrolling",
+      className: "cf-sg-nav-not-scrolling"
     };
     this.handleScroll = this.handleScroll.bind(this);
   }
@@ -33,7 +32,7 @@ export default class StickyNav extends React.Component {
     }
   }
 
-  //TODO(marian): add toggle for nav bar to float right for nice dazzler
+  // TODO(marian): add toggle for nav bar to float right for nice dazzler
 
   render() {
     return (

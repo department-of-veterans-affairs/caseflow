@@ -16,6 +16,7 @@ div {
     overflow-y: scroll;
     height: 75%;
   }
+
   &[class$="-not-scrolling"] {
     position: absolute;
     overflow-y: scroll;
@@ -24,12 +25,14 @@ div {
 
 .cf-sg-nav {
   margin-top: 35px;
+
   .current-link {
-    border-left: 4px solid #0071bc;
-    color: #0071bc;
+    border-left: 4px solid $color-primary;
+    color: $color-primary;
     font-weight: 700;
     padding-left: 1.4em;
   }
+
   a {
     color: $color-primary;
   }

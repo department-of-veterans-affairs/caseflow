@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
 export default class StyleGuidePlaceholder extends React.Component {
-  render(){
+  render() {
     let {
       id,
       subsection,
@@ -18,7 +18,7 @@ export default class StyleGuidePlaceholder extends React.Component {
       <div>
         <p>This component is not ready yet. Stay tuned! :) </p>
       </div>
-    </div>
+    </div>;
   }
 }
 

@@ -24,10 +24,8 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#typography" name="Typography"></NavLink>
         <NavLink anchor="#colors" name="Colors"></NavLink>
         <NavLink anchor="#buttons" name="Buttons"></NavLink>
-        <NavLink anchor="#link_buttons" name="Link Buttons" subsection={true}></NavLink>
         <NavLink anchor="#search" name="Search"></NavLink>
         <NavLink anchor="#dropdown" name="Dropdown Menus"></NavLink>
-        <NavLink anchor="#searchable_dropdown" name="Searchable Dropdown" subsection={true}></NavLink>
         <NavLink anchor="#checkboxes" name="Checkboxes"></NavLink>
         <NavLink anchor="#radios" name="Radio Fields"></NavLink>
         <NavLink anchor="#date_input" name="Date Input"></NavLink>
@@ -35,11 +33,9 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#tabs" name="Tabs"></NavLink>
         <NavLink anchor="#accordions" name="Accordions"></NavLink>
         <NavLink anchor="#forms_fields" name="Forms Fields"></NavLink>
-        <NavLink anchor="#inline_form" name="Inline Form" subsection={true}></NavLink>
         <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
         <NavLink anchor="#alerts" name="Alerts"></NavLink>
         <NavLink anchor="#layout" name="Layout"></NavLink>
-        <NavLink anchor="#user_dropdown_menu" name="User dropdown menu" subsection={true}></NavLink>
         <NavLink anchor="#messages" name="Messages"></NavLink>
         <NavLink anchor="#branding" name="Branding"></NavLink>
         <NavLink anchor="#dashboard" name="Dashboard"></NavLink>
