@@ -58,20 +58,6 @@ class Certification < ActiveRecord::Base
     )
   end
 
-  def assemble_updates(params)
-    whitelisted_fields = %w(representative_name
-                            representative_type
-                            hearing_change_doc_found_in_vbms
-                            form9_type
-                            hearing_preference)
-    updates = {}
-
-    whitelisted_fields.each do |field_name|
-      updates[field_name] = params[field_name] if params[field_name]
-    end
-    updates
-  end
-
   def complete!(user_id)
     appeal.certify!
     update_attributes!(completed_at: Time.zone.now, user_id: user_id)

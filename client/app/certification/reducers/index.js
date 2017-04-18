@@ -1,5 +1,5 @@
 import * as Constants from '../constants/constants';
-import * as ConfirmCaseDetailsReducers from '../ConfirmCaseDetails';
+import * as ConfirmCaseDetailsReducers from './ConfirmCaseDetails';
 
 /*
 * This global reducer is called every time a state change is

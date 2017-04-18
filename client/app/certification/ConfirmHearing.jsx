@@ -249,6 +249,7 @@ class UnconnectedConfirmHearing extends React.Component {
  * that causes the reducer in reducers/index.js
  * to return a new state object.
  */
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
     dispatch({

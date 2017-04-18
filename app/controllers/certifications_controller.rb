@@ -21,8 +21,13 @@ class CertificationsController < ApplicationController
   end
 
   def update
-    updates = certification.assemble_updates(params)
-    certification.update!(updates)
+    permitted = params.require("update")
+      .permit("representative_name",
+              "representative_type",
+              "hearing_change_doc_found_in_vbms",
+              "form9_type",
+              "hearing_preference")
+    certification.update!(permitted)
     render json: {}
   end
 
