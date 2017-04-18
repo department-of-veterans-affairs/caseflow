@@ -294,12 +294,25 @@ svg[aria-hidden=true],
   position: absolute;
   border: 1px solid #d6d7d9;
   background: white;
-  padding: 10px;
   box-shadow: 5px 5px 4px -3px #d6d7d9;
   font-weight: normal;
 
+  $dropdown-interior-padding: 10px;
+  padding-top: $dropdown-interior-padding;
+  padding-bottom: $dropdown-interior-padding;
+
+  .cf-clear-filter-row {
+    padding-left: $dropdown-interior-padding;
+    padding-right: $dropdown-interior-padding;
+  }
+
   .cf-document-category-picker {
     margin-bottom: 0;
+
+    li {
+      padding-left: $dropdown-interior-padding;
+      padding-right: $dropdown-interior-padding;
+    }
 
     li:last-child .cf-form-checkboxes {
       margin-bottom: 0;
@@ -311,6 +324,7 @@ svg[aria-hidden=true],
 
     li:hover {
       background-color: #5B616B;
+      color: white;
     }
   }
 }

@@ -32,7 +32,7 @@ class DropdownFilter extends React.PureComponent {
     return <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
-      <div>
+      <div className="cf-clear-filter-row">
         <button className="cf-text-button" onClick={this.props.clearFilters}
             disabled={!this.props.isClearEnabled}>
           Clear category filter
