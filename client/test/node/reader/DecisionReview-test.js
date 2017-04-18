@@ -248,6 +248,14 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
       }));
+
+      it('comment has page number', asyncTest(async() => {
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[1].type).
+          simulate('mouseUp');
+
+        expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
+      }));
     });
   });
 
@@ -272,6 +280,11 @@ describe('DecisionReviewer', () => {
 
         // Make sure post scroll callback is called
         expect(scrolledTo.called).to.be.true;
+      }));
+
+      it('page number is displayed', asyncTest(async() => {
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
       }));
     });
 
