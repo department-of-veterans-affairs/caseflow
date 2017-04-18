@@ -131,7 +131,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
-      expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")
       expect(page).to have_content("Routed in VACOLS")
 
       # The oldest task (task local var) is now set to a higher security level so
@@ -462,7 +462,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -475,7 +475,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
 
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
@@ -548,7 +548,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -561,7 +561,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
       end
 
@@ -621,7 +621,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Success!")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-            claim: {
+            claim_hash: {
               benefit_type_code: "1",
               payee_code: "00",
               predischarge: false,
@@ -635,7 +635,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false
             },
-            appeal: task.appeal
+            veteran_hash: task.appeal.veteran.to_vbms_hash
           )
         end
       end

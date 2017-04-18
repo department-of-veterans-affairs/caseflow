@@ -14,9 +14,6 @@ class EstablishClaim < Task
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
-  class << self
-  end
-
   cache_attribute :cached_decision_type do
     appeal.decision_type
   end
@@ -88,12 +85,13 @@ class EstablishClaim < Task
   end
 
   def prepare_with_decision!
-    return false if check_and_invalidate!
-    return false if appeal.decisions.empty?
+    return :invalid if check_and_invalidate!
+    return :already_prepared unless may_prepare?
+    return :missing_decision if appeal.decisions.empty?
 
     appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
 
-    prepare!
+    prepare! && :success
   end
 
   def actions_taken
@@ -125,7 +123,7 @@ class EstablishClaim < Task
   end
 
   def should_invalidate?
-    !appeal.decision_date || appeal.status == "Active"
+    !appeal.vacols_record_exists? || !appeal.decision_date || appeal.status == "Active"
   end
 
   private
@@ -144,7 +142,10 @@ class EstablishClaim < Task
   end
 
   def establish_claim_in_vbms(end_product)
-    Appeal.repository.establish_claim!(claim: end_product.to_vbms_hash, appeal: appeal)
+    Appeal.repository.establish_claim!(
+      claim_hash: end_product.to_vbms_hash,
+      veteran_hash: appeal.veteran.to_vbms_hash
+    )
   end
 
   def parse_vbms_error(error)
