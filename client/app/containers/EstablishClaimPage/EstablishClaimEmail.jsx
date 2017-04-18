@@ -50,7 +50,7 @@ export class EstablishClaimEmail extends BaseForm {
         emailField: new FormField(email)
       },
       noEmailNote: note,
-       copied: false
+      copied: false
     };
   }
 
@@ -84,8 +84,7 @@ export class EstablishClaimEmail extends BaseForm {
             <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
           </div>
 
-          
-        <div className ="cf-vbms-note">
+      <div className ="cf-vbms-note">
           <TextareaField
               label="Message:"
               name="emailMessage"
@@ -93,21 +92,20 @@ export class EstablishClaimEmail extends BaseForm {
               {...this.state.emailForm.emailField}
           />
 
-          <div className="cf-app-segment copy-note-button">
-           <div className="cf-push-left">
-           <CopyToClipboard text={this.state.noteForm.noteField.value}
+       <div className="cf-app-segment copy-note-button">
+        <div className="cf-push-left">
+          <CopyToClipboard text={this.state.emailForm.emailField.value}
            onCopy={this.onCopy}>
-           <Button
-           label = "Copy note"
-           name="copyNote"
-         classNames={["usa-button-outline"]}>
-         <i className="fa fa-files-o" aria-hidden="true"></i>
-         Copy note
-       </Button>
-       </CopyToClipboard>
+            <Button
+             name="copyNote"
+             classNames={["usa-button-outline"]}>
+             <i className="fa fa-files-o" aria-hidden="true"></i>
+             Copy note
+            </Button>
+          </CopyToClipboard>
+        </div>
       </div>
      </div>
-    </div>
 
           <Checkbox
               label="I confirm that I have sent an email to route this claim."
@@ -118,7 +116,6 @@ export class EstablishClaimEmail extends BaseForm {
 
         </div>
 
-        
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-left">
             <Button
@@ -195,7 +192,7 @@ export class EstablishClaimEmail extends BaseForm {
           </div>
         </div>
       }
-      </div>;
+      </div>
   }
 }
 

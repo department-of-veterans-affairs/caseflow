@@ -143,7 +143,7 @@ export class EstablishClaimNote extends BaseForm {
       then open VBMS and attach it to the EP you just created.</p>
      
 
-    <div className ="cf-vbms-note">
+  <div className ="cf-vbms-note">
      <TextareaField
         label="VBMS Note:"
         name="vbmsNote"
@@ -151,21 +151,21 @@ export class EstablishClaimNote extends BaseForm {
         {...this.state.noteForm.noteField}
       />
 
-      <div className="cf-app-segment copy-note-button">
-       <div className="cf-push-left">
+    <div className="cf-app-segment copy-note-button">
+     <div className="cf-push-left">
        <CopyToClipboard text={this.state.noteForm.noteField.value}
-       onCopy={this.onCopy}>
-        <Button
-        label = "Copy note"
-         name="copyNote"
-         classNames={["usa-button-outline"]}>
-         <i className="fa fa-files-o" aria-hidden="true"></i>
-         Copy note
-       </Button>
-       </CopyToClipboard>
-      </div>
-     </div>
+         onCopy={this.onCopy}>
+         <Button
+          label = "Copy note"
+          name="copyNote"
+          classNames={["usa-button-outline"]}>
+          <i className="fa fa-files-o" aria-hidden="true"></i>
+          Copy note
+        </Button>
+      </CopyToClipboard>
     </div>
+   </div>
+ </div>
 
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
