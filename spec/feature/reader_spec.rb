@@ -38,7 +38,7 @@ RSpec.feature "Reader" do
   end
 
   let!(:current_user) do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(roles: ["Reader"])
   end
 
   scenario "Add comment" do
