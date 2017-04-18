@@ -1,7 +1,7 @@
 class AnnotationController < ApplicationController
   before_action :verify_access
 
-  ANNOTATION_AUTHORIZED_ROLES = ["Reader"]
+  ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
 
   def create
     annotation = Annotation.create!(annotation_params)
