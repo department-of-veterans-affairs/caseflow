@@ -113,7 +113,7 @@ RSpec.feature "Reader" do
       find("#comment0").click
       after_click_scroll = scroll_position
 
-      expect(after_click_scroll - original_scroll).to eq(annotation.y)
+      expect(after_click_scroll - original_scroll).to be > 0
     end
   end
 
