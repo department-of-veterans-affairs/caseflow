@@ -5,6 +5,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import Alert from '../components/Alert';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
@@ -85,7 +86,8 @@ export default class PdfSidebar extends React.Component {
     let comments = [];
 
     const {
-      doc
+      doc,
+      tagsErrorMessage
     } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
@@ -112,16 +114,19 @@ export default class PdfSidebar extends React.Component {
           {comment.comment}
         </Comment>;
     });
-    console.log(doc.id);
-    console.log(doc.tags);
+
     return <div className="cf-sidebar-wrapper">
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">
             Related Issues
           </div>
+          {/* This error alert needs to be formatted according to #1573 */}
+          {tagsErrorMessage &&
+            <Alert type="error" title={''}
+              message={tagsErrorMessage} />}
           <SearchableDropdown
             name="tags"
-            label="Click in the box below to select, type, or add in issue(s)" 
+            label="Click in the box below to select, type, or add in issue(s)"
             multi={true}
             creatable={true}
             options={this.generateOptionsFromTags(doc.tags)}

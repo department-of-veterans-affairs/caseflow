@@ -325,6 +325,7 @@ export class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           addNewTag={this.props.addNewTag}
+          tagsErrorMessage={this.props.tagsErrorMessage}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={this.props.storeDocuments[this.props.currentDocId]}
@@ -348,7 +349,8 @@ const mapStateToProps = (state) => {
   return {
     storeDocuments: state ? state.documents : {},
     currentPdfIndex: state ? state.currentPdfIndex : 0,
-    currentDocId: state ? state.currentDocId : null
+    currentDocId: state ? state.currentDocId : null,
+    tagsErrorMessage: state ? state.tagsErrorMessage : ''
   };
 };
 

@@ -11,7 +11,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 const intialState = {
   currentPdfIndex: null,
   currentDocId: null,
-  tagsErrorMessage: null
+  tagsErrorMessage: ''
 };
 
 const readerReducer = (state = intialState, action = {}) => {

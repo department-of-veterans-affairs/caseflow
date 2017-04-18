@@ -81,7 +81,7 @@ export const addNewTag = (doc, tags) => {
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body.tags));
         }, () => {
-          dispatch(newTagRequestFailed("Unable to save. Please try again!"));
+          dispatch(newTagRequestFailed("Unable to save. Please try again."));
         });
     }
   };
