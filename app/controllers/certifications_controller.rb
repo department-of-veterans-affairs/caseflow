@@ -31,6 +31,7 @@ class CertificationsController < ApplicationController
     updateable_fields.each do |field_name|
       updates[field_name] = params[field_name] if params[field_name]
     end
+    updates
   end
 
   def update

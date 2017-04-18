@@ -223,10 +223,10 @@ class UnconnectedConfirmHearing extends React.Component {
           }
         </div>
 
-      <Footer
-        nextPageUrl={
-          `/certifications/${match.params.vacols_id}/sign_and_certify`
-        }/>
+        <Footer
+          nextPageUrl={
+            `/certifications/${match.params.vacols_id}/sign_and_certify`
+          }/>
     </div>;
   }
 }

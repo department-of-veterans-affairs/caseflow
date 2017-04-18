@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+import * as actions from './actions/ConfirmCaseDetails';
 import { Redirect } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
@@ -53,24 +54,6 @@ export class ConfirmCaseDetails extends React.Component {
     this.props.updateProgressBar();
   }
 
-  getErroredFields() {
-    const erroredFields = [];
-
-    if (!this.props.representativeName && !this.representativeTypeIsNone()) {
-      erroredFields.push('representativeName');
-    }
-
-    if (!this.props.representativeType) {
-      erroredFields.push('representativeType');
-    }
-
-    if (this.representativeTypeIsOther() && !this.props.otherRepresentativeType) {
-      erroredFields.push('otherRepresentativeType');
-    }
-
-    return erroredFields;
-  }
-
   representativeTypeIsNone() {
     return this.props.representativeType === Constants.representativeTypes.NONE;
   }
@@ -79,39 +62,62 @@ export class ConfirmCaseDetails extends React.Component {
     return this.props.representativeType === Constants.representativeTypes.OTHER;
   }
 
-  getRepresentativeType() {
-    return this.representativeTypeIsOther() ?
-      this.otherRepresentativeType : this.representativeType;
+  getValidationErrors() {
+    // TODO: consider breaking this and all validation out into separate
+    // modules.
+    let {
+      representativeName,
+      representativeType,
+      otherRepresentativeType
+    } = this.props;
+
+    const erroredFields = [];
+
+    // Unless the type of representative is "None",
+    // we need a representative name.
+    if (!representativeName && !this.representativeTypeIsNone()) {
+      erroredFields.push('representativeName');
+    }
+
+    // We always need a representative type.
+    if (!representativeType) {
+      erroredFields.push('representativeType');
+    }
+
+    // If the representative type is "Other",
+    // fill out the representative type.
+    if (this.representativeTypeIsOther() && !otherRepresentativeType) {
+      erroredFields.push('otherRepresentativeType');
+    }
+
+    return erroredFields;
   }
 
   onClickContinue() {
-    const erroredFields = this.getErroredFields();
+    const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onValidationFail(erroredFields);
+      this.props.failValidation(erroredFields);
 
       return;
     }
 
-    // Translate camelcase React names into snake case
-    // Rails key names.
-    /* eslint-disable camelcase */
-    const data = {
-      representative_type: this.props.representativeType,
-      representative_name: this.props.representativeName
-    };
-    /* eslint-enable "camelcase" */
-
-    this.props.startRequest(data);
+    this.props.certificationUpdateStart({
+      representativeType: this.props.representativeType,
+      otherRepresentativeType: this.props.otherRepresentativeType,
+      representativeName: this.props.representativeName,
+      vacolsId: this.props.match.params.vacols_id
+    });
   }
 
   render() {
-    let { representativeType,
-      onRepresentativeTypeChange,
+    let {
+      representativeType,
+      changeRepresentativeType,
       representativeName,
-      onRepresentativeNameChange,
+      changeRepresentativeName,
       otherRepresentativeType,
-      onOtherRepresentativeTypeChange,
+      changeOtherRepresentativeType,
       validationFailed,
       loading,
       updateFailed,
@@ -144,7 +150,7 @@ export class ConfirmCaseDetails extends React.Component {
           <RadioField name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
-            onChange={onRepresentativeTypeChange}
+            onChange={changeRepresentativeType}
             required={true}/>
 
           {
@@ -152,19 +158,18 @@ export class ConfirmCaseDetails extends React.Component {
             <TextField
               name="Specify other representative type"
               value={otherRepresentativeType}
-              onChange={onOtherRepresentativeTypeChange}
+              onChange={changeOtherRepresentativeType}
               required={true}/>
           }
 
           <TextField name="Representative name"
             value={representativeName}
-            onChange={onRepresentativeNameChange}
+            onChange={changeRepresentativeName}
             required={true}/>
 
         </div>
 
         <Footer
-          nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
           disableContinue={validationFailed}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
@@ -175,78 +180,32 @@ export class ConfirmCaseDetails extends React.Component {
 
 ConfirmCaseDetails.propTypes = {
   representativeType: PropTypes.string,
-  onRepresentativeTypeChange: PropTypes.func,
+  changeRepresentativeType: PropTypes.func,
   representativeName: PropTypes.string,
-  onRepresentativeNameChange: PropTypes.func,
+  changeRepresentativeName: PropTypes.func,
   otherRepresentativeType: PropTypes.string,
-  onOtherRepresentativeTypeChange: PropTypes.func,
+  changeOtherRepresentativeType: PropTypes.func,
   match: PropTypes.object.isRequired
 };
 
-
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
-    dispatch({
-      type: Constants.UPDATE_PROGRESS_BAR,
-      payload: {
-        currentSection: Constants.progressBarSections.CONFIRM_CASE_DETAILS
-      }
-    });
+    dispatch(actions.updateProgressBar());
   },
-  onRepresentativeNameChange: (representativeName) => {
-    dispatch({
-      type: Constants.CHANGE_REPRESENTATIVE_NAME,
-      payload: {
-        representativeName
-      }
-    });
-  },
-  onRepresentativeTypeChange: (representativeType) => {
-    dispatch({
-      type: Constants.CHANGE_REPRESENTATIVE_TYPE,
-      payload: {
-        representativeType
-      }
-    });
-  },
-  onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
-    dispatch({
-      type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
-      payload: {
-        otherRepresentativeType
-      }
-    });
-  },
-  onValidationFail: (invalidFields) => {
-    dispatch({
-      type: Constants.FAILED_VALIDATION,
-      payload: {
-        invalidFields,
-        validationFailed: true
-      }
-    });
-  },
-  startRequest: (data) => {
-    dispatch({
-      type: Constants.CERTIFICATION_UPDATE_REQUEST,
-      payload: {
-        data,
-        // TODO: this nested bit is a bit complex. Can we refactor this to be
-        // a little more legible?
-        onComplete: (err) => {
-          if (err) {
-            return dispatch({
-              type: Constants.CERTIFICATION_UPDATE_FAILURE
-            });
-          }
-          dispatch({
-            type: Constants.CERTIFICATION_UPDATE_SUCCESS
-          });
-        }
-      }
-    });
-  }
 
+  changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),
+
+  changeRepresentativeType: (type) => dispatch(actions.changeRepresentativeType(type)),
+
+  changeOtherRepresentativeType: (other) => {
+    dispatch(actions.changeOtherRepresentativeType(other));
+  },
+
+  failValidation: (invalidFields) => dispatch(actions.failValidation(invalidFields)),
+
+  certificationUpdateStart: (props) => {
+    dispatch(actions.certificationUpdateStart(props, dispatch));
+  }
 });
 
 const mapStateToProps = (state) => ({

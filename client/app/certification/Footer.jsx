@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import CancelCertificationModal from './CancelCertificationModal';
 
@@ -30,23 +31,26 @@ export default class Footer extends React.Component {
       certificationId,
       loading,
       disableContinue,
-      onClickContinue
+      onClickContinue,
+      nextPageUrl
     } = this.props;
 
-    return <div>
+    return <div className="cf-app-segment">
       <Button
             name="Cancel Certification"
             onClick={this.handleModalOpen}
             classNames={["cf-btn-link"]}
       />
-      <Button type="button"
-        name="Continue"
-        classNames={["cf-push-right"]}
-        onClick={onClickContinue}
-        loading={loading}
-        disabled={disableContinue}>
-        Continue
-      </Button>
+      <Link to={nextPageUrl || '#'}>
+        <Button type="button"
+          name="Continue"
+          classNames={["cf-push-right"]}
+          onClick={onClickContinue}
+          loading={loading}
+          disabled={disableContinue}>
+          Continue
+        </Button>
+      </Link>
       {cancelModalDisplay && <CancelCertificationModal
         title="Cancel Certification"
         certificationId={certificationId}

@@ -1,4 +1,3 @@
-import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../constants/constants';
 
 /*
@@ -40,16 +39,7 @@ const changeSignAndCertifyForm = (state, action) => {
   return Object.assign({}, state, update);
 };
 
-const updateCertification = (state, action) => {
-  const data = action.payload.data;
-
-  ApiUtil.put(`/certifications/${state.vacolsId}/update`, { data }).
-    then(() => {
-      action.payload.onComplete();
-    }, () => {
-      action.payload.onComplete('err');
-    });
-
+const updateCertification = (state) => {
   return Object.assign({}, state, {
     loading: true
   });

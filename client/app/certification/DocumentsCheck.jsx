@@ -43,13 +43,11 @@ class UnconnectedDocumentsCheck extends React.Component {
           documentsMatch={documentsMatch}/>
       </div>
 
-      <div className="cf-app-segment">
-        <Footer
-          nextPageUrl={
-            `/certifications/${match.params.vacols_id}/confirm_case_details`
-          }
-          certificationId={certificationId}/>
-      </div>
+      <Footer
+        nextPageUrl={
+          `/certifications/${match.params.vacols_id}/confirm_case_details`
+        }
+        certificationId={certificationId}/>
     </div>;
   }
 }
