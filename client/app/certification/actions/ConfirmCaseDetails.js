@@ -64,7 +64,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   };
   /* eslint-enable "camelcase" */
 
-  ApiUtil.put(`/certifications/${params.vacolsId}/update`, { data: { update: update } }).
+  ApiUtil.put(`/certifications/${params.vacolsId}/update`, { data: { update } }).
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
