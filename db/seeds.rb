@@ -79,6 +79,7 @@ class SeedDB
     @users.push(User.create(css_id: "Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John Smith"))
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
+    @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
   end
 
   def clean_db
