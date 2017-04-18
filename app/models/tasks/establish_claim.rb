@@ -86,8 +86,7 @@ class EstablishClaim < Task
 
   def prepare_with_decision!
     try_prepare_with_decision!.tap do |result|
-      Rails.logger.info "Prepared EstablishClaim (id = #{id}),\n" \
-                        "Result: #{result}"
+      Rails.logger.info "Prepared EstablishClaim (id = #{id}), Result: #{result}"
     end
   end
 
