@@ -17,7 +17,6 @@ export const CERTIFICATION_UPDATE_SUCCESS = 'CERTIFICATION_UPDATE_SUCCESS';
 
 export const FAILED_VALIDATION = 'FAILED_VALIDATION';
 
-
 // types of hearings
 //
 // TODO:
