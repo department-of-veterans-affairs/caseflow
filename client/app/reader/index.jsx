@@ -1,3 +1,4 @@
+import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -7,7 +8,11 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
-const readerReducer = (state = {}, action = {}) => {
+const intialState = {
+  currentPdfIndex: null
+};
+
+const readerReducer = (state = intialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -41,10 +46,10 @@ const readerReducer = (state = {}, action = {}) => {
   }
 };
 
-const store = createStore(readerReducer, null, applyMiddleware(logger));
+const store = (intialState) => { return createStore(readerReducer, applyMiddleware(thunk, logger)); }
 
 const Reader = (props) => {
-  return <Provider store={store}>
+  return <Provider store={store()}>
         <DecisionReviewer {...props} />
     </Provider>;
 };
