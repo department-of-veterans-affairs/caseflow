@@ -296,10 +296,8 @@ svg[aria-hidden=true],
   background: white;
   box-shadow: 5px 5px 4px -3px #d6d7d9;
   font-weight: normal;
-
+  padding: 0;
   $dropdown-interior-padding: 10px;
-  padding-top: $dropdown-interior-padding;
-  padding-bottom: $dropdown-interior-padding;
 
   @mixin hover {
     &:hover {
@@ -309,22 +307,36 @@ svg[aria-hidden=true],
   }
 
   .cf-clear-filter-row {
-    padding-left: $dropdown-interior-padding;
-    padding-right: $dropdown-interior-padding;
+    padding: $dropdown-interior-padding;
 
     @include hover;
   }
 
   .cf-document-category-picker {
     margin-bottom: 0;
-
-    // To make the hover better, I need to replace the vertical margins with padding.
+    margin-top: 0;
 
     li {
       padding-left: $dropdown-interior-padding;
       padding-right: $dropdown-interior-padding;
+      margin-bottom: 0;
 
       @include hover;
+
+      .cf-form-checkboxes {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        label {
+          margin-bottom: 0;
+
+          .cf-category-selector {
+            margin-bottom: 0;
+          }
+        }
+      }
     }
 
     li:last-child .cf-form-checkboxes {
