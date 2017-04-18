@@ -309,6 +309,8 @@ svg[aria-hidden=true],
   .cf-document-category-picker {
     margin-bottom: 0;
 
+    // To make the hover better, I need to replace the vertical margins with padding.
+
     li {
       padding-left: $dropdown-interior-padding;
       padding-right: $dropdown-interior-padding;
