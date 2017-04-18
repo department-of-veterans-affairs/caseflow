@@ -298,6 +298,50 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         { template: :full_grant_decided, regional_office_key: "RO21" }
       end
 
+      context "with a level 1 or 2 special issue" do
+        scenario "I cannot return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("riceCompliance").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("Create End Product")
+          safe_click_on "Create End Product"
+
+          expect(page).to_not have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Cannot edit end product")
+        end
+      end
+
+      context "with a level 3 special issue" do
+        scenario "I can return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("< Back to Review Decision")
+          safe_click_on "< Back to Review Decision"
+
+          expect(page).to have_content("Select Special Issue(s)")
+          safe_click_on "Route claim"
+          expect(page).to have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Select Special Issue(s)")
+        end
+      end
+
       scenario "Establish a new claim with special issue routed to national office" do
         task.assign!(:assigned, current_user)
 
@@ -551,6 +595,50 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
+      end
+
+      context "with a level 1 or 2 special issue" do
+        scenario "I cannot return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("riceCompliance").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("Create End Product")
+          safe_click_on "Create End Product"
+
+          expect(page).to_not have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Cannot edit end product")
+        end
+      end
+
+      context "with a level 3 special issue" do
+        scenario "I can return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("< Back to Review Decision")
+          safe_click_on "< Back to Review Decision"
+
+          expect(page).to have_content("Select Special Issue(s)")
+          safe_click_on "Route claim"
+          expect(page).to have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Select Special Issue(s)")
+        end
       end
 
       scenario "Establish a new claim with special issues with no EP" do
