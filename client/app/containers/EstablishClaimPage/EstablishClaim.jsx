@@ -61,6 +61,16 @@ const CREATE_EP_ERRORS = {
             establish the next claim.
           </span>
   },
+  "missing_ssn": {
+    header: 'The EP for this claim must be created outside Caseflow.',
+    body: <span>
+            This veteran does not have a social security number, so their
+            claim cannot be established in Caseflow.
+            <br/>
+            Select Cancel at the bottom of the page to release this claim and
+            proceed to process it outside of Caseflow.
+          </span>
+  },
   "default": {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
@@ -101,6 +111,7 @@ export default class EstablishClaim extends BaseForm {
       cancelModalDisplay: false,
       history: createHashHistory(),
       loading: false,
+      endProductCreated: false,
       modalSubmitLoading: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
@@ -143,8 +154,11 @@ export default class EstablishClaim extends BaseForm {
       // If we are on the note page and you try to move to
       // a previous page in the flow then we bump you back
       // to the note page.
-      if (this.state.page === NOTE_PAGE &&
-        location.pathname.substring(1) !== NOTE_PAGE) {
+      if (
+        this.state.page === NOTE_PAGE &&
+        location.pathname.substring(1) !== NOTE_PAGE &&
+        this.state.endProductCreated
+      ) {
         this.handlePageChange(NOTE_PAGE);
         this.setState({
           showNotePageAlert: true
@@ -187,7 +201,8 @@ export default class EstablishClaim extends BaseForm {
         // if no note needs to be shown, submits from the note page.
         if (this.shouldReviewAfterEndProductCreate()) {
           this.setState({
-            loading: false
+            loading: false,
+            endProductCreated: true
           });
           this.handlePageChange(NOTE_PAGE);
         } else {
@@ -619,7 +634,6 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isAssociatePage() &&
           <AssociatePage
-            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
@@ -630,12 +644,12 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             history={history}
           />
         }
         { this.isFormPage() &&
           <EstablishClaimForm
-            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             loading={this.state.loading}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             decisionDate={this.formattedDecisionDate()}
@@ -643,6 +657,7 @@ export default class EstablishClaim extends BaseForm {
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
@@ -652,9 +667,12 @@ export default class EstablishClaim extends BaseForm {
         { this.isNotePage() &&
           <EstablishClaimNote
             loading={this.state.loading}
+            endProductCreated={this.state.endProductCreated}
             appeal={this.props.task.appeal}
             decisionType={this.state.reviewForm.decisionType.value}
             handleSubmit={this.handleNotePageSubmit}
+            handleBackToDecisionReview={this.handleBackToDecisionReview}
+            backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
             displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}

@@ -11,8 +11,7 @@ import * as Constants from '../constants/constants';
 const initialState = {
   hearingDocumentIsInVbms: null,
   form9Type: null,
-  hearingType: null,
-  changeAndCertifyForm: null
+  hearingType: null
 };
 
 // TODO: break this out into a separate actions file.
@@ -93,12 +92,16 @@ export const mapDataToInitialState = function(state) {
     nodDate: state.appeal.nod_date,
     socMatch: state.appeal['soc_match?'],
     socDate: state.appeal.soc_date,
+    ssocDatesWithMatches: state.appeal.ssoc_dates_with_matches,
     documentsMatch: state.appeal['documents_match?'],
-
-    /* TODO: add ssoc_match and ssoc_dates */
+    certificationId: state.id,
     vbmsId: state.appeal.vbms_id,
     veteranName: state.appeal.veteran_name,
     certificationStatus: state.certification_status,
-    vacolsId: state.vacols_id
+    vacolsId: state.vacols_id,
+
+    certifyingOffice: state.form8.certifying_office,
+    certifyingUsername: state.form8.certifying_username,
+    certificationDate: state.form8.certification_date
   };
 };

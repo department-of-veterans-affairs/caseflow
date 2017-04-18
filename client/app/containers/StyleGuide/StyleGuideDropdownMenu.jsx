@@ -37,15 +37,20 @@ export default class StyleGuideDropdownMenu extends React.Component {
     return <div>
       <br />
       <StyleGuideComponentTitle
-        title="Dropdown Menu"
+        title="User dropdown menu"
         id="dropdown_menu"
         link="StyleGuideDropdownMenu.jsx"
       />
+    <p>This menu indicates which user is signed in and contains links to submit feedback,
+      view the application’s help page, see newly launched features, and log out.
+      Users can view their names on the navigation bar at all times and click on
+      the dropdown icon to view further options.</p>
     <DropdownMenu
       options={this.options()}
-      onClick={this.handleMenuClick()}
-      onBlur={this.handleMenuClick()}
+      onClick={this.handleMenuClick}
+      onBlur={this.handleMenuClick}
       label="JANE AUSTIN"
+      menu={this.state.menu}
       />
     </div>;
   }

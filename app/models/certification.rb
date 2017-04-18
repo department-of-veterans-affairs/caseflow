@@ -37,6 +37,7 @@ class Certification < ActiveRecord::Base
     serializable_hash(
       methods: :certification_status,
       include: [
+        :form8,
         appeal: { methods:
        [:nod_match?,
         :nod_date,
@@ -44,6 +45,7 @@ class Certification < ActiveRecord::Base
         :soc_date,
         :form9_match?,
         :form9_date,
+        :ssoc_dates_with_matches,
         :documents_match?,
         :veteran_name,
         :vbms_id] }]

@@ -28,7 +28,8 @@ export class EstablishClaimNote extends BaseForm {
 
     let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
-      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
+      ` for ${appeal.veteran_name},` +
+      ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
@@ -175,6 +176,13 @@ export class EstablishClaimNote extends BaseForm {
 
         </div>
         <div className="cf-app-segment" id="establish-claim-buttons">
+          {!this.props.endProductCreated && <div className="cf-push-left">
+            <Button
+              name={this.props.backToDecisionReviewText}
+              onClick={this.props.handleBackToDecisionReview}
+              classNames={["cf-btn-link"]}
+            />
+          </div>}
           <div className="cf-push-right">
             <Button
               app="dispatch"

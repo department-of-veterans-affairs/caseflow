@@ -1,4 +1,5 @@
 describe Appeal do
+  let(:appeal) { Generators::Appeal.build }
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
@@ -121,11 +122,51 @@ describe Appeal do
   end
 
   context ".find_or_create_by_vacols_id" do
-    before do
-      allow(Appeal.repository).to receive(:load_vacols_data).and_return(nil)
+    let!(:vacols_appeal) do
+      Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
     end
 
     subject { Appeal.find_or_create_by_vacols_id("123C") }
+
+    context "when no appeal exists for VACOLS id" do
+      context "when no VACOLS data exists for that appeal" do
+        before { Fakes::AppealRepository.clean! }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "when VACOLS data exists for that appeal" do
+        it "saves and returns that appeal with updated VACOLS data loaded" do
+          is_expected.to be_persisted
+          expect(subject.vbms_id).to eq("456VBMS")
+        end
+      end
+    end
+
+    context "when appeal with VACOLS id exists in the DB" do
+      before { vacols_appeal.save! }
+
+      context "when no VACOLS data exists for that appeal" do
+        before { Fakes::AppealRepository.clean! }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "when VACOLS data exists for that appeal" do
+        let!(:updated_vacols_appeal) do
+          Generators::Appeal.build(vacols_id: "123C", vbms_id: "789VBMS")
+        end
+
+        it "saves and returns that appeal with updated VACOLS data loaded" do
+          expect(subject.reload.id).to eq(vacols_appeal.id)
+          expect(subject.vbms_id).to eq("789VBMS")
+        end
+      end
+    end
 
     context "sets the vacols_id" do
       before do
@@ -518,7 +559,6 @@ describe Appeal do
 
   context "#special_issues" do
     subject { appeal.special_issues }
-    let(:appeal) { Appeal.new }
 
     context "when no special issues are true" do
       it { is_expected.to eq([]) }
@@ -544,6 +584,20 @@ describe Appeal do
       it { is_expected.to include("Vocational Rehab") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+    end
+  end
+
+  context "#veteran" do
+    subject { appeal.veteran }
+
+    let(:veteran_record) { { first_name: "Ed", last_name: "Merica" } }
+
+    before do
+      Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
+    end
+
+    it "returns veteran loaded with BGS values" do
+      is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
     end
   end
 end
