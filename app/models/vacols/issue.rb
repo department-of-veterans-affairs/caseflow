@@ -26,10 +26,6 @@ class VACOLS::Issue < VACOLS::Record
     )
   end
 
-  def self.find_by_vacols_id(vacols_id)
-    find_by_bfkey(isskey: vacols_id)
-  end
-
   # rubocop:disable MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,
