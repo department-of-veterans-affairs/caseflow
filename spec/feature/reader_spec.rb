@@ -29,6 +29,12 @@ RSpec.feature "Reader" do
         vbms_document_id: 2,
         category_medical: true,
         category_other: true
+      ),
+      Generators::Document.create(
+        filename: "NOD",
+        type: "NOD",
+        received_at: 1.days.ago,
+        vbms_document_id: 3,
       )
     ]
   end
@@ -147,12 +153,12 @@ RSpec.feature "Reader" do
       end
     end
 
-    doc_1_categories =
+    doc_0_categories =
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc_1_categories).to eq(["Procedural"])
+    expect(doc_0_categories).to eq(["Procedural"])
 
-    doc_2_categories = get_aria_labels all(".section--document-list table tr:last-child .cf-document-category-icons li")
-    expect(doc_2_categories).to eq(["Medical", "Other Evidence"])
+    doc_1_categories = get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
+    expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
 
     click_on documents[0].filename
 
@@ -165,12 +171,18 @@ RSpec.feature "Reader" do
 
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-    doc_1_categories =
+    doc_0_categories =
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc_1_categories).to eq(["Medical"])
+    expect(doc_0_categories).to eq(["Medical"])
 
     click_on documents[1].filename
 
     expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
+
+    find("#button-next").click
+
+    expect(find("#procedural", visible: false).checked?).to be false
+    expect(find("#medical", visible: false).checked?).to be false
+    expect(find("#other", visible: false).checked?).to be false
   end
 end
