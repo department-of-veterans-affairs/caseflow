@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
+import NotReady from './NotReady';
+import AlreadyCertified from './AlreadyCertified';
 import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
@@ -13,6 +15,26 @@ class UnconnectedDocumentsCheck extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+  }
+
+  /*
+   * This function acts as a router for the page. Statuses 'started' and
+   * 'mismatched_documents' go to 'check_documents'. Status 'already_certified'
+   * goes to 'already_certified'. Status 'data_missing' goes to 'not_ready'. Any
+   * unrecognized statuses also to go 'not_ready', but will throw a warning in the
+   * console.
+   */
+  documentCheckPage() {
+    if (["started", "mismatched_documents"].includes(this.props.certificationStatus)) {
+      return "check_documents";
+    } else if (this.props.certificationStatus === "already_certified") {
+      return "already_certified";
+    }
+    if (this.props.certificationStatus !== "data_missing") {
+      console.warn('Unknown certification status');
+    }
+
+    return "not_ready";
   }
 
   render() {
@@ -30,6 +52,9 @@ class UnconnectedDocumentsCheck extends React.Component {
     } = this.props;
 
     return <div>
+      { this.documentCheckPage() === "not_ready" && <NotReady/> }
+      { this.documentCheckPage() === "already_certified" && <AlreadyCertified/>}
+      { this.documentCheckPage() === "check_documents" && <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
         { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
@@ -50,11 +75,13 @@ class UnconnectedDocumentsCheck extends React.Component {
           }
           certificationId={certificationId}/>
       </div>
+    </div> }
     </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
+  certificationStatus: state.certificationStatus,
   form9Match: state.form9Match,
   form9Date: state.form9Date,
   nodMatch: state.nodMatch,
@@ -89,6 +116,7 @@ const DocumentsCheck = connect(
 )(UnconnectedDocumentsCheck);
 
 DocumentsCheck.propTypes = {
+  certificationStatus: PropTypes.string,
   form9Date: PropTypes.string,
   nodMatch: PropTypes.bool,
   nodDate: PropTypes.string,
