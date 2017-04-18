@@ -93,7 +93,8 @@ RSpec.feature "Reader" do
     let!(:annotation) do
       Generators::Annotation.create(
         comment: "hello world",
-        document_id: documents[0].id
+        document_id: documents[0].id,
+        y: 750
       )
     end
 

@@ -3,8 +3,8 @@
 
 .comment-control-button-container {
   display: inline-block;
-  text-align: right;
   width: 100%;
+  padding: 3px 0;
 }
 
 .comment-control-button {
@@ -22,7 +22,17 @@
 .comment-container {
   background-color: $color-white;
   border-radius: 3px;
-  padding: 20px;
-  margin-bottom: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
   border: 1px solid $color-gray-lighter;
+  max-width: 625px;
+}
+
+.comment-horizontal-container {
+  display: inline-block;
+  width: 100%;
+}
+
+.comment-horizontal-spacing {
+  margin-right: 49px;
 }

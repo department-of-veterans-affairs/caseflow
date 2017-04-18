@@ -151,6 +151,7 @@ export default class PdfUI extends React.Component {
           scale={this.state.scale}
           onPageChange={this.onPageChange}
           onCommentClick={this.props.onCommentClick}
+          onCommentScrolledTo={this.props.onCommentScrolledTo}
           onIconMoved={this.props.onIconMoved}
         />
       </div>
@@ -186,5 +187,6 @@ PdfUI.propTypes = {
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func,
   onIconMoved: PropTypes.func
 };

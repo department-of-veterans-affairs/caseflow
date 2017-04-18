@@ -92,7 +92,8 @@ export default class PdfSidebar extends React.Component {
         onEditComment={this.props.onEditComment}
         uuid={comment.uuid}
         selected={comment.selected}
-        onClick={this.props.onJumpToComment}
+        onClick={this.props.onJumpToComment(comment)}
+        page={comment.page}
         key={comment.comment}>
           {comment.comment}
         </Comment>;
