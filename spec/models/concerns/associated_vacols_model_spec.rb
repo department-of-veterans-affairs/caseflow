@@ -2,7 +2,12 @@ require "rails_helper"
 
 describe AssociatedVacolsModel do
   class TestVacolsModelRepository
+    class << self
+      attr_accessor :fail_load_vacols_data
+    end
+
     def self.load_vacols_data(model)
+      return false if fail_load_vacols_data
       model.foo = "bar"
     end
   end
@@ -46,11 +51,34 @@ describe AssociatedVacolsModel do
     it { is_expected.to eq([1, 2, 3]) }
   end
 
+  context "#vacols_record_exists?" do
+    subject { model.vacols_record_exists? }
+
+    it "loads VACOLS data and returns the result" do
+      is_expected.to eq(true)
+      expect(model.foo).to eq("bar")
+    end
+  end
+
   context "#check_and_load_vacols_data!" do
-    it do
-      expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(1).times
-      model.check_and_load_vacols_data!
-      model.check_and_load_vacols_data!
+    subject { model.check_and_load_vacols_data! }
+
+    it "only loads the data from VACOLS once" do
+      is_expected.to be_truthy
+
+      expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
+      expect(model.check_and_load_vacols_data!).to be_truthy
+    end
+
+    context "when VACOLS load fails" do
+      before { TestVacolsModelRepository.fail_load_vacols_data = true }
+
+      it "returns false and only attempts VACOLS load once" do
+        is_expected.to eq(false)
+
+        expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
+        expect(model.check_and_load_vacols_data!).to eq(false)
+      end
     end
   end
 end

@@ -19,8 +19,7 @@ class TestDataService
 
   def self.reset_appeal_special_issues
     return false if ApplicationController.dependencies_faked?
-
-    fail WrongEnvironmentError unless Rails.deploy_env?(:uat) || Rails.deploy_env?(:preprod)
+    fail WrongEnvironmentError if Rails.deploy_env?(:prod)
 
     Appeal.find_each do |appeal|
       Appeal::SPECIAL_ISSUES.keys.each do |special_issue|
@@ -32,12 +31,14 @@ class TestDataService
 
   def self.prepare_claims_establishment!(vacols_id:, cancel_eps: false, decision_type: :partial)
     return false if ApplicationController.dependencies_faked?
-    fail WrongEnvironmentError unless Rails.deploy_env?(:uat)
+    fail WrongEnvironmentError if Rails.deploy_env?(:prod)
+
     # Cancel EPs
     appeal = Appeal.find_or_create_by_vacols_id(vacols_id)
     cancel_end_products(appeal) if cancel_eps
     log "Preparing case with VACOLS id of #{vacols_id} for claims establishment"
     vacols_case = VACOLS::Case.find(vacols_id)
+
     if decision_type == :full
       dec_date = AppealRepository.dateshift_to_utc(2.days.ago)
     else
@@ -129,7 +130,7 @@ class TestDataService
 
   def self.delete_test_data
     # Only prepare test if there are less than 20 EstablishClaim tasks, as additional safeguard
-    fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50
+    # fail "Too many ClaimsEstablishment tasks" if EstablishClaim.count > 50
     EstablishClaim.delete_all
     Task.delete_all
     Appeal.delete_all

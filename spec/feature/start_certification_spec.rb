@@ -89,8 +89,25 @@ RSpec.feature "Start Certification" do
       click_button("Continue")
       expect(page).to have_content("Review data from BGS about the appellant's representative")
 
+      within_fieldset("Representative type") do
+        find("label", text: "Other").click
+      end
+
+      fill_in "Specify other representative type", with: "Records"
+      fill_in "Representative name", with: "Johnny Depp"
+
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+
+      # go back to the case datails page
+      page.go_back
+      within_fieldset("Representative type") do
+        expect(find_field("Other", visible: false)).to be_checked
+      end
+      expect(find_field("Specify other representative type").value).to eq("Records")
+      expect(find_field("Representative name").value).to eq("Johnny Depp")
+
+      click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
         find("label", text: "Yes").click
@@ -183,9 +200,6 @@ RSpec.feature "Start Certification" do
     end
 
     scenario "404's if appeal doesn't exist in VACOLS" do
-      # It's awkward that we have to do this in order to trigger a RecordNotFound
-      Fakes::AppealRepository.records = {}
-
       visit "certifications/new/4444NNNN"
       expect(page).to have_content("Page not found")
     end
