@@ -105,9 +105,9 @@ class AppealRepository
     appeal
   end
 
-  def self.issues(vacols_id:)
+  def self.issues(vacols_id)
     VACOLS::Issue.descriptions(vacols_id).map do |issue|
-      VACOLS::Issue.format(issue)
+      VACOLS::Issue.load_from_vacols(issue)
     end
   end
 

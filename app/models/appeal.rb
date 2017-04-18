@@ -187,15 +187,15 @@ class Appeal < ActiveRecord::Base
   end
 
   def partial_grant?
-    status == "Remand" && issues.all?(&:non_new_matrial_allowed?)
+    status == "Remand" && issues.any?(&:non_new_material_allowed?)
   end
 
   def full_grant?
-    status == "Complete" && issues.all?(&:non_new_matrial_allowed?)
+    status == "Complete" && issues.all?(&:non_new_material_allowed?)
   end
 
   def remand?
-    status == "Remand" &&issues.none?(&:non_new_matrial_allowed?)
+    status == "Remand" && issues.none?(&:non_new_material_allowed?)
   end
 
   def decision_type
@@ -227,7 +227,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def issues
-    @issues ||= self.class.repository.issues(vacols_id: vacols_id)
+    @issues ||= self.class.repository.issues(vacols_id)
   end
 
   def sanitized_vbms_id
