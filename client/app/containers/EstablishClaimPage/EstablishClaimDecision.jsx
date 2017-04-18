@@ -110,12 +110,13 @@ export class EstablishClaimDecision extends React.Component {
       return this.decisionTabs()[0].page;
     }
 
-    //TODO(marian) turn into React component
+    // TODO(marian) turn into React component
     return <div className="usa-alert usa-alert-error cf-app-segment" role="alert">
       <div className="usa-alert-body">
         <h3 className="usa-alert-heading">Unable to load decision document</h3>
         <p className="usa-alert-text">We were unable to load the decision for this claim.
-          Please select <b>Cancel</b> below and process it outside of Caseflow.</p>
+          Please select <b>Cancel</b> below and process this claim outside of
+          Caseflow.</p>
       </div>
     </div>;
 
