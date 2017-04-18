@@ -85,13 +85,10 @@ class EstablishClaim < Task
   end
 
   def prepare_with_decision!
-    return :invalid if check_and_invalidate!
-    return :already_prepared unless may_prepare?
-    return :missing_decision if appeal.decisions.empty?
-
-    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-
-    prepare! && :success
+    try_prepare_with_decision!.tap do |result|
+      Rails.logger.info "Prepared EstablishClaim (id = #{id}),\n" \
+                        "Result: #{result}"
+    end
   end
 
   def actions_taken
@@ -127,6 +124,16 @@ class EstablishClaim < Task
   end
 
   private
+
+  def try_prepare_with_decision!
+    return :invalid if check_and_invalidate!
+    return :already_prepared unless may_prepare?
+    return :missing_decision if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare! && :success
+  end
 
   def init_claim_establishment!
     create_claim_establishment(appeal: appeal)
