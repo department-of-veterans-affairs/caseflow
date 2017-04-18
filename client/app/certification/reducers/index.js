@@ -34,6 +34,7 @@ export const startUpdateCertification = (state) => {
 
 
 // TODO: is this meant to be something like a schema?
+// it's too similar to the object in "mapDataToInitialState".
 const initialState = {
   documentsMatch: null,
   form9Match: null,
@@ -81,6 +82,8 @@ export const certificationReducers = function(state = initialState, action = {})
   case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
     return changeSignAndCertifyForm(state, action);
 
+  // Certification
+  // ==================
   // These reducer actions are used by a few different pages,
   // so they can stay in the index.
   //
@@ -110,6 +113,7 @@ export const certificationReducers = function(state = initialState, action = {})
       updateSucceeded: true,
       loading: false
     });
+
   default:
     return state;
   }
@@ -133,6 +137,10 @@ export const mapDataToInitialState = function(state) {
     vbmsId: state.appeal.vbms_id,
     veteranName: state.appeal.veteran_name,
     certificationStatus: state.certification_status,
-    vacolsId: state.vacols_id
+    vacolsId: state.vacols_id,
+
+    certifyingOffice: state.form8.certifying_office,
+    certifyingUsername: state.form8.certifying_username,
+    certificationDate: state.form8.certification_date
   };
 };

@@ -176,6 +176,13 @@ export class EstablishClaimNote extends BaseForm {
 
         </div>
         <div className="cf-app-segment" id="establish-claim-buttons">
+          {!this.props.endProductCreated && <div className="cf-push-left">
+            <Button
+              name={this.props.backToDecisionReviewText}
+              onClick={this.props.handleBackToDecisionReview}
+              classNames={["cf-btn-link"]}
+            />
+          </div>}
           <div className="cf-push-right">
             <Button
               app="dispatch"
