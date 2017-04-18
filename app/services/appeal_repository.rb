@@ -18,18 +18,23 @@ end
 # :nocov:
 
 class AppealRepository
+  # :nocov:
+  # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
       VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
     end
+
     set_vacols_values(appeal: appeal, case_record: case_record)
 
-    appeal
+    true
+
+  rescue ActiveRecord::RecordNotFound
+    return false
   end
 
-  # :nocov:
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
@@ -46,7 +51,7 @@ class AppealRepository
       case_scope.where(bfcorlid: appeal.vbms_id)
     end
 
-    fail ActiveRecord::RecordNotFound if case_records.empty?
+    return false if case_records.empty?
     fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
@@ -100,13 +105,13 @@ class AppealRepository
     appeal
   end
 
+  # :nocov:
   def self.issues(vacols_id:)
     VACOLS::Issue.descriptions(vacols_id).map do |issue|
       VACOLS::Issue.format(issue)
     end
   end
 
-  # :nocov:
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
                                     service: :vacols,
