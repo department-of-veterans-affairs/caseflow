@@ -7,7 +7,14 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
-const readerReducer = (state = {}, action = {}) => {
+const initialState = {
+  ui: {
+    pdf: {
+    }
+  }
+};
+
+const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -37,15 +44,29 @@ const readerReducer = (state = {}, action = {}) => {
       }
     );
   case Constants.SET_CURRENT_RENDERED_FILE:
-    return {
-      ...state,
-      currentRenderedFile: action.payload
-    };
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            currentRenderedFile: action.payload.currentRenderedFile
+          }
+        }
+      }
+    );
   case Constants.SCROLL_TO_COMMENT:
-    return {
-      ...state,
-      scrollToComment: action.payload
-    };
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            scrollToComment: action.payload.scrollToComment
+          }
+        }
+      }
+    );
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
       {},

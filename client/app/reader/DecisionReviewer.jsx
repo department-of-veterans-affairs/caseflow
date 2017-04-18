@@ -341,7 +341,6 @@ export class DecisionReviewer extends React.Component {
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
           label={documents[this.state.currentPdfIndex].label}
-          scrollToComment={this.props.scrollToComment}
           onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
       </div>
@@ -354,15 +353,8 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
-  scrollToComment: PropTypes.shape({
-    id: React.PropTypes.number,
-    page: React.PropTypes.number,
-    y: React.PropTypes.number
-  }),
   onCommentScrolledTo: PropTypes.func
 };
-
-const mapsStateToProps = (state) => _.pick(state, 'scrollToComment');
 
 const mapDispatchToProps = (dispatch) => ({
   onReceiveDocs(documents) {
@@ -374,9 +366,9 @@ const mapDispatchToProps = (dispatch) => ({
   onScrollToComment(scrollToComment) {
     dispatch({
       type: Constants.SCROLL_TO_COMMENT,
-      payload: scrollToComment
+      payload: { scrollToComment }
     });
   }
 });
 
-export default connect(mapsStateToProps, mapDispatchToProps)(DecisionReviewer);
+export default connect(null, mapDispatchToProps)(DecisionReviewer);

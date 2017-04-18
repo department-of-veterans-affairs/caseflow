@@ -18,7 +18,7 @@ export default class Comment extends React.Component {
   }
 
   getControlButtons = () => {
-    if (!this.props.onEditComment || !this.props.onDeleteComment) {
+    if (!(this.props.onEditComment && this.props.onDeleteComment)) {
       return;
     }
 

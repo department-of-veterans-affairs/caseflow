@@ -70,7 +70,7 @@ export class Pdf extends React.Component {
       let pageNumber = index + 1;
       let canvas = document.getElementById(`canvas${pageNumber}`);
       let container = document.getElementById(`textLayer${pageNumber}`);
-      let page = document.getElementById(`pageContainer${pageNumber}`);
+      let page = this.pageContainers[pageNumber - 1];
 
       if (!canvas || !container || !page) {
         reject();
@@ -149,8 +149,7 @@ export class Pdf extends React.Component {
 
   onPageClick = (pageNumber) => (event) => {
     if (this.props.onPageClick) {
-      let container = document.getElementById(`pageContainer${pageNumber}`).
-        getBoundingClientRect();
+      let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
       let xPosition = (event.pageX - container.left) / this.props.scale;
       let yPosition = (event.pageY - container.top) / this.props.scale;
 
@@ -166,7 +165,6 @@ export class Pdf extends React.Component {
 
   scrollEvent = () => {
     let page = document.getElementsByClassName('page');
-    let scrollWindow = document.getElementById('scrollWindow');
 
     Array.prototype.forEach.call(page, (ele, index) => {
       let boundingRect = ele.getBoundingClientRect();
@@ -174,8 +172,8 @@ export class Pdf extends React.Component {
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
       if (this.props.onPageChange &&
-          boundingRect.top < scrollWindow.clientHeight / 2 &&
-          boundingRect.bottom > scrollWindow.clientHeight / 2) {
+          boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+          boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
         this.props.onPageChange(index + 1, this.state.numPages);
       }
 
@@ -186,7 +184,7 @@ export class Pdf extends React.Component {
       // we also redner it.
       // TODO: Make this more robust and avoid magic numbers.
       if (boundingRect.bottom > -1000 &&
-          boundingRect.top < scrollWindow.clientHeight + 1000) {
+          boundingRect.top < this.scrollWindow.clientHeight + 1000) {
         this.renderPage(index, this.props.file);
       }
     });
@@ -212,20 +210,20 @@ export class Pdf extends React.Component {
         }
 
         // Scroll to the correct location on the page
-        document.getElementById('scrollWindow').scrollTop = scrollLocation;
+        this.scrollWindow.scrollTop = scrollLocation;
       });
     });
   }
 
   onJumpToComment = (comment) => {
     if (comment) {
-      let pageNumber = comment.page;
-      let yPosition = comment.y;
+      const pageNumber = comment.page;
+      const yPosition = comment.y;
 
       this.renderPage(pageNumber - 1).then(() => {
-        let height = (this.scrollWindow.getBoundingClientRect().bottom -
-          this.scrollWindow.getBoundingClientRect().top);
-        let halfHeight = height / 2;
+        const boundingBox = this.scrollWindow.getBoundingClientRect();
+        const height = (boundingBox.bottom - boundingBox.top);
+        const halfHeight = height / 2;
 
         this.scrollWindow.scrollTop =
           this.pageContainers[pageNumber - 1].getBoundingClientRect().top +
@@ -241,11 +239,6 @@ export class Pdf extends React.Component {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
     this.setupPdf(this.props.file);
-
-    // Scroll event to render pages as they come into view
-    let scrollWindow = document.getElementById('scrollWindow');
-
-    scrollWindow.addEventListener('scroll', this.scrollEvent);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -254,7 +247,7 @@ export class Pdf extends React.Component {
     // with negative conditions.
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
-      document.getElementById('scrollWindow').scrollTop = 0;
+      this.scrollWindow.scrollTop = 0;
       this.setupPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
@@ -266,8 +259,7 @@ export class Pdf extends React.Component {
 
   componentDidUpdate = () => {
     for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
-      if (!this.state.isRendered[index] &&
-        document.getElementById(`pageContainer${index + 1}`)) {
+      if (!this.state.isRendered[index] && this.pageContainers[index]) {
         this.renderPage(index, this.props.file);
       }
     }
@@ -358,6 +350,7 @@ export class Pdf extends React.Component {
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
+      onScroll={this.scrollEvent}
       ref={(scrollWindow) => {
         this.scrollWindow = scrollWindow;
       }}>
@@ -370,13 +363,18 @@ export class Pdf extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state, 'currentRenderedFile');
+const mapStateToProps = (state) => {
+  return {
+    currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
+    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   handleSetCurrentRenderedFile(currentRenderedFile) {
     dispatch({
       type: Constants.SET_CURRENT_RENDERED_FILE,
-      payload: currentRenderedFile
+      payload: { currentRenderedFile }
     });
   }
 });
