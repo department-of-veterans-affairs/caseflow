@@ -30,10 +30,13 @@ div {
     font-weight: 700;
     padding-left: 1.4em;
   }
+  a {
+    color: $color-gray-dark;
+  }
 }
 
 .cf-sg-content {
-  width: 80%;
+  width: 78%;
 }
 
 .usa-accordion {
