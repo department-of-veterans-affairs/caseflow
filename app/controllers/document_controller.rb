@@ -1,5 +1,5 @@
 class DocumentController < ApplicationController
-  before_action :verify_system_admin
+  before_action :verify_access
 
   # Currently update is being used for labels which will
   # be removed/changed soon. When we're using this for
@@ -39,5 +39,9 @@ class DocumentController < ApplicationController
 
   def update_params
     params.permit(:category_procedural, :category_medical, :category_other)
+  end
+
+  def verify_access
+    verify_authorized_roles("Reader")
   end
 end
