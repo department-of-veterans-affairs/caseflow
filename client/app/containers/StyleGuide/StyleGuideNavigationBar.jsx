@@ -1,9 +1,46 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import NavigationBar from '../../components/NavigationBar';
+import DropdownMenu from '../../components/DropdownMenu';
 
-export default function StyleGuideNavigationBar() {
-  return <div>
+export default class StyleGuideNavigationBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      menu: false
+    };
+  }
+
+  handleMenuClick = () => {
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
+  options = () => {
+    return [
+      {
+        title: 'Help',
+        link: '#navigation_bar'
+      },
+      {
+        title: 'Send feedback',
+        link: '#navigation_bar'
+      },
+      {
+        title: 'Sign out',
+        link: '#navigation_bar'
+      }
+    ];
+  }
+
+  render() {
+    let {
+      name
+    } = this.props;
+
+    name = "App Bar";
+
+    return <div>
       <StyleGuideComponentTitle
         title="Navigation Bar"
         id="navigation_bar"
@@ -24,6 +61,25 @@ export default function StyleGuideNavigationBar() {
       The navigation bar is a total of 90px tall with a 1px border-bottom colored
       grey-lighter.
     </p>
-      <NavigationBar name="App Bar" />
+      <div>
+        <nav className="cf-nav">
+          <a href="#" id="cf-logo-link">
+            <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-default">
+            </span>Caseflow</h1>
+          </a>
+          <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
+          <div className="cf-dropdown cf-nav-dropdown">
+            <DropdownMenu
+              options={this.options()}
+              onClick={this.handleMenuClick}
+              onBlur={this.handleMenuClick}
+              label="Abraham Lincoln"
+              menu={this.state.menu}
+              />
+          </div>
+      </nav>
+      <br />
+    </div>
   </div>;
+  }
 }
