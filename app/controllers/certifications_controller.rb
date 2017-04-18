@@ -20,22 +20,8 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def assemble_updates
-    updateable_fields = %w(representative_name
-                           representative_type
-                           hearing_change_doc_found_in_vbms
-                           form9_type
-                           hearing_preference)
-    updates = {}
-
-    updateable_fields.each do |field_name|
-      updates[field_name] = params[field_name] if params[field_name]
-    end
-    updates
-  end
-
   def update
-    updates = assemble_updates
+    updates = certification.assemble_updates
     certification.update!(updates)
     render json: {}
   end
