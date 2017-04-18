@@ -38,16 +38,8 @@ export class EstablishClaimNote extends BaseForm {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
       },
-      value: '',
       copied: false
     };
-  }
-
-  onChangeCopy({ target: { value } }) {
-    this.setState({
-      value: '',
-      copied: false
-    });
   }
 
 // callback, will be called when text is copied
@@ -136,7 +128,6 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   vbmsSection() {
-    console.log("code", this.state.noteForm.noteField, new Date());
 
     return <div>
       <p>To help better identify this claim, please copy the following note,

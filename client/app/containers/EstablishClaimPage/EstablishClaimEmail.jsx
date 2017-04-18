@@ -192,7 +192,7 @@ export class EstablishClaimEmail extends BaseForm {
           </div>
         </div>
       }
-      </div>
+      </div>;
   }
 }
 
