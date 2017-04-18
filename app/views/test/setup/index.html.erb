@@ -14,25 +14,23 @@
     </div>
 
     <div class="usa-width-one-half">
-      <% if ENV["TEST_APPEAL_IDS"] %>
-      <h2>Certification</h2>
+	<h2>Certification</h2>
         <%= form_for @certification_appeal, url: test_setup_uncertify_appeal_path, method: "POST",
-          html: { id: "uncertify-appeal-form", class: "cf-form" },
-          builder: CaseflowFormBuilder do |f| %>
+            html: { id: "uncertify-appeal-form", class: "cf-form" },
+		builder: CaseflowFormBuilder do |f| %>
             <%= f.text_field :vacols_id, label: "VACOLS ID", question_name: "vacols_id" %>
             <button type="submit" class="cf-submit">Uncertify Appeal</button>
         <% end %>
-      <% end %>
-      <% if ENV["FULL_GRANT_IDS"] && ENV["PARTIAL_AND_REMAND_IDS"] %>
       <h2>Dispatch</h2>
-        <%= form_for @dispatch_appeal, url: test_setup_appeal_location_date_reset_path, method: "POST",
+      <%= form_for @dispatch_appeal, url: test_setup_appeal_location_date_reset_path, method: "POST",
           html: { id: "appeal-location-date-reset-form", class: "cf-form" },
-          builder: CaseflowFormBuilder do |f| %>
-            <%= f.text_field :vacols_id, label: "VACOLS ID", question_name: "vacols_id" %>
-            <%= f.yes_no_field :cancel_eps,
-                  label: "Cancel existing End Products?", secondary: false %>
-            <button type="submit" class="cf-submit">Reset Date and Location</button>
-        <% end %>
+	      builder: CaseflowFormBuilder do |f| %>
+          <%= f.text_field :vacols_id, label: "VACOLS ID", question_name: "vacols_id" %>
+          <%= f.yes_no_field :cancel_eps,
+          label: "Cancel existing End Products?", secondary: false %>
+	  <%= f.radio_buttons_field :decision_type, label: "Decision Type", question_name: "decision_type",
+          values: CreateEstablishClaim::DECISION_TYPES, inline: true %>
+          <button type="submit" class="cf-submit">Reset Date and Location</button>
       <% end %>
     </div>
   </div>

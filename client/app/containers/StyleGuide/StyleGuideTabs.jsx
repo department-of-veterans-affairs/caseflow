@@ -61,6 +61,7 @@ export default class StyleGuideTabs extends React.Component {
         and cannot be clicked.
       </p>
       <TabWindow
+        name="tabsnoicons"
         tabs={tabs}
         onChange={this.onTabSelected}/>
       <h3>Tabs with Icons</h3>
@@ -70,6 +71,7 @@ export default class StyleGuideTabs extends React.Component {
         U.S. Design standards. Here is an example of tabs with icons:
       </p>
       <TabWindow
+        name="tabswithicons"
         tabs={tabsWithIcons}
         onChange={this.onTabSelected}/>
   </div>;

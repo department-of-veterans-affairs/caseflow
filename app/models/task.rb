@@ -5,7 +5,6 @@ class Task < ActiveRecord::Base
   belongs_to :appeal
 
   validate :no_open_tasks_for_appeal, on: :create
-  delegate :vbms_id, to: :appeal
 
   class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
@@ -242,10 +241,15 @@ class Task < ActiveRecord::Base
           :decision_type,
           :station_key,
           :regional_office_key,
-          :issues
+          :issues,
+          :sanitized_vbms_id
         ] }],
       methods: [:progress_status, :aasm_state]
     )
+  end
+
+  def vbms_id
+    appeal.sanitized_vbms_id
   end
 
   private

@@ -15,11 +15,12 @@ class SeedDB
 
   def create_appeals(number)
     appeals = number.times.map do |i|
-      Appeal.create(
+      Generators::Appeal.create(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}"
         )
     end
+
     @appeals.push(*appeals)
     @appeals.push(Appeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
   end

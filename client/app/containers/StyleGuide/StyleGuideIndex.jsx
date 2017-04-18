@@ -65,6 +65,7 @@ export default class StyleGuideIndex extends React.Component {
         <NavLink anchor="#modals" name="Modals"></NavLink>
         <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
         <NavLink anchor="#text_input" name="Text Input"></NavLink>
+        <NavLink anchor="#user_dropdown_menu" name="User dropdown menu"></NavLink>
       </StickyNav>
       <div className="cf-push-right cf-sg-content" ref={(node) => this.calcHeight(node)}>
       <h1 id="commons">Caseflow Commons</h1>
@@ -162,6 +163,8 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideTextInput />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
+        <div className="cf-help-divider"></div>
+        <StyleGuideDropdownMenu />
     </div>
     </div>;
   }
