@@ -14,11 +14,11 @@ import NavLink from '../../components/NavLink';
 import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
-export default class StyleGuideIndex extends React.Component {
-  render() {
+export default function StyleGuideIndex() {
+
 /* eslint-disable max-len */
 
-    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+  return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
         <NavLink anchor="#typography" name="Typography"></NavLink>
@@ -138,7 +138,7 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideProgressBar />
     </div>
     </div>;
-  }
+
 }
 
 /* eslint-enable max-len */

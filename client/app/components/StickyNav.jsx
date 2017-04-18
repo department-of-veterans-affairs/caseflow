@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 // mostly copy pasted this answer from Stack Overflow: http://stackoverflow.com/a/33555276
 
@@ -45,3 +45,11 @@ export default class StickyNav extends React.Component {
     );
   }
   }
+
+StickyNav.propTypes = {
+  children: PropTypes.arrayOf(
+    PropTypes.shape({
+      child: PropTypes.obj
+    })
+  )
+};
