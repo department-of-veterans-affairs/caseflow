@@ -1,8 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 
-// TODO: as this grows, we should break up actions into separate files.
-
 export const updateProgressBar = () => ({
   type: Constants.UPDATE_PROGRESS_BAR,
   payload: {
