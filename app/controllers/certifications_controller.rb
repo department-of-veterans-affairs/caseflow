@@ -21,7 +21,7 @@ class CertificationsController < ApplicationController
   end
 
   def update
-    updates = certification.assemble_updates
+    updates = certification.assemble_updates(params)
     certification.update!(updates)
     render json: {}
   end

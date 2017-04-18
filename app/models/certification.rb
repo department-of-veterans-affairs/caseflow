@@ -58,7 +58,7 @@ class Certification < ActiveRecord::Base
     )
   end
 
-  def assemble_updates
+  def assemble_updates(params)
     whitelisted_fields = %w(representative_name
                             representative_type
                             hearing_change_doc_found_in_vbms
