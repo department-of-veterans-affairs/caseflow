@@ -161,22 +161,6 @@ class Fakes::AppealRepository
   end
 
   def self.issues(vacols_id)
-    # [
-      # VACOLS::Issue.load_from_vacols(
-        # "issprog" => "2",
-        # "issprog_label" => "Compensation",
-        # "isscode" => "10",
-        # "isscode_label" => "Service connection",
-        # "isslev1" => "20",
-        # "isslev1_label" => "All Others",
-        # "isslev2" => "30",
-        # "isslev2_label" => "Post-traumatic stress disorder",
-        # "isslev3" => nil,
-        # "isslev3_label" => nil,
-        # "issdc" => "Allowed"
-      # )
-    # ]
-
     (issue_records || {})[vacols_id] || []
   end
 
