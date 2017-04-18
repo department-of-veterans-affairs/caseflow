@@ -94,16 +94,18 @@ export default class PdfUI extends React.Component {
               <i className="fa fa-plus" aria-hidden="true"></i>
             </Button>
           </span>
-          <span className="usa-width-one-third cf-right-side">
-            <DocumentCategoryIcons docId={this.props.doc.id} />
-            <Button
-              name="newTab"
-              classNames={["cf-pdf-button"]}
-              ariaLabel="open document in new tab"
-              onClick={() => window.open(
-                linkToSingleDocumentView(this.props.doc), '_blank')}>
-              {this.props.doc.type}
-            </Button>
+          <span className="usa-width-one-third">
+            <span className="cf-right-side">
+              <DocumentCategoryIcons docId={this.props.doc.id} />
+              <Button
+                name="newTab"
+                classNames={["cf-pdf-button"]}
+                ariaLabel="open document in new tab"
+                onClick={() => window.open(
+                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                {this.props.doc.type}
+              </Button>
+            </span>
           </span>
         </div>
       </div>
