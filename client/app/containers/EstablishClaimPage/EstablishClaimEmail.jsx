@@ -34,11 +34,12 @@ export class EstablishClaimEmail extends BaseForm {
 
     let email = `The BVA Full Grant decision dated` +
       ` ${formatDate(appeal.serialized_decision_date)}` +
-      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
+      ` for ${appeal.veteran_name},` +
+      ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
       ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
-    let note = `This claim for Vet ID #${appeal.vbms_id}` +
+    let note = `This claim for Vet ID #${appeal.sanitized_vbms_id}` +
       ` includes Special Issue(s): ${selectedSpecialIssue.join(', ')}` +
       ` not handled by Caseflow`;
 

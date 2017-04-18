@@ -55,6 +55,15 @@ describe EstablishClaim do
       let(:vacols_record) { { template: :remand_decided, decision_date: nil } }
       it { is_expected.to be_truthy }
     end
+
+    context "appeal not found in VACOLS" do
+      before do
+        establish_claim
+        Fakes::AppealRepository.clean!
+      end
+
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#prepare_with_decision!" do
@@ -73,14 +82,14 @@ describe EstablishClaim do
     context "if the task is invalid" do
       let(:decision_date) { nil }
 
-      it "returns false and invalidates the task" do
-        is_expected.to be_falsey
+      it "returns :invalid and invalidates the task" do
+        is_expected.to eq(:invalid)
         expect(establish_claim.reload).to be_invalidated
       end
     end
 
     context "if the task's appeal has no decisions" do
-      it { is_expected.to be_falsey }
+      it { is_expected.to eq(:missing_decision) }
     end
 
     context "if the task's appeal has decisions" do
@@ -105,7 +114,7 @@ describe EstablishClaim do
         end
 
         it "prepares task and caches decision document content" do
-          expect(subject).to be_truthy
+          expect(subject).to eq(:success)
 
           expect(establish_claim.reload).to be_unassigned
           expect(S3Service.files[filename]).to eq("yay content!")
