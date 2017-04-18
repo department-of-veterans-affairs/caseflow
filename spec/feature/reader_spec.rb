@@ -33,8 +33,8 @@ RSpec.feature "Reader" do
       Generators::Document.create(
         filename: "NOD",
         type: "NOD",
-        received_at: 1.days.ago,
-        vbms_document_id: 3,
+        received_at: 1.day.ago,
+        vbms_document_id: 3
       )
     ]
   end
@@ -157,7 +157,8 @@ RSpec.feature "Reader" do
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
     expect(doc_0_categories).to eq(["Procedural"])
 
-    doc_1_categories = get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
+    doc_1_categories =
+      get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
     expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
 
     click_on documents[0].filename
