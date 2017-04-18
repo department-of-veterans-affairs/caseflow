@@ -37,13 +37,13 @@ class DocumentController < ApplicationController
 
   private
 
-  DOCUMENT_AUTHORIZED_ROLES = "Reader"
+  DOCUMENT_AUTHORIZED_ROLES = ["Reader"]
 
   def update_params
     params.permit(:category_procedural, :category_medical, :category_other)
   end
 
   def verify_access
-    verify_authorized_roles(DOCUMENT_AUTHORIZED_ROLES)
+    verify_authorized_roles(DOCUMENT_AUTHORIZED_ROLES.join(" "))
   end
 end
