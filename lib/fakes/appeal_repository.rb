@@ -20,13 +20,20 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_writer :documents
-    attr_accessor :records
     attr_accessor :document_records
-    attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
+
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
+    attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
+
+    def records
+      @records ||= {}
+    end
+
+    def clean!
+      @records = {}
+    end
   end
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
@@ -81,32 +88,24 @@ class Fakes::AppealRepository
   end
 
   def self.load_vacols_data(appeal)
-    return unless @records
-
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
-      @records[appeal.vacols_id] || fail(ActiveRecord::RecordNotFound)
+      records[appeal.vacols_id]
     end
+
+    return false unless record
 
     # clone this since we mutate it later
     record = record.dup
 
     raise_vbms_error_if_necessary(record)
 
-    # For testing dispatch appeals, the seed data in the record
-    # has a randomly generated vbms id from our appeal generator,
-    # and the appeal already has a vbms id from db seed data.
-    # Don't overwrite the appeal vbms id if it already has one.
-    # TODO: figure out a way to untangle this. Perhaps we shouldn't
-    # be using randomly generated VBMS ids?
-    record.delete(:vbms_id) if Rails.env.development? && !appeal.vbms_id.nil?
-
     appeal.assign_from_vacols(record)
+
+    true
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
-    return unless @records
-
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
@@ -116,10 +115,10 @@ class Fakes::AppealRepository
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
       # TODO(jd): create a more dynamic setup
-      @records.find { |_, r| r[:vbms_id] == appeal.vbms_id } || fail(ActiveRecord::RecordNotFound)
+      records.find { |_, r| r[:vbms_id] == appeal.vbms_id }
     end
 
-    fail ActiveRecord::RecordNotFound unless record
+    return false unless record
 
     # clone this in case it accidentally gets mutated later
     record = record.dup

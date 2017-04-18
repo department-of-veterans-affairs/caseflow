@@ -112,7 +112,7 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  Fakes::AppealRepository.records = nil
+  Fakes::AppealRepository.clean!
 end
 
 def current_user

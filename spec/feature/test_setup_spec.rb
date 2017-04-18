@@ -21,15 +21,16 @@ RSpec.feature "Test Setup" do
   end
 
   context "Data Reset" do
-    before(:each) do
+    before do
       ENV["TEST_APPEAL_IDS"].split(",").each_with_index do |appeal_id, i|
-        appeal = Appeal.create(
+        appeal = Generators::Appeal.create(
           vacols_id: appeal_id,
           vbms_id: "#{appeal_id}_id"
         )
         task = EstablishClaim.create(appeal: appeal)
         task.prepare!
-        appeal = Appeal.create(
+
+        appeal = Generators::Appeal.create(
           vacols_id: "#{appeal_id}_#{i}",
           vbms_id: "#{appeal_id}_id#{i}"
         )
@@ -66,18 +67,12 @@ RSpec.feature "Test Setup" do
       click_button("Uncertify Appeal")
     end
 
-    scenario "Fails to uncertify an appeal" do
-      # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
-
-      visit "test/setup"
-      expect(page).to have_content("Uncertify Appeal")
-      fill_in("UNCERTIFY_ME_vacols_id", with: "DANK")
-      click_button("Uncertify Appeal")
-      expect(page).to have_content("uncertifiable")
-    end
-
     scenario "Resets date and location for a Full Grant" do
+      Generators::Appeal.create(
+        vacols_id: "VACOLS123",
+        vacols_record: :full_grant_decided
+      )
+
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
@@ -85,6 +80,7 @@ RSpec.feature "Test Setup" do
       visit "test/setup"
       expect(page).to have_content("Reset Date and Location")
       fill_in("DISPATCH_ME_vacols_id", with: "VACOLS123")
+      find(:xpath, "//label[@for='DISPATCH_ME_decision_type_full_grant']").click
       expect(TestDataService).to receive(:prepare_claims_establishment!).with(vacols_id: "VACOLS123",
                                                                               cancel_eps: true,
                                                                               decision_type: :full)
@@ -93,6 +89,11 @@ RSpec.feature "Test Setup" do
     end
 
     scenario "Resets date and location for a Partial Grant" do
+      Generators::Appeal.create(
+        vacols_id: "VACOLS321",
+        vacols_record: :partial_grant_decided
+      )
+
       # this has to be repeated because mocks are not allowed in before clause
       allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
       allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
@@ -105,19 +106,6 @@ RSpec.feature "Test Setup" do
                                                                               decision_type: :partial)
       page.find(:xpath, "//label[@for='DISPATCH_ME_cancel_eps_yes']").click
       click_button("Reset Date and Location")
-    end
-
-    scenario "Fails to reset date and location" do
-      # this has to be repeated because mocks are not allowed in before clause
-      allow(Rails).to receive(:deploy_env?).with(:prod).and_return(false)
-      allow(ApplicationController).to receive(:dependencies_faked?).and_return(true)
-
-      visit "test/setup"
-      expect(page).to have_content("Reset Date and Location")
-      fill_in("DISPATCH_ME_vacols_id", with: "DANK")
-      page.find(:xpath, "//label[@for='DISPATCH_ME_cancel_eps_yes']").click
-      click_button("Reset Date and Location")
-      expect(page).to have_content("not a testable appeal")
     end
   end
 end
