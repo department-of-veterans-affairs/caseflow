@@ -1,8 +1,7 @@
 describe Issue do
   let(:disposition) { "Allowed" }
   let(:new_material) { false }
-  let(:issue) { { disposition: disposition, new_material: new_material } }
-  end
+  let(:issue) { Generators::Issue.build(disposition: disposition, new_material: new_material) }
 
   context "#allowed?" do
     subject { issue.allowed? }
