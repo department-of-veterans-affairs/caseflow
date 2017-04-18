@@ -7,27 +7,18 @@ import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import _ from 'lodash';
+import { connect } from 'react-redux';
+import * as Constants from './constants';
 
 const NUMBER_OF_COLUMNS = 5;
 
-export default class PdfListView extends React.Component {
+export class PdfListView extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      commentsOpened: {}
-    };
   }
 
   toggleComments = (id) => () => {
-    let commentsOpened = {
-      ...this.state.commentsOpened,
-      [id]: !this.state.commentsOpened[id]
-    };
-
-    this.setState({
-      commentsOpened
-    });
+    this.props.handleToggleCommentOpened(id, !this.props.reduxDocuments[id].listComments);
   }
 
   getDocumentColumns = () => {
@@ -136,7 +127,7 @@ export default class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.state.commentsOpened[row.id] ?
+            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -172,7 +163,7 @@ export default class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.state.commentsOpened[row.id]) {
+      if (this.props.reduxDocuments[row.id].listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -205,11 +196,34 @@ export default class PdfListView extends React.Component {
   }
 }
 
+// Should be merged with documents when we finish integrating redux
+const mapStateToProps = (state) => {
+  return { reduxDocuments: _.get(state, 'documents') }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCommentOpened(docId, toggleState) {
+    dispatch({
+      type: Constants.TOGGLE_COMMENT_LIST,
+      payload: {
+        docId,
+        toggleState
+      }
+    });
+  }
+});
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfListView);
+
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   filterBy: PropTypes.string.isRequired,
   numberOfDocuments: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
   onJumpToComment: PropTypes.func,
-  sortBy: PropTypes.string
+  sortBy: PropTypes.string,
+  reduxDocuments: PropTypes.object.isRequired,
+  handleToggleCommentOpened: PropTypes.func.isRequired
 };

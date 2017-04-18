@@ -46,6 +46,18 @@ const readerReducer = (state = {}, action = {}) => {
       ...state,
       scrollToComment: action.payload
     };
+  case Constants.TOGGLE_COMMENT_LIST:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            listComments: action.payload.toggleState
+          }
+        }
+      }
+    );
   default:
     return state;
   }

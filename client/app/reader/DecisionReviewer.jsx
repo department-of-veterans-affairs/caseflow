@@ -344,7 +344,6 @@ export class DecisionReviewer extends React.Component {
           scrollToComment={this.props.scrollToComment}
           onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
-        }
       </div>
     );
   }
