@@ -13,6 +13,9 @@ export const linkToSingleDocumentView = (doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
+const ZOOM_RATE = 0.3;
+const MINIMUM_ZOOM = 0.1;
+
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
 //
@@ -40,10 +43,16 @@ export default class PdfUI extends React.Component {
     // let zoomFactor = (this.state.scale + delta) / this.state.scale;
 
     this.setState({
-      scale: this.state.scale + delta
+      scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
     // this.draw(this.props.file,
     //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
+  }
+
+  fitToScreen = () => {
+    this.setState({
+      scale: 1
+    });
   }
 
   onPageChange = (currentPage, numPages) => {
@@ -75,21 +84,21 @@ export default class PdfUI extends React.Component {
             <Button
               name="zoomOut"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(-0.3)}
+              onClick={this.zoom(-ZOOM_RATE)}
               ariaLabel="zoom out">
               <i className="fa fa-minus" aria-hidden="true"></i>
             </Button>
             <Button
               name="fit"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(1)}
+              onClick={this.fitToScreen}
               ariaLabel="fit to screen">
               <i className="fa fa-arrows-alt" aria-hidden="true"></i>
             </Button>
             <Button
               name="zoomIn"
               classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(0.3)}
+              onClick={this.zoom(ZOOM_RATE)}
               ariaLabel="zoom in">
               <i className="fa fa-plus" aria-hidden="true"></i>
             </Button>
