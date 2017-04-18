@@ -54,12 +54,6 @@ export class EstablishClaimEmail extends BaseForm {
     };
   }
 
-  onCopy() {
-    this.setState({
-      copied: true
-    });
-  }
-
   render() {
     return <div>
       { this.props.regionalOfficeEmail &&
@@ -84,28 +78,27 @@ export class EstablishClaimEmail extends BaseForm {
             <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
           </div>
 
-      <div className ="cf-vbms-note">
-          <TextareaField
-              label="Message:"
-              name="emailMessage"
-              onChange={this.handleFieldChange('emailForm', 'emailField')}
-              {...this.state.emailForm.emailField}
-          />
+          <div className ="cf-vbms-note">
+            <TextareaField
+                label="Message:"
+                name="emailMessage"
+                onChange={this.handleFieldChange('emailForm', 'emailField')}
+                {...this.state.emailForm.emailField}
+            />
 
-       <div className="cf-app-segment copy-note-button">
-        <div className="cf-push-left">
-          <CopyToClipboard text={this.state.emailForm.emailField.value}
-           onCopy={this.onCopy}>
-            <Button
-             name="copyNote"
-             classNames={["usa-button-outline"]}>
-             <i className="fa fa-files-o" aria-hidden="true"></i>
-             Copy note
-            </Button>
-          </CopyToClipboard>
-        </div>
-      </div>
-     </div>
+            <div className="cf-app-segment copy-note-button">
+              <div className="cf-push-left">
+                <CopyToClipboard text={this.state.emailForm.emailField.value}>
+                  <Button
+                   name="copyNote"
+                   classNames={["usa-button-outline"]}>
+                   <i className="fa fa-files-o" aria-hidden="true"></i>
+                   Copy note
+                  </Button>
+                </CopyToClipboard>
+              </div>
+            </div>
+          </div>
 
           <Checkbox
               label="I confirm that I have sent an email to route this claim."

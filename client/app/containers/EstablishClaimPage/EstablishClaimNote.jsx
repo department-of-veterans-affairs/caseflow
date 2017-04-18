@@ -42,14 +42,6 @@ export class EstablishClaimNote extends BaseForm {
     };
   }
 
-// callback, will be called when text is copied
-  onCopy() {
-    this.setState({
-      copied: true
-    });
-  }
-
-
   // This is a copy of the logic from
   // AppealRepository.update_location_after_dispatch!
   // NOTE: We must keep these two methods in sync
@@ -134,29 +126,28 @@ export class EstablishClaimNote extends BaseForm {
       then open VBMS and attach it to the EP you just created.</p>
 
 
-  <div className ="cf-vbms-note">
-     <TextareaField
-        label="VBMS Note:"
-        name="vbmsNote"
-        onChange={this.handleFieldChange('noteForm', 'noteField')}
-        {...this.state.noteForm.noteField}
-      />
+      <div className ="cf-vbms-note">
+        <TextareaField
+          label="VBMS Note:"
+          name="vbmsNote"
+          onChange={this.handleFieldChange('noteForm', 'noteField')}
+          {...this.state.noteForm.noteField}
+        />
 
-    <div className="cf-app-segment copy-note-button">
-     <div className="cf-push-left">
-       <CopyToClipboard text={this.state.noteForm.noteField.value}
-         onCopy={this.onCopy}>
-         <Button
-          label = "Copy note"
-          name="copyNote"
-          classNames={["usa-button-outline"]}>
-          <i className="fa fa-files-o" aria-hidden="true"></i>
-          Copy note
-        </Button>
-      </CopyToClipboard>
-    </div>
-   </div>
- </div>
+        <div className="cf-app-segment copy-note-button">
+          <div className="cf-push-left">
+            <CopyToClipboard text={this.state.noteForm.noteField.value}>
+              <Button
+                label = "Copy note"
+                name="copyNote"
+                classNames={["usa-button-outline"]}>
+                <i className="fa fa-files-o" aria-hidden="true"></i>
+                Copy note
+              </Button>
+            </CopyToClipboard>
+          </div>
+        </div>
+      </div>
 
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
