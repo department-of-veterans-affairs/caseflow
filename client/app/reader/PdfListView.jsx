@@ -14,7 +14,7 @@ const NUMBER_OF_COLUMNS = 5;
 
 export class PdfListView extends React.Component {
   toggleComments = (id) => () => {
-    this.props.handleToggleCommentOpened(id, !this.props.reduxDocuments[id].listComments);
+    this.props.handleToggleCommentOpened(id);
   }
 
   getDocumentColumns = () => {
@@ -198,12 +198,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleToggleCommentOpened(docId, toggleState) {
+  handleToggleCommentOpened(docId) {
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
       payload: {
-        docId,
-        toggleState
+        docId
       }
     });
   }

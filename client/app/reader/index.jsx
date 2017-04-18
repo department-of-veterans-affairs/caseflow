@@ -51,9 +51,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       state,
       {
         ui: {
-          pdf: {
-            currentRenderedFile: action.payload.currentRenderedFile
-          }
+          pdf: _.pick(action.payload, 'currentRenderedFile')
         }
       }
     );
@@ -63,9 +61,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       state,
       {
         ui: {
-          pdf: {
-            scrollToComment: action.payload.scrollToComment
-          }
+          pdf: _.pick(action.payload, 'scrollToComment')
         }
       }
     );
@@ -76,7 +72,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       {
         documents: {
           [action.payload.docId]: {
-            listComments: action.payload.toggleState
+            listComments: !state.documents[action.payload.docId].listComments
           }
         }
       }
