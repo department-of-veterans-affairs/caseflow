@@ -47,7 +47,7 @@ const readerReducer = (state = intialState, action = {}) => {
     return Object.assign({}, state, {
       tagsErrorMessage: ''
     });
-  case Constants.SHOW_TAG_SAVE_ERROR_MESSAGE:
+  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return Object.assign({}, state, {
       tagsErrorMessage: action.payload.errorMessage
     });

@@ -9,7 +9,7 @@ export const onReceiveDocs = (documents) => {
   };
 };
 
-export const updatedTagList = (docId, createdTags) => {
+export const newTagRequestSuccess = (docId, createdTags) => {
   return {
     type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
     payload: {
@@ -19,9 +19,9 @@ export const updatedTagList = (docId, createdTags) => {
   };
 };
 
-export const tagSaveFailed = (errorMessage) => {
+export const newTagRequestFailed = (errorMessage) => {
   return {
-    type: Constants.SHOW_TAG_SAVE_ERROR_MESSAGE,
+    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
     payload: {
       errorMessage
     }
@@ -79,11 +79,9 @@ export const addNewTag = (doc, tags) => {
       dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
       ApiUtil.post(`/reader/documents/${doc.id}/tags`, { data: { tags: processedTags } }).
         then((data) => {
-          dispatch(updatedTagList(doc.id, data.body.tags));
+          dispatch(newTagRequestSuccess(doc.id, data.body.tags));
         }, () => {
-          /* eslint-disable no-console */
-          dispatch(tagSaveFailed("Unable to save. Please try again!"));
-          /* eslint-enable no-console */
+          dispatch(newTagRequestFailed("Unable to save. Please try again!"));
         });
     }
   };
