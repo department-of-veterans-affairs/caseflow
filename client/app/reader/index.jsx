@@ -9,7 +9,9 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
 const intialState = {
-  currentPdfIndex: null
+  currentPdfIndex: null,
+  currentDocId: null,
+  tagsErrorMessage: null
 };
 
 const readerReducer = (state = intialState, action = {}) => {
@@ -41,17 +43,49 @@ const readerReducer = (state = intialState, action = {}) => {
         }
       }
     );
+  case Constants.REQUEST_NEW_TAG_CREATION:
+    return Object.assign({}, state, {
+      tagsErrorMessage: ''
+    });
+  case Constants.SHOW_TAG_SAVE_ERROR_MESSAGE:
+    return Object.assign({}, state, {
+      tagsErrorMessage: action.payload.errorMessage
+    });
+  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            tags: _.union(state.documents[action.payload.docId].tags,
+              action.payload.createdTags)
+          }
+        }
+      }
+    );
+  case Constants.SHOW_PREV_PDF:
+    return state;
+  case Constants.SHOW_NEXT_PDF:
+    return state;
+  case Constants.UPDATE_SHOWING_DOC:
+    return Object.assign({}, state, {
+      currentDocId: action.payload.currentDocId,
+      tagsErrorMessage: ''
+    });
   default:
     return state;
   }
 };
 
-const store = (intialState) => { return createStore(readerReducer, applyMiddleware(thunk, logger)); }
+const store = (intialState) => {
+  return createStore(readerReducer, applyMiddleware(thunk, logger));
+};
 
 const Reader = (props) => {
   return <Provider store={store()}>
-        <DecisionReviewer {...props} />
-    </Provider>;
+      <DecisionReviewer {...props} />
+  </Provider>;
 };
 
 export default Reader;

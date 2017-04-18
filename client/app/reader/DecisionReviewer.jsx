@@ -6,7 +6,6 @@ import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
-import * as Constants from './constants';
 import * as ReaderActions from './actions';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
@@ -54,7 +53,10 @@ export class DecisionReviewer extends React.Component {
   }
 
   onPreviousPdf = () => {
-    this.setPage(Math.max(this.state.currentPdfIndex - 1, 0));
+    const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
+
+    this.setPage(currentPdfIndex);
+    this.props.updateShowingDocId(this.state.documents[currentPdfIndex].id);
   }
 
   documentUrl = (doc) => {
@@ -62,8 +64,11 @@ export class DecisionReviewer extends React.Component {
   }
 
   onNextPdf = () => {
-    this.setPage(Math.min(this.state.currentPdfIndex + 1,
-        this.state.documents.length - 1));
+    const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
+        this.state.documents.length - 1);
+
+    this.setPage(currentPdfIndex);
+    this.props.updateShowingDocId(this.state.documents[currentPdfIndex].id);
   }
 
   // This method is used for updating attributes of documents.
@@ -114,6 +119,7 @@ export class DecisionReviewer extends React.Component {
 
     event.preventDefault();
     this.setPage(pdfNumber);
+    this.props.updateShowingDocId(this.state.documents[pdfNumber].id);
   }
 
   markAsRead = (pdfNumber) => {
@@ -298,8 +304,6 @@ export class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
-    console.log(this.props);
-
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
 
@@ -323,7 +327,7 @@ export class DecisionReviewer extends React.Component {
           addNewTag={this.props.addNewTag}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
-          doc={documents[this.state.currentPdfIndex]}
+          doc={this.props.storeDocuments[this.props.currentDocId]}
           onPreviousPdf={onPreviousPdf}
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
@@ -342,7 +346,9 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    reduxDocuments: state ? state.documents : {}
+    storeDocuments: state ? state.documents : {},
+    currentPdfIndex: state ? state.currentPdfIndex : 0,
+    currentDocId: state ? state.currentDocId : null
   };
 };
 

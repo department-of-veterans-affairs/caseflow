@@ -11,7 +11,7 @@ export const onReceiveDocs = (documents) => {
 
 export const updatedTagList = (docId, createdTags) => {
   return {
-    type: Constants.UPDATE_DOCUMENT_TAG_LIST,
+    type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
     payload: {
       docId,
       createdTags
@@ -33,6 +33,27 @@ export const selectCurrentPdf = (docId) => {
     type: Constants.SELECT_CURRENT_VIEWER_PDF,
     payload: {
       docId
+    }
+  };
+};
+
+export const showNextPdf = () => {
+  return {
+    type: Constants.SHOW_NEXT_PDF
+  };
+};
+
+export const showPrevPdf = () => {
+  return {
+    type: Constants.SHOW_PREV_PDF
+  };
+};
+
+export const updateShowingDocId = (currentDocId) => {
+  return {
+    type: Constants.UPDATE_SHOWING_DOC,
+    payload: {
+      currentDocId
     }
   };
 };
@@ -65,5 +86,5 @@ export const addNewTag = (doc, tags) => {
           /* eslint-enable no-console */
         });
     }
-  }
-}
+  };
+};
