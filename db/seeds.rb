@@ -79,6 +79,12 @@ class SeedDB
     @users.push(User.create(css_id: "Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John Smith"))
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
+    @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
+  end
+
+  def create_annotations
+    Generators::Annotation.create(comment: "Hello World!", document_id: 1, x: 300, y: 400)
+    Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
   end
 
   def clean_db
@@ -91,6 +97,7 @@ class SeedDB
     create_appeals(50)
     create_users(3)
     create_tasks(50)
+    create_annotations
   end
 end
 

@@ -8,15 +8,14 @@ import { categoryFieldNameOfCategoryName } from './utils';
 
 const initialState = {
   ui: {
-    pdfList: {
-      filters: {
-        category: {}
-      },
-      filterPositions: {}
+    pdf: {
     }
+  },
+  documents: {
   }
 };
-const readerReducer = (state = initialState, action = {}) => {
+
+export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -67,20 +66,13 @@ const readerReducer = (state = initialState, action = {}) => {
         }
       );
     })();
-  case Constants.SET_FILTER_POSITION:
+  case Constants.SET_CURRENT_RENDERED_FILE:
     return _.merge(
       {},
       state,
       {
         ui: {
-          pdfList: {
-            filterPositions: {
-              // elem.getBoundingClientRect is a ClientRect, and if we just
-              // insert it into this object, it wll show up as an empty object.
-              // We can convert it to a plain object with _.merge.
-              [action.payload.filterName]: _.merge({}, action.payload.boundingRect)
-            }
-          }
+          pdf: _.pick(action.payload, 'currentRenderedFile')
         }
       }
     );
@@ -96,6 +88,27 @@ const readerReducer = (state = initialState, action = {}) => {
                 [action.payload.categoryName]: action.payload.checked
               }
             }
+          }
+        }
+      });
+  case Constants.SCROLL_TO_COMMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'scrollToComment')
+        }
+      }
+    );
+  case Constants.TOGGLE_COMMENT_LIST:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            listComments: !state.documents[action.payload.docId].listComments
           }
         }
       }
