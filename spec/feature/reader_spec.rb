@@ -38,7 +38,7 @@ RSpec.feature "Reader" do
   end
 
   let!(:current_user) do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(roles: ["Reader"])
   end
 
   scenario "Add comment" do
@@ -93,7 +93,8 @@ RSpec.feature "Reader" do
     let!(:annotation) do
       Generators::Annotation.create(
         comment: "hello world",
-        document_id: documents[0].id
+        document_id: documents[0].id,
+        y: 750
       )
     end
 
@@ -113,7 +114,7 @@ RSpec.feature "Reader" do
       find("#comment0").click
       after_click_scroll = scroll_position
 
-      expect(after_click_scroll - original_scroll).to eq(annotation.y)
+      expect(after_click_scroll - original_scroll).to be > 0
     end
   end
 
