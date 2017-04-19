@@ -72,13 +72,15 @@ const ConnectedCategorySelector = connect(
 // show a PDF with it's corresponding information.
 export default class PdfSidebar extends React.Component {
   generateOptionsFromTags = (tags) => {
+
     if (!tags || tags.length <= 0) {
       return {};
     }
 
     return tags.map((tag) => {
       return { value: tag.text,
-        label: tag.text };
+        label: tag.text,
+        tagId: tag.id };
     });
   };
 
@@ -132,7 +134,10 @@ export default class PdfSidebar extends React.Component {
             options={this.generateOptionsFromTags(doc.tags)}
             placeholder="Select or type issue"
             value={this.generateOptionsFromTags(doc.tags)}
-            onChange={(values) => {
+            onChange={(values, deletedValue) => {
+              console.log(deletedValue);
+              deletedValue ?
+              this.props.removeTag(doc, deletedValue) :
               this.props.addNewTag(doc, values);
             }}
           />

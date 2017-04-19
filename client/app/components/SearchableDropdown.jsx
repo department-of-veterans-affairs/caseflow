@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
+import _ from 'lodash';
 
 const TAG_ALREADY_EXISTS_MSG = "Tag already exists";
 const NO_RESULTS_TEXT = "Not an option";
@@ -20,6 +21,7 @@ class SearchableDropdown extends Component {
 
   onChange = (value) => {
     let newValue = value;
+    let deletedValue = null;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -32,8 +34,11 @@ class SearchableDropdown extends Component {
       newValue = null;
     }
     this.setState({ value: newValue });
+    if (value.length < this.state.value.length) {
+      deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
+    }
     if (this.props.onChange) {
-      this.props.onChange(newValue);
+      this.props.onChange(newValue, deletedValue);
     }
   }
 

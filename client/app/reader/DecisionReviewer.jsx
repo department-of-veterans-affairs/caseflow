@@ -325,6 +325,7 @@ export class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           addNewTag={this.props.addNewTag}
+          removeTag={this.props.removeTag}
           tagsErrorMessage={this.props.tagsErrorMessage}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}

@@ -58,6 +58,23 @@ export const updateShowingDocId = (currentDocId) => {
   };
 };
 
+export const removeTag = (doc, deletedTag) => {
+  return (dispatch) => {
+    if (deletedTag) {
+      console.log(deletedTag)
+      dispatch({ type: Constants.REQUEST_REMOVE_TAG });
+      ApiUtil.delete(`/reader/documents/${doc.id}/tags/${deletedTag[0].tagId}`).
+        then((data) => {
+          console.log(data);
+          //dispatch(newTagRequestSuccess(doc.id, data.body.tags));
+        }, () => {
+          console.log("failed");
+          dispatch();
+        });
+    }
+  };
+};
+
 export const addNewTag = (doc, tags) => {
   return (dispatch) => {
     const currentTags = doc.tags;

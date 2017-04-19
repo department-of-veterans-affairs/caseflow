@@ -26,7 +26,8 @@ class Reader::TagsController < ApplicationController
 
   def destroy
     tag_id = params[:id]
-    Document.delete(tag_id)
+    puts params[:id]
+    Tag.delete(tag_id)
     render(:json => 'no_content', :status => :no_content)
   end
 
