@@ -10,6 +10,9 @@ import { categoryFieldNameOfCategoryName } from './utils';
 const initialState = {
   ui: {
     pdf: {
+    },
+    pdfList: {
+
     }
   },
   documents: {
@@ -73,6 +76,18 @@ export const readerReducer = (state = initialState, action = {}) => {
         documents: {
           [action.payload.docId]: {
             listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      }
+    );
+  case Constants.LAST_READ_DOCUMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdfList: {
+            lastRead: action.payload.docId
           }
         }
       }
