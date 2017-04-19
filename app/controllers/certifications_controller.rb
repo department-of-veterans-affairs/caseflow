@@ -20,6 +20,18 @@ class CertificationsController < ApplicationController
     end
   end
 
+  def update_v2
+    permitted = params
+                .require("update")
+                .permit("representative_name",
+                        "representative_type",
+                        "hearing_change_doc_found_in_vbms",
+                        "form9_type",
+                        "hearing_preference")
+    certification.update!(permitted)
+    render json: {}
+  end
+
   # TODO: update for certification v2- should we use hidden form params?
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
