@@ -87,11 +87,11 @@ export const certificationReducers = function(state = initialState, action = {})
 export const mapDataToInitialState = function(state) {
   return {
     form9Match: state.appeal['form9_match?'],
-    form9Date: state.appeal.form9_date,
+    form9Date: state.appeal.serialized_form9_date,
     nodMatch: state.appeal['nod_match?'],
-    nodDate: state.appeal.nod_date,
+    nodDate: state.appeal.serialized_nod_date,
     socMatch: state.appeal['soc_match?'],
-    socDate: state.appeal.soc_date,
+    socDate: state.appeal.serialized_soc_date,
     ssocDatesWithMatches: state.appeal.ssoc_dates_with_matches,
     documentsMatch: state.appeal['documents_match?'],
     certificationId: state.id,
