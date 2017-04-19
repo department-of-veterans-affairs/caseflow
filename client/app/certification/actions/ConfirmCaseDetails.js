@@ -29,8 +29,8 @@ export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   }
 });
 
-export const failValidation = (invalidFields) => ({
-  type: Constants.FAILED_VALIDATION,
+export const onValidationFailed = (invalidFields) => ({
+  type: Constants.ON_VALIDATION_FAILED,
   payload: {
     validationFailed: true,
     invalidFields

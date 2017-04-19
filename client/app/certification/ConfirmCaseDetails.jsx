@@ -97,7 +97,7 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.failValidation(erroredFields);
+      this.props.onValidationFailed(erroredFields);
 
       return;
     }
@@ -201,7 +201,9 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
-  failValidation: (invalidFields) => dispatch(actions.failValidation(invalidFields)),
+  onValidationFailed: (invalidFields) => {
+    dispatch(actions.onValidationFailed(invalidFields));
+  },
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
