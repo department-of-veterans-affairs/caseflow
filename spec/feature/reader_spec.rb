@@ -44,7 +44,7 @@ RSpec.feature "Reader" do
   end
 
   let!(:current_user) do
-    User.authenticate!(roles: ["System Admin"])
+    User.authenticate!(roles: ["Reader"])
   end
 
   scenario "Add comment" do
@@ -99,7 +99,8 @@ RSpec.feature "Reader" do
     let!(:annotation) do
       Generators::Annotation.create(
         comment: "hello world",
-        document_id: documents[0].id
+        document_id: documents[0].id,
+        y: 750
       )
     end
 
