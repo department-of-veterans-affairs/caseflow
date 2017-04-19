@@ -64,7 +64,7 @@ class Veteran
   end
 
   def military_address_vbms_hash
-    basic_address_vbms_hash.merge(
+    base_vbms_hash.merge(
       state: military_postal_type_code,
       city: military_post_office_type_code
     )
