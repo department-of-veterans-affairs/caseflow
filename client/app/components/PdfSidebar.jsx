@@ -144,7 +144,7 @@ export default class PdfSidebar extends React.Component {
               <Button
                 name="AddComment"
                 onClick={this.props.onAddComment}>
-                <span>{ plusIcon() } &nbsp; Add a Comment</span>
+                <span>{ plusIcon() } &nbsp; Add a comment</span>
               </Button>
             </span>
           </div>
