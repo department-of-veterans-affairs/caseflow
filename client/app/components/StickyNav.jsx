@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 // mostly copy pasted this answer from Stack Overflow: http://stackoverflow.com/a/33555276
+// This component adds the "sticking" functionality to a given navigation list
 
 export default class StickyNav extends React.Component {
   constructor(props) {
@@ -36,20 +37,8 @@ export default class StickyNav extends React.Component {
   render() {
     return (
       <div className={this.state.className}>
-        <div className="cf-push-left cf-sg-nav">
-          <ul className="usa-sidenav-list">
-            { this.props.children }
-          </ul>
-        </div>
+        { this.props.children }
       </div>
     );
   }
-  }
-
-StickyNav.propTypes = {
-  children: PropTypes.arrayOf(
-    PropTypes.shape({
-      child: PropTypes.obj
-    })
-  )
-};
+}
