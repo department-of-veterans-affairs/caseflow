@@ -8,11 +8,14 @@ import { categoryFieldNameOfCategoryName } from './utils';
 
 const initialState = {
   ui: {
-    pdf: {
+    pdf: {},
+    pdfList: {
+      filters: {
+        category: {}
+      }
     }
   },
-  documents: {
-  }
+  documents: {}
 };
 
 export const readerReducer = (state = initialState, action = {}) => {
