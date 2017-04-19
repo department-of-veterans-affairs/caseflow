@@ -15,8 +15,8 @@ export default class NavLink extends React.Component {
             <a href={link.anchor}>{link.name}</a>
           </li>)}
       </ul>
-    </div>
-  };
+    </div>;
+  }
 }
 
 

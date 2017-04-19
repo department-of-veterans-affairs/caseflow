@@ -18,91 +18,91 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 export default function StyleGuideIndex() {
 
   let componentLinks = [
-      {
-        anchor: '/styleguide#',
-        name: 'Introduction'
-      },
-      {
-        anchor: '#typography',
-        name: 'Typography'
-      },
-      {
-        anchor: '#colors',
-        name: 'Colors'
-      },
-      {
-        anchor: '#buttons',
-        name: 'Buttons'
-      },
-      {
-        anchor: '#search',
-        name: 'Search'
-      },
-      {
-        anchor: '#dropdown',
-        name: 'Dropdown Menus'
-      },
-      {
-        anchor: '#checkboxes',
-        name: 'Checkboxes'
-      },
-      {
-        anchor: '#radios',
-        name: 'Radios'
-      },
-      {
-        anchor: '#date_input',
-        name: 'Date Input'
-      },
-      {
-        anchor: '#tables',
-        name: 'Tables'
-      },
-      {
-        anchor: '#tabs',
-        name: 'Tabs'
-      },
-      {
-        anchor: '#accordions',
-        name: 'Accordions'
-      },
-      {
-        anchor: '#forms_fields',
-        name: 'Forms Fields'
-      },
-      {
-        anchor: '#loading_buttons',
-        name: 'Loading Buttons'
-      },
-      {
-        anchor: '#alerts',
-        name: 'Alerts'
-      },
-      {
-        anchor: '#layout',
-        name: 'Layout'
-      },
-      {
-        anchor: '#messages',
-        name: 'Messages'
-      },
-      {
-        anchor: '#branding',
-        name: 'Branding'
-      },
-      {
-        anchor: '#dashboard',
-        name: 'Dashboard'
-      },
-      {
-        anchor: '#modals',
-        name: 'Modals'
-      },
-      {
-        anchor: '#progress_bar',
-        name: 'Progress Bar'
-      },
-    ];
+    {
+      anchor: '/styleguide#',
+      name: 'Introduction'
+    },
+    {
+      anchor: '#typography',
+      name: 'Typography'
+    },
+    {
+      anchor: '#colors',
+      name: 'Colors'
+    },
+    {
+      anchor: '#buttons',
+      name: 'Buttons'
+    },
+    {
+      anchor: '#search',
+      name: 'Search'
+    },
+    {
+      anchor: '#dropdown',
+      name: 'Dropdown Menus'
+    },
+    {
+      anchor: '#checkboxes',
+      name: 'Checkboxes'
+    },
+    {
+      anchor: '#radios',
+      name: 'Radios'
+    },
+    {
+      anchor: '#date_input',
+      name: 'Date Input'
+    },
+    {
+      anchor: '#tables',
+      name: 'Tables'
+    },
+    {
+      anchor: '#tabs',
+      name: 'Tabs'
+    },
+    {
+      anchor: '#accordions',
+      name: 'Accordions'
+    },
+    {
+      anchor: '#forms_fields',
+      name: 'Forms Fields'
+    },
+    {
+      anchor: '#loading_buttons',
+      name: 'Loading Buttons'
+    },
+    {
+      anchor: '#alerts',
+      name: 'Alerts'
+    },
+    {
+      anchor: '#layout',
+      name: 'Layout'
+    },
+    {
+      anchor: '#messages',
+      name: 'Messages'
+    },
+    {
+      anchor: '#branding',
+      name: 'Branding'
+    },
+    {
+      anchor: '#dashboard',
+      name: 'Dashboard'
+    },
+    {
+      anchor: '#modals',
+      name: 'Modals'
+    },
+    {
+      anchor: '#progress_bar',
+      name: 'Progress Bar'
+    }
+  ];
 
 /* eslint-disable max-len */
 
