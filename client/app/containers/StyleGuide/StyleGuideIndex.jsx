@@ -12,6 +12,7 @@ import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
+import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default function StyleGuideIndex() {
@@ -119,6 +120,7 @@ export default function StyleGuideIndex() {
         <StyleGuidePlaceholder
           title="Layout"
           id="layout" />
+        <StyleGuideNavigationBar />
         <StyleGuideUserDropdownMenu />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder

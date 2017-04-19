@@ -48,7 +48,7 @@ const ApiUtil = {
   },
 
   // Default headers needed to talk with rails server.
-  // Including rail's authenticity token
+  // Including rails authenticity token
   headers(options = {}) {
     let headers = Object.assign({},
       {
