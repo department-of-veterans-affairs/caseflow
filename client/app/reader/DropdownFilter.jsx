@@ -38,7 +38,7 @@ class DropdownFilter extends React.PureComponent {
             disabled={!this.props.isClearEnabled}>
           Clear category filter
         </button>
-        <IconButton iconFunction={removeSymbolHtml}
+        <IconButton iconFunction={removeSymbolHtml} className="cf-clear-button"
           handleActivate={this.props.clearFilters} label="Clear filters" />
       </div>
       {children}

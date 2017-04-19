@@ -311,6 +311,14 @@ svg[aria-hidden=true],
     padding: $dropdown-interior-padding;
 
     @include hover;
+
+    &>*:first-child {
+      margin-right: 10px;
+    }
+
+    .cf-clear-button {
+      display: inline;
+    }
   }
 
   .cf-document-category-picker {
