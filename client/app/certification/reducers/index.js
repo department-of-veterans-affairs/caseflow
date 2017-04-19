@@ -1,4 +1,5 @@
 import * as Constants from '../constants/constants';
+import * as ConfirmCaseDetailsReducers from './ConfirmCaseDetails';
 
 /*
 * This global reducer is called every time a state change is
@@ -8,26 +9,8 @@ import * as Constants from '../constants/constants';
 * that would live at client/app/actions/**.js.
 */
 
-const initialState = {
-  hearingDocumentIsInVbms: null,
-  form9Type: null,
-  hearingType: null
-};
 
-// TODO: break this out into a separate actions file.
-const updateRepresentativeType = (state, action) => {
-  const update = {};
-
-  update.representativeType = action.payload.representativeType;
-  // if we changed the type to something other than "Other",
-  // erase the other representative type if it was specified.
-  if (state.representativeType !== Constants.representativeTypes.OTHER) {
-    update.otherRepresentativeType = null;
-  }
-
-  return Object.assign({}, state, update);
-};
-
+// TODO: break this out into a reducers/SignAndCertify.jsx
 const changeSignAndCertifyForm = (state, action) => {
   const update = {};
 
@@ -38,25 +21,44 @@ const changeSignAndCertifyForm = (state, action) => {
   return Object.assign({}, state, update);
 };
 
+export const startUpdateCertification = (state) => {
+  // setting the 'loading' attribute causes
+  // a spinny spinner to appear over the continue
+  // button
+  // TODO: verify that this also disables the continue
+  // button.
+  return Object.assign({}, state, {
+    loading: true
+  });
+};
+
+
+// TODO: is this meant to be something like a schema?
+// it's too similar to the object in "mapDataToInitialState".
+const initialState = {
+  documentsMatch: null,
+  form9Match: null,
+  socMatch: null,
+  representativeType: null,
+  representativeName: null,
+  otherRepresentativeType: null
+};
 
 export const certificationReducers = function(state = initialState, action = {}) {
   switch (action.type) {
-  case Constants.UPDATE_PROGRESS_BAR:
-    return Object.assign({}, state, {
-      currentSection: action.payload.currentSection
-    });
+
+  // ConfirmCaseDetails
+  // ==================
   case Constants.CHANGE_REPRESENTATIVE_NAME:
-    return Object.assign({}, state, {
-      representativeName: action.payload.representativeName
-    });
-  case Constants.CHANGE_REPRESENTATIVE_TYPE: {
-    return updateRepresentativeType(state, action);
-  }
-  case Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE: {
-    return Object.assign({}, state, {
-      otherRepresentativeType: action.payload.otherRepresentativeType
-    });
-  }
+    return ConfirmCaseDetailsReducers.changeRepresentativeName(state, action);
+  case Constants.CHANGE_REPRESENTATIVE_TYPE:
+    return ConfirmCaseDetailsReducers.changeRepresentativeType(state, action);
+  case Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE:
+    return ConfirmCaseDetailsReducers.changeOtherRepresentativeType(state, action);
+
+  // ConfirmHearing
+  // ==================
+  // TODO: break these out into reducers/ConfirmHearing.js
   case Constants.CHANGE_VBMS_HEARING_DOCUMENT:
     return Object.assign({}, state, {
       hearingDocumentIsInVbms: action.payload.hearingDocumentIsInVbms,
@@ -79,6 +81,39 @@ export const certificationReducers = function(state = initialState, action = {})
     });
   case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
     return changeSignAndCertifyForm(state, action);
+
+  // Certification
+  // ==================
+  // These reducer actions are used by a few different pages,
+  // so they can stay in the index.
+  //
+  // TODO: rename this to something else, it's more like a Page Load action now.
+  case Constants.UPDATE_PROGRESS_BAR:
+    return Object.assign({}, state, {
+      currentSection: action.payload.currentSection,
+      // reset some parts of state so we don't skip pages or end up in loops
+      updateFailed: null,
+      updateSucceeded: null,
+      loading: false
+    });
+  case Constants.ON_VALIDATION_FAILED:
+    return Object.assign({}, state, {
+      invalidFields: action.payload.invalidFields,
+      validationFailed: action.payload.validationFailed
+    });
+  case Constants.CERTIFICATION_UPDATE_REQUEST:
+    return startUpdateCertification(state, action);
+  case Constants.CERTIFICATION_UPDATE_FAILURE:
+    return Object.assign({}, state, {
+      updateFailed: true,
+      loading: false
+    });
+  case Constants.CERTIFICATION_UPDATE_SUCCESS:
+    return Object.assign({}, state, {
+      updateSucceeded: true,
+      loading: false
+    });
+
   default:
     return state;
   }
@@ -86,6 +121,10 @@ export const certificationReducers = function(state = initialState, action = {})
 
 export const mapDataToInitialState = function(state) {
   return {
+    // TODO alex: fix bug where other representative type won't
+    // come down from the server, dagnabbit.
+    representativeType: state.representative_type,
+    representativeName: state.representative_name,
     form9Match: state.appeal['form9_match?'],
     form9Date: state.appeal.form9_date,
     nodMatch: state.appeal['nod_match?'],

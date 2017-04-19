@@ -8,6 +8,25 @@ class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
   def start!
+    create_or_update_form8
+
+    update_attributes!(
+      already_certified:   calculate_already_certified,
+      vacols_data_missing: calculate_vacols_data_missing,
+      nod_matching_at:     calculate_nod_matching_at,
+      form9_matching_at:   calculate_form9_matching_at,
+      soc_matching_at:     calculate_soc_matching_at,
+      ssocs_required:      calculate_ssocs_required,
+      ssocs_matching_at:   calculcate_ssocs_matching_at,
+      form8_started_at:    (certification_status == :started) ? now : nil,
+      vacols_hearing_preference: appeal.hearing_request_type,
+      vacols_representative_name: appeal.representative
+    )
+
+    certification_status
+  end
+
+  def create_or_update_form8
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,
     # refresh it with new data.
@@ -18,19 +37,6 @@ class Certification < ActiveRecord::Base
     else
       form8.update_certification_date
     end
-
-    update_attributes!(
-      already_certified:   calculate_already_certified,
-      vacols_data_missing: calculate_vacols_data_missing,
-      nod_matching_at:     calculate_nod_matching_at,
-      form9_matching_at:   calculate_form9_matching_at,
-      soc_matching_at:     calculate_soc_matching_at,
-      ssocs_required:      calculate_ssocs_required,
-      ssocs_matching_at:   calculcate_ssocs_matching_at,
-      form8_started_at:    (certification_status == :started) ? now : nil
-    )
-
-    certification_status
   end
 
   def to_hash
