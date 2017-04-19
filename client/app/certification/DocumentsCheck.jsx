@@ -61,7 +61,8 @@ class UnconnectedDocumentsCheck extends React.Component {
           nextPageUrl={
             `/certifications/${match.params.vacols_id}/confirm_case_details`
           }
-          certificationId={certificationId}/>
+          certificationId={certificationId}
+          hideContinue={!documentsMatch}/>
       </div>
     </div>;
   }
