@@ -12,6 +12,7 @@ import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 import IconButton from '../components/IconButton';
+
 const NUMBER_OF_COLUMNS = 5;
 
 const FilterIcon = (props) =>
