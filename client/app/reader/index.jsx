@@ -77,6 +77,18 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.TOGGLE_PDF_SIDEBAR:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
+          }
+        }
+      }
+    );
   default:
     return state;
   }

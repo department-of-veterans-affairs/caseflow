@@ -39,6 +39,10 @@ $bookmark-yellow: #efdf1a;
   bottom: 0;
   right: 380px;
   left: 0;
+
+  &--hidden-sidebar {
+    right: 0px;
+  }
 }
 
 .cf-pdf-scroll-view {
@@ -86,6 +90,10 @@ svg[aria-hidden=true],
   text-align: left;
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
+
+  &--hidden-sidebar {
+    visibility: hidden;
+  }
 }
 
 .cf-sidebar-header {

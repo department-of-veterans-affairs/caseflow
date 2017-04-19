@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
+import { connect } from 'react-redux';
+import * as Constants from '../reader/constants';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -28,7 +30,7 @@ const MINIMUM_ZOOM = 0.1;
 //   a user to be able to navigate to, pass in handlers for onNextPdf
 //   and onPreviousPdf. If one is not supplied, or is null, then the
 //   corresponding arrow will be missing.
-export default class PdfUI extends React.Component {
+export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,7 +69,7 @@ export default class PdfUI extends React.Component {
 
     selectedLabels[this.props.label] = true;
 
-    return <div className="cf-pdf-container">
+    return <div>
       <div className="cf-pdf-header cf-pdf-toolbar">
         <div className="usa-grid-full">
           <span className="usa-width-one-third cf-pdf-buttons-left">
@@ -114,6 +116,14 @@ export default class PdfUI extends React.Component {
                   linkToSingleDocumentView(this.props.doc), '_blank')}>
                 {this.props.doc.type}
               </Button>
+              {this.props.hidePdfSidebar && <Button
+                name="open menu"
+                classNames={["cf-pdf-button"]}
+                onClick={this.props.handleTogglePdfSidebar}>
+                <strong>
+                  Open Menu
+                </strong>
+              </Button>}
             </span>
           </span>
         </div>
@@ -166,6 +176,22 @@ export default class PdfUI extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    hidePdfSidebar: _.get(state, 'ui.pdf.hidePdfSidebar')
+  };
+};
+const mapDispatchToProps = (dispatch) => ({
+  handleTogglePdfSidebar() {
+    dispatch({
+      type: Constants.TOGGLE_PDF_SIDEBAR
+    });
+  }
+});
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfUI);
+
 PdfUI.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.string,
@@ -188,5 +214,7 @@ PdfUI.propTypes = {
   onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  onIconMoved: PropTypes.func
+  onIconMoved: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };

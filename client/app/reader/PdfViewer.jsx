@@ -2,11 +2,13 @@ import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
+import { connect } from 'react-redux';
+import * as Constants from './constants';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
-export default class PdfViewer extends React.Component {
+export class PdfViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -194,40 +196,49 @@ export default class PdfViewer extends React.Component {
   }
 
   render() {
+    const pdfUiClass = this.props.hidePdfSidebar ?
+      "cf-pdf-container--hidden-sidebar" : "cf-pdf-container";
+    const sidebarClass = this.props.hidePdfSidebar ?
+      "cf-sidebar-wrapper--hidden-sidebar" : "cf-sidebar-wrapper";
+
     return (
       <div>
         <div className="cf-pdf-page-container">
-          <PdfUI
-            comments={this.state.comments}
-            doc={this.props.doc}
-            file={this.props.file}
-            pdfWorker={this.props.pdfWorker}
-            id="pdf"
-            onPageClick={this.placeComment}
-            onShowList={this.props.onShowList}
-            onNextPdf={this.props.onNextPdf}
-            onPreviousPdf={this.props.onPreviousPdf}
-            onViewPortCreated={this.onViewPortCreated}
-            onViewPortsCleared={this.onViewPortsCleared}
-            onCommentClick={this.onCommentClick}
-            scrollToComment={this.props.scrollToComment}
-            onCommentScrolledTo={this.props.onCommentScrolledTo}
-            onIconMoved={this.onIconMoved}
-          />
-          <PdfSidebar
-            doc={this.props.doc}
-            editingComment={this.state.editingComment}
-            onAddComment={this.onAddComment}
-            isAddingComment={this.state.isAddingComment}
-            comments={this.state.comments}
-            onSaveCommentAdd={this.state.onSaveCommentAdd}
-            onCancelCommentAdd={this.onCancelCommentAdd}
-            onSaveCommentEdit={this.onSaveCommentEdit}
-            onCancelCommentEdit={this.onCancelCommentEdit}
-            onDeleteComment={this.onDeleteComment}
-            onEditComment={this.onEditComment}
-            onJumpToComment={this.props.onJumpToComment}
-          />
+          <div className={pdfUiClass}>
+            <PdfUI
+              comments={this.state.comments}
+              doc={this.props.doc}
+              file={this.props.file}
+              pdfWorker={this.props.pdfWorker}
+              id="pdf"
+              onPageClick={this.placeComment}
+              onShowList={this.props.onShowList}
+              onNextPdf={this.props.onNextPdf}
+              onPreviousPdf={this.props.onPreviousPdf}
+              onViewPortCreated={this.onViewPortCreated}
+              onViewPortsCleared={this.onViewPortsCleared}
+              onCommentClick={this.onCommentClick}
+              scrollToComment={this.props.scrollToComment}
+              onCommentScrolledTo={this.props.onCommentScrolledTo}
+              onIconMoved={this.onIconMoved}
+            />
+          </div>
+          <div className={sidebarClass}>
+            <PdfSidebar
+              doc={this.props.doc}
+              editingComment={this.state.editingComment}
+              onAddComment={this.onAddComment}
+              isAddingComment={this.state.isAddingComment}
+              comments={this.state.comments}
+              onSaveCommentAdd={this.state.onSaveCommentAdd}
+              onCancelCommentAdd={this.onCancelCommentAdd}
+              onSaveCommentEdit={this.onSaveCommentEdit}
+              onCancelCommentEdit={this.onCancelCommentEdit}
+              onDeleteComment={this.onDeleteComment}
+              onEditComment={this.onEditComment}
+              onJumpToComment={this.props.onJumpToComment}
+            />
+          </div>
         </div>
         {this.state.onConfirmDelete && <Modal
           buttons={[
@@ -249,6 +260,16 @@ export default class PdfViewer extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    hidePdfSidebar: _.get(state, 'ui.pdf.hidePdfSidebar')
+  };
+};
+export default connect(
+  mapStateToProps, null
+)(PdfViewer);
+
+
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
@@ -259,5 +280,6 @@ PdfViewer.propTypes = {
     id: React.PropTypes.number
   }),
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func
+  onCommentScrolledTo: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };

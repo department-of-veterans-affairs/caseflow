@@ -69,7 +69,7 @@ const ConnectedCategorySelector = connect(
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
-export default class PdfSidebar extends React.Component {
+export class PdfSidebar extends React.Component {
   render() {
     let comments = [];
 
@@ -99,11 +99,12 @@ export default class PdfSidebar extends React.Component {
         </Comment>;
     });
 
-    return <div className="cf-sidebar-wrapper">
+    return <div>
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={["cf-pdf-button"]}>
+            classNames={["cf-pdf-button"]}
+            onClick={this.props.handleTogglePdfSidebar}>
             <strong>
               Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
@@ -164,6 +165,18 @@ export default class PdfSidebar extends React.Component {
   }
 }
 
+const mapSidebarDispatchToProps = (dispatch) => ({
+  handleTogglePdfSidebar() {
+    dispatch({
+      type: Constants.TOGGLE_PDF_SIDEBAR
+    });
+  }
+});
+export default connect(
+  null, mapSidebarDispatchToProps
+)(PdfSidebar);
+
+
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
@@ -178,5 +191,6 @@ PdfSidebar.propTypes = {
   onCancelCommentEdit: PropTypes.func,
   onCancelCommentAdd: PropTypes.func,
   onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func
+  onJumpToComment: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func
 };
