@@ -81,7 +81,7 @@ RSpec.feature "Start Certification" do
   context "As an authorized user for Certification V2" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
-    scenario "Starting a Certification v2" do
+    scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
       expect(page).to have_content("All documents detected!")
@@ -89,8 +89,25 @@ RSpec.feature "Start Certification" do
       click_button("Continue")
       expect(page).to have_content("Review data from BGS about the appellant's representative")
 
+      within_fieldset("Representative type") do
+        find("label", text: "Other").click
+      end
+
+      fill_in "Specify other representative type", with: "Records"
+      fill_in "Representative name", with: "Johnny Depp"
+
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+
+      # go back to the case datails page
+      page.go_back
+      within_fieldset("Representative type") do
+        expect(find_field("Other", visible: false)).to be_checked
+      end
+      expect(find_field("Specify other representative type").value).to eq("Records")
+      expect(find_field("Representative name").value).to eq("Johnny Depp")
+
+      click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
         find("label", text: "Yes").click
@@ -104,6 +121,13 @@ RSpec.feature "Start Certification" do
         find("label", text: "Statement in lieu of Form 9").click
       end
       expect(page).to have_content("What optional board hearing preference, if any")
+    end
+
+    scenario "When some documents aren't matching shows missing documents page" do
+      visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/mismatched_documents")
+      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to_not have_selector(:link_or_button, "Continue")
     end
   end
 

@@ -1,5 +1,7 @@
 class AnnotationController < ApplicationController
-  before_action :verify_system_admin
+  before_action :verify_access
+
+  ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
 
   def create
     annotation = Annotation.create!(annotation_params)
@@ -20,5 +22,9 @@ class AnnotationController < ApplicationController
     params.require(:annotation).permit(:page, :x, :y, :comment).merge(
       document_id: params[:document_id]
     )
+  end
+
+  def verify_access
+    verify_authorized_roles(ANNOTATION_AUTHORIZED_ROLES.join(" "))
   end
 end
