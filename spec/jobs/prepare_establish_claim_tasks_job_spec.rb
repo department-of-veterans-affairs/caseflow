@@ -19,7 +19,7 @@ describe PrepareEstablishClaimTasksJob do
     EstablishClaim.create(appeal: appeal_without_decision_document)
   end
 
-  context ".perform", focus: true do
+  context ".perform" do
     subject { PrepareEstablishClaimTasksJob.perform_now }
 
     let(:filename) { appeal_with_decision_document.decisions.first.file_name }

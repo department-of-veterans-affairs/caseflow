@@ -14,8 +14,12 @@ class PrepareEstablishClaimTasksJob < ActiveJob::Base
   def log_result
     Rails.logger.info "Successfully prepared #{@prepared_count} tasks"
 
+    not_enough_prepared_check!
+  end
+
+  def not_enough_prepared_check!
     if workday? && (@prepared_count < expected_minimum)
-      raise Caseflow::Error::NotEnoughTasksPrepared
+      fail Caseflow::Error::NotEnoughTasksPrepared
     end
   end
 
@@ -26,7 +30,7 @@ class PrepareEstablishClaimTasksJob < ActiveJob::Base
   end
 
   def next_workday
-    (Time.now + 12.hours).to_date
+    (Time.zone.now + 12.hours).to_date
   end
 
   def expected_minimum
