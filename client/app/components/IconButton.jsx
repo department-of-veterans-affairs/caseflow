@@ -14,7 +14,7 @@ const IconButton = ({
     role: 'button',
     ref: getRef,
     'aria-label': label,
-    tabindex: '0',
+    tabIndex: '0',
     onKeyDown: handleKeyDown,
     onClick: handleActivate,
     className
