@@ -210,6 +210,13 @@ class AppealRepository
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
+    # TODO(alex):
+    # if certification v2 is enabled,
+    # appeal.case_record.bfhr
+    # '1' - Central Office
+    # '2' - Travel Board/Video hearing
+    # '5' - None
+
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
