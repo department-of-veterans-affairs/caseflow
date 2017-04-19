@@ -1,9 +1,9 @@
 class HelpController < ApplicationController
   skip_before_action :verify_authentication
-  
-   def logo_name
+
+  def logo_name
     "Dispatch"
-  end
+ end
 
   def logo_path
     "establish_claims_path"
