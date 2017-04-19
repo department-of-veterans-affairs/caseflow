@@ -37,14 +37,15 @@ class DropdownFilter extends React.PureComponent {
             disabled={!this.props.isClearEnabled}>
           Clear category filter
         </button>
-        <IconButton iconName="fa-times" handleActivate={this.props.handleClose} />
+        <IconButton iconName="fa-times"
+          handleActivate={this.props.clearFilters} label="Clear filters" />
       </div>
       {children}
     </div>;
   }
 
   componentDidMount() {
-    document.addEventListener('click', this.onGlobalClick);
+    document.addEventListener('click', this.onGlobalClick, true);
 
     if (this.rootElem) {
       this.setState({

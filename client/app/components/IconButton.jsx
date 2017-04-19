@@ -16,4 +16,10 @@ const IconButton = ({ handleActivate, label, getRef, iconName, className = '' })
 
 IconButton.displayName = 'IconButton';
 
+IconButton.propTypes = {
+  label: PropTypes.string.isRequired,
+  iconName: PropTypes.string.isRequired,
+  handleActivate: PropTypes.func
+};
+
 export default IconButton;

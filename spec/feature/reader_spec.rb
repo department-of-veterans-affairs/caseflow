@@ -47,6 +47,18 @@ RSpec.feature "Reader" do
     User.authenticate!(roles: ["Reader"])
   end
 
+  scenario "PdfListView Dropdown" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+    expect(all(".cf-dropdown-filter")).to be_empty
+
+    find("#categories-header .cf-icon-button").click
+    expect(all(".cf-dropdown-filter").count).to eq(1)
+
+    find("#receipt-date-header").click
+    expect(all(".cf-dropdown-filter")).to be_empty
+  end
+
   scenario "Add comment" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     expect(page).to have_content("Caseflow Reader")

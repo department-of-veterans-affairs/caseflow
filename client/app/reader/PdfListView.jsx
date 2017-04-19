@@ -159,7 +159,7 @@ export class PdfListView extends React.Component {
         {
           header: <div id="issue-tags-header"
             className="document-list-header-issue-tags">
-            Issue Tags <FilterIcon />
+            Issue Tags <FilterIcon label="Filter by issue" />
           </div>,
           valueFunction: () => {
             return <div className="document-list-issue-tags">
