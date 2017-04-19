@@ -55,8 +55,15 @@ RSpec.feature "Reader" do
     find("#categories-header .cf-icon-button").click
     expect(all(".cf-dropdown-filter").count).to eq(1)
 
+    find(".checkbox-wrapper-procedural").click
+    expect(find("#procedural", visible: false).checked?).to be true
+
     find("#receipt-date-header").click
     expect(all(".cf-dropdown-filter")).to be_empty
+
+    find("#categories-header .cf-icon-button").click
+
+    expect(find("#procedural", visible: false).checked?).to be true
   end
 
   scenario "Add comment" do
