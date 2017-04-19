@@ -64,6 +64,28 @@ const readerReducer = (state = intialState, action = {}) => {
         }
       }
     );
+  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
+    let tags = state.documents[action.payload.docId].tags;
+    _.remove(tags, (tag) => {
+      return tag.id === action.payload.tagId;
+    });
+
+    return _.merge(
+      {},
+      state,
+      {
+        tagsErrorMessage: '',
+        documents: {
+          [action.payload.docId]: {
+            tags
+          }
+        }
+      }
+    );
+  case Constants.REQUEST_REMOVE_TAG_FAILURE:
+    return Object.assign({}, state, {
+      tagsErrorMessage: action.payload.errorMessage
+    });
   case Constants.SHOW_PREV_PDF:
     return state;
   case Constants.SHOW_NEXT_PDF:

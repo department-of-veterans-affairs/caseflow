@@ -11,6 +11,8 @@ import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 
+const FIRST_ELEMENT = 0;
+
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
   const toggleState = _.get(
@@ -71,6 +73,14 @@ const ConnectedCategorySelector = connect(
 // It is intended to be used with the PdfUI component to
 // show a PDF with it's corresponding information.
 export default class PdfSidebar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      values: [],
+      options: []
+    };
+  }
+
   generateOptionsFromTags = (tags) => {
 
     if (!tags || tags.length <= 0) {
@@ -83,6 +93,28 @@ export default class PdfSidebar extends React.Component {
         tagId: tag.id };
     });
   };
+
+  updateOptionsFromTagsInState = (tags) => {
+    this.setState(() => {
+      return {
+        options: this.generateOptionsFromTags(tags)
+      };
+    });
+  };
+
+  updateValuesFromTagsInState = (tags) => {
+    this.setState(() => {
+      return {
+        values: this.generateOptionsFromTags(tags)
+      };
+    });
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    this.updateOptionsFromTagsInState(nextProps.doc.tags);
+    this.updateValuesFromTagsInState(nextProps.doc.tags);
+  }
+
 
   render() {
     let comments = [];
@@ -131,14 +163,18 @@ export default class PdfSidebar extends React.Component {
             label="Click in the box below to select, type, or add in issue(s)"
             multi={true}
             creatable={true}
-            options={this.generateOptionsFromTags(doc.tags)}
+            options={this.state.options}
             placeholder="Select or type issue"
             value={this.generateOptionsFromTags(doc.tags)}
             onChange={(values, deletedValue) => {
-              console.log(deletedValue);
-              deletedValue ?
-              this.props.removeTag(doc, deletedValue) :
-              this.props.addNewTag(doc, values);
+              if (deletedValue && deletedValue.length > 0) {
+                let tagValue = deletedValue[FIRST_ELEMENT].label;
+                let result = _.find(this.state.options, { 'value': tagValue });
+
+                this.props.removeTag(doc, result.tagId);
+              } else {
+                this.props.addNewTag(doc, values);
+              }
             }}
           />
           <div className="cf-heading-alt">Document</div>
