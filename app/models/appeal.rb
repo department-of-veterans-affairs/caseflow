@@ -200,10 +200,6 @@ class Appeal < ActiveRecord::Base
     serialize_date(soc_date)
   end
 
-  def serialized_ssoc_dates
-    ssoc_dates.map { |date| serialize_date(date) }
-  end
-
   def certify!
     Appeal.certify(self)
   end
