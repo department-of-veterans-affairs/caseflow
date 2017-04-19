@@ -21,6 +21,8 @@ describe Veteran do
         state: "CA",
         country: "USA",
         zip_code: "94117",
+        military_post_office_type_code: "DPO",
+        military_postal_type_code: "AE",
 
         # test extra values from BGS go unused
         chaff: "chaff"
@@ -44,7 +46,9 @@ describe Veteran do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        zip_code: "94117"
+        zip_code: "94117",
+        military_post_office_type_code: "DPO",
+        military_postal_type_code: "AE"
       )
     end
   end
@@ -62,13 +66,16 @@ describe Veteran do
         address_line2: "PO BOX 123",
         address_line3: "Daisies",
         city: "San Francisco",
-        state: state,
+        state: "CA",
         country: country,
-        zip_code: "94117"
+        zip_code: "94117",
+        military_post_office_type_code: military_post_office_type_code,
+        military_postal_type_code: military_postal_type_code
       }
     end
 
-    let(:state) { "CA" }
+    let(:military_post_office_type_code) { nil }
+    let(:military_postal_type_code) { nil }
     let(:country) { "USA" }
 
     it "returns the correct values" do
@@ -90,9 +97,10 @@ describe Veteran do
     end
 
     context "when state represents a military address" do
-      let(:state) { "AA" }
+      let(:military_postal_type_code) { "AA" }
+      let(:military_post_office_type_code) { "APO" }
 
-      it { is_expected.to include(address_type: "OVR") }
+      it { is_expected.to include(state: "AA", city: "APO", address_type: "OVR") }
     end
 
     context "when country is not USA" do
@@ -101,9 +109,10 @@ describe Veteran do
       it { is_expected.to include(address_type: "INT") }
 
       context "when state represents a military address" do
-        let(:state) { "AE" }
+        let(:military_postal_type_code) { "AA" }
+        let(:military_post_office_type_code) { "DPO" }
 
-        it { is_expected.to include(address_type: "OVR") }
+        it { is_expected.to include(state: "AA", city: "DPO", address_type: "OVR") }
       end
     end
   end
