@@ -1,6 +1,7 @@
 import React from 'react';
 
 // mostly copy pasted this answer from Stack Overflow: http://stackoverflow.com/a/33555276
+// This component adds the "sticking" functionality to a given navigation list
 
 export default class StickyNav extends React.Component {
   constructor(props) {
