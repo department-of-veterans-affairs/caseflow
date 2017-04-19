@@ -59,6 +59,10 @@ class DropdownFilter extends React.PureComponent {
   }
 
   onGlobalClick = () => {
+    if (!this.rootElem) {
+      return;
+    }
+
     const clickIsInsideThisComponent = () => {
       let node = event.target;
 
