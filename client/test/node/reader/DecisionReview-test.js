@@ -276,7 +276,8 @@ describe('DecisionReviewer', () => {
 
         // Make sure that the 1st row has the last
         // read indicator in the first column.
-        expect(wrapper.find('#table-row-1').childAt(0).children()).to.have.length(1);
+        expect(wrapper.find('#table-row-1').childAt(0).
+          children()).to.have.length(1);
       }));
 
       it('appears on document opened in new tab', asyncTest(async() => {
@@ -291,7 +292,8 @@ describe('DecisionReviewer', () => {
 
         // Make sure that the 0th row has the last
         // read indicator in the first column.
-        expect(wrapper.find('#table-row-0').childAt(0).children()).to.have.length(1);
+        expect(wrapper.find('#table-row-0').childAt(0).
+          children()).to.have.length(1);
       }));
     });
 

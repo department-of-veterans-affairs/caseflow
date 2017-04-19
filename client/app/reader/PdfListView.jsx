@@ -76,7 +76,7 @@ export class PdfListView extends React.Component {
         {
           valueFunction: (doc) => {
             if (doc.id === this.props.lastRead) {
-              return rightTriangle()
+              return rightTriangle();
             }
           }
         },

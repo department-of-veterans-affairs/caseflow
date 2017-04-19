@@ -376,7 +376,7 @@ const mapDispatchToProps = (dispatch) => ({
       payload: {
         docId
       }
-    })
+    });
   }
 });
 
