@@ -34,13 +34,11 @@ describe('PdfUI', () => {
       it('renders the title', () => {
         expect(wrapper.find('Button').find({ name: 'newTab' }).
           children().
-          text()).to.eq(doc.filename);
+          text()).to.eq(doc.type);
       });
 
       it('renders the page number', () => {
-        expect(wrapper.find('div').
-          filterWhere((node) => node.
-            text() === 'Page 1 of 1')).to.have.length(1);
+        expect(wrapper.text()).to.include('Page 1 of 1');
       });
 
       it('renders the zoom buttons', () => {

@@ -34,20 +34,20 @@ export default class AnnotationStorage {
       annotation.page = pageNumber;
       annotation.documentId = documentId;
 
-      let allAnnotations = this.getAnnotationByDocumentId(documentId);
-
-      allAnnotations.push(annotation);
-
-      // Keep the array sorted
-      this.storedAnnotations[documentId] = allAnnotations.sort(this.sortAnnotations);
       let data = ApiUtil.convertToSnakeCase({ annotation });
 
       ApiUtil.post(`/document/${documentId}/annotation`, { data }).
           then((response) => {
-
+            let allAnnotations = this.getAnnotationByDocumentId(documentId);
             let responseObject = JSON.parse(response.text);
 
             annotation.uuid = responseObject.id;
+            annotation.id = responseObject.id;
+            allAnnotations.push(annotation);
+
+            // Keep the array sorted
+            this.storedAnnotations[documentId] =
+              allAnnotations.sort(this.sortAnnotations);
             resolve(annotation);
             this.onCommentChange();
           }, () => {
