@@ -85,10 +85,7 @@ Rails.application.routes.draw do
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#show'
-  
-  get "help_dispatch/show" => "help_dispatch#show"
-  
-
+    
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
