@@ -138,14 +138,16 @@ export default class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-alt cf-comment-headding">
+          <div className="cf-heading-alt">
             Comments
+            <span className="cf-right-side cf-add-comment-button">
+              <Button
+                name="AddComment"
+                onClick={this.props.onAddComment}>
+                <span>{ plusIcon() } &nbsp; Add a Comment</span>
+              </Button>
+            </span>
           </div>
-          <Button
-            name="AddComment"
-            onClick={this.props.onAddComment}>
-            { plusIcon() } Add a Comment
-          </Button>
         </div>
 
         <div className="cf-comment-wrapper">

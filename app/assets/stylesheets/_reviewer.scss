@@ -31,7 +31,6 @@ $bookmark-yellow: #efdf1a;
   right: 0;
   left: 0;
   min-height: 400px;
-  z-index: 1;
 }
 
 .cf-pdf-container {
@@ -100,21 +99,13 @@ svg[aria-hidden=true],
   padding: 0 30px;
 }
 
-.cf-comment-headding {
-  margin-bottom: 10px;
-}
-
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 348px;
+  top: 338px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
-}
-
-.cf-pdf-comment-list {
-  padding-top: 10px;
 }
 
 .cf-pdf-toolbar {
@@ -218,6 +209,10 @@ svg[aria-hidden=true],
   text-transform: uppercase;
 }
 
+.cf-add-comment-button {
+  margin-top: -20px;
+}
+
 .cf-pdf-meta-title {
   margin-top: 0;
   margin-bottom: 10px;
@@ -298,6 +293,7 @@ svg[aria-hidden=true],
 .cf-document-category-picker {
   list-style-type: none;
   padding-left: 0;
+  padding-bottom: 5px;
 
   .cf-category-selector {
     display: flex;
