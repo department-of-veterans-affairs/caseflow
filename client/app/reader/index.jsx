@@ -12,7 +12,6 @@ const initialState = {
     pdf: {
     },
     pdfList: {
-
     }
   },
   documents: {
