@@ -66,7 +66,8 @@ describe User do
         "Establish Claim" => { enabled: false },
         "Manage Claim Establishment" => { enabled: false },
         "Certify Appeal" => { enabled: false },
-        "CertificationV2" => { enabled: false }
+        "CertificationV2" => { enabled: false },
+        "Reader" => { enabled: false }
       }
       it { is_expected.to eq result }
     end
@@ -78,7 +79,8 @@ describe User do
         "Establish Claim" => { enabled: false },
         "Manage Claim Establishment" => { enabled: true },
         "Certify Appeal" => { enabled: false },
-        "CertificationV2" => { enabled: false }
+        "CertificationV2" => { enabled: false },
+        "Reader" => { enabled: false }
       }
       it { is_expected.to eq result }
     end
