@@ -10,13 +10,15 @@ class Generators::Issue
           "03 - All Others",
           "5252 - Thigh, limitation of flexion of"
         ],
-        program: "02 - Compensation",
-        new_material: false
+        program_description: "02 - Compensation",
+        program: :compensation,
+        type: :service_connection,
+        category: :knee
       }
     end
 
     def build(attrs = {})
-      Issue.new(default_attrs.merge(attrs))
+      ::Issue.new(default_attrs.merge(attrs))
     end
   end
 end

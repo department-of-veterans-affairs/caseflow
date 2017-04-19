@@ -1,31 +1,9 @@
-require_relative "../issue"
-
 class VACOLS::Issue < VACOLS::Record
   self.table_name = "vacols.issues"
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
   # :nocov:
-  def self.new_material?(issue)
-    issue["issprog"] == "02" &&
-      issue["isscode"] == "15" &&
-      issue["isslev1"] == "04"
-  end
-
-  def self.load_from_vacols(issue)
-    description = ["#{issue['isscode']} - #{issue['isscode_label']}"]
-    description.push("#{issue['isslev1']} - #{issue['isslev1_label']}") if issue["isslev1"]
-    description.push("#{issue['isslev2']} - #{issue['isslev2_label']}") if issue["isslev2"]
-    description.push("#{issue['isslev3']} - #{issue['isslev3_label']}") if issue["isslev3"]
-
-    Issue.new(
-      program: "#{issue['issprog']} - #{issue['issprog_label']}",
-      description: description,
-      disposition: VACOLS::Case::DISPOSITIONS[issue["issdc"]] || "Other",
-      new_material: new_material?(issue)
-    )
-  end
-
   # rubocop:disable MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,

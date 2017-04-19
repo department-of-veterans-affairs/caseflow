@@ -254,23 +254,23 @@ describe Appeal do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant? }
 
-    context "is false if no allowed issues" do
-      let(:issues) { [{ new_material: false, disposition: "Remand" }] }
+    context "when no allowed issues" do
+      let(:issues) { [Generators::Issue.build(disposition: :remand)] }
 
       it { is_expected.to be_falsey }
     end
 
-    context "is false if allowed issues are new material" do
-      let(:issues) { [{ new_material: true, disposition: "Allowed" }] }
+    context "when the allowed issues are new material" do
+      let(:issues) { [Generators::Issue.build(disposition: :allowed, category: :new_material)] }
 
       it { is_expected.to be_falsey }
     end
 
-    context "is true" do
+    context "when there's a mix of allowed and remanded issues" do
       let(:issues) do
         [
-          { new_material: false, disposition: "Allowed" },
-          { new_material: false, disposition: "Remand" }
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :remand)
         ]
       end
 
@@ -279,26 +279,29 @@ describe Appeal do
   end
 
   context "#full_grant?" do
+    let(:issues) { [] }
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
+    end
     subject { appeal.full_grant? }
-    context "is false if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+
+    context "when status is Remand" do
+      let(:status) { "Remand" }
       it { is_expected.to be_falsey }
     end
 
-    context "is false if only new-material allowed issues" do
-      let(:issues) { [{ new_material: true, disposition: "Allowed" }] }
-      let(:appeal) do
-        Generators::Appeal.build(vacols_id: "123", status: "Complete", issues: issues)
-      end
-      it { is_expected.to be_falsey }
-    end
+    context "when status is Complete" do
+      let(:status) { "Complete" }
 
-    context "is true if non-new-material allowed issues" do
-      let(:issues) { [{ new_material: false, disposition: "Allowed" }] }
-      let(:appeal) do
-        Generators::Appeal.build(vacols_id: "123", status: "Complete", issues: issues)
+      context "when all issues are new-material allowed" do
+        let(:issues) { [Generators::Issue.build(disposition: :allowed, category: :new_material)] }
+        it { is_expected.to be_falsey }
       end
-      it { is_expected.to be_truthy }
+
+      context "when at least one issue is not new-material allowed" do
+        let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 
@@ -317,8 +320,8 @@ describe Appeal do
     context "is true if new-material allowed issue" do
       let(:issues) do
         [
-          { new_material: true, disposition: "Allowed" },
-          { new_material: false, disposition: "Remand" }
+          Generators::Issue.build(disposition: :allowed, category: :new_material),
+          Generators::Issue.build(disposition: :remand)
         ]
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
@@ -328,25 +331,25 @@ describe Appeal do
 
   context "#decision_type" do
     subject { appeal.decision_type }
-    context "is a partial grant" do
+    context "when it has a mix of allowed and granted issues" do
       let(:issues) do
         [
-          { new_material: false, disposition: "Allowed" },
-          { new_material: false, disposition: "Remand" }
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :remand)
         ]
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to eq("Partial Grant") }
     end
 
-    context "is a full grant" do
-      let(:issues) { [{ new_material: false, disposition: "Allowed" }] }
+    context "when it has a non-new-material allowed issue" do
+      let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete", issues: issues) }
       it { is_expected.to eq("Full Grant") }
     end
 
-    context "is a remand" do
-      let(:issues) { [{ new_material: false, disposition: "Remand" }] }
+    context "when it has a remanded issue" do
+      let(:issues) { [Generators::Issue.build(disposition: :remand)] }
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
       it { is_expected.to eq("Remand") }
     end

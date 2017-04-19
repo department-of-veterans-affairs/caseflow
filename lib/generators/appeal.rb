@@ -51,7 +51,7 @@ class Generators::Appeal
           disposition: "Remanded",
           decision_date: 7.days.ago,
           issues: [
-            { disposition: "Remand", new_material: false }
+            { disposition: :remand, program: :compensation, type: :service_connection, category: :knee }
           ]
         },
         partial_grant_decided: {
@@ -59,8 +59,8 @@ class Generators::Appeal
           disposition: "Allowed",
           decision_date: 7.days.ago,
           issues: [
-            { disposition: "Remand", new_material: false },
-            { disposition: "Allowed", new_material: false }
+            { disposition: :remand, program: :compensation, type: :service_connection, category: :knee },
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
           ]
         },
         full_grant_decided: {
@@ -70,7 +70,7 @@ class Generators::Appeal
           outcoding_date: 2.days.ago,
           decision_date: 7.days.ago,
           issues: [
-            { disposition: "Allowed", new_material: false }
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
           ]
         }
       }
@@ -128,7 +128,9 @@ class Generators::Appeal
     private
 
     def set_vacols_issues(appeal:, issues:)
-      (issues ||= []).map! { |issue| Generators::Issue.build(issue) }
+      (issues ||= []).map! do |issue|
+        issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
+      end
 
       Fakes::AppealRepository.issue_records ||= {}
       Fakes::AppealRepository.issue_records[appeal.vacols_id] = issues
