@@ -197,7 +197,7 @@ class Fakes::AppealRepository
     ]
   end
 
-  def self.establish_claim_documents
+  def self.establish_claim_one_decision
     certification_documents + [
       Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago, category_other: true)
     ]
@@ -209,6 +209,10 @@ class Fakes::AppealRepository
     ]
   end
 
+  def self.establish_claim_no_decisions
+    certification_documents + []
+  end
+
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
     50.times.each do |i|
@@ -216,7 +220,7 @@ class Fakes::AppealRepository
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
         vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
-        documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
+        documents: i.even? ? establish_claim_one_decision : establish_claim_multiple_decisions
       )
     end
   end

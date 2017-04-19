@@ -257,6 +257,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("This veteran does not have a social security number")
     end
 
+    context "Appeal with no documents or documents unable to be loaded" do
+      let(:appeal) do
+        Generators::Appeal.create(vacols_record: vacols_record, documents: [])
+      end
+
+      scenario "View a claim with no decision documents" do
+        visit "/dispatch/establish-claim"
+        safe_click_on "Establish next claim"
+        expect(page).to have_content("Unable to load decision document")
+      end
+    end
+
     context "For an appeal with multiple possible decision documents in VBMS" do
       let(:documents) do
         [
