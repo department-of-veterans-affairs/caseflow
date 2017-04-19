@@ -255,7 +255,7 @@ describe Appeal do
     subject { appeal.partial_grant? }
 
     context "when no allowed issues" do
-      let(:issues) { [Generators::Issue.build(disposition: :remand)] }
+      let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
 
       it { is_expected.to be_falsey }
     end
@@ -270,7 +270,7 @@ describe Appeal do
       let(:issues) do
         [
           Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remand)
+          Generators::Issue.build(disposition: :remanded)
         ]
       end
 
@@ -321,7 +321,7 @@ describe Appeal do
       let(:issues) do
         [
           Generators::Issue.build(disposition: :allowed, category: :new_material),
-          Generators::Issue.build(disposition: :remand)
+          Generators::Issue.build(disposition: :remanded)
         ]
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
@@ -335,7 +335,7 @@ describe Appeal do
       let(:issues) do
         [
           Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remand)
+          Generators::Issue.build(disposition: :remanded)
         ]
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }

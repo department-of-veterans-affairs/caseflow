@@ -11,6 +11,36 @@ describe Issue do
                             category: category)
   end
 
+  context ".load_from_vacols" do
+    subject { Issue.load_from_vacols(issue_hash) }
+    let(:issue_hash) do
+      # NOTE: This is the exact structure pulled from VACOLS
+      # please do not touch this!
+      {"isskey"=>"12345678",
+        "issseq"=>1,
+        "issdc"=>"3",
+        "issdesc"=>nil,
+        "issprog"=>"02",
+        "isscode"=>"15",
+        "isslev1"=>"02",
+        "isslev2"=>nil,
+        "isslev3"=>nil,
+        "issprog_label"=>"Compensation",
+        "isscode_label"=>"1151 Eligibility",
+        "isslev1_label"=>"Other",
+        "isslev2_label"=>nil,
+        "isslev3_label"=>nil}
+    end
+
+    it "assigns values properly" do
+      expect(subject.program).to eq(:compensation)
+      expect(subject.program_description).to eq('02 - Compensation')
+      expect(subject.type).to eq(:service_connection)
+      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other"])
+      expect(subject.disposition).to eq(:remanded)
+    end
+  end
+
   context "#allowed?" do
     subject { issue.allowed? }
 
@@ -21,7 +51,7 @@ describe Issue do
     end
 
     context "when disposition is not allowed" do
-      let(:disposition) { :remand }
+      let(:disposition) { :remanded }
 
       it { is_expected.to be_falsey }
     end
@@ -75,7 +105,7 @@ describe Issue do
       end
 
       context "when non-allowed disposition" do
-        let(:disposition) { :remand }
+        let(:disposition) { :remanded }
         it { is_expected.to be_falsey }
       end
     end
@@ -84,18 +114,18 @@ describe Issue do
       let(:category) { :new_material }
 
       context "when allowed disposition" do
-        let(:disposition) { :remand }
+        let(:disposition) { :remanded }
         it { is_expected.to be_falsey }
       end
 
       context "when non-allowed disposition" do
-        let(:disposition) { :remand }
+        let(:disposition) { :remanded }
         it { is_expected.to be_falsey }
       end
     end
 
     context "when non-allowed disposition" do
-      let(:disposition) { :remand }
+      let(:disposition) { :remanded }
 
       it "returns false" do
         expect(issue.allowed?).to be_falsey

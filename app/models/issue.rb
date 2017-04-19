@@ -41,10 +41,10 @@ class Issue
   class << self
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def load_from_vacols(hash)
-      description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
-      description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
-      description.push("#{hash['isslev2']} - #{hash['isslev2_label']}") if hash["isslev2"]
-      description.push("#{hash['isslev3']} - #{hash['isslev3_label']}") if hash["isslev3"]
+      description = ["#{hash["isscode"]} - #{hash["isscode_label"]}"]
+      description.push("#{hash["isslev1"]} - #{hash["isslev1_label"]}") if hash["isslev1"]
+      description.push("#{hash["isslev2"]} - #{hash["isslev2_label"]}") if hash["isslev2"]
+      description.push("#{hash["isslev3"]} - #{hash["isslev3_label"]}") if hash["isslev3"]
 
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
 
@@ -52,10 +52,10 @@ class Issue
                     .parameterize.underscore.to_sym
 
       new(
-        program: PROGRAMS[program_code],
-        type: TYPES[issue_code],
+        program: PROGRAMS[hash["issprog"]],
+        type: TYPES[hash["isscode"]],
         category: CATEGORIES[category_code],
-        program_description: "#{issue['issprog']} - #{issue['issprog_label']}",
+        program_description: "#{hash["issprog"]} - #{hash["issprog_label"]}",
         description: description,
         disposition: disposition
       )

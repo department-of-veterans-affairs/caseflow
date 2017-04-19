@@ -51,7 +51,7 @@ class Generators::Appeal
           disposition: "Remanded",
           decision_date: 7.days.ago,
           issues: [
-            { disposition: :remand, program: :compensation, type: :service_connection, category: :knee }
+            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee }
           ]
         },
         partial_grant_decided: {
@@ -59,7 +59,7 @@ class Generators::Appeal
           disposition: "Allowed",
           decision_date: 7.days.ago,
           issues: [
-            { disposition: :remand, program: :compensation, type: :service_connection, category: :knee },
+            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
             { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
           ]
         },
