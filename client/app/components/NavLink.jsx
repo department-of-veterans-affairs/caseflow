@@ -1,21 +1,18 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 // To be used with the "StickyNav" component
 
 export default class NavLink extends React.Component {
   render() {
     let {
       anchor,
-      name,
-      subsection
+      name
     } = this.props;
-
-    // This is to add subsections within the navigation
-    if (subsection === true) {
-      return <ul className="usa-sidenav-sub_list">
-        <li><a href={anchor}>{name}</a></li>)
-      </ul>;
-    }
 
     return <li><a href={anchor}>{name}</a></li>;
   }
 }
+
+NavLink.propTypes = {
+  anchor: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
+};

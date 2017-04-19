@@ -17,31 +17,102 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
 export default function StyleGuideIndex() {
 
+  let componentLinks = [
+    {
+      anchor: '/styleguide#',
+      name: 'Introduction'
+    },
+    {
+      anchor: '#typography',
+      name: 'Typography'
+    },
+    {
+      anchor: '#colors',
+      name: 'Colors'
+    },
+    {
+      anchor: '#buttons',
+      name: 'Buttons'
+    },
+    {
+      anchor: '#search',
+      name: 'Search'
+    },
+    {
+      anchor: '#dropdown',
+      name: 'Dropdown Menus'
+    },
+    {
+      anchor: '#checkboxes',
+      name: 'Checkboxes'
+    },
+    {
+      anchor: '#radios',
+      name: 'Radios'
+    },
+    {
+      anchor: '#date_input',
+      name: 'Date Input'
+    },
+    {
+      anchor: '#tables',
+      name: 'Tables'
+    },
+    {
+      anchor: '#tabs',
+      name: 'Tabs'
+    },
+    {
+      anchor: '#accordions',
+      name: 'Accordions'
+    },
+    {
+      anchor: '#forms_fields',
+      name: 'Forms Fields'
+    },
+    {
+      anchor: '#loading_buttons',
+      name: 'Loading Buttons'
+    },
+    {
+      anchor: '#alerts',
+      name: 'Alerts'
+    },
+    {
+      anchor: '#layout',
+      name: 'Layout'
+    },
+    {
+      anchor: '#messages',
+      name: 'Messages'
+    },
+    {
+      anchor: '#branding',
+      name: 'Branding'
+    },
+    {
+      anchor: '#dashboard',
+      name: 'Dashboard'
+    },
+    {
+      anchor: '#modals',
+      name: 'Modals'
+    },
+    {
+      anchor: '#progress_bar',
+      name: 'Progress Bar'
+    }
+  ];
+
 /* eslint-disable max-len */
 
   return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
-        <NavLink anchor="/styleguide#" name="Introduction"></NavLink>
-        <NavLink anchor="#typography" name="Typography"></NavLink>
-        <NavLink anchor="#colors" name="Colors"></NavLink>
-        <NavLink anchor="#buttons" name="Buttons"></NavLink>
-        <NavLink anchor="#search" name="Search"></NavLink>
-        <NavLink anchor="#dropdown" name="Dropdown Menus"></NavLink>
-        <NavLink anchor="#checkboxes" name="Checkboxes"></NavLink>
-        <NavLink anchor="#radios" name="Radio Fields"></NavLink>
-        <NavLink anchor="#date_input" name="Date Input"></NavLink>
-        <NavLink anchor="#tables" name="Tables"></NavLink>
-        <NavLink anchor="#tabs" name="Tabs"></NavLink>
-        <NavLink anchor="#accordions" name="Accordions"></NavLink>
-        <NavLink anchor="#forms_fields" name="Forms Fields"></NavLink>
-        <NavLink anchor="#loading_buttons" name="Loading Buttons"></NavLink>
-        <NavLink anchor="#alerts" name="Alerts"></NavLink>
-        <NavLink anchor="#layout" name="Layout"></NavLink>
-        <NavLink anchor="#messages" name="Messages"></NavLink>
-        <NavLink anchor="#branding" name="Branding"></NavLink>
-        <NavLink anchor="#dashboard" name="Dashboard"></NavLink>
-        <NavLink anchor="#modals" name="Modals"></NavLink>
-        <NavLink anchor="#progress_bar" name="Progress Bar"></NavLink>
+        {
+          componentLinks.map((link) => (
+            <NavLink anchor={link.anchor} name={link.name}/>
+          ))
+        }
       </StickyNav>
       <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
