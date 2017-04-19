@@ -50,20 +50,35 @@ RSpec.feature "Reader" do
   scenario "PdfListView Dropdown" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-    expect(all(".cf-dropdown-filter")).to be_empty
+    def expect_dropdown_filter_to_be_hidden
+      expect(all(".cf-dropdown-filter")).to be_empty
+    end
+
+    def expect_dropdown_filter_to_be_visible
+      expect(all(".cf-dropdown-filter").count).to eq(1)
+    end
+    
+    expect_dropdown_filter_to_be_hidden
 
     find("#categories-header .cf-icon-button").click
-    expect(all(".cf-dropdown-filter").count).to eq(1)
+    expect_dropdown_filter_to_be_visible
 
     find(".checkbox-wrapper-procedural").click
     expect(find("#procedural", visible: false).checked?).to be true
 
     find("#receipt-date-header").click
-    expect(all(".cf-dropdown-filter")).to be_empty
+    expect_dropdown_filter_to_be_hidden
 
     find("#categories-header .cf-icon-button").click
+    expect_dropdown_filter_to_be_visible
 
     expect(find("#procedural", visible: false).checked?).to be true
+
+    find("#categories-header .cf-icon-button").send_keys :enter
+    expect_dropdown_filter_to_be_hidden
+
+    find("#categories-header .cf-icon-button").send_keys :enter
+    expect_dropdown_filter_to_be_visible
   end
 
   scenario "Add comment" do
