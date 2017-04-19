@@ -1,13 +1,9 @@
 import React, { PropTypes } from 'react';
-import FormField from '../util/FormField';
-import BaseForm from '../containers/BaseForm';
-
 import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
-export default class EditComment extends BaseForm {
+export default class EditComment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
