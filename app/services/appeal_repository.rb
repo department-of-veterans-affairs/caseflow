@@ -312,6 +312,8 @@ class AppealRepository
               end
     documents = send_and_log_request(sanitized_id, request)
 
+    Rails.logger.info("Document list length: #{documents.length}")
+
     documents.map do |vbms_document|
       Document.from_vbms_document(vbms_document)
     end
