@@ -7,18 +7,15 @@ class Veteran
 
   BGS_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
-    address_line3 city state country zip_code
+    address_line3 city state country zip_code military_postal_type_code
+    military_post_office_type_code
   ).freeze
-
-  MILITARY_ADDRESS_STATES = %w(AE AA AP).freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
 
   # Convert to hash used in AppealRepository.establish_claim!
   def to_vbms_hash
-    vbms_attributes.each_with_object({}) do |attribute, vbms_hash|
-      vbms_hash[attribute] = send(attribute)
-    end
+    military_address? ? military_address_vbms_hash : base_vbms_hash
   end
 
   def load_bgs_record!
@@ -39,7 +36,7 @@ class Veteran
   private
 
   def address_type
-    return "OVR" if MILITARY_ADDRESS_STATES.include?(state)
+    return "OVR" if military_address?
     return "INT" if country != "USA"
     "" # Empty string means the address doesn't have a special type
   end
@@ -53,6 +50,23 @@ class Veteran
   end
 
   def vbms_attributes
-    BGS_ATTRIBUTES + [:address_type]
+    BGS_ATTRIBUTES - [:military_postal_type_code, :military_post_office_type_code] + [:address_type]
+  end
+
+  def military_address?
+    !military_postal_type_code.blank?
+  end
+
+  def base_vbms_hash
+    vbms_attributes.each_with_object({}) do |attribute, vbms_hash|
+      vbms_hash[attribute] = send(attribute)
+    end
+  end
+
+  def military_address_vbms_hash
+    base_vbms_hash.merge(
+      state: military_postal_type_code,
+      city: military_post_office_type_code
+    )
   end
 end
