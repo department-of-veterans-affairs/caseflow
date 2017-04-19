@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { commentIcon } from './RenderFunctions';
+import { commentIcon, selectedCommentIcon } from './RenderFunctions';
 
 export default class CommentIcon extends React.Component {
   onClick = () => {

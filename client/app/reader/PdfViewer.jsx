@@ -210,7 +210,6 @@ export default class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
-            scrollToComment={this.props.scrollToComment}
             onCommentScrolledTo={this.props.onCommentScrolledTo}
             onIconMoved={this.onIconMoved}
           />
