@@ -30,7 +30,7 @@ class Veteran
   end
 
   def self.bgs
-    @bgs ||= BGSService.new
+    BGSService.new
   end
 
   private
