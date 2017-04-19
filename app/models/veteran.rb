@@ -15,7 +15,7 @@ class Veteran
 
   # Convert to hash used in AppealRepository.establish_claim!
   def to_vbms_hash
-    military_address? ? military_address_vbms_hash : basic_address_vbms_hash
+    military_address? ? military_address_vbms_hash : base_vbms_hash
   end
 
   def load_bgs_record!
@@ -57,7 +57,7 @@ class Veteran
     !military_postal_type_code.blank?
   end
 
-  def basic_address_vbms_hash
+  def base_vbms_hash
     vbms_attributes.each_with_object({}) do |attribute, vbms_hash|
       vbms_hash[attribute] = send(attribute)
     end
