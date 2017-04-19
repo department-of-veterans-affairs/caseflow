@@ -108,6 +108,7 @@ class VACOLS::Case < VACOLS::Record
     (
       select ISSKEY,
 
+      count(case when ISSDC = '3' then 1 end) ISSUE_CNT_REMAND,
       count(case when
       (
         ISSDC = '1' and not
