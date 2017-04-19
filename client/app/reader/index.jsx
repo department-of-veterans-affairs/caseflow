@@ -7,7 +7,16 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
-const readerReducer = (state = {}, action = {}) => {
+const initialState = {
+  ui: {
+    pdf: {
+    }
+  },
+  documents: {
+  }
+};
+
+export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -36,12 +45,44 @@ const readerReducer = (state = {}, action = {}) => {
         }
       }
     );
+  case Constants.SET_CURRENT_RENDERED_FILE:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'currentRenderedFile')
+        }
+      }
+    );
+  case Constants.SCROLL_TO_COMMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'scrollToComment')
+        }
+      }
+    );
+  case Constants.TOGGLE_COMMENT_LIST:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      }
+    );
   default:
     return state;
   }
 };
 
-const store = createStore(readerReducer, null, applyMiddleware(logger));
+const store = createStore(readerReducer, initialState, applyMiddleware(logger));
 
 const Reader = (props) => {
   return <Provider store={store}>

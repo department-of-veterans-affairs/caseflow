@@ -1,5 +1,5 @@
 import React from 'react';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
@@ -11,6 +11,7 @@ import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
+import { readerReducer } from '../../../app/reader/index';
 import PdfJsStub from '../../helpers/PdfJsStub';
 
 /* eslint-disable camelcase */
@@ -24,7 +25,7 @@ describe('DecisionReviewer', () => {
     ApiUtilStub.beforeEach();
 
     wrapper = mount(
-      <Provider store={createStore(_.identity)}>
+      <Provider store={createStore(readerReducer)}>
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
@@ -206,14 +207,14 @@ describe('DecisionReviewer', () => {
 
       it('can be clicked on to jump to icon', asyncTest(async() => {
         let commentId = 1;
+        let jumpTo = sinon.spy(wrapper.find('DecisionReviewer').
+          getNode(), 'onJumpToComment');
 
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
-        let pdfViewer = wrapper.find('PdfViewer').getNode();
-        let jumpTo = sinon.spy(pdfViewer, 'onJumpToComment');
 
         wrapper.find('a').findWhere(
           (link) => link.text() === '+ Add a Comment').
@@ -228,7 +229,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         wrapper.find('#comment0').simulate('click');
-        expect(jumpTo.calledWith(commentId)).to.be.true;
+        assert(jumpTo.calledWith(sinon.match({ id: commentId })));
       }));
 
       it('highlighted by clicking on the icon', asyncTest(async() => {
@@ -247,10 +248,46 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
       }));
+
+      it('comment has page number', asyncTest(async() => {
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[1].type).
+          simulate('mouseUp');
+
+        expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
+      }));
     });
   });
 
   context('PDF list view', () => {
+    context('when expanded comments', () => {
+      it('can view comments', () => {
+        expect(wrapper.text()).to.not.include('Test Comment');
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        expect(wrapper.text()).to.include('Test Comment');
+      });
+
+      it('can jump to comment', asyncTest(async() => {
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        wrapper.find('#button-jumpToComment').simulate('click');
+
+        let scrolledTo = sinon.spy(wrapper.find('DecisionReviewer').
+          getNode(), 'onCommentScrolledTo');
+
+        // verify the page is on the pdf view
+        expect(wrapper.text()).to.include('View all documents');
+        await pause();
+
+        // Make sure post scroll callback is called
+        expect(scrolledTo.called).to.be.true;
+      }));
+
+      it('page number is displayed', asyncTest(async() => {
+        wrapper.find('#expand-2-comments-button').simulate('click');
+        expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
+      }));
+    });
+
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
         expect(wrapper.find('#receipt-date-header').

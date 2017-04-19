@@ -28,11 +28,12 @@ export default class Footer extends React.Component {
   render() {
     let cancelModalDisplay = this.state.modal;
     let {
-      certificationId,
       loading,
       disableContinue,
+      hideContinue,
       onClickContinue,
-      nextPageUrl
+      nextPageUrl,
+      certificationId
     } = this.props;
 
     return <div className="cf-app-segment">
@@ -41,7 +42,7 @@ export default class Footer extends React.Component {
             onClick={this.handleModalOpen}
             classNames={["cf-btn-link"]}
       />
-      <Link to={nextPageUrl || '#'}>
+      { !hideContinue && <Link to={nextPageUrl || '#'}>
         <Button type="button"
           name="Continue"
           classNames={["cf-push-right"]}
@@ -51,6 +52,7 @@ export default class Footer extends React.Component {
           Continue
         </Button>
       </Link>
+      }
       {cancelModalDisplay && <CancelCertificationModal
         title="Cancel Certification"
         certificationId={certificationId}
