@@ -5,6 +5,7 @@ import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import { rightTriangle } from '../components/RenderFunctions';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import * as Constants from './constants';
@@ -13,7 +14,7 @@ import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 import IconButton from '../components/IconButton';
 
-const NUMBER_OF_COLUMNS = 5;
+const NUMBER_OF_COLUMNS = 6;
 
 const FilterIcon = (props) =>
   <IconButton {...props} className={'table-icon bordered-icon'} iconName="fa-filter" />;
@@ -109,6 +110,13 @@ export class PdfListView extends React.Component {
       }
 
       return [
+        {
+          valueFunction: (doc) => {
+            if (doc.id === this.props.lastRead) {
+              return rightTriangle();
+            }
+          }
+        },
         {
           header: <div
             id="categories-header"
@@ -246,19 +254,9 @@ export class PdfListView extends React.Component {
   }
 }
 
-PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  filterBy: PropTypes.string.isRequired,
-  numberOfDocuments: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired,
-  onJumpToComment: PropTypes.func,
-  sortBy: PropTypes.string,
-  reduxDocuments: PropTypes.object.isRequired,
-  handleToggleCommentOpened: PropTypes.func.isRequired
-};
-
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'pdfList'),
+  lastRead: _.get(state, 'ui.pdfList.lastRead'),
 
   // Should be merged with documents when we finish integrating redux
   reduxDocuments: state.documents
@@ -292,4 +290,18 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PdfListView);
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfListView);
+
+PdfListView.propTypes = {
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  filterBy: PropTypes.string.isRequired,
+  numberOfDocuments: PropTypes.number.isRequired,
+  onFilter: PropTypes.func.isRequired,
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string,
+  reduxDocuments: PropTypes.object.isRequired,
+  handleToggleCommentOpened: PropTypes.func.isRequired,
+  lastRead: PropTypes.number
+};
