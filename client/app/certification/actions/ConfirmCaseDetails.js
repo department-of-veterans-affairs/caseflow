@@ -23,7 +23,7 @@ export const changeRepresentativeType = (representativeType) => ({
 });
 
 export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
-  type: Constants.UPDATE_PROGRESS_BAR,
+  type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
   payload: {
     otherRepresentativeType
   }
@@ -62,7 +62,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   };
   /* eslint-enable "camelcase" */
 
-  ApiUtil.put(`/certifications/${params.vacolsId}/update`, { data: { update } }).
+  ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {

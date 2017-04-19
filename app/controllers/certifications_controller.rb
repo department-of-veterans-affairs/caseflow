@@ -20,7 +20,7 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def update
+  def update_v2
     permitted = params
                 .require("update")
                 .permit("representative_name",
