@@ -7,6 +7,7 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha'],
+    reporters: ['mocha'],
     singleRun: true,
 
     browserConsoleLogOptions: {
