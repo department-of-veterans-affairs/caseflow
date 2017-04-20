@@ -10,7 +10,7 @@ import React from 'react';
  * @returns {string} The HTML for the loading symbol.
  */
 
-export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color = '#844E9F') {
+export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color = '#844E9F') {
 
   let imgSize = size;
 
@@ -22,7 +22,7 @@ export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color =
     );
   }
 
-  let style = { 'marginLeft': `-${imgSize}` };
+  const style = { 'marginLeft': `-${imgSize}` };
 
   return (
       <div>
@@ -85,8 +85,8 @@ export let loadingSymbolHtml = function(text = 'Loading', size = '30px', color =
   );
 };
 
-export let commentIcon = function(selected) {
-  let outlineColor = selected ? '#3e94cf' : '#5C626C';
+export const commentIcon = function(selected) {
+  const outlineColor = selected ? '#3e94cf' : '#5C626C';
 
   return <svg version="1.1" id="Layer_1" width="100%" height="100%" viewBox="0 0 75 75">
       <g>
@@ -127,7 +127,7 @@ export let commentIcon = function(selected) {
     </svg>;
 };
 
-export let closeSymbolHtml = function() {
+export const closeSymbolHtml = function() {
   return (
     <svg width="55" height="55" className="cf-icon-close"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
@@ -140,7 +140,7 @@ export let closeSymbolHtml = function() {
   );
 };
 
-export let successSymbolHtml = function() {
+export const successSymbolHtml = function() {
   return (
     <svg width="55" height="55" class="cf-icon-found"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50">
@@ -153,7 +153,7 @@ export let successSymbolHtml = function() {
   );
 };
 
-export let missingSymbolHtml = function() {
+export const missingSymbolHtml = function() {
   return (
     <svg width="55" height="55" class="cf-icon-missing"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
@@ -167,26 +167,38 @@ export let missingSymbolHtml = function() {
   );
 };
 
-export let checkSymbolHtml = function() {
+export const checkSymbolHtml = function() {
   return (
     <i className="fa fa-check fa-1 cf-tab-check" aria-hidden="true"></i>
   );
 };
 
-export let crossSymbolHtml = function() {
+export const crossSymbolHtml = function() {
   return (
     <i className="fa fa-times fa-1 cf-tab-cross" aria-hidden="true"></i>
   );
 };
 
-export let GithubIcon = function() {
+export const GithubIcon = function() {
   return (
     <i className="fa fa-github fa-1" aria-hidden="true"></i>
   );
 };
 
+export const plusIcon = function() {
+  return <svg width="12px" height="12px" viewBox="0 0 15 15">
+      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+          <g fill-rule="nonzero" fill="#FFFFFF">
+              <g>
+                  <path d="M14.7014925,5.75279851 C14.5026119,5.55391791 14.2609701,5.45451493 13.9769776,5.45451493 L9.54514925,5.45451493 L9.54514925,1.02276119 C9.54514925,0.73880597 9.44570896,0.497238806 9.24690299,0.298358209 C9.04802239,0.0994776119 8.80671642,0 8.52227612,0 L6.47712687,0 C6.1930597,0 5.95156716,0.0993656716 5.75268657,0.298246269 C5.55380597,0.497126866 5.45440299,0.738656716 5.45440299,1.02264925 L5.45440299,5.45455224 L1.02268657,5.45455224 C0.738656716,5.45455224 0.497126866,5.55395522 0.298246269,5.75283582 C0.0993656716,5.95171642 0,6.19302239 0,6.47723881 L0,8.52268657 C0,8.8069403 0.0993283582,9.04828358 0.298208955,9.2469403 C0.497089552,9.44593284 0.738619403,9.54526119 1.02261194,9.54526119 L5.45432836,9.54526119 L5.45432836,13.9772388 C5.45432836,14.261194 5.55376866,14.5029851 5.75264925,14.7017537 C5.95152985,14.9004478 6.19317164,14.9997761 6.47720149,14.9997761 L8.52238806,14.9997761 C8.80664179,14.9997761 9.04802239,14.9004478 9.2469403,14.7017537 C9.44589552,14.5028731 9.54522388,14.2612313 9.54522388,13.9772388 L9.54522388,9.54526119 L13.9769403,9.54526119 C14.261194,9.54526119 14.5026866,9.44593284 14.7014552,9.24697761 C14.9001493,9.04809701 14.9995896,8.80679104 14.9995896,8.52253731 L14.9995896,6.47701493 C14.9995896,6.19287313 14.9003358,5.95141791 14.7013433,5.75264925 L14.7014925,5.75279851 Z" id="Shape"></path>
+              </g>
+          </g>
+      </g>
+    </svg>;
+};
+
 export const docCategoryIcon = (color) => () =>
-  <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <g fill={color}>
               <path d="M4.64092309,1 C3.21738445,1 2,2.16989858 2,3.68789356 L2,17.9336416 C2,18.2762127 2.06871806,18.7149247 2.37159862,19.0431298 C2.67415351,19.371335 3.04184399,19.4258517 3.32062438,19.4258517 C3.47694983,19.4229048 3.62839011,19.3683882 3.75800997,19.2674586 L10.4497163,14.2184033 L17.1414226,19.2674586 C17.2700654,19.3683882 17.4215057,19.4229048 17.5791339,19.4258517 C17.8575886,19.4258517 18.2252791,19.371335 18.5268569,19.0431298 C18.8297375,18.7149247 18.8984556,18.2762127 18.8984556,17.9336416 L18.8984556,3.68789356 C18.8984556,2.16989858 17.6820481,1 16.2585095,1 L4.64092309,1 Z"></path>
@@ -194,4 +206,10 @@ export const docCategoryIcon = (color) => () =>
       </g>
   </svg>;
 
+
+export const rightTriangle = function() {
+  return (
+    <i className="fa fa-caret-right" aria-hidden="true"></i>
+  );
+};
 /* eslint-enable max-len */
