@@ -5,7 +5,7 @@ import Checkbox from '../components/Checkbox';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, categoryToggleStates } = props;
-  const toggleState = categoryToggleStates[categoryName];
+  const toggleState = categoryToggleStates[categoryName] || false;
   const Svg = category.svg;
   const label = <div className="cf-category-selector">
       <Svg />
@@ -25,6 +25,7 @@ CategorySelector.propTypes = {
     humanName: PropTypes.string.isRequired,
     svg: PropTypes.func.isRequired
   }).isRequired,
+  categoryToggleStates: PropTypes.object,
   categoryName: PropTypes.string.isRequired
 };
 
@@ -45,6 +46,11 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle }) => {
         value()
     }
   </ul>;
+};
+
+DocCategoryPicker.propTypes = {
+  handleCategoryToggle: PropTypes.func.isRequired,
+  categoryToggleStates: PropTypes.object
 };
 
 export default DocCategoryPicker;
