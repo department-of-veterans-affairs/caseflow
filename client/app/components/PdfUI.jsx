@@ -70,7 +70,7 @@ export class PdfUI extends React.Component {
     selectedLabels[this.props.label] = true;
 
     return <div>
-      <div className="cf-pdf-header cf-pdf-toolbar">
+      <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <div className="usa-grid-full">
           <span className="usa-width-one-third cf-pdf-buttons-left">
             { this.props.onShowList &&

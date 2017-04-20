@@ -139,7 +139,7 @@ export class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-alt">
+          <div className="cf-heading-comments">
             Comments
             <span className="cf-right-side cf-add-comment-button">
               <Button

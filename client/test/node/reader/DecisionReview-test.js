@@ -146,9 +146,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Click on the add a comment button
-        wrapper.find('a').findWhere(
-          (link) => link.text() === '+ Add a Comment').
-          simulate('click');
+        wrapper.find('#button-AddComment').simulate('click');
 
         // Click on the pdf at the location specified by event
         wrapper.find('#pageContainer1').simulate('click', event);
@@ -216,9 +214,7 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
 
-        wrapper.find('a').findWhere(
-          (link) => link.text() === '+ Add a Comment').
-          simulate('click');
+        wrapper.find('#button-AddComment').simulate('click');
 
         await pause();
         wrapper.find('#pageContainer1').simulate('click', event);

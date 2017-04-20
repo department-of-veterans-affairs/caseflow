@@ -97,6 +97,8 @@ svg[aria-hidden=true],
 }
 
 .cf-sidebar-header {
+  padding-left: 20px;
+  margin-bottom: 10px;
   height: 50px;
   background-color: $color-gray-warm-light;
   line-height: 50px;
@@ -110,7 +112,7 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   position: absolute;
-  top: 338px;
+  top: 328px;
   bottom: 0;
   width: 380px;
   overflow-y: scroll;
@@ -122,6 +124,7 @@ svg[aria-hidden=true],
   height: 50px;
   color: $color-white;
   font-size: 15px;
+  max-width: 100%;
 }
 
 .cf-pdf-header {
@@ -206,10 +209,9 @@ svg[aria-hidden=true],
   }
 }
 
-.cf-heading-alt {
+.cf-heading-comments {
   border-bottom: 1px solid $color-gray-lighter;
-  padding-bottom: 5px;
-  margin-bottom: 20px;
+  padding-bottom: 12px;
   margin-top: 30px;
   font-size: 13px;
   font-weight: 400;
@@ -218,12 +220,11 @@ svg[aria-hidden=true],
 }
 
 .cf-add-comment-button {
-  margin-top: -20px;
+  margin-top: -15px;
 }
 
 .cf-pdf-meta-title {
-  margin-top: 0;
-  margin-bottom: 10px;
+  margin: 0;
 }
 
 .cf-full-page-app {
