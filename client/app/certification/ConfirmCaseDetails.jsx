@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+import * as actions from './actions/ConfirmCaseDetails';
+import { Redirect } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
@@ -44,7 +46,7 @@ const representativeTypeOptions = [
  *
  */
 
-class UnconnectedConfirmCaseDetails extends React.Component {
+export class ConfirmCaseDetails extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -52,15 +54,86 @@ class UnconnectedConfirmCaseDetails extends React.Component {
     this.props.updateProgressBar();
   }
 
-  render() {
-    let { representativeType,
-      onRepresentativeTypeChange,
+  representativeTypeIsNone() {
+    return this.props.representativeType === Constants.representativeTypes.NONE;
+  }
+
+  representativeTypeIsOther() {
+    return this.props.representativeType === Constants.representativeTypes.OTHER;
+  }
+
+  getValidationErrors() {
+    // TODO: consider breaking this and all validation out into separate
+    // modules.
+    let {
       representativeName,
-      onRepresentativeNameChange,
+      representativeType,
+      otherRepresentativeType
+    } = this.props;
+
+    const erroredFields = [];
+
+    // Unless the type of representative is "None",
+    // we need a representative name.
+    if (!representativeName && !this.representativeTypeIsNone()) {
+      erroredFields.push('representativeName');
+    }
+
+    // We always need a representative type.
+    if (!representativeType) {
+      erroredFields.push('representativeType');
+    }
+
+    // If the representative type is "Other",
+    // fill out the representative type.
+    if (this.representativeTypeIsOther() && !otherRepresentativeType) {
+      erroredFields.push('otherRepresentativeType');
+    }
+
+    return erroredFields;
+  }
+
+  onClickContinue() {
+    const erroredFields = this.getValidationErrors();
+
+    if (erroredFields.length) {
+      this.props.onValidationFailed(erroredFields);
+
+      return;
+    }
+
+    this.props.certificationUpdateStart({
+      representativeType: this.props.representativeType,
+      otherRepresentativeType: this.props.otherRepresentativeType,
+      representativeName: this.props.representativeName,
+      vacolsId: this.props.match.params.vacols_id
+    });
+  }
+
+  render() {
+    let {
+      representativeType,
+      changeRepresentativeType,
+      representativeName,
+      changeRepresentativeName,
       otherRepresentativeType,
-      onOtherRepresentativeTypeChange,
+      changeOtherRepresentativeType,
+      validationFailed,
+      loading,
+      updateFailed,
+      updateSucceeded,
       match
     } = this.props;
+
+    if (updateSucceeded) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
+    }
+
+    if (updateFailed) {
+      // TODO: add real error handling and validated error states etc.
+      return <div>500 500 error error</div>;
+    }
 
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
@@ -77,7 +150,7 @@ class UnconnectedConfirmCaseDetails extends React.Component {
           <RadioField name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
-            onChange={onRepresentativeTypeChange}
+            onChange={changeRepresentativeType}
             required={true}/>
 
           {
@@ -85,79 +158,70 @@ class UnconnectedConfirmCaseDetails extends React.Component {
             <TextField
               name="Specify other representative type"
               value={otherRepresentativeType}
-              onChange={onOtherRepresentativeTypeChange}
+              onChange={changeOtherRepresentativeType}
               required={true}/>
           }
 
           <TextField name="Representative name"
             value={representativeName}
-            onChange={onRepresentativeNameChange}
+            onChange={changeRepresentativeName}
             required={true}/>
 
         </div>
 
         <Footer
-          nextPageUrl={`/certifications/${match.params.vacols_id}/confirm_hearing`}
+          disableContinue={validationFailed}
+          loading={loading}
+          onClickContinue={this.onClickContinue.bind(this)}
         />
     </div>;
-
   }
 }
 
+ConfirmCaseDetails.propTypes = {
+  representativeType: PropTypes.string,
+  changeRepresentativeType: PropTypes.func,
+  representativeName: PropTypes.string,
+  changeRepresentativeName: PropTypes.func,
+  otherRepresentativeType: PropTypes.string,
+  changeOtherRepresentativeType: PropTypes.func,
+  match: PropTypes.object.isRequired
+};
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
-    dispatch({
-      type: Constants.UPDATE_PROGRESS_BAR,
-      payload: {
-        currentSection: Constants.progressBarSections.CONFIRM_CASE_DETAILS
-      }
-    });
+    dispatch(actions.updateProgressBar());
   },
-  onRepresentativeNameChange: (representativeName) => {
-    dispatch({
-      type: Constants.CHANGE_REPRESENTATIVE_NAME,
-      payload: {
-        representativeName
-      }
-    });
+
+  changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),
+
+  changeRepresentativeType: (type) => dispatch(actions.changeRepresentativeType(type)),
+
+  changeOtherRepresentativeType: (other) => {
+    dispatch(actions.changeOtherRepresentativeType(other));
   },
-  onRepresentativeTypeChange: (representativeType) => {
-    dispatch({
-      type: Constants.CHANGE_REPRESENTATIVE_TYPE,
-      payload: {
-        representativeType
-      }
-    });
+
+  onValidationFailed: (invalidFields) => {
+    dispatch(actions.onValidationFailed(invalidFields));
   },
-  onOtherRepresentativeTypeChange: (otherRepresentativeType) => {
-    dispatch({
-      type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
-      payload: {
-        otherRepresentativeType
-      }
-    });
+
+  certificationUpdateStart: (props) => {
+    dispatch(actions.certificationUpdateStart(props, dispatch));
   }
 });
 
 const mapStateToProps = (state) => ({
+  updateSucceeded: state.updateSucceeded,
+  updateFailed: state.updateFailed,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
-  otherRepresentativeType: state.otherRepresentativeType
+  otherRepresentativeType: state.otherRepresentativeType,
+  validationFailed: state.validationFailed,
+  invalidFields: state.invalidFields,
+  loading: state.loading
 });
 
-const ConfirmCaseDetails = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedConfirmCaseDetails);
-
-ConfirmCaseDetails.propTypes = {
-  representativeType: PropTypes.string,
-  onRepresentativeTypeChange: PropTypes.func,
-  representativeName: PropTypes.string,
-  onRepresentativeNameChange: PropTypes.func,
-  otherRepresentativeType: PropTypes.string,
-  onOtherRepresentativeTypeChange: PropTypes.func,
-  match: PropTypes.object.isRequired
-};
-
-export default ConfirmCaseDetails;
+)(ConfirmCaseDetails);

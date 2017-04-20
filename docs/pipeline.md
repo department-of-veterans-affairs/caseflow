@@ -20,6 +20,13 @@ When ever a pull request is created, it will automatically create a build on Tra
 ## Code Review
 All PR's must be reviewed by at least one other team member. If two team members paired on the code, then its fine for one of those two to act as the reviewer. It's also encouraged to get extra eyes on code that you feel a little more uncomfortable about.
 
+**Some things to think about when writing your PR description**
+- Check that things look right (add a screenshot or .gif of the feature if relevant, http://www.cockos.com/licecap/)
+- Any integration cases that you ran (file numbers, test setup)
+- Any additional assumptions have I made about why this doesn't break things?
+- "connects #ISSUENUMBER" so the reviewer can see the AC. Add a comment to the original issue if the AC needs to be updated.
+- Anything we should notify all devs about (new build commands, etc)
+
 **Some things to check for in a code review:**
 - Are we duplicating any logic that could be reused instead? This includes hand writing features that we could be using rails for.
 - Every logic path of every added method should have a unit test.

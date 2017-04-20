@@ -106,9 +106,9 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.issues(vacols_id:)
-    VACOLS::Issue.descriptions(vacols_id).map do |issue|
-      VACOLS::Issue.format(issue)
+  def self.issues(vacols_id)
+    VACOLS::CaseIssue.descriptions(vacols_id).map do |issue_hash|
+      Issue.load_from_vacols(issue_hash)
     end
   end
 
@@ -209,6 +209,13 @@ class AppealRepository
 
   def self.certify(appeal)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
+
+    # TODO(alex):
+    # if certification v2 is enabled,
+    # appeal.case_record.bfhr
+    # '1' - Central Office
+    # '2' - Travel Board/Video hearing
+    # '5' - None
 
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
@@ -311,6 +318,8 @@ class AppealRepository
                 VBMS::Requests::ListDocuments.new(sanitized_id)
               end
     documents = send_and_log_request(sanitized_id, request)
+
+    Rails.logger.info("Document list length: #{documents.length}")
 
     documents.map do |vbms_document|
       Document.from_vbms_document(vbms_document)

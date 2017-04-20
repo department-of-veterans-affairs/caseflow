@@ -7,7 +7,13 @@ module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
     frameworks: ['mocha'],
+    reporters: ['mocha'],
     singleRun: true,
+
+    browserConsoleLogOptions: {
+      terminal: true,
+      level: ''
+    },
 
     files: [
       { pattern: karmaTestPattern }

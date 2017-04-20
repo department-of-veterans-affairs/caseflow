@@ -13,6 +13,9 @@ export const linkToSingleDocumentView = (doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
+const ZOOM_RATE = 0.3;
+const MINIMUM_ZOOM = 0.1;
+
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
 //
@@ -40,10 +43,16 @@ export default class PdfUI extends React.Component {
     // let zoomFactor = (this.state.scale + delta) / this.state.scale;
 
     this.setState({
-      scale: this.state.scale + delta
+      scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
     // this.draw(this.props.file,
     //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
+  }
+
+  fitToScreen = () => {
+    this.setState({
+      scale: 1
+    });
   }
 
   onPageChange = (currentPage, numPages) => {
@@ -59,18 +68,41 @@ export default class PdfUI extends React.Component {
     selectedLabels[this.props.label] = true;
 
     return <div className="cf-pdf-container">
-      <div className="cf-pdf-header cf-pdf-toolbar">
-        <div>
-          <span className="cf-pdf-buttons-left">
-            { this.props.onShowList &&
-              <Button
-                name="backToDocuments"
-                classNames={["cf-pdf-button"]}
-                onClick={this.props.onShowList}>
-                <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                &nbsp; View all documents
-              </Button> }
-          </span>
+      <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
+        <span className="usa-width-one-third cf-pdf-buttons-left">
+          { this.props.onShowList &&
+            <Button
+              name="backToDocuments"
+              classNames={["cf-pdf-button"]}
+              onClick={this.props.onShowList}>
+              <i className="fa fa-chevron-left" aria-hidden="true"></i>
+              &nbsp; View all documents
+            </Button> }
+        </span>
+        <span className="usa-width-one-third cf-pdf-buttons-center">
+          <Button
+            name="zoomOut"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.zoom(-ZOOM_RATE)}
+            ariaLabel="zoom out">
+            <i className="fa fa-minus" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="fit"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.fitToScreen}
+            ariaLabel="fit to screen">
+            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="zoomIn"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.zoom(ZOOM_RATE)}
+            ariaLabel="zoom in">
+            <i className="fa fa-plus" aria-hidden="true"></i>
+          </Button>
+        </span>
+        <span className="usa-width-one-third">
           <span className="cf-right-side">
             <DocumentCategoryIcons docId={this.props.doc.id} />
             <Button
@@ -79,10 +111,10 @@ export default class PdfUI extends React.Component {
               ariaLabel="open document in new tab"
               onClick={() => window.open(
                 linkToSingleDocumentView(this.props.doc), '_blank')}>
-              {this.props.doc.filename}
+              {this.props.doc.type}
             </Button>
           </span>
-        </div>
+        </span>
       </div>
       <div className="cf-pdf-navigation">
         { this.props.onPreviousPdf &&
@@ -117,46 +149,14 @@ export default class PdfUI extends React.Component {
           scale={this.state.scale}
           onPageChange={this.onPageChange}
           onCommentClick={this.props.onCommentClick}
+          onCommentScrolledTo={this.props.onCommentScrolledTo}
           onIconMoved={this.props.onIconMoved}
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
-        <div className="usa-grid-full">
-          <div className="usa-width-one-third">
-          </div>
-          <div
-            className="usa-width-one-third cf-pdf-buttons-center cf-pull-right-one-third">
+        <div>
+          <div className="cf-pdf-buttons-center">
             Page {this.state.currentPage} of {this.state.numPages}
-          </div>
-          <div className="usa-width-one-third cf-pdf-buttons-right">
-            <Button
-              name="download"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              ariaLabel="download"
-            >
-              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="zoomOut"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(-0.3)}
-              ariaLabel="zoom out">
-              <i className="fa fa-minus" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="fit"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(1)}
-              ariaLabel="fit to screen">
-              <i className="fa fa-arrows-alt" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="zoomIn"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(0.3)}
-              ariaLabel="zoom in">
-              <i className="fa fa-plus" aria-hidden="true"></i>
-            </Button>
           </div>
         </div>
       </div>
@@ -185,5 +185,6 @@ PdfUI.propTypes = {
   onNextPdf: PropTypes.func,
   onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func,
   onIconMoved: PropTypes.func
 };

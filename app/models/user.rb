@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
     EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
   }.freeze
 
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2"].freeze
+  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
 
   # Because of the funciton character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
