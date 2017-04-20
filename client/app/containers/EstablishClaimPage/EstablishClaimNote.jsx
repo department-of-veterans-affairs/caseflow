@@ -38,7 +38,6 @@ export class EstablishClaimNote extends BaseForm {
         confirmBox: new FormField(!this.props.displayVbmsNote),
         noteField: new FormField(vbmsNote)
       },
-      copied: false
     };
   }
 

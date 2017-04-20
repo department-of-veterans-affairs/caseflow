@@ -50,7 +50,6 @@ export class EstablishClaimEmail extends BaseForm {
         emailField: new FormField(email)
       },
       noEmailNote: note,
-      copied: false
     };
   }
 
