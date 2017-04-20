@@ -2,11 +2,13 @@ import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
+import * as Constants from '../reader/constants';
+import { connect } from 'react-redux';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
-export default class PdfViewer extends React.Component {
+export class PdfViewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -191,6 +193,11 @@ export default class PdfViewer extends React.Component {
     if (nextProps.doc.id !== this.props.doc.id) {
       this.onCommentChange(nextProps.doc.id);
     }
+
+    if (nextProps.scrollToComment &&
+        nextProps.scrollToComment !== this.props.scrollToComment) {
+      this.onCommentClick(nextProps.scrollToComment.id);
+    }
   }
 
   render() {
@@ -247,6 +254,15 @@ export default class PdfViewer extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
+  };
+};
+export default connect(
+  mapStateToProps
+)(PdfViewer);
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
