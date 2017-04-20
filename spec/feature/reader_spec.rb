@@ -173,4 +173,28 @@ RSpec.feature "Reader" do
 
     expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
   end
+
+  scenario "Tags" do
+
+    TAG_TEXT1 = "Medical"
+    TAG_TEXT2 = "Law document"
+
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on documents[0].filename
+    find('.Select-control').click
+    input_element = find('.Select-input > input')
+    input_element.click.native.send_keys(TAG_TEXT1)
+
+    # making sure there is a dropdown showing up when text is entered
+    expect(page).to have_css('.Select-menu-outer')
+
+    # enter the text
+    input_element.send_keys(:enter)
+
+    find('.Select-input > input').click.native.send_keys(TAG_TEXT2, :enter)
+
+    # expecting the multi-selct to have the two new fields
+    expect(page).to have_css('.Select-value-label', text: TAG_TEXT1)
+    expect(page).to have_css('.Select-value-label', text: TAG_TEXT2)
+  end
 end
