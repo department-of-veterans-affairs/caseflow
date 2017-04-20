@@ -98,6 +98,15 @@ class VACOLS::Case < VACOLS::Record
     "5" => :none
   }.freeze
 
+  HEARING_PREFERENCE_TYPES_V2 = {
+    VIDEO: { vacols_value: "2", video_hearing: true },
+    TRAVEL_BOARD: { vacols_value: "2" },
+    WASHINGTON_DC: { vacols_value: "1" },
+    HEARING_TYPE_NOT_SPECIFIED: { vacols_value: "2", video_hearing: true },
+    NO_HEARING_DESIRED: { vacols_value: "5" },
+    HEARING_CANCELLED: { vacols_value: "5" }
+  }.freeze
+
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS

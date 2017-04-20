@@ -210,23 +210,21 @@ class AppealRepository
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
-    # TODO(alex):
-    # if certification v2 is enabled,
-    # appeal.case_record.bfhr
-    # '1' - Central Office
-    # '2' - Travel Board/Video hearing
-    # '5' - None
-
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
+    appeal.case_record.bftbind = nil
+
+    # rubocop:disable Style/IfInsideElse
     # Certification v2 - use the hearing preference that the user confirms.
-    if certification.hearing_preference
-      appeal.case_record.bfhr = VACOLS::Case::HEARING_REQUEST_TYPES.key(certification.hearing_preference)
-      appeal.case_record.bftbind = "X" if certification.hearing_preference == :travel_board
+    if FeatureToggle.enabled?(:certification_v2)
+      hearing_preference = VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[certification.hearing_preference.to_sym]
+      appeal.case_record.bfhr = hearing_preference[:vacols_value]
+      appeal.case_record.bftbind = "X" if hearing_preference[:video_hearing]
     else
       appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
     end
+    # rubocop:enable Style/IfInsideElse
 
     MetricsService.record("VACOLS: certify #{appeal.vacols_id}",
                           service: :vacols,
