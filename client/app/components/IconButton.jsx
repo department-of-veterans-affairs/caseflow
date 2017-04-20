@@ -20,7 +20,9 @@ IconButton.displayName = 'IconButton';
 IconButton.propTypes = {
   label: PropTypes.string.isRequired,
   iconName: PropTypes.string,
-  handleActivate: PropTypes.func
+  handleActivate: PropTypes.func,
+  getRef: PropTypes.func,
+  className: PropTypes.string
 };
 
 export default IconButton;
