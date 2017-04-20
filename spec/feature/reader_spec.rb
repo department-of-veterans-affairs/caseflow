@@ -57,7 +57,7 @@ RSpec.feature "Reader" do
     def expect_dropdown_filter_to_be_visible
       expect(all(".cf-dropdown-filter").count).to eq(1)
     end
-    
+
     expect_dropdown_filter_to_be_hidden
 
     find("#categories-header .cf-icon-button").click
