@@ -24,7 +24,8 @@ config.output = {
 
 config.plugins.push(
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoEmitOnErrorsPlugin()
+  new webpack.NoEmitOnErrorsPlugin(),
+  new webpack.NamedModulesPlugin()
 );
 
 module.exports = config;
