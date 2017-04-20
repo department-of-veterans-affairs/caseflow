@@ -162,33 +162,6 @@ export default class PdfSidebar extends React.Component {
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
-          <div className="cf-heading-alt">
-            Related Issues
-          </div>
-          {/* This error alert needs to be formatted according to #1573 */}
-          {tagsErrorMessage &&
-            <Alert type="error" title={''}
-              message={tagsErrorMessage} />}
-          <SearchableDropdown
-            name="tags"
-            label="Click in the box below to select, type, or add in issue(s)"
-            multi={true}
-            creatable={true}
-            options={this.state.options}
-            placeholder="Select or type issue"
-            value={this.generateOptionsFromTags(doc.tags)}
-            onChange={(values, deletedValue) => {
-              if (deletedValue && deletedValue.length > 0) {
-                let tagValue = deletedValue[FIRST_ELEMENT].label;
-                let result = _.find(this.state.options, { 'value': tagValue });
-
-                this.props.removeTag(doc, result.tagId);
-              } else {
-                this.props.addNewTag(doc, values);
-              }
-            }}
-          />
-          <div className="cf-heading-alt">Document</div>
           <p className="cf-pdf-meta-title">
             <b>Filename:</b> {this.props.doc.filename}
           </p>
@@ -220,7 +193,33 @@ export default class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-comments">
+          <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
+            Related Issues
+          </div>
+          {/* This error alert needs to be formatted according to #1573 */}
+          {tagsErrorMessage &&
+            <Alert type="error" title={''}
+              message={tagsErrorMessage} />}
+          <SearchableDropdown
+            name="tags"
+            label="Click in the box below to select, type, or add in issue(s)"
+            multi={true}
+            creatable={true}
+            options={this.state.options}
+            placeholder="Select or type issue"
+            value={this.generateOptionsFromTags(doc.tags)}
+            onChange={(values, deletedValue) => {
+              if (deletedValue && deletedValue.length > 0) {
+                let tagValue = deletedValue[FIRST_ELEMENT].label;
+                let result = _.find(this.state.options, { 'value': tagValue });
+
+                this.props.removeTag(doc, result.tagId);
+              } else {
+                this.props.addNewTag(doc, values);
+              }
+            }}
+          />
+          <div className="cf-sidebar-heading">
             Comments
             <span className="cf-right-side cf-add-comment-button">
               <Button
