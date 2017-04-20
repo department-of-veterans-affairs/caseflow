@@ -68,55 +68,53 @@ export default class PdfUI extends React.Component {
     selectedLabels[this.props.label] = true;
 
     return <div className="cf-pdf-container">
-      <div className="cf-pdf-header cf-pdf-toolbar">
-        <div className="usa-grid-full">
-          <span className="usa-width-one-third cf-pdf-buttons-left">
-            { this.props.onShowList &&
-              <Button
-                name="backToDocuments"
-                classNames={["cf-pdf-button"]}
-                onClick={this.props.onShowList}>
-                <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                &nbsp; View all documents
-              </Button> }
-          </span>
-          <span className="usa-width-one-third cf-pdf-buttons-center">
+      <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
+        <span className="usa-width-one-third cf-pdf-buttons-left">
+          { this.props.onShowList &&
             <Button
-              name="zoomOut"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(-ZOOM_RATE)}
-              ariaLabel="zoom out">
-              <i className="fa fa-minus" aria-hidden="true"></i>
-            </Button>
+              name="backToDocuments"
+              classNames={["cf-pdf-button"]}
+              onClick={this.props.onShowList}>
+              <i className="fa fa-chevron-left" aria-hidden="true"></i>
+              &nbsp; View all documents
+            </Button> }
+        </span>
+        <span className="usa-width-one-third cf-pdf-buttons-center">
+          <Button
+            name="zoomOut"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.zoom(-ZOOM_RATE)}
+            ariaLabel="zoom out">
+            <i className="fa fa-minus" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="fit"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.fitToScreen}
+            ariaLabel="fit to screen">
+            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="zoomIn"
+            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            onClick={this.zoom(ZOOM_RATE)}
+            ariaLabel="zoom in">
+            <i className="fa fa-plus" aria-hidden="true"></i>
+          </Button>
+        </span>
+        <span className="usa-width-one-third">
+          <span className="cf-right-side">
+            <DocumentCategoryIcons docId={this.props.doc.id} />
             <Button
-              name="fit"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.fitToScreen}
-              ariaLabel="fit to screen">
-              <i className="fa fa-arrows-alt" aria-hidden="true"></i>
-            </Button>
-            <Button
-              name="zoomIn"
-              classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
-              onClick={this.zoom(ZOOM_RATE)}
-              ariaLabel="zoom in">
-              <i className="fa fa-plus" aria-hidden="true"></i>
+              name="newTab"
+              classNames={["cf-pdf-button"]}
+              ariaLabel="open document in new tab"
+              onClick={() => window.open(
+                linkToSingleDocumentView(this.props.doc), '_blank')}>
+              {this.props.doc.type}
             </Button>
           </span>
-          <span className="usa-width-one-third">
-            <span className="cf-right-side">
-              <DocumentCategoryIcons docId={this.props.doc.id} />
-              <Button
-                name="newTab"
-                classNames={["cf-pdf-button"]}
-                ariaLabel="open document in new tab"
-                onClick={() => window.open(
-                  linkToSingleDocumentView(this.props.doc), '_blank')}>
-                {this.props.doc.type}
-              </Button>
-            </span>
-          </span>
-        </div>
+        </span>
       </div>
       <div className="cf-pdf-navigation">
         { this.props.onPreviousPdf &&
