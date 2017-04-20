@@ -53,7 +53,7 @@ export default class EditComment extends React.Component {
   render() {
     return <div>
         <textarea
-          className="comment-container"
+          className="comment-container comment-textarea"
           name="Edit Comment"
           aria-label="Edit Comment"
           id={this.props.id}
