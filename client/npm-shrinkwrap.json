@@ -3613,6 +3613,12 @@
         }
       }
     },
+    "karma-mocha-reporter": {
+      "version": "2.2.3",
+      "from": "karma-mocha-reporter@latest",
+      "resolved": "https://registry.npmjs.org/karma-mocha-reporter/-/karma-mocha-reporter-2.2.3.tgz",
+      "dev": true
+    },
     "karma-sourcemap-loader": {
       "version": "0.3.7",
       "from": "karma-sourcemap-loader@latest",
