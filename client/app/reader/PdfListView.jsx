@@ -16,7 +16,10 @@ import IconButton from '../components/IconButton';
 const NUMBER_OF_COLUMNS = 5;
 
 const FilterIcon = (props) =>
-  <IconButton {...props} className={'table-icon bordered-icon'} iconName="fa-filter" />;
+  // TODO: Update this icon to be the right SVG once Gina uploads it, instead of fa-close.
+  <IconButton {...props}
+    className={'table-icon bordered-icon'}
+    iconName={props.selected ? "fa-close" : "fa-filter"} />;
 
 export class PdfListView extends React.Component {
   constructor() {
@@ -108,6 +111,14 @@ export class PdfListView extends React.Component {
         }];
       }
 
+      const isCategoryDropdownFilterOpen =
+        _.get(this.props.pdfList, ['dropdowns', 'category']);
+
+      const isAnyCategoryFilterSelected = Boolean(_(this.props.pdfList.filters.category).
+        values().
+        compact().
+        size());
+
       return [
         {
           header: <div
@@ -118,9 +129,10 @@ export class PdfListView extends React.Component {
               getRef={(categoryFilterIcon) => {
                 this.categoryFilterIcon = categoryFilterIcon;
               }}
+              selected={isCategoryDropdownFilterOpen || isAnyCategoryFilterSelected}
               handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
-            {_.get(this.props.pdfList, ['dropdowns', 'category']) &&
+            {isCategoryDropdownFilterOpen &&
               <DropdownFilter baseCoordinates={this.state.filterPositions.category}
                 clearFilters={clearFilters}
                 isClearEnabled={anyCategoryFiltersAreSet}
