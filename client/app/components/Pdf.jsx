@@ -315,7 +315,7 @@ export class Pdf extends React.Component {
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
-          onClick={this.props.onCommentClick(comment)} />);
+          onClick={this.onCommentClick(comment)} />);
 
       return acc;
     }, {});

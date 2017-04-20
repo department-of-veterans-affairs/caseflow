@@ -38,8 +38,8 @@ CategorySelector.propTypes = {
   categoryName: PropTypes.string.isRequired
 };
 
-const mapPropsToState = (state) => _.pick(state, 'documents');
-const mapDispatchToState = (dispatch) => ({
+const mapCategoryStateToProps = (state) => _.pick(state, 'documents');
+const mapCategoryDispatchToProps = (dispatch) => ({
   handleCategoryToggle(categoryName, toggleState, docId) {
     const categoryKey = categoryFieldNameOfCategoryName(categoryName);
 
@@ -62,13 +62,31 @@ const mapDispatchToState = (dispatch) => ({
   }
 });
 const ConnectedCategorySelector = connect(
-    mapPropsToState, mapDispatchToState
-  )(CategorySelector);
+  mapCategoryStateToProps, mapCategoryDispatchToProps
+)(CategorySelector);
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
-export default class PdfSidebar extends React.Component {
+export class PdfSidebar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.commentElements = {};
+  }
+
+  componentDidUpdate = () => {
+    if (this.props.scrollToSidebarComment) {
+      let commentListBoundingBox = this.commentListElement.getBoundingClientRect();
+
+      this.commentListElement.scrollTop = this.commentListElement.scrollTop +
+        this.commentElements[
+          this.props.scrollToSidebarComment.id
+        ].getBoundingClientRect().top - commentListBoundingBox.top - 50;
+      this.props.handleFinishScrollToSidebarComment();
+    }
+  }
+
   render() {
     let comments = [];
 
@@ -84,18 +102,22 @@ export default class PdfSidebar extends React.Component {
           </EditComment>;
       }
 
-      return <Comment
-        id={`comment${index}`}
-        selected={false}
-        onDeleteComment={this.props.onDeleteComment}
-        onEditComment={this.props.onEditComment}
-        uuid={comment.uuid}
-        selected={comment.selected}
-        onClick={this.props.onJumpToComment(comment)}
-        page={comment.page}
-        key={comment.comment}>
-          {comment.comment}
-        </Comment>;
+      return <div ref={(commentElement) => {
+          this.commentElements[comment.id] = commentElement
+        }}>
+        <Comment
+          id={`comment${index}`}
+          selected={false}
+          onDeleteComment={this.props.onDeleteComment}
+          onEditComment={this.props.onEditComment}
+          uuid={comment.uuid}
+          selected={comment.selected}
+          onClick={this.props.onJumpToComment(comment)}
+          page={comment.page}
+          key={comment.comment}>
+            {comment.comment}
+          </Comment>
+        </div>;
     });
 
     return <div className="cf-sidebar-wrapper">
@@ -145,7 +167,10 @@ export default class PdfSidebar extends React.Component {
           </div>
         </div>
 
-        <div className="cf-comment-wrapper">
+        <div className="cf-comment-wrapper"
+          ref={(commentListElement) => {
+            this.commentListElement = commentListElement
+          }}>
           <div className="cf-pdf-comment-list">
             {this.props.isAddingComment &&
               <EditComment
@@ -158,6 +183,25 @@ export default class PdfSidebar extends React.Component {
       </div>;
   }
 }
+
+const mapSidebarStateToProps = (state) => {
+  return {
+    scrollToSidebarComment: _.get(state, 'ui.pdf.scrollToSidebarComment')
+  };
+}
+const mapDispatchToProps = (dispatch) => ({
+  handleFinishScrollToSidebarComment(comment) {
+    dispatch({
+      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+      payload: { 
+        scrollToSidebarComment: null
+      }
+    });
+  }
+});
+export default connect(
+  mapSidebarStateToProps, mapDispatchToProps
+)(PdfSidebar);
 
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
