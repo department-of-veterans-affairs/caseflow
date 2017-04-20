@@ -19,7 +19,8 @@
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test npm run build",
     "build:production": "NODE_ENV=production npm run build",
-    "dev": "rm ../app/assets/webpack/* || true && npm run build -- -w"
+    "dev": "rm ../app/assets/webpack/* || true && npm run build -- -w",
+    "dev:hot": "NODE_ENV=development node webpack-hot-server.js"
   },
   "cacheDirectories": [
     "node_modules",
@@ -59,6 +60,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
+    "babel-plugin-react-transform": "^2.0.2",
     "chai": "^3.5.0",
     "enzyme": "^2.6.0",
     "eslint": "^3.11.1",
@@ -72,7 +74,11 @@
     "karma-webpack": "^2.0.3",
     "mocha": "^3.1.2",
     "react-addons-test-utils": "^15.4.2",
-    "sinon": "^2.1.0"
+    "react-tools": "^0.13.3",
+    "react-transform": "0.0.3",
+    "react-transform-hmr": "^1.0.4",
+    "sinon": "^2.1.0",
+    "webpack-dev-server": "^2.4.2"
   },
   "optionalDependencies": {
     "fsevents": "*"
