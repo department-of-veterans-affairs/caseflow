@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
+import NotReady from './NotReady';
+import AlreadyCertified from './AlreadyCertified';
 import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
@@ -17,7 +19,8 @@ class UnconnectedDocumentsCheck extends React.Component {
 
   render() {
 
-    let { form9Match,
+    let { certificationStatus,
+      form9Match,
       form9Date,
       nodMatch,
       nodDate,
@@ -29,6 +32,16 @@ class UnconnectedDocumentsCheck extends React.Component {
       certificationId
     } = this.props;
 
+    if (certificationStatus === "data_missing") {
+      return <NotReady/>;
+    }
+    if (certificationStatus === "already_certified") {
+      return <AlreadyCertified/>;
+    }
+
+    /*
+     * certificationStatus == 'mismatched_documents' or 'started'
+     */
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
@@ -54,6 +67,7 @@ class UnconnectedDocumentsCheck extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  certificationStatus: state.certificationStatus,
   form9Match: state.form9Match,
   form9Date: state.form9Date,
   nodMatch: state.nodMatch,
@@ -88,6 +102,7 @@ const DocumentsCheck = connect(
 )(UnconnectedDocumentsCheck);
 
 DocumentsCheck.propTypes = {
+  certificationStatus: PropTypes.string,
   form9Date: PropTypes.string,
   nodMatch: PropTypes.bool,
   nodDate: PropTypes.string,
