@@ -39,13 +39,14 @@ class Issue
   end
 
   class << self
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-    def load_from_vacols(hash)
-      description = ["#{hash["isscode"]} - #{hash["isscode_label"]}"]
-      description.push("#{hash["isslev1"]} - #{hash["isslev1_label"]}") if hash["isslev1"]
-      description.push("#{hash["isslev2"]} - #{hash["isslev2_label"]}") if hash["isslev2"]
-      description.push("#{hash["isslev3"]} - #{hash["isslev3_label"]}") if hash["isslev3"]
+    def description(hash)
+      description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
+      description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
+      description.push("#{hash['isslev2']} - #{hash['isslev2_label']}") if hash["isslev2"]
+      description.push("#{hash['isslev3']} - #{hash['isslev3_label']}") if hash["isslev3"]
+    end
 
+    def load_from_vacols(hash)
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
 
       disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
@@ -55,8 +56,8 @@ class Issue
         program: PROGRAMS[hash["issprog"]],
         type: TYPES[hash["isscode"]],
         category: CATEGORIES[category_code],
-        program_description: "#{hash["issprog"]} - #{hash["issprog_label"]}",
-        description: description,
+        program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
+        description: description(hash),
         disposition: disposition
       )
     end
