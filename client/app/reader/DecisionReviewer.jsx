@@ -7,6 +7,7 @@ import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
+import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
@@ -49,7 +50,9 @@ export class DecisionReviewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    //this.props.onReceiveDocs(nextProps.appealDocuments);
+    if (this.props.appealDocuments !== nextProps.appealDocuments) {
+      this.props.onReceiveDocs(nextProps.appealDocuments);
+    }
   }
 
   onPreviousPdf = () => {
@@ -98,7 +101,11 @@ export class DecisionReviewer extends React.Component {
     });
   }
 
-  showPdf = (pdfNumber) => (event) => {
+  pdfNumberFromId = (pdfId) => _.findIndex(this.state.documents, { id: pdfId })
+
+  showPdf = (pdfId) => (event) => {
+    let pdfNumber = this.pdfNumberFromId(pdfId);
+
     // If the user is trying to open the link in a new tab/window
     // then follow the link. Otherwise if they just clicked the link
     // keep them contained within the SPA.
@@ -298,6 +305,15 @@ export class DecisionReviewer extends React.Component {
     return this.state.currentPdfIndex > 0;
   }
 
+  onJumpToComment = (comment) => () => {
+    this.setPage(this.pdfNumberFromId(comment.documentId));
+    this.props.onScrollToComment(comment);
+  }
+
+  onCommentScrolledTo = () => {
+    this.props.onScrollToComment(null);
+  }
+
   render() {
     let {
       documents,
@@ -314,6 +330,7 @@ export class DecisionReviewer extends React.Component {
           documents={documents}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
+          showPdfAndJumpToPage={this.showPdfAndJumpToPage}
           sortDirection={sortDirection}
           numberOfDocuments={this.props.appealDocuments.length}
           onFilter={this.onFilter}
@@ -322,7 +339,8 @@ export class DecisionReviewer extends React.Component {
           selectedLabels={this.state.selectedLabels}
           selectLabel={this.onLabelSelected}
           selectComments={this.selectComments}
-          isCommentLabelSelected={this.state.isCommentLabelSelected} />}
+          isCommentLabelSelected={this.state.isCommentLabelSelected}
+          onJumpToComment={this.onJumpToComment} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
           addNewTag={this.props.addNewTag}
           removeTag={this.props.removeTag}
@@ -333,8 +351,10 @@ export class DecisionReviewer extends React.Component {
           onPreviousPdf={onPreviousPdf}
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
-          pdfWorker={this.props.pdfWorker} />
-        }
+          pdfWorker={this.props.pdfWorker}
+          label={documents[this.state.currentPdfIndex].label}
+          onJumpToComment={this.onJumpToComment}
+          onCommentScrolledTo={this.onCommentScrolledTo} />}
       </div>
     );
   }
@@ -343,7 +363,9 @@ export class DecisionReviewer extends React.Component {
 DecisionReviewer.propTypes = {
   annotations: PropTypes.arrayOf(PropTypes.object),
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
-  pdfWorker: PropTypes.string
+  pdfWorker: PropTypes.string,
+  onScrollToComment: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func
 };
 
 const mapStateToProps = (state) => {

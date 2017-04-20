@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import DocumentsMatchingBox from './DocumentsMatchingBox';
 import DocumentsNotMatchingBox from './DocumentsNotMatchingBox';
 import DocumentsCheckTable from './DocumentsCheckTable';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Footer from './Footer';
 import * as Constants from './constants/constants';
 
 // TODO: refactor to use shared components where helpful
@@ -25,7 +25,9 @@ class UnconnectedDocumentsCheck extends React.Component {
       socDate,
       ssocDatesWithMatches,
       documentsMatch,
-      match } = this.props;
+      match,
+      certificationId
+    } = this.props;
 
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
@@ -41,18 +43,12 @@ class UnconnectedDocumentsCheck extends React.Component {
           documentsMatch={documentsMatch}/>
       </div>
 
-      <div className="cf-app-segment">
-        <a href="#confirm-cancel-certification"
-          className="cf-action-openmodal cf-btn-link">
-          Cancel Certification
-        </a>
-        <Link
-          to={`/certifications/${match.params.vacols_id}/confirm_case_details`}>
-          <button type="button" className="cf-push-right">
-            Continue
-          </button>
-        </Link>
-      </div>
+      <Footer
+        nextPageUrl={
+          `/certifications/${match.params.vacols_id}/confirm_case_details`
+        }
+        certificationId={certificationId}
+        hideContinue={!documentsMatch}/>
     </div>;
   }
 }
@@ -65,7 +61,8 @@ const mapStateToProps = (state) => ({
   socMatch: state.socMatch,
   socDate: state.socDate,
   ssocDatesWithMatches: state.ssocDatesWithMatches,
-  documentsMatch: state.documentsMatch
+  documentsMatch: state.documentsMatch,
+  certificationId: state.certificationId
 
 });
 
@@ -89,5 +86,15 @@ const DocumentsCheck = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedDocumentsCheck);
+
+DocumentsCheck.propTypes = {
+  form9Date: PropTypes.string,
+  nodMatch: PropTypes.bool,
+  nodDate: PropTypes.string,
+  socMatch: PropTypes.bool,
+  socDate: PropTypes.string,
+  documentsMatch: PropTypes.bool,
+  match: PropTypes.object.isRequired
+};
 
 export default DocumentsCheck;

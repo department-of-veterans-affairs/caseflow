@@ -8,14 +8,21 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 
-const intialState = {
+const initialState = {
   currentPdfIndex: null,
   currentDocId: null,
-  tagsErrorMessage: ''
+  tagsErrorMessage: '',
+  ui: {
+    pdf: {
+    }
+  },
+  documents: {
+  }
 };
 
-const readerReducer = (state = intialState, action = {}) => {
+export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
+  let tags;
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
@@ -65,7 +72,7 @@ const readerReducer = (state = intialState, action = {}) => {
       }
     );
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    let tags = state.documents[action.payload.docId].tags;
+    tags = state.documents[action.payload.docId].tags;
     _.remove(tags, (tag) => {
       return tag.id === action.payload.tagId;
     });
@@ -95,12 +102,44 @@ const readerReducer = (state = intialState, action = {}) => {
       currentDocId: action.payload.currentDocId,
       tagsErrorMessage: ''
     });
+  case Constants.SET_CURRENT_RENDERED_FILE:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'currentRenderedFile')
+        }
+      }
+    );
+  case Constants.SCROLL_TO_COMMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'scrollToComment')
+        }
+      }
+    );
+  case Constants.TOGGLE_COMMENT_LIST:
+    return _.merge(
+      {},
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      }
+    );
   default:
     return state;
   }
 };
 
-const store = (intialState) => {
+const store = () => {
   return createStore(readerReducer, applyMiddleware(thunk, logger));
 };
 

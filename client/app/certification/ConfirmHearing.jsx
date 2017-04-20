@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 
@@ -149,79 +149,79 @@ class UnconnectedConfirmHearing extends React.Component {
       form9IsInformal;
 
     return <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Confirm Hearing</h2>
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Confirm Hearing</h2>
 
-          <div>
-            {hearingCheckText}
-          </div>
-          {/*
-            TODO: would we be better served by
-            making our connected components smaller?
-            we could make e.g.
-            HearingChangeRadioField,
-            TypeOfForm9RadioField,
-            HearingTypeChangeRadioField
-
-            which would be a connected component with
-            direct access to the Redux store.
-          */}
-          <RadioField name={hearingChangeQuestion}
-            required={true}
-            options={hearingChangeAnswers}
-            value={hearingDocumentIsInVbms}
-            onChange={onHearingDocumentChange}/>
-
-          {
-            shouldDisplayHearingChangeFound &&
-            <RadioField name={hearingChangeFoundQuestion}
-              required={true}
-              options={hearingChangeFoundAnswers}
-              value={hearingType}
-              onChange={onHearingTypeChange}/>
-          }
-
-          {
-            shouldDisplayTypeOfForm9Question &&
-            <RadioField name={typeOfForm9Question}
-              required={true}
-              options={typeOfForm9Answers}
-              value={form9Type}
-              onChange={onTypeOfForm9Change}/>
-          }
-
-          {
-            shouldDisplayTypeOfForm9Question &&
-
-            /* TODO: restore the accessibility stuff here.
-              also, we should stop using rails pdf viewer */
-            <LoadingContainer>
-              <iframe
-                className="cf-doc-embed cf-iframe-with-loading form9-viewer"
-                title="Form8 PDF"
-                src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
-              </iframe>
-            </LoadingContainer>
-          }
-
-          {
-            shouldDisplayFormalForm9Question &&
-            <RadioField name={formalForm9HearingQuestion}
-              options={formalForm9HearingAnswers}
-              value={hearingType}
-              required={true}
-              onChange={onHearingTypeChange}/>
-          }
-
-          {
-            shouldDisplayInformalForm9Question &&
-            <RadioField name={informalForm9HearingQuestion}
-              options={informalForm9HearingAnswers}
-              value={hearingType}
-              required={true}
-              onChange={onHearingTypeChange}/>
-          }
+        <div>
+          {hearingCheckText}
         </div>
+        {/*
+          TODO: would we be better served by
+          making our connected components smaller?
+          we could make e.g.
+          HearingChangeRadioField,
+          TypeOfForm9RadioField,
+          HearingTypeChangeRadioField
+
+          which would be a connected component with
+          direct access to the Redux store.
+        */}
+        <RadioField name={hearingChangeQuestion}
+          required={true}
+          options={hearingChangeAnswers}
+          value={hearingDocumentIsInVbms}
+          onChange={onHearingDocumentChange}/>
+
+        {
+          shouldDisplayHearingChangeFound &&
+          <RadioField name={hearingChangeFoundQuestion}
+            required={true}
+            options={hearingChangeFoundAnswers}
+            value={hearingType}
+            onChange={onHearingTypeChange}/>
+        }
+
+        {
+          shouldDisplayTypeOfForm9Question &&
+          <RadioField name={typeOfForm9Question}
+            required={true}
+            options={typeOfForm9Answers}
+            value={form9Type}
+            onChange={onTypeOfForm9Change}/>
+        }
+
+        {
+          shouldDisplayTypeOfForm9Question &&
+
+          /* TODO: restore the accessibility stuff here.
+            also, we should stop using rails pdf viewer */
+          <LoadingContainer>
+            <iframe
+              className="cf-doc-embed cf-iframe-with-loading form9-viewer"
+              title="Form8 PDF"
+              src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+            </iframe>
+          </LoadingContainer>
+        }
+
+        {
+          shouldDisplayFormalForm9Question &&
+          <RadioField name={formalForm9HearingQuestion}
+            options={formalForm9HearingAnswers}
+            value={hearingType}
+            required={true}
+            onChange={onHearingTypeChange}/>
+        }
+
+        {
+          shouldDisplayInformalForm9Question &&
+          <RadioField name={informalForm9HearingQuestion}
+            options={informalForm9HearingAnswers}
+            value={hearingType}
+            required={true}
+            onChange={onHearingTypeChange}/>
+        }
+      </div>
 
       <Footer
         nextPageUrl={
@@ -249,6 +249,7 @@ class UnconnectedConfirmHearing extends React.Component {
  * that causes the reducer in reducers/index.js
  * to return a new state object.
  */
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
     dispatch({
@@ -289,6 +290,7 @@ const mapDispatchToProps = (dispatch) => ({
  * application state should be passed in as props to
  * the rendered component.
  */
+
 const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
@@ -305,5 +307,16 @@ const ConfirmHearing = connect(
   mapStateToProps,
   mapDispatchToProps
 )(UnconnectedConfirmHearing);
+
+ConfirmHearing.propTypes = {
+  hearingDocumentIsInVbms: PropTypes.string,
+  onHearingDocumentChange: PropTypes.func,
+  form9Type: PropTypes.string,
+  form9Date: PropTypes.string,
+  onTypeOfForm9Change: PropTypes.func,
+  hearingType: PropTypes.string,
+  onHearingTypeChange: PropTypes.func,
+  match: PropTypes.object.isRequired
+};
 
 export default ConfirmHearing;

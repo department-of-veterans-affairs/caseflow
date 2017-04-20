@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     get 'pdf', on: :member
     get 'form9_pdf', on: :member
     post 'confirm', on: :member
+    put 'update_v2', on: :member
   end
 
   # These routes are here so Certification v2 SPA can be launched if the
@@ -84,10 +85,12 @@ Rails.application.routes.draw do
   get "styleguide", to: "styleguide#show"
 
   get 'help' => 'help#show'
+  get 'help/dispatch' => 'help#dispatch'
+  
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#show'
-
+    
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"

@@ -170,12 +170,6 @@ export default class PdfViewer extends React.Component {
     this.setState({ comments });
   }
 
-  componentDidMount = () => {
-    this.onCommentChange();
-
-    window.addEventListener('keydown', this.keyListener);
-  }
-
   componentDidUpdate = () => {
     if (this.state.isAddingComment) {
       let commentBox = document.getElementById('addComment');
@@ -183,25 +177,6 @@ export default class PdfViewer extends React.Component {
       commentBox.focus();
     }
   }
-
-  // Consider moving this down into Pdf.jsx
-  onJumpToComment = (uuid) => {
-    this.props.annotationStorage.
-      getAnnotation(this.props.doc.id, uuid).
-      then((annotation) => {
-        let page = document.getElementsByClassName('page');
-        let scrollWindow = document.getElementById('scrollWindow');
-
-        // If this is called before the page fully loads, these
-        // variables may have null. Check before trying to scroll.
-        if (page[annotation.page - 1] && scrollWindow) {
-          scrollWindow.scrollTop =
-            page[annotation.page - 1].getBoundingClientRect().top +
-            annotation.y - 100 + scrollWindow.scrollTop;
-        }
-      });
-  }
-
   componentDidMount = () => {
     this.onCommentChange();
 
@@ -235,6 +210,8 @@ export default class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
+            scrollToComment={this.props.scrollToComment}
+            onCommentScrolledTo={this.props.onCommentScrolledTo}
             onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
@@ -252,7 +229,7 @@ export default class PdfViewer extends React.Component {
             onCancelCommentEdit={this.onCancelCommentEdit}
             onDeleteComment={this.onDeleteComment}
             onEditComment={this.onEditComment}
-            onJumpToComment={this.onJumpToComment}
+            onJumpToComment={this.props.onJumpToComment}
           />
         </div>
         {this.state.onConfirmDelete && <Modal
@@ -262,7 +239,7 @@ export default class PdfViewer extends React.Component {
               onClick: this.closeConfirmDeleteModal
             },
             { classNames: ["usa-button", "usa-button-secondary"],
-              name: 'Confirm Delete',
+              name: 'Confirm delete',
               onClick: this.state.onConfirmDelete
             }
           ]}
@@ -279,5 +256,11 @@ PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   file: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string
+  label: PropTypes.string,
+  pdfWorker: PropTypes.string,
+  scrollToComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
+  onScrollToComment: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func
 };

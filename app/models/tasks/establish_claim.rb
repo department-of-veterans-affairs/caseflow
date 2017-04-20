@@ -2,20 +2,17 @@ class EstablishClaim < Task
   include CachedAttributes
 
   class InvalidEndProductError < StandardError; end
-  class EndProductAlreadyExistsError < StandardError; end
+
+  class VBMSError < StandardError
+    attr_reader :error_code
+
+    def initialize(error_code)
+      @error_code = error_code
+    end
+  end
 
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
-
-  class << self
-    def for_full_grant
-      joins(:claim_establishment).where(claim_establishments: { decision_type: 1 })
-    end
-
-    def for_partial_grant_or_remand
-      joins(:claim_establishment).where(claim_establishments: { decision_type: [2, 3] })
-    end
-  end
 
   cache_attribute :cached_decision_type do
     appeal.decision_type
@@ -88,12 +85,9 @@ class EstablishClaim < Task
   end
 
   def prepare_with_decision!
-    return false if check_and_invalidate!
-    return false if appeal.decisions.empty?
-
-    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-
-    prepare!
+    try_prepare_with_decision!.tap do |result|
+      Rails.logger.info "Prepared EstablishClaim (id = #{id}), Result: #{result}"
+    end
   end
 
   def actions_taken
@@ -125,10 +119,20 @@ class EstablishClaim < Task
   end
 
   def should_invalidate?
-    !appeal.decision_date || appeal.status == "Active"
+    !appeal.vacols_record_exists? || !appeal.decision_date || appeal.status == "Active"
   end
 
   private
+
+  def try_prepare_with_decision!
+    return :invalid if check_and_invalidate!
+    return :already_prepared unless may_prepare?
+    return :missing_decision if appeal.decisions.empty?
+
+    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+
+    prepare! && :success
+  end
 
   def init_claim_establishment!
     create_claim_establishment(appeal: appeal)
@@ -144,15 +148,20 @@ class EstablishClaim < Task
   end
 
   def establish_claim_in_vbms(end_product)
-    Appeal.repository.establish_claim!(claim: end_product.to_vbms_hash, appeal: appeal)
+    Appeal.repository.establish_claim!(
+      claim_hash: end_product.to_vbms_hash,
+      veteran_hash: appeal.veteran.to_vbms_hash
+    )
   end
 
   def parse_vbms_error(error)
     case error.body
     when /PIF is already in use/
-      return EndProductAlreadyExistsError
+      return VBMSError.new("duplicate_ep")
     when /A duplicate claim for this EP code already exists/
-      return EndProductAlreadyExistsError
+      return VBMSError.new("duplicate_ep")
+    when /The PersonalInfo SSN must not be empty./
+      return VBMSError.new("missing_ssn")
     else
       return error
     end
@@ -240,6 +249,14 @@ class EstablishClaim < Task
   end
 
   class << self
+    def for_full_grant
+      joins_task_result.where(claim_establishments: { decision_type: 1 })
+    end
+
+    def for_partial_grant_or_remand
+      joins_task_result.where(claim_establishments: { decision_type: [2, 3] })
+    end
+
     def joins_task_result
       joins(:claim_establishment)
     end

@@ -9,6 +9,13 @@ export const onReceiveDocs = (documents) => {
   };
 };
 
+export const onScrollToComment = (scrollToComment) => {
+  return {
+    type: Constants.SCROLL_TO_COMMENT,
+    payload: { scrollToComment }
+  };
+};
+
 export const newTagRequestSuccess = (docId, createdTags) => {
   return {
     type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
@@ -83,7 +90,6 @@ export const removeTag = (doc, tagId) => {
     dispatch({ type: Constants.REQUEST_REMOVE_TAG });
     ApiUtil.delete(`/reader/documents/${doc.id}/tags/${tagId}`).
       then((data) => {
-        console.log(data);
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
         dispatch(removeTagRequestFailure("Unable to save. Please try again."));

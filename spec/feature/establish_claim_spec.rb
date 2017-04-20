@@ -89,6 +89,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "use a different EP code modifier. GUID: 13fcd</faultstring>")
     end
 
+    let(:missing_ssn_error) do
+      VBMS::HTTPError.new("500", "<fieldName>PersonalInfo SSN</fieldName>" \
+        "<errorType>MINIMUM_LENGTH_NOT_SATISFIED</errorType><message>The " \
+        "minimum data length for the PersonalInfo SSN within the veteran " \
+        "was not satisfied: The PersonalInfo SSN must not be empty." \
+        "</message></formFieldErrors>")
+    end
+
     scenario "Assign the correct new task to myself" do
       # Create an older task with an inaccessible appeal
       Generators::EstablishClaim.create(
@@ -123,7 +131,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
-      expect(page).to have_content("(#{completed_task.appeal.vbms_id})")
+      expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")
       expect(page).to have_content("Routed in VACOLS")
 
       # The oldest task (task local var) is now set to a higher security level so
@@ -230,6 +238,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Error establishing claim" do
+      # Duplicate EP error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
       task.assign!(:assigned, current_user)
@@ -239,6 +248,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+
+      # Missing SSN error
+      allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
+
+      click_on "Create End Product"
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("This veteran does not have a social security number")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
@@ -257,7 +273,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Text on the tab
         expect(page).to have_content("Decision 1 (")
-        find("#tab-1").click
+        find("#main-tab-1").click
 
         expect(page).to have_content("Route claim for Decision 2")
         safe_click_on "Route claim for Decision 2"
@@ -280,6 +296,50 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       let(:vacols_record) do
         # Specify RO to test ROJ routing
         { template: :full_grant_decided, regional_office_key: "RO21" }
+      end
+
+      context "with a level 1 or 2 special issue" do
+        scenario "I cannot return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("riceCompliance").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("Create End Product")
+          safe_click_on "Create End Product"
+
+          expect(page).to_not have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Cannot edit end product")
+        end
+      end
+
+      context "with a level 3 special issue" do
+        scenario "I can return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("< Back to Review Decision")
+          safe_click_on "< Back to Review Decision"
+
+          expect(page).to have_content("Select Special Issue(s)")
+          safe_click_on "Route claim"
+          expect(page).to have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Select Special Issue(s)")
+        end
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -434,7 +494,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -447,7 +507,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: true,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
 
         expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
@@ -520,7 +580,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("routed_to_ro")
 
         expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-          claim: {
+          claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
             predischarge: false,
@@ -533,8 +593,52 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          appeal: task.appeal
+          veteran_hash: task.appeal.veteran.to_vbms_hash
         )
+      end
+
+      context "with a level 1 or 2 special issue" do
+        scenario "I cannot return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("riceCompliance").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("Create End Product")
+          safe_click_on "Create End Product"
+
+          expect(page).to_not have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Cannot edit end product")
+        end
+      end
+
+      context "with a level 3 special issue" do
+        scenario "I can return to Review Decision from the VACOLS Update page" do
+          task.assign!(:assigned, current_user)
+          visit "/dispatch/establish-claim"
+          safe_click_on "Establish next claim"
+
+          # Select special issues
+          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+
+          # Move on to note page
+          safe_click_on "Route claim"
+
+          expect(page).to have_content("< Back to Review Decision")
+          safe_click_on "< Back to Review Decision"
+
+          expect(page).to have_content("Select Special Issue(s)")
+          safe_click_on "Route claim"
+          expect(page).to have_content("< Back to Review Decision")
+          page.driver.go_back
+          expect(page).to have_content("Select Special Issue(s)")
+        end
       end
 
       scenario "Establish a new claim with special issues with no EP" do
@@ -593,7 +697,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           expect(page).to have_content("Success!")
 
           expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
-            claim: {
+            claim_hash: {
               benefit_type_code: "1",
               payee_code: "00",
               predischarge: false,
@@ -607,7 +711,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false
             },
-            appeal: task.appeal
+            veteran_hash: task.appeal.veteran.to_vbms_hash
           )
         end
       end

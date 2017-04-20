@@ -6,20 +6,21 @@ import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
 import Alert from '../components/Alert';
+import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import { plusIcon } from './RenderFunctions';
 
 const FIRST_ELEMENT = 0;
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
-  const toggleState = _.get(
+  const toggleState = Boolean(_.get(
     documents,
-    [docId, categoryFieldNameOfCategoryName(categoryName)],
-    false
-  );
+    [docId, categoryFieldNameOfCategoryName(categoryName)]
+  ));
   const Svg = category.svg;
   const label = <div className="cf-category-selector">
       <Svg />
@@ -71,7 +72,7 @@ const ConnectedCategorySelector = connect(
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
-// show a PDF with it's corresponding information.
+// show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -143,13 +144,23 @@ export default class PdfSidebar extends React.Component {
         onEditComment={this.props.onEditComment}
         uuid={comment.uuid}
         selected={comment.selected}
-        onClick={this.props.onJumpToComment}
+        onClick={this.props.onJumpToComment(comment)}
+        page={comment.page}
         key={comment.comment}>
           {comment.comment}
         </Comment>;
     });
 
     return <div className="cf-sidebar-wrapper">
+        <div className="cf-sidebar-header">
+          <Button
+            name="hide menu"
+            classNames={["cf-pdf-button"]}>
+            <strong>
+              Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+            </strong>
+          </Button>
+        </div>
         <div className="cf-document-info-wrapper">
           <div className="cf-heading-alt">
             Related Issues
@@ -183,14 +194,40 @@ export default class PdfSidebar extends React.Component {
           </p>
           <p className="cf-pdf-meta-title">
             <b>Document Type:</b> {this.props.doc.type}
+            <Button
+              name="download"
+              classNames={["cf-btn-link"]}
+              ariaLabel="download"
+            >
+              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
+            </Button>
           </p>
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
-          <div className="cf-heading-alt">
+          <ul className="cf-document-category-picker">
+            {
+              _(Constants.documentCategories).
+                toPairs().
+                // eslint-disable-next-line no-unused-vars
+                sortBy(([name, category]) => category.renderOrder).
+                map(
+                  ([categoryName, category]) => <li key={categoryName}>
+                    <ConnectedCategorySelector category={category}
+                      categoryName={categoryName} docId={this.props.doc.id} />
+                  </li>
+                ).
+                value()
+            }
+          </ul>
+          <div className="cf-heading-comments">
             Comments
-            <span className="cf-right-side">
-              <a href="#" onClick={this.props.onAddComment}>+ Add a Comment</a>
+            <span className="cf-right-side cf-add-comment-button">
+              <Button
+                name="AddComment"
+                onClick={this.props.onAddComment}>
+                <span>{ plusIcon() } &nbsp; Add a comment</span>
+              </Button>
             </span>
           </div>
         </div>
