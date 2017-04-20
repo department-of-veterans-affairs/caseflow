@@ -2,13 +2,14 @@ import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import EditComment from '../components/EditComment';
-import Button from '../components/Button';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import { plusIcon } from './RenderFunctions';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -104,7 +105,8 @@ export class PdfSidebar extends React.Component {
 
       return <div ref={(commentElement) => {
           this.commentElements[comment.id] = commentElement
-        }}>
+        }}
+        key={comment.comment}>
         <Comment
           id={`comment${index}`}
           selected={false}
@@ -113,8 +115,7 @@ export class PdfSidebar extends React.Component {
           uuid={comment.uuid}
           selected={comment.selected}
           onClick={this.props.onJumpToComment(comment)}
-          page={comment.page}
-          key={comment.comment}>
+          page={comment.page}>
             {comment.comment}
           </Comment>
         </div>;
@@ -159,10 +160,14 @@ export class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-alt">
+          <div className="cf-heading-comments">
             Comments
-            <span className="cf-right-side">
-              <a href="#" onClick={this.props.onAddComment}>+ Add a Comment</a>
+            <span className="cf-right-side cf-add-comment-button">
+              <Button
+                name="AddComment"
+                onClick={this.props.onAddComment}>
+                <span>{ plusIcon() } &nbsp; Add a comment</span>
+              </Button>
             </span>
           </div>
         </div>
