@@ -291,11 +291,13 @@ svg[aria-hidden=true],
   position: relative;
 }
 
+$gray-lighter: #d6d7d9;
+
 .cf-dropdown-filter {
   position: absolute;
-  border: 1px solid #d6d7d9;
+  border: 1px solid $gray-lighter;
   background: white;
-  box-shadow: 5px 5px 4px -3px #d6d7d9;
+  box-shadow: 5px 5px 4px -3px $gray-lighter;
   font-weight: normal;
   padding: 0;
   $dropdown-interior-padding: 10px;
@@ -309,15 +311,17 @@ svg[aria-hidden=true],
 
   .cf-clear-filter-row {
     padding: $dropdown-interior-padding;
+    padding-bottom: 0;
 
     @include hover;
 
-    &>*:first-child {
+    button {
       margin-right: 10px;
     }
 
-    .cf-clear-button {
-      display: inline;
+    .cf-clear-filter-button-wrapper {
+      border-bottom: 1px solid $gray-lighter;
+      padding-bottom: $dropdown-interior-padding;
     }
   }
 
