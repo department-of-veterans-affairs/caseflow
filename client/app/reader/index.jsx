@@ -86,7 +86,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       {
         ui: {
           pdfList: {
-            lastRead: action.payload.docId
+            lastReadDocId: action.payload.docId
           }
         }
       }

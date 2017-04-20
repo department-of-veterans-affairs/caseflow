@@ -75,8 +75,10 @@ export class PdfListView extends React.Component {
       return [
         {
           valueFunction: (doc) => {
-            if (doc.id === this.props.lastRead) {
-              return rightTriangle();
+            if (doc.id === this.props.lastReadDocId) {
+              return <span aria-label="Most recently read document indicator">
+                  {rightTriangle()}
+                </span>
             }
           }
         },
@@ -204,7 +206,7 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state) => {
   return {
     reduxDocuments: _.get(state, 'documents'),
-    lastRead: _.get(state, 'ui.pdfList.lastRead')
+    lastReadDocId: _.get(state, 'ui.pdfList.lastReadDocId')
   };
 };
 
@@ -232,5 +234,5 @@ PdfListView.propTypes = {
   sortBy: PropTypes.string,
   reduxDocuments: PropTypes.object.isRequired,
   handleToggleCommentOpened: PropTypes.func.isRequired,
-  lastRead: PropTypes.number
+  lastReadDocId: PropTypes.number
 };
