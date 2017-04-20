@@ -109,12 +109,14 @@ RSpec.feature "Start Certification" do
 
       click_button("Continue")
 
-      within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
+      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
+        .to_formatted_s(:short_date)}?") do
         find("label", text: "Yes").click
       end
       expect(page).to have_content("What did the appellant request in the document you found")
 
-      within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
+      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
+        .to_formatted_s(:short_date)}?") do
         find("label", text: "No").click
       end
       within_fieldset("Caseflow found the document below, labeled as a Form 9") do
