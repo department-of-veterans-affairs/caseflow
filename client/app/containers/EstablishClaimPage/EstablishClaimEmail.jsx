@@ -49,7 +49,7 @@ export class EstablishClaimEmail extends BaseForm {
         confirmBox: new FormField(false),
         emailField: new FormField(email)
       },
-      noEmailNote: note,
+      noEmailNote: note
     };
   }
 
