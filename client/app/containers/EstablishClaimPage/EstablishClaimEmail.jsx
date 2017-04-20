@@ -90,7 +90,7 @@ export class EstablishClaimEmail extends BaseForm {
                 <CopyToClipboard text={this.state.emailForm.emailField.value}>
                   <Button
                    name="copyNote"
-                   classNames={["usa-button-outline"]}>
+                   classNames={["usa-button-secondary usa-button-hover"]}>
                    <i className="fa fa-files-o" aria-hidden="true"></i>
                    Copy note
                   </Button>

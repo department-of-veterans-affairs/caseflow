@@ -139,7 +139,7 @@ export class EstablishClaimNote extends BaseForm {
               <Button
                 label = "Copy note"
                 name="copyNote"
-                classNames={["usa-button-outline"]}>
+                classNames={["usa-button-secondary usa-button-hover"]}>
                 <i className="fa fa-files-o" aria-hidden="true"></i>
                 Copy note
               </Button>
