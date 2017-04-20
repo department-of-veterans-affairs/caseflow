@@ -206,10 +206,4 @@ export const docCategoryIcon = (color) => () =>
       </g>
   </svg>;
 
-
-export const rightTriangle = function() {
-  return (
-    <i className="fa fa-caret-right" aria-hidden="true"></i>
-  );
-};
 /* eslint-enable max-len */

@@ -48,3 +48,12 @@ input {
     background: transparent;
   }
 }
+
+.cf-help-content {
+  &.cf-dispatch {
+    h1:not(:first-child) {
+      margin-top: 40px;
+    }
+  }
+}
+
