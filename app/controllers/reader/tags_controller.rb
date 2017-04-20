@@ -1,5 +1,5 @@
 class Reader::TagsController < ApplicationController
-  #before_action :verify_system_admin
+  before_action :verify_access
 
   def index
     document_id = params[:document_id]
@@ -13,26 +13,28 @@ class Reader::TagsController < ApplicationController
 
     # getting params
     document_id = params[:document_id]
-    tags = tag_params
 
     # finding the document and adding tags
     document = Document.find(document_id)
-    
-    document.tags.create(tags[:tags]) do | tag |
+    document.tags.create(tag_params[:tags]) do | tag, index |
       created_tags << tag
     end
-    render(:json => { :tags => created_tags }, :status => :created)
+    render(:json => created_tags, :status => :created)
   end
 
   def destroy
     tag_id = params[:id]
-    puts params[:id]
     Tag.delete(tag_id)
     render(:json => 'no_content', :status => :no_content)
   end
 
   private
+
   def tag_params
     params.permit(tags: [:text])
+  end
+
+  def verify_access
+    verify_authorized_roles("Reader")
   end
 end

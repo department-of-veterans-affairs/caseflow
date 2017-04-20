@@ -118,7 +118,7 @@ export const addNewTag = (doc, tags) => {
       dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
       ApiUtil.post(`/reader/documents/${doc.id}/tags`, { data: { tags: processedTags } }).
         then((data) => {
-          dispatch(newTagRequestSuccess(doc.id, data.body.tags));
+          dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {
           dispatch(newTagRequestFailed("Unable to save. Please try again."));
         });
