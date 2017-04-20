@@ -103,7 +103,7 @@ class VACOLS::Case < VACOLS::Record
   # supported in VACOLS
   VALID_UPDATE_LOCATIONS = %w(50 51 53 54 98).freeze
 
-  JOIN_ISSUE_CNT_ALLOWED = "
+  JOIN_ISSUE_COUNT = "
     inner join
     (
       select ISSKEY,
@@ -150,7 +150,10 @@ class VACOLS::Case < VACOLS::Record
     -- Exclude cases with a private attorney.
 
     and ISSUE_CNT_ALLOWED > 0
-    -- Check that there are no remands on the case. Denials can be included.
+    -- Check that there is at least one non-new-material allowed issue
+
+    and ISSUE_CNT_REMAND = 0
+    -- Check that there are no remanded issues. Denials can be included.
   }.freeze
 
   # These scopes query VACOLS and cannot be covered by automated tests.
@@ -162,7 +165,7 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(outcoded_after:)
-    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_CNT_ALLOWED)
+    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
                 .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
                 .order("BFDDEC ASC")
   end

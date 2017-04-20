@@ -1,4 +1,4 @@
-class VACOLS::Issue < VACOLS::Record
+class VACOLS::CaseIssue < VACOLS::Record
   self.table_name = "vacols.issues"
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
