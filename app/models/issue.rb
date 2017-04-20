@@ -44,6 +44,7 @@ class Issue
       description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
       description.push("#{hash['isslev2']} - #{hash['isslev2_label']}") if hash["isslev2"]
       description.push("#{hash['isslev3']} - #{hash['isslev3_label']}") if hash["isslev3"]
+      description
     end
 
     def load_from_vacols(hash)
