@@ -179,6 +179,8 @@ RSpec.feature "Reader" do
     TAG_TEXT1 = "Medical"
     TAG_TEXT2 = "Law document"
 
+    TAG_DOC2_TEXT1 = "Appeal Document"
+
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     click_on documents[0].filename
     find('.Select-control').click
@@ -196,5 +198,14 @@ RSpec.feature "Reader" do
     # expecting the multi-selct to have the two new fields
     expect(page).to have_css('.Select-value-label', text: TAG_TEXT1)
     expect(page).to have_css('.Select-value-label', text: TAG_TEXT2)
+
+    # adding new tags to another document
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on documents[1].filename
+    find('.Select-control').click
+    input_element = find('.Select-input > input')
+    input_element.click.native.send_keys(TAG_DOC2_TEXT1)
+
+    expect(page).to have_css('.Select-value-label', text: TAG_DOC2_TEXT1)
   end
 end
