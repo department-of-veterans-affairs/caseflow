@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const StringUtil = {
 
   camelCaseToDashCase(variable) {
@@ -37,6 +39,13 @@ const StringUtil = {
     }
 
     return (padded + string).slice(-width);
+  },
+
+  titleCase(string) {
+    return _(string).
+      words().
+      map(_.capitalize).
+      join(' ');
   },
 
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase

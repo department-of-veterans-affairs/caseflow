@@ -92,7 +92,7 @@ RSpec.feature "Reader" do
     expect(page).to have_content(:all, "Important Decision Document!!!")
 
     # Add a comment
-    click_on "+ Add a Comment"
+    click_on "button-AddComment"
 
     # pageContainer1 is the id pdfJS gives to the div holding the first page.
     find("#pageContainer1").click

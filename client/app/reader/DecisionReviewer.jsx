@@ -121,12 +121,12 @@ export class DecisionReviewer extends React.Component {
   }
 
   markAsRead = (pdfNumber) => {
+
     let documentId = this.state.documents[pdfNumber].id;
 
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).
       then(() => {
         this.setDocumentAttribute(pdfNumber, 'opened_by_current_user', true);
-        this.props.handleSetLastRead(this.state.documents[pdfNumber].id);
       }, () => {
 
         /* eslint-disable no-console */
@@ -353,8 +353,7 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired
+  onCommentScrolledTo: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -368,14 +367,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({
       type: Constants.SCROLL_TO_COMMENT,
       payload: { scrollToComment }
-    });
-  },
-  handleSetLastRead(docId) {
-    dispatch({
-      type: Constants.LAST_READ_DOCUMENT,
-      payload: {
-        docId
-      }
     });
   }
 });

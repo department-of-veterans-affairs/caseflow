@@ -5,7 +5,6 @@ import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
-import { rightTriangle } from '../components/RenderFunctions';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import * as Constants from './constants';
@@ -14,7 +13,7 @@ import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 import IconButton from '../components/IconButton';
 
-const NUMBER_OF_COLUMNS = 6;
+const NUMBER_OF_COLUMNS = 5;
 
 const FilterIcon = (props) =>
   <IconButton {...props} className={'table-icon bordered-icon'} iconName="fa-filter" />;
@@ -110,13 +109,6 @@ export class PdfListView extends React.Component {
       }
 
       return [
-        {
-          valueFunction: (doc) => {
-            if (doc.id === this.props.lastRead) {
-              return rightTriangle();
-            }
-          }
-        },
         {
           header: <div
             id="categories-header"
@@ -302,6 +294,5 @@ PdfListView.propTypes = {
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   reduxDocuments: PropTypes.object.isRequired,
-  handleToggleCommentOpened: PropTypes.func.isRequired,
-  lastRead: PropTypes.number
+  handleToggleCommentOpened: PropTypes.func.isRequired
 };

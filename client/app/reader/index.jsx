@@ -116,18 +116,6 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.LAST_READ_DOCUMENT:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdfList: {
-            lastRead: action.payload.docId
-          }
-        }
-      }
-    );
   default:
     return state;
   }
