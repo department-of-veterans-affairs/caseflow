@@ -1,4 +1,5 @@
 require "rails_helper"
+require "main_menu_helper"
 
 RSpec.feature "Confirm Certification" do
   let!(:current_user) { User.authenticate! }
@@ -33,6 +34,9 @@ RSpec.feature "Confirm Certification" do
 
   scenario "Screen reader user visits pdf link" do
     visit "certifications/#{appeal.vacols_id}"
+
+    # Validate help link
+    expect_main_menu_help_to_visit certification_help_path
 
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.

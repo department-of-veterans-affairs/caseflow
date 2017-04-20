@@ -26,6 +26,7 @@ class SessionsController < ApplicationController
   def destroy
     session.delete(:regional_office)
     session.delete("user")
+    session.delete(:application)
     redirect_to "/"
   end
 

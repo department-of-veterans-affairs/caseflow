@@ -1,4 +1,5 @@
 require "rails_helper"
+require "main_menu_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
@@ -38,6 +39,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
+
+      # Validate help link
+      expect_main_menu_help_to_visit dispatch_help_path
 
       fill_in "the number of people", with: "2"
       safe_click_on "Update"
@@ -133,6 +137,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")
       expect(page).to have_content("Routed in VACOLS")
+
+      # Validate help link
+      expect_main_menu_help_to_visit dispatch_help_path
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access
