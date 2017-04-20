@@ -439,4 +439,10 @@ $dropdown-filter-background-color: #fff;
 
 .section--document-list .table-icon {
   display: inline;
+
+  &:hover {
+    $hover-color: #0071bc;
+    color: $hover-color;
+    border-color: $hover-color;
+  }
 }
