@@ -20,8 +20,7 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_accessor :document_records
-
+    attr_accessor :document_records, :issue_records
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
@@ -160,22 +159,8 @@ class Fakes::AppealRepository
     # noop
   end
 
-  def self.issues(_vacols_id)
-    [
-      VACOLS::Issue.format(
-        "issprog" => "2",
-        "issprog_label" => "Compensation",
-        "isscode" => "10",
-        "isscode_label" => "Service connection",
-        "isslev1" => "20",
-        "isslev1_label" => "All Others",
-        "isslev2" => "30",
-        "isslev2_label" => "Post-traumatic stress disorder",
-        "isslev3" => nil,
-        "isslev3_label" => nil,
-        "issdc" => "Allowed"
-      )
-    ]
+  def self.issues(vacols_id)
+    (issue_records || {})[vacols_id] || []
   end
 
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
