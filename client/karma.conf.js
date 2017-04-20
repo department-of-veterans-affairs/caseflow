@@ -9,6 +9,11 @@ module.exports = function(config) {
     frameworks: ['mocha'],
     singleRun: true,
 
+    browserConsoleLogOptions: {
+      terminal: true,
+      level: ''
+    },
+
     files: [
       { pattern: karmaTestPattern }
     ],
