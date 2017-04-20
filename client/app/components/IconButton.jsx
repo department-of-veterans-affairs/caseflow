@@ -10,17 +10,8 @@ const IconButton = ({
     }
   };
 
-  const buttonProps = {
-    role: 'button',
-    ref: getRef,
-    'aria-label': label,
-    tabIndex: '0',
-    onKeyDown: handleKeyDown,
-    onClick: handleActivate,
-    className
-  };
-
-  return <i {...buttonProps}
+  return <i role="button" ref={getRef} aria-label={label}
+    tabIndex="0" onKeyDown={handleKeyDown} onClick={handleActivate}
     className={`${className} fa fa-1 ${iconName} cf-icon-button`}></i>;
 };
 
