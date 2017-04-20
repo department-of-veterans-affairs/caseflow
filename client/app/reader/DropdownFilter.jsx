@@ -1,6 +1,4 @@
 import React, { PropTypes } from 'react';
-import IconButton from '../components/IconButton';
-import { removeSymbolHtml } from '../components/RenderFunctions';
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -38,8 +36,6 @@ class DropdownFilter extends React.PureComponent {
             disabled={!this.props.isClearEnabled}>
           Clear category filter
         </button>
-        <IconButton iconFunction={removeSymbolHtml} className="cf-clear-button"
-          handleActivate={this.props.clearFilters} label="Clear filters" />
       </div>
       {children}
     </div>;
