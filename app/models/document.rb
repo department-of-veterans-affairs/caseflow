@@ -24,7 +24,7 @@ class Document < ActiveRecord::Base
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"]
+  DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
 
   attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
 

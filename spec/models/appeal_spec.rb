@@ -11,7 +11,7 @@ describe Appeal do
         Document.new(type: "NOD", received_at: 7.days.ago),
         Document.new(type: "BVA Decision", received_at: 7.days.ago),
         Document.new(type: "BVA Decision", received_at: 6.days.ago),
-        Document.new(type: "SSOC", received_at: 6.days.ago),
+        Document.new(type: "SSOC", received_at: 6.days.ago)
       ]
     end
 
@@ -24,7 +24,7 @@ describe Appeal do
     end
 
     context "when 2 types are passed" do
-      let(:type) { ["NOD", "SSOC"] }
+      let(:type) { %w(NOD SSOC) }
       it "returns right number of documents and type" do
         expect(subject.count).to eq(2)
         expect(subject.first.type).to eq(type.first)
@@ -435,7 +435,7 @@ describe Appeal do
       Document.new(received_at: Time.zone.now.to_date, type: "BVA Decision")
     end
     let(:old_decision) do
-      Document.new( received_at: 5.days.ago.to_date, type: "BVA Decision")
+      Document.new(received_at: 5.days.ago.to_date, type: "BVA Decision")
     end
     let(:appeal) { Appeal.new(vbms_id: "123") }
 
