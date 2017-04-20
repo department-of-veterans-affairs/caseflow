@@ -21,9 +21,9 @@ export class PdfListView extends React.Component {
     let className;
 
     if (this.props.sortDirection === 'ascending') {
-      className = "fa-caret-down";
+      className = 'fa-caret-down';
     } else {
-      className = "fa-caret-up";
+      className = 'fa-caret-up';
     }
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
@@ -131,7 +131,7 @@ export class PdfListView extends React.Component {
               {numberOfComments > 0 &&
                 <span>
                   <Button
-                    classNames={["cf-btn-link"]}
+                    classNames={['cf-btn-link']}
                     href="#"
                     ariaLabel={name}
                     name={name}

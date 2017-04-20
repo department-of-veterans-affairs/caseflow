@@ -15,12 +15,12 @@ let StyleGuideLinkButton = () => {
         <h3 className="styleguide-grey-header">Default</h3>
         <Button
           name="signup-1"
-          classNames={["usa-button-outline"]}>
+          classNames={['usa-button-outline']}>
           Signup
         </Button><br/><br/>
         <Button
           name="signup-2"
-          classNames={["cf-btn-link"]}>
+          classNames={['cf-btn-link']}>
           Signup
         </Button>
       </div>
@@ -28,12 +28,12 @@ let StyleGuideLinkButton = () => {
         <h3 className="styleguide-grey-header">Hover</h3>
         <Button
           name="signup-3"
-          classNames={["usa-button-outline usa-button-hover"]}>
+          classNames={['usa-button-outline usa-button-hover']}>
           Signup
         </Button><br/><br/>
         <Button
           name="signup-4"
-          classNames={["cf-btn-link button-hover"]}>
+          classNames={['cf-btn-link button-hover']}>
           Signup
         </Button>
       </div>
@@ -41,12 +41,12 @@ let StyleGuideLinkButton = () => {
         <h3 className="styleguide-grey-header">Active</h3>
         <Button
           name="signup-5"
-          classNames={["usa-button-outline usa-button-active"]}>
+          classNames={['usa-button-outline usa-button-active']}>
           Signup
         </Button><br/><br/>
         <Button
           name="signup-6"
-          classNames={["cf-btn-link button-active"]}>
+          classNames={['cf-btn-link button-active']}>
           Signup
         </Button>
       </div>

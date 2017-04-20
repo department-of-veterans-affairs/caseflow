@@ -17,9 +17,9 @@ export class EstablishClaimDecision extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Route claim for Decision 1";
+      endProductButtonText = 'Route claim for Decision 1';
     } else {
-      endProductButtonText = "Route claim";
+      endProductButtonText = 'Route claim';
     }
     this.state = {
       endProductButtonText
@@ -207,7 +207,7 @@ export class EstablishClaimDecision extends React.Component {
             <Button
                 name="Cancel"
                 onClick={handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
               app="dispatch"
