@@ -292,11 +292,12 @@ svg[aria-hidden=true],
 }
 
 $gray-lighter: #d6d7d9;
+$dropdown-filter-background-color: #fff;
 
 .cf-dropdown-filter {
   position: absolute;
   border: 1px solid $gray-lighter;
-  background: white;
+  background: $dropdown-filter-background-color;
   box-shadow: 5px 5px 4px -3px $gray-lighter;
   font-weight: normal;
   padding: 0;
@@ -304,8 +305,9 @@ $gray-lighter: #d6d7d9;
 
   @mixin hover {
     &:hover {
-      background-color: #5B616B;
-      color: white;  
+      $hover-background-color: #5b616b;
+      background-color: $hover-background-color;
+      color: $dropdown-filter-background-color;
     }
   }
 
