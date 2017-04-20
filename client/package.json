@@ -42,7 +42,7 @@
     "moment": "^2.18.1",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
-    "react": "https://registry.npmjs.org/react/-/react-15.5.4.tgz",
+    "react": "^15.5.4",
     "react-copy-to-clipboard": "^4.3.0",
     "react-dom": "^15.5.4",
     "react-on-rails": "^6.8.0",
