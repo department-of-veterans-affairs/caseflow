@@ -68,6 +68,16 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SCROLL_TO_SIDEBAR_COMMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: _.pick(action.payload, 'scrollToSidebarComment')
+        }
+      }
+    );
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
       {},
