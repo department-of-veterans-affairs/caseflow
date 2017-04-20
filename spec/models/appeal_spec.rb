@@ -4,6 +4,35 @@ describe Appeal do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
+  context "#documents_with_type" do
+    subject { appeal.documents_with_type(*type) }
+    before do
+      appeal.documents += [
+        Document.new(type: "NOD", received_at: 7.days.ago),
+        Document.new(type: "BVA Decision", received_at: 7.days.ago),
+        Document.new(type: "BVA Decision", received_at: 6.days.ago),
+        Document.new(type: "SSOC", received_at: 6.days.ago),
+      ]
+    end
+
+    context "when 1 type is passed" do
+      let(:type) { "BVA Decision" }
+      it "returns right number of documents and type" do
+        expect(subject.count).to eq(2)
+        expect(subject.first.type).to eq(type)
+      end
+    end
+
+    context "when 2 types are passed" do
+      let(:type) { ["NOD", "SSOC"] }
+      it "returns right number of documents and type" do
+        expect(subject.count).to eq(2)
+        expect(subject.first.type).to eq(type.first)
+        expect(subject.last.type).to eq(type.last)
+      end
+    end
+  end
+
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
@@ -401,26 +430,16 @@ describe Appeal do
   end
 
   context "#decisions" do
+    subject { appeal.decisions }
     let(:decision) do
-      Document.new(
-        received_at: Time.zone.now.to_date,
-        type: "BVA Decision"
-      )
+      Document.new(received_at: Time.zone.now.to_date, type: "BVA Decision")
     end
     let(:old_decision) do
-      Document.new(
-        received_at: 5.days.ago.to_date,
-        type: "BVA Decision"
-      )
+      Document.new( received_at: 5.days.ago.to_date, type: "BVA Decision")
     end
-    let(:appeal) do
-      Appeal.new(
-        vbms_id: "123"
-      )
-    end
+    let(:appeal) { Appeal.new(vbms_id: "123") }
 
-    subject { appeal.decisions }
-    context "returns single decision when only one decision" do
+    context "when only one decision" do
       before do
         appeal.documents = [decision]
         appeal.decision_date = Time.current
@@ -429,7 +448,7 @@ describe Appeal do
       it { is_expected.to eq([decision]) }
     end
 
-    context "returns single decision when only one valid" do
+    context "when only one recent decision" do
       before do
         appeal.documents = [decision, old_decision]
         appeal.decision_date = Time.current
@@ -438,7 +457,7 @@ describe Appeal do
       it { is_expected.to eq([decision]) }
     end
 
-    context "returns nil when no valid decision" do
+    context "when no recent decision" do
       before do
         appeal.documents = [old_decision]
         appeal.decision_date = Time.current
@@ -447,7 +466,7 @@ describe Appeal do
       it { is_expected.to eq([]) }
     end
 
-    context "returns nil when no decision_date" do
+    context "when no decision_date on appeal" do
       before do
         appeal.decision_date = nil
       end
@@ -455,8 +474,24 @@ describe Appeal do
       it { is_expected.to eq([]) }
     end
 
-    context "returns multiple decisions when there are two decisions" do
+    context "when there are two decisions of the same type" do
       let(:documents) { [decision, decision.clone] }
+
+      before do
+        appeal.documents = documents
+        appeal.decision_date = Time.current
+      end
+
+      it { is_expected.to eq(documents) }
+    end
+
+    context "when there are two decisions of the different types" do
+      let(:documents) do
+        [
+          decision,
+          Document.new(type: "Remand BVA or CAVC", received_at: 1.day.ago)
+        ]
+      end
 
       before do
         appeal.documents = documents

@@ -173,7 +173,7 @@ class Appeal < ActiveRecord::Base
   def decisions
     return [] unless decision_date
 
-    decisions = documents_with_type("BVA Decision").select do |decision|
+    decisions = documents_with_type(*Document::DECISION_TYPES).select do |decision|
       (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
     decisions
@@ -226,9 +226,12 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def documents_with_type(type)
+  def documents_with_type(*types)
     @documents_by_type ||= {}
-    @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+    types.reduce([]) do |accumulator, type|
+      @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+      accumulator.concat(@documents_by_type[type])
+    end
   end
 
   def clear_documents!
