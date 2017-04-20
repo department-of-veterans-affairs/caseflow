@@ -74,7 +74,7 @@ class EstablishClaimsController < TasksController
   def set_application
     RequestStore.store[:application] = "dispatch-arc"
 
-    # since app awareness is neeed across requests
+    # since app awareness is needed across requests
     session[:application] = "Dispatch"
   end
 

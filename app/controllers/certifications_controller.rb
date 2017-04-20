@@ -67,7 +67,7 @@ class CertificationsController < ApplicationController
   def set_application
     RequestStore.store[:application] = :certification
 
-    # since app awareness is neeed across requests
+    # since app awareness is needed across requests
     session[:application] = "Certification"
   end
 
