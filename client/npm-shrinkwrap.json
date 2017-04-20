@@ -4491,7 +4491,7 @@
     },
     "react-select": {
       "version": "1.0.0-rc.3",
-      "from": "react-select@>=1.0.0-rc.3 <2.0.0",
+      "from": "react-select@latest",
       "resolved": "https://registry.npmjs.org/react-select/-/react-select-1.0.0-rc.3.tgz"
     },
     "react-test-renderer": {
