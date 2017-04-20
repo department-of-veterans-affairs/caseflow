@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
+import EstablishClaim, { DECISION_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
 
