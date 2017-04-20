@@ -49,19 +49,29 @@ class Generators::Appeal
         remand_decided: {
           status: "Remand",
           disposition: "Remanded",
-          decision_date: 7.days.ago
+          decision_date: 7.days.ago,
+          issues: [
+            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee }
+          ]
         },
         partial_grant_decided: {
           status: "Remand",
           disposition: "Allowed",
-          decision_date: 7.days.ago
+          decision_date: 7.days.ago,
+          issues: [
+            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
+          ]
         },
         full_grant_decided: {
           type: "Post Remand",
           status: "Complete",
           disposition: "Allowed",
           outcoding_date: 2.days.ago,
-          decision_date: 7.days.ago
+          decision_date: 7.days.ago,
+          issues: [
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
+          ]
         }
       }
     end
@@ -92,12 +102,17 @@ class Generators::Appeal
 
       vacols_record = extract_vacols_record(attrs)
       documents = attrs.delete(:documents)
+      issues = attrs.delete(:issues)
       cast_datetime_fields(attrs)
       inaccessible = attrs.delete(:inaccessible)
 
       appeal = Appeal.new(attrs)
 
       vacols_record[:vbms_id] = appeal.vbms_id
+
+      issues_from_template = vacols_record.delete(:issues)
+      set_vacols_issues(appeal: appeal,
+                        issues: issues || issues_from_template)
 
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
@@ -111,6 +126,15 @@ class Generators::Appeal
     end
 
     private
+
+    def set_vacols_issues(appeal:, issues:)
+      (issues ||= []).map! do |issue|
+        issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
+      end
+
+      Fakes::AppealRepository.issue_records ||= {}
+      Fakes::AppealRepository.issue_records[appeal.vacols_id] = issues
+    end
 
     def add_inaccessible_appeal(appeal)
       Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []

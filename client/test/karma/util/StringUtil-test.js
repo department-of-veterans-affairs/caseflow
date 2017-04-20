@@ -19,4 +19,18 @@ describe('StringUtil', () => {
       expect(StringUtil.leftPad('12', 4, '0')).to.eq('0012');
     });
   });
+
+  context('.titleCase', () => {
+    it('handles snake_case', () => {
+      expect(StringUtil.titleCase('snake_case')).to.eq('Snake Case');
+    });
+
+    it('handles camelCase', () => {
+      expect(StringUtil.titleCase('camelCase')).to.eq('Camel Case');
+    });
+
+    it('handles single words', () => {
+      expect(StringUtil.titleCase('title')).to.eq('Title');
+    });
+  });
 });
