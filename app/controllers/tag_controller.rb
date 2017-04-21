@@ -9,16 +9,16 @@ class TagController < ApplicationController
 
     # finding the document and adding tags
     document = Document.find(document_id)
-    document.tags.create(tag_params[:tags]) do | tag, index |
+    document.tags.create(tag_params[:tags]) do |tag|
       created_tags << tag
     end
-    render(:json => created_tags, :status => :created)
+    render({ json: created_tags }, status: :created)
   end
 
   def destroy
     tag_id = params[:id]
-    Tag.delete(tag_id)
-    render(:json => 'no_content', :status => :no_content)
+    Tag.destroy(tag_id)
+    render(json: { status: :no_content })
   end
 
   private

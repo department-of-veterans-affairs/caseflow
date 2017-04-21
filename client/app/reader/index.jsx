@@ -7,7 +7,7 @@ import logger from 'redux-logger';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 const initialState = {
   ui: {
@@ -90,12 +90,9 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     }
   );
-
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
-    return Object.assign({}, state, {
-      ui: {
-        tagsErrorMessage: action.payload.errorMessage
-      }
+    return update(state, {
+      ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
     });
   case Constants.UPDATE_SHOWING_DOC:
     return Object.assign({}, state, {
