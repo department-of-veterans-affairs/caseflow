@@ -7,7 +7,7 @@ export default class StickyNav extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      className: "cf-sg-nav-not-scrolling"
+      className: 'cf-sg-nav-not-scrolling'
     };
   }
 
@@ -23,11 +23,11 @@ export default class StickyNav extends React.Component {
     // Nav bar will attach to top of page if the user scrolls down by 150px
     if (window.scrollY > 150) {
       this.setState({
-        className: "cf-sg-nav-scrolling"
+        className: 'cf-sg-nav-scrolling'
       });
     } else if (window.scrollY < 150) {
       this.setState({
-        className: "cf-sg-nav-not-scrolling"
+        className: 'cf-sg-nav-not-scrolling'
       });
     }
   }
