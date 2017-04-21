@@ -76,15 +76,15 @@ describe Task do
     end
 
     let!(:task_completed_tonight) do
-      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.end_of_day - 1.second)
+      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.end_of_day)
     end
 
     let!(:task_completed_yesterday) do
-      FakeTask.create(aasm_state: :completed, completed_at: 1.day.ago.end_of_day)
+      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.end_of_day - 1.day)
     end
 
     let!(:task_not_completed) do
-      FakeTask.create(aasm_state: :reviewed, completed_at: 1.day.ago.end_of_day)
+      FakeTask.create(aasm_state: :reviewed, completed_at: Time.zone.now)
     end
 
     it { is_expected.to eq([task_completed_this_morning, task_completed_tonight]) }

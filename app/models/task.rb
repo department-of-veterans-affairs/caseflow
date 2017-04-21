@@ -61,12 +61,11 @@ class Task < ActiveRecord::Base
     end
 
     def completed_today
-      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc)
+      where(aasm_state: "completed", completed_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day)
     end
 
     def completed_today_by_user(user_id)
-      where(completed_at: DateTime.now.beginning_of_day.utc..DateTime.now.end_of_day.utc,
-            user_id: user_id)
+      completed_today.where(user_id: user_id)
     end
 
     def to_complete
