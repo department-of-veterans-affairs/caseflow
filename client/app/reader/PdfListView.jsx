@@ -205,7 +205,7 @@ export class PdfListView extends React.Component {
 // Should be merged with documents when we finish integrating redux
 const mapStateToProps = (state) => {
   return {
-    reduxDocuments: _.get(state, 'documents'),
+    reduxDocuments: state.documents,
     lastReadDocId: _.get(state, 'ui.pdfList.lastReadDocId')
   };
 };
