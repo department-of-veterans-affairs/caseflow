@@ -62,20 +62,9 @@ class DropdownFilter extends React.PureComponent {
       return;
     }
 
-    const clickIsInsideThisComponent = () => {
-      let node = event.target;
+    const clickIsInsideThisComponent = this.rootElem.contains(event.target);
 
-      // eslint-disable-next-line no-cond-assign
-      while (node = node.parentNode) {
-        if (node === this.rootElem) {
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    if (!clickIsInsideThisComponent()) {
+    if (!clickIsInsideThisComponent) {
       this.props.handleClose();
     }
   }
