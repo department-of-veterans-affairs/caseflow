@@ -5,7 +5,7 @@ const karmaTestPattern = 'test/karma/**/*-test.js';
 
 module.exports = function(config) {
   config.set({
-    browsers: ['Firefox'],
+    browsers: ['Chrome'],
     frameworks: ['mocha'],
     reporters: ['mocha'],
     singleRun: true,

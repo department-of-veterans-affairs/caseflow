@@ -206,7 +206,7 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state) => {
   return {
     reduxDocuments: state.documents,
-    lastReadDocId: _.get(state, 'ui.pdfList.lastReadDocId')
+    lastReadDocId: state.ui.pdfList.lastReadDocId
   };
 };
 
