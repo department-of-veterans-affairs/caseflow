@@ -58,8 +58,7 @@ export class DecisionReviewer extends React.Component {
   onPreviousPdf = () => {
     const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
 
-    this.setPage(currentPdfIndex);
-    this.props.updateShowingDocId(this.state.documents[currentPdfIndex].id);
+    this.setPage(currentPdfIndex, this.state.documents);
   }
 
   documentUrl = (doc) => {
@@ -70,8 +69,7 @@ export class DecisionReviewer extends React.Component {
     const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
         this.state.documents.length - 1);
 
-    this.setPage(currentPdfIndex);
-    this.props.updateShowingDocId(this.state.documents[currentPdfIndex].id);
+    this.setPage(currentPdfIndex, this.state.documents);
   }
 
   // This method is used for updating attributes of documents.
@@ -125,8 +123,7 @@ export class DecisionReviewer extends React.Component {
     }
 
     event.preventDefault();
-    this.setPage(pdfNumber);
-    this.props.updateShowingDocId(this.state.documents[pdfNumber].id);
+    this.setPage(pdfNumber, this.state.documents);
   }
 
   markAsRead = (pdfNumber) => {
@@ -145,8 +142,11 @@ export class DecisionReviewer extends React.Component {
       });
   }
 
-  setPage = (pdfNumber) => {
+  setPage = (pdfNumber, documents) => {
     this.markAsRead(pdfNumber);
+    if (documents) {
+      this.props.updateShowingDocId(this.state.documents[pdfNumber].id);
+    }
     this.setState({
       currentPdfIndex: pdfNumber
     });
