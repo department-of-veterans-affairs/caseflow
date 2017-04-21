@@ -11,7 +11,7 @@ import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
-import { SelectedFilterIcon } from '../components/RenderFunctions';
+import { SelectedFilterIcon, UnselectedFilterIcon } from '../components/RenderFunctions';
 
 const NUMBER_OF_COLUMNS = 5;
 
@@ -40,8 +40,7 @@ const FilterIcon = ({
     return <SelectedFilterIcon {...props} className={className} idPrefix={idPrefix} />;
   }
 
-  return <i {...props}
-    className={`${className} bordered-icon fa fa-1 fa-filter`}></i>;
+  return <UnselectedFilterIcon {...props} className={className} />;
 };
 
 FilterIcon.propTypes = {
