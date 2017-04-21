@@ -358,6 +358,25 @@ svg[aria-hidden=true],
   }
 }
 
+.unselected-filter-icon {
+  .unselected-filter-icon-inner {
+    fill: #323A45;
+  }
+
+  .unselected-filter-icon-border {
+    stroke: #323A45;
+  }
+}
+
+.unselected-filter-icon:hover {
+  .unselected-filter-icon-inner {
+    fill: $color-primary;
+  }
+  .unselected-filter-icon-border {
+    stroke: $color-primary;
+  }
+}
+
 .cf-text-button {
   background: inherit;
   font-weight: inherit;
@@ -433,9 +452,4 @@ svg[aria-hidden=true],
 
 .section--document-list .table-icon {
   display: inline;
-
-  &:hover {
-    color: $color-primary;
-    border-color: $color-primary;
-  }
 }
