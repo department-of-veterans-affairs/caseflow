@@ -44,15 +44,6 @@ export const selectCurrentPdf = (docId) => {
   };
 };
 
-export const updateShowingDocId = (currentDocId) => {
-  return {
-    type: Constants.UPDATE_SHOWING_DOC,
-    payload: {
-      currentDocId
-    }
-  };
-};
-
 export const removeTagRequestFailure = (errorMessage) => {
   return {
     type: Constants.REQUEST_REMOVE_TAG_FAILURE,

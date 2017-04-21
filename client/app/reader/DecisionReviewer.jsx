@@ -58,7 +58,7 @@ export class DecisionReviewer extends React.Component {
   onPreviousPdf = () => {
     const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
 
-    this.setPage(currentPdfIndex, this.state.documents);
+    this.setPage(currentPdfIndex);
   }
 
   documentUrl = (doc) => {
@@ -69,7 +69,7 @@ export class DecisionReviewer extends React.Component {
     const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
         this.state.documents.length - 1);
 
-    this.setPage(currentPdfIndex, this.state.documents);
+    this.setPage(currentPdfIndex);
   }
 
   // This method is used for updating attributes of documents.
@@ -123,7 +123,7 @@ export class DecisionReviewer extends React.Component {
     }
 
     event.preventDefault();
-    this.setPage(pdfNumber, this.state.documents);
+    this.setPage(pdfNumber);
   }
 
   markAsRead = (pdfNumber) => {
@@ -142,11 +142,8 @@ export class DecisionReviewer extends React.Component {
       });
   }
 
-  setPage = (pdfNumber, documents) => {
+  setPage = (pdfNumber) => {
     this.markAsRead(pdfNumber);
-    if (documents) {
-      this.props.updateShowingDocId(this.state.documents[pdfNumber].id);
-    }
     this.setState({
       currentPdfIndex: pdfNumber
     });
@@ -347,7 +344,7 @@ export class DecisionReviewer extends React.Component {
           tagsErrorMessage={this.props.ui.tagsErrorMessage}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
-          doc={this.props.storeDocuments[this.props.ui.currentDocId]}
+          doc={this.props.storeDocuments[documents[this.state.currentPdfIndex].id]}
           onPreviousPdf={onPreviousPdf}
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
@@ -371,7 +368,6 @@ DecisionReviewer.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ui: {
-      currentDocId: _.get(state, 'ui.currentDocId'),
       tagsErrorMessage: _.get(state, 'ui.tagsErrorMessage')
     },
     storeDocuments: state.documents || {}

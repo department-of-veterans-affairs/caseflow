@@ -11,7 +11,6 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
-    currentDocId: null,
     tagsErrorMessage: '',
     pdf: {
     }
@@ -85,23 +84,13 @@ export const readerReducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
     });
-  case Constants.UPDATE_SHOWING_DOC:
+  case Constants.SET_CURRENT_RENDERED_FILE:
     return update(state, {
       ui: {
         tagsErrorMessage: { $set: action.payload.errorMessage },
-        currentDocId: { $set: action.payload.currentDocId }
+        pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
       }
     });
-  case Constants.SET_CURRENT_RENDERED_FILE:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: _.pick(action.payload, 'currentRenderedFile')
-        }
-      }
-    );
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
       ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
