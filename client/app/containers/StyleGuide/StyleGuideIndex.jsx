@@ -109,8 +109,8 @@ export default function StyleGuideIndex() {
   return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
-          componentLinks.map((link) => (
-            <NavLink anchor={link.anchor} name={link.name}/>
+          componentLinks.map((link, i) => (
+            <NavLink anchor={link.anchor} name={link.name} key={i}/>
           ))
         }
       </StickyNav>
