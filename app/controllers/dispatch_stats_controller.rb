@@ -1,7 +1,6 @@
 require "json"
 
 class DispatchStatsController < ApplicationController
-
   before_action :verify_authentication
   before_action :verify_access
 
