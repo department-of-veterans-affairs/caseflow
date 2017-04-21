@@ -1,1 +1,1 @@
-<% require_asset 'webpack-bundle' unless Rails.env.development? && ENV['WEBPACK_HOT'] %>
+<% require_asset "webpack-bundle" unless Rails.application.config.webpack_hot %>

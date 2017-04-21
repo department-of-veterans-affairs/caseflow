@@ -14,15 +14,8 @@
 
   <%= stylesheet_link_tag    'application', media: 'all' %>
 
-  <!--
-    In production, this will include our compiled assets (jQuery and React)
-    In development, this includes *only* our old javascript (jQuery only)
-  -->
-  <%= javascript_include_tag 'application' %>
-
-  <% if Rails.env.development? %>
-    <%= env_javascript_include_tag(hot: ['http://localhost:3500/webpack-bundle.js']) %>
-  <% end %>
+    <%= env_javascript_include_tag(static: 'application',
+                                   hot: ['http://localhost:3500/webpack-bundle.js']) %>
 
   <%= csrf_meta_tags %>
 

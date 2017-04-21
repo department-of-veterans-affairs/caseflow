@@ -19,8 +19,9 @@
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test npm run build",
     "build:production": "NODE_ENV=production npm run build",
-    "dev": "rm ../app/assets/webpack/* || true && npm run build -- -w",
-    "dev:hot": "NODE_ENV=development node webpack-hot-server.js"
+    "dev:clear-build": "rm ../app/assets/webpack/* || true",
+    "dev": "npm run dev:clear-build && NODE_ENV=development npm run build -- -w",
+    "dev:hot": "npm run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
   },
   "cacheDirectories": [
     "node_modules",
