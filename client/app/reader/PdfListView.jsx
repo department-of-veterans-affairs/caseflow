@@ -277,6 +277,7 @@ export class PdfListView extends React.Component {
               columns={this.getDocumentColumns()}
               rowObjects={rowObjects}
               summary="Document list"
+              headerClassName="cf-document-list-header-row"
               rowsPerRowObject={2}
             />
           </div>
