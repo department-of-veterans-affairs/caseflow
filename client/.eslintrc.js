@@ -192,6 +192,7 @@ module.exports = {
     "prefer-rest-params": "error",
     "prefer-spread": "error",
     "prefer-template": "error",
+    "quotes": ["warn", "single", {"avoidEscape": true}],
     "radix": "error",
     "rest-spread-spacing": "error",
     "semi": "error",

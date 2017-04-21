@@ -3,6 +3,7 @@ import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import { formatDate, addDays } from '../../util/DateUtil';
+import StringUtil from '../../util/StringUtil';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
@@ -16,9 +17,9 @@ export class EstablishClaimDecision extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Route claim for Decision 1";
+      endProductButtonText = 'Route claim for Decision 1';
     } else {
-      endProductButtonText = "Route claim";
+      endProductButtonText = 'Route claim';
     }
     this.state = {
       endProductButtonText
@@ -51,7 +52,7 @@ export class EstablishClaimDecision extends React.Component {
     let issueColumns = [
       {
         header: 'Program',
-        valueName: 'program'
+        valueName: 'program_description'
       },
       {
         header: 'VACOLS Issue(s)',
@@ -63,7 +64,7 @@ export class EstablishClaimDecision extends React.Component {
       },
       {
         header: 'Disposition',
-        valueName: 'disposition'
+        valueFunction: (issue) => StringUtil.titleCase(issue.disposition)
       }
     ];
 
@@ -206,7 +207,7 @@ export class EstablishClaimDecision extends React.Component {
             <Button
                 name="Cancel"
                 onClick={handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
               app="dispatch"

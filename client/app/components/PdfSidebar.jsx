@@ -115,7 +115,7 @@ export class PdfSidebar extends React.Component {
             <b>Document Type:</b> {this.props.doc.type}
             <Button
               name="download"
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
               ariaLabel="download"
             >
               <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>

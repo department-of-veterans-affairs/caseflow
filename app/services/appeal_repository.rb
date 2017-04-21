@@ -106,9 +106,9 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.issues(vacols_id:)
-    VACOLS::Issue.descriptions(vacols_id).map do |issue|
-      VACOLS::Issue.format(issue)
+  def self.issues(vacols_id)
+    VACOLS::CaseIssue.descriptions(vacols_id).map do |issue_hash|
+      Issue.load_from_vacols(issue_hash)
     end
   end
 

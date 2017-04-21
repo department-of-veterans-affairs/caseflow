@@ -81,7 +81,8 @@ svg[aria-hidden=true],
 // scss-lint:enable QualifyingElement
 
 .cf-sidebar-wrapper {
-  float: right;
+  display: flex;
+  flex-direction: column;
   width: 380px;
   top: 0;
   bottom: 0;
@@ -111,9 +112,6 @@ svg[aria-hidden=true],
 
 .cf-comment-wrapper {
   padding: 0 30px;
-  position: absolute;
-  top: 328px;
-  bottom: 0;
   width: 380px;
   overflow-y: scroll;
 }

@@ -10,7 +10,7 @@ import { documents } from '../../data/documents';
 
 /* eslint-disable no-unused-expressions */
 describe('Pdf', () => {
-  let pdfId = "pdf";
+  let pdfId = 'pdf';
 
   // Note, these tests use mount rather than shallow.
   // In order to get that working, we must stub out
@@ -41,7 +41,7 @@ describe('Pdf', () => {
     });
 
     context('.render', () => {
-      it(`renders the staging div`, () => {
+      it('renders the staging div', () => {
         expect(wrapper.find('.cf-pdf-pdfjs-container')).
           to.have.length(PdfJsStub.numPages);
       });
@@ -59,7 +59,7 @@ describe('Pdf', () => {
         });
 
         it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, (done) => {
-          wrapper.instance().setupPdf("test.pdf").
+          wrapper.instance().setupPdf('test.pdf').
             then(() => {
               expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
               done();

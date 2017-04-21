@@ -109,12 +109,14 @@ RSpec.feature "Start Certification" do
 
       click_button("Continue")
 
-      within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
+      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
+        .to_formatted_s(:short_date)}?") do
         find("label", text: "Yes").click
       end
       expect(page).to have_content("What did the appellant request in the document you found")
 
-      within_fieldset("Was a hearing cancellation or request added after #{form9.received_at}?") do
+      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
+        .to_formatted_s(:short_date)}?") do
         find("label", text: "No").click
       end
       within_fieldset("Caseflow found the document below, labeled as a Form 9") do
@@ -125,7 +127,6 @@ RSpec.feature "Start Certification" do
 
     scenario "When some documents aren't matching shows missing documents page" do
       visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
-      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/mismatched_documents")
       expect(page).to have_content("Cannot find documents in VBMS")
       expect(page).to_not have_selector(:link_or_button, "Continue")
     end
