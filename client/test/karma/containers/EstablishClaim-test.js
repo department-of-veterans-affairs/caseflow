@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { DECISION_PAGE, ASSOCIATE_PAGE, FORM_PAGE, NOTE_PAGE } from
+import EstablishClaim, { DECISION_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
 
@@ -51,28 +51,6 @@ describe('EstablishClaim', () => {
 
     });
 
-    context('navigation', () => {
-      it('initially loads to decision page', () => {
-        expect(wrapper.state().history.location.pathname).to.equal('/decision');
-        expect(wrapper.state().page).to.equal('decision');
-      });
-
-      it('redirects to decision if no existing EPs', (done) => {
-        // Add a listener to the history object and look for the "go back" POP event
-        let unlisten = wrapper.state().history.listen((location, action) => {
-          if (action === 'POP') {
-            expect(wrapper.state().history.location.pathname).to.equal('/decision');
-            unlisten();
-            done();
-          }
-        });
-
-        // manually navigate to associate EP page
-        // This simulates a user manually altering the URL
-        wrapper.state().history.push('associate');
-      });
-    });
-
     context('EstablishClaimForm', () => {
       beforeEach(() => {
         wrapper.node.store.dispatch({
@@ -96,24 +74,6 @@ describe('EstablishClaim', () => {
         // Click go back and close modal
         wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
-      });
-    });
-
-    context('AssociateEP', () => {
-      beforeEach(() => {
-        wrapper.setState({ page: ASSOCIATE_PAGE });
-      });
-
-      it('shows cancel model', () => {
-        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
-
-        // click cancel to open modal
-        wrapper.find('#button-Cancel').simulate('click');
-        expect(wrapper.find('.cf-modal-body')).to.have.length(1);
-
-        // Click go back and close modal
-        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
-        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });
 
