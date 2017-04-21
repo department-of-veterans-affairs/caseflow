@@ -5,7 +5,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import Logo from '../../components/Logo';
 
 export default class StyleLogos extends React.Component {
-  render() {
+  render = () => {
     return <div>
       <StyleGuideComponentTitle
         title="Logos"
@@ -23,12 +23,24 @@ export default class StyleLogos extends React.Component {
         When refering to the whole Caseflow system, you should use the
         non-colored Caseflow logo.
       </p>
-      <p className="logo-example"><Logo app="efolder" /><span>e-Folder Express</span></p>
-      <p className="logo-example"><Logo app="certification" /><span>Certification</span></p>
-      <p className="logo-example"><Logo app="dispatch" /><span>Dispatch</span></p>
-      <p className="logo-example"><Logo app="reader" /><span>Reader</span></p>
-      <p className="logo-example"><Logo app="feedback" /><span>Feedback</span></p>
-      <p className="logo-example"><Logo /><span>General Logo</span></p>
+      <p className="logo-example">
+        <Logo app="efolder" /><span>e-Folder Express</span>
+      </p>
+      <p className="logo-example">
+        <Logo app="certification" /><span>Certification</span>
+      </p>
+      <p className="logo-example">
+        <Logo app="dispatch" /><span>Dispatch</span>
+      </p>
+      <p className="logo-example">
+        <Logo app="reader" /><span>Reader</span>
+      </p>
+      <p className="logo-example">
+        <Logo app="feedback" /><span>Feedback</span>
+      </p>
+      <p className="logo-example">
+        <Logo /><span>General Logo</span>
+      </p>
     </div>;
   }
 }
