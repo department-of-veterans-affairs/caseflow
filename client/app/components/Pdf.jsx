@@ -185,11 +185,7 @@ export class Pdf extends React.Component {
       // TODO: Make this more robust and avoid magic numbers.
       if (boundingRect.bottom > -1000 &&
           boundingRect.top < this.scrollWindow.clientHeight + 1000) {
-        this.renderPage(index, this.props.file).catch(() => {
-
-          // eslint-disable-next-line no-console
-          console.log('page filed to render');
-        });
+        this.renderPage(index, this.props.file);
       }
     });
   }
@@ -232,11 +228,6 @@ export class Pdf extends React.Component {
         this.scrollWindow.scrollTop =
           this.pageContainers[pageNumber - 1].getBoundingClientRect().top +
           yPosition + this.scrollWindow.scrollTop - halfHeight;
-      }).
-      catch(() => {
-
-        // eslint-disable-next-line no-console
-        console.log('page filed to render');
       });
     }
   }
@@ -269,11 +260,7 @@ export class Pdf extends React.Component {
   componentDidUpdate = () => {
     for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
       if (!this.state.isRendered[index] && this.pageContainers[index]) {
-        this.renderPage(index, this.props.file).catch(() => {
-
-          // eslint-disable-next-line no-console
-          console.log('page filed to render');
-        });
+        this.renderPage(index, this.props.file);
       }
     }
 
