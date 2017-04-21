@@ -187,6 +187,7 @@ export default class PdfSidebar extends React.Component {
             placeholder=""
             value={this.generateOptionsFromTags(doc.tags) || []}
             onChange={this.onChange}
+            selfManageValueState={true}
           />
           <div className="cf-sidebar-heading">
             Comments

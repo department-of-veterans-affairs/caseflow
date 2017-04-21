@@ -15,12 +15,12 @@ class SearchableDropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value ? props.value : null
+      value: props.value || null
     };
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setState({value: nextProps.value || null});
+    this.setState({ value: nextProps.value || null });
   };
 
   onChange = (value) => {
@@ -37,8 +37,12 @@ class SearchableDropdown extends Component {
     if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
     }
-    this.setState({ value: newValue });
-    if (value.length < this.state.value.length) {
+    // don't set value in state if creatable is true
+    if (!this.props.selfManageValueState) {
+      this.setState({ value: newValue });
+    }
+
+    if (this.state.value && value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {
@@ -87,10 +91,10 @@ class SearchableDropdown extends Component {
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
         id={name}
-        value={this.state.value}
         options={options}
         onChange={this.onChange}
-        placeholder={placeholder ? placeholder : DEFAULT_PLACEHOLDER}
+        value={this.state.value}
+        placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder }
         clearable={false}
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
         disabled={readOnly}
