@@ -1,21 +1,9 @@
-class VACOLS::Issue < VACOLS::Record
+class VACOLS::CaseIssue < VACOLS::Record
   self.table_name = "vacols.issues"
   self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
   # :nocov:
-  def self.format(issue)
-    description = ["#{issue['isscode']} - #{issue['isscode_label']}"]
-    description.push("#{issue['isslev1']} - #{issue['isslev1_label']}") if issue["isslev1"]
-    description.push("#{issue['isslev2']} - #{issue['isslev2_label']}") if issue["isslev2"]
-    description.push("#{issue['isslev3']} - #{issue['isslev3_label']}") if issue["isslev3"]
-    {
-      program: "#{issue['issprog']} - #{issue['issprog_label']}",
-      description: description,
-      disposition: VACOLS::Case::DISPOSITIONS[issue["issdc"]] || "Other"
-    }
-  end
-
   # rubocop:disable MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,
