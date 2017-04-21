@@ -290,7 +290,6 @@ export class PdfListView extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'pdfList'),
-  lastRead: _.get(state, 'ui.pdfList.lastRead'),
 
   // Should be merged with documents when we finish integrating redux
   reduxDocuments: state.documents
