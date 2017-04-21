@@ -11,15 +11,47 @@ import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
-import IconButton from '../components/IconButton';
+import { SelectedFilterIcon } from '../components/RenderFunctions';
 
 const NUMBER_OF_COLUMNS = 5;
 
-const FilterIcon = (props) =>
-  // TODO: Update this icon to be the right SVG once Gina uploads it, instead of fa-close.
-  <IconButton {...props}
-    className={'table-icon bordered-icon'}
-    iconName={props.selected ? "fa-close" : "fa-filter"} />;
+const FilterIcon = ({
+  handleActivate, label, getRef, selected, idPrefix
+}) => {
+  const handleKeyDown = (event) => {
+    if (event.key === ' ' || event.key === 'Enter') {
+      handleActivate(event);
+      event.preventDefault();
+    }
+  };
+
+  const className = 'table-icon cf-icon-button';
+
+  const props = {
+    role: 'button',
+    ref: getRef,
+    'aria-label': label,
+    tabIndex: '0',
+    onKeyDown: handleKeyDown,
+    onClick: handleActivate
+  };
+
+  if (selected) {
+    return <SelectedFilterIcon {...props} className={className} idPrefix={idPrefix} />;
+  }
+
+  return <i {...props}
+    className={`${className} bordered-icon fa fa-1 fa-filter`}></i>;
+};
+
+FilterIcon.propTypes = {
+  label: PropTypes.string.isRequired,
+  iconName: PropTypes.string,
+  handleActivate: PropTypes.func,
+  getRef: PropTypes.func,
+  idPrefix: PropTypes.string.isRequired,
+  className: PropTypes.string
+};
 
 export class PdfListView extends React.Component {
   constructor() {
@@ -124,6 +156,7 @@ export class PdfListView extends React.Component {
             className="document-list-header-categories">
             Categories <FilterIcon
               label="Filter by category"
+              idPrefix="category"
               getRef={(categoryFilterIcon) => {
                 this.categoryFilterIcon = categoryFilterIcon;
               }}
@@ -170,7 +203,7 @@ export class PdfListView extends React.Component {
         {
           header: <div id="issue-tags-header"
             className="document-list-header-issue-tags">
-            Issue Tags <FilterIcon label="Filter by issue" />
+            Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
           </div>,
           valueFunction: () => {
             return <div className="document-list-issue-tags">

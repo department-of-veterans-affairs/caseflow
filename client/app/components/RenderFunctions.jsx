@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /* eslint-disable max-len */
 
@@ -210,6 +210,38 @@ export const docCategoryIcon = (color) => {
   CategoryIcon.displayName = `DocCategoryIcon(${color})`;
 
   return CategoryIcon;
+};
+
+export const SelectedFilterIcon = ({ idPrefix, className }) => {
+  const pathId = `${idPrefix}-path-1`;
+  const filterId = `${idPrefix}-filter-2`;
+
+  return <svg width="21px" height="21px" viewBox="0 0 21 21" className={className}>
+      <defs>
+          <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" id={pathId}></path>
+          <filter x="-10.5%" y="-10.5%" width="121.1%" height="121.1%" filterUnits="objectBoundingBox" id={filterId}>
+              <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+              <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+              <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+              <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.443137255   0 0 0 0 0.737254902  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+          </filter>
+      </defs>
+      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+          <g>
+              <g transform="translate(5.000000, 6.000000)" fillRule="nonzero" fill="#323A45">
+                  <path d="M10.9765625,0.3046875 C11.0651042,0.518229167 11.0286458,0.700520833 10.8671875,0.8515625 L7.015625,4.703125 L7.015625,10.5 C7.015625,10.71875 6.9140625,10.8723958 6.7109375,10.9609375 C6.64322917,10.9869792 6.578125,11 6.515625,11 C6.375,11 6.2578125,10.9505208 6.1640625,10.8515625 L4.1640625,8.8515625 C4.06510417,8.75260417 4.015625,8.63541667 4.015625,8.5 L4.015625,4.703125 L0.1640625,0.8515625 C0.00260416666,0.700520833 -0.0338541667,0.518229167 0.0546875,0.3046875 C0.143229167,0.1015625 0.296875,0 0.515625,0 L10.515625,0 C10.734375,0 10.8880208,0.1015625 10.9765625,0.3046875 Z"></path>
+              </g>
+              <g fillOpacity="1" fill="black">
+                  <use filter={`url(#${filterId})`} xlinkHref={`#${pathId}`}></use>
+              </g>
+          </g>
+      </g>
+  </svg>;
+};
+
+SelectedFilterIcon.propTypes = {
+  idPrefix: PropTypes.string.isRequired,
+  className: PropTypes.string
 };
 
 /* eslint-enable max-len */
