@@ -72,9 +72,24 @@ And by default, Rails will run in the development environment, which will mock o
 
 Or to run the rails server and frontend webpack server separately:
 
-`$ rails s`
+`$ bundle exec rails s`
 
 `$ cd client && nvm use && npm run dev`
+
+### Development "Hot Mode"
+
+For an improved development experience with faster iteration, you can run in "hot mode". This will cause
+Javascript changes to immediately show up on the page on save, without having to reload the page. You can start
+hot mode via:
+
+`$ foreman start -f Procfile.hot`
+
+Or to run the rails server and frontend webpack server separately:
+
+`$ REACT_ON_RAILS_ENV=hot bundle exec rails s`
+
+`$ cd client && nvm use && npm run dev`
+
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
