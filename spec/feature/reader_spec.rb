@@ -177,8 +177,6 @@ RSpec.feature "Reader" do
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
     expect(doc_0_categories).to eq(["Medical"])
 
-    find("#button-next").click
-
     expect(find("#procedural", visible: false).checked?).to be false
     expect(find("#medical", visible: false).checked?).to be false
     expect(find("#other", visible: false).checked?).to be false
