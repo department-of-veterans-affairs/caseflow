@@ -13,9 +13,6 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { readerReducer } from '../../../app/reader/index';
 import PdfJsStub from '../../helpers/PdfJsStub';
 
-/* eslint-disable camelcase */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
   let wrapper;
 
@@ -84,7 +81,3 @@ describe('DecisionReviewer', () => {
     });
   });
 });
-
-/* eslint-enable max-statements */
-/* eslint-enable no-unused-expressions */
-/* eslint-enable camelcase */

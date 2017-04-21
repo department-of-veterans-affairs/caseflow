@@ -187,7 +187,8 @@ export class Pdf extends React.Component {
           boundingRect.top < this.scrollWindow.clientHeight + 1000) {
         this.renderPage(index, this.props.file).catch(() => {
 
-          /* We do not handle renderFailures at this time */
+          // eslint-disable-next-line no-console
+          console.log('page filed to render');
         });
       }
     });
@@ -234,7 +235,8 @@ export class Pdf extends React.Component {
       }).
       catch(() => {
 
-        /* We do not handle renderFailures at this time */
+        // eslint-disable-next-line no-console
+        console.log('page filed to render');
       });
     }
   }
@@ -269,7 +271,8 @@ export class Pdf extends React.Component {
       if (!this.state.isRendered[index] && this.pageContainers[index]) {
         this.renderPage(index, this.props.file).catch(() => {
 
-          /* We do not handle renderFailures at this time */
+          // eslint-disable-next-line no-console
+          console.log('page filed to render');
         });
       }
     }
