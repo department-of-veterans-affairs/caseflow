@@ -120,10 +120,6 @@ class EstablishClaimsController < TasksController
     verify_authorized_roles("Manage Claim Establishment")
   end
 
-  def task_roles
-    User::TASK_TYPE_TO_ROLES[tasks] || fail(TaskTypeMissingError)
-  end
-
   def manager?
     current_user.can?("Manage Claim Establishment")
   end
