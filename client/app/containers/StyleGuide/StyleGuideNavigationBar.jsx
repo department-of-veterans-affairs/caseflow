@@ -40,7 +40,7 @@ export default class StyleGuideNavigationBar extends React.Component {
 
     name = 'App Bar';
 
-    return <div>
+    return <div className="sg-nav-bar">
       <StyleGuideComponentTitle
         title="Navigation Bar"
         id="navigation_bar"

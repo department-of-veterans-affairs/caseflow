@@ -95,3 +95,19 @@ pre {
 .styleguide-grey-header {
   color: $color-gray;
 }
+
+.sg-nav-bar {
+  .cf-nav {
+    padding-top: 26px;
+    padding-bottom: 26px;
+    border: 1px solid $color-gray-lighter;
+
+    .cf-logo {
+      margin-left: 50px;
+    }
+
+    .cf-nav-dropdown {
+      margin-right: 50px;
+    }
+  }
+}
