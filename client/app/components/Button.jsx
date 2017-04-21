@@ -27,7 +27,7 @@ export default class Button extends React.Component {
     let LoadingIndicator = () => {
       app = app || 'default';
 
-      children = loadingText || "Loading...";
+      children = loadingText || 'Loading...';
 
       return <span>
         <button
@@ -58,7 +58,7 @@ export default class Button extends React.Component {
     return <span>
       <button
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
-        className={classNames.join(' ') + (loading ? " hidden-field" : "")}
+        className={classNames.join(' ') + (loading ? ' hidden-field' : '')}
         type={type}
         disabled={disabled}
         onClick={onClick}

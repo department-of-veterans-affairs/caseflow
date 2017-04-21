@@ -73,7 +73,7 @@ export default class PdfUI extends React.Component {
           { this.props.onShowList &&
             <Button
               name="backToDocuments"
-              classNames={["cf-pdf-button"]}
+              classNames={['cf-pdf-button']}
               onClick={this.props.onShowList}>
               <i className="fa fa-chevron-left" aria-hidden="true"></i>
               &nbsp; View all documents
@@ -82,21 +82,21 @@ export default class PdfUI extends React.Component {
         <span className="usa-width-one-third cf-pdf-buttons-center">
           <Button
             name="zoomOut"
-            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(-ZOOM_RATE)}
             ariaLabel="zoom out">
             <i className="fa fa-minus" aria-hidden="true"></i>
           </Button>
           <Button
             name="fit"
-            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
             <i className="fa fa-arrows-alt" aria-hidden="true"></i>
           </Button>
           <Button
             name="zoomIn"
-            classNames={["cf-pdf-button cf-pdf-spaced-buttons"]}
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(ZOOM_RATE)}
             ariaLabel="zoom in">
             <i className="fa fa-plus" aria-hidden="true"></i>
@@ -107,7 +107,7 @@ export default class PdfUI extends React.Component {
             <DocumentCategoryIcons docId={this.props.doc.id} />
             <Button
               name="newTab"
-              classNames={["cf-pdf-button"]}
+              classNames={['cf-pdf-button']}
               ariaLabel="open document in new tab"
               onClick={() => window.open(
                 linkToSingleDocumentView(this.props.doc), '_blank')}>
@@ -121,7 +121,7 @@ export default class PdfUI extends React.Component {
           <span className="cf-pdf-buttons-left">
             <Button
               name="previous"
-              classNames={["cf-pdf-button"]}
+              classNames={['cf-pdf-button']}
               onClick={this.props.onPreviousPdf}
               ariaLabel="previous PDF">
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
@@ -131,7 +131,7 @@ export default class PdfUI extends React.Component {
           <span className="cf-pdf-buttons-right">
             <Button
               name="next"
-              classNames={["cf-pdf-button cf-right-side"]}
+              classNames={['cf-pdf-button cf-right-side']}
               onClick={this.props.onNextPdf}
               ariaLabel="next PDF">
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>

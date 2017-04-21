@@ -102,14 +102,14 @@ export class EstablishClaimForm extends React.Component {
           <Button
             name={backToDecisionReviewText}
             onClick={handleBackToDecisionReview}
-            classNames={["cf-btn-link"]}
+            classNames={['cf-btn-link']}
           />
         </div>
         <div className="cf-push-right">
           <Button
             name="Cancel"
             onClick={handleCancelTask}
-            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
           />
           <Button
             app="dispatch"
