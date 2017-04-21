@@ -82,12 +82,7 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    const anyCategoryFiltersAreSet = Boolean(
-      _(this.props.pdfList.filters.category).
-        values().
-        compact().
-        size()
-      );
+    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.pdfList.filters.category));
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
