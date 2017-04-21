@@ -289,23 +289,19 @@ svg[aria-hidden=true],
   position: relative;
 }
 
-$gray-lighter: #d6d7d9;
-$dropdown-filter-background-color: #fff;
-
 .cf-dropdown-filter {
   position: absolute;
-  border: 1px solid $gray-lighter;
-  background: $dropdown-filter-background-color;
-  box-shadow: 5px 5px 4px -3px $gray-lighter;
+  border: 1px solid $color-gray-lighter;
+  background: $color-white;
+  box-shadow: 5px 5px 4px -3px $color-gray-lighter;
   font-weight: normal;
   padding: 0;
   $dropdown-interior-padding: 10px;
 
   @mixin hover {
     &:hover {
-      $hover-background-color: #5b616b;
-      background-color: $hover-background-color;
-      color: $dropdown-filter-background-color;
+      background-color: $color-gray;
+      color: $color-white;
     }
   }
 
@@ -320,7 +316,7 @@ $dropdown-filter-background-color: #fff;
     }
 
     .cf-clear-filter-button-wrapper {
-      border-bottom: 1px solid $gray-lighter;
+      border-bottom: 1px solid $color-gray-lighter;
       padding-bottom: $dropdown-interior-padding;
     }
   }
