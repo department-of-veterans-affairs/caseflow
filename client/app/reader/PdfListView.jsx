@@ -29,7 +29,7 @@ const FilterIcon = ({
 
   const props = {
     role: 'button',
-    ref: getRef,
+    getRef,
     'aria-label': label,
     tabIndex: '0',
     onKeyDown: handleKeyDown,
@@ -70,13 +70,11 @@ export class PdfListView extends React.Component {
   }
 
   setCategoryFilterIconPosition = () => {
-    if (this.categoryFilterIcon) {
-      this.setState({
-        filterPositions: {
-          category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
-        }
-      });
-    }
+    this.setState({
+      filterPositions: {
+        category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
+      }
+    });
   }
 
   toggleComments = (id) => () => {
