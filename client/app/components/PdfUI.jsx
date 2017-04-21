@@ -121,7 +121,7 @@ export class PdfUI extends React.Component {
                 classNames={["cf-pdf-button"]}
                 onClick={this.props.handleTogglePdfSidebar}>
                 <strong>
-                  Open Menu
+                  Open menu
                 </strong>
               </Button>}
             </span>
