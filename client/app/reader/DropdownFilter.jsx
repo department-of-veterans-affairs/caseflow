@@ -72,7 +72,10 @@ class DropdownFilter extends React.PureComponent {
 
 DropdownFilter.propTypes = {
   children: PropTypes.node,
-  baseCoordinates: PropTypes.object,
+  baseCoordinates: PropTypes.shape({
+    bottom: PropTypes.number.isRequired,
+    right: PropTypes.number.isRequired
+  }),
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func
