@@ -371,7 +371,6 @@ DecisionReviewer.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ui: {
-      currentPdfIndex: _.get(state, 'ui.currentPdfIndex'),
       currentDocId: _.get(state, 'ui.currentDocId'),
       tagsErrorMessage: _.get(state, 'ui.tagsErrorMessage')
     },

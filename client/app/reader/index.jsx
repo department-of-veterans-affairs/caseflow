@@ -11,7 +11,6 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
-    currentPdfIndex: null,
     currentDocId: null,
     tagsErrorMessage: '',
     pdf: {
@@ -87,10 +86,10 @@ export const readerReducer = (state = initialState, action = {}) => {
       ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
     });
   case Constants.UPDATE_SHOWING_DOC:
-    return Object.assign({}, state, {
+    return update(state, {
       ui: {
-        currentDocId: action.payload.currentDocId,
-        tagsErrorMessage: ''
+        tagsErrorMessage: { $set: action.payload.errorMessage },
+        currentDocId: { $set: action.payload.currentDocId }
       }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
@@ -105,7 +104,7 @@ export const readerReducer = (state = initialState, action = {}) => {
     );
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
-      ui: { pdf: { $set: _.pick(action.payload, 'scrollToComment') } }
+      ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
     });
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
