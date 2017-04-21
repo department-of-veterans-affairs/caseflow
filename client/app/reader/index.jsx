@@ -12,6 +12,9 @@ const initialState = {
     pdfList: {
       filters: {
         category: {}
+      },
+      dropdowns: {
+        category: false
       }
     }
   },
