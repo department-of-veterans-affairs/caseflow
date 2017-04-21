@@ -4,8 +4,9 @@ import React, { PropTypes } from 'react';
 
 const NavLink = (props) => {
   const { anchor, name } = props;
-    return <li><a href={anchor}>{name}</a></li>;
-}
+
+  return <li><a href={anchor}>{name}</a></li>;
+};
 
 NavLink.propTypes = {
   anchor: PropTypes.string.isRequired,
