@@ -1,15 +1,9 @@
-import StringUtil from './StringUtil';
+import moment from 'moment';
 
-const ZERO_INDEX_MONTH_OFFSET = 1;
 const MILLISECONDS_IN_A_DAY = 86400000;
 
 export const formatDate = function(dateString) {
-  let date = new Date(dateString);
-  let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
-  let day = StringUtil.leftPad(date.getDate(), 2, '0');
-  let year = date.getFullYear();
-
-  return `${month}/${day}/${year}`;
+  return moment(dateString, 'MM-DD-YYYY').format('MM/DD/YYYY');
 };
 
 export const addDays = function(date, days) {
