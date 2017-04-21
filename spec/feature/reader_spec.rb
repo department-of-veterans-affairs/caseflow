@@ -60,7 +60,7 @@ RSpec.feature "Reader" do
 
     expect_dropdown_filter_to_be_hidden
 
-    find("#categories-header .cf-icon-button").click
+    find("#categories-header .table-icon").click
     expect_dropdown_filter_to_be_visible
 
     find(".checkbox-wrapper-procedural").click
@@ -69,15 +69,15 @@ RSpec.feature "Reader" do
     find("#receipt-date-header").click
     expect_dropdown_filter_to_be_hidden
 
-    find("#categories-header .cf-icon-button").click
+    find("#categories-header .table-icon").click
     expect_dropdown_filter_to_be_visible
 
     expect(find("#procedural", visible: false).checked?).to be true
 
-    find("#categories-header .cf-icon-button").send_keys :enter
+    find("#categories-header .table-icon").send_keys :enter
     expect_dropdown_filter_to_be_hidden
 
-    find("#categories-header .cf-icon-button").send_keys :enter
+    find("#categories-header .table-icon").send_keys :enter
     expect_dropdown_filter_to_be_visible
   end
 

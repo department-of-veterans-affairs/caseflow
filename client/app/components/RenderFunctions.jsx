@@ -212,11 +212,11 @@ export const docCategoryIcon = (color) => {
   return CategoryIcon;
 };
 
-export const SelectedFilterIcon = ({ idPrefix, className, getRef }) => {
+export const SelectedFilterIcon = ({ idPrefix, getRef, ...restProps }) => {
   const pathId = `${idPrefix}-path-1`;
   const filterId = `${idPrefix}-filter-2`;
 
-  return <svg width="21px" height="21px" viewBox="0 0 21 21" className={className} ref={getRef}>
+  return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef}>
       <defs>
           <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" id={pathId}></path>
           <filter x="-10.5%" y="-10.5%" width="121.1%" height="121.1%" filterUnits="objectBoundingBox" id={filterId}>

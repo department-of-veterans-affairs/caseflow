@@ -25,22 +25,23 @@ const FilterIcon = ({
     }
   };
 
-  const className = 'table-icon cf-icon-button';
+  const className = 'table-icon';
 
   const props = {
     role: 'button',
     getRef,
     'aria-label': label,
+    className,
     tabIndex: '0',
     onKeyDown: handleKeyDown,
     onClick: handleActivate
   };
 
   if (selected) {
-    return <SelectedFilterIcon {...props} className={className} idPrefix={idPrefix} />;
+    return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
   }
 
-  return <UnselectedFilterIcon {...props} className={className} />;
+  return <UnselectedFilterIcon {...props} />;
 };
 
 FilterIcon.propTypes = {
