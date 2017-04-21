@@ -22,7 +22,7 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
     );
   }
 
-  const style = { 'marginLeft': `-${imgSize}` };
+  const style = { marginLeft: `-${imgSize}` };
 
   return (
       <div>
