@@ -1,14 +1,14 @@
-import moment from 'moment';
+import StringUtil from './StringUtil';
 
-const MILLISECONDS_IN_A_DAY = 86400000;
+const ZERO_INDEX_MONTH_OFFSET = 1;
+
+export const dateFormatString = 'MM/DD/YYYY';
 
 export const formatDate = function(dateString) {
-  return moment(dateString, 'MM-DD-YYYY').format('MM/DD/YYYY');
-};
+  let date = new Date(dateString);
+  let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
+  let day = StringUtil.leftPad(date.getDate(), 2, '0');
+  let year = date.getFullYear();
 
-export const addDays = function(date, days) {
-  let milliseconds = days * MILLISECONDS_IN_A_DAY;
-  let dateString = date.getTime() + milliseconds;
-
-  return new Date(dateString);
+  return `${month}/${day}/${year}`;
 };
