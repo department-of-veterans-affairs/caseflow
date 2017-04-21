@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import _ from 'lodash';
 
-const TAG_ALREADY_EXISTS_MSG = "Tag already exists";
-const NO_RESULTS_TEXT = "Not an option";
+const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
+const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION =
   (label) => {
     return `Create a tag for "${label}"`;
   };
-const DEFAULT_PLACEHOLDER = "Select option";
+const DEFAULT_PLACEHOLDER = 'Select option';
 
 class SearchableDropdown extends Component {
 

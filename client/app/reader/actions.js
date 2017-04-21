@@ -80,7 +80,7 @@ export const removeTag = (doc, tagId) => {
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
-        dispatch(removeTagRequestFailure("Unable to save. Please try again."));
+        dispatch(removeTagRequestFailure('Unable to save. Please try again.'));
       });
   };
 };
@@ -104,7 +104,7 @@ export const addNewTag = (doc, tags) => {
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {
-          dispatch(newTagRequestFailed("Unable to save. Please try again."));
+          dispatch(newTagRequestFailed('Unable to save. Please try again.'));
         });
     }
   };
