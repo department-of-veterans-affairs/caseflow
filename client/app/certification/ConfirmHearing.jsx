@@ -128,7 +128,7 @@ class UnconnectedConfirmHearing extends React.Component {
       match
     } = this.props;
 
-    const hearingCheckText = <span>Check the appellants eFolder for a hearing
+    const hearingCheckText = <span>Check the appellant's eFolder for a hearing
     cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
     (or statement in lieu of Form 9) was uploaded.</span>;
 
