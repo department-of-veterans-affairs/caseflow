@@ -6,10 +6,6 @@ class User < ActiveRecord::Base
   attr_accessor :ip_address, :admin_roles
   attr_writer :regional_office, :roles
 
-  TASK_TYPE_TO_ROLES = {
-    EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
-  }.freeze
-
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
 
   # Because of the funciton character limit, we need to also alias some functions
