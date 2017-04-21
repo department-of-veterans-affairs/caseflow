@@ -67,8 +67,7 @@ class ApplicationController < ActionController::Base
   helper_method :logo_class
 
   def logo_name
-    return nil if request.path == help_path
-    session[:application]
+    nil
   end
   helper_method :logo_name
 
@@ -79,7 +78,10 @@ class ApplicationController < ActionController::Base
   helper_method :logo_path
 
   def help_url
-    "/#{logo_name}/help".gsub("//", "/").downcase
+    logo_nm = logo_name.to_s.downcase
+    return certification_help_path if logo_nm.start_with? "certification"
+    return dispatch_help_path if logo_nm.start_with? "dispatch"
+    help_path
   end
   helper_method :help_url
 
