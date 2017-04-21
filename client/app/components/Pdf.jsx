@@ -366,7 +366,7 @@ export class Pdf extends React.Component {
       }}>
         <div
           id={this.props.file}
-          className={`cf-pdf-page pdfViewer singlePageView`}>
+          className={'cf-pdf-page pdfViewer singlePageView'}>
           {pages}
         </div>
       </div>;

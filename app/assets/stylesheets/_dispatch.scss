@@ -9,6 +9,27 @@
   }
 }
 
+.cf-vbms-note {
+  position: relative;
+
+  .cf-form-textarea {
+    width: 80%;
+    margin-left: 100px;
+}
+
+  .question-label {
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+  .copy-note-button {
+    width: 80%;
+    margin-left: 100px;
+ }
+}
+
 .inline-label {
   display: inline-block;
   width: 18%;
@@ -49,6 +70,11 @@ input {
   }
 }
 
+.copy-note-button {
+  margin-top: 17px;
+  margin-bottom: 35px;
+}
+
 .cf-help-content {
   &.cf-dispatch {
     h1:not(:first-child) {
@@ -56,4 +82,3 @@ input {
     }
   }
 }
-

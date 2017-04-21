@@ -25,21 +25,21 @@ export default class Modal extends React.Component {
   }
 
   keyHandler = (event) => {
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       this.props.closeHandler();
     }
 
-    if (event.key === "Tab") {
+    if (event.key === 'Tab') {
       this.handleTab(event);
     }
   }
 
   componentWillUnmount() {
-    window.removeEventListener("keydown", this.keyHandler);
+    window.removeEventListener('keydown', this.keyHandler);
   }
 
   componentDidMount() {
-    window.addEventListener("keydown", this.keyHandler);
+    window.addEventListener('keydown', this.keyHandler);
   }
 
   generateButtons() {
@@ -47,10 +47,10 @@ export default class Modal extends React.Component {
       // If we have more than two buttons, push the
       // first left, and the rest right.
       // If we have just one button, push it right.
-      let classNames = ["cf-push-right"];
+      let classNames = ['cf-push-right'];
 
       if (i === 0 && this.props.buttons.length > 1) {
-        classNames = ["cf-push-left"];
+        classNames = ['cf-push-left'];
       }
 
       if (typeof object.classNames !== 'undefined') {

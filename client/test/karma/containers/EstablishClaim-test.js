@@ -152,7 +152,7 @@ describe('EstablishClaim', () => {
         task={task}/>);
     });
 
-    context("when ARC EP", () => {
+    context('when ARC EP', () => {
       beforeEach(() => {
         wrapper.node.store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
@@ -182,7 +182,7 @@ describe('EstablishClaim', () => {
       });
     });
 
-    context("when Routed EP", () => {
+    context('when Routed EP', () => {
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
         wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
