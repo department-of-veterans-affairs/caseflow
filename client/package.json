@@ -39,7 +39,7 @@
     "imports-loader": "^0.7.1",
     "jsdom": "^9.8.3",
     "lodash": "^4.17.2",
-    "moment": "https://registry.npmjs.org/moment/-/moment-2.18.1.tgz",
+    "moment": "^2.18.1",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
     "react": "^15.5.4",
