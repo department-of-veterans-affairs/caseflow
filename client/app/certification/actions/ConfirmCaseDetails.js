@@ -37,6 +37,13 @@ export const onValidationFailed = (invalidFields) => ({
   }
 });
 
+export const onValidationSuccess = () => ({
+  type: Constants.ON_VALIDATION_SUCCESS,
+  payload: {
+    validationFailed: false
+  }
+});
+
 export const certificationUpdateFailure = () => ({
   type: Constants.CERTIFICATION_UPDATE_FAILURE
 });
