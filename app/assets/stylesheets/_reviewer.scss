@@ -435,8 +435,7 @@ svg[aria-hidden=true],
   display: inline;
 
   &:hover {
-    $hover-color: #0071bc;
-    color: $hover-color;
-    border-color: $hover-color;
+    color: $color-primary;
+    border-color: $color-primary;
   }
 }
