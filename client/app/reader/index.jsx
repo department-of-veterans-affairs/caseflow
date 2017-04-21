@@ -51,20 +51,12 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          tagsErrorMessage: ''
-        }
-      }
-    );
+    return update(state, {
+      ui: { tagsErrorMessage: { $set: '' } }
+    });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return Object.assign({}, state, {
-      ui: {
-        tagsErrorMessage: action.payload.errorMessage
-      }
+    return update(state, {
+      ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
@@ -112,15 +104,9 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.SCROLL_TO_COMMENT:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: _.pick(action.payload, 'scrollToComment')
-        }
-      }
-    );
+    return update(state, {
+      ui: { pdf: { $set: _.pick(action.payload, 'scrollToComment') } }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
       {},
