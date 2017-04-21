@@ -34,7 +34,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View manager page" do
       # Create 4 incomplete tasks and one completed today
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
-      Generators::EstablishClaim.create(user_id: case_worker.id, completed_at: Time.zone.now)
+      Generators::EstablishClaim.create(
+        user_id: case_worker.id,
+        aasm_state: :completed,
+        completed_at: Time.zone.now
+      )
 
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
