@@ -9,7 +9,7 @@ export default class Example7 extends React.Component {
 
     this.state = {
       value: null,
-      errorMessage: "You must acknowledge this."
+      errorMessage: 'You must acknowledge this.'
     };
   }
 
@@ -21,8 +21,8 @@ export default class Example7 extends React.Component {
   }
 
   render = () => {
-    let acknowledgement = "I acknowldge that this information is correct. " +
-      "I agree to follow the rules.";
+    let acknowledgement = 'I acknowldge that this information is correct. ' +
+      'I agree to follow the rules.';
 
     return <Checkbox
       label={acknowledgement}

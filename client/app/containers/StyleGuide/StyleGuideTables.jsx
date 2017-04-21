@@ -8,50 +8,50 @@ import Table from '../../components/Table';
 export default function StyleGuideTables() {
   // List of objects which will be used to create each row
   let rowObjects = [
-    { name: "Shane",
-      spiritAnimal: "Hamster",
+    { name: 'Shane',
+      spiritAnimal: 'Hamster',
       likesSports: true },
-    { name: "Kavi",
-      spiritAnimal: "Koala Bear",
+    { name: 'Kavi',
+      spiritAnimal: 'Koala Bear',
       likesSports: false },
-    { name: "Gina",
-      spiritAnimal: "Otter",
+    { name: 'Gina',
+      spiritAnimal: 'Otter',
       likesSports: false }
   ];
 
   let columns = [
     {
-      header: "Name",
-      valueName: "name",
-      footer: "Totals"
+      header: 'Name',
+      valueName: 'name',
+      footer: 'Totals'
     },
     {
-      header: "Spirit Animal",
-      align: "center",
-      valueName: "spiritAnimal",
-      footer: "3"
+      header: 'Spirit Animal',
+      align: 'center',
+      valueName: 'spiritAnimal',
+      footer: '3'
     },
     {
-      header: "Likes sports?",
-      align: "center",
+      header: 'Likes sports?',
+      align: 'center',
       valueFunction: (person) => {
-        return person.likesSports ? "Yes" : "No";
+        return person.likesSports ? 'Yes' : 'No';
       },
-      footer: "1"
+      footer: '1'
     }
   ];
 
   let columnsWithAction = _.concat(columns, [
     {
-      header: "Poke",
-      align: "right",
+      header: 'Poke',
+      align: 'right',
       valueFunction: (person, rowNumber) => {
         return <a href={`#poke-${rowNumber}`}>Poke {person.name} »</a>;
       }
     }
   ]);
 
-  let summary = "Example styleguide table";
+  let summary = 'Example styleguide table';
 
   return <div>
     <StyleGuideComponentTitle
