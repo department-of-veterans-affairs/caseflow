@@ -23,7 +23,6 @@ const initialState = {
 
 export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
-  let tags;
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
@@ -86,7 +85,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       documents: {
         [action.payload.docId]: {
           tags: { $set: state.documents[action.payload.docId].tags.
-          filter((tag) => tag.id !== action.payload.tagId) }
+            filter((tag) => tag.id !== action.payload.tagId) }
         }
       }
     }
@@ -98,10 +97,6 @@ export const readerReducer = (state = initialState, action = {}) => {
         tagsErrorMessage: action.payload.errorMessage
       }
     });
-  case Constants.SHOW_PREV_PDF:
-    return state;
-  case Constants.SHOW_NEXT_PDF:
-    return state;
   case Constants.UPDATE_SHOWING_DOC:
     return Object.assign({}, state, {
       ui: {

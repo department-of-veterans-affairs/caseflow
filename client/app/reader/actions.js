@@ -44,18 +44,6 @@ export const selectCurrentPdf = (docId) => {
   };
 };
 
-export const showNextPdf = () => {
-  return {
-    type: Constants.SHOW_NEXT_PDF
-  };
-};
-
-export const showPrevPdf = () => {
-  return {
-    type: Constants.SHOW_PREV_PDF
-  };
-};
-
 export const updateShowingDocId = (currentDocId) => {
   return {
     type: Constants.UPDATE_SHOWING_DOC,
