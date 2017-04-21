@@ -57,7 +57,7 @@ class DropdownFilter extends React.PureComponent {
     document.removeEventListener('click', this.onGlobalClick);
   }
 
-  onGlobalClick = () => {
+  onGlobalClick = (event) => {
     if (!this.rootElem) {
       return;
     }
