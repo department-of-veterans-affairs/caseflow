@@ -298,50 +298,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         { template: :full_grant_decided, regional_office_key: "RO21" }
       end
 
-      context "with a level 1 or 2 special issue" do
-        scenario "I cannot return to Review Decision from the VACOLS Update page" do
-          task.assign!(:assigned, current_user)
-          visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
-
-          # Select special issues
-          find_label_for("riceCompliance").click
-
-          # Move on to note page
-          safe_click_on "Route claim"
-
-          expect(page).to have_content("Create End Product")
-          safe_click_on "Create End Product"
-
-          expect(page).to_not have_content("< Back to Review Decision")
-          page.driver.go_back
-          expect(page).to have_content("Cannot edit end product")
-        end
-      end
-
-      context "with a level 3 special issue" do
-        scenario "I can return to Review Decision from the VACOLS Update page" do
-          task.assign!(:assigned, current_user)
-          visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
-
-          # Select special issues
-          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-
-          # Move on to note page
-          safe_click_on "Route claim"
-
-          expect(page).to have_content("< Back to Review Decision")
-          safe_click_on "< Back to Review Decision"
-
-          expect(page).to have_content("Select Special Issue(s)")
-          safe_click_on "Route claim"
-          expect(page).to have_content("< Back to Review Decision")
-          page.driver.go_back
-          expect(page).to have_content("Select Special Issue(s)")
-        end
-      end
-
       scenario "Establish a new claim with special issue routed to national office" do
         task.assign!(:assigned, current_user)
 
@@ -385,6 +341,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Route Claim: Add VBMS Note")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
 
+        # Validate I cannot return to Review Decision from the VACOLS Update page
+        expect(page).to_not have_content("< Back to Review Decision")
+        page.driver.go_back
+        expect(page).to have_content("Cannot edit end product")
+
         find_label_for("confirmNote").click
         safe_click_on "Finish routing claim"
 
@@ -400,6 +361,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim/#{task.id}"
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        safe_click_on "Route claim"
+
+        # Validate I can return to Review Decision from the VACOLS Update page
+        safe_click_on "< Back to Review Decision"
         safe_click_on "Route claim"
 
         expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
@@ -548,6 +513,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Route Claim: Confirm VACOLS Update, Add VBMS Note")
 
+        # Validate we cannot go back
+        expect(page).to_not have_content("< Back to Review Decision")
+        page.driver.go_back
+        expect(page).to have_content("Cannot edit end product")
+
         # Make sure note page contains the special issues
         expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
 
@@ -597,50 +567,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         )
       end
 
-      context "with a level 1 or 2 special issue" do
-        scenario "I cannot return to Review Decision from the VACOLS Update page" do
-          task.assign!(:assigned, current_user)
-          visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
-
-          # Select special issues
-          find_label_for("riceCompliance").click
-
-          # Move on to note page
-          safe_click_on "Route claim"
-
-          expect(page).to have_content("Create End Product")
-          safe_click_on "Create End Product"
-
-          expect(page).to_not have_content("< Back to Review Decision")
-          page.driver.go_back
-          expect(page).to have_content("Cannot edit end product")
-        end
-      end
-
-      context "with a level 3 special issue" do
-        scenario "I can return to Review Decision from the VACOLS Update page" do
-          task.assign!(:assigned, current_user)
-          visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
-
-          # Select special issues
-          find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-
-          # Move on to note page
-          safe_click_on "Route claim"
-
-          expect(page).to have_content("< Back to Review Decision")
-          safe_click_on "< Back to Review Decision"
-
-          expect(page).to have_content("Select Special Issue(s)")
-          safe_click_on "Route claim"
-          expect(page).to have_content("< Back to Review Decision")
-          page.driver.go_back
-          expect(page).to have_content("Select Special Issue(s)")
-        end
-      end
-
       scenario "Establish a new claim with special issues with no EP" do
         task.assign!(:assigned, current_user)
 
@@ -655,6 +581,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Validate no VBMS-related content
         expect(page).to_not have_content("Update VACOLS and VBMS")
+
+        # Validate I can return to Review Decision from the VACOLS Update page
+        expect(page).to have_content("< Back to Review Decision")
+        safe_click_on "< Back to Review Decision"
+        safe_click_on "Route claim"
 
         # Valdiate correct vacols location
         expect(page).to have_content("50")

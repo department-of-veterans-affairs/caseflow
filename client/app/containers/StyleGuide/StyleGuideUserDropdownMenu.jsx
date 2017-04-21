@@ -2,7 +2,7 @@ import React from 'react';
 import DropdownMenu from '../../components/DropdownMenu';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideDropdownMenu extends React.Component {
+export default class StyleGuideUserDropdownMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,8 +38,8 @@ export default class StyleGuideDropdownMenu extends React.Component {
       <br />
       <StyleGuideComponentTitle
         title="User dropdown menu"
-        id="dropdown_menu"
-        link="StyleGuideDropdownMenu.jsx"
+        id="user_dropdown_menu"
+        link="StyleGuideUserDropdownMenu.jsx"
       />
     <p>This menu indicates which user is signed in and contains links to submit feedback,
       view the application’s help page, see newly launched features, and log out.

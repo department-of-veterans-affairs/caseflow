@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const StringUtil = {
 
   camelCaseToDashCase(variable) {
@@ -19,10 +21,10 @@ const StringUtil = {
   convertToCamelCase(phrase = '') {
     // Code courtesy of Stack Overflow, Question 2970525
     return phrase.toLowerCase().
-        replace(/[^a-zA-Z ]/g, "").
+        replace(/[^a-zA-Z ]/g, '').
         replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
           if (Number(match) === 0) {
-            return "";
+            return '';
           }
 
           return index === 0 ? match.toLowerCase() : match.toUpperCase();
@@ -39,6 +41,13 @@ const StringUtil = {
     return (padded + string).slice(-width);
   },
 
+  titleCase(string) {
+    return _(string).
+      words().
+      map(_.capitalize).
+      join(' ');
+  },
+
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase
   snakeCaseToCamelCase(variable) {
     // convert key from camelCase to snake_case
@@ -46,7 +55,7 @@ const StringUtil = {
   },
 
   html5CompliantId(str) {
-    return str.replace(/[^A-Za-z0-9-]/g, "-").replace(/-+/g, "-");
+    return str.replace(/[^A-Za-z0-9-]/g, '-').replace(/-+/g, '-');
   }
 };
 

@@ -7,6 +7,7 @@ import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 
 export class EstablishClaimEmail extends BaseForm {
@@ -32,16 +33,16 @@ export class EstablishClaimEmail extends BaseForm {
         `and ${selectedSpecialIssue[selectedSpecialIssue.length - 1]}`;
     }
 
-    let email = `The BVA Full Grant decision dated` +
+    let email = 'The BVA Full Grant decision dated' +
       ` ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name},` +
       ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
-      ` in your jurisdiction. Please proceed with control and implement this grant.`;
+      ' in your jurisdiction. Please proceed with control and implement this grant.';
 
     let note = `This claim for Vet ID #${appeal.sanitized_vbms_id}` +
       ` includes Special Issue(s): ${selectedSpecialIssue.join(', ')}` +
-      ` not handled by Caseflow`;
+      ' not handled by Caseflow';
 
     this.state = {
       emailForm: {
@@ -76,12 +77,27 @@ export class EstablishClaimEmail extends BaseForm {
             <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
           </div>
 
-          <TextareaField
-              label="Message:"
-              name="emailMessage"
-              onChange={this.handleFieldChange('emailForm', 'emailField')}
-              {...this.state.emailForm.emailField}
-          />
+          <div className ="cf-vbms-note">
+            <TextareaField
+                label="Message:"
+                name="emailMessage"
+                onChange={this.handleFieldChange('emailForm', 'emailField')}
+                {...this.state.emailForm.emailField}
+            />
+
+            <div className="cf-app-segment copy-note-button">
+              <div className="cf-push-left">
+                <CopyToClipboard text={this.state.emailForm.emailField.value}>
+                  <Button
+                   name="copyNote"
+                   classNames={['usa-button-outline usa-button-hover']}>
+                   <i className="fa fa-files-o" aria-hidden="true"></i>
+                   Copy note
+                  </Button>
+                </CopyToClipboard>
+              </div>
+            </div>
+          </div>
 
           <Checkbox
               label="I confirm that I have sent an email to route this claim."
@@ -97,19 +113,19 @@ export class EstablishClaimEmail extends BaseForm {
             <Button
               name={this.props.backToDecisionReviewText}
               onClick={this.props.handleBackToDecisionReview}
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
             />
           </div>
           <div className="cf-push-right">
             <Button
             name="Cancel"
             onClick={this.props.handleCancelTask}
-            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
               app="dispatch"
               name="Finish routing claim"
-              classNames={["usa-button-primary"]}
+              classNames={['usa-button-primary']}
               disabled={!this.state.emailForm.confirmBox.value}
               onClick={this.props.handleEmailSubmit}
               loading={this.props.loading}
@@ -147,19 +163,19 @@ export class EstablishClaimEmail extends BaseForm {
               <Button
                 name={this.props.backToDecisionReviewText}
                 onClick={this.props.handleBackToDecisionReview}
-                classNames={["cf-btn-link"]}
+                classNames={['cf-btn-link']}
               />
             </div>
             <div className="cf-push-right">
               <Button
                   name="Cancel"
                   onClick={this.props.handleCancelTask}
-                  classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+                  classNames={['cf-btn-link', 'cf-adjacent-buttons']}
               />
               <Button
                   app="dispatch"
                   name="Release claim"
-                  classNames={["usa-button-secondary"]}
+                  classNames={['usa-button-secondary']}
                   disabled={!this.state.emailForm.confirmBox.value}
                   onClick={this.props.handleNoEmailSubmit}
                   loading={this.props.loading}
