@@ -28,9 +28,9 @@ export default class Table extends React.Component {
     } = this.props;
 
     let alignmentClasses = {
-      'center': 'cf-txt-c',
-      'left': 'cf-txt-l',
-      'right': 'cf-txt-r'
+      center: 'cf-txt-c',
+      left: 'cf-txt-l',
+      right: 'cf-txt-r'
     };
 
     let cellClasses = (column) => {
