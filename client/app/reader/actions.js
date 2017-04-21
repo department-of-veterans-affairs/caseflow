@@ -79,7 +79,7 @@ export const addNewTag = (doc, tags) => {
       return tag.value === currentTag.text;
     });
 
-    if (newTags && newTags.length > 0) {
+    if (newTags && newTags.length) {
       const processedTags = newTags.map((tag) => {
         return { text: tag.label };
       });

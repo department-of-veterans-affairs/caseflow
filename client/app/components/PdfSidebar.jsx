@@ -75,12 +75,7 @@ const ConnectedCategorySelector = connect(
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
   generateOptionsFromTags = (tags) => {
-
-    if (!tags || tags.length <= 0) {
-      return [];
-    }
-
-    return tags.map((tag) => {
+    return _.map(tags, (tag) => {
       return { value: tag.text,
         label: tag.text,
         tagId: tag.id };
@@ -93,7 +88,7 @@ export default class PdfSidebar extends React.Component {
       const result = _.find(this.props.doc.tags, { text: tagValue });
 
       this.props.removeTag(this.props.doc, result.id);
-    } else if (values && values.length > 0) {
+    } else if (values && values.length) {
       this.props.addNewTag(this.props.doc, values);
     }
   }
