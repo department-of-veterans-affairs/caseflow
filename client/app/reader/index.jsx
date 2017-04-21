@@ -12,6 +12,7 @@ const initialState = {
     pdf: {
     },
     pdfList: {
+      lastReadDocId: null
     }
   },
   documents: {
