@@ -82,7 +82,6 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    // filter out false
     const anyCategoryFiltersAreSet = Boolean(
       _(this.props.pdfList.filters.category).
         values().
@@ -123,11 +122,6 @@ export class PdfListView extends React.Component {
       const isCategoryDropdownFilterOpen =
         _.get(this.props.pdfList, ['dropdowns', 'category']);
 
-      const isAnyCategoryFilterSelected = Boolean(_(this.props.pdfList.filters.category).
-        values().
-        compact().
-        size());
-
       return [
         {
           header: <div
@@ -138,7 +132,7 @@ export class PdfListView extends React.Component {
               getRef={(categoryFilterIcon) => {
                 this.categoryFilterIcon = categoryFilterIcon;
               }}
-              selected={isCategoryDropdownFilterOpen || isAnyCategoryFilterSelected}
+              selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
               handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
             {isCategoryDropdownFilterOpen &&
