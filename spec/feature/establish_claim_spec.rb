@@ -561,7 +561,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "Remand with BVA Grant",
             end_product_code: "170RBVAG",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: true
+            suppress_acknowledgement_letter: false
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
