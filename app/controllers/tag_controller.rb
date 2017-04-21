@@ -1,13 +1,6 @@
 class TagController < ApplicationController
   before_action :verify_access
 
-  def index
-    document_id = params[:document_id]
-    document = Document.find(document_id)
-
-    render json: document.tags
-  end
-
   def create
     created_tags = []
 

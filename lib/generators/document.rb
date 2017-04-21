@@ -9,11 +9,11 @@ class Generators::Document
         received_at: 3.days.ago,
         tags: [
           {
-            text:"Service Connected", 
+            text: "Service Connected",
             created_at: 3.days.ago
           },
           {
-            text:"Right Knee", 
+            text: "Right Knee",
             created_at: 5.days.ago
           }
         ]
@@ -25,7 +25,7 @@ class Generators::Document
 
       # received_at is always a Date when coming from VBMS
       attrs[:received_at] = attrs[:received_at].to_date
-      attrs[:tags] = attrs[:tags].map do | tag |
+      attrs[:tags] = attrs[:tags].map do |tag|
         Tag.new(tag)
       end
       Document.new(attrs || {})
