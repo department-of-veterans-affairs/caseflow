@@ -26,8 +26,7 @@ RSpec.feature "Dispatch Stats Dashboard" do
 
   context ".show" do
     before do
-      establish_claim = Generators::EstablishClaim.create(started_at: 30.minutes.ago, completed_at: 15.minutes.ago, completion_status: 0)
-      establish_claim.appeal.outcoding_date = 17.days.ago
+      Generators::EstablishClaim.create(started_at: 30.minutes.ago, completed_at: 15.minutes.ago, completion_status: 0)
       Generators::EstablishClaim.create(started_at: 30.minutes.ago)
       Rails.cache.clear
       DispatchStats.calculate_all!
