@@ -7,12 +7,13 @@ import logger from 'redux-logger';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
+import update from 'react-addons-update';
 
 const initialState = {
-  currentPdfIndex: null,
-  currentDocId: null,
-  tagsErrorMessage: '',
   ui: {
+    currentPdfIndex: null,
+    currentDocId: null,
+    tagsErrorMessage: '',
     pdf: {
     }
   },
@@ -51,12 +52,20 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return Object.assign({}, state, {
-      tagsErrorMessage: ''
-    });
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          tagsErrorMessage: ''
+        }
+      }
+    );
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return Object.assign({}, state, {
-      tagsErrorMessage: action.payload.errorMessage
+      ui: {
+        tagsErrorMessage: action.payload.errorMessage
+      }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
@@ -72,26 +81,22 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    tags = state.documents[action.payload.docId].tags;
-    _.remove(tags, (tag) => {
-      return tag.id === action.payload.tagId;
-    });
-
-    return _.merge(
-      {},
-      state,
-      {
-        tagsErrorMessage: '',
-        documents: {
-          [action.payload.docId]: {
-            tags
-          }
+    return update(state, {
+      ui: { tagsErrorMessage: { $set: '' } },
+      documents: {
+        [action.payload.docId]: {
+          tags: { $set: state.documents[action.payload.docId].tags.
+          filter((tag) => tag.id !== action.payload.tagId) }
         }
       }
-    );
+    }
+  );
+
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return Object.assign({}, state, {
-      tagsErrorMessage: action.payload.errorMessage
+      ui: {
+        tagsErrorMessage: action.payload.errorMessage
+      }
     });
   case Constants.SHOW_PREV_PDF:
     return state;
@@ -99,8 +104,10 @@ export const readerReducer = (state = initialState, action = {}) => {
     return state;
   case Constants.UPDATE_SHOWING_DOC:
     return Object.assign({}, state, {
-      currentDocId: action.payload.currentDocId,
-      tagsErrorMessage: ''
+      ui: {
+        currentDocId: action.payload.currentDocId,
+        tagsErrorMessage: ''
+      }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
     return _.merge(
@@ -139,12 +146,10 @@ export const readerReducer = (state = initialState, action = {}) => {
   }
 };
 
-const store = () => {
-  return createStore(readerReducer, applyMiddleware(thunk, logger));
-};
+const store = createStore(readerReducer, initialState, applyMiddleware(thunk, logger));
 
 const Reader = (props) => {
-  return <Provider store={store()}>
+  return <Provider store={store}>
       <DecisionReviewer {...props} />
   </Provider>;
 };

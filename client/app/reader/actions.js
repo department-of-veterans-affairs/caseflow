@@ -89,7 +89,7 @@ export const removeTag = (doc, tagId) => {
   return (dispatch) => {
     dispatch({ type: Constants.REQUEST_REMOVE_TAG });
     ApiUtil.delete(`/reader/documents/${doc.id}/tags/${tagId}`).
-      then((data) => {
+      then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
         dispatch(removeTagRequestFailure("Unable to save. Please try again."));
@@ -101,19 +101,15 @@ export const addNewTag = (doc, tags) => {
   return (dispatch) => {
     const currentTags = doc.tags;
 
-    const prepareTagData = (newTags) => {
-      return newTags.map((tag) => {
-        return { text: tag.label };
-      });
-    };
-
     // gets the newly added tags
     const newTags = _.differenceWith(tags, currentTags, (tag, currentTag) => {
       return tag.value === currentTag.text;
     });
 
     if (newTags && newTags.length > 0) {
-      const processedTags = prepareTagData(newTags);
+      const processedTags = newTags.map((tag) => {
+        return { text: tag.label };
+      });
 
       dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
       ApiUtil.post(`/reader/documents/${doc.id}/tags`, { data: { tags: processedTags } }).

@@ -193,8 +193,6 @@ RSpec.feature "Reader" do
 
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     click_on documents[0].filename
-    puts find('.Select-control')
-    #find('.Select-control').click
     
     input_element = find('.Select-input > input')
     input_element.click.native.send_keys(TAG1)
@@ -222,18 +220,18 @@ RSpec.feature "Reader" do
     expect(page).to have_css('.Select-value-label', count: 3)
 
     # getting remove buttons of all tags
-    cancle_icons = page.all('.Select-value-icon')
+    cancel_icons = page.all('.Select-value-icon')
 
     # delete all tags
-    for i in (cancle_icons.length - 1).downto(0)
-      cancle_icons[i].click
+    for i in (cancel_icons.length - 1).downto(0)
+      cancel_icons[i].click
     end
 
     # expecting the page not to have any tags
-    expect(page).not_to have_css('.Select-value-label', text: TAG_DOC2_TEXT1)
+    expect(page).not_to have_css('.Select-value-label', text: DOC2_TAG1)
     expect(page).to have_css('.Select-value-label', count: 0)
 
-    # go back the first document
+    # go back to the first document
     find('#button-previous').click
 
     # verify that the tags on the previous document still exist

@@ -14,7 +14,7 @@ class Generators::Document
           },
           {
             text:"Right Knee", 
-            created_at: 3.days.ago
+            created_at: 5.days.ago
           }
         ]
       }
