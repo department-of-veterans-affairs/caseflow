@@ -177,6 +177,10 @@ RSpec.feature "Reader" do
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
     expect(doc_0_categories).to eq(["Medical"])
 
+    click_on documents[1].filename
+    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
+    find("#button-next").click
+
     expect(find("#procedural", visible: false).checked?).to be false
     expect(find("#medical", visible: false).checked?).to be false
     expect(find("#other", visible: false).checked?).to be false
