@@ -470,7 +470,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "ARC-Partial Grant",
             end_product_code: "170PGAMC",
             gulf_war_registry: true,
-            suppress_acknowledgement_letter: false
+            suppress_acknowledgement_letter: true
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
@@ -561,7 +561,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "Remand with BVA Grant",
             end_product_code: "170RBVAG",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            suppress_acknowledgement_letter: true
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
@@ -640,7 +640,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               end_product_code: "170PGAMC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
-              suppress_acknowledgement_letter: false
+              suppress_acknowledgement_letter: true
             },
             veteran_hash: task.appeal.veteran.to_vbms_hash
           )
