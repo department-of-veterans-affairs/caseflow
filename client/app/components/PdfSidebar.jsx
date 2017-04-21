@@ -74,18 +74,10 @@ const ConnectedCategorySelector = connect(
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      values: [],
-      options: []
-    };
-  }
-
   generateOptionsFromTags = (tags) => {
 
     if (!tags || tags.length <= 0) {
-      return {};
+      return [];
     }
 
     return tags.map((tag) => {
@@ -95,27 +87,16 @@ export default class PdfSidebar extends React.Component {
     });
   };
 
-  updateOptionsFromTagsInState = (tags) => {
-    this.setState(() => {
-      return {
-        options: this.generateOptionsFromTags(tags)
-      };
-    });
-  };
+  onChange = (values, deletedValue) => {
+    if (_.size(deletedValue)) {
+      const tagValue = deletedValue[FIRST_ELEMENT].label;
+      const result = _.find(this.props.doc.tags, { text: tagValue });
 
-  updateValuesFromTagsInState = (tags) => {
-    this.setState(() => {
-      return {
-        values: this.generateOptionsFromTags(tags)
-      };
-    });
-  };
-
-  componentWillReceiveProps = (nextProps) => {
-    this.updateOptionsFromTagsInState(nextProps.doc.tags);
-    this.updateValuesFromTagsInState(nextProps.doc.tags);
+      this.props.removeTag(this.props.doc, result.id);
+    } else if (values && values.length > 0) {
+      this.props.addNewTag(this.props.doc, values);
+    }
   }
-
 
   render() {
     let comments = [];
@@ -163,9 +144,6 @@ export default class PdfSidebar extends React.Component {
         </div>
         <div className="cf-document-info-wrapper">
           <p className="cf-pdf-meta-title">
-            <b>Filename:</b> {this.props.doc.filename}
-          </p>
-          <p className="cf-pdf-meta-title">
             <b>Document Type:</b> {this.props.doc.type}
             <Button
               name="download"
@@ -202,22 +180,13 @@ export default class PdfSidebar extends React.Component {
               message={tagsErrorMessage} />}
           <SearchableDropdown
             name="tags"
-            label="Click in the box below to select, type, or add in issue(s)"
+            label="Click in the box to select, or add issue(s)"
             multi={true}
             creatable={true}
-            options={this.state.options}
-            placeholder="Select or type issue"
-            value={this.generateOptionsFromTags(doc.tags)}
-            onChange={(values, deletedValue) => {
-              if (deletedValue && deletedValue.length > 0) {
-                let tagValue = deletedValue[FIRST_ELEMENT].label;
-                let result = _.find(this.state.options, { 'value': tagValue });
-
-                this.props.removeTag(doc, result.tagId);
-              } else {
-                this.props.addNewTag(doc, values);
-              }
-            }}
+            options={this.generateOptionsFromTags(doc.tags) || []}
+            placeholder=""
+            value={this.generateOptionsFromTags(doc.tags) || []}
+            onChange={this.onChange}
           />
           <div className="cf-sidebar-heading">
             Comments
