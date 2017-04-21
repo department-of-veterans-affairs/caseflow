@@ -103,7 +103,7 @@ export default class PdfSidebar extends React.Component {
 
     const {
       doc,
-      tagsErrorMessage
+      showTagErrorMsg
     } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
@@ -175,9 +175,9 @@ export default class PdfSidebar extends React.Component {
             Related Issues
           </div>
           {/* This error alert needs to be formatted according to #1573 */}
-          {tagsErrorMessage &&
+          {showTagErrorMsg &&
             <Alert type="error" title={''}
-              message={tagsErrorMessage} />}
+              message="Unable to save. Please try again." />}
           <SearchableDropdown
             name="tags"
             label="Click in the box to select, or add issue(s)"

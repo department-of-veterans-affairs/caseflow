@@ -11,7 +11,7 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
-    tagsErrorMessage: '',
+    showTagErrorMsg: false,
     pdf: {
     }
   },
@@ -50,11 +50,11 @@ export const readerReducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
-      ui: { tagsErrorMessage: { $set: '' } }
+      ui: { showTagErrorMsg: { $set: false } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
+      ui: { showTagErrorMsg: { $set: true } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
@@ -71,7 +71,7 @@ export const readerReducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
-      ui: { tagsErrorMessage: { $set: '' } },
+      ui: { showTagErrorMsg: { $set: false } },
       documents: {
         [action.payload.docId]: {
           tags: { $set: state.documents[action.payload.docId].tags.
@@ -82,12 +82,12 @@ export const readerReducer = (state = initialState, action = {}) => {
   );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { tagsErrorMessage: { $set: action.payload.errorMessage } }
+      ui: { showTagErrorMsg: { $set: true } }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
     return update(state, {
       ui: {
-        tagsErrorMessage: { $set: action.payload.errorMessage },
+        showTagErrorMsg: { $set: false },
         pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
       }
     });

@@ -26,12 +26,9 @@ export const newTagRequestSuccess = (docId, createdTags) => {
   };
 };
 
-export const newTagRequestFailed = (errorMessage) => {
+export const newTagRequestFailed = () => {
   return {
-    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
-    payload: {
-      errorMessage
-    }
+    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE
   };
 };
 
@@ -44,12 +41,9 @@ export const selectCurrentPdf = (docId) => {
   };
 };
 
-export const removeTagRequestFailure = (errorMessage) => {
+export const removeTagRequestFailure = () => {
   return {
-    type: Constants.REQUEST_REMOVE_TAG_FAILURE,
-    payload: {
-      errorMessage
-    }
+    type: Constants.REQUEST_REMOVE_TAG_FAILURE
   };
 };
 
@@ -71,7 +65,7 @@ export const removeTag = (doc, tagId) => {
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
-        dispatch(removeTagRequestFailure('Unable to save. Please try again.'));
+        dispatch(removeTagRequestFailure());
       });
   };
 };
@@ -95,7 +89,7 @@ export const addNewTag = (doc, tags) => {
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {
-          dispatch(newTagRequestFailed('Unable to save. Please try again.'));
+          dispatch(newTagRequestFailed());
         });
     }
   };
