@@ -89,9 +89,9 @@ export default class PdfViewer extends React.Component {
       let annotation = {
         class: 'Annotation',
         page: pageNumber,
-        'type': 'point',
-        'x': coordinates.xPosition,
-        'y': coordinates.yPosition
+        type: 'point',
+        x: coordinates.xPosition,
+        y: coordinates.yPosition
       };
 
       this.setState({
