@@ -73,8 +73,8 @@ RSpec.feature "Certification Stats Dashboard" do
     expect(page).to have_content("Certifications Completed 3")
     expect(page).to have_content("Overall 75 %")
     expect(page).to have_content("Missing Document 50 %")
-    expect(page).to have_content("Overall (median) 60.00 min")
-    expect(page).to have_content("Missing Document (median) 120.00 min")
+    expect(page).to have_content("Overall (median) 1.00 hours")
+    expect(page).to have_content("Missing Document (median) 2.00 hours")
     expect(page).to have_content("Any Document 50 %")
     expect(page).to have_content("NOD 50 %")
     expect(page).to have_content("SOC 0 %")
@@ -119,8 +119,8 @@ RSpec.feature "Certification Stats Dashboard" do
     expect(page).to have_content("Certifications Completed 3")
     expect(page).to have_content("Overall 50 %")
     expect(page).to have_content("Missing Document 25 %")
-    expect(page).to have_content("Overall (median) 60.00 min")
-    expect(page).to have_content("Missing Document (median) 120.00 min")
+    expect(page).to have_content("Overall (median) 1.00 hours")
+    expect(page).to have_content("Missing Document (median) 2.00 hours")
 
     expect(page).to have_content("Any Document 67 %")
     expect(page).to have_content("NOD 33 %")
@@ -132,25 +132,26 @@ RSpec.feature "Certification Stats Dashboard" do
   scenario "Toggle median to 95th percentile and navigate to past periods" do
     visit "/certification/stats"
 
-    # Turn mousever events off on the Stats dashboard to not confuse Chrome
+    # Turn mouseover events off on the Stats dashboard to not confuse Chrome
     page.execute_script("window.Dashboard.mouseoverEvents = false;")
 
     click_on "Daily"
 
     find("#time-to-certify-toggle").click
 
-    expect(page).to have_content("Overall (95th percentile) 120.00 min")
+    expect(page).to have_content("Overall (95th percentile)")
+    expect(page).to have_content("December 17")
 
-    # Scroll once more to see December 31 have no stats
+    # Scroll once more to see December 16 have no stats
     page.driver.execute_script(leftarrow)
-    expect(page).to have_content("December 31")
-    expect(page).to have_content("Overall (95th percentile) ??")
+    expect(page).to have_content("December 16")
+    expect(page).to have_content("Overall (95th percentile)")
 
     find("#time-to-certify-toggle").click
 
     # Scroll to the most recent time interval
     page.driver.execute_script(rightarrow)
-    expect(page).to have_content("Overall (median) 60.00 min")
+    expect(page).to have_content("Overall (median)")
   end
 
   scenario "Unauthorized user access" do
