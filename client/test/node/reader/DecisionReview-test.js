@@ -168,7 +168,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-edit').simulate('click');
 
         // Verify that the text in the textbox is the existing comment
-        expect(wrapper.find('TextareaField').props().value).
+        expect(wrapper.find('textarea').props().value).
           to.be.equal(firstComment.comment);
 
         // Add new text to the edit textbox
