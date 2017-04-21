@@ -52,7 +52,7 @@ const ApiUtil = {
   headers(options = {}) {
     let headers = Object.assign({},
       {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       },
       ReactOnRails.authenticityHeaders(),
