@@ -146,9 +146,7 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Click on the add a comment button
-        wrapper.find('a').findWhere(
-          (link) => link.text() === '+ Add a Comment').
-          simulate('click');
+        wrapper.find('#button-AddComment').simulate('click');
 
         // Click on the pdf at the location specified by event
         wrapper.find('#pageContainer1').simulate('click', event);
@@ -170,7 +168,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-edit').simulate('click');
 
         // Verify that the text in the textbox is the existing comment
-        expect(wrapper.find('TextareaField').props().value).
+        expect(wrapper.find('textarea').props().value).
           to.be.equal(firstComment.comment);
 
         // Add new text to the edit textbox
@@ -216,9 +214,7 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
 
-        wrapper.find('a').findWhere(
-          (link) => link.text() === '+ Add a Comment').
-          simulate('click');
+        wrapper.find('#button-AddComment').simulate('click');
 
         await pause();
         wrapper.find('#pageContainer1').simulate('click', event);

@@ -24,19 +24,19 @@ export default class Comment extends React.Component {
 
     return <div>
         <Button
-          name="edit"
+          name="delete"
           classNames={["cf-btn-link comment-control-button"]}
-          onClick={this.onEditComment}>
-          Edit
+          onClick={this.onDeleteComment}>
+          Delete
         </Button>
         <span className="comment-control-button-divider">
           |
         </span>
         <Button
-          name="delete"
+          name="edit"
           classNames={["cf-btn-link comment-control-button"]}
-          onClick={this.onDeleteComment}>
-          Delete
+          onClick={this.onEditComment}>
+          Edit
         </Button>
       </div>;
   }
