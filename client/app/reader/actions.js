@@ -76,7 +76,7 @@ export const removeTagRequestSuccess = (docId, tagId) => {
 export const removeTag = (doc, tagId) => {
   return (dispatch) => {
     dispatch({ type: Constants.REQUEST_REMOVE_TAG });
-    ApiUtil.delete(`/reader/documents/${doc.id}/tags/${tagId}`).
+    ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`).
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
@@ -100,7 +100,7 @@ export const addNewTag = (doc, tags) => {
       });
 
       dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
-      ApiUtil.post(`/reader/documents/${doc.id}/tags`, { data: { tags: processedTags } }).
+      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: processedTags } }).
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {

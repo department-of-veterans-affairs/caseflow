@@ -1,4 +1,4 @@
-class Reader::TagsController < ApplicationController
+class TagController < ApplicationController
   before_action :verify_access
 
   def index
