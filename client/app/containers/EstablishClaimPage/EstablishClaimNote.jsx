@@ -31,7 +31,7 @@ export class EstablishClaimNote extends BaseForm {
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
-      ' in your jurisdiction. Please proceed with control and implement this grant.';
+      ` in your jurisdiction. Please proceed with control and implement this grant.`;
 
     this.state = {
       noteForm: {
@@ -48,14 +48,14 @@ export class EstablishClaimNote extends BaseForm {
     let specialIssues = this.props.specialIssues;
 
     if (specialIssues.vamc) {
-      return '54';
+      return "54";
     } else if (specialIssues.nationalCemeteryAdministration) {
-      return '53';
+      return "53";
     } else if (!this.hasSelectedSpecialIssues()) {
-      return '98';
+      return "98";
     }
 
-    return '50';
+    return "50";
   }
 
   hasSelectedSpecialIssues() {
@@ -92,7 +92,7 @@ export class EstablishClaimNote extends BaseForm {
 
     return `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
-      ' is being transfered from ARC as it contains: ' +
+      ` is being transfered from ARC as it contains: ` +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
   }
 
@@ -139,7 +139,7 @@ export class EstablishClaimNote extends BaseForm {
               <Button
                 label = "Copy note"
                 name="copyNote"
-                classNames={['usa-button-secondary usa-button-hover']}>
+                classNames={["usa-button-outline usa-button-hover"]}>
                 <i className="fa fa-files-o" aria-hidden="true"></i>
                 Copy note
               </Button>
@@ -198,14 +198,14 @@ export class EstablishClaimNote extends BaseForm {
             <Button
               name={this.props.backToDecisionReviewText}
               onClick={this.props.handleBackToDecisionReview}
-              classNames={['cf-btn-link']}
+              classNames={["cf-btn-link"]}
             />
           </div>}
           <div className="cf-push-right">
             <Button
               app="dispatch"
               name="Finish routing claim"
-              classNames={['usa-button-primary']}
+              classNames={["usa-button-primary"]}
               disabled={!this.state.noteForm.confirmBox.value}
               onClick={this.handleSubmit}
               loading={this.props.loading}

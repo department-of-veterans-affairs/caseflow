@@ -9,7 +9,7 @@ export default class Example4 extends React.Component {
 
     this.state = {
       value: null,
-      errorMessage: 'This field is required'
+      errorMessage: "This field is required"
     };
   }
 
@@ -22,10 +22,10 @@ export default class Example4 extends React.Component {
 
   render = () => {
     let options = [
-      { displayText: 'Furnished',
-        value: '1' },
-      { displayText: 'Not furnished',
-        value: '2' }
+      { displayText: "Furnished",
+        value: "1" },
+      { displayText: "Not furnished",
+        value: "2" }
     ];
 
     return <RadioField

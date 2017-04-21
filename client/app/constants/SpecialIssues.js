@@ -20,10 +20,10 @@ const SPECIAL_ISSUES = [
     }
   },
   {
-    display: 'Education - GI Bill, dependents educational assistance, ' +
-      'scholarship, transfer of entitlement',
-    specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
-      'TransferOfEntitlement',
+    display: `Education - GI Bill, dependents educational assistance, ` +
+      `scholarship, transfer of entitlement`,
+    specialIssue: `educationGiBillDependentsEducationalAssistanceScholarship` +
+      `TransferOfEntitlement`,
     stationOfJurisdiction: null,
     unhandled: {
       emailAddress: 'education',
@@ -153,10 +153,10 @@ const SPECIAL_ISSUES = [
     unhandled: null
   },
   {
-    display: 'U.S. Territory claim - American Samoa, Guam, Northern ' +
-      'Mariana Islands (Rota, Saipan & Tinian)',
-    specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
-      'MarianaIslandsRotaSaipanTinian',
+    display: `U.S. Territory claim - American Samoa, Guam, Northern ` +
+      `Mariana Islands (Rota, Saipan & Tinian)`,
+    specialIssue: `usTerritoryClaimAmericanSamoaGuamNorthern` +
+      `MarianaIslandsRotaSaipanTinian`,
     stationOfJurisdiction: {
       key: '459',
       location: 'Honolulu, HI'

@@ -38,7 +38,7 @@ export default class TabWindow extends React.Component {
   }
 
   getTabClassName = (index, currentPage, isTabDisabled) => {
-    let className = `cf-tab${index === currentPage ? ' cf-active' : ''}`;
+    let className = `cf-tab${index === currentPage ? " cf-active" : ""}`;
 
     className += isTabDisabled ? ' disabled' : '';
 
@@ -48,7 +48,7 @@ export default class TabWindow extends React.Component {
   // For pages with only one set of tabs or a non-specified tab group name
   // the name returns "undefined". This appends the word "main" to the tab group.
   getTabGroupName = (name) => {
-    return name ? name : 'main';
+    return name ? name : "main";
   }
 
   render() {
@@ -60,7 +60,7 @@ export default class TabWindow extends React.Component {
 
     return <div>
         <div className={
-          `cf-tab-navigation${fullPage ? ' cf-tab-navigation-full-screen' : ''}`
+          `cf-tab-navigation${fullPage ? " cf-tab-navigation-full-screen" : ""}`
         }>
           {tabs.map((tab, i) =>
             <button

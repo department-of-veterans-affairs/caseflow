@@ -133,8 +133,8 @@ export default class AnnotationStorage {
     annotations.forEach((annotation) => {
       // We have to call it a uuid for the UI to properly use it
       annotation.uuid = annotation.id;
-      annotation.class = 'annotation';
-      annotation.type = 'point';
+      annotation.class = "annotation";
+      annotation.type = "point";
       annotation.documentId = annotation.document_id;
 
       if (!this.storedAnnotations[annotation.documentId]) {

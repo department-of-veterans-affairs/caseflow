@@ -39,15 +39,15 @@ export default class StyleGuideModal extends React.Component {
       <p><Button
           name="Launch modal"
           onClick={this.handleModalOpen}
-          classNames={['usa-button', 'usa-button-outline']}
+          classNames={["usa-button", "usa-button-outline"]}
       /></p>
       { styleGuideModal && <Modal
         buttons = {[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
+          { classNames: ["cf-modal-link", "cf-btn-link"],
             name: 'Close',
             onClick: this.handleModalClose
           },
-          { classNames: ['usa-button', 'usa-button-secondary'],
+          { classNames: ["usa-button", "usa-button-secondary"],
             name: 'Proceed with action',
             onClick: this.handleModalClose
           }

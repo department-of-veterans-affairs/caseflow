@@ -8,7 +8,7 @@ export default class Example2 extends React.Component {
     super(props);
 
     this.state = {
-      value: '1'
+      value: "1"
     };
   }
 
@@ -20,10 +20,10 @@ export default class Example2 extends React.Component {
 
   render = () => {
     let options = [
-      { displayText: 'Yes',
-        value: '1' },
-      { displayText: 'No',
-        value: '2' }
+      { displayText: "Yes",
+        value: "1" },
+      { displayText: "No",
+        value: "2" }
     ];
 
     return <RadioField

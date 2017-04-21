@@ -21,14 +21,14 @@ export default class CheckboxGroup extends React.Component {
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
 
     if (options.length <= this.MAX && !vertical) {
-      fieldClasses += '-inline';
+      fieldClasses += "-inline";
     }
 
     if (errorMessage) {
-      fieldClasses += ' usa-input-error';
+      fieldClasses += " usa-input-error";
     }
 
-    let legendClasses = (hideLabel) ? 'hidden-field' : '';
+    let legendClasses = (hideLabel) ? "hidden-field" : "";
 
     return <fieldset className={fieldClasses}>
       <legend className={legendClasses}>

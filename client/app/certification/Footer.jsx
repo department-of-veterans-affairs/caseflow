@@ -40,12 +40,12 @@ export default class Footer extends React.Component {
       <Button
             name="Cancel Certification"
             onClick={this.handleModalOpen}
-            classNames={['cf-btn-link']}
+            classNames={["cf-btn-link"]}
       />
       { !hideContinue && <Link to={nextPageUrl || '#'}>
         <Button type="button"
           name="Continue"
-          classNames={['cf-push-right']}
+          classNames={["cf-push-right"]}
           onClick={onClickContinue}
           loading={loading}
           disabled={disableContinue}>

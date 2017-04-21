@@ -12,7 +12,7 @@ export default class StyleGuideComponentTitle extends React.Component {
     let ViewSourceCodeLink = (props) => {
 
       /* eslint-disable max-len */
-      let baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/';
+      let baseUrl = "https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/";
 
       /* eslint-enable max-len */
 

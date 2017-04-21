@@ -17,9 +17,9 @@ export default class CancelCertificationModal extends BaseForm {
     super(props);
     this.state = {
       shouldShowOtherReason: false,
-      cancellationReasonValue: '',
-      otherReasonValue: '',
-      emailValue: '',
+      cancellationReasonValue: "",
+      otherReasonValue: "",
+      emailValue: "",
       certificationCancellationForm: {
         cancellationReason: new FormField(
           '',
@@ -42,7 +42,7 @@ export default class CancelCertificationModal extends BaseForm {
       cancellationReasonValue: value
     });
 
-    if (value === 'Other') {
+    if (value === "Other") {
       this.setState({
         shouldShowOtherReason: true
       });
@@ -86,7 +86,7 @@ export default class CancelCertificationModal extends BaseForm {
   }
 
   validateForm = () => {
-    if (this.state.cancellationReasonValue === 'Other') {
+    if (this.state.cancellationReasonValue === "Other") {
       return this.validateFormAndSetErrors(this.state.certificationCancellationForm);
     }
 
@@ -115,7 +115,7 @@ export default class CancelCertificationModal extends BaseForm {
 
     let data = this.prepareData();
 
-    return ApiUtil.post('/certification_cancellations', { data }).
+    return ApiUtil.post(`/certification_cancellations`, { data }).
       then(() => {
         this.props.closeHandler();
 
@@ -133,22 +133,22 @@ export default class CancelCertificationModal extends BaseForm {
     let cancellationReasonOptions = [
       { displayText: "VBMS and VACOLS dates didn't match and couldn't be changed",
         value: "VBMS and VACOLS dates didn't match and couldn't be changed" },
-      { displayText: 'Missing document could not be found',
-        value: 'Missing document could not be found' },
-      { displayText: 'Pending FOIA request',
-        value: 'Pending FOIA request' },
-      { displayText: 'Other',
-        value: 'Other' }
+      { displayText: "Missing document could not be found",
+        value: "Missing document could not be found" },
+      { displayText: "Pending FOIA request",
+        value: "Pending FOIA request" },
+      { displayText: "Other",
+        value: "Other" }
     ];
 
     return <div>
       <Modal
             buttons={[
-              { classNames: ['cf-modal-link', 'cf-btn-link'],
+              { classNames: ["cf-modal-link", "cf-btn-link"],
                 name: '\u226A Go back',
                 onClick: closeHandler
               },
-              { classNames: ['usa-button', 'usa-button-secondary'],
+              { classNames: ["usa-button", "usa-button-secondary"],
                 name: 'Cancel certification',
                 onClick: this.submitForm
               }

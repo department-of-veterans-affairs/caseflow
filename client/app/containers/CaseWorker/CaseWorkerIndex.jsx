@@ -20,7 +20,7 @@ export default class CaseWorkerIndex extends BaseForm {
       loading: true
     });
 
-    ApiUtil.patch('/dispatch/establish-claim/assign').then((response) => {
+    ApiUtil.patch(`/dispatch/establish-claim/assign`).then((response) => {
       window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
     }, () => {
       this.props.handleAlert(
@@ -70,7 +70,7 @@ export default class CaseWorkerIndex extends BaseForm {
                 this.props.completedCountToday} claims completed`
                 }
                 { !availableTasks &&
-                  'There are no more claims in your queue.'
+                  "There are no more claims in your queue."
                 }
               </span>
               { availableTasks &&
@@ -78,8 +78,8 @@ export default class CaseWorkerIndex extends BaseForm {
                 app="dispatch"
                 name={buttonText}
                 onClick={this.establishNextClaim}
-                classNames={['usa-button-primary', 'cf-push-right',
-                  'cf-button-aligned-with-textfield-right']}
+                classNames={["usa-button-primary", "cf-push-right",
+                  "cf-button-aligned-with-textfield-right"]}
                 disabled={!availableTasks}
                 loading={this.state.loading}
               />
@@ -87,8 +87,8 @@ export default class CaseWorkerIndex extends BaseForm {
               { !availableTasks &&
               <Button
                   name={buttonText}
-                  classNames={['usa-button-disabled', 'cf-push-right',
-                    'cf-button-aligned-with-textfield-right']}
+                  classNames={["usa-button-disabled", "cf-push-right",
+                    "cf-button-aligned-with-textfield-right"]}
                   disabled={true}
               />
               }

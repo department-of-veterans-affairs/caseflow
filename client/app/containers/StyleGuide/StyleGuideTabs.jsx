@@ -15,34 +15,34 @@ export default class StyleGuideTabs extends React.Component {
 
     tabs = [
       {
-        label: 'Tab 1',
-        page: ' '
+        label: "Tab 1",
+        page: " "
       },
       {
-        label: 'Tab 2',
-        page: ' '
+        label: "Tab 2",
+        page: " "
       },
       {
-        label: 'Tab 3',
-        page: ' '
+        label: "Tab 3",
+        page: " "
       }
     ];
 
     tabsWithIcons = [{
       disable: false,
       icon: checkSymbolHtml(),
-      label: 'Active Tab',
-      page: ' '
+      label: "Active Tab",
+      page: " "
     }, {
       disable: false,
       icon: checkSymbolHtml(),
-      label: 'Enabled Tab',
-      page: ' '
+      label: "Enabled Tab",
+      page: " "
     }, {
       disable: true,
       icon: crossSymbolHtml(),
-      label: 'Disabled Tab',
-      page: ' '
+      label: "Disabled Tab",
+      page: " "
     }
     ];
 

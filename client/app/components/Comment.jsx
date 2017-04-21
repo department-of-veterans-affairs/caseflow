@@ -25,7 +25,7 @@ export default class Comment extends React.Component {
     return <div>
         <Button
           name="delete"
-          classNames={['cf-btn-link comment-control-button']}
+          classNames={["cf-btn-link comment-control-button"]}
           onClick={this.onDeleteComment}>
           Delete
         </Button>
@@ -34,7 +34,7 @@ export default class Comment extends React.Component {
         </span>
         <Button
           name="edit"
-          classNames={['cf-btn-link comment-control-button']}
+          classNames={["cf-btn-link comment-control-button"]}
           onClick={this.onEditComment}>
           Edit
         </Button>
@@ -53,7 +53,7 @@ export default class Comment extends React.Component {
     if (this.props.onJumpToComment) {
       jumpToSectionButton = <Button
           name="jumpToComment"
-          classNames={['cf-btn-link comment-control-button']}
+          classNames={["cf-btn-link comment-control-button"]}
           onClick={this.props.onJumpToComment}>
           Jump to Section
         </Button>;

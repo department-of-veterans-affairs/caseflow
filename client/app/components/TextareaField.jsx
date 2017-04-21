@@ -17,8 +17,8 @@ export default class TextareaField extends React.Component {
       value
     } = this.props;
 
-    let className = 'cf-form-textarea' +
-          `${errorMessage ? ' usa-input-error' : ''}`;
+    let className = `cf-form-textarea` +
+          `${errorMessage ? " usa-input-error" : ""}`;
 
     return <div className={className}>
       <label className="question-label" htmlFor={name}>

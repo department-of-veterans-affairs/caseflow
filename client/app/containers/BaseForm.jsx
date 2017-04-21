@@ -56,7 +56,7 @@ export default class BaseForm extends React.Component {
 
   scrollToAndFocusFirstError = function() {
     let erroredForm = ReactDOM.findDOMNode(this.state.validating);
-    let errors = erroredForm.getElementsByClassName('usa-input-error-message');
+    let errors = erroredForm.getElementsByClassName("usa-input-error-message");
 
     if (errors.length > 0) {
       window.scrollBy(0, errors[0].parentElement.getBoundingClientRect().top);

@@ -10,23 +10,23 @@ import Footer from './Footer';
 
 const representativeTypeOptions = [
   {
-    displayText: 'Attorney',
+    displayText: "Attorney",
     value: Constants.representativeTypes.ATTORNEY
   },
   {
-    displayText: 'Agent',
+    displayText: "Agent",
     value: Constants.representativeTypes.AGENT
   },
   {
-    displayText: 'Organization',
+    displayText: "Organization",
     value: Constants.representativeTypes.ORGANIZATION
   },
   {
-    displayText: 'None',
+    displayText: "None",
     value: Constants.representativeTypes.NONE
   },
   {
-    displayText: 'Other',
+    displayText: "Other",
     value: Constants.representativeTypes.OTHER
   }
 ];

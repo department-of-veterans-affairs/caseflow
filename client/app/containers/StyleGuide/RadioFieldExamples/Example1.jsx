@@ -8,7 +8,7 @@ export default class Example1 extends React.Component {
     super(props);
 
     this.state = {
-      value: '1'
+      value: "1"
     };
   }
 
@@ -21,11 +21,11 @@ export default class Example1 extends React.Component {
   render = () => {
     let options = [
       { displayText: <span>Yosemite National Park</span>,
-        value: '1' },
-      { displayText: 'Grand Canyon National Park',
-        value: '2' },
-      { displayText: 'Yellowstone National Park and related services',
-        value: '3' }
+        value: "1" },
+      { displayText: "Grand Canyon National Park",
+        value: "2" },
+      { displayText: "Yellowstone National Park and related services",
+        value: "3" }
     ];
 
     return <RadioField

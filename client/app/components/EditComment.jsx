@@ -64,7 +64,7 @@ export default class EditComment extends React.Component {
           <span className="cf-right-side">
             <Button
               name="cancel"
-              classNames={['cf-btn-link']}
+              classNames={["cf-btn-link"]}
               onClick={this.cancelEdit}>
               Cancel
             </Button>

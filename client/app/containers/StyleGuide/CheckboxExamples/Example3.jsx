@@ -27,16 +27,16 @@ export default class Example3 extends React.Component {
   render = () => {
     let options = [
       {
-        id: 'checkboxExample31',
-        label: 'Yosemite National Park'
+        id: "checkboxExample31",
+        label: "Yosemite National Park"
       },
       {
-        id: 'checkboxExample32',
-        label: 'Grand Canyon National Park'
+        id: "checkboxExample32",
+        label: "Grand Canyon National Park"
       },
       {
-        id: 'checkboxExample33',
-        label: 'Disabled',
+        id: "checkboxExample33",
+        label: "Disabled",
         disabled: true
       }
     ];

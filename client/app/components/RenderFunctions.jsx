@@ -18,7 +18,7 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
   if (!(/\D/).test(imgSize)) {
     imgSize += 'px';
     console.warn(
-      'loadingSymbolHtml() size argument', size, 'converted to', imgSize
+      "loadingSymbolHtml() size argument", size, "converted to", imgSize
     );
   }
 

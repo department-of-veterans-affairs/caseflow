@@ -28,7 +28,7 @@ export default class EstablishClaimToolbar extends React.Component {
 
         <Button
           name={buttonText}
-          classNames={['cf-push-right']}
+          classNames={["cf-push-right"]}
           disabled={true}
         />
       </div>;
@@ -43,7 +43,7 @@ export default class EstablishClaimToolbar extends React.Component {
           app="dispatch"
           name={buttonText}
           onClick={this.establishNextClaim}
-          classNames={['usa-button-primary', 'cf-push-right']}
+          classNames={["usa-button-primary", "cf-push-right"]}
           loading={this.state.loading}
         />
       </div>;
@@ -66,7 +66,7 @@ export default class EstablishClaimToolbar extends React.Component {
       loading: true
     });
 
-    ApiUtil.patch('/dispatch/establish-claim/assign').
+    ApiUtil.patch(`/dispatch/establish-claim/assign`).
     then((response) => {
       window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
     }, () => {

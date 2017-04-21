@@ -51,7 +51,7 @@ class SearchableDropdown extends Component {
         value={this.state.value}
         options={options}
         onChange={this.onChange}
-        placeholder={placeholder ? placeholder : 'Select option'}
+        placeholder={placeholder ? placeholder : "Select option"}
         clearable={false}
         noResultsText="Not an option"
         disabled={readOnly}
