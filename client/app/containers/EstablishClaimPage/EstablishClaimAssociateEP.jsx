@@ -57,12 +57,12 @@ export class AssociatePage extends React.Component {
   ];
 
   getClassAssignButtonClasses = (loadingFlag, claimId) => {
-    let classes = ["usa-button-outline"];
+    let classes = ['usa-button-outline'];
 
     if (loadingFlag) {
-      classes.push("usa-button-disabled");
+      classes.push('usa-button-disabled');
       if (loadingFlag !== claimId) {
-        classes.push("cf-secondary-disabled");
+        classes.push('cf-secondary-disabled');
       }
     }
 
@@ -168,14 +168,14 @@ export class AssociatePage extends React.Component {
           <Button
             name={backToDecisionReviewText}
             onClick={handleBackToDecisionReview}
-            classNames={["cf-btn-link"]}
+            classNames={['cf-btn-link']}
           />
         </div>
         <div className="cf-push-right">
           <Button
             name="Cancel"
             onClick={handleCancelTask}
-            classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
           />
           <Button
             app="dispatch"

@@ -29,9 +29,9 @@ export default class Table extends React.Component {
     } = this.props;
 
     let alignmentClasses = {
-      "center": "cf-txt-c",
-      "left": "cf-txt-l",
-      "right": "cf-txt-r"
+      'center': 'cf-txt-c',
+      'left': 'cf-txt-l',
+      'right': 'cf-txt-r'
     };
 
     let cellClasses = (column) => {
@@ -48,7 +48,7 @@ export default class Table extends React.Component {
         <tr>
           {getColumns(props).map((column, columnNumber) =>
             <th scope="col" key={columnNumber} className={cellClasses(column)}>
-              {column.header || ""}
+              {column.header || ''}
             </th>
           )}
         </tr>
@@ -63,7 +63,7 @@ export default class Table extends React.Component {
         return rowObject[column.valueName];
       }
 
-      return "";
+      return '';
     };
 
     let getCellSpan = (rowObject, column) => {
@@ -75,7 +75,7 @@ export default class Table extends React.Component {
     };
 
     let Row = (props) => {
-      let rowId = props.footer ? "footer" : props.rowNumber;
+      let rowId = props.footer ? 'footer' : props.rowNumber;
 
       return <tr id={`table-row-${rowId}`}>
         {getColumns(props).map((column, columnNumber) =>

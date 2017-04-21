@@ -8,61 +8,112 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuidePlaceholder from './StyleGuidePlaceholder';
+import StickyNav from '../../components/StickyNav';
+import NavLink from '../../components/NavLink';
+import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideNavigationBar from './StyleGuideNavigationBar';
-import StyleGuideDropdownMenu from './StyleGuideDropdownMenu';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 
-export default class StyleGuideIndex extends React.Component {
+export default function StyleGuideIndex() {
 
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["render"] }] */
-  render() {
+  let componentLinks = [
+    {
+      anchor: '/styleguide#',
+      name: 'Introduction'
+    },
+    {
+      anchor: '#typography',
+      name: 'Typography'
+    },
+    {
+      anchor: '#colors',
+      name: 'Colors'
+    },
+    {
+      anchor: '#buttons',
+      name: 'Buttons'
+    },
+    {
+      anchor: '#search',
+      name: 'Search'
+    },
+    {
+      anchor: '#dropdown',
+      name: 'Dropdown Menus'
+    },
+    {
+      anchor: '#checkboxes',
+      name: 'Checkboxes'
+    },
+    {
+      anchor: '#radios',
+      name: 'Radios'
+    },
+    {
+      anchor: '#date_input',
+      name: 'Date Input'
+    },
+    {
+      anchor: '#tables',
+      name: 'Tables'
+    },
+    {
+      anchor: '#tabs',
+      name: 'Tabs'
+    },
+    {
+      anchor: '#accordions',
+      name: 'Accordions'
+    },
+    {
+      anchor: '#forms_fields',
+      name: 'Forms Fields'
+    },
+    {
+      anchor: '#loading_buttons',
+      name: 'Loading Buttons'
+    },
+    {
+      anchor: '#alerts',
+      name: 'Alerts'
+    },
+    {
+      anchor: '#layout',
+      name: 'Layout'
+    },
+    {
+      anchor: '#messages',
+      name: 'Messages'
+    },
+    {
+      anchor: '#branding',
+      name: 'Branding'
+    },
+    {
+      anchor: '#dashboard',
+      name: 'Dashboard'
+    },
+    {
+      anchor: '#modals',
+      name: 'Modals'
+    },
+    {
+      anchor: '#progress_bar',
+      name: 'Progress Bar'
+    }
+  ];
 
 /* eslint-disable max-len */
 
-    return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-      <div className="cf-push-left cf-sg-nav">
-          <ul className="usa-sidenav-list">
-            <li>
-              <a href="/styleguide#">Introduction</a>
-            </li>
-            <li>
-              <a href="#modals">Modals</a>
-            </li>
-            <li>
-              <a href="#tabs">Tabs</a>
-            </li>
-            <li>
-              <a href="#loading_buttons">Loading Buttons</a>
-            </li>
-            <li>
-              <a href="#link_buttons">Link Buttons</a>
-            </li>
-            <li>
-              <a href="#radios">Radio Fields</a>
-            </li>
-            <li>
-              <a href="#checkboxes">Checkboxes</a>
-            </li>
-            <li>
-              <a href="#tables">Tables</a>
-            </li>
-            <li>
-              <a href="#progress_bar">Progress Bar</a>
-            </li>
-            <li>
-              <a href="#text_input">Text Input</a>
-            </li>
-            <li>
-              <a href="#searchable_dropdown">Search Dropdown</a>
-            </li>
-            <li>
-              <a href="#dropdown_menu">User dropdown menu</a>
-            </li>
-            <li>
-              <a href="#navigation_bar">Navigation Bar</a>
-            </li>
-          </ul>
-      </div>
+  return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+      <StickyNav>
+        {
+          componentLinks.map((link, i) => (
+            <NavLink anchor={link.anchor} name={link.name} key={i}/>
+          ))
+        }
+      </StickyNav>
       <div className="cf-push-right cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>
@@ -80,33 +131,87 @@ export default class StyleGuideIndex extends React.Component {
           Download UI Kit</a>
         </p>
         <div className="cf-help-divider"></div>
-        <StyleGuideModal />
+        <StyleGuidePlaceholder
+          title="Typography"
+          id="typography" />
+        <StyleGuidePlaceholder
+          title="Headings and Body"
+          id="headings_and_body"
+          subsection={true} />
+        <StyleGuidePlaceholder
+          title="Styles"
+          id="styles"
+          subsection={true} />
         <div className="cf-help-divider"></div>
-        <StyleGuideTabs />
+        <StyleGuidePlaceholder
+          title="Colors"
+          id="colors" />
         <div className="cf-help-divider"></div>
-        <StyleGuideLoadingButton />
-        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Buttons"
+          id="buttons" />
         <StyleGuideLinkButton />
         <div className="cf-help-divider"></div>
-        <StyleGuideRadioField />
+        <StyleGuidePlaceholder
+          title="Search"
+          id="search" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Dropdown Menus"
+          id="dropdown" />
+        <StyleGuideSearchableDropdown />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
         <div className="cf-help-divider"></div>
+        <StyleGuideRadioField />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Date Input"
+          id="date_input" />
+        <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
-        <StyleGuideProgressBar />
+        <StyleGuideTabs />
         <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Accordions"
+          id="accordions" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Forms Fields"
+          id="forms_fields" />
         <StyleGuideTextInput />
         <div className="cf-help-divider"></div>
-        <StyleGuideSearchableDropdown />
+        <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
-        <StyleGuideDropdownMenu />
+        <StyleGuidePlaceholder
+          title="Alerts"
+          id="alerts" />
         <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Layout"
+          id="layout" />
         <StyleGuideNavigationBar />
+        <StyleGuideUserDropdownMenu />
         <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Messages"
+          id="messages" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Branding"
+          id="branding" />
+        <div className="cf-help-divider"></div>
+        <StyleGuidePlaceholder
+          title="Dashboard"
+          id="dashboard" />
+        <div className="cf-help-divider"></div>
+        <StyleGuideModal />
+        <div className="cf-help-divider"></div>
+        <StyleGuideProgressBar />
     </div>
     </div>;
-  }
+
 }
 
 /* eslint-enable max-len */

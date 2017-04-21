@@ -16,7 +16,7 @@ export const getEstablishClaimFormInitialState = (props) => {
     stationOfJurisdiction: null,
     endProductModifier: initialModifier,
     gulfWarRegistry: false,
-    suppressAcknowledgementLetter: false
+    suppressAcknowledgementLetter: true
   };
 };
 
