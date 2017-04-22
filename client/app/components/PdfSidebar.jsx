@@ -104,8 +104,8 @@ export class PdfSidebar extends React.Component {
       }
 
       return <div ref={(commentElement) => {
-          this.commentElements[comment.id] = commentElement
-        }}
+        this.commentElements[comment.id] = commentElement;
+      }}
         key={comment.comment}>
         <Comment
           id={`comment${index}`}
@@ -174,7 +174,7 @@ export class PdfSidebar extends React.Component {
 
         <div id="cf-comment-wrapper" className="cf-comment-wrapper"
           ref={(commentListElement) => {
-            this.commentListElement = commentListElement
+            this.commentListElement = commentListElement;
           }}>
           <div className="cf-pdf-comment-list">
             {this.props.isAddingComment &&
@@ -193,17 +193,18 @@ const mapSidebarStateToProps = (state) => {
   return {
     scrollToSidebarComment: _.get(state, 'ui.pdf.scrollToSidebarComment')
   };
-}
+};
 const mapDispatchToProps = (dispatch) => ({
-  handleFinishScrollToSidebarComment(comment) {
+  handleFinishScrollToSidebarComment() {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: { 
+      payload: {
         scrollToSidebarComment: null
       }
     });
   }
 });
+
 export default connect(
   mapSidebarStateToProps, mapDispatchToProps
 )(PdfSidebar);

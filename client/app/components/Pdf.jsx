@@ -381,7 +381,7 @@ const mapDispatchToProps = (dispatch) => ({
   handleSelectCommentIcon(comment) {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: { 
+      payload: {
         scrollToSidebarComment: comment
       }
     });

@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
-import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 
 // PdfViewer is a smart component that renders the entire
@@ -257,9 +256,10 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
+    scrollToComment: state.ui.pdf.scrollToComment
   };
 };
+
 export default connect(
   mapStateToProps
 )(PdfViewer);
