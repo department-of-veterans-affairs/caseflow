@@ -66,6 +66,8 @@ const ConnectedCategorySelector = connect(
   mapCategoryStateToProps, mapCategoryDispatchToProps
 )(CategorySelector);
 
+const COMMENT_SCROLL_FROM_THE_TOP = 50;
+
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
@@ -78,12 +80,13 @@ export class PdfSidebar extends React.Component {
 
   componentDidUpdate = () => {
     if (this.props.scrollToSidebarComment) {
-      let commentListBoundingBox = this.commentListElement.getBoundingClientRect();
+      const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
 
       this.commentListElement.scrollTop = this.commentListElement.scrollTop +
         this.commentElements[
           this.props.scrollToSidebarComment.id
-        ].getBoundingClientRect().top - commentListBoundingBox.top - 50;
+        ].getBoundingClientRect().top - commentListBoundingBox.top -
+        COMMENT_SCROLL_FROM_THE_TOP;
       this.props.handleFinishScrollToSidebarComment();
     }
   }
@@ -191,7 +194,7 @@ export class PdfSidebar extends React.Component {
 
 const mapSidebarStateToProps = (state) => {
   return {
-    scrollToSidebarComment: _.get(state, 'ui.pdf.scrollToSidebarComment')
+    scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment
   };
 };
 const mapDispatchToProps = (dispatch) => ({
