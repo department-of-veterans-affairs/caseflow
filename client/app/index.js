@@ -15,9 +15,10 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       <AppContainer>
         <Component {...props}/>
       </AppContainer>
-    )
+    );
+
     render(element, document.getElementById(domNodeId));
-  }
+  };
 
   renderApp(component);
 
@@ -27,10 +28,11 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './certification/Certification'
     ], () => renderApp(component));
   }
-}
+};
 
 COMPONENTS.forEach((component) => {
   const name = component.name;
-  ReactOnRails.register({ [name]: componentWrapper(component)});
+
+  ReactOnRails.register({ [name]: componentWrapper(component) });
 });
 

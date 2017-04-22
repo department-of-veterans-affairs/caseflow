@@ -9,7 +9,9 @@ const path = require('path');
 
 const config = require('./webpack.config');
 
+/* eslint-disable no-process-env */
 const hotRailsPort = process.env.HOT_RAILS_PORT || 3500;
+/* eslint-enable no-process-env */
 
 // Splice in the react-hot-loader after the shim/shams but
 // before the `/app/index`
@@ -22,7 +24,7 @@ config.entry.push(
 config.output = {
   filename: 'webpack-bundle.js',
   path: path.join(__dirname, '../app/assets/webpack'),
-  publicPath: `http://localhost:${hotRailsPort}/`,
+  publicPath: `http://localhost:${hotRailsPort}/`
 };
 
 config.plugins.push(
