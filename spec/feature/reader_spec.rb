@@ -138,11 +138,18 @@ RSpec.feature "Reader" do
     expect(page).to have_content("Banana. Banana who")
   end
 
-  scenario "Open single document view" do
-    visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+  scenario "Open single document view and manipulate UI" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}?" +
+      "type=BVA%20Decision&received_at=2017-04-14&filename=filename.pdf"
 
     # Expect only the first page of the pdf to be rendered
     expect(page).to_not have_content("Important Decision Document!!!")
+
+    click_on "Hide menu"
+    expect(page).to_not have_content("Document Type")
+
+    click_on "Open menu"
+    expect(page).to have_content("Document Type")
   end
 
   scenario "Categories" do

@@ -100,13 +100,13 @@ export class PdfSidebar extends React.Component {
     });
 
     const sidebarClass = this.props.hidePdfSidebar ?
-      "cf-sidebar-wrapper--hidden-sidebar" : "cf-sidebar-wrapper";
+      'cf-sidebar-wrapper--hidden-sidebar' : 'cf-sidebar-wrapper';
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={["cf-pdf-button"]}
+            classNames={['cf-pdf-button']}
             onClick={this.props.handleTogglePdfSidebar}>
             <strong>
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
@@ -176,6 +176,7 @@ const mapSidebarStateToProps = (state) => {
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
+
 export default connect(
   mapSidebarStateToProps, mapSidebarDispatchToProps
 )(PdfSidebar);

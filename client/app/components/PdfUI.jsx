@@ -65,13 +65,12 @@ export class PdfUI extends React.Component {
   }
 
   render() {
-    let selectedLabels = {};
-    selectedLabels[this.props.label] = true;
-
     const categoryAndTypeGridSize = this.props.hidePdfSidebar ?
       'usa-width-one-third' : 'usa-width-one-half';
+    const pdfUiClass = this.props.hidePdfSidebar ?
+      'cf-pdf-container--hidden-sidebar' : 'cf-pdf-container';
 
-    return <div>
+    return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.onShowList && <Button
@@ -115,7 +114,7 @@ export class PdfUI extends React.Component {
             <span className={categoryAndTypeGridSize}>
               <Button
                 name="newTab"
-                classNames={["cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right"]}
+                classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right']}
                 ariaLabel="open document in new tab"
                 onClick={() => window.open(
                   linkToSingleDocumentView(this.props.doc), '_blank')}>
@@ -125,7 +124,7 @@ export class PdfUI extends React.Component {
             {this.props.hidePdfSidebar && <span className="usa-width-one-third">
               <Button
                 name="open menu"
-                classNames={["cf-pdf-button cf-pdf-cutoff"]}
+                classNames={['cf-pdf-button cf-pdf-cutoff']}
                 onClick={this.props.handleTogglePdfSidebar}>
                 <strong>
                   Open menu
@@ -183,7 +182,7 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    hidePdfSidebar: _.get(state, 'ui.pdf.hidePdfSidebar')
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -193,6 +192,7 @@ const mapDispatchToProps = (dispatch) => ({
     });
   }
 });
+
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(PdfUI);

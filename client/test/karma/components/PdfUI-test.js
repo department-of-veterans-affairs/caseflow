@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import PdfUI from '../../../app/components/PdfUI';
+import { PdfUI } from '../../../app/components/PdfUI';
 import sinon from 'sinon';
 
 /* eslint-disable no-unused-expressions */

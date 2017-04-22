@@ -82,7 +82,7 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.TOGGLE_PDF_SIDEBAR:
-      return _.merge(
+    return _.merge(
       {},
       state,
       {
