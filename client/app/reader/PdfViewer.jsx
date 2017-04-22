@@ -198,8 +198,6 @@ export class PdfViewer extends React.Component {
   render() {
     const pdfUiClass = this.props.hidePdfSidebar ?
       "cf-pdf-container--hidden-sidebar" : "cf-pdf-container";
-    const sidebarClass = this.props.hidePdfSidebar ?
-      "cf-sidebar-wrapper--hidden-sidebar" : "cf-sidebar-wrapper";
 
     return (
       <div>
@@ -223,22 +221,20 @@ export class PdfViewer extends React.Component {
               onIconMoved={this.onIconMoved}
             />
           </div>
-          <div className={sidebarClass}>
-            <PdfSidebar
-              doc={this.props.doc}
-              editingComment={this.state.editingComment}
-              onAddComment={this.onAddComment}
-              isAddingComment={this.state.isAddingComment}
-              comments={this.state.comments}
-              onSaveCommentAdd={this.state.onSaveCommentAdd}
-              onCancelCommentAdd={this.onCancelCommentAdd}
-              onSaveCommentEdit={this.onSaveCommentEdit}
-              onCancelCommentEdit={this.onCancelCommentEdit}
-              onDeleteComment={this.onDeleteComment}
-              onEditComment={this.onEditComment}
-              onJumpToComment={this.props.onJumpToComment}
-            />
-          </div>
+          <PdfSidebar
+            doc={this.props.doc}
+            editingComment={this.state.editingComment}
+            onAddComment={this.onAddComment}
+            isAddingComment={this.state.isAddingComment}
+            comments={this.state.comments}
+            onSaveCommentAdd={this.state.onSaveCommentAdd}
+            onCancelCommentAdd={this.onCancelCommentAdd}
+            onSaveCommentEdit={this.onSaveCommentEdit}
+            onCancelCommentEdit={this.onCancelCommentEdit}
+            onDeleteComment={this.onDeleteComment}
+            onEditComment={this.onEditComment}
+            onJumpToComment={this.props.onJumpToComment}
+          />
         </div>
         {this.state.onConfirmDelete && <Modal
           buttons={[
@@ -262,7 +258,7 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    hidePdfSidebar: _.get(state, 'ui.pdf.hidePdfSidebar')
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
 export default connect(

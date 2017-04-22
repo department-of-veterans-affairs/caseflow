@@ -67,15 +67,17 @@ export class PdfUI extends React.Component {
 
   render() {
     let selectedLabels = {};
-    const typeName = this.props.doc.type.substring(0, TRUNCATED_DOC_TYPE_CHARACTERS);
     selectedLabels[this.props.label] = true;
+
+    const docNameGridSize = this.props.hidePdfSidebar ?
+      'usa-width-one-third' : 'usa-width-one-half';
 
     return <div>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.onShowList && <Button
             name="backToDocuments"
-            classNames={['cf-pdf-button']}
+            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left']}
             onClick={this.props.onShowList}>
             <i className="fa fa-chevron-left" aria-hidden="true"></i>
             &nbsp; Back to all documents
@@ -105,24 +107,32 @@ export class PdfUI extends React.Component {
           </Button>
         </span>
         <span className="usa-width-one-third">
-          <span className="cf-right-side">
-            <DocumentCategoryIcons docId={this.props.doc.id} />
-            <Button
-              name="newTab"
-              classNames={["cf-pdf-button"]}
-              ariaLabel="open document in new tab"
-              onClick={() => window.open(
-                linkToSingleDocumentView(this.props.doc), '_blank')}>
-              <span title={this.props.doc.type}>{typeName}</span>
-            </Button>
-            {this.props.hidePdfSidebar && <Button
-              name="open menu"
-              classNames={["cf-pdf-button"]}
-              onClick={this.props.handleTogglePdfSidebar}>
-              <strong>
-                Open menu
-              </strong>
-            </Button>}
+          <span className="usa-grid-full">
+            <span className={docNameGridSize}>
+              <span className="cf-right-side">
+                <DocumentCategoryIcons docId={this.props.doc.id} />
+              </span>
+            </span>
+            <span className={docNameGridSize}>
+              <Button
+                name="newTab"
+                classNames={["cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right"]}
+                ariaLabel="open document in new tab"
+                onClick={() => window.open(
+                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                <span title={this.props.doc.type}>{this.props.doc.type}</span>
+              </Button>
+            </span>
+            {this.props.hidePdfSidebar && <span className="usa-width-one-third">
+              <Button
+                name="open menu"
+                classNames={["cf-pdf-button cf-pdf-cutoff"]}
+                onClick={this.props.handleTogglePdfSidebar}>
+                <strong>
+                  Open menu
+                </strong>
+              </Button>
+            </span>}
           </span>
         </span>
       </div>

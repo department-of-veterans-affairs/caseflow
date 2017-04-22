@@ -171,6 +171,7 @@ svg[aria-hidden=true],
   background-color: transparent;
   font-size: inherit;
   pointer-events: all;
+  line-height: normal;
 
   &:hover {
     text-decoration: none;
@@ -355,4 +356,11 @@ svg[aria-hidden=true],
   top: 0;
   right: 0;
   bottom: 0;
+}
+
+.cf-pdf-cutoff {
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
 }

@@ -10,6 +10,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 const initialState = {
   ui: {
     pdf: {
+      hidePdfSidebar: false
     }
   },
   documents: {

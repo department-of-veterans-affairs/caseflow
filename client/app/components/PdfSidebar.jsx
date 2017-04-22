@@ -99,7 +99,10 @@ export class PdfSidebar extends React.Component {
         </Comment>;
     });
 
-    return <div>
+    const sidebarClass = this.props.hidePdfSidebar ?
+      "cf-sidebar-wrapper--hidden-sidebar" : "cf-sidebar-wrapper";
+
+    return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
@@ -111,15 +114,11 @@ export class PdfSidebar extends React.Component {
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
-          <p className="cf-pdf-meta-title">
-            <b>Document Type:</b> {this.props.doc.type}
-            <Button
-              name="download"
-              classNames={['cf-btn-link']}
-              ariaLabel="download"
-            >
-              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-            </Button>
+          <p className="cf-pdf-meta-title cf-pdf-cutoff">
+            <b>Document Type:</b>
+            <span title={this.props.doc.type}>
+              {this.props.doc.type}
+            </span>
           </p>
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
@@ -172,8 +171,13 @@ const mapSidebarDispatchToProps = (dispatch) => ({
     });
   }
 });
+const mapSidebarStateToProps = (state) => {
+  return {
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+  };
+};
 export default connect(
-  null, mapSidebarDispatchToProps
+  mapSidebarStateToProps, mapSidebarDispatchToProps
 )(PdfSidebar);
 
 
@@ -192,5 +196,6 @@ PdfSidebar.propTypes = {
   onCancelCommentAdd: PropTypes.func,
   onDeleteComment: PropTypes.func,
   onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };

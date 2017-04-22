@@ -55,7 +55,7 @@ export default class Comment extends React.Component {
           name="jumpToComment"
           classNames={['cf-btn-link comment-control-button']}
           onClick={this.props.onJumpToComment}>
-          Jump to Section
+          Jump to section
         </Button>;
     }
 
@@ -64,7 +64,7 @@ export default class Comment extends React.Component {
           <span className="cf-right-side">
             {this.getControlButtons()}
           </span>
-          <strong>Page {this.props.page} {jumpToSectionButton}</strong>
+          <h4>Page {this.props.page} {jumpToSectionButton}</h4>
         </div>
         <div
           className={className}
@@ -76,15 +76,19 @@ export default class Comment extends React.Component {
 
     if (this.props.horizontalLayout) {
       className = `${className} comment-horizontal-container`;
-      commentToRender = <div>
-        <span className="comment-horizontal-spacing">
-          <strong>Page {this.props.page}</strong>
-        </span>
-        <span className="comment-horizontal-spacing">
-          <strong>{jumpToSectionButton}</strong>
+      commentToRender = <div className="usa-grid-full">
+        <span className="usa-width-one-fourth">
+          <span className="usa-grid-full">
+            <span className="usa-width-one-third">
+              <h4>Page {this.props.page}</h4>
+            </span>
+            <span className="usa-width-two-thirds">
+              <strong>{jumpToSectionButton}</strong>
+            </span>
+          </span>
         </span>
         <div
-          className={className}
+          className={`${className} usa-width-three-fourths`}
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
