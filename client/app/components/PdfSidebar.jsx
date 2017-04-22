@@ -128,7 +128,7 @@ export class PdfSidebar extends React.Component {
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={["cf-pdf-button"]}>
+            classNames={['cf-pdf-button']}>
             <strong>
               Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
@@ -139,7 +139,7 @@ export class PdfSidebar extends React.Component {
             <b>Document Type:</b> {this.props.doc.type}
             <Button
               name="download"
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
               ariaLabel="download"
             >
               <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>

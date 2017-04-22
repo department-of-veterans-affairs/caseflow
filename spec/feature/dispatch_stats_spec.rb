@@ -7,6 +7,7 @@ RSpec.feature "Dispatch Stats Dashboard" do
 
   context ".show#daily" do
     before do
+      Rails.cache.clear
       DispatchStats.calculate_all!
     end
     it "switches between the tabs" do
@@ -27,7 +28,7 @@ RSpec.feature "Dispatch Stats Dashboard" do
     before do
       Generators::EstablishClaim.create(started_at: 30.minutes.ago, completed_at: 15.minutes.ago, completion_status: 0)
       Generators::EstablishClaim.create(started_at: 30.minutes.ago)
-
+      Rails.cache.clear
       DispatchStats.calculate_all!
     end
     it "loads the correct stats" do

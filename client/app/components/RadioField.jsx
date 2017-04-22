@@ -32,15 +32,15 @@ export default class RadioField extends React.Component {
     required = required || false;
 
     let radioClass = className.concat(
-      this.isVertical() ? "cf-form-radio" : "cf-form-radio-inline"
+      this.isVertical() ? 'cf-form-radio' : 'cf-form-radio-inline'
     ).concat(
-      errorMessage ? "usa-input-error" : ""
+      errorMessage ? 'usa-input-error' : ''
     );
 
-    let labelClass = "question-label";
+    let labelClass = 'question-label';
 
     if (hideLabel) {
-      labelClass += " hidden-field";
+      labelClass += ' hidden-field';
     }
 
     // Since HTML5 IDs should not contain spaces...
@@ -75,7 +75,7 @@ export default class RadioField extends React.Component {
 }
 
 RadioField.defaultProps = {
-  className: ["cf-form-showhide-radio"]
+  className: ['cf-form-showhide-radio']
 };
 
 RadioField.propTypes = {

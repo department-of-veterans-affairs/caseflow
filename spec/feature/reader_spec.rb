@@ -73,7 +73,7 @@ RSpec.feature "Reader" do
 
     # Edit the comment
     click_on "Edit"
-    fill_in "editComment", with: "FooBar"
+    fill_in "editCommentBox", with: "FooBar"
     click_on "Save"
 
     # Expect edited comment to be visible on opage

@@ -159,7 +159,7 @@ class Appeal < ActiveRecord::Base
   # This will return an array containing hash of ssoc_dates and ssoc_match?es.
   # I.e. [{"date"=>"01/01/2010", "match"=>"true"}, {"date"=>"02/02/2012", "match"=>"true"}]
   def ssoc_dates_with_matches
-    ssoc_dates.map { |item| { date: item, match: ssoc_match?(item) } }
+    ssoc_dates.map { |item| { date: serialize_date(item), match: ssoc_match?(item) } }
   end
 
   def documents_match?
@@ -173,7 +173,7 @@ class Appeal < ActiveRecord::Base
   def decisions
     return [] unless decision_date
 
-    decisions = documents_with_type("BVA Decision").select do |decision|
+    decisions = documents_with_type(*Document::DECISION_TYPES).select do |decision|
       (decision.received_at.in_time_zone - decision_date).abs <= 3.days
     end
     decisions
@@ -186,6 +186,18 @@ class Appeal < ActiveRecord::Base
 
   def serialized_decision_date
     decision_date ? decision_date.to_formatted_s(:json_date) : ""
+  end
+
+  def serialized_form9_date
+    serialize_date(form9_date)
+  end
+
+  def serialized_nod_date
+    serialize_date(nod_date)
+  end
+
+  def serialized_soc_date
+    serialize_date(soc_date)
   end
 
   def certify!
@@ -201,7 +213,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def full_grant?
-    status == "Complete" && issues.all?(&:non_new_material_allowed?)
+    status == "Complete" && issues.any?(&:non_new_material_allowed?)
   end
 
   def remand?
@@ -226,9 +238,12 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def documents_with_type(type)
+  def documents_with_type(*types)
     @documents_by_type ||= {}
-    @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+    types.reduce([]) do |accumulator, type|
+      @documents_by_type[type] ||= documents.select { |doc| doc.type?(type) }
+      accumulator.concat(@documents_by_type[type])
+    end
   end
 
   def clear_documents!
@@ -269,6 +284,10 @@ class Appeal < ActiveRecord::Base
 
   def fetched_documents
     @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+  end
+
+  def serialize_date(date)
+    date ? date.to_formatted_s(:short_date) : ""
   end
 
   class << self

@@ -16,7 +16,7 @@
   <div class="cf-stats">
     <ul class="cf-tab-navigation">
       <% DispatchStats::INTERVALS.each do |interval| %>
-          <li class="cf-tab <%= (@dispatch_stats[0].interval == interval) && "cf-active" %>">
+          <li class="cf-tab <%= (@stats[0].interval == interval) && "cf-active" %>">
           <span>
             <span>
               <%= link_to interval.to_s.capitalize, dispatch_stats_path(interval) %>
@@ -34,7 +34,7 @@
           All
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_identified">
-          <%= @dispatch_stats[0].values[:establish_claim_identified] %>
+          <%= @stats[0].values[:establish_claim_identified] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_identified_full_grant">
@@ -42,7 +42,7 @@
           Full Grants
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_identified_full_grant">
-          <%= @dispatch_stats[0].values[:establish_claim_identified_full_grant] %>
+          <%= @stats[0].values[:establish_claim_identified_full_grant] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_identified_partial_grant_remand">
@@ -50,7 +50,7 @@
           Partial Grants & Remands
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_identified_partial_grant_remand">
-          <%= @dispatch_stats[0].values[:establish_claim_identified_partial_grant_remand] %>
+          <%= @stats[0].values[:establish_claim_identified_partial_grant_remand] %>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
           Active Users
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_active_users">
-          <%= @dispatch_stats[0].values[:establish_claim_active_users] %>
+          <%= @stats[0].values[:establish_claim_active_users] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_started">
@@ -72,7 +72,7 @@
           Establish Claim Tasks Started
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_started">
-          <%= @dispatch_stats[0].values[:establish_claim_started] %>
+          <%= @stats[0].values[:establish_claim_started] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_completed_success">
@@ -80,7 +80,7 @@
           Establish Claim Tasks Completed
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_completed_success">
-          <%= @dispatch_stats[0].values[:establish_claim_completed_success] %>
+          <%= @stats[0].values[:establish_claim_completed_success] %>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
             All (median)
           </h4>
           <div class="cf-stat-figure data-time" data-key="median_time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@stats[0].values[:median_time_to_establish_claim]) %>
           </div>
         </div>
         <div class="cf-stat-option data-chart" data-key="time_to_establish_claim">
@@ -133,7 +133,7 @@
             All (95th percentile)
           </h4>
           <div class="cf-stat-figure data-time" data-key="time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim]) %>
+            <%= format_time_duration_stat(@stats[0].values[:time_to_establish_claim]) %>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@
             Full Grants (median)
           </h4>
           <div class="cf-stat-figure data-time" data-key="median_time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim_full_grants]) %>
+            <%= format_time_duration_stat(@stats[0].values[:median_time_to_establish_claim_full_grants]) %>
           </div>
         </div>
         <div class="cf-stat-option data-chart" data-key="time_to_establish_claim">
@@ -153,7 +153,7 @@
             Full Grants (95th percentile)
           </h4>
           <div class="cf-stat-figure data-time" data-key="time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim_full_grants]) %>
+            <%= format_time_duration_stat(@stats[0].values[:time_to_establish_claim_full_grants]) %>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@
             Partial Grants & Remands (median)
           </h4>
           <div class="cf-stat-figure data-time" data-key="median_time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:median_time_to_establish_claim_partial_grants_remands]) %>
+            <%= format_time_duration_stat(@stats[0].values[:median_time_to_establish_claim_partial_grants_remands]) %>
           </div>
         </div>
         <div class="cf-stat-option data-chart" data-key="time_to_establish_claim">
@@ -173,7 +173,7 @@
             Partial Grants & Remands (95th percentile)
           </h4>
           <div class="cf-stat-figure data-time" data-key="time_to_establish_claim">
-            <%= format_time_duration_stat(@dispatch_stats[0].values[:time_to_establish_claim_partial_grants_remands]) %>
+            <%= format_time_duration_stat(@stats[0].values[:time_to_establish_claim_partial_grants_remands]) %>
           </div>
         </div>
       </div>
@@ -187,7 +187,7 @@
           All
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_canceled">
-          <%= @dispatch_stats[0].values[:establish_claim_canceled] %>
+          <%= @stats[0].values[:establish_claim_canceled] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_canceled_full_grant">
@@ -195,7 +195,7 @@
           Full Grants
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_canceled_full_grant">
-          <%= @dispatch_stats[0].values[:establish_claim_canceled_full_grant] %>
+          <%= @stats[0].values[:establish_claim_canceled_full_grant] %>
         </div>
       </div>
       <div class="cf-stat-panel data-chart" data-key="establish_claim_canceled_partial_grant_remand">
@@ -203,7 +203,7 @@
           Partial Grants & Remands
         </h4>
         <div class="cf-stat-figure data-value" data-key="establish_claim_canceled_partial_grant_remand">
-          <%= @dispatch_stats[0].values[:establish_claim_canceled_partial_grant_remand] %>
+          <%= @stats[0].values[:establish_claim_canceled_partial_grant_remand] %>
         </div>
       </div>
     </div>
