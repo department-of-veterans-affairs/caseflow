@@ -11,6 +11,9 @@ const initialState = {
   ui: {
     pdf: {
       hidePdfSidebar: false
+    },
+    pdfList: {
+      lastReadDocId: null
     }
   },
   documents: {
@@ -79,13 +82,25 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return _.merge(
+      return _.merge(
       {},
       state,
       {
         ui: {
           pdf: {
             hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
+          }
+        }
+      }
+    );
+  case Constants.LAST_READ_DOCUMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdfList: {
+            lastReadDocId: action.payload.docId
           }
         }
       }

@@ -17,7 +17,6 @@ export const linkToSingleDocumentView = (doc) => {
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
-const TRUNCATED_DOC_TYPE_CHARACTERS = 25;
 
 // The PdfUI component displays the PDF with surrounding UI
 // controls. We currently support the following controls:
@@ -69,7 +68,7 @@ export class PdfUI extends React.Component {
     let selectedLabels = {};
     selectedLabels[this.props.label] = true;
 
-    const docNameGridSize = this.props.hidePdfSidebar ?
+    const categoryAndTypeGridSize = this.props.hidePdfSidebar ?
       'usa-width-one-third' : 'usa-width-one-half';
 
     return <div>
@@ -108,12 +107,12 @@ export class PdfUI extends React.Component {
         </span>
         <span className="usa-width-one-third">
           <span className="usa-grid-full">
-            <span className={docNameGridSize}>
+            <span className={categoryAndTypeGridSize}>
               <span className="cf-right-side">
                 <DocumentCategoryIcons docId={this.props.doc.id} />
               </span>
             </span>
-            <span className={docNameGridSize}>
+            <span className={categoryAndTypeGridSize}>
               <Button
                 name="newTab"
                 classNames={["cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right"]}
