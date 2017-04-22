@@ -11,6 +11,9 @@ const config = require('./webpack.config');
 
 const hotRailsPort = process.env.HOT_RAILS_PORT || 3500;
 
+// Splice in the react-hot-loader after the shim/shams but
+// before the `/app/index`
+config.entry.splice(1, 0, 'react-hot-loader/patch');
 config.entry.push(
   `webpack-dev-server/client?http://localhost:${hotRailsPort}`,
   'webpack/hot/only-dev-server'

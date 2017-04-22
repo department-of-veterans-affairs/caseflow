@@ -1,16 +1,15 @@
 {
-  "presets": ["es2015", "stage-0", "react"],
-    "env": {
-      // only enable it when process.env.NODE_ENV is 'development' or undefined
-      "development-hot": {
-        "plugins": [["react-transform", {
-          "transforms": [{
-            "transform": "react-transform-hmr",
-            "imports": ["react"],
-            // this is important for Webpack HMR:
-            "locals": ["module"]
-          }]
-        }]]
-      }
+  "presets": [
+    ["es2015", { "modules": false }],
+    "stage-0",
+    "react"
+  ],
+  "env": {
+    // only enable it when process.env.NODE_ENV is 'development-hot' or undefined
+    "development-hot": {
+      "plugins": [
+        "react-hot-loader/babel"
+      ]
     }
+  }
 }

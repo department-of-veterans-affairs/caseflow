@@ -75,9 +75,7 @@
     "karma-webpack": "^2.0.3",
     "mocha": "^3.1.2",
     "react-addons-test-utils": "^15.4.2",
-    "react-tools": "^0.13.3",
-    "react-transform": "0.0.3",
-    "react-transform-hmr": "^1.0.4",
+    "react-hot-loader": "^3.0.0-beta.6",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
   },
