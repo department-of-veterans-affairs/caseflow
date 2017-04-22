@@ -172,7 +172,7 @@ export class PdfSidebar extends React.Component {
           </div>
         </div>
 
-        <div className="cf-comment-wrapper"
+        <div id="cf-comment-wrapper" className="cf-comment-wrapper"
           ref={(commentListElement) => {
             this.commentListElement = commentListElement
           }}>
