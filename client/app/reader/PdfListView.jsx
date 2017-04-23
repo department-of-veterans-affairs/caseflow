@@ -160,7 +160,10 @@ export class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.props.reduxDocuments[row.id].listComments) {
+      // checking if comments exist and if comments should be listed
+      // before being added to the row
+      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
+          this.props.reduxDocuments[row.id].listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -174,6 +177,9 @@ export class PdfListView extends React.Component {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <DocumentListHeader
+            expandAllPdfCommentList={this.props.expandAllPdfCommentList}
+            collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
+            allCommentsExpanded={this.props.allCommentsExpanded}
             documents={this.props.documents}
             onFilter={this.props.onFilter}
             filterBy={this.props.filterBy}

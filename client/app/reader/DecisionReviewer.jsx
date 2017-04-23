@@ -325,6 +325,9 @@ export class DecisionReviewer extends React.Component {
         {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}
+          expandAllPdfCommentList={this.props.expandAllPdfCommentList}
+          collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
+          allCommentsExpanded={this.props.ui.allCommentsExpanded}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
           showPdfAndJumpToPage={this.showPdfAndJumpToPage}
@@ -368,7 +371,8 @@ DecisionReviewer.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ui: {
-      showTagErrorMsg: _.get(state, 'ui.showTagErrorMsg')
+      showTagErrorMsg: _.get(state, 'ui.showTagErrorMsg'),
+      allCommentsExpanded: _.get(state, 'ui.allCommentsExpanded')
     },
     storeDocuments: state.documents || {}
   };

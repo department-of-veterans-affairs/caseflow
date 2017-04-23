@@ -57,6 +57,17 @@ export const removeTagRequestSuccess = (docId, tagId) => {
   };
 };
 
+export const expandAllPdfCommentList = () => {
+  return {
+    type: Constants.EXPAND_ALL_PDF_COMMENT_LIST
+  };
+};
+
+export const collapseAllPdfCommentList = () => {
+  return {
+    type: Constants.COLLAPSE_ALL_PDF_COMMENT_LIST
+  };
+};
 
 export const removeTag = (doc, tagId) => {
   return (dispatch) => {

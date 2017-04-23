@@ -12,11 +12,26 @@ import update from 'immutability-helper';
 const initialState = {
   ui: {
     showTagErrorMsg: false,
+    allCommentsExpanded: false,
     pdf: {
     }
   },
   documents: {
   }
+};
+
+// reusable functions
+const expandCollapseAllComments = (state, showAllComments) => {
+  return update(state, {
+    documents: {
+      $set: _.mapValues(state.documents, (document) => {
+        return update(document, { listComments: { $set: showAllComments } });
+      })
+    },
+    ui: {
+      $merge: { allCommentsExpanded: showAllComments }
+    }
+  });
 };
 
 export const readerReducer = (state = initialState, action = {}) => {
@@ -95,6 +110,10 @@ export const readerReducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
     });
+  case Constants.EXPAND_ALL_PDF_COMMENT_LIST:
+    return expandCollapseAllComments(state, true);
+  case Constants.COLLAPSE_ALL_PDF_COMMENT_LIST:
+    return expandCollapseAllComments(state, false);
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
       {},

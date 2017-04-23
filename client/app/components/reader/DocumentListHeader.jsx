@@ -3,6 +3,18 @@ import SearchBar from '../SearchBar';
 import Button from '../Button';
 
 const DocumentListHeader = (props) => {
+
+  let buttonText;
+  let buttonAction;
+
+  if (props.allCommentsExpanded) {
+    buttonText = 'Collapse all';
+    buttonAction = props.collapseAllPdfCommentList;
+  } else {
+    buttonText = 'Expand all';
+    buttonAction = props.expandAllPdfCommentList;
+  }
+
   return <div className="usa-grid-full document-list-header">
     <div className="usa-width-one-third">
       <SearchBar
@@ -18,7 +30,8 @@ const DocumentListHeader = (props) => {
       <span className="cf-right-side">
         <Button
           id="btn-default"
-          name="Expand all"
+          name={buttonText}
+          onClick={ () => buttonAction() }
         />
       </span>
     </div>
