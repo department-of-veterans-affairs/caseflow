@@ -106,6 +106,14 @@ export const certificationReducers = function(state = initialState, action = {})
       invalidFields: null,
       validationFailed: false
     });
+  case Constants.ON_CONTINUE_CLICK_FAILED:
+    return Object.assign({}, state, {
+      continueClicked: action.payload.continueClicked
+    });
+  case Constants.ON_CONTINUE_CLICK_SUCCESS:
+    return Object.assign({}, state, {
+      continueClicked: action.payload.continueClicked
+    });
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return startUpdateCertification(state, action);
   case Constants.CERTIFICATION_UPDATE_FAILURE:

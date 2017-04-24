@@ -122,13 +122,17 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   onClickContinue() {
+
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
+      this.props.onContinueClickFailed();
       this.props.onValidationFailed(erroredFields);
 
       return;
     }
+
+    this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -150,6 +154,7 @@ export class ConfirmCaseDetails extends React.Component {
       loading,
       updateFailed,
       updateSucceeded,
+      continueClicked,
       match
     } = this.props;
 
@@ -198,7 +203,7 @@ export class ConfirmCaseDetails extends React.Component {
         </div>
 
         <Footer
-          disableContinue={validationFailed}
+          disableContinue={validationFailed && continueClicked}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />
@@ -237,6 +242,9 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(certificationActions.onValidationSuccess());
   },
 
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
+
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
   }
@@ -250,7 +258,8 @@ const mapStateToProps = (state) => ({
   otherRepresentativeType: state.otherRepresentativeType,
   validationFailed: state.validationFailed,
   invalidFields: state.invalidFields,
-  loading: state.loading
+  loading: state.loading,
+  continueClicked: state.continueClicked
 });
 
 export default connect(
