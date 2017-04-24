@@ -156,7 +156,7 @@ RSpec.feature "Reader", focus: true do
           filename: "My BVA Decision",
           type: "BVA Decision",
           received_at: 7.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: number,
           category_procedural: true
         )
       ]
