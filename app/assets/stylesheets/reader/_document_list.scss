@@ -82,10 +82,9 @@ $tag-backgrond-color: #d6d7d9;
     .cf-document-category-picker {
       margin-bottom: 0;
       margin-top: 0;
+      padding-bottom: 0;
 
       li {
-        padding-left: $dropdown-interior-padding;
-        padding-right: $dropdown-interior-padding;
         margin-bottom: 0;
 
         @include hover;
@@ -93,14 +92,19 @@ $tag-backgrond-color: #d6d7d9;
         .cf-form-checkboxes {
           margin-top: 0;
           margin-bottom: 0;
-          padding-top: 10px;
-          padding-bottom: 10px;
 
           label {
+            padding: $dropdown-interior-padding;
             margin-bottom: 0;
+
+            &::before {
+              margin-top: $dropdown-interior-padding;
+              margin-left: $dropdown-interior-padding;
+            }
 
             .cf-category-selector {
               margin-bottom: 0;
+              padding-left: $dropdown-interior-padding * 3;
             }
           }
         }
