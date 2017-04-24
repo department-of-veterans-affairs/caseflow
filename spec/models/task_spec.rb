@@ -181,6 +181,16 @@ describe Task do
           outgoing_reference_id: "123WOO"
         )
       end
+
+      let(:quota) { Quota.for(date: Time.zone.today, task_klass: FakeTask) }
+
+      it "recalculates current quota assignee count" do
+        # Create a task completed by another user to bring the number of active employees to 2
+        FakeTask.create!(aasm_state: :completed, completed_at: Time.zone.now, user: Generators::User.create)
+
+        subject
+        expect(quota.assignee_count).to eq(2)
+      end
     end
 
     context "when reviewed" do
