@@ -77,6 +77,10 @@ $tag-backgrond-color: #d6d7d9;
         border-bottom: 1px solid $color-gray-lighter;
         padding-bottom: $dropdown-interior-padding;
       }
+
+      &:hover .cf-clear-filter-button-wrapper {
+        border-bottom-color: $color-gray;
+      }
     }
 
     .cf-document-category-picker {
