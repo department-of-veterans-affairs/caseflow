@@ -23,23 +23,23 @@ export default class StyleLogos extends React.Component {
         When refering to the whole Caseflow system, you should use the
         non-colored Caseflow logo.
       </p>
-      <p className="logo-example">
-        <Logo app="efolder" /><span>e-Folder Express</span>
+      <p>
+        <Logo app="efolder" /><b>eFolder Express</b>
       </p>
-      <p className="logo-example">
-        <Logo app="certification" /><span>Certification</span>
+      <p>
+        <Logo app="certification" /><b>Certification</b>
       </p>
-      <p className="logo-example">
-        <Logo app="dispatch" /><span>Dispatch</span>
+      <p>
+        <Logo app="dispatch" /><b>Dispatch</b>
       </p>
-      <p className="logo-example">
-        <Logo app="reader" /><span>Reader</span>
+      <p>
+        <Logo app="reader" /><b>Reader</b>
       </p>
-      <p className="logo-example">
-        <Logo app="feedback" /><span>Feedback</span>
+      <p>
+        <Logo app="feedback" /><b>Feedback</b>
       </p>
-      <p className="logo-example">
-        <Logo /><span>General Logo</span>
+      <p>
+        <Logo /><b>General Logo</b>
       </p>
     </div>;
   }
