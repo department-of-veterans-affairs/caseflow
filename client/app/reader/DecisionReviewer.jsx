@@ -375,7 +375,7 @@ const mapStateToProps = (state) => {
   return {
     ui: {
       pdfSidebar: {
-        showTagErrorMsg: _.get(state, 'ui.pdfSidebar.showTagErrorMsg')
+        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
     },
     storeDocuments: state.documents
