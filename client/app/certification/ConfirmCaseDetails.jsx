@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 import * as actions from './actions/ConfirmCaseDetails';
+import * as certificationActions from './actions/Certification';
 import { Redirect } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
@@ -93,6 +94,33 @@ export class ConfirmCaseDetails extends React.Component {
     return erroredFields;
   }
 
+  onChange() {
+    const erroredFields = this.getValidationErrors();
+
+    if (erroredFields.length) {
+      this.props.onValidationFailed(erroredFields);
+
+      return;
+    } else {
+      this.props.onValidationSuccess();
+    }
+  }
+
+  changeRepresentativeNameNonRedux = (name) => {
+    this.props.changeRepresentativeName(name);
+    this.onChange();
+  }
+
+  changeRepresentativeTypeNonRedux = (type) => {
+    this.props.changeRepresentativeType(type);
+    this.onChange();
+  }
+
+  changeOtherRepresentativeTypeNonRedux = (other) => {
+    this.props.changeOtherRepresentativeType(other);
+    this.onChange();
+  }
+
   onClickContinue() {
     const erroredFields = this.getValidationErrors();
 
@@ -150,7 +178,7 @@ export class ConfirmCaseDetails extends React.Component {
           <RadioField name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
-            onChange={changeRepresentativeType}
+            onChange={this.changeRepresentativeTypeNonRedux}
             required={true}/>
 
           {
@@ -158,13 +186,13 @@ export class ConfirmCaseDetails extends React.Component {
             <TextField
               name="Specify other representative type"
               value={otherRepresentativeType}
-              onChange={changeOtherRepresentativeType}
+              onChange={this.changeOtherRepresentativeTypeNonRedux}
               required={true}/>
           }
 
           <TextField name="Representative name"
             value={representativeName}
-            onChange={changeRepresentativeName}
+            onChange={this.changeRepresentativeNameNonRedux}
             required={true}/>
 
         </div>
@@ -202,7 +230,11 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   onValidationFailed: (invalidFields) => {
-    dispatch(actions.onValidationFailed(invalidFields));
+    dispatch(certificationActions.onValidationFailed(invalidFields));
+  },
+
+  onValidationSuccess: () => {
+    dispatch(certificationActions.onValidationSuccess());
   },
 
   certificationUpdateStart: (props) => {

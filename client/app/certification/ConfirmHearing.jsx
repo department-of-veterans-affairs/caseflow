@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+import * as certificationActions from './actions/Certification';
 
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
@@ -228,6 +229,12 @@ class UnconnectedConfirmHearing extends React.Component {
         nextPageUrl={
           `/certifications/${match.params.vacols_id}/sign_and_certify`
         }/>
+      <Footer
+        disableContinue={validationFailed}
+        loading={loading}
+        onClickContinue={this.onClickContinue.bind(this)}
+      />
+
     </div>;
   }
 }
@@ -282,7 +289,14 @@ const mapDispatchToProps = (dispatch) => ({
         hearingType
       }
     });
-  }
+  },
+  onValidationFailed: (invalidFields) => {
+    dispatch(certificationActions.onValidationFailed(invalidFields));
+  },
+
+  onValidationSuccess: () => {
+    dispatch(certificationActions.onValidationSuccess());
+  },
 });
 
 /*
