@@ -21,7 +21,7 @@ context('establishClaimUtil', () => {
 
     beforeEach(() => {
       regionalOfficeCities = {
-        'RO01': {
+        RO01: {
           city: 'Boston',
           state: 'MA',
           timezone: 'America/New_York'
@@ -72,7 +72,7 @@ context('establishClaimUtil', () => {
       result = validModifiers(
         [
           {
-            'end_product_type_code': '170'
+            end_product_type_code: '170'
           }
         ],
         'partial grants'
