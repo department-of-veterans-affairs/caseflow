@@ -19,10 +19,11 @@ class DropdownFilter extends React.PureComponent {
 
     if (this.state.rootElemWidth) {
       const topOffset = 5;
+      const leftOffset = -2;
 
       style = {
         top: baseCoordinates.bottom + topOffset,
-        left: baseCoordinates.right - this.state.rootElemWidth
+        left: baseCoordinates.right - this.state.rootElemWidth + leftOffset
       };
     } else {
       style = { left: '-99999px' };
