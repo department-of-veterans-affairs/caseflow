@@ -89,16 +89,6 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
     this.store = createEstablishClaimStore(props);
-    let decisionType = this.props.task.appeal.decision_type;
-    // Set initial state on page render
-
-    // The reviewForm decisionType is needed in the state first since
-    // it is used to calculate the validModifiers
-    this.state = {
-      reviewForm: {
-        decisionType: new FormField(decisionType)
-      }
-    };
 
     this.state = {
       ...this.state,
@@ -232,7 +222,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getClaimTypeFromDecision = () => {
-    let decisionType = this.state.reviewForm.decisionType.value;
+    let decisionType = this.props.task.appeal.decision_type;
     let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
@@ -348,7 +338,7 @@ export default class EstablishClaim extends BaseForm {
         });
 
         if (!this.willCreateEndProduct()) {
-          if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
+          if (this.props.task.appeal.decision_type === FULL_GRANT) {
             this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
             this.handlePageChange(EMAIL_PAGE);
           } else {
@@ -610,6 +600,7 @@ export default class EstablishClaim extends BaseForm {
       pdfLink,
       pdfjsLink
     } = this.props;
+    let decisionType = this.props.task.appeal.decision_type;
 
     let specialIssues = this.store.getState().specialIssues;
 
@@ -623,7 +614,7 @@ export default class EstablishClaim extends BaseForm {
         { this.isDecisionPage() &&
           <EstablishClaimDecision
             loading={this.state.loading}
-            decisionType={this.state.reviewForm.decisionType}
+            decisionType={decisionType}
             handleCancelTask={this.handleCancelTask}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
@@ -637,7 +628,7 @@ export default class EstablishClaim extends BaseForm {
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
             task={this.props.task}
-            decisionType={this.state.reviewForm.decisionType.value}
+            decisionType={decisionType}
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
             handleCancelTask={this.handleCancelTask}
@@ -669,13 +660,13 @@ export default class EstablishClaim extends BaseForm {
             loading={this.state.loading}
             endProductCreated={this.state.endProductCreated}
             appeal={this.props.task.appeal}
-            decisionType={this.state.reviewForm.decisionType.value}
+            decisionType={decisionType}
             handleSubmit={this.handleNotePageSubmit}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
-            displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
+            displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
         }

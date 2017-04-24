@@ -183,7 +183,7 @@ export class EstablishClaimDecision extends React.Component {
              label="Decision type"
              name="decisionType"
              readOnly={true}
-             {...decisionType}
+             value={decisionType}
             />
           </div>
 
@@ -225,7 +225,7 @@ export class EstablishClaimDecision extends React.Component {
 }
 
 EstablishClaimDecision.propTypes = {
-  decisionType: PropTypes.object.isRequired,
+  decisionType: PropTypes.string.isRequired,
   handleCancelTask: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
