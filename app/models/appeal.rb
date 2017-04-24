@@ -185,7 +185,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def serialized_decision_date
-    decision_date ? decision_date.to_formatted_s(:json_date) : ""
+    decision_date ? decision_date.iso8601 : ""
   end
 
   def serialized_form9_date
