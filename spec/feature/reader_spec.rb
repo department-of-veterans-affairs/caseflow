@@ -13,7 +13,7 @@ def in_viewport(element)
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
 end
 
-RSpec.feature "Reader", focus: true do
+RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
   let(:appeal) do
