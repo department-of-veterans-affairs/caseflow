@@ -107,8 +107,8 @@ describe Appeal do
       subject { appeal.ssoc_dates_with_matches }
 
       it do
-        expect(Date.strptime(subject.first[:date], '%m/%d/%Y')).to eq(6.days.ago.to_date)
-        expect(Date.strptime(subject.last[:date], '%m/%d/%Y')).to eq(9.days.ago.to_date)
+        expect(Date.strptime(subject.first[:date], "%m/%d/%Y")).to eq(6.days.ago.to_date)
+        expect(Date.strptime(subject.last[:date], "%m/%d/%Y")).to eq(9.days.ago.to_date)
         expect(subject.first[:match]).to be_truthy
         expect(subject.last[:match]).to be_falsy
       end
