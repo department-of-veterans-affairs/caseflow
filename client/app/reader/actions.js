@@ -16,6 +16,15 @@ export const onScrollToComment = (scrollToComment) => {
   };
 };
 
+export const handleSetLastRead = (docId) => {
+  return {
+    type: Constants.LAST_READ_DOCUMENT,
+    payload: {
+      docId
+    }
+  };
+};
+
 export const newTagRequestSuccess = (docId, createdTags) => {
   return {
     type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,

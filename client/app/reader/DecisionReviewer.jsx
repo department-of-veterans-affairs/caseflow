@@ -127,8 +127,13 @@ export class DecisionReviewer extends React.Component {
   }
 
   markAsRead = (pdfNumber) => {
-
     let documentId = this.state.documents[pdfNumber].id;
+
+    // For some reason calling this synchronosly prevents the new
+    // tab from opening. Move it to an asynchronus call.
+    setTimeout(() =>
+      this.props.handleSetLastRead(this.state.documents[pdfNumber].id)
+    );
 
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).
       then(() => {
@@ -362,9 +367,11 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func
+  onCommentScrolledTo: PropTypes.func,
+  handleSetLastRead: PropTypes.func.isRequired
 };
 
+<<<<<<< HEAD
 const mapStateToProps = (state) => {
   return {
     ui: {
