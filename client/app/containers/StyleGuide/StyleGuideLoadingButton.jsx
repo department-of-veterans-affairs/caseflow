@@ -21,14 +21,14 @@ export default class StyleGuideLoadingButton extends React.Component {
 
   toggle = (event) => {
     let state = this.state;
-    let attr = event.target.getAttribute("id").split("-")[1];
+    let attr = event.target.getAttribute('id').split('-')[1];
 
     state.loading[attr] = !state.loading[attr];
     this.setState(state);
   }
 
   render() {
-    let buttonName = "See it in action";
+    let buttonName = 'See it in action';
 
     return <div>
       <StyleGuideComponentTitle
@@ -51,9 +51,9 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-default"
-          name={"Reset"}
+          name={'Reset'}
           onClick={this.toggle}
-          classNames={["cf-btn-link"]}
+          classNames={['cf-btn-link']}
           disabled={!this.state.loading.default}
         />
       </p>
@@ -68,9 +68,9 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-dispatch"
-          name={"Reset"}
+          name={'Reset'}
           onClick={this.toggle}
-          classNames={["cf-btn-link"]}
+          classNames={['cf-btn-link']}
           disabled={!this.state.loading.dispatch}
         />
       </p>
@@ -85,9 +85,9 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-cert"
-          name={"Reset"}
+          name={'Reset'}
           onClick={this.toggle}
-          classNames={["cf-btn-link"]}
+          classNames={['cf-btn-link']}
           disabled={!this.state.loading.cert}
         />
       </p>
@@ -102,9 +102,9 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-efolder"
-          name={"Reset"}
+          name={'Reset'}
           onClick={this.toggle}
-          classNames={["cf-btn-link"]}
+          classNames={['cf-btn-link']}
           disabled={!this.state.loading.efolder}
         />
       </p>
@@ -119,9 +119,9 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-feedback"
-          name={"Reset"}
+          name={'Reset'}
           onClick={this.toggle}
-          classNames={["cf-btn-link"]}
+          classNames={['cf-btn-link']}
           disabled={!this.state.loading.feedback}
         />
       </p>
