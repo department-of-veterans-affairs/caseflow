@@ -20,6 +20,7 @@ class StyleGuideSearchableDropdown extends Component {
           title="Searchable Dropdown"
           id="searchable_dropdown"
           link="StyleGuideSearchableDropdown.jsx"
+          subsection={true}
         />
         <SearchableDropdown
           label="Searchable dropdown"

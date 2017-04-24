@@ -9,6 +9,7 @@ let StyleGuideLinkButton = () => {
       title="Link buttons"
       id="link_buttons"
       link="StyleGuideLinkButton.jsx"
+      subsection={true}
     />
     <div className="usa-grid">
       <div className="usa-width-one-third">
