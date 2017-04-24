@@ -175,9 +175,9 @@ export default class PdfSidebar extends React.Component {
             label="Click in the box to select, or add issue(s)"
             multi={true}
             creatable={true}
-            options={this.generateOptionsFromTags(doc.tags) || []}
+            options={this.generateOptionsFromTags(doc.tags)}
             placeholder=""
-            value={this.generateOptionsFromTags(doc.tags) || []}
+            value={this.generateOptionsFromTags(doc.tags)}
             onChange={this.onChange}
             selfManageValueState={true}
           />
