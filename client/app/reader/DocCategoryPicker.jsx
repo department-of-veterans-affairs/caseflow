@@ -14,10 +14,8 @@ const CategorySelector = (props) => {
 
   const handleChange = (checked) => handleCategoryToggle(categoryName, checked);
 
-  return <div>
-    <Checkbox name={categoryName} onChange={handleChange}
-      label={label} value={toggleState} />
-  </div>;
+  return <Checkbox name={categoryName} onChange={handleChange}
+      label={label} value={toggleState} />;
 };
 
 CategorySelector.propTypes = {
