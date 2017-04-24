@@ -371,7 +371,6 @@ DecisionReviewer.propTypes = {
   handleSetLastRead: PropTypes.func.isRequired
 };
 
-<<<<<<< HEAD
 const mapStateToProps = (state) => {
   return {
     ui: {
