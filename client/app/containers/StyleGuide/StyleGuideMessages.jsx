@@ -1,5 +1,4 @@
 import React from 'react';
-import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import StyleGuideSuccessMessages from './StyleGuideSuccessMessages';
 
 export default function StyleGuideMessages() {
@@ -14,5 +13,5 @@ export default function StyleGuideMessages() {
       follow-up text. The follow up text often contains context and instructions
       on what the user can do next.</p>
     <StyleGuideSuccessMessages />
-  </div>
+  </div>;
 }

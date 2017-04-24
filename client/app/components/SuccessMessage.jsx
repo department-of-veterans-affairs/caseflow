@@ -4,15 +4,16 @@ export default class SuccessMessage extends React.Component {
   render() {
     let {
       checklist,
-      messageList,
+      leadMessageList,
       messageText,
       title
     } = this.props;
 
-    return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
+    return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment
+      cf-app-segment--alt">
       <h1 className="cf-success cf-msg-screen-heading">{title}</h1>
-      {messageList.map((listValue) =>
-        <h2 className="cf-msg-screen-deck">
+      {leadMessageList.map((listValue) =>
+        <h2 className="cf-msg-screen-deck" key={listValue}>
           {listValue}
         </h2>)
       }
@@ -23,13 +24,13 @@ export default class SuccessMessage extends React.Component {
       <p className="cf-msg-screen-text">
         { messageText }
       </p>
-    </div>
+    </div>;
   }
 }
 
 SuccessMessage.props = {
   checklist: PropTypes.array,
-  messageList: PropTypes.array,
+  leadMessageList: PropTypes.array,
   messageText: PropTypes.string,
   title: PropTypes.string
 };
