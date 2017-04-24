@@ -1,5 +1,6 @@
 class Annotation < ActiveRecord::Base
   belongs_to :document
+  belongs_to :user
 
   def to_hash
     serializable_hash(
