@@ -83,7 +83,7 @@ class SearchableDropdown extends Component {
       };
     }
 
-    if (options && !options.length) {
+    if (_.isEmpty(options)) {
       addCreatableOptions.noResultsText = '';
     }
 

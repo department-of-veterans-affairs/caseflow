@@ -84,14 +84,11 @@ export const addNewTag = (doc, tags) => {
     const currentTags = doc.tags;
 
     // gets the newly added tags
-    const newTags = _.differenceWith(tags, currentTags, (tag, currentTag) => {
-      return tag.value === currentTag.text;
-    });
+    const newTags = _.differenceWith(tags, currentTags,
+      (tag, currentTag) => tag.value === currentTag.text);
 
     if (newTags && newTags.length) {
-      const processedTags = newTags.map((tag) => {
-        return { text: tag.label };
-      });
+      const processedTags = newTags.map((tag) => ({ text: tag.label }));
 
       dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
       ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: processedTags } }).

@@ -74,13 +74,12 @@ const ConnectedCategorySelector = connect(
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
-  generateOptionsFromTags = (tags) => {
-    return _.map(tags, (tag) => {
-      return { value: tag.text,
-        label: tag.text,
-        tagId: tag.id };
-    });
-  };
+  generateOptionsFromTags = (tags) =>
+    _.map(tags, (tag) => ({
+      value: tag.text,
+      label: tag.text,
+      tagId: tag.id })
+    );
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
