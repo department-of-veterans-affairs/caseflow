@@ -65,13 +65,12 @@ $tag-backgrond-color: #d6d7d9;
     }
 
     .cf-clear-filter-row {
-      padding: $dropdown-interior-padding;
-      padding-bottom: 0;
-
       @include hover;
 
       button {
-        margin-right: 10px;
+        padding: $dropdown-interior-padding;
+        padding-bottom: 0;
+        width: 100%;
       }
 
       .cf-clear-filter-button-wrapper {

@@ -31,13 +31,13 @@ class DropdownFilter extends React.PureComponent {
     return <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
-      <div className="cf-clear-filter-row" onClick={this.props.clearFilters}>
-        <div className="cf-clear-filter-button-wrapper">
-          <button className="cf-text-button" onClick={this.props.clearFilters}
-              disabled={!this.props.isClearEnabled}>
-            Clear category filter
-          </button>
-        </div>
+      <div className="cf-clear-filter-row">
+        <button className="cf-text-button" onClick={this.props.clearFilters}
+            disabled={!this.props.isClearEnabled}>
+          <div className="cf-clear-filter-button-wrapper">
+              Clear category filter
+          </div>
+        </button>
       </div>
       {children}
     </div>;
