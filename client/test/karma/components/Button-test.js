@@ -21,7 +21,7 @@ describe('Button', () => {
     const wrapper = shallow(<Button
                               name="foo"
                               onChange={onChange}
-                              classNames={["usa-button-primary"]}
+                              classNames={['usa-button-primary']}
                               disabled={true} />);
 
     expect(wrapper.find('.usa-button-disabled')).to.have.length(1);

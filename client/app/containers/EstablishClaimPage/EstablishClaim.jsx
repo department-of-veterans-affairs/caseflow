@@ -34,26 +34,26 @@ export const EMAIL_PAGE = 'email';
 
 
 export const END_PRODUCT_INFO = {
-  'ARC': {
+  ARC: {
     'Full Grant': ['172BVAG', 'BVA Grant'],
     'Partial Grant': ['170PGAMC', 'ARC-Partial Grant'],
-    'Remand': ['170RMDAMC', 'ARC-Remand']
+    Remand: ['170RMDAMC', 'ARC-Remand']
   },
-  'Routed': {
+  Routed: {
     'Full Grant': ['172BVAG', 'BVA Grant'],
     'Partial Grant': ['170RBVAG', 'Remand with BVA Grant'],
-    'Remand': ['170RMD', 'Remand']
+    Remand: ['170RMD', 'Remand']
   }
 };
 
 const CREATE_EP_ERRORS = {
-  "duplicate_ep": {
+  duplicate_ep: {
     header: 'At this time, we are unable to assign or create a new EP for this claim.',
     body: 'An EP with that modifier was previously created for this claim. ' +
           'Try a different modifier or select Cancel at the bottom of the ' +
           'page to release this claim and proceed to process it outside of Caseflow.'
   },
-  "task_already_completed": {
+  task_already_completed: {
     header: 'This task was already completed.',
     body: <span>
             Please return
@@ -61,7 +61,7 @@ const CREATE_EP_ERRORS = {
             establish the next claim.
           </span>
   },
-  "missing_ssn": {
+  missing_ssn: {
     header: 'The EP for this claim must be created outside Caseflow.',
     body: <span>
             This veteran does not have a social security number, so their
@@ -71,14 +71,14 @@ const CREATE_EP_ERRORS = {
             proceed to process it outside of Caseflow.
           </span>
   },
-  "default": {
+  default: {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
           'Please try again later.'
   }
 };
 
-const BACK_TO_DECISION_REVIEW_TEXT = "< Back to Review Decision";
+const BACK_TO_DECISION_REVIEW_TEXT = '< Back to Review Decision';
 
 // This page is used by AMC to establish claims. This is
 // the last step in the appeals process, and is after the decsion
@@ -228,7 +228,7 @@ export default class EstablishClaim extends BaseForm {
     let stationOfJurisdiction =
       this.store.getState().establishClaimForm.stationOfJurisdiction;
 
-    return stationOfJurisdiction === '397' ? "ARC" : "Routed";
+    return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
   }
 
   getClaimTypeFromDecision = () => {
@@ -236,7 +236,7 @@ export default class EstablishClaim extends BaseForm {
     let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
-      throw new RangeError("Invalid decision type value");
+      throw new RangeError('Invalid decision type value');
     }
 
     return values;
@@ -696,11 +696,11 @@ export default class EstablishClaim extends BaseForm {
 
         {cancelModalDisplay && <Modal
           buttons={[
-            { classNames: ["cf-modal-link", "cf-btn-link"],
+            { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Close',
               onClick: this.handleModalClose('cancelModalDisplay')
             },
-            { classNames: ["usa-button", "usa-button-secondary"],
+            { classNames: ['usa-button', 'usa-button-secondary'],
               loading: modalSubmitLoading,
               name: 'Stop processing claim',
               onClick: this.handleFinishCancelTask

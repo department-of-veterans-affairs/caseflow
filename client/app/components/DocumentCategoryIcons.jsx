@@ -21,7 +21,10 @@ export const DocumentCategoryIcons = ({ documents, docId }) => {
         map((category) => {
           const Svg = category.svg;
 
-          return <li key={category.renderOrder} aria-label={category.humanName}>
+          return <li
+            className="cf-no-styling-list"
+            key={category.renderOrder}
+            aria-label={category.humanName}>
             <Svg />
           </li>;
         }).

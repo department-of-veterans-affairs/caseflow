@@ -10,8 +10,8 @@ describe('Alert', () => {
   let wrapper;
 
   beforeEach(() => {
-    title = "My Error";
-    message = "There was an error";
+    title = 'My Error';
+    message = 'There was an error';
   });
 
   context('role attribute', () => {
