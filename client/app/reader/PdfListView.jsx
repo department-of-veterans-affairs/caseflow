@@ -11,9 +11,11 @@ import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
-import { SelectedFilterIcon, UnselectedFilterIcon } from '../components/RenderFunctions';
+import {
+  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
+} from '../components/RenderFunctions';
 
-const NUMBER_OF_COLUMNS = 5;
+const NUMBER_OF_COLUMNS = 6;
 
 const FilterIcon = ({
   handleActivate, label, getRef, selected, idPrefix
@@ -148,6 +150,15 @@ export class PdfListView extends React.Component {
         _.get(this.props.pdfList, ['dropdowns', 'category']);
 
       return [
+        {
+          valueFunction: (doc) => {
+            if (doc.id === this.props.pdfList.lastReadDocId) {
+              return <span aria-label="Most recently read document indicator">
+                  {rightTriangle()}
+                </span>;
+            }
+          }
+        },
         {
           header: <div
             id="categories-header"
@@ -335,5 +346,8 @@ PdfListView.propTypes = {
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   reduxDocuments: PropTypes.object.isRequired,
-  handleToggleCommentOpened: PropTypes.func.isRequired
+  handleToggleCommentOpened: PropTypes.func.isRequired,
+  pdfList: PropTypes.shape({
+    lastReadDocId: PropTypes.number
+  })
 };
