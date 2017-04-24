@@ -16,9 +16,7 @@ class StyleGuideSearchableDropdown extends Component {
   render() {
     const creatableOptions = {
       tagAlreadyExistsMsg: 'Tag already exists',
-      promptTextCreator: (label) => {
-        return `Create a tag for "${label}"`;
-      }
+      promptTextCreator: (label) => `Create a tag for "${label}"`
     };
 
     const options = [{ value: 'unitedstates',

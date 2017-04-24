@@ -370,7 +370,7 @@ const mapStateToProps = (state) => {
     ui: {
       showTagErrorMsg: _.get(state, 'ui.showTagErrorMsg')
     },
-    storeDocuments: state.documents || {}
+    storeDocuments: state.documents
   };
 };
 
