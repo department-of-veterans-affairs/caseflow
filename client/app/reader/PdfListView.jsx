@@ -18,6 +18,15 @@ export class PdfListView extends React.Component {
     this.props.handleToggleCommentOpened(id);
   }
 
+  componentDidMount = () => {
+    if (this.lastReadElement) {
+      const boundingBox = this.lastReadElement.getBoundingClientRect();
+      const halfWindowHeight = window.innerHeight / 2;
+
+      document.body.scrollTop = boundingBox.top - halfWindowHeight;
+    }
+  }
+
   getDocumentColumns = () => {
     let className;
 
@@ -76,7 +85,11 @@ export class PdfListView extends React.Component {
         {
           valueFunction: (doc) => {
             if (doc.id === this.props.lastReadDocId) {
-              return <span aria-label="Most recently read document indicator">
+              return <span
+                aria-label="Most recently read document indicator"
+                ref={(element) => {
+                  this.lastReadElement = element;
+                }}>
                   {rightTriangle()}
                 </span>;
             }

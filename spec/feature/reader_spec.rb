@@ -8,7 +8,7 @@ def scroll_to(value)
   page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
-RSpec.feature "Reader" do
+RSpec.feature "Reader", focus: true do
   let(:vacols_record) { :remand_decided }
 
   # Currently the vbms_document_ids need to be set since they correspond to specific
@@ -16,14 +16,14 @@ RSpec.feature "Reader" do
   let(:documents) do
     [
       Generators::Document.create(
-        filename: "BVA Decision",
+        filename: "My BVA Decision",
         type: "BVA Decision",
         received_at: 7.days.ago,
         vbms_document_id: 5,
         category_procedural: true
       ),
       Generators::Document.create(
-        filename: "Form 9",
+        filename: "My Form 9",
         type: "Form 9",
         received_at: 5.days.ago,
         vbms_document_id: 2,
@@ -31,7 +31,7 @@ RSpec.feature "Reader" do
         category_other: true
       ),
       Generators::Document.create(
-        filename: "NOD",
+        filename: "My NOD",
         type: "NOD",
         received_at: 1.day.ago,
         vbms_document_id: 3
@@ -52,7 +52,7 @@ RSpec.feature "Reader" do
     expect(page).to have_content("Caseflow Reader")
 
     # Click on the link to the first file
-    click_on documents[0].filename
+    click_on documents[0].type
 
     # Ensure PDF content loads (using :all because the text is hidden)
     expect(page).to have_content(:all, "Important Decision Document!!!")
@@ -109,7 +109,7 @@ RSpec.feature "Reader" do
     scenario "Scroll to comment" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      click_on documents[0].filename
+      click_on documents[0].type
 
       expect(page).to have_content(annotation.comment)
 
@@ -129,7 +129,7 @@ RSpec.feature "Reader" do
   scenario "Scrolling renders pages" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-    click_on documents[0].filename
+    click_on documents[0].type
     expect(page).to have_css(".page")
 
     # Expect only the first page to be reneder on first load
@@ -145,6 +145,28 @@ RSpec.feature "Reader" do
 
     # Expect only the first page of the pdf to be rendered
     expect(page).to_not have_content("Important Decision Document!!!")
+  end
+
+  context "Large number of documents" do
+    let(:num_documents) { 20 }
+    let(:many_documents) do
+      (0..num_documents).to_a.reduce([]) do |acc, number|
+      [
+        Generators::Document.create(
+          filename: "My BVA Decision",
+          type: "BVA Decision",
+          received_at: 7.days.ago,
+          vbms_document_id: 5,
+          category_procedural: true
+        )
+      ]
+    end
+
+    scenario "Open a document and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      click_on documents[0].type
+    end
   end
 
   scenario "Categories" do
@@ -164,7 +186,7 @@ RSpec.feature "Reader" do
       get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
     expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
 
-    click_on documents[0].filename
+    click_on documents[0].type
 
     expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
 
@@ -179,7 +201,7 @@ RSpec.feature "Reader" do
       get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
     expect(doc_0_categories).to eq(["Medical"])
 
-    click_on documents[1].filename
+    click_on documents[1].type
 
     expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
 

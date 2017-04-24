@@ -294,7 +294,7 @@ class Fakes::AppealRepository
     seed_appeal_not_ready!
   end
 
-  def self.reader_documents
+  def self.static_reader_documents
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
@@ -307,6 +307,17 @@ class Fakes::AppealRepository
     ]
   end
 
+  def self.random_reader_documents(num_documents)
+    (0..num_documents).to_a.reduce([]) do |acc, number|
+      acc << Generators::Document.build(
+        vbms_document_id: number,
+        type: Caseflow::DocumentTypes::TYPES.values[rand(Caseflow::DocumentTypes::TYPES.length)],
+        category_procedural: rand(10) == 1,
+        category_medical: rand(10) == 1,
+        category_other: rand(10) == 1)
+    end
+  end
+
   def self.seed_reader_data!
     Generators::Appeal.build(
       vacols_id: "reader_id1",
@@ -316,7 +327,17 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      documents: reader_documents
+      documents: static_reader_documents
+    )
+    Generators::Appeal.build(
+      vacols_id: "reader_id2",
+      vbms_id: "reader_id2",
+      vacols_record: {
+        template: :ready_to_certify,
+        veteran_first_name: "Joe",
+        veteran_last_name: "Smith"
+      },
+      documents: random_reader_documents(200)
     )
   end
 end
