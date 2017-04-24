@@ -10,6 +10,7 @@ import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import { plusIcon } from './RenderFunctions';
+import classNames from 'classNames'
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
@@ -99,8 +100,9 @@ export class PdfSidebar extends React.Component {
         </Comment>;
     });
 
-    const sidebarClass = this.props.hidePdfSidebar ?
-      'cf-sidebar-wrapper--hidden-sidebar' : 'cf-sidebar-wrapper';
+    const sidebarClass = classNames(
+      'cf-sidebar-wrapper',
+      { 'hidden-sidebar': this.props.hidePdfSidebar });
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -115,7 +117,7 @@ export class PdfSidebar extends React.Component {
         </div>
         <div className="cf-document-info-wrapper">
           <p className="cf-pdf-meta-title cf-pdf-cutoff">
-            <b>Document Type:</b>
+            <b>Document Type: </b>
             <span title={this.props.doc.type}>
               {this.props.doc.type}
             </span>
@@ -171,11 +173,9 @@ const mapSidebarDispatchToProps = (dispatch) => ({
     });
   }
 });
-const mapSidebarStateToProps = (state) => {
-  return {
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
-  };
-};
+const mapSidebarStateToProps = (state) => ({
+  hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+});
 
 export default connect(
   mapSidebarStateToProps, mapSidebarDispatchToProps

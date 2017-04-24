@@ -61,10 +61,10 @@ export default class Comment extends React.Component {
 
     let commentToRender = <div>
         <div className="comment-control-button-container">
-          <span className="cf-right-side">
+          <h4>Page {this.props.page} {jumpToSectionButton}</h4>
+          <span>
             {this.getControlButtons()}
           </span>
-          <h4>Page {this.props.page} {jumpToSectionButton}</h4>
         </div>
         <div
           className={className}

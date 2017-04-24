@@ -260,7 +260,6 @@ export default connect(
   mapStateToProps, null
 )(PdfViewer);
 
-
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,

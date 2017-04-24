@@ -41,7 +41,7 @@ $bookmark-yellow: #efdf1a;
   right: 380px;
   left: 0;
 
-  &--hidden-sidebar {
+  &.hidden-sidebar {
     right: 0;
   }
 }
@@ -93,7 +93,7 @@ svg[aria-hidden=true],
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
 
-  &--hidden-sidebar {
+  &.hidden-sidebar {
     visibility: hidden;
   }
 }
@@ -131,6 +131,11 @@ svg[aria-hidden=true],
   z-index: 15;
   opacity: 1;
   padding: 15px 20px;
+
+  .category-icons-and-doc-type {
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 .cf-pdf-footer {
@@ -330,6 +335,7 @@ svg[aria-hidden=true],
   margin-top: 0;
   margin-bottom: 0;
   float: left;
+  min-width: 80px;
 
   li {
     float: left;
@@ -364,4 +370,18 @@ svg[aria-hidden=true],
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 100%;
+}
+
+.cf-pdf-open-menu {
+  flex: 0 0 auto;
+  margin-left: 10px;
+}
+
+.cf-pdf-doc-type-button {
+  flex: 1;
+  min-width: 100px;
+}
+
+.cf-pdf-doc-category-icons {
+  flex: 0 0 80px;
 }

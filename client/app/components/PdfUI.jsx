@@ -4,6 +4,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import classNames from 'classNames'
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -65,10 +66,11 @@ export class PdfUI extends React.Component {
   }
 
   render() {
+    const pdfUiClass = classNames(
+      'cf-pdf-container',
+      { 'hidden-sidebar': this.props.hidePdfSidebar });
     const categoryAndTypeGridSize = this.props.hidePdfSidebar ?
       'usa-width-one-third' : 'usa-width-one-half';
-    const pdfUiClass = this.props.hidePdfSidebar ?
-      'cf-pdf-container--hidden-sidebar' : 'cf-pdf-container';
 
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
@@ -104,34 +106,31 @@ export class PdfUI extends React.Component {
             <i className="fa fa-plus" aria-hidden="true"></i>
           </Button>
         </span>
-        <span className="usa-width-one-third">
-          <span className="usa-grid-full">
-            <span className={categoryAndTypeGridSize}>
-              <span className="cf-right-side">
-                <DocumentCategoryIcons docId={this.props.doc.id} />
-              </span>
-            </span>
-            <span className={categoryAndTypeGridSize}>
-              <Button
-                name="newTab"
-                classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right']}
-                ariaLabel="open document in new tab"
-                onClick={() => window.open(
-                  linkToSingleDocumentView(this.props.doc), '_blank')}>
-                <span title={this.props.doc.type}>{this.props.doc.type}</span>
-              </Button>
-            </span>
-            {this.props.hidePdfSidebar && <span className="usa-width-one-third">
+        <span className="usa-width-one-third category-icons-and-doc-type">
+          <span>
+            <DocumentCategoryIcons docId={this.props.doc.id} />
+          </span>
+          <span className="cf-pdf-doc-type-button">
+            <Button
+              name="newTab"
+              classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right']}
+              ariaLabel="open document in new tab"
+              onClick={() => window.open(
+                linkToSingleDocumentView(this.props.doc), '_blank')}>
+              <span title={this.props.doc.type}>{this.props.doc.type}</span>
+            </Button>
+          </span>
+          {this.props.hidePdfSidebar &&
+            <span className="cf-pdf-open-menu">
               <Button
                 name="open menu"
-                classNames={['cf-pdf-button cf-pdf-cutoff']}
+                classNames={['cf-pdf-button']}
                 onClick={this.props.handleTogglePdfSidebar}>
                 <strong>
                   Open menu
                 </strong>
               </Button>
             </span>}
-          </span>
         </span>
       </div>
       <div className="cf-pdf-navigation">
