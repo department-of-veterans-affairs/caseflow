@@ -11,9 +11,14 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
-    showTagErrorMsg: false,
     allCommentsExpanded: false,
+    pdfSidebar: {
+      showTagErrorMsg: false
+    },
     pdf: {
+    },
+    pdfList: {
+      lastReadDocId: null
     }
   },
   documents: {
@@ -65,11 +70,11 @@ export const readerReducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
-      ui: { showTagErrorMsg: { $set: false } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { showTagErrorMsg: { $set: true } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
@@ -86,7 +91,7 @@ export const readerReducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
-      ui: { showTagErrorMsg: { $set: false } },
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
       documents: {
         [action.payload.docId]: {
           tags: { $set: state.documents[action.payload.docId].tags.
@@ -97,12 +102,12 @@ export const readerReducer = (state = initialState, action = {}) => {
   );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { showTagErrorMsg: { $set: true } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
     return update(state, {
       ui: {
-        showTagErrorMsg: { $set: false },
+        pdfSidebar: { showTagErrorMsg: { $set: false } },
         pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
       }
     });
@@ -122,6 +127,18 @@ export const readerReducer = (state = initialState, action = {}) => {
         documents: {
           [action.payload.docId]: {
             listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      }
+    );
+  case Constants.LAST_READ_DOCUMENT:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdfList: {
+            lastReadDocId: action.payload.docId
           }
         }
       }

@@ -19,6 +19,7 @@ export const EXPAND_ALL_PDF_COMMENT_LIST = 'EXPAND_ALL_PDF_COMMENT_LIST';
 export const COLLAPSE_ALL_PDF_COMMENT_LIST = 'COLLAPSE_ALL_PDF_COMMENT_LIST';
 export const SCROLL_TO_COMMENT = 'SCROLL_TO_COMMENT';
 export const TOGGLE_COMMENT_LIST = 'TOGGLE_COMMENT_LIST';
+export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
 
 export const documentCategories = {
   procedural: {

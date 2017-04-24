@@ -127,8 +127,13 @@ export class DecisionReviewer extends React.Component {
   }
 
   markAsRead = (pdfNumber) => {
-
     let documentId = this.state.documents[pdfNumber].id;
+
+    // For some reason calling this synchronosly prevents the new
+    // tab from opening. Move it to an asynchronus call.
+    setTimeout(() =>
+      this.props.handleSetLastRead(this.state.documents[pdfNumber].id)
+    );
 
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).
       then(() => {
@@ -344,7 +349,7 @@ export class DecisionReviewer extends React.Component {
         {this.state.currentPdfIndex !== null && <PdfViewer
           addNewTag={this.props.addNewTag}
           removeTag={this.props.removeTag}
-          showTagErrorMsg={this.props.ui.showTagErrorMsg}
+          showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={this.props.storeDocuments[documents[this.state.currentPdfIndex].id]}
@@ -365,16 +370,19 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func
+  onCommentScrolledTo: PropTypes.func,
+  handleSetLastRead: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => {
   return {
     ui: {
-      showTagErrorMsg: _.get(state, 'ui.showTagErrorMsg'),
-      allCommentsExpanded: _.get(state, 'ui.allCommentsExpanded')
+      allCommentsExpanded: state.ui.allCommentsExpanded,
+      pdfSidebar: {
+        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
+      }
     },
-    storeDocuments: state.documents || {}
+    storeDocuments: state.documents
   };
 };
 

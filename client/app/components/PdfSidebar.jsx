@@ -13,8 +13,6 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import { plusIcon } from './RenderFunctions';
 
-const FIRST_ELEMENT = 0;
-
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
   const toggleState = Boolean(_.get(
@@ -74,17 +72,16 @@ const ConnectedCategorySelector = connect(
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
-  generateOptionsFromTags = (tags) => {
-    return _.map(tags, (tag) => {
-      return { value: tag.text,
-        label: tag.text,
-        tagId: tag.id };
-    });
-  };
+  generateOptionsFromTags = (tags) =>
+    _.map(tags, (tag) => ({
+      value: tag.text,
+      label: tag.text,
+      tagId: tag.id })
+    );
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
-      const tagValue = deletedValue[FIRST_ELEMENT].label;
+      const tagValue = _.first(deletedValue).label;
       const result = _.find(this.props.doc.tags, { text: tagValue });
 
       this.props.removeTag(this.props.doc, result.id);
@@ -178,9 +175,9 @@ export default class PdfSidebar extends React.Component {
             label="Click in the box to select, or add issue(s)"
             multi={true}
             creatable={true}
-            options={this.generateOptionsFromTags(doc.tags) || []}
+            options={this.generateOptionsFromTags(doc.tags)}
             placeholder=""
-            value={this.generateOptionsFromTags(doc.tags) || []}
+            value={this.generateOptionsFromTags(doc.tags)}
             onChange={this.onChange}
             selfManageValueState={true}
           />

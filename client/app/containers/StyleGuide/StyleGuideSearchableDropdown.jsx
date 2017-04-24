@@ -16,9 +16,7 @@ class StyleGuideSearchableDropdown extends Component {
   render() {
     const creatableOptions = {
       tagAlreadyExistsMsg: 'Tag already exists',
-      promptTextCreator: (label) => {
-        return `Create a tag for "${label}"`;
-      }
+      promptTextCreator: (label) => `Create a tag for "${label}"`
     };
 
     const options = [{ value: 'unitedstates',
@@ -54,7 +52,7 @@ class StyleGuideSearchableDropdown extends Component {
         <h3>Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
           creatable={true}
-          label="Click in the box below to select, type, or add in issue(s)"
+          label="Click in the box below to select, type, or add issue(s)"
           name="countries"
           options={options}
           required={true}
