@@ -4,7 +4,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import classNames from 'classNames'
+import classNames from 'classNames';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -69,8 +69,6 @@ export class PdfUI extends React.Component {
     const pdfUiClass = classNames(
       'cf-pdf-container',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
-    const categoryAndTypeGridSize = this.props.hidePdfSidebar ?
-      'usa-width-one-third' : 'usa-width-one-half';
 
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">

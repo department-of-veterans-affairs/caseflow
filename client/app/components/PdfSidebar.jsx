@@ -10,7 +10,7 @@ import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import { plusIcon } from './RenderFunctions';
-import classNames from 'classNames'
+import classNames from 'classNames';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
