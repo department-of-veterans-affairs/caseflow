@@ -13,11 +13,11 @@ describe('Table', () => {
   beforeEach(() => {
     columns = [
       { header: 'First',
-        valueFunction: () => "fizz" },
+        valueFunction: () => 'fizz' },
       { header: 'Second',
-        valueFunction: () => "buzz" },
+        valueFunction: () => 'buzz' },
       { header: 'Second',
-        valueName: "type" }
+        valueName: 'type' }
     ];
 
     rowObjects = createTask(3);

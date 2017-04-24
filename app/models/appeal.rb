@@ -213,7 +213,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def full_grant?
-    status == "Complete" && issues.all?(&:non_new_material_allowed?)
+    status == "Complete" && issues.any?(&:non_new_material_allowed?)
   end
 
   def remand?

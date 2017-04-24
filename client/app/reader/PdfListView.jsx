@@ -4,13 +4,14 @@ import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
+import { rightTriangle } from '../components/RenderFunctions';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
 
-const NUMBER_OF_COLUMNS = 5;
+const NUMBER_OF_COLUMNS = 6;
 
 export class PdfListView extends React.Component {
   toggleComments = (id) => () => {
@@ -21,9 +22,9 @@ export class PdfListView extends React.Component {
     let className;
 
     if (this.props.sortDirection === 'ascending') {
-      className = "fa-caret-down";
+      className = 'fa-caret-down';
     } else {
-      className = "fa-caret-up";
+      className = 'fa-caret-up';
     }
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
@@ -72,6 +73,15 @@ export class PdfListView extends React.Component {
       }
 
       return [
+        {
+          valueFunction: (doc) => {
+            if (doc.id === this.props.lastReadDocId) {
+              return <span aria-label="Most recently read document indicator">
+                  {rightTriangle()}
+                </span>;
+            }
+          }
+        },
         {
           header: <div
             id="categories-header"
@@ -131,7 +141,7 @@ export class PdfListView extends React.Component {
               {numberOfComments > 0 &&
                 <span>
                   <Button
-                    classNames={["cf-btn-link"]}
+                    classNames={['cf-btn-link']}
                     href="#"
                     ariaLabel={name}
                     name={name}
@@ -194,7 +204,10 @@ export class PdfListView extends React.Component {
 
 // Should be merged with documents when we finish integrating redux
 const mapStateToProps = (state) => {
-  return { reduxDocuments: _.get(state, 'documents') };
+  return {
+    reduxDocuments: state.documents,
+    lastReadDocId: state.ui.pdfList.lastReadDocId
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -220,5 +233,6 @@ PdfListView.propTypes = {
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   reduxDocuments: PropTypes.object.isRequired,
-  handleToggleCommentOpened: PropTypes.func.isRequired
+  handleToggleCommentOpened: PropTypes.func.isRequired,
+  lastReadDocId: PropTypes.number
 };

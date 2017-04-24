@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
-import { formatDate, addDays } from '../../util/DateUtil';
+import { dateFormatString } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import Table from '../../components/Table';
@@ -10,6 +10,7 @@ import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
 import * as Constants from '../../establishClaim/constants';
+import moment from 'moment';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
@@ -17,9 +18,9 @@ export class EstablishClaimDecision extends React.Component {
     let endProductButtonText;
 
     if (this.hasMultipleDecisions()) {
-      endProductButtonText = "Route claim for Decision 1";
+      endProductButtonText = 'Route claim for Decision 1';
     } else {
-      endProductButtonText = "Route claim";
+      endProductButtonText = 'Route claim';
     }
     this.state = {
       endProductButtonText
@@ -68,13 +69,13 @@ export class EstablishClaimDecision extends React.Component {
       }
     ];
 
-    let decisionDateStart = formatDate(
-      addDays(new Date(task.appeal.serialized_decision_date), -3)
-    );
+    let decisionDateStart = moment(task.appeal.serialized_decision_date).
+      add(-3, 'days').
+      format(dateFormatString);
 
-    let decisionDateEnd = formatDate(
-      addDays(new Date(task.appeal.serialized_decision_date), 3)
-    );
+    let decisionDateEnd = moment(task.appeal.serialized_decision_date).
+      add(3, 'days').
+      format(dateFormatString);
 
     // Sort in reverse chronological order
     let decisions = task.appeal.decisions.sort((decision1, decision2) =>
@@ -85,7 +86,8 @@ export class EstablishClaimDecision extends React.Component {
 
       tab.disable = false;
 
-      tab.label = `Decision ${(index + 1)} (${formatDate(decision.received_at)})`;
+      tab.label = `Decision ${(index + 1)} ` +
+        `(${moment(decision.received_at).format(dateFormatString)})`;
 
       /* This link is here for 508 compliance, and shouldn't be visible to sighted
         users. We need to allow non-sighted users to preview the Decision. Adobe Acrobat
@@ -207,7 +209,7 @@ export class EstablishClaimDecision extends React.Component {
             <Button
                 name="Cancel"
                 onClick={handleCancelTask}
-                classNames={["cf-btn-link", "cf-adjacent-buttons"]}
+                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
               app="dispatch"

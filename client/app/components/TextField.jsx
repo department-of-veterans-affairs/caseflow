@@ -20,9 +20,9 @@ export default class TextField extends React.Component {
     } = this.props;
 
     let textInputClass = className.concat(
-      invisible ? " cf-invisible" : ""
+      invisible ? ' cf-invisible' : ''
     ).concat(
-      errorMessage ? "usa-input-error" : ""
+      errorMessage ? 'usa-input-error' : ''
     );
 
     // Use empty string instead of null or undefined,
@@ -59,7 +59,7 @@ export default class TextField extends React.Component {
 TextField.defaultProps = {
   required: false,
   type: 'text',
-  className: ["cf-form-textinput"]
+  className: ['cf-form-textinput']
 };
 
 TextField.propTypes = {

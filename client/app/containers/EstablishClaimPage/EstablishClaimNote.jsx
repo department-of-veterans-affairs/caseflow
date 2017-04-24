@@ -8,6 +8,7 @@ import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import _ from 'lodash';
 
 export class EstablishClaimNote extends BaseForm {
@@ -28,10 +29,9 @@ export class EstablishClaimNote extends BaseForm {
 
     let vbmsNote = `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(appeal.serialized_decision_date)}` +
-      ` for ${appeal.veteran_name},` +
-      ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
+      ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
-      ` in your jurisdiction. Please proceed with control and implement this grant.`;
+      ' in your jurisdiction. Please proceed with control and implement this grant.';
 
     this.state = {
       noteForm: {
@@ -48,14 +48,14 @@ export class EstablishClaimNote extends BaseForm {
     let specialIssues = this.props.specialIssues;
 
     if (specialIssues.vamc) {
-      return "54";
+      return '54';
     } else if (specialIssues.nationalCemeteryAdministration) {
-      return "53";
+      return '53';
     } else if (!this.hasSelectedSpecialIssues()) {
-      return "98";
+      return '98';
     }
 
-    return "50";
+    return '50';
   }
 
   hasSelectedSpecialIssues() {
@@ -92,7 +92,7 @@ export class EstablishClaimNote extends BaseForm {
 
     return `The BVA ${this.props.decisionType} decision` +
       ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
-      ` is being transfered from ARC as it contains: ` +
+      ' is being transfered from ARC as it contains: ' +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
   }
 
@@ -119,17 +119,34 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   vbmsSection() {
-    return <div>
 
+    return <div>
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
-      <TextareaField
-        label="VBMS Note:"
-        name="vbmsNote"
-        onChange={this.handleFieldChange('noteForm', 'noteField')}
-        {...this.state.noteForm.noteField}
-      />
+
+      <div className ="cf-vbms-note">
+        <TextareaField
+          label="VBMS Note:"
+          name="vbmsNote"
+          onChange={this.handleFieldChange('noteForm', 'noteField')}
+          {...this.state.noteForm.noteField}
+        />
+
+        <div className="cf-app-segment copy-note-button">
+          <div className="cf-push-left">
+            <CopyToClipboard text={this.state.noteForm.noteField.value}>
+              <Button
+                label = "Copy note"
+                name="copyNote"
+                classNames={['usa-button-outline usa-button-hover']}>
+                <i className="fa fa-files-o" aria-hidden="true"></i>
+                Copy note
+              </Button>
+            </CopyToClipboard>
+          </div>
+        </div>
+      </div>
 
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
@@ -143,6 +160,7 @@ export class EstablishClaimNote extends BaseForm {
       </div>
     </div>;
   }
+
 
   handleSubmit = () => {
     this.props.handleSubmit(this.vacolsNoteText());
@@ -180,14 +198,14 @@ export class EstablishClaimNote extends BaseForm {
             <Button
               name={this.props.backToDecisionReviewText}
               onClick={this.props.handleBackToDecisionReview}
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
             />
           </div>}
           <div className="cf-push-right">
             <Button
               app="dispatch"
               name="Finish routing claim"
-              classNames={["usa-button-primary"]}
+              classNames={['usa-button-primary']}
               disabled={!this.state.noteForm.confirmBox.value}
               onClick={this.handleSubmit}
               loading={this.props.loading}

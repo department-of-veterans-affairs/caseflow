@@ -1,28 +1,25 @@
 import React, { PropTypes } from 'react';
-import FormField from '../util/FormField';
-import BaseForm from '../containers/BaseForm';
-
 import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
-export default class EditComment extends BaseForm {
+export default class EditComment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      commentForm: {
-        editComment: new FormField(this.props.children)
-      }
+      value: this.props.children
     };
   }
 
-  resetForm = () => {
-    let commentForm = { ...this.state.commentForm };
-
-    commentForm.editComment.value = '';
+  onChange = (event) => {
     this.setState({
-      commentForm
+      value: event.target.value
+    });
+  }
+
+  resetForm = () => {
+    this.setState({
+      value: ''
     });
   }
 
@@ -33,7 +30,7 @@ export default class EditComment extends BaseForm {
 
   onSaveCommentEdit = () => {
     this.props.onSaveCommentEdit(
-      this.state.commentForm.editComment.value, this.props.uuid);
+      this.state.value, this.props.uuid);
     this.resetForm();
   }
 
@@ -41,11 +38,8 @@ export default class EditComment extends BaseForm {
   // in the edit form.
   componentWillReceiveProps(nextProps) {
     if (nextProps.children !== this.props.children) {
-      let commentForm = { ...this.state.commentForm };
-
-      commentForm.editComment.value = nextProps.children;
       this.setState({
-        commentForm
+        value: nextProps.children
       });
     }
   }
@@ -58,21 +52,19 @@ export default class EditComment extends BaseForm {
 
   render() {
     return <div>
-        <div
-          className="comment-container">
-          <TextareaField
-            id={this.props.id}
-            label="Edit Comment"
-            name="editComment"
-            onChange={this.handleFieldChange('commentForm', 'editComment')}
-            {...this.state.commentForm.editComment}
-          />
-        </div>
+        <textarea
+          className="comment-container comment-textarea"
+          name="Edit Comment"
+          aria-label="Edit Comment"
+          id={this.props.id}
+          onChange={this.onChange}
+          value={this.state.value}
+        />
         <div className="comment-control-button-container">
           <span className="cf-right-side">
             <Button
               name="cancel"
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
               onClick={this.cancelEdit}>
               Cancel
             </Button>

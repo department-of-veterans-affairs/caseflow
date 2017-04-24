@@ -31,19 +31,19 @@ export default class TasksManagerIndex extends BaseForm {
       {
         header: 'Employee Name',
         valueName: 'name',
-        footer: noUsers ? "" : <b>Employee Total</b>
+        footer: noUsers ? '' : <b>Employee Total</b>
       },
       {
         header: 'Cases Assigned',
         valueFunction: () => this.state.assignedCases,
         footer: noUsers ?
-          "0" :
+          '0' :
           <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>
       },
       {
         header: 'Cases Completed',
         valueName: 'numberOfTasks',
-        footer: noUsers ? "0" : <b>{this.props.completedCountToday}</b>
+        footer: noUsers ? '0' : <b>{this.props.completedCountToday}</b>
       },
       {
         header: 'Cases Remaining',
