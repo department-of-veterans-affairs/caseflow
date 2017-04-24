@@ -13,8 +13,6 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import { plusIcon } from './RenderFunctions';
 
-const FIRST_ELEMENT = 0;
-
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, docId, documents } = props;
   const toggleState = Boolean(_.get(
@@ -83,7 +81,7 @@ export default class PdfSidebar extends React.Component {
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
-      const tagValue = deletedValue[FIRST_ELEMENT].label;
+      const tagValue = _.first(deletedValue).label;
       const result = _.find(this.props.doc.tags, { text: tagValue });
 
       this.props.removeTag(this.props.doc, result.id);
