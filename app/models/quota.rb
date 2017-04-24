@@ -5,8 +5,6 @@ class Quota
 
   attr_accessor :date, :task_klass
 
-  class CarryOverError < StandardError; end
-
   def recalculate_assignee_count!
     update_assignee_count!(assignee_count)
   end
