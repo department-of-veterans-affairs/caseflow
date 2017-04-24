@@ -177,7 +177,7 @@ export const rightTriangle = function() {
 };
 
 export const commentIcon = (selected) => {
-  const filter = selected ? "url(#filter-1)" : "";
+  const filter = selected ? 'url(#filter-1)' : '';
 
   return <svg width="40px" height="40px" viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg">
     <defs>
