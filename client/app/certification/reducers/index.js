@@ -96,16 +96,6 @@ export const certificationReducers = function(state = initialState, action = {})
       updateSucceeded: null,
       loading: false
     });
-  case Constants.ON_VALIDATION_FAILED:
-    return Object.assign({}, state, {
-      invalidFields: action.payload.invalidFields,
-      validationFailed: action.payload.validationFailed
-    });
-  case Constants.ON_VALIDATION_SUCCESS:
-    return Object.assign({}, state, {
-      invalidFields: null,
-      validationFailed: false
-    });
   case Constants.ON_CONTINUE_CLICK_FAILED:
     return Object.assign({}, state, {
       continueClicked: action.payload.continueClicked

@@ -94,41 +94,12 @@ export class ConfirmCaseDetails extends React.Component {
     return erroredFields;
   }
 
-  onChange() {
-    const erroredFields = this.getValidationErrors();
-
-    if (erroredFields.length) {
-      this.props.onValidationFailed(erroredFields);
-
-      return;
-    } else {
-      this.props.onValidationSuccess();
-    }
-  }
-
-  changeRepresentativeNameNonRedux = (name) => {
-    this.props.changeRepresentativeName(name);
-    this.onChange();
-  }
-
-  changeRepresentativeTypeNonRedux = (type) => {
-    this.props.changeRepresentativeType(type);
-    this.onChange();
-  }
-
-  changeOtherRepresentativeTypeNonRedux = (other) => {
-    this.props.changeOtherRepresentativeType(other);
-    this.onChange();
-  }
-
   onClickContinue() {
 
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
       this.props.onContinueClickFailed();
-      this.props.onValidationFailed(erroredFields);
-
       return;
     }
 
@@ -150,7 +121,6 @@ export class ConfirmCaseDetails extends React.Component {
       changeRepresentativeName,
       otherRepresentativeType,
       changeOtherRepresentativeType,
-      validationFailed,
       loading,
       updateFailed,
       updateSucceeded,
@@ -183,7 +153,7 @@ export class ConfirmCaseDetails extends React.Component {
           <RadioField name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
-            onChange={this.changeRepresentativeTypeNonRedux}
+            onChange={changeRepresentativeType}
             required={true}/>
 
           {
@@ -191,19 +161,19 @@ export class ConfirmCaseDetails extends React.Component {
             <TextField
               name="Specify other representative type"
               value={otherRepresentativeType}
-              onChange={this.changeOtherRepresentativeTypeNonRedux}
+              onChange={changeOtherRepresentativeType}
               required={true}/>
           }
 
           <TextField name="Representative name"
             value={representativeName}
-            onChange={this.changeRepresentativeNameNonRedux}
+            onChange={changeRepresentativeName}
             required={true}/>
 
         </div>
 
         <Footer
-          disableContinue={validationFailed && continueClicked}
+          disableContinue={!!this.getValidationErrors().length && continueClicked}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />
@@ -234,14 +204,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
-  onValidationFailed: (invalidFields) => {
-    dispatch(certificationActions.onValidationFailed(invalidFields));
-  },
-
-  onValidationSuccess: () => {
-    dispatch(certificationActions.onValidationSuccess());
-  },
-
   onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
   onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 
@@ -256,8 +218,6 @@ const mapStateToProps = (state) => ({
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
-  validationFailed: state.validationFailed,
-  invalidFields: state.invalidFields,
   loading: state.loading,
   continueClicked: state.continueClicked
 });
