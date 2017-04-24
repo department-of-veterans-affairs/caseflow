@@ -119,46 +119,35 @@ class UnconnectedConfirmHearing extends React.Component {
   }
 
   getValidationErrors() {
-    // TODO: consider breaking this and all validation out into separate
-    // modules.
     let {
-      representativeName,
-      representativeType,
-      otherRepresentativeType
+      hearingDocumentIsInVbms,
+      hearingType,
+      form9Type
     } = this.props;
 
     const erroredFields = [];
 
-    // Unless the type of representative is "None",
-    // we need a representative name.
-    if (!representativeName && !this.representativeTypeIsNone()) {
-      erroredFields.push('representativeName');
+    if (!hearingType && hearingDocumentIsInVbms) {
+      erroredFields.push('hearingDocumentIsInVbms');
     }
 
-    // We always need a representative type.
-    if (!representativeType) {
-      erroredFields.push('representativeType');
-    }
-
-    // If the representative type is "Other",
-    // fill out the representative type.
-    if (this.representativeTypeIsOther() && !otherRepresentativeType) {
-      erroredFields.push('otherRepresentativeType');
+    if (!hearingDocumentIsInVbms && !form9Type) {
+      erroredFields.push('hearingChangeQuestion');
     }
 
     return erroredFields;
   }
 
-  onChange() {
+  onClickContinue() {
+
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onValidationFailed(erroredFields);
-
+      this.props.onContinueClickFailed();
       return;
-    } else {
-      this.props.onValidationSuccess();
     }
+
+    this.props.onContinueClickSuccess();
   }
 
   render() {
@@ -169,7 +158,7 @@ class UnconnectedConfirmHearing extends React.Component {
       onTypeOfForm9Change,
       hearingType,
       onHearingTypeChange,
-      validationFailed,
+      continueClicked,
       match
     } = this.props;
 
@@ -270,8 +259,9 @@ class UnconnectedConfirmHearing extends React.Component {
         </div>
 
       <Footer
-        disableContinue={validationFailed}
-        nextPageUrl={`/certifications/${match.params.vacols_id}/sign_and_certify`}
+        disableContinue={!!this.getValidationErrors().length && continueClicked}
+        onClickContinue={this.onClickContinue.bind(this)}
+        //nextPageUrl={`/certifications/${match.params.vacols_id}/sign_and_certify`}
       />
 
     </div>;
@@ -329,13 +319,8 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
-  onValidationFailed: (invalidFields) => {
-    dispatch(certificationActions.onValidationFailed(invalidFields));
-  },
-
-  onValidationSuccess: () => {
-    dispatch(certificationActions.onValidationSuccess());
-  },
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 });
 
 /*
@@ -349,8 +334,7 @@ const mapStateToProps = (state) => ({
   form9Type: state.form9Type,
   form9Date: state.form9Date,
   hearingType: state.hearingType,
-  validationFailed: state.validationFailed,
-  invalidFields: state.invalidFields
+  continueClicked: state.continueClicked
 });
 
 /*
@@ -372,8 +356,7 @@ ConfirmHearing.propTypes = {
   hearingType: PropTypes.string,
   onHearingTypeChange: PropTypes.func,
   match: PropTypes.object.isRequired,
-  validationFailed: PropTypes.bool,
-  invalidFields: PropTypes.array
+  continueClicked: PropTypes.bool
 };
 
 export default ConfirmHearing;
