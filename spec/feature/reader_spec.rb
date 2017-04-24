@@ -8,36 +8,13 @@ def scroll_to(value)
   page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
+def in_viewport(element)
+  page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
+  " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+end
+
 RSpec.feature "Reader", focus: true do
   let(:vacols_record) { :remand_decided }
-
-  # Currently the vbms_document_ids need to be set since they correspond to specific
-  # files to load when we fetch content.
-  let(:documents) do
-    [
-      Generators::Document.create(
-        filename: "My BVA Decision",
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: 5,
-        category_procedural: true
-      ),
-      Generators::Document.create(
-        filename: "My Form 9",
-        type: "Form 9",
-        received_at: 5.days.ago,
-        vbms_document_id: 2,
-        category_medical: true,
-        category_other: true
-      ),
-      Generators::Document.create(
-        filename: "My NOD",
-        type: "NOD",
-        received_at: 1.day.ago,
-        vbms_document_id: 3
-      )
-    ]
-  end
 
   let(:appeal) do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
@@ -47,168 +24,205 @@ RSpec.feature "Reader", focus: true do
     User.authenticate!(roles: ["Reader"])
   end
 
-  scenario "Add comment" do
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-    expect(page).to have_content("Caseflow Reader")
-
-    # Click on the link to the first file
-    click_on documents[0].type
-
-    # Ensure PDF content loads (using :all because the text is hidden)
-    expect(page).to have_content(:all, "Important Decision Document!!!")
-
-    # Add a comment
-    click_on "button-AddComment"
-
-    # pageContainer1 is the id pdfJS gives to the div holding the first page.
-    find("#pageContainer1").click
-    fill_in "addComment", with: "Foo"
-    click_on "Save"
-
-    # Expect comment to be visible on page
-    expect(page).to have_content("Foo")
-
-    # Expect comment to be in database
-    annotation = documents[0].reload.annotations.first
-    expect(annotation.comment).to eq("Foo")
-    expect(annotation.user_id).to eq(current_user.id)
-
-    # Edit the comment
-    click_on "Edit"
-    fill_in "editCommentBox", with: "FooBar"
-    click_on "Save"
-
-    # Expect edited comment to be visible on opage
-    expect(page).to have_content("FooBar")
-
-    # Expect comment to be in database
-    expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
-
-    # Delete the comment
-    click_on "Delete"
-
-    # Confirm the delete
-    click_on "Confirm delete"
-
-    # Expect the comment to be removed from the page
-    expect(page).to_not have_content("FooBar")
-
-    # Expect the comment to be removed from the database
-    expect(documents[0].reload.annotations.count).to eq(0)
-  end
-
-  context "When there is an existing annotation" do
-    let!(:annotation) do
-      Generators::Annotation.create(
-        comment: "hello world",
-        document_id: documents[0].id,
-        y: 750
-      )
-    end
-
-    scenario "Scroll to comment" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      click_on documents[0].type
-
-      expect(page).to have_content(annotation.comment)
-
-      # Wait for PDFJS to render the pages
-      expect(page).to have_css(".page")
-
-      # Click on the comment and ensure the scroll position changes
-      # by the y value the comment.
-      original_scroll = scroll_position
-      find("#comment0").click
-      after_click_scroll = scroll_position
-
-      expect(after_click_scroll - original_scroll).to be > 0
-    end
-  end
-
-  scenario "Scrolling renders pages" do
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-    click_on documents[0].type
-    expect(page).to have_css(".page")
-
-    # Expect only the first page to be reneder on first load
-    # But if we scroll second page should be rendered and
-    # we should be able to find text from the second page.
-    expect(page).to_not have_content("Banana. Banana who")
-    scroll_to(500)
-    expect(page).to have_content("Banana. Banana who")
-  end
-
-  scenario "Open single document view" do
-    visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-
-    # Expect only the first page of the pdf to be rendered
-    expect(page).to_not have_content("Important Decision Document!!!")
-  end
-
-  context "Large number of documents" do
-    let(:num_documents) { 20 }
-    let(:many_documents) do
-      (0..num_documents).to_a.reduce([]) do |acc, number|
+  context "Short list of documents" do
+    # Currently the vbms_document_ids need to be set since they correspond to specific
+    # files to load when we fetch content.
+    let(:documents) do
       [
         Generators::Document.create(
           filename: "My BVA Decision",
           type: "BVA Decision",
           received_at: 7.days.ago,
+          vbms_document_id: 5,
+          category_procedural: true
+        ),
+        Generators::Document.create(
+          filename: "My Form 9",
+          type: "Form 9",
+          received_at: 5.days.ago,
+          vbms_document_id: 2,
+          category_medical: true,
+          category_other: true
+        ),
+        Generators::Document.create(
+          filename: "My NOD",
+          type: "NOD",
+          received_at: 1.day.ago,
+          vbms_document_id: 3
+        )
+      ]
+    end
+
+    scenario "Add comment" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Caseflow Reader")
+
+      # Click on the link to the first file
+      click_on documents[0].type
+
+      # Ensure PDF content loads (using :all because the text is hidden)
+      expect(page).to have_content(:all, "Important Decision Document!!!")
+
+      # Add a comment
+      click_on "button-AddComment"
+
+      # pageContainer1 is the id pdfJS gives to the div holding the first page.
+      find("#pageContainer1").click
+      fill_in "addComment", with: "Foo"
+      click_on "Save"
+
+      # Expect comment to be visible on page
+      expect(page).to have_content("Foo")
+
+      # Expect comment to be in database
+      annotation = documents[0].reload.annotations.first
+      expect(annotation.comment).to eq("Foo")
+      expect(annotation.user_id).to eq(current_user.id)
+
+      # Edit the comment
+      click_on "Edit"
+      fill_in "editCommentBox", with: "FooBar"
+      click_on "Save"
+
+      # Expect edited comment to be visible on opage
+      expect(page).to have_content("FooBar")
+
+      # Expect comment to be in database
+      expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
+
+      # Delete the comment
+      click_on "Delete"
+
+      # Confirm the delete
+      click_on "Confirm delete"
+
+      # Expect the comment to be removed from the page
+      expect(page).to_not have_content("FooBar")
+
+      # Expect the comment to be removed from the database
+      expect(documents[0].reload.annotations.count).to eq(0)
+    end
+
+    context "When there is an existing annotation" do
+      let!(:annotation) do
+        Generators::Annotation.create(
+          comment: "hello world",
+          document_id: documents[0].id,
+          y: 750
+        )
+      end
+
+      scenario "Scroll to comment" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[0].type
+
+        expect(page).to have_content(annotation.comment)
+
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+
+        # Click on the comment and ensure the scroll position changes
+        # by the y value the comment.
+        original_scroll = scroll_position
+        find("#comment0").click
+        after_click_scroll = scroll_position
+
+        expect(after_click_scroll - original_scroll).to be > 0
+      end
+    end
+
+    scenario "Scrolling renders pages" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      click_on documents[0].type
+      expect(page).to have_css(".page")
+
+      # Expect only the first page to be reneder on first load
+      # But if we scroll second page should be rendered and
+      # we should be able to find text from the second page.
+      expect(page).to_not have_content("Banana. Banana who")
+      scroll_to(500)
+      expect(page).to have_content("Banana. Banana who")
+    end
+
+    scenario "Open single document view" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      # Expect only the first page of the pdf to be rendered
+      expect(page).to_not have_content("Important Decision Document!!!")
+    end
+
+    scenario "Categories" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      def get_aria_labels(elems)
+        elems.map do |elem|
+          elem["aria-label"]
+        end
+      end
+
+      doc_0_categories =
+        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+      expect(doc_0_categories).to eq(["Procedural"])
+
+      doc_1_categories =
+        get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
+      expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
+
+      click_on documents[0].type
+
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
+
+      find(".checkbox-wrapper-procedural").click
+      find(".checkbox-wrapper-medical").click
+
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      doc_0_categories =
+        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
+      expect(doc_0_categories).to eq(["Medical"])
+
+      click_on documents[1].type
+
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
+
+      find("#button-next").click
+
+      expect(find("#procedural", visible: false).checked?).to be false
+      expect(find("#medical", visible: false).checked?).to be false
+      expect(find("#other", visible: false).checked?).to be false
+    end
+  end
+
+  context "Large number of documents" do
+    let(:num_documents) { 20 }
+    let(:documents) do
+      (1..num_documents).to_a.reduce([]) do |acc, number|
+        acc << Generators::Document.create(
+          filename: number.to_s,
+          type: "BVA Decision #{number}",
+          received_at: number.days.ago,
           vbms_document_id: number,
           category_procedural: true
         )
-      ]
+      end
     end
 
     scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
+      # Click on the document at the bottom
       click_on documents[0].type
+
+      click_on "View all documents"
+
+      expect(page).to have_content("#{num_documents} Documents")
+
+      # Make sure the document is scrolled
+      expect(in_viewport("read-indicator")).to be true
     end
-  end
-
-  scenario "Categories" do
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-    def get_aria_labels(elems)
-      elems.map do |elem|
-        elem["aria-label"]
-      end
-    end
-
-    doc_0_categories =
-      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc_0_categories).to eq(["Procedural"])
-
-    doc_1_categories =
-      get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
-    expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
-
-    click_on documents[0].type
-
-    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
-
-    find(".checkbox-wrapper-procedural").click
-    find(".checkbox-wrapper-medical").click
-
-    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
-
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-    doc_0_categories =
-      get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-    expect(doc_0_categories).to eq(["Medical"])
-
-    click_on documents[1].type
-
-    expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
-
-    find("#button-next").click
-
-    expect(find("#procedural", visible: false).checked?).to be false
-    expect(find("#medical", visible: false).checked?).to be false
-    expect(find("#other", visible: false).checked?).to be false
   end
 end

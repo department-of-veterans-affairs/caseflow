@@ -86,6 +86,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             if (doc.id === this.props.lastReadDocId) {
               return <span
+                id="read-indicator"
                 aria-label="Most recently read document indicator"
                 ref={(element) => {
                   this.lastReadElement = element;
