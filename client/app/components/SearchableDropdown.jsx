@@ -28,8 +28,7 @@ class SearchableDropdown extends Component {
         return { value: nextProps.resetValue,
           uniqueId: nextProps.uniqueId };
       }
-    }
-    );
+    });
   };
 
   onChange = (value) => {
