@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
+import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
@@ -70,8 +72,31 @@ const ConnectedCategorySelector = connect(
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export default class PdfSidebar extends React.Component {
+  generateOptionsFromTags = (tags) =>
+    _.map(tags, (tag) => ({
+      value: tag.text,
+      label: tag.text,
+      tagId: tag.id })
+    );
+
+  onChange = (values, deletedValue) => {
+    if (_.size(deletedValue)) {
+      const tagValue = _.first(deletedValue).label;
+      const result = _.find(this.props.doc.tags, { text: tagValue });
+
+      this.props.removeTag(this.props.doc, result.id);
+    } else if (values && values.length) {
+      this.props.addNewTag(this.props.doc, values);
+    }
+  }
+
   render() {
     let comments = [];
+
+    const {
+      doc,
+      showTagErrorMsg
+    } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
       if (comment.uuid === this.props.editingComment) {
@@ -103,7 +128,7 @@ export default class PdfSidebar extends React.Component {
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={["cf-pdf-button"]}>
+            classNames={['cf-pdf-button']}>
             <strong>
               Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
@@ -114,7 +139,7 @@ export default class PdfSidebar extends React.Component {
             <b>Document Type:</b> {this.props.doc.type}
             <Button
               name="download"
-              classNames={["cf-btn-link"]}
+              classNames={['cf-btn-link']}
               ariaLabel="download"
             >
               <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
@@ -138,7 +163,25 @@ export default class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-comments">
+          <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
+            Related Issues
+          </div>
+          {/* This error alert needs to be formatted according to #1573 */}
+          {showTagErrorMsg &&
+            <Alert type="error" title={''}
+              message="Unable to save. Please try again." />}
+          <SearchableDropdown
+            name="tags"
+            label="Click in the box to select, or add issue(s)"
+            multi={true}
+            creatable={true}
+            options={this.generateOptionsFromTags(doc.tags)}
+            placeholder=""
+            value={this.generateOptionsFromTags(doc.tags)}
+            onChange={this.onChange}
+            selfManageValueState={true}
+          />
+          <div className="cf-sidebar-heading">
             Comments
             <span className="cf-right-side cf-add-comment-button">
               <Button

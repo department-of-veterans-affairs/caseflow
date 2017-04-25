@@ -87,11 +87,11 @@ export default class PdfViewer extends React.Component {
   placeComment = (pageNumber, coordinates) => {
     if (this.state.isPlacingNote) {
       let annotation = {
-        class: "Annotation",
+        class: 'Annotation',
         page: pageNumber,
-        "type": "point",
-        "x": coordinates.xPosition,
-        "y": coordinates.yPosition
+        type: 'point',
+        x: coordinates.xPosition,
+        y: coordinates.yPosition
       };
 
       this.setState({
@@ -215,6 +215,9 @@ export default class PdfViewer extends React.Component {
             onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
+            addNewTag={this.props.addNewTag}
+            removeTag={this.props.removeTag}
+            showTagErrorMsg={this.props.showTagErrorMsg}
             doc={this.props.doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
@@ -231,11 +234,11 @@ export default class PdfViewer extends React.Component {
         </div>
         {this.state.onConfirmDelete && <Modal
           buttons={[
-            { classNames: ["cf-modal-link", "cf-btn-link"],
+            { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
               onClick: this.closeConfirmDeleteModal
             },
-            { classNames: ["usa-button", "usa-button-secondary"],
+            { classNames: ['usa-button', 'usa-button-secondary'],
               name: 'Confirm delete',
               onClick: this.state.onConfirmDelete
             }

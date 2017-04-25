@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
+import * as ReaderActions from './actions';
 import _ from 'lodash';
-import { connect } from 'react-redux';
-import * as Constants from './constants';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
@@ -54,7 +56,9 @@ export class DecisionReviewer extends React.Component {
   }
 
   onPreviousPdf = () => {
-    this.setPage(Math.max(this.state.currentPdfIndex - 1, 0));
+    const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
+
+    this.setPage(currentPdfIndex);
   }
 
   documentUrl = (doc) => {
@@ -62,8 +66,10 @@ export class DecisionReviewer extends React.Component {
   }
 
   onNextPdf = () => {
-    this.setPage(Math.min(this.state.currentPdfIndex + 1,
-        this.state.documents.length - 1));
+    const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
+        this.state.documents.length - 1);
+
+    this.setPage(currentPdfIndex);
   }
 
   // This method is used for updating attributes of documents.
@@ -121,8 +127,13 @@ export class DecisionReviewer extends React.Component {
   }
 
   markAsRead = (pdfNumber) => {
-
     let documentId = this.state.documents[pdfNumber].id;
+
+    // For some reason calling this synchronosly prevents the new
+    // tab from opening. Move it to an asynchronus call.
+    setTimeout(() =>
+      this.props.handleSetLastRead(this.state.documents[pdfNumber].id)
+    );
 
     ApiUtil.patch(`/document/${documentId}/mark-as-read`).
       then(() => {
@@ -333,9 +344,12 @@ export class DecisionReviewer extends React.Component {
           isCommentLabelSelected={this.state.isCommentLabelSelected}
           onJumpToComment={this.onJumpToComment} />}
         {this.state.currentPdfIndex !== null && <PdfViewer
+          addNewTag={this.props.addNewTag}
+          removeTag={this.props.removeTag}
+          showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
-          doc={documents[this.state.currentPdfIndex]}
+          doc={this.props.storeDocuments[documents[this.state.currentPdfIndex].id]}
           onPreviousPdf={onPreviousPdf}
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
@@ -353,22 +367,23 @@ DecisionReviewer.propTypes = {
   appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func
+  onCommentScrolledTo: PropTypes.func,
+  handleSetLastRead: PropTypes.func.isRequired
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  onReceiveDocs(documents) {
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: documents
-    });
-  },
-  onScrollToComment(scrollToComment) {
-    dispatch({
-      type: Constants.SCROLL_TO_COMMENT,
-      payload: { scrollToComment }
-    });
-  }
-});
+const mapStateToProps = (state) => {
+  return {
+    ui: {
+      pdfSidebar: {
+        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
+      }
+    },
+    storeDocuments: state.documents
+  };
+};
 
-export default connect(null, mapDispatchToProps)(DecisionReviewer);
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(ReaderActions, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

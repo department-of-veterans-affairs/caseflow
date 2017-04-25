@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170413191800) do
+ActiveRecord::Schema.define(version: 20170424151347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,9 +22,11 @@ ActiveRecord::Schema.define(version: 20170413191800) do
     t.integer "page"
     t.integer "x"
     t.integer "y"
+    t.integer "user_id"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
+  add_index "annotations", ["user_id"], name: "index_annotations_on_user_id", using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
@@ -195,6 +197,13 @@ ActiveRecord::Schema.define(version: 20170413191800) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
+  create_table "tags", force: :cascade do |t|
+    t.string   "text"
+    t.integer  "document_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",             null: false
     t.string   "type",                  null: false
@@ -220,5 +229,6 @@ ActiveRecord::Schema.define(version: 20170413191800) do
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
 
+  add_foreign_key "annotations", "users"
   add_foreign_key "certifications", "users"
 end

@@ -32,10 +32,10 @@ class UnconnectedDocumentsCheck extends React.Component {
       certificationId
     } = this.props;
 
-    if (certificationStatus === "data_missing") {
+    if (certificationStatus === 'data_missing') {
       return <NotReady/>;
     }
-    if (certificationStatus === "already_certified") {
+    if (certificationStatus === 'already_certified') {
       return <AlreadyCertified/>;
     }
 

@@ -10,7 +10,7 @@ describe('Modal', () => {
       let wrapper = mount(
         <Modal
         buttons={[
-          { classNames: ["test-class"],
+          { classNames: ['test-class'],
             name: 'first'
           }
         ]}
@@ -31,13 +31,13 @@ describe('Modal', () => {
       let wrapper = mount(
         <Modal
         buttons={[
-          { classNames: ["test-class"],
+          { classNames: ['test-class'],
             name: 'first'
           },
-          { classNames: ["test-class"],
+          { classNames: ['test-class'],
             name: 'second'
           },
-          { classNames: ["test-class"],
+          { classNames: ['test-class'],
             name: 'third'
           }
         ]}
