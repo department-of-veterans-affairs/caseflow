@@ -12,6 +12,13 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
+export const handleSelectCommentIcon = (comment) => ({
+  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+  payload: {
+    scrollToSidebarComment: comment
+  }
+});
+
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,
   payload: {

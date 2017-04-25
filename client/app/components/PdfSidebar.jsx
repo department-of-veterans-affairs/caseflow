@@ -73,7 +73,6 @@ const COMMENT_SCROLL_FROM_THE_TOP = 50;
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
-<<<<<<< HEAD
 export class PdfSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -91,8 +90,9 @@ export class PdfSidebar extends React.Component {
         ].getBoundingClientRect().top - commentListBoundingBox.top -
         COMMENT_SCROLL_FROM_THE_TOP;
       this.props.handleFinishScrollToSidebarComment();
-=======
-export default class PdfSidebar extends React.Component {
+    }
+  }
+
   generateOptionsFromTags = (tags) =>
     _.map(tags, (tag) => ({
       value: tag.text,
@@ -108,7 +108,6 @@ export default class PdfSidebar extends React.Component {
       this.props.removeTag(this.props.doc, result.id);
     } else if (values && values.length) {
       this.props.addNewTag(this.props.doc, values);
->>>>>>> 8054d3c67d9a35a6e5fa1fe79e42d213bf8e1dfb
     }
   }
 

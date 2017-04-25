@@ -83,7 +83,7 @@ export const readerReducer = (state = initialState, action = {}) => {
             filter((tag) => tag.id !== action.payload.tagId) }
         }
       }
-    );
+    });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
         ui: {
