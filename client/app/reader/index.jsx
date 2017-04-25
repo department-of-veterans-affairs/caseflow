@@ -1,14 +1,19 @@
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
 import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
+import update from 'immutability-helper';
 
 const initialState = {
   ui: {
     pdf: {},
+    pdfSidebar: {
+      showTagErrorMsg: false
+    },
     pdfList: {
       lastReadDocId: null,
       filters: {
@@ -73,13 +78,24 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       );
     })();
-  case Constants.SET_CURRENT_RENDERED_FILE:
+  case Constants.REQUEST_NEW_TAG_CREATION:
+    return update(state, {
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } }
+    });
+  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
+    return update(state, {
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+    });
+  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
       {},
       state,
       {
-        ui: {
-          pdf: _.pick(action.payload, 'currentRenderedFile')
+        documents: {
+          [action.payload.docId]: {
+            tags: _.union(state.documents[action.payload.docId].tags,
+              action.payload.createdTags)
+          }
         }
       }
     );
@@ -108,6 +124,32 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
+    return update(state, {
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      documents: {
+        [action.payload.docId]: {
+          tags: { $set: state.documents[action.payload.docId].tags.
+            filter((tag) => tag.id !== action.payload.tagId) }
+        }
+      }
+    }
+  );
+  case Constants.REQUEST_REMOVE_TAG_FAILURE:
+    return update(state, {
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+    });
+  case Constants.SET_CURRENT_RENDERED_FILE:
+    return update(state, {
+      ui: {
+        pdfSidebar: { showTagErrorMsg: { $set: false } },
+        pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
+      }
+    });
+  case Constants.SCROLL_TO_COMMENT:
+    return update(state, {
+      ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
     return _.merge(
       {},
@@ -137,16 +179,15 @@ export const readerReducer = (state = initialState, action = {}) => {
   }
 };
 
-const store = createStore(
-  readerReducer,
   // eslint-disable-next-line no-underscore-dangle
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store =
+  createStore(readerReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
 
 const Reader = (props) => {
   return <Provider store={store}>
-        <DecisionReviewer {...props} />
-    </Provider>;
+      <DecisionReviewer {...props} />
+  </Provider>;
 };
 
 export default Reader;
