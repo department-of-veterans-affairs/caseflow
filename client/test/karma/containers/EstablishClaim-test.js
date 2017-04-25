@@ -143,7 +143,7 @@ describe('EstablishClaim', () => {
           value: stationOfJurisdiction
         }
       });
-    }
+    };
 
     beforeEach(() => {
 

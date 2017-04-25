@@ -12,7 +12,6 @@ import { validModifiers } from '../../establishClaim/util';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import Modal from '../../components/Modal';
-import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
 import { formatDate } from '../../util/DateUtil';
@@ -22,6 +21,7 @@ import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
+import CancelModal from '../../establishClaim/components/CancelModal';
 
 import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -510,6 +510,9 @@ export default class EstablishClaim extends BaseForm {
     return constant[regionalOfficeKey];
   }
 
+  handleCancelFeedbackChange = () => {
+  }
+
   formattedDecisionDate = () => {
     return formatDate(this.props.task.appeal.serialized_decision_date);
   }
@@ -603,6 +606,7 @@ export default class EstablishClaim extends BaseForm {
     let decisionType = this.props.task.appeal.decision_type;
 
     let specialIssues = this.store.getState().specialIssues;
+    let isShowingCancelModal = this.store.getState().establishClaim.isShowingCancelModal;
 
     return (
       <Provider store={this.store}>
@@ -684,38 +688,7 @@ export default class EstablishClaim extends BaseForm {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
         }
-
-        {cancelModalDisplay && <Modal
-          buttons={[
-            { classNames: ['cf-modal-link', 'cf-btn-link'],
-              name: 'Close',
-              onClick: this.handleModalClose('cancelModalDisplay')
-            },
-            { classNames: ['usa-button', 'usa-button-secondary'],
-              loading: modalSubmitLoading,
-              name: 'Stop processing claim',
-              onClick: this.handleFinishCancelTask
-            }
-          ]}
-          visible={true}
-          closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Stop Processing Claim">
-          <p>
-            If you click the <b>Stop processing claim </b>
-            button below your work will not be
-            saved and an EP will not be created for this claim.
-          </p>
-          <p>
-            Please tell us why you have chosen to discontinue processing this claim.
-          </p>
-          <TextareaField
-            label="Explanation"
-            name="Explanation"
-            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
-            required={true}
-            {...this.state.cancelModal.cancelFeedback}
-          />
-        </Modal>}
+        <CancelModal/>
         </div>
       </Provider>
     );

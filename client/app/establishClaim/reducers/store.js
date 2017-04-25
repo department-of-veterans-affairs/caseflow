@@ -1,6 +1,7 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import logger from 'redux-logger';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
+import establishClaimReducer, { getEstablishClaimInitialState } from './index';
 import establishClaimFormReducer,
   { getEstablishClaimFormInitialState } from './establishClaimForm';
 import ConfigUtil from '../../util/ConfigUtil';
@@ -17,11 +18,14 @@ export const createEstablishClaimStore = (props) => {
   return createStore(
     combineReducers({
       specialIssues: specialIssuesReducer,
-      establishClaimForm: establishClaimFormReducer
+      establishClaimForm: establishClaimFormReducer,
+      // Reducer with general/common state
+      establishClaim: establishClaimReducer
     }),
     {
       specialIssues: getSpecialIssuesInitialState(props),
-      establishClaimForm: getEstablishClaimFormInitialState(props)
+      establishClaimForm: getEstablishClaimFormInitialState(props),
+      establishClaim: getEstablishClaimInitialState(props)
     },
     applyMiddleware(...middleware)
   );

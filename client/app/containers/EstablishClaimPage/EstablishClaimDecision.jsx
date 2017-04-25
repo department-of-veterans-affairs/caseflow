@@ -42,7 +42,7 @@ export class EstablishClaimDecision extends React.Component {
       loading,
       decisionType,
       handleSubmit,
-      handleCancelTask,
+      handleToggleCancelTaskModal,
       handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
@@ -208,7 +208,7 @@ export class EstablishClaimDecision extends React.Component {
           <div className="cf-push-right">
             <Button
                 name="Cancel"
-                onClick={handleCancelTask}
+                onClick={handleToggleCancelTaskModal}
                 classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
@@ -226,7 +226,7 @@ export class EstablishClaimDecision extends React.Component {
 
 EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.string.isRequired,
-  handleCancelTask: PropTypes.func.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
@@ -242,6 +242,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    handleToggleCancelTaskModal: () => {
+      dispatch({
+        type: Constants.TOGGLE_CANCEL_TASK_MODAL
+      });
+    },
     handleSpecialIssueFieldChange: (specialIssue) => (value) => {
       dispatch({
         type: Constants.CHANGE_SPECIAL_ISSUE,
