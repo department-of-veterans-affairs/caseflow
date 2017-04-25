@@ -347,6 +347,7 @@ export class DecisionReviewer extends React.Component {
           addNewTag={this.props.addNewTag}
           removeTag={this.props.removeTag}
           showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
+          errorCount={this.props.ui.pdfSidebar.errorCount}
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(documents[this.state.currentPdfIndex])}
           doc={this.props.storeDocuments[documents[this.state.currentPdfIndex].id]}
@@ -375,7 +376,8 @@ const mapStateToProps = (state) => {
   return {
     ui: {
       pdfSidebar: {
-        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
+        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg,
+        errorCount: state.ui.pdfSidebar.errorCount
       }
     },
     storeDocuments: state.documents

@@ -12,7 +12,8 @@ import update from 'immutability-helper';
 const initialState = {
   ui: {
     pdfSidebar: {
-      showTagErrorMsg: false
+      showTagErrorMsg: false,
+      errorCount: 0
     },
     pdf: {
     },
@@ -59,7 +60,8 @@ export const readerReducer = (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true },
+        errorCount: { $set: state.ui.pdfSidebar.errorCount + 1 } } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return _.merge(
@@ -87,7 +89,8 @@ export const readerReducer = (state = initialState, action = {}) => {
   );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true },
+        errorCount: { $set: state.ui.pdfSidebar.errorCount + 1 } } }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
     return update(state, {

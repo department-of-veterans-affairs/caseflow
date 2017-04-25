@@ -24,6 +24,9 @@ class SearchableDropdown extends Component {
       if (nextProps.uniqueId !== prevProps.uniqueId) {
         return { value: nextProps.initialValue || null,
           uniqueId: nextProps.uniqueId };
+      } else if (_.size(nextProps.resetValue)) {
+        return { value: nextProps.resetValue,
+          uniqueId: nextProps.uniqueId };
       }
     }
     );
