@@ -81,13 +81,13 @@ export default class TagTableColumn extends React.Component {
   }
 
   setHeight = (index, dimensions) => {
-    this.setState((prevState) => {
-      return update(prevState, {
+    this.setState((prevState) => (
+      update(prevState, {
         widths: { $merge: {
           [index]: dimensions.width
         } }
-      });
-    });
+      })
+    ));
   }
 
   getShowMoreLink = (expandAll) => {
@@ -99,9 +99,9 @@ export default class TagTableColumn extends React.Component {
 
     return <a className="see-more-link-toggle" href="#" onClick={(element) => {
       element.preventDefault();
-      this.setState((prevState) => {
-        return { showAllTags: !prevState.showAllTags };
-      });
+      this.setState((prevState) => (
+        { showAllTags: !prevState.showAllTags }
+      ));
     }}>
       {tagText}
     </a>;

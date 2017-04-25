@@ -26,8 +26,8 @@ const initialState = {
 };
 
 // reusable functions
-const expandCollapseAllComments = (state, showAllComments) => {
-  return update(state, {
+const expandCollapseAllComments = (state, showAllComments) => (
+  update(state, {
     documents: {
       $set: _.mapValues(state.documents, (document) => {
         return update(document, { listComments: { $set: showAllComments } });
@@ -36,8 +36,8 @@ const expandCollapseAllComments = (state, showAllComments) => {
     ui: {
       $merge: { expandAll: showAllComments }
     }
-  });
-};
+  })
+);
 
 export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
