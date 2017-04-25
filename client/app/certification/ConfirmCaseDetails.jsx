@@ -100,6 +100,7 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (erroredFields.length) {
       this.props.onContinueClickFailed();
+
       return;
     }
 
@@ -173,7 +174,7 @@ export class ConfirmCaseDetails extends React.Component {
         </div>
 
         <Footer
-          disableContinue={!!this.getValidationErrors().length && continueClicked}
+          disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />

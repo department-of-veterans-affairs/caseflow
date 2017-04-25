@@ -143,12 +143,14 @@ class UnconnectedConfirmHearing extends React.Component {
 
     if (erroredFields.length) {
       this.props.onContinueClickFailed();
+
       return;
     }
 
     this.props.onContinueClickSuccess();
 
-    window.location = `/certifications/${this.props.match.params.vacols_id}/sign_and_certify`;
+    window.location = `/certifications/${this.props.match.params.vacols_id}` +
+        '/sign_and_certify';
   }
 
   render() {
@@ -260,7 +262,7 @@ class UnconnectedConfirmHearing extends React.Component {
         </div>
 
       <Footer
-        disableContinue={!!this.getValidationErrors().length && continueClicked}
+        disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
         onClickContinue={this.onClickContinue.bind(this)}
       />
 
@@ -320,7 +322,7 @@ const mapDispatchToProps = (dispatch) => ({
     });
   },
   onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess())
 });
 
 /*

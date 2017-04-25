@@ -33,33 +33,26 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   getValidationErrors() {
-    let {
-      certifyingOffice,
-      certifyingUsername,
-      certifyingOfficialName,
-      certifyingOfficialTitle,
-      certificationDate
-    } = this.props;
 
     const erroredFields = [];
 
-    if (!certifyingOffice) {
+    if (!this.props.certifyingOffice) {
       erroredFields.push('certifyingOffice');
     }
 
-    if (!certifyingUsername) {
+    if (!this.props.certifyingUsername) {
       erroredFields.push('certifyingUsername');
     }
 
-    if (!certifyingOfficialName) {
+    if (!this.props.certifyingOfficialName) {
       erroredFields.push('certifyingOfficialName');
     }
 
-    if (!certifyingOfficialTitle) {
+    if (!this.props.certifyingOfficialTitle) {
       erroredFields.push('certifyingOfficialTitle');
     }
 
-    if (!certificationDate) {
+    if (!this.props.certificationDate) {
       erroredFields.push('certificationDate');
     }
 
@@ -72,6 +65,7 @@ class UnconnectedSignAndCertify extends React.Component {
 
     if (erroredFields.length) {
       this.props.onContinueClickFailed();
+
       return;
     }
 
@@ -125,7 +119,7 @@ class UnconnectedSignAndCertify extends React.Component {
         </div>
       </form>
     <Footer
-      disableContinue={!!this.getValidationErrors().length && continueClicked}
+      disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
       onClickContinue={this.onClickContinue.bind(this)}
     />
   </div>;
@@ -150,7 +144,7 @@ const mapDispatchToProps = (dispatch) => ({
     });
   },
   onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess())
 });
 
 const mapStateToProps = (state) => ({
