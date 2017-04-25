@@ -16,6 +16,10 @@ const baseUrl = `http://localhost:${hotRailsPort}`;
 
 const devServer = new WebpackDevServer(compiler, {
   publicPath: webpackConfig.output.publicPath,
+  headers: {
+    'Access-Control-Allow-Origin': 'http://localhost:3000',
+    'Access-Control-Allow-Credentials': 'true'
+  },
   hot: true,
   inline: true,
   historyApiFallback: false,
