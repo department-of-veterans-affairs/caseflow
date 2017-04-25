@@ -182,7 +182,7 @@ describe Task do
         )
       end
 
-      let(:quota) { Quota.for(date: Time.zone.today, task_klass: FakeTask) }
+      let(:quota) { Quota.new(date: Time.zone.today, task_klass: FakeTask) }
 
       it "recalculates current quota assignee count" do
         # Create a task completed by another user to bring the number of active employees to 2

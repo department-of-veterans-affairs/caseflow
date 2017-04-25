@@ -239,7 +239,7 @@ class Task < ActiveRecord::Base
   end
 
   def quota
-    Quota.for(date: Time.zone.today, task_klass: self.class)
+    Quota.new(date: Time.zone.today, task_klass: self.class)
   end
 
   def check_and_invalidate!

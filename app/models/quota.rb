@@ -10,7 +10,7 @@ class Quota
   end
 
   def update_assignee_count!(projection)
-    @loaded_assignee_count = nil
+    @persisted_assignee_count = nil
 
     Rails.cache.write(redis_key, [active_assignees, projection.to_i].max, expires_in: nil)
   end
@@ -20,13 +20,13 @@ class Quota
   end
 
   def assignee_count
-    set_carry_over_assignee_projection! unless loaded_assignee_count
+    set_carry_over_assignee_projection! unless persisted_assignee_count
 
-    loaded_assignee_count
+    persisted_assignee_count
   end
 
   def persisted?
-    !!loaded_assignee_count
+    !!persisted_assignee_count
   end
 
   class << self
@@ -67,11 +67,11 @@ class Quota
 
   # Cap the search to the last month to avoid an infinite loop
   def most_recent_quotas
-    (1...31).lazy.map { |days| Quota.for(date: date - days.days, task_klass: task_klass) }
+    (1...31).lazy.map { |days| self.class.new(date: date - days.days, task_klass: task_klass) }
   end
 
-  def loaded_assignee_count
-    @loaded_assignee_count = Rails.cache.read(redis_key).try(:to_i)
+  def persisted_assignee_count
+    @persisted_assignee_count = Rails.cache.read(redis_key).try(:to_i)
   end
 
   def redis_key

@@ -145,7 +145,7 @@ class EstablishClaimsController < TasksController
   end
 
   def quota
-    Quota.for(date: Time.zone.today, task_klass: EstablishClaim)
+    Quota.new(date: Time.zone.today, task_klass: EstablishClaim)
   end
   helper_method :quota
 
