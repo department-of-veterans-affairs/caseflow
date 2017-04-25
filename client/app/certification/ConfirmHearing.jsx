@@ -125,7 +125,8 @@ class UnconnectedConfirmHearing extends React.Component {
       onTypeOfForm9Change,
       hearingType,
       onHearingTypeChange,
-      match
+      match,
+      certificationId
     } = this.props;
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
@@ -225,6 +226,7 @@ class UnconnectedConfirmHearing extends React.Component {
         </div>
 
       <Footer
+        certificationId={certificationId}
         nextPageUrl={
           `/certifications/${match.params.vacols_id}/sign_and_certify`
         }/>
@@ -295,7 +297,8 @@ const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
   form9Date: state.form9Date,
-  hearingType: state.hearingType
+  hearingType: state.hearingType,
+  certificationId: state.certificationId
 });
 
 /*
@@ -316,7 +319,8 @@ ConfirmHearing.propTypes = {
   onTypeOfForm9Change: PropTypes.func,
   hearingType: PropTypes.string,
   onHearingTypeChange: PropTypes.func,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationId: PropTypes.number
 };
 
 export default ConfirmHearing;
