@@ -196,7 +196,7 @@ RSpec.feature "Reader" do
       expect(find("#other", visible: false).checked?).to be false
     end
 
-    scenario "Tags", focus: true do
+    scenario "Tags" do
       TAG1 = "Medical".freeze
       TAG2 = "Law document".freeze
 
@@ -245,9 +245,10 @@ RSpec.feature "Reader" do
       # expecting the page not to have any tags
       expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
+      
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # go back to the first document
-      find("#button-previous").click
+      click_on documents[0].type
 
       # verify that the tags on the previous document still exist
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
