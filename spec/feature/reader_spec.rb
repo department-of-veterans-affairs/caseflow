@@ -320,11 +320,9 @@ RSpec.feature "Reader" do
     click_on "Expand all"
     expect(page).to have_content("Foo")
     expect(page).to have_content("Bar")
-    expect(first(".document-list-issue-tags"))
-    to have_css(".document-list-issue-tag", count: 9)
+    expect(first(".document-list-issue-tags")).to have_css(".document-list-issue-tag", count: 9)
     click_on "Collapse all"
-    expect(first(".document-list-issue-tags"))
-    to have_css(".document-list-issue-tag", maximum: 5)
+    expect(first(".document-list-issue-tags")).to have_css(".document-list-issue-tag", maximum: 5)
     expect(page).not_to have_content("Foo")
     expect(page).not_to have_content("Bar")
   end
