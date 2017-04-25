@@ -14,12 +14,19 @@ class SearchableDropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value || null
+      value: props.initialValue || null,
+      uniqueId: props.uniqueId
     };
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value || null });
+    this.setState((prevProps) => {
+      if (nextProps.uniqueId !== prevProps.uniqueId) {
+        return { value: nextProps.initialValue || null,
+          uniqueId: nextProps.uniqueId };
+      }
+    }
+    );
   };
 
   onChange = (value) => {
@@ -36,6 +43,7 @@ class SearchableDropdown extends Component {
     if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
     }
+
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
       this.setState({ value: newValue });
