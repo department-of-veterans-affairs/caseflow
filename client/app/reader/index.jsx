@@ -114,16 +114,6 @@ export const readerReducer = (state = initialState, action = {}) => {
           }
         }
       });
-  case Constants.SCROLL_TO_COMMENT:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: _.pick(action.payload, 'scrollToComment')
-        }
-      }
-    );
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },

@@ -122,7 +122,6 @@ export class PdfSidebar extends React.Component {
             onChange={this.onChange}
             selfManageValueState={true}
           />
-          {/*<div className="cf-heading-comments">*/}
           <div className="cf-sidebar-heading">
             Comments
             <span className="cf-right-side cf-add-comment-button">
