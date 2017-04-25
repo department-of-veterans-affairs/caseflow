@@ -8,6 +8,31 @@ const MAX_WIDTH = 225;
 const MAX_ASSUMED_ROWS_FOR_ONE_TAG = 2;
 const MAX_SHOWN_ROWS = 2;
 
+const getAllTagsForRow = (i, arrWidths) => {
+  let index = i;
+  let totalWidth = 0;
+  let indices = [];
+
+  // get all the tags this row can hold
+  while (index < arrWidths.length &&
+    (totalWidth + arrWidths[index]) < MAX_WIDTH) {
+    totalWidth += arrWidths[index];
+    indices.push(index);
+    index += 1;
+  }
+
+  return {
+    indices,
+    index
+  };
+};
+
+/**
+ * This function returns a has with rows with keys as row numbers,
+ * values as array of tag numbers. This is calculated using the
+ * max width provided for the column.
+ */
+/*eslint-disable */
 const getTagsRowFormat = (widths) => {
   const arrWidths = _.values(widths);
   let rows = {};
@@ -29,17 +54,7 @@ const getTagsRowFormat = (widths) => {
     // if two elements alongside each other have combined less
     // than max width, this row can fit more than one tag
     } else if ((arrWidths[i] + arrWidths[i + 1]) < MAX_WIDTH) {
-      let index = i;
-      let totalWidth = 0;
-      let indices = [];
-
-      // get all the tags this row can hold
-      while (index < arrWidths.length &&
-        (totalWidth + arrWidths[index]) < MAX_WIDTH) {
-        totalWidth += arrWidths[index];
-        indices.push(index);
-        index += 1;
-      }
+      const { indices, index } = getAllTagsForRow(i, arrWidths);
 
       rows[rowNum] = indices;
       rowNum += 1;
@@ -58,6 +73,7 @@ const getTagsRowFormat = (widths) => {
 
   return rows;
 };
+/*eslint-enable */
 
 const getIndicesToHide = (rows) => {
   let hiddenindices = [];
@@ -132,7 +148,6 @@ export default class TagTableColumn extends React.Component {
 
     let hiddenTagindices = getIndicesToHide(rows);
     let tagsStyle = { maxWidth: MAX_WIDTH };
-    //let tagStyle = { maxWidth: MAX_WIDTH };
 
     return <div className="document-list-issue-tags" style={tagsStyle}>
       {tags.map((tag, index) => {
@@ -142,7 +157,8 @@ export default class TagTableColumn extends React.Component {
           }}
           key={index}
         >
-          <div className={this.getTagClassName(hiddenTagindices, index)} style={tagsStyle}>
+          <div className={this.getTagClassName(hiddenTagindices, index)}
+            style={tagsStyle}>
             {`${tag.text}`}
           </div>
         </Measure>;
