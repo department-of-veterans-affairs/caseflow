@@ -76,15 +76,15 @@ const getTagsRowFormat = (widths) => {
 /*eslint-enable */
 
 const getIndicesToHide = (rows) => {
-  let hiddenindices = [];
+  let hiddenIndices = [];
 
   _.forOwn(rows, (value, key) => {
     if (key > MAX_SHOWN_ROWS) {
-      hiddenindices = _.union(hiddenindices, rows[key]);
+      hiddenIndices = _.union(hiddenIndices, rows[key]);
     }
   });
 
-  return hiddenindices;
+  return hiddenIndices;
 };
 
 export default class TagTableColumn extends React.Component {
