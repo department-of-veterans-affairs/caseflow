@@ -83,7 +83,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialTitle,
       certificationDate,
       continueClicked,
-      match
+      certificationId
     } = this.props;
 
     return <div>
