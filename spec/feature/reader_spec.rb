@@ -245,10 +245,53 @@ RSpec.feature "Reader" do
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
   end
 
-  scenario "Expand All" do
+  scenario "Expand All and See More..Less tags" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     click_on documents[0].filename
-    
-    
+
+    # Add a comment
+    click_on "button-AddComment"
+
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
+    fill_in "addComment", with: "Foo"
+    click_on "Save"
+
+    click_on "button-AddComment"
+
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
+    fill_in "addComment", with: "Bar"
+    click_on "Save"
+
+    find(".Select-control").click
+    input_element = find(".Select-input > input")
+    input_element.click.native.send_keys("doc tag", :enter)
+    input_element.click.native.send_keys("This is a Law Document", :enter)
+    input_element.click.native.send_keys("Crazy Document", :enter)
+    input_element.click.native.send_keys("Serviced Comment", :enter)
+    input_element.click.native.send_keys("Tag tag tag 2", :enter)
+    input_element.click.native.send_keys("Tag tag tag 3", :enter)
+    input_element.click.native.send_keys("Piece of Pie", :enter)
+        
+    find("#button-backToDocuments").click
+
+    expect(page).to have_content("See More...")
+    first('.see-more-link-toggle').click
+    expect(first('.document-list-issue-tags')).to have_css('.document-list-issue-tag', count: 9)
+    expect(page).to have_content("See Less...")
+    first('.see-more-link-toggle').click
+
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on "Expand all"
+    expect(page).to have_content("Foo")
+    expect(page).to have_content("Bar")
+    expect(first('.document-list-issue-tags')).
+      to have_css('.document-list-issue-tag', count: 9)
+    click_on "Collapse all"
+    expect(first('.document-list-issue-tags')).
+      to have_css('.document-list-issue-tag', maximum: 5)
+    expect(page).not_to have_content("Foo")
+    expect(page).not_to have_content("Bar")
   end
 end
