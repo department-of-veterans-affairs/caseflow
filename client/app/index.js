@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactOnRails from 'react-on-rails';
-import { render } from "react-dom";
-import { AppContainer } from "react-hot-loader";
+import { render } from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
