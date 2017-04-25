@@ -4,74 +4,19 @@ import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
-import Checkbox from '../components/Checkbox';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
-
-const CategorySelector = (props) => {
-  const { category, categoryName, handleCategoryToggle, docId, documents } = props;
-  const toggleState = Boolean(_.get(
-    documents,
-    [docId, categoryFieldNameOfCategoryName(categoryName)]
-  ));
-  const Svg = category.svg;
-  const label = <div className="cf-category-selector">
-      <Svg />
-      <span className="cf-category-name">{category.humanName}</span>
-    </div>;
-
-  const handleChange = (checked) => handleCategoryToggle(categoryName, checked, docId);
-
-  return <div>
-    <Checkbox name={categoryName} onChange={handleChange}
-      label={label} value={toggleState} />
-  </div>;
-};
-
-CategorySelector.propTypes = {
-  category: PropTypes.shape({
-    humanName: PropTypes.string.isRequired,
-    svg: PropTypes.func.isRequired
-  }).isRequired,
-  categoryName: PropTypes.string.isRequired
-};
-
-const mapPropsToState = (state) => _.pick(state, 'documents');
-const mapDispatchToState = (dispatch) => ({
-  handleCategoryToggle(categoryName, toggleState, docId) {
-    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-    ApiUtil.patch(
-      `/document/${docId}`,
-      { data: { [categoryKey]: toggleState } }
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Saving document category failed', err);
-    });
-
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-      payload: {
-        categoryName,
-        toggleState,
-        docId
-      }
-    });
-  }
-});
-const ConnectedCategorySelector = connect(
-    mapPropsToState, mapDispatchToState
-  )(CategorySelector);
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
-export default class PdfSidebar extends React.Component {
+export class PdfSidebar extends React.Component {
   generateOptionsFromTags = (tags) =>
     _.map(tags, (tag) => ({
       value: tag.text,
@@ -125,6 +70,12 @@ export default class PdfSidebar extends React.Component {
         </Comment>;
     });
 
+    const categoryToggleStates = _.mapValues(
+      Constants.documentCategories,
+      (val, key) =>
+        this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
+    );
+
     return <div className="cf-sidebar-wrapper">
         <div className="cf-sidebar-header">
           <Button
@@ -149,21 +100,11 @@ export default class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
           </p>
-          <ul className="cf-document-category-picker">
-            {
-              _(Constants.documentCategories).
-                toPairs().
-                // eslint-disable-next-line no-unused-vars
-                sortBy(([name, category]) => category.renderOrder).
-                map(
-                  ([categoryName, category]) => <li key={categoryName}>
-                    <ConnectedCategorySelector category={category}
-                      categoryName={categoryName} docId={this.props.doc.id} />
-                  </li>
-                ).
-                value()
+          <DocCategoryPicker
+            handleCategoryToggle={
+              _.partial(this.props.handleCategoryToggle, this.props.doc.id)
             }
-          </ul>
+            categoryToggleStates={categoryToggleStates} />
           <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
             Related Issues
           </div>
@@ -227,3 +168,32 @@ PdfSidebar.propTypes = {
   onDeleteComment: PropTypes.func,
   onJumpToComment: PropTypes.func
 };
+
+const mapPropsToState = (state) => _.pick(state, 'documents');
+const mapDispatchToState = (dispatch) => ({
+  handleCategoryToggle(docId, categoryName, toggleState) {
+    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
+
+    ApiUtil.patch(
+      `/document/${docId}`,
+      { data: { [categoryKey]: toggleState } }
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Saving document category failed', err);
+    });
+
+    dispatch({
+      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+      payload: {
+        categoryName,
+        toggleState,
+        docId
+      }
+    });
+  }
+});
+const ConnectedPdfSidebar = connect(
+    mapPropsToState, mapDispatchToState
+  )(PdfSidebar);
+
+export default ConnectedPdfSidebar;
