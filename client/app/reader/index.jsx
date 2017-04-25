@@ -32,26 +32,28 @@ export const readerReducer = (state = initialState, action = {}) => {
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
-    return _.merge(
-      {},
+    return update(
       state,
       {
-        documents: _(action.payload).
-          map((doc) => [doc.id, doc]).
-          fromPairs().
-          value()
+        documents: {
+          $set: _(action.payload).
+            map((doc) => [doc.id, doc]).
+            fromPairs().
+            value()
+        }
       }
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
 
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            [categoryKey]: action.payload.toggleState
+            [categoryKey]: {
+              $set: action.payload.toggleState
+            }
           }
         }
       }
@@ -64,14 +66,14 @@ export const readerReducer = (state = initialState, action = {}) => {
         false
       );
 
-      return _.merge(
-        {},
-        state,
+      return update(state,
         {
           ui: {
             pdfList: {
               dropdowns: {
-                [action.payload.filterName]: !originalValue
+                [action.payload.filterName]: {
+                  $set: !originalValue
+                }
               }
             }
           }
@@ -87,28 +89,30 @@ export const readerReducer = (state = initialState, action = {}) => {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            tags: _.union(state.documents[action.payload.docId].tags,
-              action.payload.createdTags)
+            tags: {
+              $set: _.union(state.documents[action.payload.docId].tags,
+                action.payload.createdTags)
+            }
           }
         }
       }
     );
   case Constants.SET_CATEGORY_FILTER:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdfList: {
             filters: {
               category: {
-                [action.payload.categoryName]: action.payload.checked
+                [action.payload.categoryName]: {
+                  $set: action.payload.checked
+                }
               }
             }
           }
@@ -141,25 +145,27 @@ export const readerReducer = (state = initialState, action = {}) => {
       ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
     });
   case Constants.TOGGLE_COMMENT_LIST:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            listComments: !state.documents[action.payload.docId].listComments
+            listComments: {
+              $set: !state.documents[action.payload.docId].listComments
+            }
           }
         }
       }
     );
   case Constants.LAST_READ_DOCUMENT:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdfList: {
-            lastReadDocId: action.payload.docId
+            lastReadDocId: {
+              $set: action.payload.docId
+            }
           }
         }
       }
