@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
+import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Checkbox from '../components/Checkbox';
+import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
@@ -71,6 +73,7 @@ const COMMENT_SCROLL_FROM_THE_TOP = 50;
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
+<<<<<<< HEAD
 export class PdfSidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -88,11 +91,34 @@ export class PdfSidebar extends React.Component {
         ].getBoundingClientRect().top - commentListBoundingBox.top -
         COMMENT_SCROLL_FROM_THE_TOP;
       this.props.handleFinishScrollToSidebarComment();
+=======
+export default class PdfSidebar extends React.Component {
+  generateOptionsFromTags = (tags) =>
+    _.map(tags, (tag) => ({
+      value: tag.text,
+      label: tag.text,
+      tagId: tag.id })
+    );
+
+  onChange = (values, deletedValue) => {
+    if (_.size(deletedValue)) {
+      const tagValue = _.first(deletedValue).label;
+      const result = _.find(this.props.doc.tags, { text: tagValue });
+
+      this.props.removeTag(this.props.doc, result.id);
+    } else if (values && values.length) {
+      this.props.addNewTag(this.props.doc, values);
+>>>>>>> 8054d3c67d9a35a6e5fa1fe79e42d213bf8e1dfb
     }
   }
 
   render() {
     let comments = [];
+
+    const {
+      doc,
+      showTagErrorMsg
+    } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
       if (comment.uuid === this.props.editingComment) {
@@ -163,7 +189,25 @@ export class PdfSidebar extends React.Component {
                 value()
             }
           </ul>
-          <div className="cf-heading-comments">
+          <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
+            Related Issues
+          </div>
+          {/* This error alert needs to be formatted according to #1573 */}
+          {showTagErrorMsg &&
+            <Alert type="error" title={''}
+              message="Unable to save. Please try again." />}
+          <SearchableDropdown
+            name="tags"
+            label="Click in the box to select, or add issue(s)"
+            multi={true}
+            creatable={true}
+            options={this.generateOptionsFromTags(doc.tags)}
+            placeholder=""
+            value={this.generateOptionsFromTags(doc.tags)}
+            onChange={this.onChange}
+            selfManageValueState={true}
+          />
+          <div className="cf-sidebar-heading">
             Comments
             <span className="cf-right-side cf-add-comment-button">
               <Button
