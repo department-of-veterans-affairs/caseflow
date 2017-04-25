@@ -7,7 +7,6 @@ import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 
-
 // TODO: how should we organize content?
 // one school of thought is to put content
 // in its own separate file.
@@ -148,6 +147,8 @@ class UnconnectedConfirmHearing extends React.Component {
     }
 
     this.props.onContinueClickSuccess();
+
+    window.location = `/certifications/${this.props.match.params.vacols_id}/sign_and_certify`;
   }
 
   render() {
@@ -261,7 +262,6 @@ class UnconnectedConfirmHearing extends React.Component {
       <Footer
         disableContinue={!!this.getValidationErrors().length && continueClicked}
         onClickContinue={this.onClickContinue.bind(this)}
-        //nextPageUrl={`/certifications/${match.params.vacols_id}/sign_and_certify`}
       />
 
     </div>;

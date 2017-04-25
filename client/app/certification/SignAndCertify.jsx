@@ -5,7 +5,7 @@ import RadioField from '../components/RadioField';
 import Footer from './Footer';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
-
+import * as certificationActions from './actions/Certification';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -32,6 +32,54 @@ class UnconnectedSignAndCertify extends React.Component {
     this.props.updateProgressBar();
   }
 
+  getValidationErrors() {
+    let {
+      certifyingOffice,
+      certifyingUsername,
+      certifyingOfficialName,
+      certifyingOfficialTitle,
+      certificationDate
+    } = this.props;
+
+    const erroredFields = [];
+
+    if (!certifyingOffice) {
+      erroredFields.push('certifyingOffice');
+    }
+
+    if (!certifyingUsername) {
+      erroredFields.push('certifyingUsername');
+    }
+
+    if (!certifyingOfficialName) {
+      erroredFields.push('certifyingOfficialName');
+    }
+
+    if (!certifyingOfficialTitle) {
+      erroredFields.push('certifyingOfficialTitle');
+    }
+
+    if (!certificationDate) {
+      erroredFields.push('certificationDate');
+    }
+
+    return erroredFields;
+  }
+
+  onClickContinue() {
+
+    const erroredFields = this.getValidationErrors();
+
+    if (erroredFields.length) {
+      this.props.onContinueClickFailed();
+      return;
+    }
+
+    this.props.onContinueClickSuccess();
+
+    window.location = `/certifications/${this.props.match.params.vacols_id}/success`;
+  }
+
   render() {
     let {
       onSignAndCertifyFormChange,
@@ -40,7 +88,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      match
+      continueClicked
     } = this.props;
 
     return <div>
@@ -76,9 +124,10 @@ class UnconnectedSignAndCertify extends React.Component {
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
       </form>
-    <Footer nextPageUrl={
-      `/certifications/${match.params.vacols_id}/success`
-    }/>
+    <Footer
+      disableContinue={!!this.getValidationErrors().length && continueClicked}
+      onClickContinue={this.onClickContinue.bind(this)}
+    />
   </div>;
   }
 }
@@ -99,7 +148,9 @@ const mapDispatchToProps = (dispatch) => ({
         [fieldName]: value
       }
     });
-  }
+  },
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 });
 
 const mapStateToProps = (state) => ({
@@ -107,7 +158,8 @@ const mapStateToProps = (state) => ({
   certifyingUsername: state.certifyingUsername,
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
-  certificationDate: state.certificationDate
+  certificationDate: state.certificationDate,
+  continueClicked: state.continueClicked
 });
 
 const SignAndCertify = connect(
@@ -122,7 +174,8 @@ SignAndCertify.propTypes = {
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  continueClicked: PropTypes.bool
 };
 
 export default SignAndCertify;
