@@ -117,8 +117,7 @@ export default class CancelCertificationModal extends BaseForm {
 
     return ApiUtil.post('/certification_cancellations', { data }).
       then(() => {
-        this.props.closeHandler();
-
+        window.location.href = '/certification_cancellations/show';
       });
 
   }

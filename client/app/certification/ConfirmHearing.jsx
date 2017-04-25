@@ -162,6 +162,7 @@ class UnconnectedConfirmHearing extends React.Component {
       hearingType,
       onHearingTypeChange,
       continueClicked,
+      certificationId,
       match
     } = this.props;
 
@@ -264,8 +265,8 @@ class UnconnectedConfirmHearing extends React.Component {
       <Footer
         disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
         onClickContinue={this.onClickContinue.bind(this)}
+        certificationId={certificationId}
       />
-
     </div>;
   }
 }
@@ -336,7 +337,8 @@ const mapStateToProps = (state) => ({
   form9Type: state.form9Type,
   form9Date: state.form9Date,
   hearingType: state.hearingType,
-  continueClicked: state.continueClicked
+  continueClicked: state.continueClicked,
+  certificationId: state.certificationId
 });
 
 /*
@@ -358,7 +360,8 @@ ConfirmHearing.propTypes = {
   hearingType: PropTypes.string,
   onHearingTypeChange: PropTypes.func,
   match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool
+  continueClicked: PropTypes.bool,
+  certificationId: PropTypes.number
 };
 
 export default ConfirmHearing;

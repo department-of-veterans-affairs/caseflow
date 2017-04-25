@@ -82,7 +82,8 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      continueClicked
+      continueClicked,
+      match
     } = this.props;
 
     return <div>
@@ -121,6 +122,7 @@ class UnconnectedSignAndCertify extends React.Component {
     <Footer
       disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
       onClickContinue={this.onClickContinue.bind(this)}
+      certificationId={certificationId}
     />
   </div>;
   }
@@ -153,7 +155,8 @@ const mapStateToProps = (state) => ({
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
-  continueClicked: state.continueClicked
+  continueClicked: state.continueClicked,
+  certificationId: state.certificationId
 });
 
 const SignAndCertify = connect(
@@ -169,7 +172,8 @@ SignAndCertify.propTypes = {
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
   match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool
+  continueClicked: PropTypes.bool,
+  certificationId: PropTypes.number
 };
 
 export default SignAndCertify;
