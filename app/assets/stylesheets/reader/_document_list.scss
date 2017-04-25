@@ -16,6 +16,7 @@ $tag-backgrond-color: #d6d7d9;
 
   .see-more-link-toggle {
     display: inline-block;
+    margin: 4px;
   }
 
   i {
@@ -41,8 +42,10 @@ $tag-backgrond-color: #d6d7d9;
     font-weight: bold;
     margin: 3px;
   }
+
   .document-list-issue-tags {
     max-width: 225px;
+
     .document-list-issue-tag {
       display: inline-block;
       background: $tag-backgrond-color;

@@ -131,8 +131,10 @@ export default class TagTableColumn extends React.Component {
     }
 
     let hiddenTagindices = getIndicesToHide(rows);
+    let tagsStyle = { maxWidth: MAX_WIDTH };
+    //let tagStyle = { maxWidth: MAX_WIDTH };
 
-    return <div className="document-list-issue-tags">
+    return <div className="document-list-issue-tags" style={tagsStyle}>
       {tags.map((tag, index) => {
         return <Measure
           onMeasure={(dimensions) => {
@@ -140,7 +142,7 @@ export default class TagTableColumn extends React.Component {
           }}
           key={index}
         >
-          <div className={this.getTagClassName(hiddenTagindices, index)}>
+          <div className={this.getTagClassName(hiddenTagindices, index)} style={tagsStyle}>
             {`${tag.text}`}
           </div>
         </Measure>;
