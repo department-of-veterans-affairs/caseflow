@@ -15,6 +15,7 @@ import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideMessages from './StyleGuideMessages';
+import StyleGuideLogos from './StyleGuideLogos';
 
 export default function StyleGuideIndex() {
 
@@ -102,6 +103,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#progress_bar',
       name: 'Progress Bar'
+    },
+    {
+      anchor: '#logos',
+      name: 'Logos'
     }
   ];
 
@@ -212,6 +217,8 @@ export default function StyleGuideIndex() {
         <StyleGuideModal />
         <div className="cf-help-divider"></div>
         <StyleGuideProgressBar />
+        <div className="cf-help-divider"></div>
+        <StyleGuideLogos />
     </div>
     </div>;
 
