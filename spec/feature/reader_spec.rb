@@ -248,7 +248,7 @@ RSpec.feature "Reader" do
   scenario "Expand All" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     click_on documents[0].filename
-
+    
     
   end
 end
