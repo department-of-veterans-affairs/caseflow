@@ -57,10 +57,10 @@ class UnconnectedDocumentsCheck extends React.Component {
       </div>
 
       <Footer
+        certificationId={certificationId}
         nextPageUrl={
           `/certifications/${match.params.vacols_id}/confirm_case_details`
         }
-        certificationId={certificationId}
         hideContinue={!documentsMatch}/>
     </div>;
   }
@@ -77,7 +77,6 @@ const mapStateToProps = (state) => ({
   ssocDatesWithMatches: state.ssocDatesWithMatches,
   documentsMatch: state.documentsMatch,
   certificationId: state.certificationId
-
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -109,7 +108,8 @@ DocumentsCheck.propTypes = {
   socMatch: PropTypes.bool,
   socDate: PropTypes.string,
   documentsMatch: PropTypes.bool,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationId: PropTypes.number
 };
 
 export default DocumentsCheck;
