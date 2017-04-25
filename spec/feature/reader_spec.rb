@@ -195,6 +195,63 @@ RSpec.feature "Reader" do
       expect(find("#medical", visible: false).checked?).to be false
       expect(find("#other", visible: false).checked?).to be false
     end
+
+    scenario "Tags", focus: true do
+      TAG1 = "Medical".freeze
+      TAG2 = "Law document".freeze
+
+      DOC2_TAG1 = "Appeal Document".freeze
+
+      SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on documents[0].type
+
+      input_element = find(".Select-input > input")
+      input_element.click.native.send_keys(TAG1)
+
+      # making sure there is a dropdown showing up when text is entered
+      expect(page).to have_css(".Select-menu-outer")
+
+      # submit entering the tag
+      input_element.send_keys(:enter)
+
+      find(".Select-input > input").click.native.send_keys(TAG2, :enter)
+
+      # expecting the multi-selct to have the two new fields
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
+
+      # adding new tags to 2nd document
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on documents[1].type
+      find(".Select-control").click
+      input_element = find(".Select-input > input")
+      input_element.click.native.send_keys(DOC2_TAG1, :enter)
+
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 3)
+
+      # getting remove buttons of all tags
+      cancel_icons = page.all(".Select-value-icon", count: 3)
+
+      # rubocop:disable all
+      # delete all tags
+      for i in (cancel_icons.length - 1).downto(0)
+        cancel_icons[i].click
+      end
+      # rubocop:enable all
+
+      # expecting the page not to have any tags
+      expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
+
+      # go back to the first document
+      find("#button-previous").click
+
+      # verify that the tags on the previous document still exist
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+    end
   end
 
   context "Large number of documents" do
@@ -224,62 +281,5 @@ RSpec.feature "Reader" do
       # Make sure the document is scrolled
       expect(in_viewport("read-indicator")).to be true
     end
-  end
-
-  scenario "Tags" do
-    TAG1 = "Medical".freeze
-    TAG2 = "Law document".freeze
-
-    DOC2_TAG1 = "Appeal Document".freeze
-
-    SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
-
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-    click_on documents[0].filename
-
-    input_element = find(".Select-input > input")
-    input_element.click.native.send_keys(TAG1)
-
-    # making sure there is a dropdown showing up when text is entered
-    expect(page).to have_css(".Select-menu-outer")
-
-    # submit entering the tag
-    input_element.send_keys(:enter)
-
-    find(".Select-input > input").click.native.send_keys(TAG2, :enter)
-
-    # expecting the multi-selct to have the two new fields
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
-
-    # adding new tags to 2nd document
-    visit "/reader/appeal/#{appeal.vacols_id}/documents"
-    click_on documents[1].filename
-    find(".Select-control").click
-    input_element = find(".Select-input > input")
-    input_element.click.native.send_keys(DOC2_TAG1, :enter)
-
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 3)
-
-    # getting remove buttons of all tags
-    cancel_icons = page.all(".Select-value-icon")
-
-    # rubocop:disable all
-    # delete all tags
-    for i in (cancel_icons.length - 1).downto(0)
-      cancel_icons[i].click
-    end
-    # rubocop:enable all
-
-    # expecting the page not to have any tags
-    expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
-
-    # go back to the first document
-    find("#button-previous").click
-
-    # verify that the tags on the previous document still exist
-    expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
   end
 end
