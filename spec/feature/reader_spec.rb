@@ -69,7 +69,9 @@ RSpec.feature "Reader" do
     expect(page).to have_content("Foo")
 
     # Expect comment to be in database
-    expect(documents[0].reload.annotations.first.comment).to eq("Foo")
+    annotation = documents[0].reload.annotations.first
+    expect(annotation.comment).to eq("Foo")
+    expect(annotation.user_id).to eq(current_user.id)
 
     # Edit the comment
     click_on "Edit"
@@ -91,7 +93,7 @@ RSpec.feature "Reader" do
     # Expect the comment to be removed from the page
     expect(page).to_not have_content("FooBar")
 
-    # Expect the comment to be removed from teh database
+    # Expect the comment to be removed from the database
     expect(documents[0].reload.annotations.count).to eq(0)
   end
 

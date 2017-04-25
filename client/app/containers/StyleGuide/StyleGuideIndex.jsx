@@ -14,6 +14,7 @@ import NavLink from '../../components/NavLink';
 import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
+import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 
 export default function StyleGuideIndex() {
@@ -102,6 +103,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#progress_bar',
       name: 'Progress Bar'
+    },
+    {
+      anchor: '#logos',
+      name: 'Logos'
     }
   ];
 
@@ -208,6 +213,8 @@ export default function StyleGuideIndex() {
         <StyleGuideModal />
         <div className="cf-help-divider"></div>
         <StyleGuideProgressBar />
+        <div className="cf-help-divider"></div>
+        <StyleGuideLogos />
     </div>
     </div>;
 
