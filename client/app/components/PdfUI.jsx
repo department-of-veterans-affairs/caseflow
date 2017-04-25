@@ -4,7 +4,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import classNames from 'classNames';
+import classNames from 'classnames';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
