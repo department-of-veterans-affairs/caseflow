@@ -1,14 +1,16 @@
 {
-  "presets": [
-    ["es2015", { "modules": false }],
-    "stage-0",
-    "react"
-  ],
+  // Used for development and test mode
+  "presets": ["es2015", "stage-0", "react"],
   "env": {
-    // only enable it when process.env.NODE_ENV is 'development-hot' or undefined
+    // only enabled for development-hot
     "development-hot": {
       "plugins": [
         "react-hot-loader/babel"
+      ],
+      "presets": [
+        ["es2015", { "modules": false }],
+        "stage-0",
+        "react"
       ]
     }
   }

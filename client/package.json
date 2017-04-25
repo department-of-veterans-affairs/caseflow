@@ -65,7 +65,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
-    "babel-plugin-react-transform": "^2.0.2",
     "chai": "^3.5.0",
     "enzyme": "^2.6.0",
     "eslint": "^3.11.1",
