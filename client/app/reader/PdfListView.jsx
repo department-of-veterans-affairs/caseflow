@@ -122,7 +122,7 @@ export class PdfListView extends React.Component {
             Issue Tags {filterIcon}
           </div>,
           valueFunction: (doc) => {
-            return <TagTableColumn tags={doc.tags || []} />;
+            return <TagTableColumn tags={doc.tags} allCommentsExpanded={this.props.allCommentsExpanded} />;
           }
         },
         {
