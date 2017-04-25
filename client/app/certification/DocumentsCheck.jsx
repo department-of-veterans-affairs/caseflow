@@ -7,6 +7,8 @@ import AlreadyCertified from './AlreadyCertified';
 import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
+import NotFoundIcon from '../components/NotFoundIcon';
+
 
 // TODO: refactor to use shared components where helpful
 class UnconnectedDocumentsCheck extends React.Component {
@@ -39,6 +41,19 @@ class UnconnectedDocumentsCheck extends React.Component {
       return <AlreadyCertified/>;
     }
 
+    const missingInformation =
+      <div>
+        <p>Caseflow could not find the documents marked
+          with an <NotFoundIcon/> in the appellant's eFolder. This usually happens when
+          something doesn't match up. Try checking:</p>
+        <ul>The <strong>document type</strong> in VBMS to make sure it's
+          <a href="/help#mismatched-documents"> labeled correctly</a></ul>
+        <ul>The <strong>document date</strong> — the date in VBMS must match
+        the date in VACOLS</ul>
+        <p>Once you've made corrections, <a href="">refresh this page.</a></p>
+        <p>If you can't find the document, <a href="">cancel this certification.</a></p>
+      </div>;
+
     /*
      * certificationStatus == 'mismatched_documents' or 'started'
      */
@@ -54,6 +69,7 @@ class UnconnectedDocumentsCheck extends React.Component {
           socDate={socDate}
           ssocDatesWithMatches={ssocDatesWithMatches}
           documentsMatch={documentsMatch}/>
+        { !documentsMatch && missingInformation }
       </div>
 
       <Footer

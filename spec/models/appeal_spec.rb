@@ -93,6 +93,26 @@ describe Appeal do
 
       it { is_expected.to be_falsy }
     end
+
+    context "ssoc_dates_with_matches returns correct hash" do
+      before do
+        appeal.documents += [
+          Document.new(type: "SSOC", received_at: 6.days.ago),
+          Document.new(type: "SSOC", received_at: 7.days.ago)
+        ]
+
+        appeal.ssoc_dates = [6.days.ago, 9.days.ago]
+      end
+
+      subject { appeal.ssoc_dates_with_matches }
+
+      it do
+        expect(Date.strptime(subject.first[:date], "%m/%d/%Y")).to eq(6.days.ago.to_date)
+        expect(Date.strptime(subject.last[:date], "%m/%d/%Y")).to eq(9.days.ago.to_date)
+        expect(subject.first[:match]).to be_truthy
+        expect(subject.last[:match]).to be_falsy
+      end
+    end
   end
 
   context "#serialized_decision_date" do
