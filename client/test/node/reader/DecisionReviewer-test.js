@@ -233,14 +233,9 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
-        let clickedOnCommentEvent = {
-          getAttribute: () => {
-            return annotations[0].id;
-          }
-        };
-
         wrapper.find('Pdf').getNode().
-          onCommentClick(clickedOnCommentEvent);
+          onCommentClick(annotations[0])();
+
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
       }));
