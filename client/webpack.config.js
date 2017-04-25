@@ -16,7 +16,7 @@ const config = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin(['NODE_ENV'])
+    new webpack.EnvironmentPlugin({NODE_ENV: 'development'})
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

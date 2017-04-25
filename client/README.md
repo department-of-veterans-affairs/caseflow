@@ -4,6 +4,8 @@
 
 Caseflow's frontend is built using React & Webpack. React is the framework we use to organize our frontend code into reusable, extensible components. Rails still handles all web routing, and determines when react components should be rendered.
 
+Be sure to install the [Redux DevTools browser extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en) for full debugging support on the parts of the app that use Redux and integrate with the dev tools.
+
 ## Asset Compilation Process
 
 ![Screenshot of Asset Compile](./asset-compile-diagram.png "Asset Compile Diagram")
