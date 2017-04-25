@@ -332,7 +332,7 @@ export class DecisionReviewer extends React.Component {
           documents={documents}
           expandAllPdfCommentList={this.props.expandAllPdfCommentList}
           collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
-          allCommentsExpanded={this.props.ui.allCommentsExpanded}
+          expandAll={this.props.ui.expandAll}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
           showPdfAndJumpToPage={this.showPdfAndJumpToPage}
@@ -377,7 +377,7 @@ DecisionReviewer.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ui: {
-      allCommentsExpanded: state.ui.allCommentsExpanded,
+      expandAll: state.ui.expandAll,
       pdfSidebar: {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }

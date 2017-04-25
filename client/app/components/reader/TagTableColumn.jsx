@@ -90,9 +90,9 @@ export default class TagTableColumn extends React.Component {
     });
   }
 
-  getShowMoreLink = (allCommentsExpanded) => {
+  getShowMoreLink = (expandAll) => {
 
-    if (allCommentsExpanded) {
+    if (expandAll) {
       return null;
     }
     const tagText = this.state.showAllTags ? 'See Less...' : 'See More...';
@@ -108,7 +108,7 @@ export default class TagTableColumn extends React.Component {
   };
 
   getTagClassName = (indices, index) => {
-    if (this.state.showAllTags || this.props.allCommentsExpanded) {
+    if (this.state.showAllTags || this.props.expandAll) {
       return 'document-list-issue-tag';
     }
 
@@ -118,7 +118,7 @@ export default class TagTableColumn extends React.Component {
   render() {
     const {
       tags,
-      allCommentsExpanded
+      expandAll
     } = this.props;
 
     const rows = getTagsRowFormat(this.state.widths);
@@ -127,7 +127,7 @@ export default class TagTableColumn extends React.Component {
     // if number of tag rows exceed max
     // get show more link
     if (_.size(rows) > MAX_SHOWN_ROWS) {
-      showMoreDiv = this.getShowMoreLink(allCommentsExpanded);
+      showMoreDiv = this.getShowMoreLink(expandAll);
     }
 
     let hiddenTagindices = getindicesToHide(rows);

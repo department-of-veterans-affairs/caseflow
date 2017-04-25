@@ -11,7 +11,7 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
-    allCommentsExpanded: false,
+    expandAll: false,
     pdfSidebar: {
       showTagErrorMsg: false
     },
@@ -34,7 +34,7 @@ const expandCollapseAllComments = (state, showAllComments) => {
       })
     },
     ui: {
-      $merge: { allCommentsExpanded: showAllComments }
+      $merge: { expandAll: showAllComments }
     }
   });
 };

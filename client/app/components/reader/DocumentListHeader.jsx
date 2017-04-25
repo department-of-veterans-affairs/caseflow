@@ -7,7 +7,7 @@ const DocumentListHeader = (props) => {
   let buttonText;
   let buttonAction;
 
-  if (props.allCommentsExpanded) {
+  if (props.expandAll) {
     buttonText = 'Collapse all';
     buttonAction = props.collapseAllPdfCommentList;
   } else {

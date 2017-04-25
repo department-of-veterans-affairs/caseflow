@@ -122,7 +122,7 @@ export class PdfListView extends React.Component {
             Issue Tags {filterIcon}
           </div>,
           valueFunction: (doc) => {
-            return <TagTableColumn tags={doc.tags} allCommentsExpanded={this.props.allCommentsExpanded} />;
+            return <TagTableColumn tags={doc.tags} expandAll={this.props.expandAll} />;
           }
         },
         {
@@ -190,7 +190,7 @@ export class PdfListView extends React.Component {
           <DocumentListHeader
             expandAllPdfCommentList={this.props.expandAllPdfCommentList}
             collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
-            allCommentsExpanded={this.props.allCommentsExpanded}
+            expandAll={this.props.expandAll}
             documents={this.props.documents}
             onFilter={this.props.onFilter}
             filterBy={this.props.filterBy}
