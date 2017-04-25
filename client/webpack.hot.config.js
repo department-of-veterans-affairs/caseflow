@@ -1,8 +1,5 @@
-// This is our webpack dev server, which allows for hot module reloading
-//
-// Run with Rails server like this:
-// rails s
-// cd client && npm run hot:dev
+// This webpack config is usedby webpack dev server for
+// hot module reloading
 
 const webpack = require('webpack');
 const path = require('path');
