@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
     resources :annotation, only: [:create, :destroy, :update]
+    resources :tag, only: [:create, :destroy]
   end
 
   namespace :reader do
