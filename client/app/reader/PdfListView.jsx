@@ -1,4 +1,7 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
+
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
@@ -7,8 +10,6 @@ import { linkToSingleDocumentView } from '../components/PdfUI';
 import { rightTriangle } from '../components/RenderFunctions';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
-import _ from 'lodash';
-import { connect } from 'react-redux';
 import * as Constants from './constants';
 
 const NUMBER_OF_COLUMNS = 6;

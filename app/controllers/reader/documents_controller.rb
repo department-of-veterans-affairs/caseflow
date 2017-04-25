@@ -20,6 +20,7 @@ class Reader::DocumentsController < ApplicationController
     @documents = appeal.saved_documents.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
+        object[:tags] = document.tags
       end
     end
   end

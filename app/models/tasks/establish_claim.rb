@@ -41,6 +41,30 @@ class EstablishClaim < Task
     )
   end
 
+  # Used when processing the task.
+  # Makes calls to BGS, which can make it much slower.
+  def to_hash_with_bgs_call
+    serializable_hash(
+      include: [:user, appeal: {
+        include: [
+          :pending_eps,
+          :non_canceled_end_products_within_30_days,
+          decisions: { methods: :received_at }
+        ],
+        methods: [
+          :serialized_decision_date,
+          :disposition,
+          :veteran_name,
+          :decision_type,
+          :station_key,
+          :regional_office_key,
+          :issues,
+          :sanitized_vbms_id
+        ] }],
+      methods: [:progress_status, :aasm_state]
+    )
+  end
+
   # Core method responsible for API call to VBMS to create the end product
   # On success, will update the DB with the data related to the outcome
   def perform!(end_product_params)
