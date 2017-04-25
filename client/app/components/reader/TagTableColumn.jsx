@@ -29,24 +29,24 @@ const getTagsRowFormat = (widths) => {
     // if two elements alongside each other have combined less
     // than max width, this row can fit more than one tag
     } else if ((arrWidths[i] + arrWidths[i + 1]) < MAX_WIDTH) {
-      let indx = i;
+      let index = i;
       let totalWidth = 0;
       let indices = [];
 
       // get all the tags this row can hold
-      while (indx < arrWidths.length &&
-        (totalWidth + arrWidths[indx]) < MAX_WIDTH) {
-        totalWidth += arrWidths[indx];
-        indices.push(indx);
-        indx += 1;
+      while (index < arrWidths.length &&
+        (totalWidth + arrWidths[index]) < MAX_WIDTH) {
+        totalWidth += arrWidths[index];
+        indices.push(index);
+        index += 1;
       }
 
       rows[rowNum] = indices;
       rowNum += 1;
 
-      // decrementing indx because it was incremented in the
+      // decrementing index because it was incremented in the
       // while loop.
-      i = indx - 1;
+      i = index - 1;
 
     // if tag is less than max width and no other tag can
     // fit in the same row.
@@ -59,7 +59,7 @@ const getTagsRowFormat = (widths) => {
   return rows;
 };
 
-const getindicesToHide = (rows) => {
+const getIndicesToHide = (rows) => {
   let hiddenindices = [];
 
   _.forOwn(rows, (value, key) => {
@@ -130,7 +130,7 @@ export default class TagTableColumn extends React.Component {
       showMoreDiv = this.getShowMoreLink(expandAll);
     }
 
-    let hiddenTagindices = getindicesToHide(rows);
+    let hiddenTagindices = getIndicesToHide(rows);
 
     return <div className="document-list-issue-tags">
       {tags.map((tag, index) => {
