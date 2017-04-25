@@ -4,16 +4,7 @@ import Button from '../Button';
 
 const DocumentListHeader = (props) => {
 
-  let buttonText;
-  let buttonAction;
-
-  if (props.expandAll) {
-    buttonText = 'Collapse all';
-    buttonAction = props.collapseAllPdfCommentList;
-  } else {
-    buttonText = 'Expand all';
-    buttonAction = props.expandAllPdfCommentList;
-  }
+  const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
 
   return <div className="usa-grid-full document-list-header">
     <div className="usa-width-one-third">
@@ -31,7 +22,7 @@ const DocumentListHeader = (props) => {
         <Button
           id="btn-default"
           name={buttonText}
-          onClick={ () => buttonAction() }
+          onClick={ () => props.toggleExpandAll() }
         />
       </span>
     </div>

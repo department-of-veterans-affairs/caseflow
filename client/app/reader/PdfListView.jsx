@@ -217,7 +217,11 @@ export class PdfListView extends React.Component {
             Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
           </div>,
           valueFunction: (doc) => {
-            return <TagTableColumn tags={doc.tags} expandAll={this.props.expandAll} />;
+            return <TagTableColumn
+              doc={doc}
+              handleToggleTagsOpened={this.props.handleToggleTagsOpened}
+              expandTags={this.props.reduxDocuments[doc.id].expandTags}
+            />;
           }
         },
         {
@@ -230,7 +234,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].listComments ?
+            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].expandComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -269,7 +273,7 @@ export class PdfListView extends React.Component {
       // checking if comments exist and if comments should be listed
       // before being added to the row
       if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
-          this.props.reduxDocuments[row.id].listComments) {
+          this.props.reduxDocuments[row.id].expandComments) {
         acc.push({
           ...row,
           isComment: true
@@ -283,8 +287,7 @@ export class PdfListView extends React.Component {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <DocumentListHeader
-            expandAllPdfCommentList={this.props.expandAllPdfCommentList}
-            collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
+            toggleExpandAll={this.props.toggleExpandAll}
             expandAll={this.props.expandAll}
             documents={this.props.documents}
             onFilter={this.props.onFilter}
@@ -334,6 +337,14 @@ const mapDispatchToProps = (dispatch) => ({
   handleToggleCommentOpened(docId) {
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
+      payload: {
+        docId
+      }
+    });
+  },
+  handleToggleTagsOpened(docId) {
+    dispatch({
+      type: Constants.TOGGLE_TAG_LIST,
       payload: {
         docId
       }

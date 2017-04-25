@@ -28,20 +28,6 @@ const initialState = {
   documents: {}
 };
 
-// reusable functions
-const expandCollapseAllComments = (state, showAllComments) => (
-  update(state, {
-    documents: {
-      $set: _.mapValues(state.documents, (document) => {
-        return update(document, { listComments: { $set: showAllComments } });
-      })
-    },
-    ui: {
-      $merge: { expandAll: showAllComments }
-    }
-  })
-);
-
 export const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
@@ -159,18 +145,39 @@ export const readerReducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
     });
-  case Constants.EXPAND_ALL_PDF_COMMENT_LIST:
-    return expandCollapseAllComments(state, true);
-  case Constants.COLLAPSE_ALL_PDF_COMMENT_LIST:
-    return expandCollapseAllComments(state, false);
+  case Constants.TOGGLE_EXPAND_ALL:
+    return update(state, {
+      documents: {
+        $set: _.mapValues(state.documents, (document) => {
+          return update(document, { expandComments: { $set: !state.ui.expandAll },
+            expandTags: { $set: !state.ui.expandAll } });
+        })
+      },
+      ui: {
+        $merge: { expandAll: !state.ui.expandAll }
+      }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
     return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            listComments: {
-              $set: !state.documents[action.payload.docId].listComments
+            expandComments: {
+              $set: !state.documents[action.payload.docId].expandComments
+            }
+          }
+        }
+      }
+    );
+  case Constants.TOGGLE_TAG_LIST:
+    return update(
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            expandTags: {
+              $set: !state.documents[action.payload.docId].expandTags
             }
           }
         }
@@ -197,7 +204,8 @@ export const readerReducer = (state = initialState, action = {}) => {
   // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store =
-  createStore(readerReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
+  createStore(readerReducer, initialState,
+    composeEnhancers(applyMiddleware(thunk)));
 
 const Reader = (props) => {
   return <Provider store={store}>

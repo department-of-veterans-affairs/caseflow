@@ -330,8 +330,7 @@ export class DecisionReviewer extends React.Component {
         {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={_.values(this.props.storeDocuments)}
-          expandAllPdfCommentList={this.props.expandAllPdfCommentList}
-          collapseAllPdfCommentList={this.props.collapseAllPdfCommentList}
+          toggleExpandAll={this.props.toggleExpandAll}
           expandAll={this.props.ui.expandAll}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
