@@ -154,3 +154,44 @@ pre {
 .cf-sg-success-example {
   margin-left: 125px;
 }
+
+.sg-colors-swatches {
+  overflow: auto;
+
+  .sg-colors-swatch {
+    float: left;
+    margin-bottom: 20px;
+    margin-right: 25px;
+
+    div {
+      width: 110px;
+      height: 110px;
+      box-shadow: 1px 1px 5px $color-gray-medium;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      position: relative;
+      left: 2px;
+    }
+
+    b,
+    p {
+      font-size: 75%;
+    }
+
+    p {
+      margin: 0;
+      padding: 0;
+
+      &:nth-of-type(2) {
+        font-size: 55%;
+      }
+    }
+  }
+}
+
+.sg-colors-combo {
+  border: 1px solid $color-gray;
+  padding: .75rem;
+  margin-bottom: 10px;
+  width: 50%;
+}
