@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const TagTableColumn = ({ doc }) => (
   <div className="document-list-issue-tags">
@@ -9,5 +9,9 @@ const TagTableColumn = ({ doc }) => (
     })}
   </div>
 );
+
+TagTableColumn.propTypes = {
+  doc: PropTypes.object.isRequired
+};
 
 export default TagTableColumn;
