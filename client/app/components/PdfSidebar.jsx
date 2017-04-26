@@ -86,7 +86,7 @@ export class PdfSidebar extends React.Component {
             classNames={['cf-pdf-button']}
             onClick={this.props.handleTogglePdfSidebar}>
             <strong>
-              Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+              Hide menu asdfasd<i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
           </Button>
         </div>
