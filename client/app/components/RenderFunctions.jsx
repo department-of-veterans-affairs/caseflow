@@ -228,12 +228,12 @@ export const rightTriangle = function() {
     </svg>;
 };
 
-export const commentIcon = (selected) => {
-  const filter = selected ? 'url(#filter-1)' : '';
+export const commentIcon = (selected, id) => {
+  const filter = selected ? `url(#${id}-filter-1)` : '';
 
   return <svg width="40px" height="40px" viewBox="0 0 46 48" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <filter x="-13.8%" y="-8.8%" width="127.5%" height="127.5%" filterUnits="objectBoundingBox" id="filter-1">
+      <filter x="-13.8%" y="-8.8%" width="127.5%" height="127.5%" filterUnits="objectBoundingBox" id={`${id}-filter-1`}>
         <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
         <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
         <feColorMatrix values="0 0 0 0 0.0313725509   0 0 0 0 0.447058827   0 0 0 0 0.725490212  0 0 0 1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>

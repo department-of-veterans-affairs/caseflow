@@ -70,7 +70,7 @@ export class PdfSidebar extends React.Component {
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
             onSaveCommentEdit={this.props.onSaveCommentEdit}
-            key={comment.comment}
+            key={comment.id}
           >
             {comment.comment}
           </EditComment>;
@@ -79,7 +79,7 @@ export class PdfSidebar extends React.Component {
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;
       }}
-        key={comment.comment}>
+        key={comment.id}>
         <Comment
           id={`comment${index}`}
           selected={false}
