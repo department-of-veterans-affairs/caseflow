@@ -112,7 +112,6 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  FeatureToggle.disable!(:certification_v2)
   Fakes::AppealRepository.clean!
 end
 
