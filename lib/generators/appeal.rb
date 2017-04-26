@@ -51,7 +51,8 @@ class Generators::Appeal
           disposition: "Remanded",
           decision_date: 7.days.ago,
           issues: [
-            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee }
+            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
+            { disposition: :denied, program: :compensation, type: :service_connection, category: :elbow }
           ]
         },
         partial_grant_decided: {
@@ -60,7 +61,8 @@ class Generators::Appeal
           decision_date: 7.days.ago,
           issues: [
             { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
-            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
+            { disposition: :denied, program: :compensation, type: :service_connection, category: :shoulder }
           ]
         },
         full_grant_decided: {
@@ -70,7 +72,8 @@ class Generators::Appeal
           outcoding_date: 2.days.ago,
           decision_date: 7.days.ago,
           issues: [
-            { disposition: :allowed, program: :compensation, type: :service_connection, category: :knee }
+            { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
+            { disposition: :denied, program: :compensation, type: :service_connection, category: :shoulder }
           ]
         }
       }
