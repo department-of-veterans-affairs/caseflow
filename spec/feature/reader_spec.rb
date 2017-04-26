@@ -213,8 +213,10 @@ RSpec.feature "Reader" do
       # Make sure the comment icon and comment are shown as selected
       expect(page).to have_css(".comment-container-selected")
 
+      id = "#{annotations[annotations.size-2].id}-filter-1"
+
       # This filter is the blue highlight around the comment icon
-      find('g[filter="url(#filter-1)"]')
+      find("g[filter=\"url(##{id})\"]")
     end
   end
 
