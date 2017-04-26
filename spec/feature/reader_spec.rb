@@ -285,7 +285,7 @@ RSpec.feature "Reader" do
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
   end
 
-  scenario "Expand All and See More..Less tags" do
+  scenario "Expand All button" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
     click_on documents[0].filename
 
