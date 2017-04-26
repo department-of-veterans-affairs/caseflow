@@ -40,6 +40,10 @@ $bookmark-yellow: #efdf1a;
   bottom: 0;
   right: 380px;
   left: 0;
+
+  &.hidden-sidebar {
+    right: 0;
+  }
 }
 
 .cf-pdf-scroll-view {
@@ -88,6 +92,10 @@ svg[aria-hidden=true],
   text-align: left;
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
+
+  &.hidden-sidebar {
+    visibility: hidden;
+  }
 }
 
 .cf-sidebar-header {
@@ -106,6 +114,7 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   width: 380px;
+  margin-top: 15px;
   overflow-y: scroll;
 }
 
@@ -123,6 +132,11 @@ svg[aria-hidden=true],
   z-index: 15;
   opacity: 1;
   padding: 15px 20px;
+
+  .category-icons-and-doc-type {
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 .cf-pdf-footer {
@@ -164,6 +178,7 @@ svg[aria-hidden=true],
   background-color: transparent;
   font-size: inherit;
   pointer-events: all;
+  line-height: normal;
 
   &:hover {
     text-decoration: none;
@@ -335,4 +350,33 @@ svg[aria-hidden=true],
   top: 0;
   right: 0;
   bottom: 0;
+}
+
+.cf-pdf-cutoff {
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.cf-pdf-open-menu {
+  flex: 0 0 auto;
+  margin-left: 5px;
+}
+
+.cf-pdf-doc-type-button-container {
+  flex: 0 1 auto;
+  min-width: 20px;
+}
+
+.cf-pdf-doc-category-icons {
+  flex: 0 0 auto;
+}
+
+.cf-pdf-doc-type-button {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: hidden;
+  width: 100%;
+  padding-right: 5px;
 }
