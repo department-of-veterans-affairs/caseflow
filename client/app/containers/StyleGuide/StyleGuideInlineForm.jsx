@@ -13,7 +13,7 @@ export default function StyleGuideInlineForm() {
         title="Inline Form"
         id="inline_form"
         link="StyleGuideInlineForm.jsx"
-        subsection={true}
+        isSubsection={true}
       />
       <p>
         Inline forms give designers and developers the liberty to customize

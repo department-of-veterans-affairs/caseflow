@@ -143,11 +143,11 @@ export default function StyleGuideIndex() {
         <StyleGuidePlaceholder
           title="Headings and Body"
           id="headings_and_body"
-          subsection={true} />
+          isSubsection={true} />
         <StyleGuidePlaceholder
           title="Styles"
           id="styles"
-          subsection={true} />
+          isSubsection={true} />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Colors"
@@ -189,7 +189,7 @@ export default function StyleGuideIndex() {
         <StyleGuidePlaceholder
           title="Text Input"
           id="text_input"
-          subsection={true} />
+          isSubsection={true} />
         <StyleGuideInlineForm />
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
