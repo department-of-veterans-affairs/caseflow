@@ -123,7 +123,7 @@ describe('EstablishClaim', () => {
   });
 
   context('.getClaimTypeFromDecision', () => {
-    let wrapper, task;
+    let task, wrapper;
 
     const mountApp = (decisionType, stationOfJurisdiction = '397') => {
       task.appeal.decision_type = decisionType;
@@ -192,7 +192,6 @@ describe('EstablishClaim', () => {
 
       it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
         mountApp('Partial Grant', '301');
-        console.log('DECISION_TYPE', wrapper.instance().props.task.appeal.decision_type);
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['170RBVAG', 'Remand with BVA Grant']);
       });

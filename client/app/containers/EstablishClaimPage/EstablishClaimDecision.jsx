@@ -234,30 +234,24 @@ EstablishClaimDecision.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return {
-    specialIssues: state.specialIssues
-  };
-};
+const mapStateToProps = (state) => ({
+  specialIssues: state.specialIssues
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleToggleCancelTaskModal: () => {
-      dispatch({
-        type: Constants.TOGGLE_CANCEL_TASK_MODAL
-      });
-    },
-    handleSpecialIssueFieldChange: (specialIssue) => (value) => {
-      dispatch({
-        type: Constants.CHANGE_SPECIAL_ISSUE,
-        payload: {
-          specialIssue,
-          value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCancelTaskModal: () => {
+    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
+  },
+  handleSpecialIssueFieldChange: (specialIssue) => (value) => {
+    dispatch({
+      type: Constants.CHANGE_SPECIAL_ISSUE,
+      payload: {
+        specialIssue,
+        value
+      }
+    });
+  }
+});
 
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,

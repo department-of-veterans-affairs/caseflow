@@ -1,5 +1,6 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
 import establishClaimReducer, { getEstablishClaimInitialState } from './index';
 import establishClaimFormReducer,
@@ -7,7 +8,7 @@ import establishClaimFormReducer,
 import ConfigUtil from '../../util/ConfigUtil';
 
 export const createEstablishClaimStore = (props) => {
-  let middleware = [];
+  let middleware = [thunk];
 
 
   // Avoid all the log spam when running the tests
@@ -25,7 +26,7 @@ export const createEstablishClaimStore = (props) => {
     {
       specialIssues: getSpecialIssuesInitialState(props),
       establishClaimForm: getEstablishClaimFormInitialState(props),
-      establishClaim: getEstablishClaimInitialState(props)
+      establishClaim: getEstablishClaimInitialState()
     },
     applyMiddleware(...middleware)
   );
