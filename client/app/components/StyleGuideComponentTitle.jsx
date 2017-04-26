@@ -6,7 +6,7 @@ export default class StyleGuideComponentTitle extends React.Component {
     let {
       id,
       link,
-      subsection,
+      isSubsection,
       title
     } = this.props;
 
@@ -28,8 +28,8 @@ export default class StyleGuideComponentTitle extends React.Component {
     Style Guide (aka StyleGuideModal.jsx)*/
     return <div className="usa-width-one-whole">
       <div className="cf-push-left">
-        {!subsection && <h2 id={id}>{title}</h2>}
-        {subsection && <h3 id={id} className="cf-sg-subsection">{title}</h3>}
+        {!isSubsection && <h2 id={id}>{title}</h2>}
+        {isSubsection && <h3 id={id} className="cf-sg-subsection">{title}</h3>}
       </div>
 
       <div className="cf-push-right">
@@ -41,7 +41,7 @@ export default class StyleGuideComponentTitle extends React.Component {
 
 StyleGuideComponentTitle.props = {
   id: PropTypes.string.isRequired,
+  isSubsection: PropTypes.bool,
   link: PropTypes.string.isRequired,
-  subsection: PropTypes.bool,
   title: PropTypes.string.isRequired
 };

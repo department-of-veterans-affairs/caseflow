@@ -19,7 +19,7 @@ export default function StyleGuideSuccessMessages() {
       title="Success Messages"
       id="success_messages"
       link="StyleGuideSuccessMessages.jsx"
-      subsection={true}
+      isSubsection={true}
     />
   <p>Success messages are shown when the user has successfully completed the intended
     task of the application. The title is green, and these messages contain a checklist
