@@ -58,6 +58,12 @@ export default class StyleGuideColors extends React.Component {
     'Green'
   ];
 
+  colorVar = (name) => {
+    return (`$color-${name}`).toLowerCase();
+  };
+
+  VAR_TITLE = 'Use this variable to refer to the hexadecimal value in your SASS files';
+
   render() {
     return <div>
       <StyleGuideComponentTitle
@@ -83,11 +89,12 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Primary.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
+      {this.Primary.map((name, i) =>
+        <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
-          <span>{name}</span>
+          <p>{name}</p>
+          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
         </div>
       )}
       </div>
@@ -103,21 +110,23 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(0, 2).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
+      {this.Secondary.slice(0, 2).map((name, i) =>
+        <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
-          <span>{name}</span>
+          <p>{name}</p>
+          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
         </div>
       )}
       </div>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(2).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
+      {this.Secondary.slice(2).map((name, i) =>
+        <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
-          <span>{name}</span>
+          <p>{name}</p>
+          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
         </div>
       )}
       </div>
@@ -131,11 +140,11 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Logos.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
+      {this.Logos.map((name, i) =>
+        <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
-          <span>{name}</span>
+          <p>{name}</p>
         </div>
       )}
       </div>
@@ -163,8 +172,9 @@ export default class StyleGuideColors extends React.Component {
 
       <h4>Fully Accessible Text Combinations</h4>
 
-      {this.Combos.map((name) =>
-        <div className="sg-colors-combo" style={{ color: this.Colors[name] }}>
+      {this.Combos.map((name, i) =>
+        <div className="sg-colors-combo" key={name + i}
+          style={{ color: this.Colors[name] }}>
           {name.toLowerCase()} - on white
         </div>
       )}
