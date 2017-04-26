@@ -122,7 +122,8 @@ export class ConfirmCaseDetails extends React.Component {
       loading,
       updateFailed,
       updateSucceeded,
-      match
+      match,
+      certificationId
     } = this.props;
 
     if (updateSucceeded) {
@@ -172,6 +173,7 @@ export class ConfirmCaseDetails extends React.Component {
         <Footer
           disableContinue={validationFailed}
           loading={loading}
+          certificationId={certificationId}
           onClickContinue={this.onClickContinue.bind(this)}
         />
     </div>;
@@ -185,7 +187,8 @@ ConfirmCaseDetails.propTypes = {
   changeRepresentativeName: PropTypes.func,
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationId: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -218,7 +221,8 @@ const mapStateToProps = (state) => ({
   otherRepresentativeType: state.otherRepresentativeType,
   validationFailed: state.validationFailed,
   invalidFields: state.invalidFields,
-  loading: state.loading
+  loading: state.loading,
+  certificationId: state.certificationId
 });
 
 export default connect(

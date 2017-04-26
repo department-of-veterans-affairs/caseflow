@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /* eslint-disable max-len */
 
@@ -155,14 +155,66 @@ export const plusIcon = function() {
     </svg>;
 };
 
-export const docCategoryIcon = (color) => () =>
-  <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+export const docCategoryIcon = (color) => {
+  const CategoryIcon = () =>
+    <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+            <g fill={color}>
+                <path d="M4.64092309,1 C3.21738445,1 2,2.16989858 2,3.68789356 L2,17.9336416 C2,18.2762127 2.06871806,18.7149247 2.37159862,19.0431298 C2.67415351,19.371335 3.04184399,19.4258517 3.32062438,19.4258517 C3.47694983,19.4229048 3.62839011,19.3683882 3.75800997,19.2674586 L10.4497163,14.2184033 L17.1414226,19.2674586 C17.2700654,19.3683882 17.4215057,19.4229048 17.5791339,19.4258517 C17.8575886,19.4258517 18.2252791,19.371335 18.5268569,19.0431298 C18.8297375,18.7149247 18.8984556,18.2762127 18.8984556,17.9336416 L18.8984556,3.68789356 C18.8984556,2.16989858 17.6820481,1 16.2585095,1 L4.64092309,1 Z"></path>
+            </g>
+        </g>
+    </svg>;
+
+  CategoryIcon.displayName = `DocCategoryIcon(${color})`;
+
+  return CategoryIcon;
+};
+
+export const SelectedFilterIcon = ({ idPrefix, getRef, ...restProps }) => {
+  const pathId = `${idPrefix}-path-1`;
+  const filterId = `${idPrefix}-filter-2`;
+
+  return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef}>
+      <defs>
+          <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" id={pathId}></path>
+          <filter x="-10.5%" y="-10.5%" width="121.1%" height="121.1%" filterUnits="objectBoundingBox" id={filterId}>
+              <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+              <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+              <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+              <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.443137255   0 0 0 0 0.737254902  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+          </filter>
+      </defs>
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-          <g fill={color}>
-              <path d="M4.64092309,1 C3.21738445,1 2,2.16989858 2,3.68789356 L2,17.9336416 C2,18.2762127 2.06871806,18.7149247 2.37159862,19.0431298 C2.67415351,19.371335 3.04184399,19.4258517 3.32062438,19.4258517 C3.47694983,19.4229048 3.62839011,19.3683882 3.75800997,19.2674586 L10.4497163,14.2184033 L17.1414226,19.2674586 C17.2700654,19.3683882 17.4215057,19.4229048 17.5791339,19.4258517 C17.8575886,19.4258517 18.2252791,19.371335 18.5268569,19.0431298 C18.8297375,18.7149247 18.8984556,18.2762127 18.8984556,17.9336416 L18.8984556,3.68789356 C18.8984556,2.16989858 17.6820481,1 16.2585095,1 L4.64092309,1 Z"></path>
+          <g>
+              <g transform="translate(5.000000, 6.000000)" fillRule="nonzero" fill="#323A45">
+                  <path d="M10.9765625,0.3046875 C11.0651042,0.518229167 11.0286458,0.700520833 10.8671875,0.8515625 L7.015625,4.703125 L7.015625,10.5 C7.015625,10.71875 6.9140625,10.8723958 6.7109375,10.9609375 C6.64322917,10.9869792 6.578125,11 6.515625,11 C6.375,11 6.2578125,10.9505208 6.1640625,10.8515625 L4.1640625,8.8515625 C4.06510417,8.75260417 4.015625,8.63541667 4.015625,8.5 L4.015625,4.703125 L0.1640625,0.8515625 C0.00260416666,0.700520833 -0.0338541667,0.518229167 0.0546875,0.3046875 C0.143229167,0.1015625 0.296875,0 0.515625,0 L10.515625,0 C10.734375,0 10.8880208,0.1015625 10.9765625,0.3046875 Z"></path>
+              </g>
+              <g fillOpacity="1" fill="black">
+                  <use filter={`url(#${filterId})`} xlinkHref={`#${pathId}`}></use>
+              </g>
           </g>
       </g>
   </svg>;
+};
+
+SelectedFilterIcon.propTypes = {
+  idPrefix: PropTypes.string.isRequired,
+  getRef: PropTypes.func,
+  className: PropTypes.string
+};
+
+export const UnselectedFilterIcon = (props) => {
+  const { getRef, className, ...restProps } = props;
+
+  return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef} className={`${className} unselected-filter-icon`}>
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g transform="translate(5.000000, 6.000000)" fillRule="nonzero" className="unselected-filter-icon-inner">
+        <path d="M10.9765625,0.3046875 C11.0651042,0.518229167 11.0286458,0.700520833 10.8671875,0.8515625 L7.015625,4.703125 L7.015625,10.5 C7.015625,10.71875 6.9140625,10.8723958 6.7109375,10.9609375 C6.64322917,10.9869792 6.578125,11 6.515625,11 C6.375,11 6.2578125,10.9505208 6.1640625,10.8515625 L4.1640625,8.8515625 C4.06510417,8.75260417 4.015625,8.63541667 4.015625,8.5 L4.015625,4.703125 L0.1640625,0.8515625 C0.00260416666,0.700520833 -0.0338541667,0.518229167 0.0546875,0.3046875 C0.143229167,0.1015625 0.296875,0 0.515625,0 L10.515625,0 C10.734375,0 10.8880208,0.1015625 10.9765625,0.3046875 Z"></path>
+      </g>
+      <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" className="unselected-filter-icon-border"></path>
+    </g>
+  </svg>;
+};
 
 export const rightTriangle = function() {
   return <svg width="11px" height="18px" viewBox="0 0 21 35">

@@ -7,6 +7,7 @@ $tag-backgrond-color: #d6d7d9;
 .section--document-list {
   .table-icon {
     margin: 1px;
+    margin-left: 5px;
     cursor: pointer;
   }
 
@@ -19,6 +20,10 @@ $tag-backgrond-color: #d6d7d9;
     padding: 1px 2px;
     border-radius: 5px;
     font-size: 15px;
+  }
+
+  .cf-document-list-header-row tr th > div {
+    display: flex;
   }
 
   .document-list-receipt-date {
@@ -41,6 +46,132 @@ $tag-backgrond-color: #d6d7d9;
     padding: 2px 5px;
     text-align: center;
     margin: 3px;
+  }
+
+  .cf-dropdown-filter {
+    position: absolute;
+    border: 1px solid $color-gray-lighter;
+    background: $color-white;
+    box-shadow: 5px 5px 4px -3px $color-gray-lighter;
+    font-weight: normal;
+    padding: 0;
+    $dropdown-interior-padding: 10px;
+
+    @mixin hover {
+      &:hover {
+        background-color: $color-gray;
+        color: $color-white;
+      }
+    }
+
+    .cf-clear-filter-row {
+      @include hover;
+
+      button {
+        padding: $dropdown-interior-padding;
+        padding-bottom: 0;
+        width: 100%;
+      }
+
+      .cf-clear-filter-button-wrapper {
+        border-bottom: 1px solid $color-gray-lighter;
+        padding-bottom: $dropdown-interior-padding;
+      }
+
+      &:hover .cf-clear-filter-button-wrapper {
+        border-bottom-color: $color-gray;
+      }
+    }
+
+    .cf-document-category-picker {
+      margin-bottom: 0;
+      margin-top: 0;
+      padding-bottom: 0;
+
+      li {
+        margin-bottom: 0;
+
+        @include hover;
+
+        .cf-form-checkboxes {
+          margin-top: 0;
+          margin-bottom: 0;
+
+          label {
+            padding: $dropdown-interior-padding;
+            margin-bottom: 0;
+
+            &::before {
+              margin-top: $dropdown-interior-padding;
+              margin-left: $dropdown-interior-padding;
+            }
+
+            .cf-category-selector {
+              margin-bottom: 0;
+              padding-left: $dropdown-interior-padding * 3;
+            }
+          }
+        }
+      }
+
+      li:last-child .cf-form-checkboxes {
+        margin-bottom: 0;
+
+        .cf-category-selector {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .unselected-filter-icon {
+    .unselected-filter-icon-inner {
+      fill: $color-gray-dark;
+    }
+
+    .unselected-filter-icon-border {
+      stroke: $color-gray-dark;
+    }
+  }
+
+  .unselected-filter-icon:hover {
+    .unselected-filter-icon-inner {
+      fill: $color-primary;
+    }
+
+    .unselected-filter-icon-border {
+      stroke: $color-primary;
+    }
+  }
+
+  .cf-text-button {
+    background: inherit;
+    font-weight: inherit;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+
+    &:hover {
+      color: inherit;
+      background: inherit;
+    }
+  }
+
+  .cf-document-category-picker {
+    list-style-type: none;
+    padding-left: 0;
+    padding-bottom: 5px;
+
+    .cf-category-selector {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+
+      .cf-category-name {
+        line-height: 1;
+        padding-left: 7px;
+      }
+    }
   }
 
 }
