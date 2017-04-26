@@ -93,7 +93,7 @@ class SearchableDropdown extends Component {
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
-        id={name}
+        inputProps={{ id: name }}
         options={options}
         onChange={this.onChange}
         value={this.state.value}

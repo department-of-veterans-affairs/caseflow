@@ -238,7 +238,10 @@ describe Appeal do
     subject { appeal.certify! }
 
     context "when form8 for appeal exists in the DB" do
-      before { @form8 = Form8.create(vacols_id: "765") }
+      before do
+        @form8 = Form8.create(vacols_id: "765")
+        @certification = Certification.create(vacols_id: "765")
+      end
 
       it "certifies the appeal using AppealRepository" do
         expect { subject }.to_not raise_error
@@ -342,13 +345,23 @@ describe Appeal do
     context "when status is Complete" do
       let(:status) { "Complete" }
 
-      context "when all issues are new-material allowed" do
-        let(:issues) { [Generators::Issue.build(disposition: :allowed, category: :new_material)] }
+      context "when at least one issues is new-material allowed" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed, category: :new_material),
+            Generators::Issue.build(disposition: :denied)
+          ]
+        end
         it { is_expected.to be_falsey }
       end
 
       context "when at least one issue is not new-material allowed" do
-        let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed),
+            Generators::Issue.build(disposition: :denied)
+          ]
+        end
         it { is_expected.to be_truthy }
       end
     end

@@ -12,6 +12,7 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
+import classNames from 'classnames';
 
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
@@ -69,32 +70,32 @@ export class PdfSidebar extends React.Component {
         </Comment>;
     });
 
+    const sidebarClass = classNames(
+      'cf-sidebar-wrapper',
+      { 'hidden-sidebar': this.props.hidePdfSidebar });
     const categoryToggleStates = _.mapValues(
       Constants.documentCategories,
       (val, key) =>
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
-    return <div className="cf-sidebar-wrapper">
+    return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={['cf-pdf-button']}>
+            classNames={['cf-pdf-button']}
+            onClick={this.props.handleTogglePdfSidebar}>
             <strong>
-              Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+              Hide menu asdfasd<i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
-          <p className="cf-pdf-meta-title">
-            <b>Document Type:</b> {this.props.doc.type}
-            <Button
-              name="download"
-              classNames={['cf-btn-link']}
-              ariaLabel="download"
-            >
-              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-            </Button>
+          <p className="cf-pdf-meta-title cf-pdf-cutoff">
+            <b>Document Type: </b>
+            <span title={this.props.doc.type}>
+              {this.props.doc.type}
+            </span>
           </p>
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
@@ -162,10 +163,15 @@ PdfSidebar.propTypes = {
   onCancelCommentEdit: PropTypes.func,
   onCancelCommentAdd: PropTypes.func,
   onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func
+  onJumpToComment: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };
 
-const mapPropsToState = (state) => _.pick(state, 'documents');
+const mapPropsToState = (state) => ({
+  documents: state.documents,
+  hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+});
 const mapDispatchToState = (dispatch) => ({
   handleCategoryToggle(docId, categoryName, toggleState) {
     const categoryKey = categoryFieldNameOfCategoryName(categoryName);
@@ -186,10 +192,14 @@ const mapDispatchToState = (dispatch) => ({
         docId
       }
     });
+  },
+  handleTogglePdfSidebar() {
+    dispatch({
+      type: Constants.TOGGLE_PDF_SIDEBAR
+    });
   }
 });
-const ConnectedPdfSidebar = connect(
-    mapPropsToState, mapDispatchToState
-  )(PdfSidebar);
 
-export default ConnectedPdfSidebar;
+export default connect(
+  mapPropsToState, mapDispatchToState
+)(PdfSidebar);

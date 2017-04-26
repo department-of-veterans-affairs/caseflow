@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
+import * as certificationActions from './actions/Certification';
 
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
-
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -117,6 +117,43 @@ class UnconnectedConfirmHearing extends React.Component {
     this.props.updateProgressBar();
   }
 
+  getValidationErrors() {
+    let {
+      hearingDocumentIsInVbms,
+      hearingType,
+      form9Type
+    } = this.props;
+
+    const erroredFields = [];
+
+    if (!hearingType && hearingDocumentIsInVbms) {
+      erroredFields.push('hearingDocumentIsInVbms');
+    }
+
+    if (!hearingDocumentIsInVbms && !form9Type) {
+      erroredFields.push('hearingChangeQuestion');
+    }
+
+    return erroredFields;
+  }
+
+  onClickContinue() {
+
+    const erroredFields = this.getValidationErrors();
+
+    if (erroredFields.length) {
+      this.props.onContinueClickFailed();
+
+      return;
+    }
+
+    // Sets continueClicked to false for the next page.
+    this.props.onContinueClickSuccess();
+
+    window.location = `/certifications/${this.props.match.params.vacols_id}` +
+        '/sign_and_certify';
+  }
+
   render() {
     let { hearingDocumentIsInVbms,
       onHearingDocumentChange,
@@ -125,8 +162,9 @@ class UnconnectedConfirmHearing extends React.Component {
       onTypeOfForm9Change,
       hearingType,
       onHearingTypeChange,
-      match,
-      certificationId
+      continueClicked,
+      certificationId,
+      match
     } = this.props;
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
@@ -148,6 +186,10 @@ class UnconnectedConfirmHearing extends React.Component {
       form9IsFormal;
     const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
       form9IsInformal;
+
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = (Boolean(this.getValidationErrors().length && continueClicked));
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -226,10 +268,10 @@ class UnconnectedConfirmHearing extends React.Component {
         </div>
 
       <Footer
+        disableContinue={disableContinue}
+        onClickContinue={this.onClickContinue.bind(this)}
         certificationId={certificationId}
-        nextPageUrl={
-          `/certifications/${match.params.vacols_id}/sign_and_certify`
-        }/>
+      />
     </div>;
   }
 }
@@ -284,7 +326,9 @@ const mapDispatchToProps = (dispatch) => ({
         hearingType
       }
     });
-  }
+  },
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess())
 });
 
 /*
@@ -298,6 +342,7 @@ const mapStateToProps = (state) => ({
   form9Type: state.form9Type,
   form9Date: state.form9Date,
   hearingType: state.hearingType,
+  continueClicked: state.continueClicked,
   certificationId: state.certificationId
 });
 
@@ -320,6 +365,7 @@ ConfirmHearing.propTypes = {
   hearingType: PropTypes.string,
   onHearingTypeChange: PropTypes.func,
   match: PropTypes.object.isRequired,
+  continueClicked: PropTypes.bool,
   certificationId: PropTypes.number
 };
 
