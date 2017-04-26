@@ -175,7 +175,7 @@ export default class StyleGuideColors extends React.Component {
       {this.Combos.map((name, i) =>
         <div className="sg-colors-combo" key={name + i}
           style={{ color: this.Colors[name] }}>
-          {name.toLowerCase()} - on white
+          <b>{name.toLowerCase()} - on white</b>
         </div>
       )}
     </div>;
