@@ -81,6 +81,14 @@ RSpec.feature "Start Certification" do
   context "As an authorized user for Certification V2" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
+    before(:all) do
+      FeatureToggle.enable!(:certification_v2)
+    end
+
+    after(:all) do
+      FeatureToggle.disable!(:certification_v2)
+    end
+
     scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
