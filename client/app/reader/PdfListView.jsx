@@ -219,8 +219,6 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             return <TagTableColumn
               doc={doc}
-              handleToggleTagsOpened={this.props.handleToggleTagsOpened}
-              expandTags={this.props.reduxDocuments[doc.id].expandTags}
             />;
           }
         },
@@ -337,14 +335,6 @@ const mapDispatchToProps = (dispatch) => ({
   handleToggleCommentOpened(docId) {
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
-      payload: {
-        docId
-      }
-    });
-  },
-  handleToggleTagsOpened(docId) {
-    dispatch({
-      type: Constants.TOGGLE_TAG_LIST,
       payload: {
         docId
       }

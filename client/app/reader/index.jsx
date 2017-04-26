@@ -149,8 +149,7 @@ export const readerReducer = (state = initialState, action = {}) => {
     return update(state, {
       documents: {
         $set: _.mapValues(state.documents, (document) => {
-          return update(document, { expandComments: { $set: !state.ui.expandAll },
-            expandTags: { $set: !state.ui.expandAll } });
+          return update(document, { expandComments: { $set: !state.ui.expandAll } });
         })
       },
       ui: {
@@ -163,18 +162,6 @@ export const readerReducer = (state = initialState, action = {}) => {
         [action.payload.docId]: {
           expandComments: {
             $set: !state.documents[action.payload.docId].expandComments
-          }
-        }
-      },
-      ui: { $merge: { expandAll: false } }
-    }
-);
-  case Constants.TOGGLE_TAG_LIST:
-    return update(state, {
-      documents: {
-        [action.payload.docId]: {
-          expandTags: {
-            $set: !state.documents[action.payload.docId].expandTags
           }
         }
       },
