@@ -1,7 +1,12 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
+import StatusMessage from '../../components/StatusMessage';
 
 export default function StyleGuideStatusMessages() {
+  let message1 = "We've recorded the explanation and placed the claim on hold."
+
+  let message2 = "You can try establishing another claim or go view held claims in your Work History."
+
   return <div>
     <StyleGuideComponentTitle
       title="Status Messages"
@@ -14,5 +19,8 @@ export default function StyleGuideStatusMessages() {
     particular page or application. These messages are more neutral with a
     <code>dark-grey</code> title, an explanation of what is going on, and next steps
     the user can take.</p>
+    <StatusMessage
+      title="Claim Held"
+      leadMessageList={[message1, message2]} />
   </div>;
 }
