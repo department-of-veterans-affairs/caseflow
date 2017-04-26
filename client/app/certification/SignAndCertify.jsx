@@ -5,7 +5,7 @@ import RadioField from '../components/RadioField';
 import Footer from './Footer';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
-
+import * as certificationActions from './actions/Certification';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -32,6 +32,50 @@ class UnconnectedSignAndCertify extends React.Component {
     this.props.updateProgressBar();
   }
 
+  getValidationErrors() {
+
+    const erroredFields = [];
+
+    if (!this.props.certifyingOffice) {
+      erroredFields.push('certifyingOffice');
+    }
+
+    if (!this.props.certifyingUsername) {
+      erroredFields.push('certifyingUsername');
+    }
+
+    if (!this.props.certifyingOfficialName) {
+      erroredFields.push('certifyingOfficialName');
+    }
+
+    if (!this.props.certifyingOfficialTitle) {
+      erroredFields.push('certifyingOfficialTitle');
+    }
+
+    // TODO: we should validate that it's a datetype
+    if (!this.props.certificationDate) {
+      erroredFields.push('certificationDate');
+    }
+
+    return erroredFields;
+  }
+
+  onClickContinue() {
+
+    const erroredFields = this.getValidationErrors();
+
+    if (erroredFields.length) {
+      this.props.onContinueClickFailed();
+
+      return;
+    }
+
+    // Sets continueClicked to false for the next page.
+    this.props.onContinueClickSuccess();
+
+    window.location = `/certifications/${this.props.match.params.vacols_id}/success`;
+  }
+
   render() {
     let {
       onSignAndCertifyFormChange,
@@ -40,9 +84,17 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      match,
+      continueClicked,
       certificationId
     } = this.props;
+
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = false;
+
+    if (this.getValidationErrors().length && continueClicked) {
+      disableContinue = true;
+    }
 
     return <div>
       <form>
@@ -78,10 +130,10 @@ class UnconnectedSignAndCertify extends React.Component {
         </div>
       </form>
     <Footer
+      disableContinue={disableContinue}
+      onClickContinue={this.onClickContinue.bind(this)}
       certificationId={certificationId}
-      nextPageUrl={
-        `/certifications/${match.params.vacols_id}/success`
-      }/>
+    />
   </div>;
   }
 }
@@ -102,7 +154,9 @@ const mapDispatchToProps = (dispatch) => ({
         [fieldName]: value
       }
     });
-  }
+  },
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess())
 });
 
 const mapStateToProps = (state) => ({
@@ -111,6 +165,7 @@ const mapStateToProps = (state) => ({
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
+  continueClicked: state.continueClicked,
   certificationId: state.certificationId
 });
 
@@ -127,6 +182,7 @@ SignAndCertify.propTypes = {
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
   match: PropTypes.object.isRequired,
+  continueClicked: PropTypes.bool,
   certificationId: PropTypes.number
 };
 
