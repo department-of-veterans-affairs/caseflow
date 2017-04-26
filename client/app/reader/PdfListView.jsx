@@ -64,6 +64,13 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
+    if (this.lastReadElement) {
+      const boundingBox = this.lastReadElement.getBoundingClientRect();
+      const halfWindowHeight = window.innerHeight / 2;
+
+      document.body.scrollTop = boundingBox.top - halfWindowHeight;
+    }
+
     window.addEventListener('resize', this.setCategoryFilterIconPosition);
     this.setCategoryFilterIconPosition();
   }
@@ -82,15 +89,6 @@ export class PdfListView extends React.Component {
 
   toggleComments = (id) => () => {
     this.props.handleToggleCommentOpened(id);
-  }
-
-  componentDidMount = () => {
-    if (this.lastReadElement) {
-      const boundingBox = this.lastReadElement.getBoundingClientRect();
-      const halfWindowHeight = window.innerHeight / 2;
-
-      document.body.scrollTop = boundingBox.top - halfWindowHeight;
-    }
   }
 
   getDocumentColumns = () => {
