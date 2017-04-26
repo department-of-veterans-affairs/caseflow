@@ -218,6 +218,7 @@ export default class PdfViewer extends React.Component {
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
             showTagErrorMsg={this.props.showTagErrorMsg}
+            tagsErrorCount={this.props.tagsErrorCount}
             doc={this.props.doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
