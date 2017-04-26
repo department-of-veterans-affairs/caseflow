@@ -71,7 +71,7 @@ class EstablishClaimsController < TasksController
   end
 
   def update_employee_count
-    Rails.cache.write("employee_count", params[:count], expires_in: nil)
+    quota.update_assignee_count!(params[:count])
     render json: {}
   end
 
@@ -144,17 +144,10 @@ class EstablishClaimsController < TasksController
     RequestStore.store[:application] = "dispatch-arc"
   end
 
-  def total_assigned_issues
-    if Rails.cache.read("employee_count").to_i == 0 || Rails.cache.read("employee_count").nil?
-      per_employee_quota = 0
-    else
-      employee_total = Rails.cache.read("employee_count").to_i
-      per_employee_quota = (@completed_count_today + @remaining_count_today) /
-                           employee_total
-    end
-    per_employee_quota
+  def quota
+    Quota.new(date: Time.zone.today, task_klass: EstablishClaim)
   end
-  helper_method :total_assigned_issues
+  helper_method :quota
 
   def review_complete_params
     { vacols_note: params[:vacols_note] }
