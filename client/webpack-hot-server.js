@@ -22,7 +22,6 @@ const devServer = new WebpackDevServer(compiler, {
   },
   hot: true,
   inline: true,
-  historyApiFallback: false,
   quiet: false,
   noInfo: false,
   lazy: false,
