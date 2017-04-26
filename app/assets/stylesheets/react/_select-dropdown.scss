@@ -8,6 +8,9 @@
  *
  * This css has been modified to match the searchable select dropdown for caseflow.
 */
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
 .Select {
   position: relative;
   max-width: 46rem;
@@ -42,6 +45,8 @@
   background-position: right 1.3rem center;
   background-repeat: no-repeat;
   background-size: 1.3rem;
+  border-left: 1px solid $color-gray;
+  padding-left: 32px;
 }
 
 .Select-control {
@@ -227,7 +232,6 @@
 .Select-arrow-zone {
   cursor: pointer;
   display: table-cell;
-  position: relative;
   text-align: center;
   vertical-align: middle;
   width: 30px;
@@ -241,6 +245,7 @@
 
 .Select--multi .Select-multi-value-wrapper {
   display: inline-block;
+  padding-bottom: 5px;
 }
 
 .Select .Select-aria-only {
@@ -338,14 +343,10 @@
 }
 
 .Select--multi .Select-value {
-  background-color: #ebf5ff;
-  /* Fallback color for IE 8 */
-  background-color: rgba(0, 126, 255, 0.08);
-  border-radius: 2px;
-  border: 1px solid #c2e0ff;
-  /* Fallback color for IE 8 */
-  border: 1px solid rgba(0, 126, 255, 0.24);
-  color: #007eff;
+  background-color: $color-gray-lighter;
+  padding: 0px 4px;
+  border-radius: 3px;
+  color: black;
   display: inline-block;
   font-size: 0.9em;
   line-height: 1.4;
@@ -364,7 +365,7 @@
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
   cursor: default;
-  padding: 2px 5px;
+  padding: 5px 5px;
 }
 
 .Select--multi a.Select-value-label {
@@ -378,21 +379,14 @@
 }
 
 .Select--multi .Select-value-icon {
+  font-size: 20px;
+  font-weight: 900;
+  text-decoration: bold;
+  float: right;
   cursor: pointer;
   border-bottom-left-radius: 2px;
   border-top-left-radius: 2px;
-  border-right: 1px solid #c2e0ff;
-  /* Fallback color for IE 8 */
-  border-right: 1px solid rgba(0, 126, 255, 0.24);
-  padding: 1px 5px 3px;
-}
-
-.Select--multi .Select-value-icon:hover,
-.Select--multi .Select-value-icon:focus {
-  background-color: #d8eafd;
-  /* Fallback color for IE 8 */
-  background-color: rgba(0, 113, 230, 0.08);
-  color: #0071e6;
+  padding: 2px 5px 3px;
 }
 
 .Select--multi .Select-value-icon:active {

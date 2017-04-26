@@ -2,192 +2,155 @@ require "rails_helper"
 require "ostruct"
 
 class FakeTask < Task
+  before_create do
+    # Automatically set appeal to make test data setup easier
+    self.appeal ||= Generators::Appeal.create
+  end
+
   def should_invalidate?
     appeal.vbms_id == "INVALID"
   end
 end
 
 describe Task do
-  # Clear the task from the DB before every test
-  before do
-    @one_week_ago = Time.utc(2016, 2, 17, 20, 59, 0) - 7.days
-    Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
-
-    @user = User.create(station_id: "ABC", css_id: "123", full_name: "Robert Smith")
-    @user2 = User.create(station_id: "ABC", css_id: "456", full_name: "Jane Doe")
-  end
+  before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
   let(:appeal) { Generators::Appeal.create }
   let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state) }
-  let(:user) { User.create(station_id: "ABC", css_id: "ROBBY", full_name: "Robert Smith") }
+  let(:user) { Generators::User.create(full_name: "Robert Smith") }
   let(:aasm_state) { :unassigned }
 
   context ".newest_first" do
-    let!(:appeal1) { Appeal.create(vacols_id: "123C") }
-    let!(:task1) { EstablishClaim.create(appeal: appeal1) }
-    let!(:appeal2) { Appeal.create(vacols_id: "456D") }
-    let!(:task2) { EstablishClaim.create(appeal: appeal2) }
-    subject { Task.newest_first }
-    before do
-      task1.update(created_at: 10.days.ago)
-      task2.update(created_at: 1.day.ago)
-    end
+    subject { Task.newest_first.all }
 
-    it "orders correctly" do
-      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
-      expect(subject.first).to eq(task2)
-      expect(subject.last).to eq(task1)
-    end
+    let!(:newest_task) { FakeTask.create(created_at: 1.second.ago) }
+    let!(:oldest_task) { FakeTask.create(created_at: 2.seconds.ago) }
+
+    it { is_expected.to eq([newest_task, oldest_task]) }
   end
 
   context ".oldest_first" do
-    let!(:appeal1) { Appeal.create(vacols_id: "123C") }
-    let!(:task1) { EstablishClaim.create(appeal: appeal1) }
-    let!(:appeal2) { Appeal.create(vacols_id: "456D") }
-    let!(:task2) { EstablishClaim.create(appeal: appeal2) }
-    subject { Task.oldest_first }
-    before do
-      task1.update(created_at: 10.days.ago)
-      task2.update(created_at: 1.day.ago)
+    subject { Task.oldest_first.all }
+
+    let!(:newest_task) { FakeTask.create(created_at: 1.second.ago) }
+    let!(:oldest_task) { FakeTask.create(created_at: 2.seconds.ago) }
+
+    it { is_expected.to eq([oldest_task, newest_task]) }
+  end
+
+  context ".to_complete" do
+    subject { Task.to_complete }
+
+    let!(:unprepared_task) { FakeTask.create!(aasm_state: :unprepared) }
+    let!(:completed_task) { FakeTask.create!(aasm_state: :completed) }
+    let!(:unassigned_task) { FakeTask.create!(aasm_state: :unassigned) }
+    let!(:reviewed_task) { FakeTask.create!(aasm_state: :reviewed) }
+
+    it { is_expected.to eq([unassigned_task, reviewed_task]) }
+  end
+
+  context ".tasks_completed_by_users" do
+    subject { Task.tasks_completed_by_users(tasks) }
+
+    let!(:user_one_task) { Generators::User.create(full_name: "Klay Thompson") }
+    let!(:user_two_tasks) { Generators::User.create(full_name: "Steph Curry") }
+
+    let!(:tasks) do
+      [
+        FakeTask.create(aasm_state: :completed, user: user_one_task),
+        FakeTask.create(aasm_state: :completed, user: user_two_tasks),
+        FakeTask.create(aasm_state: :completed, user: user_two_tasks)
+      ]
     end
 
-    it "orders correctly" do
-      expect(subject).to be_an_instance_of(Task::ActiveRecord_Relation)
-      expect(subject.first).to eq(task1)
-      expect(subject.last).to eq(task2)
+    it "returns hash with each user and their completed number of tasks" do
+      is_expected.to eq("Klay Thompson" => 1, "Steph Curry" => 2)
     end
   end
 
-  context ".progress_status" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
+  context ".completed_today" do
+    subject { FakeTask.completed_today.all }
+
+    let!(:task_completed_this_morning) do
+      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.beginning_of_day)
+    end
+
+    let!(:task_completed_tonight) do
+      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.end_of_day)
+    end
+
+    let!(:task_completed_yesterday) do
+      FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.end_of_day - 1.day)
+    end
+
+    let!(:task_not_completed) do
+      FakeTask.create(aasm_state: :reviewed, completed_at: Time.zone.now)
+    end
+
+    it { is_expected.to eq([task_completed_this_morning, task_completed_tonight]) }
+  end
+
+  context ".completed_success" do
+    subject { Task.completed_success }
+
+    let!(:successful_task) { FakeTask.create!(completion_status: :routed_to_arc) }
+    let!(:canceled_task) { FakeTask.create!(completion_status: :canceled) }
+
+    it "returns only the successfully completed task" do
+      is_expected.to eq [successful_task]
+    end
+  end
+
+  context "#assigned_not_completed" do
+    subject { Task.assigned_not_completed }
+
+    let!(:unassigned_task) { FakeTask.create! }
+    let!(:assigned_task) { FakeTask.create!(assigned_at: Time.zone.now, aasm_state: :assigned) }
+    let!(:completed_task) { FakeTask.create!(assigned_at: Time.zone.now, aasm_state: :completed) }
+
+    it { is_expected.to eq([assigned_task]) }
+  end
+
+  context "#progress_status" do
     subject { task.progress_status }
 
-    # We start with a blank task and move it task through the various states
-
-    context "starts as unassigned" do
+    context "when unprepared" do
+      let(:aasm_state) { :unprepared }
       it { is_expected.to eq("Unassigned") }
     end
 
-    context "task is assigned" do
-      before do
-        task.prepare!
-        task.assign!(:assigned, @user)
-      end
-
+    context "when assigned" do
+      let(:aasm_state) { :assigned }
       it { is_expected.to eq("Not Started") }
     end
 
-    context "task is started" do
-      let!(:appeal) { Appeal.create(vacols_id: "123C") }
-      let!(:task) { EstablishClaim.create(appeal: appeal) }
-      before do
-        task.prepare!
-        task.assign!(:assigned, @user)
-        task.start!
-      end
+    context "when started" do
+      let(:aasm_state) { :started }
       it { is_expected.to eq("In Progress") }
     end
 
     context "task is completed" do
-      before do
-        task.prepare!
-        task.assign!(:assigned, @user)
-        task.start!
-        task.review!
-        task.complete!(:completed, status: 0)
-      end
-
+      let(:aasm_state) { :completed }
       it { is_expected.to eq("Completed") }
     end
   end
 
-  context ".start!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    it "errors if no one is assigned" do
-      expect(task.user).to be_nil
-      expect { task.start! }.to raise_error(AASM::InvalidTransition)
+  context "#start!" do
+    subject { task.start! }
+
+    context "when assigned" do
+      let(:aasm_state) { :assigned }
+
+      it "is successful and sets started_at" do
+        is_expected.to be_truthy
+        expect(task.reload.started_at).to eq(Time.zone.now)
+      end
     end
 
-    it "sets started_at value to current timestamp" do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      expect(task.started_at).to be_falsey
-      task.start!
-      expect(task.started_at).to eq(Time.now.utc)
-    end
-  end
-
-  context ".started?" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    subject { task.started? }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-    end
-
-    context "not started" do
-      it { is_expected.to be_falsey }
-    end
-
-    context "was started" do
-      before { task.start! }
-      it { is_expected.to be_truthy }
-    end
-  end
-
-  context ".special_issue_not_emailed?" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    let!(:completion_status) { :special_issue_not_emailed }
-    subject { task }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-      task.complete!(status: completion_status)
-    end
-    it { expect(subject.special_issue_not_emailed?).to be_truthy }
-  end
-
-  context ".completed?" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    subject { task }
-    before { task.completed_at = Time.now.utc }
-    it { expect(subject.completed_at).to be_truthy }
-  end
-
-  context "#completed_today" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.update_attributes!(completed_at: Time.now.utc)
-    end
-    it { expect { Task.completed_today.find(task.id) }.not_to raise_error }
-  end
-
-  context "#complete_and_recreate!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-      task.review!
-      task.complete_and_recreate!(3)
-    end
-    it "completes and creates a new task" do
-      new_task = appeal.tasks.where(type: task.type).where.not(aasm_state: "completed").first
-      expect(task.completed?).to be_truthy
-      expect(task.id).not_to eq(new_task.id)
-    end
-
-    it "fails on already completed tasks" do
-      expect(task.reload.completed?).to be_truthy
-      expect { task.cancel! }.to raise_error(AASM::InvalidTransition)
+    context "when not assigned" do
+      it "raises InvalidTransition" do
+        expect { subject }.to raise_error(AASM::InvalidTransition)
+      end
     end
   end
 
@@ -218,6 +181,16 @@ describe Task do
           outgoing_reference_id: "123WOO"
         )
       end
+
+      let(:quota) { Quota.new(date: Time.zone.today, task_klass: FakeTask) }
+
+      it "recalculates current quota assignee count" do
+        # Create a task completed by another user to bring the number of active employees to 2
+        FakeTask.create!(aasm_state: :completed, completed_at: Time.zone.now, user: Generators::User.create)
+
+        subject
+        expect(quota.assignee_count).to eq(2)
+      end
     end
 
     context "when reviewed" do
@@ -246,144 +219,56 @@ describe Task do
     end
   end
 
-  context "#to_complete" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-    end
-    it { expect { Task.to_complete.find(task.id) }.not_to raise_error }
-  end
-
   context "#expire!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-    end
-    it "closes unfinished tasks" do
-      task.expire!
-      expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq("expired")
-      expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
+    subject { task.expire! }
+    let(:aasm_state) { :started }
+
+    it "sets status to completed and completion_status to expired" do
+      is_expected.to be_truthy
+
+      expect(task.reload).to be_completed
+      expect(task).to be_expired
     end
 
-    it "closes unfinished task in review state" do
-      task.review!
-      task.expire!
-      expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq("expired")
-      expect(appeal.tasks.where.not(aasm_state: "completed").where(type: :EstablishClaim).count).to eq(1)
+    it "recreates a new unprepared task" do
+      subject
+      expect(FakeTask.where(aasm_state: :unprepared, appeal: task.appeal).length).to eq(1)
     end
-  end
 
-  context "#completed_success" do
-    let!(:successful_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 0) }
-    let!(:canceled_task) { Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1) }
-    it "returns only the successfully completed task" do
-      expect(Task.completed_success).to eq [successful_task]
+    context "when new task creation fails" do
+      before do
+        allow(FakeTask).to receive(:create!).and_raise("Roar")
+      end
+
+      it "rolls back state change too" do
+        expect { subject }.to raise_error("Roar")
+        expect(task.reload).to_not be_completed
+        expect(task).to_not be_expired
+      end
     end
   end
 
   context "#cancel!" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-    end
-    it "closes canceled tasks" do
-      task.cancel!
-      expect(task.reload.completed?).to be_truthy
-      expect(task.reload.completion_status).to eq("canceled")
-      expect(appeal.tasks.to_complete.where(type: :EstablishClaim).count).to eq(0)
-    end
+    subject { task.cancel!("feedbackz") }
 
-    it "saves feedback" do
-      task.cancel!("Feedback")
-      expect(task.reload.comment).to eq("Feedback")
-    end
-  end
+    let(:aasm_state) { :started }
 
-  context ".canceled?" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-      task.start!
-    end
-    it "returns false for task not canceled" do
-      expect(task.canceled?).to be_falsey
-    end
+    it "sets task to cancelled and saves feedback" do
+      is_expected.to be_truthy
 
-    it "returns true for canceled task" do
-      task.cancel!
-      expect(task.canceled?).to be_truthy
+      expect(task.reload).to be_completed
+      expect(task).to be_canceled
+      expect(task.reload.comment).to eq("feedbackz")
     end
-
-    it "can be canceled when in review state" do
-      task.review!
-      task.cancel!
-      expect(task.canceled?).to be_truthy
-    end
-  end
-
-  context "#assigned_not_completed" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    before do
-      task.prepare!
-      task.assign!(:assigned, @user)
-    end
-    it { expect { Task.assigned_not_completed.find(task.id) }.not_to raise_error }
   end
 
   context "#days_since_creation" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal, created_at: @one_week_ago) }
+    subject { task.days_since_creation }
+
+    let(:task) { FakeTask.create!(created_at: 7.days.ago) }
+
     it "returns the correct number of days" do
-      expect(task.days_since_creation).to eq(7)
-    end
-  end
-
-  context "#unprepared" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:task) { EstablishClaim.create(appeal: appeal) }
-    it "returns unprepared tasks" do
-      expect(Task.unprepared.first).to eq(task)
-    end
-  end
-
-  context "#tasks_completed_by_users" do
-    let!(:appeal) { Appeal.create(vacols_id: "123C") }
-    let!(:tasks) do
-      [
-        EstablishClaim.create(appeal: appeal),
-        EstablishClaim.create(appeal: appeal),
-        EstablishClaim.create(appeal: appeal)
-      ]
-    end
-
-    before do
-      tasks.each_with_index do |task, index|
-        task.prepare!
-        if index < 2
-          task.assign!(:assigned, @user)
-        else
-          task.assign!(:assigned, @user2)
-        end
-        task.start!
-        task.review!
-        task.complete!(status: 0)
-      end
-    end
-
-    it "returns hash with each user and their completed number of tasks" do
-      expect(Task.tasks_completed_by_users(tasks)).to eq("Jane Doe" => 1, "Robert Smith" => 2)
+      is_expected.to eq(7)
     end
   end
 
