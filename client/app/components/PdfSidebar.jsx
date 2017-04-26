@@ -219,6 +219,7 @@ const mapDispatchToProps = (dispatch) => ({
     });
   }
 });
+
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
