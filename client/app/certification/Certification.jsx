@@ -31,11 +31,7 @@ const configureStore = (data) => {
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('./reducers/index', () => {
-      /* eslint-disable global-require */
-      const nextRootReducer = require('./reducers/index').default;
-      /* eslint-enable global-require */
-
-      store.replaceReducer(nextRootReducer);
+      store.replaceReducer(certificationReducers);
     });
   }
 
