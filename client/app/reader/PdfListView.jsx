@@ -223,6 +223,7 @@ export class PdfListView extends React.Component {
           }
         },
         {
+          align: 'center',
           header: <div
             id="comments-header"
             className="document-list-header-comments"
