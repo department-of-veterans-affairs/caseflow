@@ -27,8 +27,12 @@ export const newTagRequestSuccess = (docId, createdTags) => ({
   }
 });
 
-export const newTagRequestFailed = () => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE
+export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
+  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
+  payload: {
+    docId,
+    tagsThatWereAttemptedToBeCreated
+  }
 });
 
 export const selectCurrentPdf = (docId) => ({
@@ -83,7 +87,7 @@ export const addNewTag = (doc, tags) => (
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {
-          dispatch(newTagRequestFailed());
+          dispatch(newTagRequestFailed(doc.id, newTags));
         });
     }
   }

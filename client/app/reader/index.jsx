@@ -93,7 +93,19 @@ export const readerReducer = (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $apply: (tags) =>
+              _.differenceBy(
+                tags,
+                action.payload.tagsThatWereAttemptedToBeCreated,
+                'text'
+              )
+          }
+        }
+      }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return update(
