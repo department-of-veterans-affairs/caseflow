@@ -12,6 +12,7 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
+import classNames from 'classnames';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -94,32 +95,32 @@ export class PdfSidebar extends React.Component {
         </div>;
     });
 
+    const sidebarClass = classNames(
+      'cf-sidebar-wrapper',
+      { 'hidden-sidebar': this.props.hidePdfSidebar });
     const categoryToggleStates = _.mapValues(
       Constants.documentCategories,
       (val, key) =>
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
-    return <div className="cf-sidebar-wrapper">
+    return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
             name="hide menu"
-            classNames={['cf-pdf-button']}>
+            classNames={['cf-pdf-button']}
+            onClick={this.props.handleTogglePdfSidebar}>
             <strong>
-              Hide Menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+              Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
           </Button>
         </div>
         <div className="cf-document-info-wrapper">
-          <p className="cf-pdf-meta-title">
-            <b>Document Type:</b> {this.props.doc.type}
-            <Button
-              name="download"
-              classNames={['cf-btn-link']}
-              ariaLabel="download"
-            >
-              <i className="cf-pdf-button fa fa-download" aria-hidden="true"></i>
-            </Button>
+          <p className="cf-pdf-meta-title cf-pdf-cutoff">
+            <b>Document Type: </b>
+            <span title={this.props.doc.type}>
+              {this.props.doc.type}
+            </span>
           </p>
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
@@ -176,9 +177,10 @@ export class PdfSidebar extends React.Component {
   }
 }
 
-const mapSidebarStateToProps = (state) => {
+const mapStateToProps = (state) => {
   return {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     documents: state.documents
   };
 };
@@ -210,13 +212,13 @@ const mapDispatchToProps = (dispatch) => ({
         docId
       }
     });
+  },
+  handleTogglePdfSidebar() {
+    dispatch({
+      type: Constants.TOGGLE_PDF_SIDEBAR
+    });
   }
 });
-
-export default connect(
-  mapSidebarStateToProps, mapDispatchToProps
-)(PdfSidebar);
-
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
@@ -231,5 +233,11 @@ PdfSidebar.propTypes = {
   onCancelCommentEdit: PropTypes.func,
   onCancelCommentAdd: PropTypes.func,
   onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func
+  onJumpToComment: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfSidebar);

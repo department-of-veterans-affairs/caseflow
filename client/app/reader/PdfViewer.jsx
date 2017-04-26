@@ -259,12 +259,13 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    scrollToComment: state.ui.pdf.scrollToComment
+    scrollToComment: state.ui.pdf.scrollToComment,
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, null
 )(PdfViewer);
 
 PdfViewer.propTypes = {
@@ -277,5 +278,6 @@ PdfViewer.propTypes = {
     id: React.PropTypes.number
   }),
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func
+  onCommentScrolledTo: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };

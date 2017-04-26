@@ -2,6 +2,9 @@ import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
+import { connect } from 'react-redux';
+import * as Constants from '../reader/constants';
+import classNames from 'classnames';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -28,7 +31,7 @@ const MINIMUM_ZOOM = 0.1;
 //   a user to be able to navigate to, pass in handlers for onNextPdf
 //   and onPreviousPdf. If one is not supplied, or is null, then the
 //   corresponding arrow will be missing.
-export default class PdfUI extends React.Component {
+export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,21 +66,20 @@ export default class PdfUI extends React.Component {
   }
 
   render() {
-    let selectedLabels = {};
+    const pdfUiClass = classNames(
+      'cf-pdf-container',
+      { 'hidden-sidebar': this.props.hidePdfSidebar });
 
-    selectedLabels[this.props.label] = true;
-
-    return <div className="cf-pdf-container">
+    return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.onShowList &&
-            <Button
-              name="backToDocuments"
-              classNames={['cf-pdf-button']}
-              onClick={this.props.onShowList}>
-              <i className="fa fa-chevron-left" aria-hidden="true"></i>
-              &nbsp; View all documents
-            </Button> }
+          { this.props.onShowList && <Button
+            name="backToDocuments"
+            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left']}
+            onClick={this.props.onShowList}>
+            <i className="fa fa-chevron-left" aria-hidden="true"></i>
+            &nbsp; Back to all documents
+          </Button> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
           <Button
@@ -103,17 +105,32 @@ export default class PdfUI extends React.Component {
           </Button>
         </span>
         <span className="usa-width-one-third">
-          <span className="cf-right-side">
-            <DocumentCategoryIcons docId={this.props.doc.id} />
-            <Button
-              name="newTab"
-              classNames={['cf-pdf-button']}
-              ariaLabel="open document in new tab"
-              onClick={() => window.open(
-                linkToSingleDocumentView(this.props.doc), '_blank')}>
-              {this.props.doc.type}
-            </Button>
-          </span>
+          <span className="category-icons-and-doc-type">
+            <span className="cf-pdf-doc-category-icons">
+              <DocumentCategoryIcons docId={this.props.doc.id} />
+            </span>
+            <span className="cf-pdf-doc-type-button-container">
+              <Button
+                name="newTab"
+                classNames={['cf-pdf-button cf-pdf-doc-type-button']}
+                ariaLabel="open document in new tab"
+                onClick={() => window.open(
+                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                <span title={this.props.doc.type}>{this.props.doc.type}</span>
+              </Button>
+            </span>
+            {this.props.hidePdfSidebar &&
+              <span className="cf-pdf-open-menu">
+                <Button
+                  name="open menu"
+                  classNames={['cf-pdf-button']}
+                  onClick={this.props.handleTogglePdfSidebar}>
+                  <strong>
+                    Open menu
+                  </strong>
+                </Button>
+              </span>}
+            </span>
         </span>
       </div>
       <div className="cf-pdf-navigation">
@@ -154,15 +171,30 @@ export default class PdfUI extends React.Component {
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
-        <div>
-          <div className="cf-pdf-buttons-center">
-            Page {this.state.currentPage} of {this.state.numPages}
-          </div>
+        <div className="cf-pdf-buttons-center">
+          Page {this.state.currentPage} of {this.state.numPages}
         </div>
       </div>
     </div>;
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+  };
+};
+const mapDispatchToProps = (dispatch) => ({
+  handleTogglePdfSidebar() {
+    dispatch({
+      type: Constants.TOGGLE_PDF_SIDEBAR
+    });
+  }
+});
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(PdfUI);
 
 PdfUI.propTypes = {
   comments: PropTypes.arrayOf(PropTypes.shape({
@@ -186,5 +218,7 @@ PdfUI.propTypes = {
   onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  onIconMoved: PropTypes.func
+  onIconMoved: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
 };

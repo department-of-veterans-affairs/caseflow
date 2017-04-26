@@ -2,9 +2,17 @@
 @import 'uswds/core/variables';
 
 .comment-control-button-container {
-  display: inline-block;
+  display: flex;
   width: 100%;
   padding: 3px 0;
+  justify-content: space-between;
+}
+
+.comment-save-button-container {
+  display: inline-block;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 17px;
 }
 
 .comment-control-button {
@@ -25,7 +33,6 @@
   padding: 15px;
   margin-bottom: 15px;
   border: 1px solid $color-gray-lighter;
-  max-width: 625px;
 }
 
 .comment-horizontal-container {

@@ -324,6 +324,8 @@ export class DecisionReviewer extends React.Component {
 
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
+    const renderPdf = this.state.currentPdfIndex !== null &&
+      this.props.storeDocuments[documents[this.state.currentPdfIndex].id];
 
     return (
       <div className="section--document-list">
@@ -343,7 +345,7 @@ export class DecisionReviewer extends React.Component {
           selectComments={this.selectComments}
           isCommentLabelSelected={this.state.isCommentLabelSelected}
           onJumpToComment={this.onJumpToComment} />}
-        {this.state.currentPdfIndex !== null && <PdfViewer
+        {renderPdf && <PdfViewer
           addNewTag={this.props.addNewTag}
           removeTag={this.props.removeTag}
           showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
