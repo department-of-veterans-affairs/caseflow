@@ -54,7 +54,7 @@ export default class EstablishClaimComplete extends React.Component {
       </ul>
 
        <h2 className="cf-msg-screen-deck">
-       <h4>Way to go!</h4>💪💻🇺🇸<br/>
+       <h2>Way to go!</h2>💪💻🇺🇸<br/>
        <div>You have completed all of the total cases assigned to you today.</div>
        </h2>
 
