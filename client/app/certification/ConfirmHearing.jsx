@@ -147,6 +147,7 @@ class UnconnectedConfirmHearing extends React.Component {
       return;
     }
 
+    // Sets continueClicked to false for the next page.
     this.props.onContinueClickSuccess();
 
     window.location = `/certifications/${this.props.match.params.vacols_id}` +
@@ -185,6 +186,10 @@ class UnconnectedConfirmHearing extends React.Component {
       form9IsFormal;
     const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
       form9IsInformal;
+
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = (Boolean(this.getValidationErrors().length && continueClicked));
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -263,7 +268,7 @@ class UnconnectedConfirmHearing extends React.Component {
         </div>
 
       <Footer
-        disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
+        disableContinue={disableContinue}
         onClickContinue={this.onClickContinue.bind(this)}
         certificationId={certificationId}
       />

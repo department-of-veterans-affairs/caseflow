@@ -104,6 +104,7 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
+    // Sets continueClicked to false for the next page.
     this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
@@ -143,6 +144,14 @@ export class ConfirmCaseDetails extends React.Component {
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
 
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = false;
+
+    if (this.getValidationErrors().length && continueClicked) {
+      disableContinue = true;
+    }
+
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Confirm Case Details</h2>
@@ -175,7 +184,7 @@ export class ConfirmCaseDetails extends React.Component {
         </div>
 
         <Footer
-          disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
+          disableContinue={disableContinue}
           loading={loading}
           certificationId={certificationId}
           onClickContinue={this.onClickContinue.bind(this)}

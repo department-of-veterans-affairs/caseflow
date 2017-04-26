@@ -52,6 +52,7 @@ class UnconnectedSignAndCertify extends React.Component {
       erroredFields.push('certifyingOfficialTitle');
     }
 
+    // TODO: we should validate that it's a datetype
     if (!this.props.certificationDate) {
       erroredFields.push('certificationDate');
     }
@@ -69,6 +70,7 @@ class UnconnectedSignAndCertify extends React.Component {
       return;
     }
 
+    // Sets continueClicked to false for the next page.
     this.props.onContinueClickSuccess();
 
     window.location = `/certifications/${this.props.match.params.vacols_id}/success`;
@@ -85,6 +87,14 @@ class UnconnectedSignAndCertify extends React.Component {
       continueClicked,
       certificationId
     } = this.props;
+
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = false;
+
+    if (this.getValidationErrors().length && continueClicked) {
+      disableContinue = true;
+    }
 
     return <div>
       <form>
@@ -120,7 +130,7 @@ class UnconnectedSignAndCertify extends React.Component {
         </div>
       </form>
     <Footer
-      disableContinue={Boolean(this.getValidationErrors().length) && continueClicked}
+      disableContinue={disableContinue}
       onClickContinue={this.onClickContinue.bind(this)}
       certificationId={certificationId}
     />
