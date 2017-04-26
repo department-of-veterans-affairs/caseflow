@@ -158,31 +158,28 @@ export const readerReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.TOGGLE_COMMENT_LIST:
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            expandComments: {
-              $set: !state.documents[action.payload.docId].expandComments
-            }
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          expandComments: {
+            $set: !state.documents[action.payload.docId].expandComments
           }
         }
-      }
-    );
+      },
+      ui: { $merge: { expandAll: false } }
+    }
+);
   case Constants.TOGGLE_TAG_LIST:
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            expandTags: {
-              $set: !state.documents[action.payload.docId].expandTags
-            }
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          expandTags: {
+            $set: !state.documents[action.payload.docId].expandTags
           }
         }
-      }
-    );
+      },
+      ui: { $merge: { expandAll: false } }
+    });
   case Constants.LAST_READ_DOCUMENT:
     return update(
       state,
