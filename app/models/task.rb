@@ -141,7 +141,8 @@ class Task < ActiveRecord::Base
     end
 
     event :complete do
-      before { |*args| assign_completion_attribtues(*args) }
+      before { |*args| assign_completion_attribtues(*args); }
+      success :recalculate_quota_assignees!
 
       transitions from: :reviewed, to: :completed
       transitions from: :started, to: :completed
@@ -231,6 +232,14 @@ class Task < ActiveRecord::Base
 
   def before_invalidation
     assign_attributes(completion_status: :invalidated)
+  end
+
+  def recalculate_quota_assignees!
+    quota.recalculate_assignee_count!
+  end
+
+  def quota
+    Quota.new(date: Time.zone.today, task_klass: self.class)
   end
 
   def check_and_invalidate!
