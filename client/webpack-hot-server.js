@@ -21,19 +21,14 @@ const devServer = new WebpackDevServer(compiler, {
     'Access-Control-Allow-Credentials': 'true'
   },
   hot: true,
-  inline: true,
+  inline: false,
   quiet: false,
   noInfo: false,
-  lazy: false,
   proxy: {
     '*': baseUrl
   },
   stats: {
-    colors: true,
-    hash: false,
-    version: false,
-    chunks: false,
-    children: false
+    colors: true
   }
 });
 
