@@ -1,6 +1,4 @@
 {
-  // Used for development and test mode
-  "presets": ["es2015", "stage-0", "react"],
   "env": {
     // only enabled for development-hot
     "development-hot": {
@@ -12,6 +10,12 @@
         "stage-0",
         "react"
       ]
+    },
+    "test": {
+      "presets": ["es2015", "stage-0", "react"],
+    },
+    "development": {
+      "presets": ["es2015", "stage-0", "react"],
     }
   }
 }
