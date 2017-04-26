@@ -14,6 +14,8 @@ export default function StyleGuideSuccessMessages() {
 
   let messageList = [successMessage, wayToGo];
 
+  let sgStyle = { "margin-left": "125px" };
+
   return <div>
     <StyleGuideComponentTitle
       title="Success Messages"
@@ -27,6 +29,7 @@ export default function StyleGuideSuccessMessages() {
     Caseflow in the background, such as automatically sending a letter or changing
     the location of a claim.</p>
   <SuccessMessage
+    example={true}
     checklist={successChecklist}
     title="Success!"
     leadMessageList={messageList} />
