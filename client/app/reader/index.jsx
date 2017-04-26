@@ -1,9 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
-import logger from 'redux-logger';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
@@ -11,17 +10,21 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
+    pdf: {},
     pdfSidebar: {
       showTagErrorMsg: false
     },
-    pdf: {
-    },
     pdfList: {
-      lastReadDocId: null
+      lastReadDocId: null,
+      filters: {
+        category: {}
+      },
+      dropdowns: {
+        category: false
+      }
     }
   },
-  documents: {
-  }
+  documents: {}
 };
 
 export const readerReducer = (state = initialState, action = {}) => {
@@ -29,30 +32,54 @@ export const readerReducer = (state = initialState, action = {}) => {
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
-    return _.merge(
-      {},
+    return update(
       state,
       {
-        documents: _(action.payload).
-          map((doc) => [doc.id, doc]).
-          fromPairs().
-          value()
+        documents: {
+          $set: _(action.payload).
+            map((doc) => [doc.id, doc]).
+            fromPairs().
+            value()
+        }
       }
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
 
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            [categoryKey]: action.payload.toggleState
+            [categoryKey]: {
+              $set: action.payload.toggleState
+            }
           }
         }
       }
     );
+  case Constants.TOGGLE_FILTER_DROPDOWN:
+    return (() => {
+      const originalValue = _.get(
+        state,
+        ['ui', 'pdfList', 'dropdowns', action.payload.filterName],
+        false
+      );
+
+      return update(state,
+        {
+          ui: {
+            pdfList: {
+              dropdowns: {
+                [action.payload.filterName]: {
+                  $set: !originalValue
+                }
+              }
+            }
+          }
+        }
+      );
+    })();
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } }
@@ -62,18 +89,35 @@ export const readerReducer = (state = initialState, action = {}) => {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            tags: _.union(state.documents[action.payload.docId].tags,
-              action.payload.createdTags)
+            tags: {
+              $set: _.union(state.documents[action.payload.docId].tags,
+                action.payload.createdTags)
+            }
           }
         }
       }
     );
+  case Constants.SET_CATEGORY_FILTER:
+    return update(
+      state,
+      {
+        ui: {
+          pdfList: {
+            filters: {
+              category: {
+                [action.payload.categoryName]: {
+                  $set: action.payload.checked
+                }
+              }
+            }
+          }
+        }
+      });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
@@ -101,25 +145,27 @@ export const readerReducer = (state = initialState, action = {}) => {
       ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
     });
   case Constants.TOGGLE_COMMENT_LIST:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            listComments: !state.documents[action.payload.docId].listComments
+            listComments: {
+              $set: !state.documents[action.payload.docId].listComments
+            }
           }
         }
       }
     );
   case Constants.LAST_READ_DOCUMENT:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdfList: {
-            lastReadDocId: action.payload.docId
+            lastReadDocId: {
+              $set: action.payload.docId
+            }
           }
         }
       }
@@ -129,7 +175,10 @@ export const readerReducer = (state = initialState, action = {}) => {
   }
 };
 
-const store = createStore(readerReducer, initialState, applyMiddleware(thunk, logger));
+  // eslint-disable-next-line no-underscore-dangle
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store =
+  createStore(readerReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
 
 const Reader = (props) => {
   return <Provider store={store}>
