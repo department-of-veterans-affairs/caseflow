@@ -84,11 +84,30 @@ export const readerReducer = (state = initialState, action = {}) => {
     })();
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $push: action.payload.newTags
+          }
+        }
+      }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $apply: (tags) =>
+              _.differenceBy(
+                tags,
+                action.payload.tagsThatWereAttemptedToBeCreated,
+                'text'
+              )
+          }
+        }
+      }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
     return update(
@@ -97,8 +116,7 @@ export const readerReducer = (state = initialState, action = {}) => {
         documents: {
           [action.payload.docId]: {
             tags: {
-              $set: _.union(state.documents[action.payload.docId].tags,
-                action.payload.createdTags)
+              $set: action.payload.createdTags
             }
           }
         }
