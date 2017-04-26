@@ -27,7 +27,7 @@ export default class EstablishClaimCanceled extends React.Component {
     return <div>
         <div id="certifications-generate"
            className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
-            <h1 className="cf-red-text cf-msg-screen-heading">
+            <h1 className="cf-error cf-msg-screen-heading">
                 Claim Processing Discontinued
             </h1>
             <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
