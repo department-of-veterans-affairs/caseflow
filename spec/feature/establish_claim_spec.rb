@@ -34,7 +34,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View manager page" do
       # Create 4 incomplete tasks and one completed today
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
-      Generators::EstablishClaim.create(user_id: case_worker.id, completed_at: Time.zone.now)
+      Generators::EstablishClaim.create(
+        user_id: case_worker.id,
+        aasm_state: :completed,
+        completed_at: Time.zone.now
+      )
 
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
@@ -48,6 +52,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # two tasks assigned to her, has completed one, and has one remaining.
       expect(page).to have_content("Jane Smith 3 1 2")
       expect(page).to have_content("Employee Total 5 1 4")
+
+      # Two more users completing tasks should force the number of people to bump up to 3
+      2.times do
+        Generators::EstablishClaim.create(
+          user: Generators::User.create,
+          aasm_state: :started
+        ).complete!(status: :routed_to_arc)
+      end
+
+      fill_in "the number of people", with: "2"
+      safe_click_on "Update"
+      expect(find_field("the number of people").value).to have_content("3")
     end
 
     scenario "View unprepared tasks page" do

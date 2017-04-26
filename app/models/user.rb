@@ -1,14 +1,11 @@
 class User < ActiveRecord::Base
   has_many :tasks
   has_many :document_views
+  has_many :annotations
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :ip_address, :admin_roles
   attr_writer :regional_office, :roles
-
-  TASK_TYPE_TO_ROLES = {
-    EstablishClaim: { employee: "Establish Claim", manager: "Manage Claim Establishment" }
-  }.freeze
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
 
@@ -82,6 +79,9 @@ class User < ActiveRecord::Base
 
   def toggle_admin_roles(role:, enable: true)
     return if role == "System Admin"
+    if role == "CertificationV2"
+      enable ? FeatureToggle.enable!(:certification_v2) : FeatureToggle.disable!(:certification_v2)
+    end
     enable ? admin_roles << role : admin_roles.delete(role)
   end
 

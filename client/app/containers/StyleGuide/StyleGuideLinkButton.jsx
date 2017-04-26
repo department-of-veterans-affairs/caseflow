@@ -16,12 +16,12 @@ let StyleGuideLinkButton = () => {
         <Button
           name="signup-1"
           classNames={['usa-button-outline']}>
-          Signup
+          Sign up
         </Button><br/><br/>
         <Button
           name="signup-2"
           classNames={['cf-btn-link']}>
-          Signup
+          Sign up
         </Button>
       </div>
       <div className="usa-width-one-third">
@@ -29,12 +29,12 @@ let StyleGuideLinkButton = () => {
         <Button
           name="signup-3"
           classNames={['usa-button-outline usa-button-hover']}>
-          Signup
+          Sign up
         </Button><br/><br/>
         <Button
           name="signup-4"
           classNames={['cf-btn-link button-hover']}>
-          Signup
+          Sign up
         </Button>
       </div>
       <div className="usa-width-one-third">
@@ -42,12 +42,12 @@ let StyleGuideLinkButton = () => {
         <Button
           name="signup-5"
           classNames={['usa-button-outline usa-button-active']}>
-          Signup
+          Sign up
         </Button><br/><br/>
         <Button
           name="signup-6"
           classNames={['cf-btn-link button-active']}>
-          Signup
+          Sign up
         </Button>
       </div>
     </div>
