@@ -5,5 +5,5 @@
   completedCountToday: @completed_count_today,
   currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
   toCompleteCount: @to_complete_count,
-  totalAssignedIssues: total_assigned_issues
+  totalAssignedIssues: quota.per_assignee
 }) %>
