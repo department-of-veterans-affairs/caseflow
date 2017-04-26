@@ -22,10 +22,6 @@ export default class EstablishClaimComplete extends React.Component {
     let casesAssigned, employeeCountInt,
       hasQuotaReached, quotaReachedMessage, totalCases;
 
-    quotaReachedMessage = <h2 className="cf-msg-screen-deck">
-      Way to go! 💻💪🇺🇸<br/>
-      You have completed all of the total cases assigned to you today.
-    </h2>;
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
@@ -33,6 +29,7 @@ export default class EstablishClaimComplete extends React.Component {
     casesAssigned = employeeCountInt > 0 ?
       Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
+
 
     return <div>
       <EstablishClaimProgressBar
@@ -54,6 +51,12 @@ export default class EstablishClaimComplete extends React.Component {
         {checklist.map((listValue) => <li key={listValue}>
           <span className="cf-icon-success--bg"></span>{listValue}</li>)}
       </ul>
+
+       <h2 className="cf-msg-screen-deck">
+       <h2>Way to go!</h2>💪💻🇺🇸<br/>
+       <div>You have completed all of the total cases assigned to you today.</div>
+       </h2>
+
     </div>
     <EstablishClaimToolbar
       availableTasks={availableTasks}
