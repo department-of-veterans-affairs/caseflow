@@ -1,5 +1,6 @@
 import React from 'react';
 import StyleGuideSuccessMessages from './StyleGuideSuccessMessages';
+import StyleGuideStatusMessages from './StyleGuideStatusMessages';
 
 export default function StyleGuideMessages() {
   return <div><br />
@@ -13,5 +14,6 @@ export default function StyleGuideMessages() {
       follow-up text. The follow up text often contains context and instructions
       on what the user can do next.</p>
     <StyleGuideSuccessMessages />
+    <StyleGuideStatusMessages />
   </div>;
 }
