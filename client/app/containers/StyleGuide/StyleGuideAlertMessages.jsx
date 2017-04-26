@@ -4,7 +4,7 @@ import AlertMessage from '../../components/AlertMessage';
 
 export default function StyleGuideAlertMessages() {
   /* eslint-disable max-len */
-  let message = "We’ve recorded your explanation and placed the claim back in the queue. You can try establishing another claim or go back to your Work History."
+  let message = 'We’ve recorded your explanation and placed the claim back in the queue. You can try establishing another claim or go back to your Work History.';
   /* eslint-enable max-len */
 
   return <div>
