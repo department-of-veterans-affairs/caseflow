@@ -171,11 +171,14 @@
 .cf-success-checklist {
   position: relative;
   width: 50%;
-  margin: 5rem auto 6.5rem 0;
-  list-style-image: url('icons/icon-check.svg');
+  margin: 50px 0 65px 225px;
+  list-style-type: none;
 
   li {
-    list-style-position: outside;
+    background: url('icons/icon-check.svg') no-repeat left top transparent;
+    background-size: 22px 17px;
+    padding-left: 38px;
+    padding-top: 3px;
   }
 }
 
