@@ -130,12 +130,12 @@ export const readerReducer = (state = initialState, action = {}) => {
     });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
-        ui: {
-          pdf: {
-            scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
-          }
+      ui: {
+        pdf: {
+          scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
         }
       }
+    }
     );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {

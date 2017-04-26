@@ -330,7 +330,8 @@ RSpec.feature "Reader" do
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
 
     # go back to the first document
-    find("#button-previous").click
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on documents[0].filename
 
     # verify that the tags on the previous document still exist
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
