@@ -60,7 +60,7 @@ export default class EditComment extends React.Component {
           onChange={this.onChange}
           value={this.state.value}
         />
-        <div className="comment-control-button-container">
+        <div className="comment-save-button-container">
           <span className="cf-right-side">
             <Button
               name="cancel"
