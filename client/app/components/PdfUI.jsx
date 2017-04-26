@@ -104,31 +104,33 @@ export class PdfUI extends React.Component {
             <i className="fa fa-plus" aria-hidden="true"></i>
           </Button>
         </span>
-        <span className="usa-width-one-third category-icons-and-doc-type">
-          <span>
-            <DocumentCategoryIcons docId={this.props.doc.id} />
-          </span>
-          <span className="cf-pdf-doc-type-button">
-            <Button
-              name="newTab"
-              classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-right']}
-              ariaLabel="open document in new tab"
-              onClick={() => window.open(
-                linkToSingleDocumentView(this.props.doc), '_blank')}>
-              <span title={this.props.doc.type}>{this.props.doc.type}</span>
-            </Button>
-          </span>
-          {this.props.hidePdfSidebar &&
-            <span className="cf-pdf-open-menu">
+        <span className="usa-width-one-third">
+          <span className="category-icons-and-doc-type">
+            <span className="cf-pdf-doc-category-icons">
+              <DocumentCategoryIcons docId={this.props.doc.id} />
+            </span>
+            <span className="cf-pdf-doc-type-button-container">
               <Button
-                name="open menu"
-                classNames={['cf-pdf-button']}
-                onClick={this.props.handleTogglePdfSidebar}>
-                <strong>
-                  Open menu
-                </strong>
+                name="newTab"
+                classNames={['cf-pdf-button cf-pdf-doc-type-button']}
+                ariaLabel="open document in new tab"
+                onClick={() => window.open(
+                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
-            </span>}
+            </span>
+            {this.props.hidePdfSidebar &&
+              <span className="cf-pdf-open-menu">
+                <Button
+                  name="open menu"
+                  classNames={['cf-pdf-button']}
+                  onClick={this.props.handleTogglePdfSidebar}>
+                  <strong>
+                    Open menu
+                  </strong>
+                </Button>
+              </span>}
+            </span>
         </span>
       </div>
       <div className="cf-pdf-navigation">
