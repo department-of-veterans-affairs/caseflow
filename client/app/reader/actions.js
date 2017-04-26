@@ -42,8 +42,12 @@ export const selectCurrentPdf = (docId) => ({
   }
 });
 
-export const removeTagRequestFailure = () => ({
-  type: Constants.REQUEST_REMOVE_TAG_FAILURE
+export const removeTagRequestFailure = (docId, tagId) => ({
+  type: Constants.REQUEST_REMOVE_TAG_FAILURE,
+  payload: {
+    docId,
+    tagId
+  }
 });
 
 export const removeTagRequestSuccess = (docId, tagId) => ({
@@ -56,12 +60,18 @@ export const removeTagRequestSuccess = (docId, tagId) => ({
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {
-    dispatch({ type: Constants.REQUEST_REMOVE_TAG });
+    dispatch({
+      type: Constants.REQUEST_REMOVE_TAG,
+      payload: {
+        docId: doc.id,
+        tagId
+      }
+    });
     ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`).
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
-        dispatch(removeTagRequestFailure());
+        dispatch(removeTagRequestFailure(doc.id, tagId));
       });
   }
 );
