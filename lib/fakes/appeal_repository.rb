@@ -50,7 +50,8 @@ class Fakes::AppealRepository
     appeal
   end
 
-  def self.certify(appeal)
+  def self.certify(appeal:, certification:)
+    @certification = certification
     @certified_appeal = appeal
     VBMSCaseflowLogger.log(:request, response_code: 500)
   end
