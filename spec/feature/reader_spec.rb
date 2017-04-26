@@ -279,7 +279,7 @@ RSpec.feature "Reader" do
       # expecting the page not to have any tags
       expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
-      
+
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].type
