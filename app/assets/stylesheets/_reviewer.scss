@@ -294,22 +294,6 @@ svg[aria-hidden=true],
   position: relative;
 }
 
-.cf-document-category-picker {
-  list-style-type: none;
-  padding-left: 0;
-
-  .cf-category-selector {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-
-    .cf-category-name {
-      line-height: 1;
-      padding-left: 7px;
-    }
-  }
-}
-
 // Use this class when you want the grid to start at the 1/3 point.
 //    <empty> <content .cf-pull-right-one-third> <content>
 .cf-pull-right-one-third {
