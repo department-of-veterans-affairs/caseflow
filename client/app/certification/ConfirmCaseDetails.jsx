@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 import * as actions from './actions/ConfirmCaseDetails';
+import * as certificationActions from './actions/Certification';
 import { Redirect } from 'react-router-dom';
 
 import RadioField from '../components/RadioField';
@@ -94,13 +95,17 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   onClickContinue() {
+
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onValidationFailed(erroredFields);
+      this.props.onContinueClickFailed();
 
       return;
     }
+
+    // Sets continueClicked to false for the next page.
+    this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -118,12 +123,12 @@ export class ConfirmCaseDetails extends React.Component {
       changeRepresentativeName,
       otherRepresentativeType,
       changeOtherRepresentativeType,
-      validationFailed,
       loading,
       updateFailed,
       updateSucceeded,
-      match,
-      certificationId
+      continueClicked,
+      certificationId,
+      match
     } = this.props;
 
     if (updateSucceeded) {
@@ -138,6 +143,14 @@ export class ConfirmCaseDetails extends React.Component {
 
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
+
+    // if the form input is not valid and the user has already tried to click continue,
+    // disable the continue button until the validation errors are fixed.
+    let disableContinue = false;
+
+    if (this.getValidationErrors().length && continueClicked) {
+      disableContinue = true;
+    }
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -171,7 +184,7 @@ export class ConfirmCaseDetails extends React.Component {
         </div>
 
         <Footer
-          disableContinue={validationFailed}
+          disableContinue={disableContinue}
           loading={loading}
           certificationId={certificationId}
           onClickContinue={this.onClickContinue.bind(this)}
@@ -204,9 +217,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
-  onValidationFailed: (invalidFields) => {
-    dispatch(actions.onValidationFailed(invalidFields));
-  },
+  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
@@ -219,10 +231,9 @@ const mapStateToProps = (state) => ({
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
-  validationFailed: state.validationFailed,
-  invalidFields: state.invalidFields,
+  certificationId: state.certificationId,
   loading: state.loading,
-  certificationId: state.certificationId
+  continueClicked: state.continueClicked
 });
 
 export default connect(
