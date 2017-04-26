@@ -238,7 +238,10 @@ describe Appeal do
     subject { appeal.certify! }
 
     context "when form8 for appeal exists in the DB" do
-      before { @form8 = Form8.create(vacols_id: "765") }
+      before do
+        @form8 = Form8.create(vacols_id: "765")
+        @certification = Certification.create(vacols_id: "765")
+      end
 
       it "certifies the appeal using AppealRepository" do
         expect { subject }.to_not raise_error
