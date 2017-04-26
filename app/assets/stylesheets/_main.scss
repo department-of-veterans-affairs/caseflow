@@ -167,6 +167,19 @@
   }
 }
 
+// add to commons
+.cf-success-checklist {
+  position: relative;
+  width: 50%;
+  margin: 5rem auto 6.5rem 0;
+  list-style-image: url('icons/icon-check.svg');
+
+  li {
+    list-style-position: outside;
+  }
+}
+
+
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
 }

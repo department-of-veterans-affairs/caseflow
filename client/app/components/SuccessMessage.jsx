@@ -17,9 +17,8 @@ export default class SuccessMessage extends React.Component {
           {listValue}
         </h2>)
       }
-      <ul className="cf-list-checklist cf-left-padding">
-        {checklist.map((listValue) => <li key={listValue}>
-          <span className="cf-icon-success--bg"></span>{listValue}</li>)}
+      <ul className="cf-success-checklist cf-left-padding">
+        {checklist.map((listValue) => <li key={listValue}>{listValue}</li>)}
       </ul>
       <p className="cf-msg-screen-text">
         { messageText }
