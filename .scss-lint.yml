@@ -65,7 +65,7 @@ linters:
     convention: hyphenated_lowercase # or 'camel_case', or 'snake_case', or a regex pattern
   NestingDepth:
     enabled: true
-    max_depth: 4
+    max_depth: 10
     severity: warning
   PlaceholderInExtend:
     enabled: false
@@ -89,14 +89,14 @@ linters:
     severity: warning
   SelectorDepth:
     enabled: true
-    max_depth: 5
+    max_depth: 10
     severity: warning
   SelectorFormat:
     enabled: false # strict_BEM doesn't seem to be supported by Hound
     convention: strict_BEM
   Shorthand:
     enabled: true
-    allowed_shorthands: [1, 2]
+    allowed_shorthands: [1, 2, 3, 4]
     severity: warning
   SingleLinePerProperty:
     enabled: true

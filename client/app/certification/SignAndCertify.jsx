@@ -40,7 +40,8 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      match
+      match,
+      certificationId
     } = this.props;
 
     return <div>
@@ -76,9 +77,11 @@ class UnconnectedSignAndCertify extends React.Component {
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
       </form>
-    <Footer nextPageUrl={
-      `/certifications/${match.params.vacols_id}/success`
-    }/>
+    <Footer
+      certificationId={certificationId}
+      nextPageUrl={
+        `/certifications/${match.params.vacols_id}/success`
+      }/>
   </div>;
   }
 }
@@ -107,7 +110,8 @@ const mapStateToProps = (state) => ({
   certifyingUsername: state.certifyingUsername,
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
-  certificationDate: state.certificationDate
+  certificationDate: state.certificationDate,
+  certificationId: state.certificationId
 });
 
 const SignAndCertify = connect(
@@ -122,7 +126,8 @@ SignAndCertify.propTypes = {
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationId: PropTypes.number
 };
 
 export default SignAndCertify;
