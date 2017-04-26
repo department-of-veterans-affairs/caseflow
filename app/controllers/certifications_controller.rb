@@ -8,7 +8,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if verify_certification_v2_access
+    if FeatureToggle.enabled?(:certification_v2)
       render "v2", layout: "application"
       return
     end
@@ -77,10 +77,6 @@ class CertificationsController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Certify Appeal")
-  end
-
-  def verify_certification_v2_access
-    return true if current_user && current_user.can?("CertificationV2")
   end
 
   def certification
