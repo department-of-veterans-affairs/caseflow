@@ -14,8 +14,6 @@ export default function StyleGuideSuccessMessages() {
 
   let messageList = [successMessage, wayToGo];
 
-  let sgStyle = { "margin-left": "125px" };
-
   return <div>
     <StyleGuideComponentTitle
       title="Success Messages"
