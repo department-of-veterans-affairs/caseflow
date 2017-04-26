@@ -137,6 +137,26 @@ export const readerReducer = (state = initialState, action = {}) => {
           }
         }
       });
+  case Constants.REQUEST_REMOVE_TAG:
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $apply: (tags) => {
+              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+              return update(tags, {
+                [removedTagIndex]: {
+                  $merge: {
+                    pendingRemoval: true
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },

@@ -19,11 +19,14 @@ import classNames from 'classnames';
 // show a PDF with its corresponding information.
 export class PdfSidebar extends React.Component {
   generateOptionsFromTags = (tags) =>
-    _.map(tags, (tag) => ({
-      value: tag.text,
-      label: tag.text,
-      tagId: tag.id })
-    );
+    _(tags).
+      reject('pendingRemoval').
+      map((tag) => ({
+        value: tag.text,
+        label: tag.text,
+        tagId: tag.id })
+      ).
+      value();
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
