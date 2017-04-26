@@ -47,9 +47,8 @@ RSpec.feature "Reader" do
     User.authenticate!(roles: ["Reader"])
   end
 
-  scenario "PdfListView Dropdown", focus: true do
+  scenario "PdfListView Dropdown" do
     visit "/reader/appeal/#{appeal.vacols_id}/documents"
-    binding.pry
 
     def expect_dropdown_filter_to_be_hidden
       expect(all(".cf-dropdown-filter")).to be_empty
@@ -180,9 +179,7 @@ RSpec.feature "Reader" do
           "type=BVA%20Decision&received_at=2017-04-14&filename=filename.pdf"
 
     # Expect only the first page of the pdf to be rendered
-    expect(page).to_not have_content("Important Decision Document!!!")
-
-    click_on "Hide menu"
+    find("#button-hide-menu").click
     expect(page).to_not have_content("Document Type")
 
     click_on "Open menu"
@@ -281,7 +278,8 @@ RSpec.feature "Reader" do
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
 
     # go back to the first document
-    find("#button-previous").click
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on documents[0].filename
 
     # verify that the tags on the previous document still exist
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
