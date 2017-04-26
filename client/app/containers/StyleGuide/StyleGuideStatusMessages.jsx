@@ -3,9 +3,9 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import StatusMessage from '../../components/StatusMessage';
 
 export default function StyleGuideStatusMessages() {
-  let message1 = "We've recorded the explanation and placed the claim on hold."
-
-  let message2 = "You can try establishing another claim or go view held claims in your Work History."
+  /* eslint-disable max-len */
+  let message = "We've recorded your explanation and placed the claim on hold. You can try establishing another claim or go view held claims in your Work History."
+  /* eslint-enable max-len */
 
   return <div>
     <StyleGuideComponentTitle
@@ -21,6 +21,6 @@ export default function StyleGuideStatusMessages() {
     the user can take.</p>
     <StatusMessage
       title="Claim Held"
-      leadMessageList={[message1, message2]} />
+      leadMessageList={[message]} />
   </div>;
 }
