@@ -2,6 +2,6 @@
   page: "TasksManagerIndex",
   toCompleteCount: @to_complete_count,
   completedCountToday: @completed_count_today,
-  employeeCount: Rails.cache.read('employee_count') || '0',
+  employeeCount: quota.assignee_count,
   tasksCompletedByUsers: @tasks_completed_by_users
 }) %>

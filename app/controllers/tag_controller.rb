@@ -12,7 +12,7 @@ class TagController < ApplicationController
     document.tags.create(tag_params[:tags]) do |tag|
       created_tags << tag
     end
-    render({ json: created_tags }, status: :created)
+    render({ json: document.tags }, status: :created)
   end
 
   def destroy
