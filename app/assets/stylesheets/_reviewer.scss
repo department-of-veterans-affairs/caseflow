@@ -380,3 +380,7 @@ svg[aria-hidden=true],
   width: 100%;
   padding-right: 5px;
 }
+
+.cf-pdf-comment-cursor * {
+  cursor: url(asset-path('comment-cursor.svg')), auto !important;
+};

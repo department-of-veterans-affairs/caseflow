@@ -325,7 +325,7 @@ export class Pdf extends React.Component {
 
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
-        className="cf-pdf-pdfjs-container page"
+        className="cf-pdf-pdfjs-container page cf-pdf-comment-cursor"
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}

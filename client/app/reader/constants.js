@@ -21,6 +21,7 @@ export const SCROLL_TO_COMMENT = 'SCROLL_TO_COMMENT';
 export const TOGGLE_COMMENT_LIST = 'TOGGLE_COMMENT_LIST';
 export const TOGGLE_PDF_SIDEBAR = 'TOGGLE_PDF_SIDEBAR';
 export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
+export const PLACING_COMMENT = 'PLACING_COMMENT';
 
 export const documentCategories = {
   procedural: {

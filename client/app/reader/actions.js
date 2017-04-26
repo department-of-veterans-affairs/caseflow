@@ -12,6 +12,10 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
+export const togglePlacingComment = () => ({
+  type: Constants.PLACING_COMMENT
+});
+
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,
   payload: {

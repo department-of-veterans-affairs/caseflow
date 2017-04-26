@@ -3,6 +3,8 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as ReaderActions from './actions';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -257,6 +259,9 @@ const mapStateToProps = (state) => {
   return {
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
+};
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(ReaderActions, dispatch);
 };
 
 export default connect(
