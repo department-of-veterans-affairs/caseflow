@@ -33,11 +33,7 @@ const store =
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
   module.hot.accept('./reducer', () => {
-    /* eslint-disable global-require */
-    const nextRootReducer = require('./reducer').default;
-    /* eslint-enable global-require */
-
-    store.replaceReducer(nextRootReducer);
+    store.replaceReducer(readerReducer);
   });
 }
 
