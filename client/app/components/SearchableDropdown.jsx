@@ -4,8 +4,7 @@ import _ from 'lodash';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
-const DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION =
-  (label) => `Create a tag for "${label}"`;
+
 
 const DEFAULT_PLACEHOLDER = 'Select option';
 
@@ -78,8 +77,9 @@ class SearchableDropdown extends Component {
       addCreatableOptions = {
         noResultsText: (creatableOptions && creatableOptions.tagAlreadyExistsMsg) ?
           creatableOptions.tagAlreadyExistsMsg : TAG_ALREADY_EXISTS_MSG,
-        promptTextCreator: (creatableOptions && creatableOptions.promptTextCreator) ?
-          creatableOptions.promptTextCreator : DEFAULT_PROMPT_TEXT_CREATOR_FUNCTION
+
+        ...{ promptTextCreator: (tagName) => `Create a tag for "${tagName}"` },
+        ..._.pick(creatableOptions, 'promptTextCreator')
       };
     }
 
