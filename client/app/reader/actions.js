@@ -42,12 +42,20 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
-export const selectCurrentPdf = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
+export const selectCurrentPdf = (docId) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}/mark-as-read`).
+    catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error marking as read', docId, err);
+    });
+
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
+};
 
 export const unselectPdf = (docId) => ({
   type: Constants.UNSELECT_CURRENT_VIEWER_PDF,

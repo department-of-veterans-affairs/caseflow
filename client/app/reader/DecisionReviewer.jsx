@@ -73,28 +73,17 @@ export class DecisionReviewer extends React.Component {
         (event.button &&
         event.button === 1)) {
 
-      this.markAsRead(pdfId);
+      // For some reason calling this synchronosly prevents the new
+      // tab from opening. Move it to an asynchronus call.
+      setTimeout(() =>
+        this.props.handleSetLastRead(pdfId)
+      );
 
       return true;
     }
 
     event.preventDefault();
     this.props.selectCurrentPdf(pdfId);
-  }
-
-  markAsRead = (pdfId) => {
-    // For some reason calling this synchronosly prevents the new
-    // tab from opening. Move it to an asynchronus call.
-    setTimeout(() =>
-      this.props.handleSetLastRead(pdfId)
-    );
-
-    ApiUtil.patch(`/document/${pdfId}/mark-as-read`).
-      catch(() => {
-        /* eslint-disable no-console */
-        console.log('Error marking as read');
-        /* eslint-enable no-console */
-      });
   }
 
   onShowList = () => {
