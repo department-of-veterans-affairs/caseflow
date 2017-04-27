@@ -286,25 +286,14 @@ export class DecisionReviewer extends React.Component {
     this.props.onScrollToComment(null);
   }
 
-  getFilteredDocuments = () => {
-    const activeCategoryFilters = _(this.props.documentFilters.category).
-      toPairs().
-      filter((([key, value]) => value)).
-      map(([key, value]) => categoryFieldNameOfCategoryName(key)).
-      value();
-
-    return _.filter(
-      this.props.storeDocuments,
-      (doc) => !activeCategoryFilters.length || _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-    );
-  }
-
   render() {
     let {
       sortDirection
     } = this.state;
 
-    const documents = this.getFilteredDocuments();
+    const documents = _.size(this.props.filteredDocIds) ?
+      this.props.filteredDocIds.map((docId) => this.props.storeDocuments[docId]) :
+      _.values(this.props.storeDocuments);
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
 
     const activeDocIndex = _.findIndex(documents, { id: this.props.currentRenderedFile });
@@ -371,6 +360,7 @@ const mapStateToProps = (state) => {
     },
     currentRenderedFile: state.ui.pdf.currentRenderedFile,
     documentFilters: state.ui.pdfList.filters,
+    filteredDocIds: state.ui.filteredDocIds,
     storeDocuments: state.documents
   };
 };

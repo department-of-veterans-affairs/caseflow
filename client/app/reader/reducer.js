@@ -145,21 +145,45 @@ export default (state = initialState, action = {}) => {
       }
     );
   case Constants.SET_CATEGORY_FILTER:
-    return update(
-      state,
-      {
-        ui: {
-          pdfList: {
-            filters: {
-              category: {
-                [action.payload.categoryName]: {
-                  $set: action.payload.checked
+    return (() => {
+      const nextState = update(
+        state,
+        {
+          ui: {
+            pdfList: {
+              filters: {
+                category: {
+                  [action.payload.categoryName]: {
+                    $set: action.payload.checked
+                  }
                 }
               }
             }
           }
+        });
+
+      const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
+        toPairs().
+        filter((([key, value]) => value)).
+        map(([key, value]) => categoryFieldNameOfCategoryName(key)).
+        value();
+
+      const filteredIds = _(nextState.documents).
+        filter(
+          (doc) => !activeCategoryFilters.length ||
+            _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+        ).
+        map('id').
+        value();
+
+      return update(nextState, {
+        ui: {
+          filteredDocIds: {
+            $set: filteredIds
+          }
         }
       });
+    })();
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
