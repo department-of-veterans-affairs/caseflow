@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 
-const initialState = {
+export const initialState = {
   ui: {
     pdf: {},
     pdfSidebar: {

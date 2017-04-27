@@ -11,7 +11,8 @@ import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
-import { readerReducer } from '../../../app/reader/index';
+import readerReducer from '../../../app/reader/reducer';
+import { initialState } from '../../../app/reader/index';
 import PdfJsStub from '../../helpers/PdfJsStub';
 
 /* eslint-disable camelcase */
@@ -25,7 +26,7 @@ describe('DecisionReviewer', () => {
     ApiUtilStub.beforeEach();
 
     wrapper = mount(
-      <Provider store={createStore(readerReducer)}>
+      <Provider store={createStore(readerReducer, initialState)}>
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
