@@ -22,6 +22,7 @@ export const initialState = {
     },
     pdfSidebar: {
       showTagErrorMsg: false,
+      commentFlowState: null,
       hidePdfSidebar: false
     },
     pdfList: {

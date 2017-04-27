@@ -311,6 +311,17 @@ export default (state = {}, action = {}) => {
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
+  case Constants.SET_COMMENT_FLOW_STATE:
+    return update(
+      state,
+      {
+        ui: {
+          pdf: {
+            commentFlowState: { $set: action.payload.state }
+          }
+        }
+      }
+    );
   default:
     return state;
   }

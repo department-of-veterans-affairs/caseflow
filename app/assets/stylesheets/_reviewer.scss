@@ -243,6 +243,7 @@ svg[aria-hidden=true],
 .pdfViewer.singlePageView .page {
   box-shadow: 0 0 5px $color-gray-dark;
   margin: 5px;
+  margin-bottom: 25px;
   border-image: none;
   z-index: 5;
 }
@@ -378,4 +379,17 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   width: 100%;
   padding-right: 5px;
+}
+
+// I HATE IMPORTANTS, but I'm not sure how to get rid of this one.
+// We need this to apply to every page and all of its sub components,
+// or else when we mouse over a div with text on the page the cursor
+// switches to a text selector. But since the divs have a more specific
+// selector, it wins out.
+.cf-pdf-placing-comment {
+  outline: 10px solid $color-focus;
+
+  * {
+    cursor: url(asset-path('comment-cursor.svg')), auto !important;
+  }
 }
