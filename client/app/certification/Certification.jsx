@@ -24,11 +24,23 @@ const EntryPointRedirect = connect(
   mapStateToProps
 )(UnconnectedEntryPointRedirect);
 
-const Certification = ({ certification }) => {
-  const initialData = mapDataToInitialState(certification);
-  let store = createStore(certificationReducers, initialData);
+const configureStore = (data) => {
+  const initialData = mapDataToInitialState(data);
+  const store = createStore(certificationReducers, initialData);
 
-  return <Provider store={store}>
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('./reducers/index', () => {
+      store.replaceReducer(certificationReducers);
+    });
+  }
+
+  return store;
+};
+
+const Certification = ({ certification }) => {
+
+  return <Provider store={configureStore(certification)}>
     <div>
       <BrowserRouter>
         <div>

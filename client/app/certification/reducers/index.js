@@ -121,6 +121,7 @@ export const certificationReducers = function(state = initialState, action = {})
     return state;
   }
 };
+export default certificationReducers;
 
 export const mapDataToInitialState = function(state) {
   return {

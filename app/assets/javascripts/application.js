@@ -1,4 +1,4 @@
-//= require webpack-bundle
+//= require webpack-loader
 
 /* globals Clipboard */
 
