@@ -236,7 +236,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.props.documents[doc.id].listComments ?
+            const icon = `fa fa-3 ${doc.listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -272,7 +272,9 @@ export class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.props.documents[row.id].listComments) {
+      const doc = _.find(this.props.documents, _.pick(row, 'id'));
+
+      if (doc.listComments) {
         acc.push({
           ...row,
           isComment: true
