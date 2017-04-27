@@ -4,7 +4,6 @@ import TextareaField from '../../components/TextareaField';
 import Modal from '../../components/Modal';
 import * as Constants from '../constants';
 import { getCancelFeedbackErrorMessage } from '../selectors';
-import * as Actions from '../actions/cancelModal';
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 
