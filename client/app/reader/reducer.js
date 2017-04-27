@@ -33,6 +33,20 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
+const updateLastReadDoc = (state, docId) =>
+  update(
+    state,
+    {
+      ui: {
+        pdfList: {
+          lastReadDocId: {
+            $set: docId
+          }
+        }
+      }
+    }
+  );
+
 export default (state = {}, action = {}) => {
   let categoryKey;
 
@@ -65,7 +79,7 @@ export default (state = {}, action = {}) => {
       }
     }));
   case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return update(state, {
+    return updateLastReadDoc(update(state, {
       ui: {
         pdfSidebar: { showTagErrorMsg: { $set: false } },
         pdf: {
@@ -81,7 +95,7 @@ export default (state = {}, action = {}) => {
           }
         }
       }
-    });
+    }), action.payload.docId);
   case Constants.UNSELECT_CURRENT_VIEWER_PDF:
     return update(updateFilteredDocIds(state), {
       ui: {
@@ -274,18 +288,7 @@ export default (state = {}, action = {}) => {
       }
     );
   case Constants.LAST_READ_DOCUMENT:
-    return update(
-      state,
-      {
-        ui: {
-          pdfList: {
-            lastReadDocId: {
-              $set: action.payload.docId
-            }
-          }
-        }
-      }
-    );
+    return updateLastReadDoc(state, action.payload.docId);
   default:
     return state;
   }
