@@ -94,27 +94,28 @@ export default class StyleGuideLayout extends React.Component {
               label="Establish Claim(DSUSER)"
               menu={this.state.menu}
               />
-          </div>
-        </div>
-        <p>
-        <div className="cf-app-segment" id="establish-claim-buttons">
-         <div className="usa-width-one-half">
-          <InlineForm>
-            <span><Button
-             name="Back to Preview"
-             classNames={['cf-btn-link']} /></span>
-          </InlineForm>
-          </div>
-
-        <div className ="cf-push-right">
-         <Button
-           name="Cancel"
-           classNames={['cf-btn-link']}/>
-         <Button
-           name="Submit End Product"
-          />
-          </div>
+           </div>
       </div>
+      <p>
+        <div className="cf-app-segment" id="establish-claim-buttons">
+          <div className="usa-width-one-half">
+           <InlineForm>
+            <span><Button
+               name="Back to Preview"
+               classNames={['cf-btn-link']} />
+            </span>
+          </InlineForm>
+         </div>
+
+         <div className ="cf-push-right">
+           <Button
+            name="Cancel"
+           classNames={['cf-btn-link']}/>
+          <Button
+            name="Submit End Product"
+          />
+         </div>
+        </div>
       </p>
 
     </div>;
