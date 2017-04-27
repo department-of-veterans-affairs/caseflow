@@ -10,6 +10,7 @@ export const initialState = {
     pdf: {},
     pdfSidebar: {
       showTagErrorMsg: false,
+      commentFlowState: null,
       hidePdfSidebar: false
     },
     pdfList: {

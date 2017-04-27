@@ -5,6 +5,8 @@ import CommentIcon from './CommentIcon';
 import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import classNames from 'classnames';
+import { handleSelectCommentIcon } from '../reader/actions';
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -321,12 +323,19 @@ export class Pdf extends React.Component {
     }, {});
 
     let pages = [];
+    const pageClassNames = classNames({
+      'cf-pdf-pdfjs-container': true,
+      page: true,
+      'cf-pdf-placing-comment': (this.props.commentFlowState ===
+        Constants.PLACING_COMMENT_STATE)
+    });
 
     this.pageContainers = [];
 
+
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
-        className="cf-pdf-pdfjs-container page"
+        className={pageClassNames}
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
@@ -367,6 +376,7 @@ export class Pdf extends React.Component {
 const mapStateToProps = (state) => {
   return {
     currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
+    commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
   };
 };
@@ -378,14 +388,7 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { currentRenderedFile }
     });
   },
-  handleSelectCommentIcon(comment) {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: comment
-      }
-    });
-  }
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
 export default connect(
@@ -421,5 +424,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
+  commentFlowState: PropTypes.string,
   handleSelectCommentIcon: PropTypes.func
 };
