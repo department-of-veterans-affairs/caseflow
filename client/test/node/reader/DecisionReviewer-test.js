@@ -91,9 +91,9 @@ describe('DecisionReviewer', () => {
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
-        // Filter documents on the second document's comment
+        // Filter documents on the second document's type
         wrapper.find('input').simulate('change',
-          { target: { value: annotations[0].comment } });
+          { target: { value: documents[1].type } });
 
         // Enter the pdf view
         wrapper.find('a').findWhere(
