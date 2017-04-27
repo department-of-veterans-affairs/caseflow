@@ -137,7 +137,7 @@ export class PdfSidebar extends React.Component {
 
         <div className="cf-comment-wrapper">
           <div className="cf-pdf-comment-list">
-            {this.props.isAddingComment &&
+            {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
               <EditComment
                 id="addComment"
                 onCancelCommentEdit={this.props.onCancelCommentAdd}
@@ -157,7 +157,7 @@ PdfSidebar.propTypes = {
     uuid: React.PropTypes.number
   })),
   editingComment: React.PropTypes.number,
-  isAddingComment: PropTypes.bool,
+  isWritingComment: PropTypes.bool,
   onSaveCommentAdd: PropTypes.func,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func,
@@ -170,6 +170,7 @@ PdfSidebar.propTypes = {
 
 const mapPropsToState = (state) => ({
   documents: state.documents,
+  commentFlowState: state.ui.pdf.commentFlowState,
   hidePdfSidebar: state.ui.pdf.hidePdfSidebar
 });
 const mapDispatchToState = (dispatch) => ({

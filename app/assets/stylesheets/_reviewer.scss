@@ -244,6 +244,7 @@ svg[aria-hidden=true],
 .pdfViewer.singlePageView .page {
   box-shadow: 0 0 5px $color-gray-dark;
   margin: 5px;
+  margin-bottom: 25px;
   border-image: none;
   z-index: 5;
 }
@@ -381,6 +382,10 @@ svg[aria-hidden=true],
   padding-right: 5px;
 }
 
-.cf-pdf-comment-cursor * {
+.cf-pdf-placing-comment * {
   cursor: url(asset-path('comment-cursor.svg')), auto !important;
-};
+}
+
+.cf-pdf-placing-comment {
+  outline: 10px solid $color-focus;
+}

@@ -5,6 +5,7 @@ import Modal from '../components/Modal';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as ReaderActions from './actions';
+import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -15,8 +16,6 @@ export class PdfViewer extends React.Component {
     this.state = {
       comments: [],
       editingComment: null,
-      isAddingComment: false,
-      isPlacingNote: false,
       onSaveCommentAdd: null,
       onConfirmDelete: null
     };
@@ -81,14 +80,12 @@ export class PdfViewer extends React.Component {
 
   onAddComment = () => {
     if (!this.isUserActive()) {
-      this.setState({
-        isPlacingNote: true
-      });
+      this.props.handlePlaceComment();
     }
   }
 
   placeComment = (pageNumber, coordinates) => {
-    if (this.state.isPlacingNote) {
+    if (this.props.commentFlowState === PLACING_COMMENT_STATE) {
       let annotation = {
         class: 'Annotation',
         page: pageNumber,
@@ -97,9 +94,8 @@ export class PdfViewer extends React.Component {
         y: coordinates.yPosition
       };
 
+      this.props.handleWriteComment();
       this.setState({
-        isAddingComment: true,
-        isPlacingNote: false,
         onSaveCommentAdd: this.onSaveCommentAdd(annotation, pageNumber)
       });
     }
@@ -116,9 +112,8 @@ export class PdfViewer extends React.Component {
   }
 
   onCancelCommentAdd = () => {
+    this.props.handleClearCommentState();
     this.setState({
-      isAddingComment: false,
-      isPlacingNote: false,
       onSaveCommentAdd: null
     });
   }
@@ -142,8 +137,7 @@ export class PdfViewer extends React.Component {
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
-      this.state.isAddingComment ||
-      this.state.isPlacingNote
+      this.props.commentFlowState
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
@@ -174,7 +168,7 @@ export class PdfViewer extends React.Component {
   }
 
   componentDidUpdate = () => {
-    if (this.state.isAddingComment) {
+    if (this.props.commentFlowState === WRITING_COMMENT_STATE) {
       let commentBox = document.getElementById('addComment');
 
       commentBox.focus();
@@ -224,7 +218,6 @@ export class PdfViewer extends React.Component {
             doc={this.props.doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
-            isAddingComment={this.state.isAddingComment}
             comments={this.state.comments}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.onCancelCommentAdd}
@@ -257,7 +250,8 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    commentFlowState: state.ui.pdf.commentFlowState
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -265,7 +259,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(
-  mapStateToProps, null
+  mapStateToProps, mapDispatchToProps
 )(PdfViewer);
 
 PdfViewer.propTypes = {

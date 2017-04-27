@@ -12,8 +12,25 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const togglePlacingComment = () => ({
-  type: Constants.PLACING_COMMENT
+export const handlePlaceComment = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: Constants.PLACING_COMMENT_STATE
+  }
+});
+
+export const handleWriteComment = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: Constants.WRITING_COMMENT_STATE
+  }
+});
+
+export const handleClearCommentState = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: null
+  }
 });
 
 export const handleSetLastRead = (docId) => ({

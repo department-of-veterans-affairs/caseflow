@@ -13,7 +13,7 @@ const initialState = {
     pdf: {},
     pdfSidebar: {
       showTagErrorMsg: false,
-      placingComment: false,
+      commentFlowState: null,
       hidePdfSidebar: false
     },
     pdfList: {
@@ -184,13 +184,13 @@ export const readerReducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.PLACING_COMMENT:
+  case Constants.SET_COMMENT_FLOW_STATE:
     return update(
       state,
       {
         ui: {
           pdf: {
-            placingComment: { $set: !state.ui.pdf.placingComment }
+            commentFlowState: { $set: action.payload.state }
           }
         }
       }
