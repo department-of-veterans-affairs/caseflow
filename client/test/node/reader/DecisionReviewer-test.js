@@ -11,7 +11,7 @@ import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
-import { readerReducer } from '../../../app/reader/index';
+import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 
 /* eslint-disable camelcase */
