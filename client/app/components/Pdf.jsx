@@ -77,9 +77,6 @@ export class Pdf extends React.Component {
         return reject();
       }
 
-      console.log(pdfDocument);
-      console.log(pageNumber);
-      console.log(index > pdfDocument.pdfInfo.numPages);
       pdfDocument.getPage(pageNumber).then((pdfPage) => {
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
@@ -217,9 +214,7 @@ export class Pdf extends React.Component {
         this.scrollWindow.scrollTop = scrollLocation;
       });
     });
-  },
-  DOCUMENT_THROTTLE_TIME,
-  {
+  }, DOCUMENT_THROTTLE_TIME, {
     leading: true,
     trailing: true
   });
