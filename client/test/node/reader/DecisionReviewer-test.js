@@ -1,13 +1,13 @@
 import React from 'react';
 import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
-import { DecisionReviewer } from '../../../app/reader/DecisionReviewer';
+import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import _ from 'lodash';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
@@ -24,17 +24,13 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
+    const store = createStore(readerReducer, applyMiddleware(thunk));
+
     wrapper = mount(
-      <Provider store={createStore(readerReducer)}>
+      <Provider store={store}>
         <DecisionReviewer
-          storeDocuments={documents}
           appealDocuments={documents}
-          filteredDocIds={null}
           annotations={annotations}
-          currentRenderedFile={null}
-          handleSetLastRead={_.noop}
-          onReceiveDocs={_.noop}
-          ui={{ pdfSidebar: { showTagErrorMessage: false } } }
           pdfWorker="worker"
           url="url"
         />
@@ -53,7 +49,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfListView')).to.have.length(1);
       });
 
-      it.only('the PDF view when a PDF is clicked', asyncTest(async () => {
+      it('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[0].type).
