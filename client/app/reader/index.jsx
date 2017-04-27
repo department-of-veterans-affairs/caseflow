@@ -8,6 +8,9 @@ import readerReducer from './reducer';
 export const initialState = {
   ui: {
     filteredDocIds: null,
+    sort: {
+      sortBy: null
+    },
     pdf: {
       currentRenderedFile: null,
       hidePdfSidebar: false

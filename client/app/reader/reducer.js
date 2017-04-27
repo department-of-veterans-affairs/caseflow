@@ -63,6 +63,16 @@ export default (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.SET_SORT_BY:
+    return update(state, {
+      ui: {
+        sort: {
+          sortBy: {
+            $set: action.payload.sortBy
+          }
+        }
+      }
+    });
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {

@@ -273,7 +273,6 @@ export class DecisionReviewer extends React.Component {
         {!shouldRenderPdf && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}
-          changeSortState={this.changeSortState}
           showPdf={this.showPdf}
           showPdfAndJumpToPage={this.showPdfAndJumpToPage}
           sortDirection={sortDirection}

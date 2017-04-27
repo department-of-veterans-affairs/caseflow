@@ -22,6 +22,7 @@ export const TOGGLE_COMMENT_LIST = 'TOGGLE_COMMENT_LIST';
 export const TOGGLE_PDF_SIDEBAR = 'TOGGLE_PDF_SIDEBAR';
 export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
+export const SET_SORT_BY = 'SET_SORT_BY';
 
 export const documentCategories = {
   procedural: {

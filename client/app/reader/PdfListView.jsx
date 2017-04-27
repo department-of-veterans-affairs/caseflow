@@ -190,7 +190,7 @@ export class PdfListView extends React.Component {
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
-            onClick={this.props.changeSortState('date')}>
+            onClick={() => this.props.changeSortState('date')}>
             Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) =>
@@ -199,7 +199,7 @@ export class PdfListView extends React.Component {
             </span>
         },
         {
-          header: <div id="type-header" onClick={this.props.changeSortState('type')}>
+          header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
             Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) => boldUnreadContent(
@@ -308,6 +308,14 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  changeSortState(sortBy) {
+    dispatch({
+      type: Constants.SET_SORT_BY,
+      payload: {
+        sortBy
+      }
+    });
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
