@@ -55,7 +55,38 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
-export default (state = {}, action = {}) => {
+export const initialState = {
+  ui: {
+    filteredDocIds: null,
+    docFilterCriteria: {
+      sort: {
+        sortBy: 'type',
+        sortAscending: false
+      },
+      category: {},
+      searchQuery: ''
+    },
+    pdf: {
+      currentRenderedFile: null,
+      pdfsReadyToShow: {},
+      hidePdfSidebar: false
+    },
+    pdfSidebar: {
+      showTagErrorMsg: false,
+      commentFlowState: null,
+      hidePdfSidebar: false
+    },
+    pdfList: {
+      lastReadDocId: null,
+      dropdowns: {
+        category: false
+      }
+    }
+  },
+  documents: {}
+};
+
+export default (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {

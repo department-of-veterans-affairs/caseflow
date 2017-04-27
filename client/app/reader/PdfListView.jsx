@@ -236,7 +236,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].listComments ?
+            const icon = `fa fa-3 ${this.props.documents[doc.id].listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -272,7 +272,7 @@ export class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.props.reduxDocuments[row.id].listComments) {
+      if (this.props.documents[row.id].listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -303,10 +303,7 @@ export class PdfListView extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, ['pdfList']),
-  ..._.pick(state.ui, ['docFilterCriteria']),
-
-  // Should be merged with documents when we finish integrating redux
-  reduxDocuments: state.documents
+  ..._.pick(state.ui, ['docFilterCriteria'])
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -353,7 +350,6 @@ PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
-  reduxDocuments: PropTypes.object.isRequired,
   handleToggleCommentOpened: PropTypes.func.isRequired,
   pdfList: PropTypes.shape({
     lastReadDocId: PropTypes.number
