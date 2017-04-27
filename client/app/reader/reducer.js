@@ -42,8 +42,10 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {
-        currentlyViewingDocId: {
-          $set: action.payload.docId
+        pdf: {
+          currentRenderedFile: {
+            $set: action.payload.docId
+          }
         }
       },
       documents: {
@@ -57,8 +59,10 @@ export default (state = initialState, action = {}) => {
   case Constants.UNSELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {
-        currentlyViewingDocId: {
-          $set: null
+        pdf: {
+          currentRenderedFile: {
+            $set: null
+          }
         }
       }
     });

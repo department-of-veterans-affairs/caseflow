@@ -323,8 +323,8 @@ export class DecisionReviewer extends React.Component {
 
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
-    const shouldRenderPdf = this.props.currentlyViewingDocId !== null;
-    const activeDoc = _.find(documents, { id: this.props.currentlyViewingDocId });
+    const shouldRenderPdf = this.props.currentRenderedFile !== null;
+    const activeDoc = _.find(documents, { id: this.props.currentRenderedFile });
 
     return (
       <div className="section--document-list">
@@ -379,7 +379,7 @@ const mapStateToProps = (state) => {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
     },
-    currentlyViewingDocId: state.ui.currentlyViewingDocId,
+    currentRenderedFile: state.ui.pdf.currentRenderedFile,
     documentFilters: state.ui.pdfList.filters,
     storeDocuments: state.documents
   };
