@@ -78,7 +78,8 @@ class SearchableDropdown extends Component {
         noResultsText: _.get(
           creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG
         ),
-        ...{ promptTextCreator: (tagName) => `Create a tag for "${tagName}"` },
+
+        promptTextCreator: (tagName) => `Create a tag for "${tagName}"`,
         ..._.pick(creatableOptions, 'promptTextCreator')
       };
     }
