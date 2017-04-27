@@ -158,7 +158,7 @@ export default (state = initialState, action = {}) => {
       documents: {
         [action.payload.docId]: {
           tags: {
-            $apply: (tags) => _.reject(tags, { id: action.payload.tagId }) 
+            $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
           }
         }
       }
