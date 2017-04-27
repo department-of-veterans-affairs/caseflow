@@ -132,13 +132,34 @@ export default (state = initialState, action = {}) => {
           }
         }
       });
+  case Constants.REQUEST_REMOVE_TAG:
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $apply: (tags) => {
+              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+              return update(tags, {
+                [removedTagIndex]: {
+                  $merge: {
+                    pendingRemoval: true
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
       documents: {
         [action.payload.docId]: {
-          tags: { $set: state.documents[action.payload.docId].tags.
-            filter((tag) => tag.id !== action.payload.tagId) }
+          tags: {
+            $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
+          }
         }
       }
     });
@@ -153,7 +174,24 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
+      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      documents: {
+        [action.payload.docId]: {
+          tags: {
+            $apply: (tags) => {
+              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+              return update(tags, {
+                [removedTagIndex]: {
+                  $merge: {
+                    pendingRemoval: false
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
     });
   case Constants.SET_CURRENT_RENDERED_FILE:
     return update(state, {
