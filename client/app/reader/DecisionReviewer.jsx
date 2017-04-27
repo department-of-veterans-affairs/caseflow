@@ -229,10 +229,6 @@ export class DecisionReviewer extends React.Component {
   }
 
   render() {
-    let {
-      sortDirection
-    } = this.state;
-
     const documents = _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) ||
       _.values(this.props.storeDocuments);
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
@@ -253,7 +249,6 @@ export class DecisionReviewer extends React.Component {
           documents={documents}
           showPdf={this.showPdf}
           showPdfAndJumpToPage={this.showPdfAndJumpToPage}
-          sortDirection={sortDirection}
           numberOfDocuments={this.props.appealDocuments.length}
           onFilter={this.onFilter}
           filterBy={this.state.filterBy}
