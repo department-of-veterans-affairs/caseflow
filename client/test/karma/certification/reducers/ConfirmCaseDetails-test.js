@@ -1,17 +1,13 @@
 import { expect } from 'chai';
 import * as ConfirmCaseDetails from
     '../../../../app/certification/reducers/ConfirmCaseDetails';
-import { mapDataToInitialState } from
-    '../../../../app/certification/reducers/index';
+import { getBlankInitialState } from './util';
 import * as Constants from
     '../../../../app/certification/constants/constants';
 
 describe('.changeRepresentativeType', () => {
   it('should change the representative type', () => {
-    let initialState = mapDataToInitialState({
-      appeal: {},
-      form8: {}
-    });
+    let initialState = getBlankInitialState();
     let action = {
       type: Constants.CHANGE_REPRESENTATIVE_TYPE,
       payload: {
@@ -26,10 +22,7 @@ describe('.changeRepresentativeType', () => {
 
 describe('.changeRepresentativeName', () => {
   it('should change the representative name', () => {
-    let initialState = mapDataToInitialState({
-      appeal: {},
-      form8: {}
-    });
+    let initialState = getBlankInitialState();
     let action = {
       type: Constants.CHANGE_REPRESENTATIVE_NAME,
       payload: {
@@ -44,10 +37,7 @@ describe('.changeRepresentativeName', () => {
 
 describe('.changeOtherRepresentativeType', () => {
   it('should change the other representative type', () => {
-    let initialState = mapDataToInitialState({
-      appeal: {},
-      form8: {}
-    });
+    let initialState = getBlankInitialState();
     let action = {
       type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
       payload: {
