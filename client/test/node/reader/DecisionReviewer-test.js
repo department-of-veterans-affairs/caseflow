@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
-import DecisionReviewer from '../../../app/reader/DecisionReviewer';
+import { DecisionReviewer } from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
@@ -29,7 +29,9 @@ describe('DecisionReviewer', () => {
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
+          currentRenderedFile={null}
           onReceiveDocs={_.noop}
+          ui={{ pdfSidebar: { showTagErrorMessage: false } } }
           pdfWorker="worker"
           url="url"
         />
