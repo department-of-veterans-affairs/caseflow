@@ -4,7 +4,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1, 14))
+    Timecop.freeze(Time.utc(2017, 1, 1))
 
     BGSService.end_product_data = []
 
