@@ -242,6 +242,17 @@ export default (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_COMMENT_FLOW_STATE:
+    return update(
+      state,
+      {
+        ui: {
+          pdf: {
+            commentFlowState: { $set: action.payload.state }
+          }
+        }
+      }
+    );
   default:
     return state;
   }

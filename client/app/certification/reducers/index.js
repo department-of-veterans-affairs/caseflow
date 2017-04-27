@@ -1,5 +1,6 @@
 import * as Constants from '../constants/constants';
 import * as ConfirmCaseDetailsReducers from './ConfirmCaseDetails';
+import * as CertificationReducers from './Certification';
 
 /*
 * This global reducer is called every time a state change is
@@ -20,18 +21,6 @@ const changeSignAndCertifyForm = (state, action) => {
 
   return Object.assign({}, state, update);
 };
-
-export const startUpdateCertification = (state) => {
-  // setting the 'loading' attribute causes
-  // a spinny spinner to appear over the continue
-  // button
-  // TODO: verify that this also disables the continue
-  // button.
-  return Object.assign({}, state, {
-    loading: true
-  });
-};
-
 
 // TODO: is this meant to be something like a schema?
 // it's too similar to the object in "mapDataToInitialState".
@@ -84,38 +73,20 @@ export const certificationReducers = function(state = initialState, action = {})
 
   // Certification
   // ==================
-  // These reducer actions are used by a few different pages,
-  // so they can stay in the index.
   //
   // TODO: rename this to something else, it's more like a Page Load action now.
   case Constants.UPDATE_PROGRESS_BAR:
-    return Object.assign({}, state, {
-      currentSection: action.payload.currentSection,
-      // reset some parts of state so we don't skip pages or end up in loops
-      updateFailed: null,
-      updateSucceeded: null,
-      loading: false
-    });
+    return CertificationReducers.updateProgressBar(state, action);
   case Constants.ON_CONTINUE_CLICK_FAILED:
-    return Object.assign({}, state, {
-      continueClicked: action.payload.continueClicked
-    });
+    return CertificationReducers.onContinueClickFailed(state, action);
   case Constants.ON_CONTINUE_CLICK_SUCCESS:
-    return Object.assign({}, state, {
-      continueClicked: action.payload.continueClicked
-    });
+    return CertificationReducers.onContinueClickSuccess(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
-    return startUpdateCertification(state, action);
+    return CertificationReducers.startUpdateCertification(state);
   case Constants.CERTIFICATION_UPDATE_FAILURE:
-    return Object.assign({}, state, {
-      updateFailed: true,
-      loading: false
-    });
+    return CertificationReducers.certificationUpdateFailure(state);
   case Constants.CERTIFICATION_UPDATE_SUCCESS:
-    return Object.assign({}, state, {
-      updateSucceeded: true,
-      loading: false
-    });
+    return CertificationReducers.certificationUpdateSuccess(state);
 
   default:
     return state;
