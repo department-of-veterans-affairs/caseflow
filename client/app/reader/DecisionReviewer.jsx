@@ -16,7 +16,6 @@ export class DecisionReviewer extends React.Component {
     super(props);
 
     this.state = {
-      filterBy: '',
       isCommentLabelSelected: false
     };
 
@@ -64,39 +63,6 @@ export class DecisionReviewer extends React.Component {
 
   onShowList = () => {
     this.props.unselectPdf();
-  }
-
-  sortAndFilter = () => {
-    this.setState({
-      documents: this.filterDocuments(
-        this.sortDocuments(this.state.unsortedDocuments))
-    });
-  }
-
-  sortDocuments = (documents) => {
-    let documentCopy = [...documents];
-    let multiplier;
-
-    if (this.state.sortDirection === 'ascending') {
-      multiplier = 1;
-    } else if (this.state.sortDirection === 'descending') {
-      multiplier = -1;
-    } else {
-      return;
-    }
-
-    documentCopy.sort((doc1, doc2) => {
-      if (this.state.sortBy === 'date') {
-        return multiplier * (new Date(doc1.receivedAt) - new Date(doc2.receivedAt));
-      } else if (this.state.sortBy === 'type') {
-        return multiplier * (doc1.type < doc2.type ? -1 : 1);
-      }
-
-      return 0;
-
-    });
-
-    return documentCopy;
   }
 
   componentDidMount = () => {
@@ -162,16 +128,10 @@ export class DecisionReviewer extends React.Component {
     return filteredDocuments;
   }
 
-  onFilter = (filterBy) => {
-    this.setState({
-      filterBy
-    }, this.sortAndFilter);
-  }
-
   selectComments = () => {
     this.setState({
       isCommentLabelSelected: !this.state.isCommentLabelSelected
-    }, this.sortAndFilter);
+    });
   }
 
   onJumpToComment = (comment) => () => {
@@ -203,9 +163,6 @@ export class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           documents={documents}
           showPdf={this.showPdf}
-          numberOfDocuments={this.props.appealDocuments.length}
-          onFilter={this.onFilter}
-          filterBy={this.state.filterBy}
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
           selectComments={this.selectComments}

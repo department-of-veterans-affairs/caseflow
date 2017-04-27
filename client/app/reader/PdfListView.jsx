@@ -285,12 +285,7 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <DocumentListHeader
-            documents={this.props.documents}
-            onFilter={this.props.onFilter}
-            filterBy={this.props.filterBy}
-            numberOfDocuments={this.props.numberOfDocuments}
-          />
+          <DocumentListHeader documents={this.props.documents} />
           <div>
             <Table
               columns={this.getDocumentColumns()}
