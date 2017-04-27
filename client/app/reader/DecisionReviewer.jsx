@@ -55,12 +55,6 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  onPreviousPdf = () => {
-    const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
-
-    this.setPage(currentPdfIndex);
-  }
-
   documentUrl = (doc) => {
     return `/document/${doc.id}/pdf`;
   }
