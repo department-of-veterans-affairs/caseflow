@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
@@ -316,11 +317,25 @@ export class DecisionReviewer extends React.Component {
     this.props.onScrollToComment(null);
   }
 
+  getFilteredDocuments = () => {
+    const activeCategoryFilters = _(this.props.documentFilters.category).
+      toPairs().
+      filter((([key, value]) => value)).
+      map(([key, value]) => categoryFieldNameOfCategoryName(key)).
+      value();
+
+    return _.filter(
+      this.props.storeDocuments,
+      (doc) => !activeCategoryFilters.length || _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    );
+  }
+
   render() {
     let {
-      documents,
       sortDirection
     } = this.state;
+
+    const documents = this.getFilteredDocuments();
 
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
@@ -380,6 +395,7 @@ const mapStateToProps = (state) => {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
     },
+    documentFilters: state.ui.pdfList.filters,
     storeDocuments: state.documents
   };
 };
