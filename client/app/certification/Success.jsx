@@ -29,11 +29,7 @@ const UnconnectedSuccess = ({
         </li>
     </ul>
 
-   <!-- <p className="cf-msg-screen-text">
-      {`Way to go! You can now close this window
-       and open another appeal in VACOLS.`}
-    </p> 
-    //-->
+   
   </div>;
 };
 
