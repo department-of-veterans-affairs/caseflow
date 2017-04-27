@@ -177,7 +177,6 @@ export class PdfSidebar extends React.Component {
   }
 }
 
-<<<<<<< HEAD
 PdfSidebar.propTypes = {
   onAddComment: PropTypes.func,
   doc: PropTypes.object,
@@ -197,7 +196,7 @@ PdfSidebar.propTypes = {
   hidePdfSidebar: PropTypes.bool
 };
 
-const mapPropsToState = (state) => {
+const mapStateToProps = (state) => {
   return {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
@@ -240,25 +239,6 @@ const mapDispatchToProps = (dispatch) => ({
     });
   }
 });
-
-PdfSidebar.propTypes = {
-  onAddComment: PropTypes.func,
-  doc: PropTypes.object,
-  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    comment: React.PropTypes.string,
-    uuid: React.PropTypes.number
-  })),
-  editingComment: React.PropTypes.number,
-  isAddingComment: PropTypes.bool,
-  onSaveCommentAdd: PropTypes.func,
-  onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
-  onCancelCommentAdd: PropTypes.func,
-  onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool
-};
 
 export default connect(
   mapStateToProps, mapDispatchToProps

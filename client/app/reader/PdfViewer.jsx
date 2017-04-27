@@ -107,7 +107,9 @@ export class PdfViewer extends React.Component {
       this.props.doc.id,
       pageNumber,
       annotation
-    );
+    ).then((savedAnnotation) => {
+      this.props.handleSelectCommentIcon(savedAnnotation);
+    });
     this.onCancelCommentAdd();
   }
 

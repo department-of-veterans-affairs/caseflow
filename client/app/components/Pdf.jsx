@@ -6,6 +6,8 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
+import * as ReaderActions from '../reader/actions';
+import { bindActionCreators } from 'redux';
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -387,14 +389,7 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { currentRenderedFile }
     });
   },
-  handleSelectCommentIcon(comment) {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: comment
-      }
-    });
-  }
+  ...bindActionCreators(ReaderActions, dispatch)
 });
 
 export default connect(
