@@ -100,7 +100,8 @@ export class DecisionReviewer extends React.Component {
   }
 
   render() {
-    const documents = _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) ||
+    const documents = this.props.filteredDocIds ?
+      _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) :
       _.values(this.props.storeDocuments);
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
 

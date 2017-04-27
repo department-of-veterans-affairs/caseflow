@@ -27,9 +27,12 @@ describe('DecisionReviewer', () => {
     wrapper = mount(
       <Provider store={createStore(readerReducer)}>
         <DecisionReviewer
+          storeDocuments={documents}
           appealDocuments={documents}
+          filteredDocIds={null}
           annotations={annotations}
           currentRenderedFile={null}
+          handleSetLastRead={_.noop}
           onReceiveDocs={_.noop}
           ui={{ pdfSidebar: { showTagErrorMessage: false } } }
           pdfWorker="worker"
@@ -50,7 +53,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfListView')).to.have.length(1);
       });
 
-      it('the PDF view when a PDF is clicked', asyncTest(async () => {
+      it.only('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[0].type).
