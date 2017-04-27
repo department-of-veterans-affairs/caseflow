@@ -326,7 +326,7 @@ export class Pdf extends React.Component {
     let pages = [];
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
-      'page': true,
+      page: true,
       'cf-pdf-placing-comment': (this.props.commentFlowState ===
         Constants.PLACING_COMMENT_STATE)
     });

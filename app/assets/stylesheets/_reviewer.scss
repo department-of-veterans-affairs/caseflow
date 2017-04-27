@@ -382,10 +382,15 @@ svg[aria-hidden=true],
   padding-right: 5px;
 }
 
-.cf-pdf-placing-comment * {
-  cursor: url(asset-path('comment-cursor.svg')), auto !important;
-}
-
+// I HATE IMPORTANTS, but I'm not sure how to get rid of this one.
+// We need this to apply to every page and all of its sub components,
+// or else when we mouse over a div with text on the page the cursor
+// switches to a text selector. But since the divs have a more specific
+// selector, it wins out.
 .cf-pdf-placing-comment {
   outline: 10px solid $color-focus;
+
+  * {
+    cursor: url(asset-path('comment-cursor.svg')), auto !important;
+  }
 }
