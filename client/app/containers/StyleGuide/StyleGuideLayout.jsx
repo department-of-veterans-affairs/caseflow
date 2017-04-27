@@ -2,13 +2,55 @@ import React from 'react';
 
 import InlineForm from '../../components/InlineForm';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-
+import DropdownMenu from '../../components/DropdownMenu';
 import Button from '../../components/Button';
-//import Layout from '../../components/Layout';
 
 export default class StyleGuideLayout extends React.Component {
+   constructor(props) {
+    super(props);
+    this.state = {
+      menu: false
+    };
+  }
+
+  handleMenuClick = () => {
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
+   options = () => {
+    return [
+      {
+        title: 'Help',
+        link: '#layout'
+      },
+      {
+        title: 'Send feedback',
+        link: '#layout'
+      },
+      {
+        title: 'Whats New?*',
+        link: '#layout'
+      },
+      {
+        title: 'Switch User',
+        link: '#layout'
+      },
+      {
+        title: 'Sign out',
+        link: '#layout'
+      }
+    ];
+  }
+
+  render() {
+    let {
+      name
+    } = this.props;
+
+    name = 'Dispatch';
   
-  render(){
     return <div>
       <StyleGuideComponentTitle
         title="Layout"
@@ -37,14 +79,30 @@ export default class StyleGuideLayout extends React.Component {
         You should avoid placing these actions in other parts of the page without good reason.
       </p>
 
-        <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt"></div>
+      <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+          <a href="#" id="cf-logo-link">
+            <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-dispatch">
+            </span>Caseflow</h1>
+          </a>
+          <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
+
+           <div className="cf-dropdown cf-nav-dropdown">
+            <DropdownMenu
+              options={this.options()}
+              onClick={this.handleMenuClick}
+              onBlur={this.handleMenuClick}
+              label="Establish Claim(DSUSER)"
+              menu={this.state.menu}
+              />
+          </div>
+        </div>
         <p>
         <div className="cf-app-segment" id="establish-claim-buttons">
          <div className="usa-width-one-half">
           <InlineForm>
-            <Button
+            <span><Button
              name="Back to Preview"
-             classNames={['cf-btn-link']} />
+             classNames={['cf-btn-link']} /></span>
           </InlineForm>
           </div>
 
@@ -56,7 +114,7 @@ export default class StyleGuideLayout extends React.Component {
            name="Submit End Product"
           />
           </div>
-         </div>
+      </div>
       </p>
 
     </div>;
