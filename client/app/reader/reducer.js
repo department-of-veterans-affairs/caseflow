@@ -54,6 +54,14 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UNSELECT_CURRENT_VIEWER_PDF:
+    return update(state, {
+      ui: {
+        currentlyViewingDocId: {
+          $set: null
+        }
+      }
+    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
 

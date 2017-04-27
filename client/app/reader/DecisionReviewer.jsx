@@ -142,9 +142,7 @@ export class DecisionReviewer extends React.Component {
   }
 
   onShowList = () => {
-    this.setState({
-      currentPdfIndex: null
-    }, this.sortAndFilter);
+    this.props.unselectPdf();
   }
 
   sortAndFilter = () => {
