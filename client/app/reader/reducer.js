@@ -3,7 +3,27 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
-export default const readerReducer = (state = initialState, action = {}) => {
+export const initialState = {
+  ui: {
+    pdf: {},
+    pdfSidebar: {
+      showTagErrorMsg: false,
+      hidePdfSidebar: false
+    },
+    pdfList: {
+      lastReadDocId: null,
+      filters: {
+        category: {}
+      },
+      dropdowns: {
+        category: false
+      }
+    }
+  },
+  documents: {}
+};
+
+export default (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
