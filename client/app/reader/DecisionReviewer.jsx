@@ -236,7 +236,6 @@ export class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           documents={documents}
           showPdf={this.showPdf}
-          showPdfAndJumpToPage={this.showPdfAndJumpToPage}
           numberOfDocuments={this.props.appealDocuments.length}
           onFilter={this.onFilter}
           filterBy={this.state.filterBy}
