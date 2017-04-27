@@ -60,7 +60,7 @@ export const initialState = {
     filteredDocIds: null,
     docFilterCriteria: {
       sort: {
-        sortBy: 'type',
+        sortBy: 'receivedAt',
         sortAscending: false
       },
       category: {},
