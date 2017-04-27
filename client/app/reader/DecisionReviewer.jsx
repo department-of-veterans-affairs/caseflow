@@ -154,28 +154,6 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  changeSortState = (sortBy) => () => {
-    let sortDirection = this.state.sortDirection;
-
-    // if you click the same label then we want to
-    // flip the sort type. Otherwise if you're clicking
-    // a new label, we want this to sort ascending.
-    if (this.state.sortBy === sortBy) {
-      if (sortDirection === 'ascending') {
-        sortDirection = 'descending';
-      } else {
-        sortDirection = 'ascending';
-      }
-    } else {
-      sortDirection = 'ascending';
-    }
-
-    this.setState({
-      sortBy,
-      sortDirection
-    }, this.sortAndFilter);
-  }
-
   metadataContainsString = (doc, searchString) => {
     if (doc.type.toLowerCase().includes(searchString)) {
       return true;
