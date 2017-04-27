@@ -59,33 +59,6 @@ export class DecisionReviewer extends React.Component {
     return `/document/${doc.id}/pdf`;
   }
 
-  // This method is used for updating attributes of documents.
-  // Since we maintain a sorted and unsorted list of documents
-  // when we update one, we need to update the other.
-  setDocumentAttribute = (pdfNumber, field, value) => {
-    let unsortedDocs = [...this.state.unsortedDocuments];
-    let documentId = this.state.documents[pdfNumber].id;
-
-    // We need to update the attribute in both the unsorted
-    // and sorted list of documents. PdfNumber refers to the
-    // sorted list. For the unsorted list, we need to look
-    // it up by documentId.
-    unsortedDocs.forEach((doc) => {
-      if (doc.id === documentId) {
-        doc[field] = value;
-      }
-    });
-
-    let docs = [...this.state.documents];
-
-    docs[pdfNumber][field] = value;
-
-    this.setState({
-      documents: docs,
-      unsortedDocuments: unsortedDocs
-    });
-  }
-
   pdfNumberFromId = (pdfId) => _.findIndex(this.state.documents, { id: pdfId })
 
   showPdf = (pdfId) => (event) => {
