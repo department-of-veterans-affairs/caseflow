@@ -103,8 +103,6 @@ export class DecisionReviewer extends React.Component {
   pdfNumberFromId = (pdfId) => _.findIndex(this.state.documents, { id: pdfId })
 
   showPdf = (pdfId) => (event) => {
-    let pdfNumber = this.pdfNumberFromId(pdfId);
-
     // If the user is trying to open the link in a new tab/window
     // then follow the link. Otherwise if they just clicked the link
     // keep them contained within the SPA.
@@ -118,41 +116,29 @@ export class DecisionReviewer extends React.Component {
         (event.button &&
         event.button === 1)) {
 
-      this.markAsRead(pdfNumber);
+      this.markAsRead(pdfId);
 
       return true;
     }
 
     event.preventDefault();
-    this.setPage(pdfNumber);
+    this.props.selectCurrentPdf(pdfId);
   }
 
-  markAsRead = (pdfNumber) => {
-    let documentId = this.state.documents[pdfNumber].id;
-
+  markAsRead = (pdfId) => {
     // For some reason calling this synchronosly prevents the new
     // tab from opening. Move it to an asynchronus call.
     setTimeout(() =>
-      this.props.handleSetLastRead(this.state.documents[pdfNumber].id)
+      this.props.handleSetLastRead(pdfId)
     );
 
-    ApiUtil.patch(`/document/${documentId}/mark-as-read`).
-      then(() => {
-        this.setDocumentAttribute(pdfNumber, 'opened_by_current_user', true);
-      }, () => {
-
+    this.props.selectCurrentPdf(pdfId);
+    ApiUtil.patch(`/document/${pdfId}/mark-as-read`).
+      catch(() => {
         /* eslint-disable no-console */
         console.log('Error marking as read');
-
         /* eslint-enable no-console */
       });
-  }
-
-  setPage = (pdfNumber) => {
-    this.markAsRead(pdfNumber);
-    this.setState({
-      currentPdfIndex: pdfNumber
-    });
   }
 
   onShowList = () => {
@@ -339,12 +325,12 @@ export class DecisionReviewer extends React.Component {
 
     let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
     let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
-    const renderPdf = this.state.currentPdfIndex !== null &&
-      this.props.storeDocuments[documents[this.state.currentPdfIndex].id];
+    const shouldRenderPdf = this.props.currentlyViewingDocId !== null;
+    const activeDoc = _.find(documents, { id: this.props.currentlyViewingDocId });
 
     return (
       <div className="section--document-list">
-        {this.state.currentPdfIndex === null && <PdfListView
+        {!shouldRenderPdf && <PdfListView
           annotationStorage={this.annotationStorage}
           documents={documents}
           changeSortState={this.changeSortState}
@@ -360,13 +346,13 @@ export class DecisionReviewer extends React.Component {
           selectComments={this.selectComments}
           isCommentLabelSelected={this.state.isCommentLabelSelected}
           onJumpToComment={this.onJumpToComment} />}
-        {renderPdf && <PdfViewer
+        {shouldRenderPdf && <PdfViewer
           addNewTag={this.props.addNewTag}
           removeTag={this.props.removeTag}
           showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
           annotationStorage={this.annotationStorage}
-          file={this.documentUrl(documents[this.state.currentPdfIndex])}
-          doc={this.props.storeDocuments[documents[this.state.currentPdfIndex].id]}
+          file={this.documentUrl(activeDoc)}
+          doc={activeDoc}
           onPreviousPdf={onPreviousPdf}
           onNextPdf={onNextPdf}
           onShowList={this.onShowList}
@@ -395,6 +381,7 @@ const mapStateToProps = (state) => {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
     },
+    currentlyViewingDocId: state.ui.currentlyViewingDocId,
     documentFilters: state.ui.pdfList.filters,
     storeDocuments: state.documents
   };

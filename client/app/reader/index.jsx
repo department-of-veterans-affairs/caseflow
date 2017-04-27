@@ -7,6 +7,7 @@ import readerReducer from './reducer';
 
 export const initialState = {
   ui: {
+    currentlyViewingDocId: null,
     pdf: {},
     pdfSidebar: {
       showTagErrorMsg: false,

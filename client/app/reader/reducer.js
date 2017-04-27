@@ -39,6 +39,21 @@ export default (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
+    return update(state, {
+      ui: {
+        currentlyViewingDocId: {
+          $set: action.payload.docId
+        }
+      },
+      documents: {
+        [action.payload.docId]: {
+          $merge: {
+            opened_by_current_user: true
+          }
+        }
+      }
+    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
 
