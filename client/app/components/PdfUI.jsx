@@ -5,6 +5,7 @@ import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import classNames from 'classnames';
+import _ from 'lodash';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -27,10 +28,6 @@ const MINIMUM_ZOOM = 0.1;
 //   total number of pages.
 // Document name: The document name is in the top right corner.
 //   it is currently a link to open the document in a new tab.
-// Next & Previous PDF: If you have several PDFs you would like
-//   a user to be able to navigate to, pass in handlers for onNextPdf
-//   and onPreviousPdf. If one is not supplied, or is null, then the
-//   corresponding arrow will be missing.
 export class PdfUI extends React.Component {
   constructor(props) {
     super(props);
@@ -134,7 +131,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div className="cf-pdf-navigation">
-        { this.props.onPreviousPdf &&
+        { this.props.showPreviousPageButton &&
           <span className="cf-pdf-buttons-left">
             <Button
               name="previous"
@@ -144,7 +141,7 @@ export class PdfUI extends React.Component {
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
-        { this.props.onNextPdf &&
+        { this.props.showNextPageButton &&
           <span className="cf-pdf-buttons-right">
             <Button
               name="next"
@@ -179,11 +176,7 @@ export class PdfUI extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
-  };
-};
+const mapStateToProps = (state) => state.ui.pdf;
 const mapDispatchToProps = (dispatch) => ({
   handleTogglePdfSidebar() {
     dispatch({
@@ -214,8 +207,6 @@ PdfUI.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  onNextPdf: PropTypes.func,
-  onPreviousPdf: PropTypes.func,
   onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   onIconMoved: PropTypes.func,

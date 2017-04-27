@@ -66,13 +66,6 @@ export class DecisionReviewer extends React.Component {
     return `/document/${doc.id}/pdf`;
   }
 
-  onNextPdf = () => {
-    const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
-        this.state.documents.length - 1);
-
-    this.setPage(currentPdfIndex);
-  }
-
   // This method is used for updating attributes of documents.
   // Since we maintain a sorted and unsorted list of documents
   // when we update one, we need to update the other.
@@ -284,14 +277,6 @@ export class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
-  shouldShowNextButton = () => {
-    return this.state.currentPdfIndex + 1 < this.state.documents.length;
-  }
-
-  shouldShowPreviousButton = () => {
-    return this.state.currentPdfIndex > 0;
-  }
-
   onJumpToComment = (comment) => () => {
     this.setPage(this.pdfNumberFromId(comment.documentId));
     this.props.onScrollToComment(comment);
@@ -320,11 +305,13 @@ export class DecisionReviewer extends React.Component {
     } = this.state;
 
     const documents = this.getFilteredDocuments();
-
-    let onPreviousPdf = this.shouldShowPreviousButton() ? this.onPreviousPdf : null;
-    let onNextPdf = this.shouldShowNextButton() ? this.onNextPdf : null;
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
-    const activeDoc = _.find(documents, { id: this.props.currentRenderedFile });
+
+    const activeDocIndex = _.findIndex(documents, { id: this.props.currentRenderedFile });
+    const showNextPageButton = activeDocIndex + 1 < _.size(documents);
+    const showPreviousPageButton = activeDocIndex > 0;
+
+    const activeDoc = documents[activeDocIndex];
 
     return (
       <div className="section--document-list">
@@ -351,8 +338,8 @@ export class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(activeDoc)}
           doc={activeDoc}
-          onPreviousPdf={onPreviousPdf}
-          onNextPdf={onNextPdf}
+          showNextPageButton={showNextPageButton}
+          showPreviousPageButton={showPreviousPageButton}
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
           label={activeDoc.label}
