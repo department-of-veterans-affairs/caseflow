@@ -5,6 +5,8 @@ import Modal from '../../components/Modal';
 import * as Constants from '../constants';
 import { getCancelFeedbackErrorMessage } from '../selectors';
 import * as Actions from '../actions/cancelModal';
+import ApiUtil from '../../util/ApiUtil';
+import WindowUtil from '../../util/WindowUtil';
 
 export const CancelModal = ({
   cancelFeedback,
@@ -76,7 +78,37 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       type: Constants.TOGGLE_CANCEL_TASK_MODAL
     });
   },
-  handleCancelSubmit: Actions.handleCancelSubmit(dispatch, ownProps),
+  handleCancelSubmit: () => (
+    dispatch((_dispatch, getState) => {
+      _dispatch({ type: Constants.VALIDATE_CANCEL_FEEDBACK });
+      const isInvalid =
+        Boolean(getCancelFeedbackErrorMessage(getState().establishClaim));
+
+      if (isInvalid) {
+        return;
+      }
+
+      _dispatch({ type: Constants.REQUEST_CANCEL_FEEDBACK });
+      ownProps.handleAlertClear();
+
+      const data = ApiUtil.convertToSnakeCase({
+        feedback: getState().establishClaim.cancelFeedback
+      });
+
+      ApiUtil.patch(`/dispatch/establish-claim/${ownProps.taskId}/cancel`, { data }).
+        then(() => {
+          WindowUtil.reloadPage();
+        }, () => {
+          _dispatch({ type: Constants.REQUEST_CANCEL_FEEDBACK_FAILURE });
+          ownProps.handleAlert(
+            'error',
+            'Error',
+            'There was an error while cancelling the current claim.' +
+            ' Please try again later'
+          );
+        });
+    })
+  ),
   handleChangeCancelFeedback: (value) => {
     dispatch({
       type: Constants.CHANGE_CANCEL_FEEDBACK,
