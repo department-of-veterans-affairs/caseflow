@@ -8,9 +8,12 @@ import readerReducer from './reducer';
 export const initialState = {
   ui: {
     filteredDocIds: null,
-    sort: {
-      sortBy: 'type',
-      sortAscending: false
+    docFilterCriteria: {
+      sort: {
+        sortBy: 'type',
+        sortAscending: false
+      },
+      category: {}
     },
     pdf: {
       currentRenderedFile: null,
@@ -22,9 +25,6 @@ export const initialState = {
     },
     pdfList: {
       lastReadDocId: null,
-      filters: {
-        category: {}
-      },
       dropdowns: {
         category: false
       }

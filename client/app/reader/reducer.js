@@ -3,28 +3,9 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
-export const initialState = {
-  ui: {
-    pdf: {},
-    pdfSidebar: {
-      showTagErrorMsg: false,
-      hidePdfSidebar: false
-    },
-    pdfList: {
-      lastReadDocId: null,
-      filters: {
-        category: {}
-      },
-      dropdowns: {
-        category: false
-      }
-    }
-  },
-  documents: {}
-};
-
 const updateFilteredDocIds = (nextState) => {
-  const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
+  const { docFilterCriteria } = nextState.ui;
+  const activeCategoryFilters = _(docFilterCriteria.category).
         toPairs().
         filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
         map(([key]) => categoryFieldNameOfCategoryName(key)).
@@ -35,11 +16,11 @@ const updateFilteredDocIds = (nextState) => {
       (doc) => !activeCategoryFilters.length ||
         _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
-    sortBy(nextState.ui.sort.sortBy).
+    sortBy(docFilterCriteria.sort.sortBy).
     map('id').
     value();
 
-  if (nextState.ui.sort.sortAscending) {
+  if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
   }
 
@@ -52,7 +33,7 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
-export default (state = initialState, action = {}) => {
+export default (state = {}, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -71,12 +52,14 @@ export default (state = initialState, action = {}) => {
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
-        sort: {
-          sortBy: {
-            $set: action.payload.sortBy
-          },
-          sortAscending: {
-            $apply: (prevVal) => !prevVal
+        docFilterCriteria: {
+          sort: {
+            sortBy: {
+              $set: action.payload.sortBy
+            },
+            sortAscending: {
+              $apply: (prevVal) => !prevVal
+            }
           }
         }
       }
@@ -191,12 +174,10 @@ export default (state = initialState, action = {}) => {
       state,
       {
         ui: {
-          pdfList: {
-            filters: {
-              category: {
-                [action.payload.categoryName]: {
-                  $set: action.payload.checked
-                }
+          docFilterCriteria: {
+            category: {
+              [action.payload.categoryName]: {
+                $set: action.payload.checked
               }
             }
           }

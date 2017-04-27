@@ -85,7 +85,7 @@ export class PdfListView extends React.Component {
   }
 
   getDocumentColumns = () => {
-    const className = this.props.sort.sortAscending ? 'fa-caret-down' : 'fa-caret-up';
+    const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-down' : 'fa-caret-up';
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
       aria-hidden="true"></i>;
@@ -108,7 +108,7 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.pdfList.filters.category));
+    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.category));
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -172,7 +172,7 @@ export class PdfListView extends React.Component {
                 isClearEnabled={anyCategoryFiltersAreSet}
                 handleClose={toggleCategoryDropdownFilterVisiblity}>
                 <DocCategoryPicker
-                  categoryToggleStates={this.props.pdfList.filters.category}
+                  categoryToggleStates={this.props.docFilterCriteria.category}
                   handleCategoryToggle={this.props.setCategoryFilter} />
               </DropdownFilter>
             }
@@ -185,7 +185,7 @@ export class PdfListView extends React.Component {
             id="receipt-date-header"
             className="document-list-header-recepit-date"
             onClick={() => this.props.changeSortState('date')}>
-            Receipt Date {this.props.sort.sortBy === 'date' ? sortIcon : notsortedIcon}
+            Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'date' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
@@ -194,7 +194,7 @@ export class PdfListView extends React.Component {
         },
         {
           header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
-            Document Type {this.props.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
+            Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) => boldUnreadContent(
             <a
@@ -295,7 +295,8 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, ['pdfList', 'sort']),
+  ..._.pick(state.ui, ['pdfList']),
+  ..._.pick(state.ui, ['docFilterCriteria']),
 
   // Should be merged with documents when we finish integrating redux
   reduxDocuments: state.documents
