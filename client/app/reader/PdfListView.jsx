@@ -201,7 +201,7 @@ export class PdfListView extends React.Component {
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {formatDate(doc.receivedAt)}
+              {formatDate(doc.received_at)}
             </span>
         },
         {
