@@ -64,6 +64,13 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
+    if (this.lastReadElement) {
+      const boundingBox = this.lastReadElement.getBoundingClientRect();
+      const halfWindowHeight = window.innerHeight / 2;
+
+      document.body.scrollTop = boundingBox.top - halfWindowHeight;
+    }
+
     window.addEventListener('resize', this.setCategoryFilterIconPosition);
     this.setCategoryFilterIconPosition();
   }
@@ -153,7 +160,12 @@ export class PdfListView extends React.Component {
         {
           valueFunction: (doc) => {
             if (doc.id === this.props.pdfList.lastReadDocId) {
-              return <span aria-label="Most recently read document indicator">
+              return <span
+                id="read-indicator"
+                aria-label="Most recently read document indicator"
+                ref={(element) => {
+                  this.lastReadElement = element;
+                }}>
                   {rightTriangle()}
                 </span>;
             }
