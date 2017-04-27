@@ -57,7 +57,12 @@ export default (state = {}, action = {}) => {
       {
         documents: {
           $set: _(action.payload).
-            map((doc) => [doc.id, doc]).
+            map((doc) => [
+              doc.id, {
+                ...doc,
+                receivedAt: doc.received_at
+              }
+            ]).
             fromPairs().
             value()
         }

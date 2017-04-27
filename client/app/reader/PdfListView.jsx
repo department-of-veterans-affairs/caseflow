@@ -196,12 +196,12 @@ export class PdfListView extends React.Component {
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
-            onClick={() => this.props.changeSortState('date')}>
-            Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'date' ? sortIcon : notsortedIcon}
+            onClick={() => this.props.changeSortState('receivedAt')}>
+            Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {formatDate(doc.received_at)}
+              {formatDate(doc.receivedAt)}
             </span>
         },
         {
