@@ -15,30 +15,9 @@ export class DecisionReviewer extends React.Component {
   constructor(props) {
     super(props);
 
-    let selectedLabels = {
-      decisions: false,
-      layperson: false,
-      privateMedical: false,
-      procedural: false,
-      vaMedial: false,
-      veteranSubmitted: false
-    };
-
     this.state = {
-      // We want to show the list view (currentPdfIndex null), unless
-      // there is just a single pdf in which case we want to just show
-      // the first pdf.
-      currentPdfIndex: this.props.appealDocuments.length > 1 ? null : 0,
       filterBy: '',
-      isCommentLabelSelected: false,
-      selectedLabels,
-      sortBy: 'date',
-      sortDirection: 'ascending',
-      unsortedDocuments: this.props.appealDocuments.map((doc) => {
-        doc.receivedAt = doc.received_at;
-
-        return doc;
-      })
+      isCommentLabelSelected: false
     };
 
     this.props.onReceiveDocs(this.props.appealDocuments);
