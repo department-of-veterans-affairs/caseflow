@@ -23,9 +23,6 @@ export class DecisionReviewer extends React.Component {
     this.props.onReceiveDocs(this.props.appealDocuments);
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-
-    this.state.documents = this.filterDocuments(
-      this.sortDocuments(this.state.unsortedDocuments));
   }
 
   componentWillReceiveProps(nextProps) {
