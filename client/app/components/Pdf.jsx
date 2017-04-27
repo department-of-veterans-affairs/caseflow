@@ -207,8 +207,6 @@ export class Pdf extends React.Component {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
 
-        this.props.handleSetCurrentRenderedFile(this.props.documentId);
-
         // Scroll to the correct location on the page
         this.scrollWindow.scrollTop = scrollLocation;
       });
@@ -372,12 +370,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleSetCurrentRenderedFile(currentRenderedFile) {
-    dispatch({
-      type: Constants.SET_CURRENT_RENDERED_FILE,
-      payload: { currentRenderedFile }
-    });
-  },
   handleSelectCommentIcon(comment) {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
@@ -408,7 +400,6 @@ Pdf.propTypes = {
   currentRenderedFile: PropTypes.number,
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
-  handleSetCurrentRenderedFile: PropTypes.func.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageClick: PropTypes.func,

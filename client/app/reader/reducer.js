@@ -42,6 +42,7 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {
+        pdfSidebar: { showTagErrorMsg: { $set: false } },
         pdf: {
           currentRenderedFile: {
             $set: action.payload.docId
@@ -218,13 +219,6 @@ export default (state = initialState, action = {}) => {
             }
           }
         }
-      }
-    });
-  case Constants.SET_CURRENT_RENDERED_FILE:
-    return update(state, {
-      ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
-        pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
       }
     });
   case Constants.SCROLL_TO_COMMENT:
