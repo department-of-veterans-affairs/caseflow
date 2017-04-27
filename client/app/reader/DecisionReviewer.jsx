@@ -192,15 +192,6 @@ export class DecisionReviewer extends React.Component {
     }, this.sortAndFilter);
   }
 
-  onLabelSelected = (label) => () => {
-    let selectedLabels = { ...this.state.selectedLabels };
-
-    selectedLabels[label] = !selectedLabels[label];
-    this.setState({
-      selectedLabels
-    }, this.sortAndFilter);
-  }
-
   selectComments = () => {
     this.setState({
       isCommentLabelSelected: !this.state.isCommentLabelSelected
@@ -241,7 +232,6 @@ export class DecisionReviewer extends React.Component {
           filterBy={this.state.filterBy}
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
-          selectLabel={this.onLabelSelected}
           selectComments={this.selectComments}
           isCommentLabelSelected={this.state.isCommentLabelSelected}
           onJumpToComment={this.onJumpToComment} />}
