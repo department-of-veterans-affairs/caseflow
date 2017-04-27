@@ -262,7 +262,8 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(ReaderActions, dispatch);
+  handlePlaceComment: () => dispatch(handlePlaceComment()),
+  handleWriteComment: () => dispatch(handleWriteComment())
 };
 
 export default connect(
@@ -280,5 +281,7 @@ PdfViewer.propTypes = {
   }),
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
+  handlePlaceComment: PropTypes.func,
+  handleWriteComment: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

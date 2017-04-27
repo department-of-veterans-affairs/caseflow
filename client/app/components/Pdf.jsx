@@ -6,7 +6,7 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import * as ReaderActions from '../reader/actions';
+import { handlePlaceComment, handleWriteComment } as ReaderActions from '../reader/actions';
 import { bindActionCreators } from 'redux';
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -389,7 +389,8 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { currentRenderedFile }
     });
   },
-  ...bindActionCreators(ReaderActions, dispatch)
+  handlePlaceComment: () => dispatch(handlePlaceComment()),
+  handleWriteComment: () => dispatch(handleWriteComment())
 });
 
 export default connect(
