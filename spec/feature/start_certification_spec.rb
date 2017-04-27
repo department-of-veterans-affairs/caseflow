@@ -153,6 +153,16 @@ RSpec.feature "Start Certification" do
       # expect(page).to have_content("Caseflow Certification Help")
       # page.driver.go_back
       expect(find_link("Help", visible: false)[:href]).to include(certification_help_path)
+      puts "****************************"
+      puts "****************************"
+      puts "****************************"
+      puts "****************************"
+      puts find_link("Help", visible: false)[:href]
+      puts "****************************"
+      puts "****************************"
+      puts "****************************"
+      puts "****************************"
+      expect(find_link("Help", visible: false)[:href]).to include(certification_help_path)
 
       expect(find("#correspondent-name")).to have_content("Crockett, Davy")
       expect(find("#appeal-type-header")).to have_content("Original")
