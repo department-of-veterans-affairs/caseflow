@@ -310,7 +310,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   changeSortState(sortBy) {
     dispatch({
-      type: Constants.SET_SORT_BY,
+      type: Constants.SET_SORT,
       payload: {
         sortBy
       }

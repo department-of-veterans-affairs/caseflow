@@ -9,7 +9,8 @@ export const initialState = {
   ui: {
     filteredDocIds: null,
     sort: {
-      sortBy: null
+      sortBy: null,
+      sortAscending: false
     },
     pdf: {
       currentRenderedFile: null,

@@ -39,6 +39,10 @@ const updateFilteredDocIds = (nextState) => {
     map('id').
     value();
 
+  if (nextState.ui.sort.sortAscending) {
+    filteredIds.reverse();
+  }
+
   return update(nextState, {
     ui: {
       filteredDocIds: {
@@ -64,12 +68,15 @@ export default (state = initialState, action = {}) => {
         }
       }
     ));
-  case Constants.SET_SORT_BY:
+  case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
         sort: {
           sortBy: {
             $set: action.payload.sortBy
+          },
+          sortAscending: {
+            $apply: (prevVal) => !prevVal
           }
         }
       }
