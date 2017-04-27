@@ -3,6 +3,9 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
+const metadataContainsString = (searchQuery, doc) =>
+  doc.type.toLowerCase().includes(searchQuery) || doc.receivedAt.toLowerCase().includes(searchQuery);
+
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
@@ -11,10 +14,15 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => categoryFieldNameOfCategoryName(key)).
         value();
 
+  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+
   const filteredIds = _(nextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
         _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    ).
+    filter(
+      _.partial(metadataContainsString, searchQuery)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').

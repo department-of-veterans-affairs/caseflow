@@ -84,50 +84,6 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  metadataContainsString = (doc, searchString) => {
-    if (doc.type.toLowerCase().includes(searchString)) {
-      return true;
-    } else if (doc.receivedAt.toLowerCase().includes(searchString)) {
-      return true;
-    }
-  }
-
-  // This filters documents to those that contain the search text
-  // in either the metadata (type, date) or in the comments
-  // on the document.
-  filterDocuments = (documents) => {
-    let filterBy = this.state.filterBy.toLowerCase();
-    let labelsSelected = Object.keys(this.state.selectedLabels).
-      reduce((anySelected, label) =>
-        anySelected || this.state.selectedLabels[label], false);
-
-    let filteredDocuments = documents.filter((doc) => {
-      // if there is a label selected, we filter on that.
-      if (labelsSelected && !this.state.selectedLabels[doc.label]) {
-        return false;
-      }
-
-      let annotations = this.annotationStorage.getAnnotationByDocumentId(doc.id);
-
-      if (this.state.isCommentLabelSelected && annotations.length === 0) {
-        return false;
-      }
-
-      if (this.metadataContainsString(doc, filterBy)) {
-        return true;
-      }
-
-      if (annotations.some((annotation) => annotation.comment.
-        toLowerCase().includes(filterBy))) {
-        return true;
-      }
-
-      return false;
-    });
-
-    return filteredDocuments;
-  }
-
   selectComments = () => {
     this.setState({
       isCommentLabelSelected: !this.state.isCommentLabelSelected

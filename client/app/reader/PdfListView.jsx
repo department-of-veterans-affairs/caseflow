@@ -351,9 +351,6 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  filterBy: PropTypes.string.isRequired,
-  numberOfDocuments: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   reduxDocuments: PropTypes.object.isRequired,
