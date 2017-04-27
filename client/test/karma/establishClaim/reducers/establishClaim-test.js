@@ -1,18 +1,20 @@
 import { expect } from 'chai';
 import * as Constants from '../../../../app/establishClaim/constants';
-import EstablishClaimReducer, { getEstablishClaimInitialState } from
+import establishClaimReducer, { getEstablishClaimInitialState } from
   '../../../../app/establishClaim/reducers/index';
 
-describe('EstablishClaimReducer', () => {
+describe('establishClaimReducer', () => {
   let initialState;
+
   beforeEach(() => {
     initialState = getEstablishClaimInitialState();
   });
 
   context(Constants.TOGGLE_CANCEL_TASK_MODAL, () => {
     let state;
+
     beforeEach(() => {
-      state = EstablishClaimReducer(initialState, {
+      state = establishClaimReducer(initialState, {
         type: Constants.TOGGLE_CANCEL_TASK_MODAL
       });
     });
@@ -24,13 +26,14 @@ describe('EstablishClaimReducer', () => {
 
   context(Constants.REQUEST_CANCEL_FEEDBACK_FAILURE, () => {
     let state;
+
     beforeEach(() => {
       // Set state such that the modal is currently submitting
       initialState.isShowingCancelModal = true;
       initialState.isSubmittingCancelFeedback = true;
       initialState.isValidating = true;
 
-      state = EstablishClaimReducer(initialState, {
+      state = establishClaimReducer(initialState, {
         type: Constants.REQUEST_CANCEL_FEEDBACK_FAILURE
       });
     });

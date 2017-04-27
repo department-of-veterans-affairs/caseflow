@@ -559,6 +559,7 @@ export default class EstablishClaim extends BaseForm {
           <AssociatePage
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            history={this.history}
             task={this.props.task}
             decisionType={decisionType}
             handleAlert={this.props.handleAlert}
@@ -567,7 +568,6 @@ export default class EstablishClaim extends BaseForm {
             hasAvailableModifers={this.hasAvailableModifers()}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
-            history={this.state.history}
           />
         }
         { this.isFormPage() &&
