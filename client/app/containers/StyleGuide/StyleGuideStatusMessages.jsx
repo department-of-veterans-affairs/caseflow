@@ -3,9 +3,8 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import StatusMessage from '../../components/StatusMessage';
 
 export default function StyleGuideStatusMessages() {
-  /* eslint-disable max-len */
-  let message = "We've recorded your explanation and placed the claim on hold. You can try establishing another claim or go view held claims in your Work History.";
-  /* eslint-enable max-len */
+  let message = "We've recorded your explanation and placed the claim on hold. " +
+  'You can try establishing another claim or go view held claims in your Work History.';
 
   return <div>
     <StyleGuideComponentTitle
