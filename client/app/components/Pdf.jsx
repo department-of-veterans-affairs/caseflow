@@ -203,6 +203,8 @@ export class Pdf extends React.Component {
           resolve();
         });
 
+        this.props.setPdfReadyToShow(this.props.documentId);
+
         if (this.props.onPageChange) {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
@@ -265,7 +267,7 @@ export class Pdf extends React.Component {
 
     if (this.props.scrollToComment) {
       if (this.props.currentRenderedFile === this.props.scrollToComment.documentId &&
-        this.state.pdfDocument) {
+        this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
       }
@@ -364,12 +366,21 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
     currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  setPdfReadyToShow(docId) {
+    dispatch({
+      type: Constants.SET_PDF_READY_TO_SHOW,
+      payload: {
+        docId
+      }
+    });
+  },
   handleSelectCommentIcon(comment) {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,

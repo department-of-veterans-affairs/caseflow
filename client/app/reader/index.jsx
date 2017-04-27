@@ -17,6 +17,7 @@ export const initialState = {
     },
     pdf: {
       currentRenderedFile: null,
+      pdfsReadyToShow: {},
       hidePdfSidebar: false
     },
     pdfSidebar: {

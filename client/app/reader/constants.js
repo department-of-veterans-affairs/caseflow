@@ -23,6 +23,7 @@ export const TOGGLE_PDF_SIDEBAR = 'TOGGLE_PDF_SIDEBAR';
 export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
 export const SET_SORT = 'SET_SORT';
+export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
 
 export const documentCategories = {
   procedural: {

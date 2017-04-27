@@ -90,6 +90,11 @@ export default (state = {}, action = {}) => {
         pdf: {
           currentRenderedFile: {
             $set: action.payload.docId
+          },
+          pdfsReadyToShow: {
+            [action.payload.docId]: {
+              $set: false
+            }
           }
         }
       },
@@ -107,6 +112,18 @@ export default (state = {}, action = {}) => {
         pdf: {
           currentRenderedFile: {
             $set: null
+          }
+        }
+      }
+    });
+  case Constants.SET_PDF_READY_TO_SHOW:
+    return update(state, {
+      ui: {
+        pdf: {
+          pdfsReadyToShow: {
+            [action.payload.docId]: {
+              $set: true
+            }
           }
         }
       }
