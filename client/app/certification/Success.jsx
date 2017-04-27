@@ -8,12 +8,10 @@ const UnconnectedSuccess = ({
   return <div id="certifications-generate"
     className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
     <h1 className="cf-success cf-msg-screen-heading">
-    #Was congratulations before
       Success!
     </h1>
     <h2 className="cf-msg-screen-deck">
-      {veteranName}'s case {vbmsId} has been certified. 
-      You can now close this window and open another appeal in VACOLS.
+      {veteranName}'s case {vbmsId} has been certified. You can now close this window and open another appeal in VACOLS.
     </h2>
 
     <ul className="cf-checklist">
@@ -31,10 +29,11 @@ const UnconnectedSuccess = ({
         </li>
     </ul>
 
-    #<p className="cf-msg-screen-text">
-     # {`Way to go! You can now close this window
-      #  and open another appeal in VACOLS.`}
-    #</p>
+   <!-- <p className="cf-msg-screen-text">
+      {`Way to go! You can now close this window
+       and open another appeal in VACOLS.`}
+    </p> 
+    //-->
   </div>;
 };
 
