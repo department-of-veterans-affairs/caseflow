@@ -178,6 +178,8 @@ class ApplicationController < ActionController::Base
                 "Caseflow Dispatch"
               elsif request.original_fullpath.include? "certifications"
                 "Caseflow Certification"
+              elsif request.original_fullpath.include? "reader"
+                "Caseflow Reader"
               else
                 # default to just plain Caseflow.
                 "Caseflow"
