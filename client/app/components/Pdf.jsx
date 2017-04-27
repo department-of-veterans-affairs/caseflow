@@ -424,5 +424,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
+  commentFlowState: PropTypes.string,
   handleSelectCommentIcon: PropTypes.func
 };
