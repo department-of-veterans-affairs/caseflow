@@ -147,21 +147,10 @@ RSpec.feature "Start Certification" do
       visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
 
       # Validate help link
-      # Test keeps failing Travis CI but works every time locally so...
-      # find('#menu-trigger').click
-      # find_link("Help").click
-      # expect(page).to have_content("Caseflow Certification Help")
-      # page.driver.go_back
-      expect(find_link("Help", visible: false)[:href]).to include(certification_help_path)
-      puts "****************************"
-      puts "****************************"
-      puts "****************************"
-      puts "****************************"
-      puts find_link("Help", visible: false)[:href]
-      puts "****************************"
-      puts "****************************"
-      puts "****************************"
-      puts "****************************"
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Caseflow Certification Help")
+      page.driver.go_back
       expect(find_link("Help", visible: false)[:href]).to include(certification_help_path)
 
       expect(find("#correspondent-name")).to have_content("Crockett, Davy")
