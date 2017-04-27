@@ -96,10 +96,13 @@ export const certificationReducers = function(state = initialState, action = {})
       updateSucceeded: null,
       loading: false
     });
-  case Constants.ON_VALIDATION_FAILED:
+  case Constants.ON_CONTINUE_CLICK_FAILED:
     return Object.assign({}, state, {
-      invalidFields: action.payload.invalidFields,
-      validationFailed: action.payload.validationFailed
+      continueClicked: action.payload.continueClicked
+    });
+  case Constants.ON_CONTINUE_CLICK_SUCCESS:
+    return Object.assign({}, state, {
+      continueClicked: action.payload.continueClicked
     });
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return startUpdateCertification(state, action);
@@ -118,6 +121,7 @@ export const certificationReducers = function(state = initialState, action = {})
     return state;
   }
 };
+export default certificationReducers;
 
 export const mapDataToInitialState = function(state) {
   return {

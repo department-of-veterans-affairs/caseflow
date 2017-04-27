@@ -1,7 +1,7 @@
 require "rails_helper"
 
-def scroll_position
-  page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
+def scroll_position(element)
+  page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
 
 def scroll_to(value)
@@ -138,12 +138,34 @@ RSpec.feature "Reader" do
     end
 
     context "When there is an existing annotation" do
-      let!(:annotation) do
-        Generators::Annotation.create(
-          comment: "hello world",
-          document_id: documents[0].id,
-          y: 750
-        )
+      let!(:annotations) do
+        [
+          Generators::Annotation.create(
+            comment: "another comment",
+            document_id: documents[0].id,
+            y: 150
+          ),
+          Generators::Annotation.create(
+            comment: "how's it going",
+            document_id: documents[0].id,
+            y: 200
+          ),
+          Generators::Annotation.create(
+            comment: "my mother is a fish",
+            document_id: documents[0].id,
+            y: 250
+          ),
+          Generators::Annotation.create(
+            comment: "baby metal 4 lyfe",
+            document_id: documents[0].id,
+            y: 300
+          ),
+          Generators::Annotation.create(
+            comment: "hello world",
+            document_id: documents[0].id,
+            y: 750
+          )
+        ]
       end
 
       scenario "Scroll to comment" do
@@ -151,18 +173,27 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
-        expect(page).to have_content(annotation.comment)
-
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
-        # Click on the comment and ensure the scroll position changes
-        # by the y value the comment.
-        original_scroll = scroll_position
-        find("#comment0").click
-        after_click_scroll = scroll_position
+        # Click on the comment icon and ensure the scroll position of
+        # the comment wrapper changes
+        element = "cf-comment-wrapper"
+        original_scroll = scroll_position(element)
+
+        # Click on the second to last comment icon (last comment icon is off screen)
+        all(".commentIcon-container", wait: 3, count: annotations.size)[annotations.size - 2].click
+        after_click_scroll = scroll_position(element)
 
         expect(after_click_scroll - original_scroll).to be > 0
+
+        # Make sure the comment icon and comment are shown as selected
+        expect(page).to have_css(".comment-container-selected")
+
+        id = "#{annotations[annotations.size - 2].id}-filter-1"
+
+        # This filter is the blue highlight around the comment icon
+        find("g[filter=\"url(##{id})\"]")
       end
     end
 
@@ -177,7 +208,7 @@ RSpec.feature "Reader" do
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
       scroll_to(500)
-      expect(page).to have_content("Banana. Banana who")
+      expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
     scenario "Open single document view and manipulate UI" do
