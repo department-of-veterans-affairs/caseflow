@@ -168,7 +168,7 @@ export class PdfSidebar extends React.Component {
             this.commentListElement = commentListElement;
           }}>
           <div className="cf-pdf-comment-list">
-            {this.props.isAddingComment &&
+            {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
               <EditComment
                 id="addComment"
                 onCancelCommentEdit={this.props.onCancelCommentAdd}
@@ -180,9 +180,33 @@ export class PdfSidebar extends React.Component {
   }
 }
 
+PdfSidebar.propTypes = {
+  onAddComment: PropTypes.func,
+  doc: PropTypes.object,
+  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
+    comment: React.PropTypes.string,
+    uuid: React.PropTypes.number
+  })),
+  editingComment: React.PropTypes.number,
+  isWritingComment: PropTypes.bool,
+  onSaveCommentAdd: PropTypes.func,
+  onSaveCommentEdit: PropTypes.func,
+  onCancelCommentEdit: PropTypes.func,
+  onCancelCommentAdd: PropTypes.func,
+  onDeleteComment: PropTypes.func,
+  onJumpToComment: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  commentFlowState: PropTypes.string,
+  scrollToSidebarComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
+  hidePdfSidebar: PropTypes.bool
+};
+
 const mapStateToProps = (state) => {
   return {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
+    commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     documents: state.documents
   };
@@ -222,25 +246,6 @@ const mapDispatchToProps = (dispatch) => ({
     });
   }
 });
-
-PdfSidebar.propTypes = {
-  onAddComment: PropTypes.func,
-  doc: PropTypes.object,
-  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    comment: React.PropTypes.string,
-    uuid: React.PropTypes.number
-  })),
-  editingComment: React.PropTypes.number,
-  isAddingComment: PropTypes.bool,
-  onSaveCommentAdd: PropTypes.func,
-  onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
-  onCancelCommentAdd: PropTypes.func,
-  onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool
-};
 
 export default connect(
   mapStateToProps, mapDispatchToProps
