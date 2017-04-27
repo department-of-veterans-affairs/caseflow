@@ -11,7 +11,7 @@ import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
-import { readerReducer } from '../../../app/reader/index';
+import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 
 /* eslint-disable camelcase */
@@ -233,14 +233,9 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
-        let clickedOnCommentEvent = {
-          getAttribute: () => {
-            return annotations[0].id;
-          }
-        };
-
         wrapper.find('Pdf').getNode().
-          onCommentClick(clickedOnCommentEvent);
+          onCommentClick(annotations[0])();
+
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
       }));
