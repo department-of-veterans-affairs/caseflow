@@ -7,6 +7,13 @@ export const onReceiveDocs = (documents) => ({
   payload: documents
 });
 
+export const setSearch = (searchQuery) => ({
+  type: Constants.SET_SEARCH,
+  payload: {
+    searchQuery
+  }
+});
+
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
   payload: { scrollToComment }

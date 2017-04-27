@@ -68,6 +68,16 @@ export default (state = {}, action = {}) => {
         }
       }
     ));
+  case Constants.SET_SEARCH:
+    return updateFilteredDocIds(update(state, {
+      ui: {
+        docFilterCriteria: {
+          searchQuery: {
+            $set: action.payload.searchQuery
+          }
+        }
+      }
+    }));
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {

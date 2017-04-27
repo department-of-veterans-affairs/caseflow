@@ -13,7 +13,8 @@ export const initialState = {
         sortBy: 'type',
         sortAscending: false
       },
-      category: {}
+      category: {},
+      searchQuery: ''
     },
     pdf: {
       currentRenderedFile: null,

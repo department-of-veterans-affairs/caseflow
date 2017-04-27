@@ -25,6 +25,7 @@ export const SET_COMMENT_FLOW_STATE = 'SET_COMMENT_FLOW_STATE';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
 export const SET_SORT = 'SET_SORT';
 export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
+export const SET_SEARCH = 'SET_SEARCH';
 
 // comment flow states
 export const PLACING_COMMENT_STATE = 'PLACING_COMMENT';
