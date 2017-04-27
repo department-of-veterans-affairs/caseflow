@@ -3,8 +3,8 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as ReaderActions from './actions';
+import { handleClearCommentState, handlePlaceComment,
+  handleWriteComment, handleSelectCommentIcon } from '../reader/actions';
 import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
 
 // PdfViewer is a smart component that renders the entire
@@ -261,10 +261,12 @@ const mapStateToProps = (state) => {
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch) => ({
   handlePlaceComment: () => dispatch(handlePlaceComment()),
-  handleWriteComment: () => dispatch(handleWriteComment())
-};
+  handleWriteComment: () => dispatch(handleWriteComment()),
+  handleClearCommentState: () => dispatch(handleClearCommentState()),
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+});
 
 export default connect(
   mapStateToProps, mapDispatchToProps
@@ -283,5 +285,7 @@ PdfViewer.propTypes = {
   onCommentScrolledTo: PropTypes.func,
   handlePlaceComment: PropTypes.func,
   handleWriteComment: PropTypes.func,
+  handleClearCommentState: PropTypes.func,
+  handleSelectCommentIcon: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

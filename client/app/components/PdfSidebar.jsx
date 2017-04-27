@@ -193,6 +193,10 @@ PdfSidebar.propTypes = {
   onDeleteComment: PropTypes.func,
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
+  commentFlowState: PropTypes.string,
+  scrollToSidebarComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
   hidePdfSidebar: PropTypes.bool
 };
 

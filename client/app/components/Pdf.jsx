@@ -6,8 +6,7 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handlePlaceComment, handleWriteComment } as ReaderActions from '../reader/actions';
-import { bindActionCreators } from 'redux';
+import { handleSelectCommentIcon } from '../reader/actions';
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -389,8 +388,7 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { currentRenderedFile }
     });
   },
-  handlePlaceComment: () => dispatch(handlePlaceComment()),
-  handleWriteComment: () => dispatch(handleWriteComment())
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
 export default connect(
@@ -425,7 +423,6 @@ Pdf.propTypes = {
     page: React.PropTypes.number,
     y: React.PropTypes.number
   }),
-  isPlacingComment: PropTypes.bool,
   onIconMoved: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };
