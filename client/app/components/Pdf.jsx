@@ -5,6 +5,8 @@ import CommentIcon from './CommentIcon';
 import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import classNames from 'classnames';
+import { handleSelectCommentIcon } from '../reader/actions';
 
 const DOCUMENT_THROTTLE_TIME = 500;
 
@@ -236,8 +238,9 @@ export class Pdf extends React.Component {
     }
   }
 
-  onCommentClick = (event) => {
-    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id'), 10));
+  onCommentClick = (comment) => () => {
+    this.props.onCommentClick(comment.id);
+    this.props.handleSelectCommentIcon(comment);
   }
 
   componentDidMount = () => {
@@ -318,18 +321,25 @@ export class Pdf extends React.Component {
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
-          onClick={this.props.onCommentClick} />);
+          onClick={this.onCommentClick(comment)} />);
 
       return acc;
     }, {});
 
     let pages = [];
+    const pageClassNames = classNames({
+      'cf-pdf-pdfjs-container': true,
+      page: true,
+      'cf-pdf-placing-comment': (this.props.commentFlowState ===
+        Constants.PLACING_COMMENT_STATE)
+    });
 
     this.pageContainers = [];
 
+
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
-        className="cf-pdf-pdfjs-container page"
+        className={pageClassNames}
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
@@ -370,6 +380,7 @@ export class Pdf extends React.Component {
 const mapStateToProps = (state) => {
   return {
     currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
+    commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
   };
 };
@@ -380,7 +391,8 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SET_CURRENT_RENDERED_FILE,
       payload: { currentRenderedFile }
     });
-  }
+  },
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
 export default connect(
@@ -415,5 +427,7 @@ Pdf.propTypes = {
     page: React.PropTypes.number,
     y: React.PropTypes.number
   }),
-  onIconMoved: PropTypes.func
+  onIconMoved: PropTypes.func,
+  commentFlowState: PropTypes.string,
+  handleSelectCommentIcon: PropTypes.func
 };

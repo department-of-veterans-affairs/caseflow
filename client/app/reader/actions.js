@@ -12,6 +12,34 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
+export const handlePlaceComment = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: Constants.PLACING_COMMENT_STATE
+  }
+});
+
+export const handleWriteComment = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: Constants.WRITING_COMMENT_STATE
+  }
+});
+
+export const handleClearCommentState = () => ({
+  type: Constants.SET_COMMENT_FLOW_STATE,
+  payload: {
+    state: null
+  }
+});
+
+export const handleSelectCommentIcon = (comment) => ({
+  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+  payload: {
+    scrollToSidebarComment: comment
+  }
+});
+
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,
   payload: {
@@ -42,8 +70,12 @@ export const selectCurrentPdf = (docId) => ({
   }
 });
 
-export const removeTagRequestFailure = () => ({
-  type: Constants.REQUEST_REMOVE_TAG_FAILURE
+export const removeTagRequestFailure = (docId, tagId) => ({
+  type: Constants.REQUEST_REMOVE_TAG_FAILURE,
+  payload: {
+    docId,
+    tagId
+  }
 });
 
 export const removeTagRequestSuccess = (docId, tagId) => ({
@@ -56,12 +88,18 @@ export const removeTagRequestSuccess = (docId, tagId) => ({
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {
-    dispatch({ type: Constants.REQUEST_REMOVE_TAG });
+    dispatch({
+      type: Constants.REQUEST_REMOVE_TAG,
+      payload: {
+        docId: doc.id,
+        tagId
+      }
+    });
     ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`).
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
-        dispatch(removeTagRequestFailure());
+        dispatch(removeTagRequestFailure(doc.id, tagId));
       });
   }
 );

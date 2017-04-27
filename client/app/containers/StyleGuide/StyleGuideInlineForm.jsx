@@ -6,15 +6,15 @@ import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import InlineForm from '../../components/InlineForm';
 
-export default function StyleGuideTextInput() {
+export default function StyleGuideInlineForm() {
   return <div>
       <br />
       <StyleGuideComponentTitle
-        title="Text Input"
-        id="text_input"
-        link="StyleGuideTextInput.jsx"
+        title="Inline Form"
+        id="inline_form"
+        link="StyleGuideInlineForm.jsx"
+        isSubsection={true}
       />
-    <h3 id="inline_form">Inline Form</h3>
       <p>
         Inline forms give designers and developers the liberty to customize
         the width and spacing of each field in a row. Input fields can be found
