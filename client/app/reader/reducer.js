@@ -35,6 +35,7 @@ const updateFilteredDocIds = (nextState) => {
       (doc) => !activeCategoryFilters.length ||
         _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
+    sortBy(nextState.ui.sort.sortBy).
     map('id').
     value();
 
@@ -64,7 +65,7 @@ export default (state = initialState, action = {}) => {
       }
     ));
   case Constants.SET_SORT_BY:
-    return update(state, {
+    return updateFilteredDocIds(update(state, {
       ui: {
         sort: {
           sortBy: {
@@ -72,7 +73,7 @@ export default (state = initialState, action = {}) => {
           }
         }
       }
-    });
+    }));
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {
