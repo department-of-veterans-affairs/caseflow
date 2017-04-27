@@ -123,12 +123,32 @@ describe('EstablishClaim', () => {
   });
 
   context('.getClaimTypeFromDecision', () => {
-    let wrapper;
+    let task, wrapper;
+
+    const mountApp = (decisionType, stationOfJurisdiction = '397') => {
+      task.appeal.decision_type = decisionType;
+
+      wrapper = mount(<EstablishClaim
+        regionalOfficeCities={{}}
+        pdfLink=""
+        pdfjsLink=""
+        handleAlert={func}
+        handleAlertClear={func}
+        task={task}/>);
+
+      wrapper.node.store.dispatch({
+        type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+        payload: {
+          field: 'stationOfJurisdiction',
+          value: stationOfJurisdiction
+        }
+      });
+    };
 
     beforeEach(() => {
 
       /* eslint-disable camelcase */
-      const task = {
+      task = {
         appeal: {
           vbms_id: '516517691',
           decision_type: 'Remand',
@@ -140,43 +160,24 @@ describe('EstablishClaim', () => {
         },
         user: 'a'
       };
-
       /* eslint-enable camelcase */
-
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={{}}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task}/>);
     });
 
     context('when ARC EP', () => {
-      beforeEach(() => {
-        wrapper.node.store.dispatch({
-          type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
-          payload: {
-            field: 'stationOfJurisdiction',
-            value: '397'
-          }
-        });
-      });
-
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
+        mountApp('Remand');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['170RMDAMC', 'ARC-Remand']);
       });
 
       it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
+        mountApp('Partial Grant');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['170PGAMC', 'ARC-Partial Grant']);
       });
 
       it('returns 172BVAG - BVA Grant for full', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        mountApp('Full Grant');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['172BVAG', 'BVA Grant']);
       });
@@ -184,19 +185,19 @@ describe('EstablishClaim', () => {
 
     context('when Routed EP', () => {
       it('returns 170RMDAMC - ARC-Remand for remand', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Remand' } } });
+        mountApp('Remand', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['170RMD', 'Remand']);
       });
 
       it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Partial Grant' } } });
+        mountApp('Partial Grant', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['170RBVAG', 'Remand with BVA Grant']);
       });
 
       it('returns 172BVAG - BVA Grant for full', () => {
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        mountApp('Full Grant', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
           eql(['172BVAG', 'BVA Grant']);
       });
