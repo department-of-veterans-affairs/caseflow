@@ -341,21 +341,21 @@ describe('DecisionReviewer', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-down')).to.be.true;
+          hasClass('fa-caret-up')).to.be.true;
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[0].type);
-        expect(textArray[2]).to.include(documents[1].type);
+        expect(textArray[1]).to.include(documents[1].type);
+        expect(textArray[2]).to.include(documents[0].type);
 
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-up')).to.be.true;
+          hasClass('fa-caret-down')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[1].type);
-        expect(textArray[2]).to.include(documents[0].type);
+        expect(textArray[1]).to.include(documents[0].type);
+        expect(textArray[2]).to.include(documents[1].type);
       });
     });
 
