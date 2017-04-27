@@ -6,17 +6,12 @@ import { mapDataToInitialState } from
 import * as Constants from
     '../../../../app/certification/constants/constants';
 
-describe('ConfirmCaseDetailsReducer', () => {
-  context('.changeRepresentativeType', () => {
-    let initialState;
-
-    beforeEach(() => {
-      initialState = mapDataToInitialState({
-        appeal: {},
-        form8: {}
-      });
+describe('.changeRepresentativeType', () => {
+  it('should change the representative type', () => {
+    let initialState = mapDataToInitialState({
+      appeal: {},
+      form8: {}
     });
-
     let action = {
       type: Constants.CHANGE_REPRESENTATIVE_TYPE,
       payload: {
@@ -24,20 +19,17 @@ describe('ConfirmCaseDetailsReducer', () => {
       }
     };
 
-    it('changes the representative type', () => {
-      expect(ConfirmCaseDetails.changeRepresentativeType(initialState, action).representativeType).to.eq('new rep type');
-    });
+    expect(ConfirmCaseDetails.changeRepresentativeType(initialState, action).
+        representativeType).to.eq('new rep type');
   });
-  context('.changeRepresentativeName', () => {
-    let initialState;
+});
 
-    beforeEach(() => {
-      initialState = mapDataToInitialState({
-        appeal: {},
-        form8: {}
-      });
+describe('.changeRepresentativeName', () => {
+  it('should change the representative name', () => {
+    let initialState = mapDataToInitialState({
+      appeal: {},
+      form8: {}
     });
-
     let action = {
       type: Constants.CHANGE_REPRESENTATIVE_NAME,
       payload: {
@@ -45,20 +37,17 @@ describe('ConfirmCaseDetailsReducer', () => {
       }
     };
 
-    it('changes the representative name', () => {
-      expect(ConfirmCaseDetails.changeRepresentativeName(initialState, action).representativeName).to.eq('new rep name');
-    });
+    expect(ConfirmCaseDetails.changeRepresentativeName(initialState, action).
+        representativeName).to.eq('new rep name');
   });
-  context('.changeOtherRepresentativeType', () => {
-    let initialState;
+});
 
-    beforeEach(() => {
-      initialState = mapDataToInitialState({
-        appeal: {},
-        form8: {}
-      });
+describe('.changeOtherRepresentativeType', () => {
+  it('should change the other representative type', () => {
+    let initialState = mapDataToInitialState({
+      appeal: {},
+      form8: {}
     });
-
     let action = {
       type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
       payload: {
@@ -66,8 +55,7 @@ describe('ConfirmCaseDetailsReducer', () => {
       }
     };
 
-    it('changes the other representative type', () => {
-      expect(ConfirmCaseDetails.changeOtherRepresentativeType(initialState, action).otherRepresentativeType).to.eq('new other rep type');
-    });
+    expect(ConfirmCaseDetails.changeOtherRepresentativeType(initialState, action).
+        otherRepresentativeType).to.eq('new other rep type');
   });
 });
