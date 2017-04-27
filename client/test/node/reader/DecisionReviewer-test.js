@@ -390,7 +390,8 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(3);
       });
 
-      it('comment displays properly', () => {
+      // We are temporarily dropping this functionality.
+      it.skip('comment displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: annotations[0].comment } });
 
