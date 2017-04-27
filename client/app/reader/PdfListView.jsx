@@ -85,13 +85,7 @@ export class PdfListView extends React.Component {
   }
 
   getDocumentColumns = () => {
-    let className;
-
-    if (this.props.sortDirection === 'ascending') {
-      className = 'fa-caret-down';
-    } else {
-      className = 'fa-caret-up';
-    }
+    const className = this.props.sort.sortAscending ? 'fa-caret-down' : 'fa-caret-up';
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
       aria-hidden="true"></i>;
