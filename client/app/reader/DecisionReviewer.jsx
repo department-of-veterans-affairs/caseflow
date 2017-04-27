@@ -59,8 +59,6 @@ export class DecisionReviewer extends React.Component {
     return `/document/${doc.id}/pdf`;
   }
 
-  pdfNumberFromId = (pdfId) => _.findIndex(this.state.documents, { id: pdfId })
-
   showPdf = (pdfId) => (event) => {
     // If the user is trying to open the link in a new tab/window
     // then follow the link. Otherwise if they just clicked the link
@@ -244,7 +242,7 @@ export class DecisionReviewer extends React.Component {
   }
 
   onJumpToComment = (comment) => () => {
-    this.setPage(this.pdfNumberFromId(comment.documentId));
+    this.props.selectCurrentPdf(comment.documentId);
     this.props.onScrollToComment(comment);
   }
 
