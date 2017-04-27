@@ -16,6 +16,7 @@ import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
+import StyleGuideColors from './StyleGuideColors';
 
 export default function StyleGuideIndex() {
 
@@ -149,9 +150,7 @@ export default function StyleGuideIndex() {
           id="styles"
           isSubsection={true} />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Colors"
-          id="colors" />
+        <StyleGuideColors />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Buttons"

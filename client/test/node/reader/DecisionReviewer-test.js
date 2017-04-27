@@ -307,7 +307,7 @@ describe('DecisionReviewer', () => {
           getNode(), 'onCommentScrolledTo');
 
         // verify the page is on the pdf view
-        expect(wrapper.text()).to.include('View all documents');
+        expect(wrapper.text()).to.include('Back to all documents');
         await pause();
 
         // Make sure post scroll callback is called
