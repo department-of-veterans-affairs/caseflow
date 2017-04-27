@@ -34,12 +34,11 @@ export class Pdf extends React.Component {
 
   setIsRendered = (index, value) => {
     this.isRendering[index] = false;
+    let isRendered = [...this.state.isRendered];
+
+    isRendered[index] = value;
     this.setState({
-      isRendered: [
-        ...this.state.isRendered.slice(0, index),
-        value,
-        ...this.state.isRendered.slice(index + 1)
-      ]
+      isRendered
     });
   }
 
@@ -164,6 +163,8 @@ export class Pdf extends React.Component {
   }
 
   scrollEvent = () => {
+    console.log('ScrollEvent');
+    console.log(this.state.isRendered);
     let page = document.getElementsByClassName('page');
 
     Array.prototype.forEach.call(page, (ele, index) => {
@@ -350,7 +351,7 @@ export class Pdf extends React.Component {
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
-      onScroll={this.scrollEvent}
+      onScroll={_.debounce(this.scrollEvent, 0)}
       ref={(scrollWindow) => {
         this.scrollWindow = scrollWindow;
       }}>

@@ -146,10 +146,14 @@ export class PdfViewer extends React.Component {
   keyListener = (event) => {
     if (!this.isUserActive()) {
       if (event.key === 'ArrowLeft') {
-        this.props.onPreviousPdf();
+        if (this.props.onPreviousPdf) {
+          this.props.onPreviousPdf();
+        }
       }
       if (event.key === 'ArrowRight') {
-        this.props.onNextPdf();
+        if (this.props.onNextPdf) {
+          this.props.onNextPdf();
+        }
       }
     }
   }
