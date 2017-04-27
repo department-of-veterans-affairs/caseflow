@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
+import SuccessMessage from '../../components/SuccessMessage';
 
 const PARSE_INT_RADIX = 10;
 
@@ -20,12 +21,16 @@ export default class EstablishClaimComplete extends React.Component {
     } = this.props;
 
     let casesAssigned, employeeCountInt,
-      hasQuotaReached, quotaReachedMessage, totalCases;
+      hasQuotaReached, quotaReachedMessage, successMessages, totalCases;
 
-    quotaReachedMessage = <h2 className="cf-msg-screen-deck">
-      Way to go! 💻💪🇺🇸<br/>
-      You have completed all of the total cases assigned to you today.
-    </h2>;
+    quotaReachedMessage = () => {
+      if (hasQuotaReached) {
+        return <span>
+          Way to go! 💻💪🇺🇸<br/>
+          You have completed all of the total cases assigned to you today.
+        </span>;
+      }
+    };
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
@@ -34,27 +39,19 @@ export default class EstablishClaimComplete extends React.Component {
       Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
+    successMessages = [secondHeader, quotaReachedMessage()];
+
     return <div>
       <EstablishClaimProgressBar
         isConfirmation={true}
       />
 
-      <div
-        id="certifications-generate"
-        className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
+      <SuccessMessage
+        title={firstHeader}
+        leadMessageList={successMessages}
+        checklist={checklist}
+        />
 
-      <h1 className="cf-success cf-msg-screen-heading">{firstHeader}</h1>
-      <h2 className="cf-msg-screen-deck">
-        {secondHeader}
-      </h2>
-
-      {hasQuotaReached && quotaReachedMessage}
-
-      <ul className="cf-list-checklist cf-left-padding">
-        {checklist.map((listValue) => <li key={listValue}>
-          <span className="cf-icon-success--bg"></span>{listValue}</li>)}
-      </ul>
-    </div>
     <EstablishClaimToolbar
       availableTasks={availableTasks}
       buttonText={buttonText}

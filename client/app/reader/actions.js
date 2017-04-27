@@ -33,6 +33,13 @@ export const handleClearCommentState = () => ({
   }
 });
 
+export const handleSelectCommentIcon = (comment) => ({
+  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+  payload: {
+    scrollToSidebarComment: comment
+  }
+});
+
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,
   payload: {
@@ -48,8 +55,12 @@ export const newTagRequestSuccess = (docId, createdTags) => ({
   }
 });
 
-export const newTagRequestFailed = () => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE
+export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
+  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
+  payload: {
+    docId,
+    tagsThatWereAttemptedToBeCreated
+  }
 });
 
 export const selectCurrentPdf = (docId) => ({
@@ -87,19 +98,24 @@ export const addNewTag = (doc, tags) => (
   (dispatch) => {
     const currentTags = doc.tags;
 
-    // gets the newly added tags
-    const newTags = _.differenceWith(tags, currentTags,
-      (tag, currentTag) => tag.value === currentTag.text);
+    const newTags = _(tags).
+      differenceWith(currentTags, (tag, currentTag) => tag.value === currentTag.text).
+      map((tag) => ({ text: tag.label })).
+      value();
 
-    if (newTags && newTags.length) {
-      const processedTags = newTags.map((tag) => ({ text: tag.label }));
-
-      dispatch({ type: Constants.REQUEST_NEW_TAG_CREATION });
-      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: processedTags } }).
+    if (_.size(newTags)) {
+      dispatch({
+        type: Constants.REQUEST_NEW_TAG_CREATION,
+        payload: {
+          newTags,
+          docId: doc.id
+        }
+      });
+      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }).
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body));
         }, () => {
-          dispatch(newTagRequestFailed());
+          dispatch(newTagRequestFailed(doc.id, newTags));
         });
     }
   }

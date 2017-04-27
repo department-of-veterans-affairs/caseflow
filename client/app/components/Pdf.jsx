@@ -233,8 +233,9 @@ export class Pdf extends React.Component {
     }
   }
 
-  onCommentClick = (event) => {
-    this.props.onCommentClick(parseInt(event.getAttribute('data-pdf-annotate-id'), 10));
+  onCommentClick = (comment) => () => {
+    this.props.onCommentClick(comment.id);
+    this.props.handleSelectCommentIcon(comment);
   }
 
   componentDidMount = () => {
@@ -315,7 +316,7 @@ export class Pdf extends React.Component {
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
-          onClick={this.props.onCommentClick} />);
+          onClick={this.onCommentClick(comment)} />);
 
       return acc;
     }, {});
@@ -385,6 +386,14 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SET_CURRENT_RENDERED_FILE,
       payload: { currentRenderedFile }
     });
+  },
+  handleSelectCommentIcon(comment) {
+    dispatch({
+      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+      payload: {
+        scrollToSidebarComment: comment
+      }
+    });
   }
 });
 
@@ -421,5 +430,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   isPlacingComment: PropTypes.bool,
-  onIconMoved: PropTypes.func
+  onIconMoved: PropTypes.func,
+  handleSelectCommentIcon: PropTypes.func
 };

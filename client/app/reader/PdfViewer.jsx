@@ -188,6 +188,11 @@ export class PdfViewer extends React.Component {
     if (nextProps.doc.id !== this.props.doc.id) {
       this.onCommentChange(nextProps.doc.id);
     }
+
+    if (nextProps.scrollToComment &&
+        nextProps.scrollToComment !== this.props.scrollToComment) {
+      this.onCommentClick(nextProps.scrollToComment.id);
+    }
   }
 
   render() {
@@ -207,7 +212,6 @@ export class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
-            scrollToComment={this.props.scrollToComment}
             onCommentScrolledTo={this.props.onCommentScrolledTo}
             onIconMoved={this.onIconMoved}
           />
@@ -250,8 +254,9 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
-    commentFlowState: state.ui.pdf.commentFlowState
+    commentFlowState: state.ui.pdf.commentFlowState,
+    scrollToComment: state.ui.pdf.scrollToComment,
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => {

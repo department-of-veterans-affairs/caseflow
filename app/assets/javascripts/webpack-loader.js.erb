@@ -1,0 +1,4 @@
+// For production builds and non-hot dev mode, we want to directly require the
+// webpack-bundle into the asset pipeline. For hot mode we will skip it,
+// and request the webpack file directly from the dev server
+<%= require_asset "webpack-bundle" unless Rails.application.config.webpack_hot %>
