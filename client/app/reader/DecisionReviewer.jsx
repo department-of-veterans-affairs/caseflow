@@ -89,7 +89,6 @@ export class DecisionReviewer extends React.Component {
       this.props.handleSetLastRead(pdfId)
     );
 
-    this.props.selectCurrentPdf(pdfId);
     ApiUtil.patch(`/document/${pdfId}/mark-as-read`).
       catch(() => {
         /* eslint-disable no-console */
@@ -269,7 +268,6 @@ export class DecisionReviewer extends React.Component {
           prevDocId={prevDocId}
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
-          label={activeDoc.label}
           onJumpToComment={this.onJumpToComment}
           onCommentScrolledTo={this.onCommentScrolledTo} />}
       </div>

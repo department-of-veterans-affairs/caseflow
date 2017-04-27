@@ -272,7 +272,6 @@ PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   file: PropTypes.string.isRequired,
-  label: PropTypes.string,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
