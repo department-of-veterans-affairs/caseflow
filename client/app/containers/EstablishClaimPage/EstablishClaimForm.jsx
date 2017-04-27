@@ -33,7 +33,7 @@ export class EstablishClaimForm extends React.Component {
       decisionDate,
       establishClaimForm,
       handleSubmit,
-      handleCancelTask,
+      handleToggleCancelTaskModal,
       handleFieldChange,
       handleBackToDecisionReview,
       backToDecisionReviewText,
@@ -108,7 +108,7 @@ export class EstablishClaimForm extends React.Component {
         <div className="cf-push-right">
           <Button
             name="Cancel"
-            onClick={handleCancelTask}
+            onClick={handleToggleCancelTaskModal}
             classNames={['cf-btn-link', 'cf-adjacent-buttons']}
           />
           <Button
@@ -128,6 +128,7 @@ EstablishClaimForm.propTypes = {
   claimLabelValue: PropTypes.string.isRequired,
   decisionDate: PropTypes.string.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -142,29 +143,28 @@ EstablishClaimForm.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state, ownProps) => {
-  return {
-    establishClaimForm: state.establishClaimForm,
-    stationOfJurisdiction: getStationOfJurisdiction(
-      state.specialIssues,
-      ownProps.stationKey
-    )
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  establishClaimForm: state.establishClaimForm,
+  stationOfJurisdiction: getStationOfJurisdiction(
+    state.specialIssues,
+    ownProps.stationKey
+  )
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleFieldChange: (field) => (value) => {
-      dispatch({
-        type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
-        payload: {
-          field,
-          value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCancelTaskModal: () => {
+    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
+  },
+  handleFieldChange: (field) => (value) => {
+    dispatch({
+      type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
+      payload: {
+        field,
+        value
+      }
+    });
+  }
+});
 
 /*
  * Creates a component that's connected to the Redux store
