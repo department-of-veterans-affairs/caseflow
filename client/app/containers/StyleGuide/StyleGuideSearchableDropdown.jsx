@@ -40,6 +40,7 @@ class StyleGuideSearchableDropdown extends Component {
           title="Searchable Dropdowns"
           id="searchable_dropdown"
           link="StyleGuideSearchableDropdown.jsx"
+          isSubsection={true}
         />
         <h3>Single Select Searchable Dropdown</h3>
         <SearchableDropdown
