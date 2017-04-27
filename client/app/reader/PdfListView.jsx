@@ -191,7 +191,7 @@ export class PdfListView extends React.Component {
             id="receipt-date-header"
             className="document-list-header-recepit-date"
             onClick={() => this.props.changeSortState('date')}>
-            Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
+            Receipt Date {this.props.sort.sortBy === 'date' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
@@ -200,7 +200,7 @@ export class PdfListView extends React.Component {
         },
         {
           header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
-            Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
+            Document Type {this.props.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) => boldUnreadContent(
             <a
@@ -301,7 +301,7 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'pdfList'),
+  ..._.pick(state.ui, ['pdfList', 'sort']),
 
   // Should be merged with documents when we finish integrating redux
   reduxDocuments: state.documents
