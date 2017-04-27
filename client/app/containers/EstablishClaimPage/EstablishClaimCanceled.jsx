@@ -4,7 +4,8 @@ import AlertMessage from '../../components/AlertMessage';
 
 const PARSE_INT_RADIX = 10;
 
-const MESSAGE_TEXT = "You can now establish the next claim or go back to your Work History."
+const MESSAGE_TEXT = 'You can now establish the next claim or go back' +
+' to your Work History.';
 
 export default class EstablishClaimCanceled extends React.Component {
 
