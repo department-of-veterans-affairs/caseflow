@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
-export default (state, action = {}) => {
+export default const readerReducer = (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
@@ -121,8 +121,16 @@ export default (state, action = {}) => {
             filter((tag) => tag.id !== action.payload.tagId) }
         }
       }
+    });
+  case Constants.SCROLL_TO_SIDEBAR_COMMENT:
+    return update(state, {
+      ui: {
+        pdf: {
+          scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
+        }
+      }
     }
-  );
+    );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
       ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } }
@@ -136,7 +144,7 @@ export default (state, action = {}) => {
     });
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
-      ui: { pdf: { $merge: _.pick(action.payload, 'scrollToComment') } }
+      ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
   case Constants.TOGGLE_COMMENT_LIST:
     return update(
