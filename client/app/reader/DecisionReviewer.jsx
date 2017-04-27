@@ -291,8 +291,7 @@ export class DecisionReviewer extends React.Component {
       sortDirection
     } = this.state;
 
-    const documents = _.size(this.props.filteredDocIds) ?
-      this.props.filteredDocIds.map((docId) => this.props.storeDocuments[docId]) :
+    const documents = _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) ||
       _.values(this.props.storeDocuments);
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
 

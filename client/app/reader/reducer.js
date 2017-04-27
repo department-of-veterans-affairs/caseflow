@@ -23,12 +23,36 @@ export const initialState = {
   documents: {}
 };
 
+const updateFilteredDocIdsFromFilters = (nextState) => {
+  const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
+        toPairs().
+        filter((([key, value]) => value)).
+        map(([key, value]) => categoryFieldNameOfCategoryName(key)).
+        value();
+
+  const filteredIds = _(nextState.documents).
+    filter(
+      (doc) => !activeCategoryFilters.length ||
+        _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    ).
+    map('id').
+    value();
+
+  return update(nextState, {
+    ui: {
+      filteredDocIds: {
+        $set: filteredIds
+      }
+    }
+  });
+};
+
 export default (state = initialState, action = {}) => {
   let categoryKey;
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
-    return update(
+    return updateFilteredDocIdsFromFilters(update(
       state,
       {
         documents: {
@@ -38,7 +62,7 @@ export default (state = initialState, action = {}) => {
             value()
         }
       }
-    );
+    ));
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return update(state, {
       ui: {
@@ -58,7 +82,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.UNSELECT_CURRENT_VIEWER_PDF:
-    return update(state, {
+    return update(updateFilteredDocIdsFromFilters(state), {
       ui: {
         pdf: {
           currentRenderedFile: {
@@ -162,27 +186,7 @@ export default (state = initialState, action = {}) => {
           }
         });
 
-      const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
-        toPairs().
-        filter((([key, value]) => value)).
-        map(([key, value]) => categoryFieldNameOfCategoryName(key)).
-        value();
-
-      const filteredIds = _(nextState.documents).
-        filter(
-          (doc) => !activeCategoryFilters.length ||
-            _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-        ).
-        map('id').
-        value();
-
-      return update(nextState, {
-        ui: {
-          filteredDocIds: {
-            $set: filteredIds
-          }
-        }
-      });
+      return updateFilteredDocIdsFromFilters(nextState);
     })();
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
