@@ -10,7 +10,6 @@ import * as ReaderActions from './actions';
 import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
-const PAGE_THROTTLE_TIME = 500;
 
 export class DecisionReviewer extends React.Component {
   constructor(props) {
@@ -56,33 +55,23 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  onPreviousPdf = _.throttle(() => {
-      const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
+  onPreviousPdf = () => {
+    const currentPdfIndex = Math.max(this.state.currentPdfIndex - 1, 0);
 
-      this.setPage(currentPdfIndex);
-    },
-    PAGE_THROTTLE_TIME,
-    {
-      leading: true,
-      trailing: false
-    });
+    this.setPage(currentPdfIndex);
+  }
 
   documentUrl = (doc) => {
     return `/document/${doc.id}/pdf`;
   }
 
-  onNextPdf = _.throttle(() => {
-      const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
-        this.state.documents.length - 1);
+  onNextPdf = () => {
+    const currentPdfIndex = Math.min(this.state.currentPdfIndex + 1,
+      this.state.documents.length - 1);
 
 
-      this.setPage(currentPdfIndex);
-    },
-    PAGE_THROTTLE_TIME,
-    {
-      leading: true,
-      trailing: false
-    });
+    this.setPage(currentPdfIndex);
+  }
 
   // This method is used for updating attributes of documents.
   // Since we maintain a sorted and unsorted list of documents

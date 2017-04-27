@@ -6,6 +6,8 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+const DOCUMENT_THROTTLE_TIME = 500;
+
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
@@ -61,8 +63,8 @@ export class Pdf extends React.Component {
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index >= this.state.numPages) {
-        resolve();
+      if (index > this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+        return resolve();
       }
 
       // Page numbers are one-indexed
@@ -72,9 +74,12 @@ export class Pdf extends React.Component {
       let page = this.pageContainers[pageNumber - 1];
 
       if (!canvas || !container || !page) {
-        reject();
+        return reject();
       }
 
+      console.log(pdfDocument);
+      console.log(pageNumber);
+      console.log(index > pdfDocument.pdfInfo.numPages);
       pdfDocument.getPage(pageNumber).then((pdfPage) => {
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
@@ -163,8 +168,6 @@ export class Pdf extends React.Component {
   }
 
   scrollEvent = () => {
-    console.log('ScrollEvent');
-    console.log(this.state.isRendered);
     let page = document.getElementsByClassName('page');
 
     Array.prototype.forEach.call(page, (ele, index) => {
@@ -193,7 +196,7 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = (file, scrollLocation = 0) => {
+  setupPdf = _.debounce((file, scrollLocation = 0) => {
     return new Promise((resolve) => {
       PDFJS.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -214,7 +217,12 @@ export class Pdf extends React.Component {
         this.scrollWindow.scrollTop = scrollLocation;
       });
     });
-  }
+  },
+  DOCUMENT_THROTTLE_TIME,
+  {
+    leading: true,
+    trailing: true
+  });
 
   onJumpToComment = (comment) => {
     if (comment) {
