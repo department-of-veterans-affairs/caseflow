@@ -23,7 +23,7 @@ export const initialState = {
   documents: {}
 };
 
-const updateFilteredDocIdsFromFilters = (nextState) => {
+const updateFilteredDocIds = (nextState) => {
   const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
         toPairs().
         filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
@@ -52,7 +52,7 @@ export default (state = initialState, action = {}) => {
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIdsFromFilters(update(
+    return updateFilteredDocIds(update(
       state,
       {
         documents: {
@@ -92,7 +92,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.UNSELECT_CURRENT_VIEWER_PDF:
-    return update(updateFilteredDocIdsFromFilters(state), {
+    return update(updateFilteredDocIds(state), {
       ui: {
         pdf: {
           currentRenderedFile: {
@@ -179,25 +179,21 @@ export default (state = initialState, action = {}) => {
       }
     );
   case Constants.SET_CATEGORY_FILTER:
-    return (() => {
-      const nextState = update(
-        state,
-        {
-          ui: {
-            pdfList: {
-              filters: {
-                category: {
-                  [action.payload.categoryName]: {
-                    $set: action.payload.checked
-                  }
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          pdfList: {
+            filters: {
+              category: {
+                [action.payload.categoryName]: {
+                  $set: action.payload.checked
                 }
               }
             }
           }
-        });
-
-      return updateFilteredDocIdsFromFilters(nextState);
-    })();
+        }
+      }));
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
