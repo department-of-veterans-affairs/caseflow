@@ -344,4 +344,34 @@ RSpec.feature "Reader" do
     # verify that the tags on the previous document still exist
     expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
   end
+
+  scenario "Expand All button" do
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on documents[0].filename
+
+    # Add a comment
+    click_on "button-AddComment"
+
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
+    fill_in "addComment", with: "Foo"
+    click_on "Save"
+
+    click_on "button-AddComment"
+
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
+    fill_in "addComment", with: "Bar"
+    click_on "Save"
+
+    find("#button-backToDocuments").click
+
+    visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    click_on "Expand all"
+    expect(page).to have_content("Foo")
+    expect(page).to have_content("Bar")
+    click_on "Collapse all"
+    expect(page).not_to have_content("Foo")
+    expect(page).not_to have_content("Bar")
+  end
 end

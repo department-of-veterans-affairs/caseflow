@@ -3,6 +3,9 @@ import SearchBar from '../SearchBar';
 import Button from '../Button';
 
 const DocumentListHeader = (props) => {
+
+  const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
+
   return <div className="usa-grid-full document-list-header">
     <div className="usa-width-one-third">
       <SearchBar
@@ -18,7 +21,8 @@ const DocumentListHeader = (props) => {
       <span className="cf-right-side">
         <Button
           id="btn-default"
-          name="Expand all"
+          name={buttonText}
+          onClick={ () => props.toggleExpandAll() }
         />
       </span>
     </div>

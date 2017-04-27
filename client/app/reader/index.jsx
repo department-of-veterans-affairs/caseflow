@@ -10,6 +10,7 @@ import update from 'immutability-helper';
 
 const initialState = {
   ui: {
+    expandAll: false,
     pdf: {},
     pdfSidebar: {
       showTagErrorMsg: false,
@@ -171,19 +172,28 @@ export const readerReducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
+  case Constants.TOGGLE_EXPAND_ALL:
+    return update(state, {
+      documents: {
+        $set: _.mapValues(state.documents, (document) => {
+          return update(document, { expandComments: { $set: !state.ui.expandAll } });
+        })
+      },
+      ui: {
+        $merge: { expandAll: !state.ui.expandAll }
+      }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            listComments: {
-              $set: !state.documents[action.payload.docId].listComments
-            }
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          expandComments: {
+            $set: !state.documents[action.payload.docId].expandComments
           }
         }
-      }
-    );
+      },
+      ui: { $merge: { expandAll: false } }
+    });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
       {},
@@ -217,7 +227,8 @@ export const readerReducer = (state = initialState, action = {}) => {
   // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store =
-  createStore(readerReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
+  createStore(readerReducer, initialState,
+    composeEnhancers(applyMiddleware(thunk)));
 
 const Reader = (props) => {
   return <Provider store={store}>

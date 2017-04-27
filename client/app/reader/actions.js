@@ -53,6 +53,10 @@ export const removeTagRequestFailure = () => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE
 });
 
+export const toggleExpandAll = () => ({
+  type: Constants.TOGGLE_EXPAND_ALL
+});
+
 export const removeTagRequestSuccess = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
   payload: {

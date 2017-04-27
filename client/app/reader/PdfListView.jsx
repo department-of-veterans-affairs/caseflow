@@ -7,6 +7,8 @@ import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import TagTableColumn from '../components/reader/TagTableColumn';
+
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
@@ -214,9 +216,10 @@ export class PdfListView extends React.Component {
             className="document-list-header-issue-tags">
             Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
           </div>,
-          valueFunction: () => {
-            return <div className="document-list-issue-tags">
-            </div>;
+          valueFunction: (doc) => {
+            return <TagTableColumn
+              doc={doc}
+            />;
           }
         },
         {
@@ -230,7 +233,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].listComments ?
+            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].expandComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -266,7 +269,10 @@ export class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.props.reduxDocuments[row.id].listComments) {
+      // checking if comments exist and if comments should be listed
+      // before being added to the row
+      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
+          this.props.reduxDocuments[row.id].expandComments) {
         acc.push({
           ...row,
           isComment: true
@@ -280,6 +286,8 @@ export class PdfListView extends React.Component {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <DocumentListHeader
+            toggleExpandAll={this.props.toggleExpandAll}
+            expandAll={this.props.expandAll}
             documents={this.props.documents}
             onFilter={this.props.onFilter}
             filterBy={this.props.filterBy}

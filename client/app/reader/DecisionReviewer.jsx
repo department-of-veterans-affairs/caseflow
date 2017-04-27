@@ -331,7 +331,9 @@ export class DecisionReviewer extends React.Component {
       <div className="section--document-list">
         {this.state.currentPdfIndex === null && <PdfListView
           annotationStorage={this.annotationStorage}
-          documents={documents}
+          documents={_.values(this.props.storeDocuments)}
+          toggleExpandAll={this.props.toggleExpandAll}
+          expandAll={this.props.ui.expandAll}
           changeSortState={this.changeSortState}
           showPdf={this.showPdf}
           showPdfAndJumpToPage={this.showPdfAndJumpToPage}
@@ -376,6 +378,7 @@ DecisionReviewer.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ui: {
+      expandAll: state.ui.expandAll,
       pdfSidebar: {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
