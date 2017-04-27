@@ -14,16 +14,40 @@ import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
 
+const COMMENT_SCROLL_FROM_THE_TOP = 50;
+
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export class PdfSidebar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.commentElements = {};
+  }
+
+  componentDidUpdate = () => {
+    if (this.props.scrollToSidebarComment) {
+      const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
+
+      this.commentListElement.scrollTop = this.commentListElement.scrollTop +
+        this.commentElements[
+          this.props.scrollToSidebarComment.id
+        ].getBoundingClientRect().top - commentListBoundingBox.top -
+        COMMENT_SCROLL_FROM_THE_TOP;
+      this.props.handleFinishScrollToSidebarComment();
+    }
+  }
+
   generateOptionsFromTags = (tags) =>
-    _.map(tags, (tag) => ({
-      value: tag.text,
-      label: tag.text,
-      tagId: tag.id })
-    );
+    _(tags).
+      reject('pendingRemoval').
+      map((tag) => ({
+        value: tag.text,
+        label: tag.text,
+        tagId: tag.id })
+      ).
+      value();
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
@@ -50,24 +74,28 @@ export class PdfSidebar extends React.Component {
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
             onSaveCommentEdit={this.props.onSaveCommentEdit}
-            key={comment.comment}
+            key={comment.id}
           >
             {comment.comment}
           </EditComment>;
       }
 
-      return <Comment
-        id={`comment${index}`}
-        selected={false}
-        onDeleteComment={this.props.onDeleteComment}
-        onEditComment={this.props.onEditComment}
-        uuid={comment.uuid}
-        selected={comment.selected}
-        onClick={this.props.onJumpToComment(comment)}
-        page={comment.page}
-        key={comment.comment}>
-          {comment.comment}
-        </Comment>;
+      return <div ref={(commentElement) => {
+        this.commentElements[comment.id] = commentElement;
+      }}
+        key={comment.id}>
+        <Comment
+          id={`comment${index}`}
+          selected={false}
+          onDeleteComment={this.props.onDeleteComment}
+          onEditComment={this.props.onEditComment}
+          uuid={comment.uuid}
+          selected={comment.selected}
+          onClick={this.props.onJumpToComment(comment)}
+          page={comment.page}>
+            {comment.comment}
+          </Comment>
+        </div>;
     });
 
     const sidebarClass = classNames(
@@ -135,7 +163,10 @@ export class PdfSidebar extends React.Component {
           </div>
         </div>
 
-        <div className="cf-comment-wrapper">
+        <div id="cf-comment-wrapper" className="cf-comment-wrapper"
+          ref={(commentListElement) => {
+            this.commentListElement = commentListElement;
+          }}>
           <div className="cf-pdf-comment-list">
             {this.props.isAddingComment &&
               <EditComment
@@ -149,30 +180,22 @@ export class PdfSidebar extends React.Component {
   }
 }
 
-PdfSidebar.propTypes = {
-  onAddComment: PropTypes.func,
-  doc: PropTypes.object,
-  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    comment: React.PropTypes.string,
-    uuid: React.PropTypes.number
-  })),
-  editingComment: React.PropTypes.number,
-  isAddingComment: PropTypes.bool,
-  onSaveCommentAdd: PropTypes.func,
-  onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
-  onCancelCommentAdd: PropTypes.func,
-  onDeleteComment: PropTypes.func,
-  onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool
+const mapStateToProps = (state) => {
+  return {
+    scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    documents: state.documents
+  };
 };
-
-const mapPropsToState = (state) => ({
-  documents: state.documents,
-  hidePdfSidebar: state.ui.pdf.hidePdfSidebar
-});
-const mapDispatchToState = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
+  handleFinishScrollToSidebarComment() {
+    dispatch({
+      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+      payload: {
+        scrollToSidebarComment: null
+      }
+    });
+  },
   handleCategoryToggle(docId, categoryName, toggleState) {
     const categoryKey = categoryFieldNameOfCategoryName(categoryName);
 
@@ -200,6 +223,25 @@ const mapDispatchToState = (dispatch) => ({
   }
 });
 
+PdfSidebar.propTypes = {
+  onAddComment: PropTypes.func,
+  doc: PropTypes.object,
+  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
+    comment: React.PropTypes.string,
+    uuid: React.PropTypes.number
+  })),
+  editingComment: React.PropTypes.number,
+  isAddingComment: PropTypes.bool,
+  onSaveCommentAdd: PropTypes.func,
+  onSaveCommentEdit: PropTypes.func,
+  onCancelCommentEdit: PropTypes.func,
+  onCancelCommentAdd: PropTypes.func,
+  onDeleteComment: PropTypes.func,
+  onJumpToComment: PropTypes.func,
+  handleTogglePdfSidebar: PropTypes.func,
+  hidePdfSidebar: PropTypes.bool
+};
+
 export default connect(
-  mapPropsToState, mapDispatchToState
+  mapStateToProps, mapDispatchToProps
 )(PdfSidebar);
