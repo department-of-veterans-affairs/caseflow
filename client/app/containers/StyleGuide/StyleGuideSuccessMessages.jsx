@@ -27,6 +27,7 @@ export default function StyleGuideSuccessMessages() {
     Caseflow in the background, such as automatically sending a letter or changing
     the location of a claim.</p>
   <SuccessMessage
+    example={true}
     checklist={successChecklist}
     title="Success!"
     leadMessageList={messageList} />

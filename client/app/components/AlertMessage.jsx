@@ -8,7 +8,7 @@ export default class AlertMessage extends React.Component {
       title
     } = this.props;
 
-    return <div className="cf-app-msg-screen cf-app-segment
+    return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment
       cf-app-segment--alt">
       <h1 className="cf-red-text cf-msg-screen-heading">{title}</h1>
       {leadMessageList.map((listValue) =>

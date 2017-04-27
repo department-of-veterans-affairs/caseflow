@@ -4,10 +4,16 @@ export default class SuccessMessage extends React.Component {
   render() {
     let {
       checklist,
+      classNames,
+      example,
       leadMessageList,
       messageText,
       title
     } = this.props;
+
+    if (example) {
+      classNames.push('cf-sg-success-example');
+    }
 
     return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment
       cf-app-segment--alt">
@@ -17,7 +23,8 @@ export default class SuccessMessage extends React.Component {
           {listValue}
         </h2>)
       }
-      <ul className="cf-success-checklist cf-left-padding">
+
+      <ul className={classNames.join(' ')}>
         {checklist.map((listValue) => <li key={listValue}>{listValue}</li>)}
       </ul>
       <p className="cf-msg-screen-text">
@@ -26,6 +33,10 @@ export default class SuccessMessage extends React.Component {
     </div>;
   }
 }
+
+SuccessMessage.defaultProps = {
+  classNames: ['cf-success-checklist', 'cf-left-padding']
+};
 
 SuccessMessage.props = {
   checklist: PropTypes.array,

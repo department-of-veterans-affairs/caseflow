@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
+import AlertMessage from '../../components/AlertMessage';
 
 const PARSE_INT_RADIX = 10;
+
+const MESSAGE_TEXT = "You can now establish the next claim or go back to your Work History."
 
 export default class EstablishClaimCanceled extends React.Component {
 
@@ -25,15 +28,10 @@ export default class EstablishClaimCanceled extends React.Component {
         Math.ceil(totalCases / employeeCountInt) : 0;
 
     return <div>
-        <div id="certifications-generate"
-           className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
-            <h1 className="cf-error cf-msg-screen-heading">
-                Claim Processing Discontinued
-            </h1>
-            <h2 className="cf-msg-screen-deck">{secondHeader}</h2>
-            <p className="cf-msg-screen-text">
-                You can now establish the next claim or go back to your Work History.</p>
-        </div>
+        <AlertMessage
+          title="Claim Processing Discontinued"
+          leadMessageList={[secondHeader]}
+          messageText={MESSAGE_TEXT} />
         <EstablishClaimToolbar
             availableTasks={availableTasks}
             buttonText={buttonText}
