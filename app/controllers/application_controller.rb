@@ -78,15 +78,15 @@ class ApplicationController < ActionController::Base
   helper_method :logo_path
 
   def help_url
-    logo_nm = logo_name.to_s.downcase
-    return certification_help_path if logo_nm.start_with? "certification"
-    return dispatch_help_path if logo_nm.start_with? "dispatch"
-    help_path
+    {
+      "Certification" => certification_help_path,
+      "Dispatch" => dispatch_help_path
+    }[logo_name] || help_path
   end
   helper_method :help_url
 
   def certification_header(title)
-    "&nbsp &gt &nbsp".html_safe + title
+    "&nbsp &#124; &nbsp".html_safe + title
   end
   helper_method :certification_header
 

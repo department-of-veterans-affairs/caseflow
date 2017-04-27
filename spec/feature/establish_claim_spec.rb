@@ -1,5 +1,4 @@
 require "rails_helper"
-require "main_menu_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
@@ -45,7 +44,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
-      expect_main_menu_help_to_visit dispatch_help_path
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Caseflow Dispatch Help")
+      page.driver.go_back
 
       fill_in "the number of people", with: "2"
       safe_click_on "Update"
@@ -155,7 +157,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("Routed in VACOLS")
 
       # Validate help link
-      expect_main_menu_help_to_visit dispatch_help_path
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Caseflow Dispatch Help")
+      page.driver.go_back
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access

@@ -82,7 +82,7 @@ Rails.application.routes.draw do
   get "styleguide", to: "styleguide#show"
 
   get 'dispatch/help' => "help#dispatch"
-  get 'certification/help' => 'help#show'
+  get 'certification/help' => 'help#certification'
   get 'help' => 'help#show'
   
 
