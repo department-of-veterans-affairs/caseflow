@@ -8,6 +8,7 @@ def scroll_to(value)
   page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
 end
 
+# This utility function returns true if an element is currently visible on the page
 def in_viewport(element)
   page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
