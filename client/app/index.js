@@ -2,12 +2,16 @@ import React from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import _ from 'lodash';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
 import Certification from './certification/Certification';
 
-const COMPONENTS = [BaseContainer, Certification];
+const COMPONENTS = {
+  BaseContainer,
+  Certification
+};
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   const renderApp = (Component) => {
@@ -30,9 +34,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   }
 };
 
-COMPONENTS.forEach((component) => {
-  const name = component.name;
-
+_.forOwn(COMPONENTS, (component, name) => {
   ReactOnRails.register({ [name]: componentWrapper(component) });
 });
 
