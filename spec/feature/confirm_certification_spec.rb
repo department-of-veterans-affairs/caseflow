@@ -58,12 +58,6 @@ RSpec.feature "Confirm Certification" do
 
     expect(page).to have_content("Congratulations!")
 
-    # Validate help link
-    find('#menu-trigger').click
-    find_link("Help").click
-    expect(page).to have_content("Caseflow Certification Help")
-    page.driver.go_back
-
     certification = Certification.find_or_create_by_vacols_id(appeal.vacols_id)
     expect(certification.reload.completed_at).to eq(Time.zone.now)
   end

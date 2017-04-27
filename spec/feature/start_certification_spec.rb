@@ -146,6 +146,12 @@ RSpec.feature "Start Certification" do
     scenario "When some documents aren't matching shows missing documents page" do
       visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
 
+      # Validate help link
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Caseflow Certification Help")
+      page.driver.go_back
+
       expect(find("#correspondent-name")).to have_content("Crockett, Davy")
       expect(find("#appeal-type-header")).to have_content("Original")
       expect(find("#file-type-header")).to have_content("VVA")
