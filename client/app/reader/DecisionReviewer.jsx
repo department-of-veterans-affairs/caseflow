@@ -308,10 +308,13 @@ export class DecisionReviewer extends React.Component {
     const shouldRenderPdf = this.props.currentRenderedFile !== null;
 
     const activeDocIndex = _.findIndex(documents, { id: this.props.currentRenderedFile });
-    const showNextPageButton = activeDocIndex + 1 < _.size(documents);
-    const showPreviousPageButton = activeDocIndex > 0;
-
     const activeDoc = documents[activeDocIndex];
+
+    const nextDocExists = activeDocIndex + 1 < _.size(documents);
+    const nextDocId = nextDocExists && documents[activeDocIndex + 1].id;
+
+    const previousDocExists = activeDocIndex > 0;
+    const prevDocId = previousDocExists && documents[activeDocIndex - 1].id;
 
     return (
       <div className="section--document-list">
@@ -338,8 +341,8 @@ export class DecisionReviewer extends React.Component {
           annotationStorage={this.annotationStorage}
           file={this.documentUrl(activeDoc)}
           doc={activeDoc}
-          showNextPageButton={showNextPageButton}
-          showPreviousPageButton={showPreviousPageButton}
+          nextDocId={nextDocId}
+          prevDocId={prevDocId}
           onShowList={this.onShowList}
           pdfWorker={this.props.pdfWorker}
           label={activeDoc.label}

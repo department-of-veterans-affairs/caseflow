@@ -4,8 +4,8 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import { selectCurrentPdf } from '../reader/actions';
 import classNames from 'classnames';
-import _ from 'lodash';
 
 export const linkToSingleDocumentView = (doc) => {
   let id = doc.id;
@@ -131,22 +131,22 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div className="cf-pdf-navigation">
-        { this.props.showPreviousPageButton &&
+        { this.props.prevDocId &&
           <span className="cf-pdf-buttons-left">
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
-              onClick={this.props.onPreviousPdf}
+              onClick={() => this.props.goToDoc(this.props.prevDocId)}
               ariaLabel="previous PDF">
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
           </span> }
-        { this.props.showNextPageButton &&
+        { this.props.nextDocId &&
           <span className="cf-pdf-buttons-right">
             <Button
               name="next"
               classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.onNextPdf}
+              onClick={() => this.props.goToDoc(this.props.nextDocId)}
               ariaLabel="next PDF">
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
             </Button>
@@ -178,6 +178,9 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => state.ui.pdf;
 const mapDispatchToProps = (dispatch) => ({
+  goToDoc(docId) {
+    dispatch(selectCurrentPdf(docId));
+  },
   handleTogglePdfSidebar() {
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR

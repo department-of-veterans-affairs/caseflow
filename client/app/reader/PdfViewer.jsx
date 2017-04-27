@@ -211,8 +211,8 @@ export class PdfViewer extends React.Component {
             id="pdf"
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            showPreviousPageButton={this.props.showPreviousPageButton}
-            showNextPageButton={this.props.showNextPageButton}
+            prevDocId={this.props.prevDocId}
+            nextDocId={this.props.nextDocId}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
