@@ -34,12 +34,6 @@ RSpec.feature "Confirm Certification" do
   scenario "Screen reader user visits pdf link" do
     visit "certifications/#{appeal.vacols_id}"
 
-    # Validate help link
-    find('#menu-trigger').click
-    find_link("Help").click
-    expect(page).to have_content("Caseflow Certification Help")
-    page.driver.go_back
-
     # We want this content to only appear for screen reader users, so
     # it will not be visible, but it **should** be in the DOM.
     expect(page).to have_text(:all, "The PDF viewer in your browser may not be accessible.")
@@ -63,6 +57,12 @@ RSpec.feature "Confirm Certification" do
     expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq(appeal.vacols_id)
 
     expect(page).to have_content("Congratulations!")
+
+    # Validate help link
+    find('#menu-trigger').click
+    find_link("Help").click
+    expect(page).to have_content("Caseflow Certification Help")
+    page.driver.go_back
 
     certification = Certification.find_or_create_by_vacols_id(appeal.vacols_id)
     expect(certification.reload.completed_at).to eq(Time.zone.now)
