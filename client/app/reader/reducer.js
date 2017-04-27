@@ -26,8 +26,8 @@ export const initialState = {
 const updateFilteredDocIdsFromFilters = (nextState) => {
   const activeCategoryFilters = _(nextState.ui.pdfList.filters.category).
         toPairs().
-        filter((([key, value]) => value)).
-        map(([key, value]) => categoryFieldNameOfCategoryName(key)).
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => categoryFieldNameOfCategoryName(key)).
         value();
 
   const filteredIds = _(nextState.documents).

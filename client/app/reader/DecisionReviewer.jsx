@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import AnnotationStorage from '../util/AnnotationStorage';
