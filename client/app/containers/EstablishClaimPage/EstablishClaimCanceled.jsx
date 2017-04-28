@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
-import AlertMessage from '../../components/AlertMessage';
+import StatusMessage from '../../components/StatusMessage';
 
 const PARSE_INT_RADIX = 10;
 
@@ -29,10 +29,11 @@ export default class EstablishClaimCanceled extends React.Component {
         Math.ceil(totalCases / employeeCountInt) : 0;
 
     return <div>
-        <AlertMessage
+        <StatusMessage
           title="Claim Processing Discontinued"
           leadMessageList={[secondHeader]}
-          messageText={MESSAGE_TEXT} />
+          messageText={MESSAGE_TEXT}
+          type="alert" />
         <EstablishClaimToolbar
             availableTasks={availableTasks}
             buttonText={buttonText}

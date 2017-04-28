@@ -20,6 +20,7 @@ export default function StyleGuideStatusMessages() {
     the user can take.</p>
     <StatusMessage
       title="Claim Held"
-      leadMessageList={[message]} />
+      leadMessageList={[message]}
+      type="status" />
   </div>;
 }

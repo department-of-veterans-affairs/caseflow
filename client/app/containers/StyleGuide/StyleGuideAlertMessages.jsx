@@ -1,6 +1,6 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import AlertMessage from '../../components/AlertMessage';
+import StatusMessage from '../../components/StatusMessage';
 
 export default function StyleGuideAlertMessages() {
   let message = 'We’ve recorded your explanation and placed the claim back in the queue.' +
@@ -17,8 +17,9 @@ export default function StyleGuideAlertMessages() {
     their work. These messages have red titles to reinforce that the user did not
     complete the intended task of the application, a brief explanation of what happened,
      and next steps.</p>
-   <AlertMessage
+   <StatusMessage
        title="Establishment Cancelled"
-       leadMessageList={[message]} />
+       leadMessageList={[message]}
+       type="alert" />
   </div>;
 }
