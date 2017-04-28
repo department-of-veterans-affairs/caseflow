@@ -77,8 +77,16 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_path
 
+  def help_url
+    {
+      "Certification" => certification_help_path,
+      "Dispatch" => dispatch_help_path
+    }[logo_name] || help_path
+  end
+  helper_method :help_url
+
   def certification_header(title)
-    "&nbsp &gt &nbsp".html_safe + title
+    "&nbsp &#124; &nbsp".html_safe + title
   end
   helper_method :certification_header
 

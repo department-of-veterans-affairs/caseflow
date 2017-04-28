@@ -21,4 +21,8 @@ class Admin::EstablishClaimsController < ApplicationController
   def create_establish_claim_params
     params.require(:create_establish_claim).permit(:vbms_id, :decision_type)
   end
+
+  def logo_name
+    "Dispatch"
+  end
 end
