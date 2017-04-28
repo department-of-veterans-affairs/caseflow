@@ -5,8 +5,8 @@
     checklist: ['Reviewed decision', 'Assigned existing EP to claim'],
     firstHeader: 'Congratulations!',
     page: 'EstablishClaimComplete',
-    totalCasesCompleted: user_completed_today,
-    employeeCount: Rails.cache.read('employee_count') || '0',
+    totalCasesCompleted: user_quota.tasks_completed_count,
+    employeeCount: team_quota.user_count || '0',
     totalCasesToComplete: to_complete_count,
     secondHeader: task.appeal.veteran_full_name + "'s claim (" + task.appeal.sanitized_vbms_id + ') has been assigned an EP.'
 }) %>

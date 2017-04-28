@@ -34,11 +34,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View manager page" do
       # Create 4 incomplete tasks and one completed today
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
-      Generators::EstablishClaim.create(
-        user_id: case_worker.id,
-        aasm_state: :completed,
-        completed_at: Time.zone.now
-      )
+
+      Generators::EstablishClaim.create(user: case_worker, aasm_state: :assigned).tap do |task|
+        task.start!
+        task.complete!(status: :routed_to_arc)
+      end
 
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
@@ -53,17 +53,26 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("Jane Smith 3 1 2")
       expect(page).to have_content("Employee Total 5 1 4")
 
-      # Two more users completing tasks should force the number of people to bump up to 3
-      2.times do
+      # Two more users starting tasks should force the number of people to bump up to 3
+      %w(June Jeffers).each do |name|
         Generators::EstablishClaim.create(
-          user: Generators::User.create,
-          aasm_state: :started
-        ).complete!(status: :routed_to_arc)
+          user: Generators::User.create(full_name: "#{name} Smith"),
+          aasm_state: :assigned
+        ).tap do |task|
+          task.start!
+          task.complete!(status: :routed_to_arc)
+        end
       end
 
       fill_in "the number of people", with: "2"
       safe_click_on "Update"
       expect(find_field("the number of people").value).to have_content("3")
+
+      # Validate remanders are handled correctly
+      expect(page).to have_content("Jane Smith 3 1 2")
+      expect(page).to have_content("June Smith 2 1 1")
+      expect(page).to have_content("Jeffers Smith 2 1 1")
+      expect(page).to have_content("Employee Total 7 3 4")
     end
 
     scenario "View unprepared tasks page" do

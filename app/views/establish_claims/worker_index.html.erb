@@ -4,6 +4,6 @@
   buttonText: start_text,
   completedCountToday: @completed_count_today,
   currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
-  toCompleteCount: @to_complete_count,
-  totalAssignedIssues: quota.per_assignee
+  toCompleteCount: to_complete_count,
+  totalAssignedIssues: user_quota && user_quota.task_count
 }) %>
