@@ -32,8 +32,10 @@ export default (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
     allTags = Array.prototype.concat.apply([], _(action.payload).
-            map((doc) => doc.tags).
-            value());
+      map((doc) => {
+        return doc.tags ? doc.tags : [];
+      }).
+      value());
     uniqueTags = _.uniqWith(allTags, _.isEqual);
 
     return update(
