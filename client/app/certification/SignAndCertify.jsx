@@ -6,6 +6,8 @@ import Footer from './Footer';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
+import * as actions from './actions/SignAndCertify';
+import { Redirect } from 'react-router-dom';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -73,7 +75,14 @@ class UnconnectedSignAndCertify extends React.Component {
     // Sets continueClicked to false for the next page.
     this.props.onContinueClickSuccess();
 
-    window.location = `/certifications/${this.props.match.params.vacols_id}/success`;
+    this.props.certificationUpdateStart({
+      certifyingOffice: this.props.certifyingOffice,
+      certifyingUsername: this.props.certifyingUsername,
+      certifyingOfficialName: this.props.certifyingOfficialName,
+      certifyingOfficialTitle: this.props.certifyingOfficialTitle,
+      certificationDate: this.props.certificationDate,
+      vacolsId: this.props.match.params.vacols_id
+    });
   }
 
   render() {
@@ -85,8 +94,21 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialTitle,
       certificationDate,
       continueClicked,
-      certificationId
+      certificationId,
+      updateSucceeded,
+      updateFailed,
+      match
     } = this.props;
+
+    if (updateSucceeded) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/success`}/>;
+    }
+
+    if (updateFailed) {
+      // TODO: add real error handling and validated error states etc.
+      return <div>500 500 error error</div>;
+    }
 
     // if the form input is not valid and the user has already tried to click continue,
     // disable the continue button until the validation errors are fixed.
@@ -140,23 +162,20 @@ class UnconnectedSignAndCertify extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => {
-    dispatch({
-      type: Constants.UPDATE_PROGRESS_BAR,
-      payload: {
-        currentSection: Constants.progressBarSections.SIGN_AND_CERTIFY
-      }
-    });
+    dispatch(actions.updateProgressBar());
   },
+
   onSignAndCertifyFormChange: (fieldName, value) => {
-    dispatch({
-      type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
-      payload: {
-        [fieldName]: value
-      }
-    });
+    dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
   },
+
   onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess())
+
+  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
+
+  certificationUpdateStart: (props) => {
+    dispatch(actions.certificationUpdateStart(props, dispatch));
+  }
 });
 
 const mapStateToProps = (state) => ({
@@ -166,7 +185,10 @@ const mapStateToProps = (state) => ({
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
   continueClicked: state.continueClicked,
-  certificationId: state.certificationId
+  certificationId: state.certificationId,
+  loading: state.loading,
+  updateSucceeded: state.updateSucceeded,
+  updateFailed: state.updateFailed
 });
 
 const SignAndCertify = connect(
