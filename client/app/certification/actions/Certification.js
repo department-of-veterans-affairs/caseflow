@@ -13,3 +13,7 @@ export const onContinueClickSuccess = () => ({
     continueClicked: false
   }
 });
+
+export const resetState = () => ({
+  type: Constants.RESET_STATE
+});

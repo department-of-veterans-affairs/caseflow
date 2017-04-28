@@ -26,6 +26,7 @@ class Reader::DocumentsController < ApplicationController
   end
   helper_method :documents
 
+  # :nocov:
   def single_document
     Document.find(params[:id]).tap do |t|
       t.filename = params[:filename]
@@ -34,6 +35,7 @@ class Reader::DocumentsController < ApplicationController
     end
   end
   helper_method :single_document
+  # :nocov:
 
   def logo_name
     "Reader"
