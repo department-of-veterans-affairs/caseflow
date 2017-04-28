@@ -8,7 +8,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon } from '../reader/actions';
 
-const DOCUMENT_THROTTLE_TIME = 500;
+const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -216,7 +216,7 @@ export class Pdf extends React.Component {
         this.scrollWindow.scrollTop = scrollLocation;
       });
     });
-  }, DOCUMENT_THROTTLE_TIME, {
+  }, DOCUMENT_DEBOUNCE_TIME, {
     leading: true,
     trailing: true
   });
