@@ -52,15 +52,15 @@ describe('EstablishClaim', () => {
 
     context('navigation', () => {
       it('initially loads to decision page', () => {
-        expect(wrapper.state().history.location.pathname).to.equal('/decision');
+        expect(wrapper.instance().history.location.pathname).to.equal('/decision');
         expect(wrapper.state().page).to.equal('decision');
       });
 
       it('redirects to decision if no existing EPs', (done) => {
         // Add a listener to the history object and look for the "go back" POP event
-        let unlisten = wrapper.state().history.listen((location, action) => {
+        let unlisten = wrapper.instance().history.listen((location, action) => {
           if (action === 'POP') {
-            expect(wrapper.state().history.location.pathname).to.equal('/decision');
+            expect(wrapper.instance().history.location.pathname).to.equal('/decision');
             unlisten();
             done();
           }
@@ -68,7 +68,7 @@ describe('EstablishClaim', () => {
 
         // manually navigate to associate EP page
         // This simulates a user manually altering the URL
-        wrapper.state().history.push('associate');
+        wrapper.instance().history.push('associate');
       });
     });
 

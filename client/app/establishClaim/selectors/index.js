@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import { ARC_STATION_OF_JURISDICTION } from '../constants';
+import requiredValidator from '../../util/validators/RequiredValidator';
 
 const getSpecialIssues = (specialIssues) => specialIssues;
 const getStationKey = (_, stationKey) => stationKey;
@@ -25,5 +26,20 @@ export const getStationOfJurisdiction = createSelector(
     });
 
     return station;
+  }
+);
+
+
+const getIsValdating = (state) => state.isValidating;
+const getCancelFeedback = (state) => state.cancelFeedback;
+const getValidator = () => requiredValidator('Please enter an explanation');
+
+
+export const getCancelFeedbackErrorMessage = createSelector(
+  [getIsValdating, getCancelFeedback, getValidator],
+  (isValidating, cancelFeedback, validator) => {
+    if (isValidating) {
+      return validator(cancelFeedback);
+    }
   }
 );
