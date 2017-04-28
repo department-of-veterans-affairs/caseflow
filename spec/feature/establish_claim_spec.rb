@@ -154,6 +154,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       visit "/dispatch/establish-claim"
 
+      expect(page).to have_content("There are claims ready to get picked up for today")
+
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
       expect(page).to have_selector('#work-history-table tr', count: 2)
       expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")

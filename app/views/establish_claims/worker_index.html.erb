@@ -2,8 +2,6 @@
   page: "CaseWorkerIndex",
   availableTasks: tasks.any_assignable_to?(current_user),
   buttonText: start_text,
-  completedCountToday: @completed_count_today,
+  userQuota: user_quota && user_quota.to_hash,
   currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
-  toCompleteCount: to_complete_count,
-  totalAssignedIssues: user_quota && user_quota.task_count
 }) %>

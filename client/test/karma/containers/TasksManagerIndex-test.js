@@ -10,11 +10,11 @@ describe('TasksManagerIndex', () => {
 
     let renderPage = () => {
       const quotas = [{
-        "user_name": "Billy Bob Thorton",
-        "task_count": 3,
-        "completed_tasks_count": 1,
-        "tasks_left_count": 2
-      }]
+        user_name: 'Billy Bob Thorton',
+        task_count: 3,
+        completed_tasks_count: 1,
+        tasks_left_count: 2
+      }];
 
       wrapper = shallow(
         <TasksManagerIndex
