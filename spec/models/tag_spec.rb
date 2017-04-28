@@ -5,7 +5,7 @@ describe Tag do
 
   context ".tag creation" do
     it "creates tag when valid text provided" do
-      tag = Tag.new(text: "Service Disabled", document_id: document.id)
+      tag = Tag.new(text: "Service Disabled")
       assert tag.valid?
     end
 
