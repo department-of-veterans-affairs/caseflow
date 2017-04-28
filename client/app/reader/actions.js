@@ -2,10 +2,21 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 
-export const onReceiveDocs = (documents) => ({
-  type: Constants.RECEIVE_DOCUMENTS,
+
+export const collectAllTags = (documents) => ({
+  type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
 });
+
+export const onReceiveDocs = (documents) => (
+  (dispatch) => {
+    dispatch(collectAllTags(documents));
+    dispatch({
+      type: Constants.RECEIVE_DOCUMENTS,
+      payload: documents
+    });
+  }
+);
 
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
@@ -47,13 +58,20 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
-export const newTagRequestSuccess = (docId, createdTags) => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
-  payload: {
-    docId,
-    createdTags
+export const newTagRequestSuccess = (docId, createdTags) => (
+  (dispatch, getState) => {
+    dispatch({
+      type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
+      payload: {
+        docId,
+        createdTags
+      }
+    });
+    const { documents } = getState();
+
+    dispatch(collectAllTags(documents));
   }
-});
+);
 
 export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
   type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
@@ -78,13 +96,20 @@ export const removeTagRequestFailure = (docId, tagId) => ({
   }
 });
 
-export const removeTagRequestSuccess = (docId, tagId) => ({
-  type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
-  payload: {
-    docId,
-    tagId
+export const removeTagRequestSuccess = (docId, tagId) => (
+  (dispatch, getState) => {
+    dispatch({
+      type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
+      payload: {
+        docId,
+        tagId
+      }
+    });
+    const { documents } = getState();
+
+    dispatch(collectAllTags(documents));
   }
-});
+);
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {

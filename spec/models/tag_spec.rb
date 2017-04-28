@@ -9,11 +9,6 @@ describe Tag do
       assert tag.valid?
     end
 
-    it "fails when document is not provided" do
-      tag = Tag.new
-      refute tag.valid?, "tag is not valid without a document"
-    end
-
     it "fails when text not provided" do
       tag = Tag.new
       refute tag.valid?, "tag is not valid without text"

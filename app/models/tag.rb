@@ -1,6 +1,5 @@
 class Tag < ActiveRecord::Base
-  belongs_to :document
+  has_and_belongs_to_many :documents
 
   validates :text, presence: true
-  validates :document, presence: true
 end
