@@ -27,6 +27,8 @@ export const SET_SORT = 'SET_SORT';
 export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
 export const SET_SEARCH = 'SET_SEARCH';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
+export const SET_ANNOTATION_STORAGE = 'SET_ANNOTATION_STORAGE';
+export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
 
 // comment flow states
 export const PLACING_COMMENT_STATE = 'PLACING_COMMENT';

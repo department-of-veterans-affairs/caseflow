@@ -4,14 +4,21 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
 const metadataContainsString = (searchQuery, doc) =>
-  doc.type.toLowerCase().includes(searchQuery) || doc.receivedAt.toLowerCase().includes(searchQuery);
+  doc.type.toLowerCase().includes(searchQuery) ||
+  doc.receivedAt.toLowerCase().includes(searchQuery);
+
+const commentContainsString = (searchQuery, annotationStorage, doc) =>
+  annotationStorage.getAnnotationByDocumentId(doc.id).reduce((acc, annotation) => {
+    return acc || annotation.comment.toLowerCase().includes(searchQuery);
+  }, false);
 
 const categoryContainsString = (searchQuery, doc) => 
   doc[categoryFieldNameOfCategoryName(searchQuery)];
 
-const searchString = (searchQuery) => (doc) =>
+const searchString = (searchQuery, annotationStorage) => (doc) =>
   metadataContainsString(searchQuery, doc) ||
-  categoryContainsString(searchQuery, doc);
+  categoryContainsString(searchQuery, doc) ||
+  commentContainsString(searchQuery, annotationStorage, doc);
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -29,7 +36,7 @@ const updateFilteredDocIds = (nextState) => {
         _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
     filter(
-      searchString(searchQuery)
+      searchString(searchQuery, nextState.annotationStorage)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -63,6 +70,7 @@ const updateLastReadDoc = (state, docId) =>
   );
 
 export const initialState = {
+  annotationStorage: null,
   ui: {
     filteredDocIds: null,
     docFilterCriteria: {
@@ -389,6 +397,28 @@ export default (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_ANNOTATION_STORAGE:
+    return update(
+      state,
+      {
+        annotationStorage: {
+          $set: action.payload.annotationStorage
+        }
+      }
+    );
+  case Constants.CLEAR_ALL_SEARCH:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            searchQuery: {
+              $set: ''
+            }
+          }
+        }
+      }
+    ));
   default:
     return state;
   }

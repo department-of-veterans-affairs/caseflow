@@ -393,3 +393,13 @@ svg[aria-hidden=true],
     cursor: url(asset-path('comment-cursor.svg')), auto !important;
   }
 }
+
+input[type="search"].cf-search-input-with-close {
+  padding-right: 25px;
+}
+
+.cf-search-close-icon {
+  margin-left: -20px;
+  margin-top: 6px;
+  position: absolute;
+}

@@ -3,7 +3,7 @@ import SearchBar from '../SearchBar';
 import Button from '../Button';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setSearch, clearAllFilters } from '../../reader/actions';
+import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
 
 export const DocumentListHeader = (props) => {
@@ -23,6 +23,7 @@ export const DocumentListHeader = (props) => {
         <SearchBar
           id="searchBar"
           onChange={props.setSearch}
+          onClearSearch={props.clearSearch}
           value={props.docFilterCriteria.searchQuery}
         />
       </div>
@@ -62,7 +63,8 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => dispatch(clearAllFilters()),
-  setSearch: (searchQuery) => {dispatch(setSearch(searchQuery))}
+  setSearch: (searchQuery) => {dispatch(setSearch(searchQuery))},
+  clearSearch: () => {dispatch(clearSearch())}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);
