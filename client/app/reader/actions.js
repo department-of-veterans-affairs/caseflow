@@ -115,6 +115,10 @@ export const setPdfReadyToShow = (docId) => ({
   }
 });
 
+export const clearAllFilters = () => ({
+  type: Constants.CLEAR_ALL_FILTERS,
+});
+
 export const removeTag = (doc, tagId) => (
   (dispatch) => {
     dispatch({

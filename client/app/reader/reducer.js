@@ -64,6 +64,7 @@ export const initialState = {
         sortAscending: false
       },
       category: {},
+      tag: {},
       searchQuery: ''
     },
     pdf: {
@@ -259,6 +260,21 @@ export default (state = initialState, action = {}) => {
               [action.payload.categoryName]: {
                 $set: action.payload.checked
               }
+            }
+          }
+        }
+      }));
+  case Constants.CLEAR_ALL_FILTERS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            category: {
+              $set: {}
+            },
+            tag: {
+              $set: {}
             }
           }
         }
