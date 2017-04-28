@@ -211,6 +211,7 @@ export class PdfViewer extends React.Component {
             onShowList={this.props.onShowList}
             prevDocId={this.props.prevDocId}
             nextDocId={this.props.nextDocId}
+            showPdf={this.props.showPdf}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
@@ -265,7 +266,6 @@ const mapDispatchToProps = (dispatch) => ({
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
   handleClearCommentState: () => dispatch(handleClearCommentState()),
-  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
