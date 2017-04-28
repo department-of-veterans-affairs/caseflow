@@ -221,8 +221,8 @@ ActiveRecord::Schema.define(version: 20170427201655) do
   end
 
   create_table "team_quotas", force: :cascade do |t|
-    t.date     "date"
-    t.string   "task_type"
+    t.date     "date",       null: false
+    t.string   "task_type",  null: false
     t.integer  "user_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

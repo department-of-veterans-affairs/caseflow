@@ -25,7 +25,7 @@ export default class TasksManagerIndex extends BaseForm {
   getUserColumns = () => {
     // We return an empty row if there are no users in the table. Otherwise
     // we use the footer to display the totals.
-    let noUsers = Object.keys(this.props.userQuotas).length === 0;
+    let noUsers = this.props.userQuotas.length === 0;
 
     return [
       {
