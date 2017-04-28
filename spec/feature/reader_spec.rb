@@ -172,6 +172,23 @@ RSpec.feature "Reader" do
         ]
       end
 
+      scenario "Expand All button" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on "Expand all"
+        expect(page).to have_content("another comment")
+        expect(page).to have_content("how's it going")
+        expect(page).to have_content("my mother is a fish")
+        expect(page).to have_content("baby metal 4 lyfe")
+        expect(page).to have_content("hello world")
+        click_on "Collapse all"
+        expect(page).not_to have_content("another comment")
+        expect(page).not_to have_content("how's it going")
+        expect(page).not_to have_content("my mother is a fish")
+        expect(page).not_to have_content("baby metal 4 lyfe")
+        expect(page).not_to have_content("hello world")
+      end
+
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
