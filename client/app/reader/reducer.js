@@ -114,13 +114,32 @@ export const initialState = {
       }
     }
   },
+  tagOptions: [],
   documents: {}
 };
 
 export default (state = initialState, action = {}) => {
   let categoryKey;
+  let allTags;
+  let uniqueTags;
 
   switch (action.type) {
+  case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
+    allTags = Array.prototype.concat.apply([], _(action.payload).
+      map((doc) => {
+        return doc.tags ? doc.tags : [];
+      }).
+      value());
+    uniqueTags = _.uniqWith(allTags, _.isEqual);
+
+    return update(
+      state,
+      {
+        tagOptions: {
+          $set: uniqueTags
+        }
+      }
+    );
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
