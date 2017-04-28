@@ -73,7 +73,7 @@ export default class StyleGuideLayout extends React.Component {
         On the bottom left, of the App Canvas, there will be a back link,
         preferably with a description of where the user will go to
         or a link to the main page after a user has completed a task.
-        These are actions that allow the user to move back a step 
+        These are actions that allow the user to move back a step
         or completely leave the task they’re working on.
       </p>
 
