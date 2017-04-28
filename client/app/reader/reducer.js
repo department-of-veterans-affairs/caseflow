@@ -58,6 +58,7 @@ const updateLastReadDoc = (state, docId) =>
 export const initialState = {
   ui: {
     filteredDocIds: null,
+    expandAll: false,
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -347,6 +348,17 @@ export default (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
+  case Constants.TOGGLE_EXPAND_ALL:
+    return update(state, {
+      documents: {
+        $set: _.mapValues(state.documents, (document) => {
+          return update(document, { listComments: { $set: !state.ui.expandAll } });
+        })
+      },
+      ui: {
+        $merge: { expandAll: !state.ui.expandAll }
+      }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
     return update(
       state,
@@ -357,7 +369,8 @@ export default (state = initialState, action = {}) => {
               $set: !state.documents[action.payload.docId].listComments
             }
           }
-        }
+        },
+        ui: { $merge: { expandAll: false } }
       }
     );
   case Constants.TOGGLE_PDF_SIDEBAR:
