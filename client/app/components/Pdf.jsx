@@ -202,16 +202,16 @@ export class Pdf extends React.Component {
           pdfDocument,
           isRendered: []
         }, () => {
-          this.props.setPdfReadyToShow(this.props.documentId);
-
-          if (this.props.onPageChange) {
-            this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
-          }
-
-          // Scroll to the correct location on the page
-          this.scrollWindow.scrollTop = scrollLocation;
           resolve();
         });
+        this.props.setPdfReadyToShow(this.props.documentId);
+
+        if (this.props.onPageChange) {
+          this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
+        }
+
+        // Scroll to the correct location on the page
+        this.scrollWindow.scrollTop = scrollLocation;
       });
     });
   }

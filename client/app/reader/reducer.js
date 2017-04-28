@@ -139,11 +139,6 @@ export default (state = initialState, action = {}) => {
         pdf: {
           currentRenderedFile: {
             $set: action.payload.docId
-          },
-          pdfsReadyToShow: {
-            [action.payload.docId]: {
-              $set: false
-            }
           }
         }
       },
@@ -170,8 +165,8 @@ export default (state = initialState, action = {}) => {
       ui: {
         pdf: {
           pdfsReadyToShow: {
-            [action.payload.docId]: {
-              $set: true
+            $set: {
+              [action.payload.docId]: true
             }
           }
         }
