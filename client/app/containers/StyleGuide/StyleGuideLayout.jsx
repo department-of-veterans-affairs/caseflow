@@ -1,5 +1,4 @@
 import React from 'react';
-
 import InlineForm from '../../components/InlineForm';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import DropdownMenu from '../../components/DropdownMenu';
@@ -67,11 +66,15 @@ export default class StyleGuideLayout extends React.Component {
       </p>
 
       <p>
-        The actions at the bottom of the page are arranged such as the primary task (the task that takes the user forward) is on the bottom right of the App Canvas.
+        The actions at the bottom of the page are arranged such as the primary
+        task (the task that takes the user forward) is on the bottom right of the App Canvas.
         The label of this action usually hints at the title of the next page.
         Escape actions are placed to the left of the primary action.
-        On the bottom left, of the App Canvas, there will be a back link, preferably with a description of where the user will go to or a link to the main page after a user has completed a task.
-        These are actions that allow the user to move back a step or completely leave the task they’re working on.
+        On the bottom left, of the App Canvas, there will be a back link,
+        preferably with a description of where the user will go to
+        or a link to the main page after a user has completed a task.
+        These are actions that allow the user to move back a step 
+        or completely leave the task they’re working on.
       </p>
 
       <p>
