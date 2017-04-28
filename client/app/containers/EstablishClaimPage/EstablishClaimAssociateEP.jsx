@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { connect } from 'react-redux';
+import * as Constants from '../../establishClaim/constants';
+
 
 export class AssociatePage extends React.Component {
 
@@ -113,7 +115,7 @@ export class AssociatePage extends React.Component {
   render() {
     let {
       handleSubmit,
-      handleCancelTask,
+      handleToggleCancelTaskModal,
       handleBackToDecisionReview,
       backToDecisionReviewText,
       hasAvailableModifers,
@@ -174,7 +176,7 @@ export class AssociatePage extends React.Component {
         <div className="cf-push-right">
           <Button
             name="Cancel"
-            onClick={handleCancelTask}
+            onClick={handleToggleCancelTaskModal}
             classNames={['cf-btn-link', 'cf-adjacent-buttons']}
           />
           <Button
@@ -196,20 +198,27 @@ AssociatePage.propTypes = {
   handleAlert: PropTypes.func.isRequired,
   handleAlertClear: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
   task: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return {
-    specialIssues: state.specialIssues
-  };
-};
+const mapStateToProps = (state) => ({
+  specialIssues: state.specialIssues
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCancelTaskModal: () => {
+    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
+  }
+});
 
 const ConnectedEstablishClaimAssociateEP = connect(
-    mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(AssociatePage);
 
 export default ConnectedEstablishClaimAssociateEP;

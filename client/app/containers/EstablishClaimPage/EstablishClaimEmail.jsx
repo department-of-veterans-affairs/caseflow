@@ -9,6 +9,7 @@ import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import * as Constants from '../../establishClaim/constants';
 
 export class EstablishClaimEmail extends BaseForm {
   constructor(props) {
@@ -119,7 +120,7 @@ export class EstablishClaimEmail extends BaseForm {
           <div className="cf-push-right">
             <Button
             name="Cancel"
-            onClick={this.props.handleCancelTask}
+            onClick={this.props.handleToggleCancelTaskModal}
             classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
@@ -190,7 +191,7 @@ export class EstablishClaimEmail extends BaseForm {
 
 EstablishClaimEmail.propTypes = {
   appeal: PropTypes.object.isRequired,
-  handleCancelTask: PropTypes.func.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleBackToDecisionReview: PropTypes.func.isRequired,
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleEmailSubmit: PropTypes.func.isRequired,
@@ -199,14 +200,19 @@ EstablishClaimEmail.propTypes = {
   regionalOfficeEmail: PropTypes.arrayOf(PropTypes.string)
 };
 
-const mapStateToProps = (state) => {
-  return {
-    specialIssues: state.specialIssues
-  };
-};
+const mapStateToProps = (state) => ({
+  specialIssues: state.specialIssues
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCancelTaskModal: () => {
+    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
+  }
+});
 
 const ConnectedEstablishClaimEmail = connect(
-    mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(EstablishClaimEmail);
 
 export default ConnectedEstablishClaimEmail;

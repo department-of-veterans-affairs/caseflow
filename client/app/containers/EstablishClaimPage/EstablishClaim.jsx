@@ -2,6 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import ApiUtil from '../../util/ApiUtil';
+import WindowUtil from '../../util/WindowUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import { FULL_GRANT } from '../../establishClaim/constants';
@@ -11,10 +12,6 @@ import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 import { validModifiers } from '../../establishClaim/util';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
-import Modal from '../../components/Modal';
-import TextareaField from '../../components/TextareaField';
-import FormField from '../../util/FormField';
-import requiredValidator from '../../util/validators/RequiredValidator';
 import { formatDate } from '../../util/DateUtil';
 import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
@@ -22,6 +19,7 @@ import EstablishClaimNote from './EstablishClaimNote';
 import EstablishClaimEmail from './EstablishClaimEmail';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import AssociatePage from './EstablishClaimAssociateEP';
+import CancelModal from '../../establishClaim/components/CancelModal';
 
 import { createHashHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -89,30 +87,12 @@ export default class EstablishClaim extends BaseForm {
   constructor(props) {
     super(props);
     this.store = createEstablishClaimStore(props);
-    let decisionType = this.props.task.appeal.decision_type;
-    // Set initial state on page render
-
-    // The reviewForm decisionType is needed in the state first since
-    // it is used to calculate the validModifiers
-    this.state = {
-      reviewForm: {
-        decisionType: new FormField(decisionType)
-      }
-    };
+    this.history = createHashHistory();
 
     this.state = {
       ...this.state,
-      cancelModal: {
-        cancelFeedback: new FormField(
-          '',
-          requiredValidator('Please enter an explanation')
-        )
-      },
-      cancelModalDisplay: false,
-      history: createHashHistory(),
       loading: false,
       endProductCreated: false,
-      modalSubmitLoading: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
       specialIssues: {},
@@ -148,9 +128,8 @@ export default class EstablishClaim extends BaseForm {
   }
 
   componentDidMount() {
-    let { history } = this.state;
 
-    history.listen((location) => {
+    this.history.listen((location) => {
       // If we are on the note page and you try to move to
       // a previous page in the flow then we bump you back
       // to the note page.
@@ -170,11 +149,7 @@ export default class EstablishClaim extends BaseForm {
       }
     });
 
-    history.replace(this.defaultPage());
-  }
-
-  reloadPage = () => {
-    window.location.href = window.location.pathname + window.location.search;
+    this.history.replace(this.defaultPage());
   }
 
   shouldReviewAfterEndProductCreate = () => {
@@ -232,7 +207,7 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getClaimTypeFromDecision = () => {
-    let decisionType = this.state.reviewForm.decisionType.value;
+    let decisionType = this.props.task.appeal.decision_type;
     let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
@@ -242,54 +217,8 @@ export default class EstablishClaim extends BaseForm {
     return values;
   }
 
-  handleFinishCancelTask = () => {
-    let { id } = this.props.task;
-    let data = {
-      feedback: this.state.cancelModal.cancelFeedback.value
-    };
-
-    this.props.handleAlertClear();
-
-    if (!this.validateFormAndSetErrors(this.state.cancelModal)) {
-      return;
-    }
-
-    this.setState({
-      modalSubmitLoading: true
-    });
-
-    data = ApiUtil.convertToSnakeCase(data);
-
-    return ApiUtil.patch(`/dispatch/establish-claim/${id}/cancel`, { data }).then(() => {
-      this.reloadPage();
-    }, () => {
-      this.props.handleAlert(
-        'error',
-        'Error',
-        'There was an error while cancelling the current claim. Please try again later'
-      );
-      this.setState({
-        cancelModalDisplay: false,
-        modalSubmitLoading: false
-      });
-    });
-  }
-
-  handleModalClose = (modal) => () => {
-    let stateObject = {};
-
-    stateObject[modal] = false;
-    this.setState(stateObject);
-  };
-
-  handleCancelTask = () => {
-    this.setState({
-      cancelModalDisplay: true
-    });
-  }
-
   handlePageChange = (page) => {
-    this.state.history.push(page);
+    this.history.push(page);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
   }
@@ -348,7 +277,7 @@ export default class EstablishClaim extends BaseForm {
         });
 
         if (!this.willCreateEndProduct()) {
-          if (this.state.reviewForm.decisionType.value === FULL_GRANT) {
+          if (this.props.task.appeal.decision_type === FULL_GRANT) {
             this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
             this.handlePageChange(EMAIL_PAGE);
           } else {
@@ -391,7 +320,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).
       then(() => {
-        this.reloadPage();
+        WindowUtil.reloadPage();
       }, () => {
         handleAlert(
         'error',
@@ -420,7 +349,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
       then(() => {
-        this.reloadPage();
+        WindowUtil.reloadPage();
       }, () => {
         handleAlert(
         'error',
@@ -444,7 +373,7 @@ export default class EstablishClaim extends BaseForm {
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/no-email-complete`).
     then(() => {
-      this.reloadPage();
+      WindowUtil.reloadPage();
     }, () => {
       handleAlert(
         'error',
@@ -601,15 +530,10 @@ export default class EstablishClaim extends BaseForm {
 
   render() {
     let {
-      cancelModalDisplay,
-      history,
-      modalSubmitLoading
-    } = this.state;
-
-    let {
       pdfLink,
       pdfjsLink
     } = this.props;
+    let decisionType = this.props.task.appeal.decision_type;
 
     let specialIssues = this.store.getState().specialIssues;
 
@@ -623,8 +547,7 @@ export default class EstablishClaim extends BaseForm {
         { this.isDecisionPage() &&
           <EstablishClaimDecision
             loading={this.state.loading}
-            decisionType={this.state.reviewForm.decisionType}
-            handleCancelTask={this.handleCancelTask}
+            decisionType={decisionType}
             handleFieldChange={this.handleFieldChange}
             handleSubmit={this.handleDecisionPageSubmit}
             pdfLink={pdfLink}
@@ -636,16 +559,15 @@ export default class EstablishClaim extends BaseForm {
           <AssociatePage
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            history={this.history}
             task={this.props.task}
-            decisionType={this.state.reviewForm.decisionType.value}
+            decisionType={decisionType}
             handleAlert={this.props.handleAlert}
             handleAlertClear={this.props.handleAlertClear}
-            handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleAssociatePageSubmit}
             hasAvailableModifers={this.hasAvailableModifers()}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
-            history={history}
           />
         }
         { this.isFormPage() &&
@@ -653,7 +575,6 @@ export default class EstablishClaim extends BaseForm {
             loading={this.state.loading}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
             decisionDate={this.formattedDecisionDate()}
-            handleCancelTask={this.handleCancelTask}
             handleSubmit={this.handleFormPageSubmit}
             handleFieldChange={this.handleFieldChange}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
@@ -669,13 +590,13 @@ export default class EstablishClaim extends BaseForm {
             loading={this.state.loading}
             endProductCreated={this.state.endProductCreated}
             appeal={this.props.task.appeal}
-            decisionType={this.state.reviewForm.decisionType.value}
+            decisionType={decisionType}
             handleSubmit={this.handleNotePageSubmit}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             showNotePageAlert={this.state.showNotePageAlert}
             specialIssues={specialIssues}
-            displayVacolsNote={this.state.reviewForm.decisionType.value !== FULL_GRANT}
+            displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
         }
@@ -683,7 +604,6 @@ export default class EstablishClaim extends BaseForm {
           <EstablishClaimEmail
             loading={this.state.loading}
             appeal={this.props.task.appeal}
-            handleCancelTask={this.handleCancelTask}
             handleEmailSubmit={this.handleEmailPageSubmit}
             handleNoEmailSubmit={this.handleNoEmailPageSubmit}
             regionalOffice={this.getSpecialIssuesRegionalOffice()}
@@ -693,38 +613,11 @@ export default class EstablishClaim extends BaseForm {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
         }
-
-        {cancelModalDisplay && <Modal
-          buttons={[
-            { classNames: ['cf-modal-link', 'cf-btn-link'],
-              name: 'Close',
-              onClick: this.handleModalClose('cancelModalDisplay')
-            },
-            { classNames: ['usa-button', 'usa-button-secondary'],
-              loading: modalSubmitLoading,
-              name: 'Stop processing claim',
-              onClick: this.handleFinishCancelTask
-            }
-          ]}
-          visible={true}
-          closeHandler={this.handleModalClose('cancelModalDisplay')}
-          title="Stop Processing Claim">
-          <p>
-            If you click the <b>Stop processing claim </b>
-            button below your work will not be
-            saved and an EP will not be created for this claim.
-          </p>
-          <p>
-            Please tell us why you have chosen to discontinue processing this claim.
-          </p>
-          <TextareaField
-            label="Explanation"
-            name="Explanation"
-            onChange={this.handleFieldChange('cancelModal', 'cancelFeedback')}
-            required={true}
-            {...this.state.cancelModal.cancelFeedback}
-          />
-        </Modal>}
+        <CancelModal
+          handleAlertClear={this.props.handleAlertClear}
+          handleAlert={this.props.handleAlert}
+          taskId={this.props.task.id}
+        />
         </div>
       </Provider>
     );
