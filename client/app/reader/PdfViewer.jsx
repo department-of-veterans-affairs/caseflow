@@ -4,7 +4,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { connect } from 'react-redux';
 import { handleClearCommentState, handlePlaceComment,
-  handleWriteComment, handleSelectCommentIcon } from '../reader/actions';
+  handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
 
 // PdfViewer is a smart component that renders the entire
@@ -143,11 +143,11 @@ export class PdfViewer extends React.Component {
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
-      if (event.key === 'ArrowLeft') {
-        this.props.onPreviousPdf();
+      if (event.key === 'ArrowLeft' && this.props.prevDocId) {
+        this.props.selectCurrentPdf(this.props.prevDocId);
       }
-      if (event.key === 'ArrowRight') {
-        this.props.onNextPdf();
+      if (event.key === 'ArrowRight' && this.props.nextDocId) {
+        this.props.selectCurrentPdf(this.props.nextDocId);
       }
     }
   }
@@ -209,8 +209,8 @@ export class PdfViewer extends React.Component {
             id="pdf"
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            onNextPdf={this.props.onNextPdf}
-            onPreviousPdf={this.props.onPreviousPdf}
+            prevDocId={this.props.prevDocId}
+            nextDocId={this.props.nextDocId}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
@@ -265,6 +265,7 @@ const mapDispatchToProps = (dispatch) => ({
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
   handleClearCommentState: () => dispatch(handleClearCommentState()),
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
@@ -276,7 +277,6 @@ PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   file: PropTypes.string.isRequired,
-  label: PropTypes.string,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
@@ -287,5 +287,8 @@ PdfViewer.propTypes = {
   handleWriteComment: PropTypes.func,
   handleClearCommentState: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
+  nextDocId: PropTypes.number,
+  prevDocId: PropTypes.number,
+  selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

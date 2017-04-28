@@ -55,6 +55,10 @@ export class ConfirmCaseDetails extends React.Component {
     this.props.updateProgressBar();
   }
 
+  componentWillUnmount() {
+    this.props.resetState();
+  }
+
   representativeTypeIsNone() {
     return this.props.representativeType === Constants.representativeTypes.NONE;
   }
@@ -209,6 +213,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
+  resetState: () => dispatch(certificationActions.resetState()),
+
   changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),
 
   changeRepresentativeType: (type) => dispatch(actions.changeRepresentativeType(type)),
@@ -218,6 +224,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
+
   onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 
   certificationUpdateStart: (props) => {
