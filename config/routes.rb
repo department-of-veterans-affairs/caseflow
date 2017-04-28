@@ -82,7 +82,8 @@ Rails.application.routes.draw do
   get "styleguide", to: "styleguide#show"
 
   get 'help' => 'help#show'
-  get 'help/dispatch' => 'help#dispatch'
+  get 'dispatch/help' => 'help#dispatch'
+  get 'certification/help' => 'help#certification'
   
 
   # alias root to help; make sure to keep this below the canonical route so url_for works

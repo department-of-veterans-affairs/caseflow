@@ -71,6 +71,14 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_name
 
+  def help_url
+    {
+      "Certification" => certification_help_path,
+      "Dispatch" => dispatch_help_path
+    }[logo_name] || help_path
+  end
+  helper_method :help_url
+
   # Link used when clicking logo
   def logo_path
     root_path
