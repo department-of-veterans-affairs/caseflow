@@ -394,9 +394,11 @@ svg[aria-hidden=true],
   }
 }
 
+// scss-lint:disable QualifyingElement
 input[type="search"].cf-search-input-with-close {
   padding-right: 25px;
 }
+// scss-lint:enable QualifyingElement
 
 .cf-search-close-icon {
   margin-left: -20px;

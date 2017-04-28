@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
 
@@ -14,8 +13,8 @@ export const DocumentListHeader = (props) => {
     props.docFilterCriteria.tag[tag]
   );
   const filteredCategories = [].concat(
-    categoryFilters ? ["categories"] : [],
-    tagFilters ? ["tags"] : []).join(" ");
+    categoryFilters ? ['categories'] : [],
+    tagFilters ? ['tags'] : []).join(' ');
 
   return <div>
     <div className="usa-grid-full document-list-header">
@@ -43,7 +42,9 @@ export const DocumentListHeader = (props) => {
       <div className="usa-alert-body">
         <h3 className="usa-alert-heading">Showing limited results</h3>
         <p className="usa-alert-text">Documents are currently
-          filtered by {filteredCategories}. <a onClick={props.clearAllFilters}>
+          filtered by {filteredCategories}. <a
+            id="clear-filters"
+            onClick={props.clearAllFilters}>
           Click here to see all documents.</a></p>
       </div>
     </div>}
@@ -63,8 +64,12 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => dispatch(clearAllFilters()),
-  setSearch: (searchQuery) => {dispatch(setSearch(searchQuery))},
-  clearSearch: () => {dispatch(clearSearch())}
+  setSearch: (searchQuery) => {
+    dispatch(setSearch(searchQuery));
+  },
+  clearSearch: () => {
+    dispatch(clearSearch());
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);

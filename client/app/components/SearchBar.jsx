@@ -14,7 +14,7 @@ export default class SearchBar extends React.Component {
       onClearSearch
     } = this.props;
 
-    const inputClassName = onClearSearch ? "cf-search-input-with-close" : "";
+    const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
 
     return <span className="usa-search usa-search-small" role="search">
       <label className="usa-sr-only" htmlFor={id}>Search small</label>

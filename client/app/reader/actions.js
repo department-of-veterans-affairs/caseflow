@@ -116,7 +116,7 @@ export const setPdfReadyToShow = (docId) => ({
 });
 
 export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS,
+  type: Constants.CLEAR_ALL_FILTERS
 });
 
 export const setAnnotationStorage = (annotationStorage) => ({

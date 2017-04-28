@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
@@ -12,15 +14,16 @@ const commentContainsString = (searchQuery, annotationStorage, doc) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
 
-const categoryContainsString = (searchQuery, doc) => 
+const categoryContainsString = (searchQuery, doc) =>
   Object.keys(Constants.documentCategories).reduce((acc, category) =>
     acc || (category.includes(searchQuery) &&
       doc[categoryFieldNameOfCategoryName(category)])
   , false);
 
 const tagContainsString = (searchQuery, doc) =>
-  Object.keys(doc.tags).reduce((acc, tag) => {
-    return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery)) }
+  Object.keys(doc.tags || {}).reduce((acc, tag) => {
+    return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery));
+  }
   , false);
 
 const searchString = (searchQuery, annotationStorage) => (doc) =>
@@ -30,7 +33,7 @@ const searchString = (searchQuery, annotationStorage) => (doc) =>
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, annotationStorage, doc) ||
       tagContainsString(searchWord, doc));
-  })
+  });
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -435,3 +438,4 @@ export default (state = initialState, action = {}) => {
     return state;
   }
 };
+/* eslint-enable max-lines */

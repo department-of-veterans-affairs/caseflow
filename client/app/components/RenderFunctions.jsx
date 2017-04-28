@@ -263,6 +263,6 @@ export const closeIcon = () => {
         </g>
       </g>
     </g>
-</svg>
-}
+</svg>;
+};
 /* eslint-enable max-len */

@@ -359,7 +359,7 @@ describe('DecisionReviewer', () => {
       });
     });
 
-    context('when filtered by', () => {
+    context('when searched by', () => {
       it('date displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: documents[1].received_at } });
@@ -390,8 +390,7 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(3);
       });
 
-      // We are temporarily dropping this functionality.
-      it.skip('comment displays properly', () => {
+      it('comment displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: annotations[0].comment } });
 
@@ -402,6 +401,23 @@ describe('DecisionReviewer', () => {
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('category displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'medical' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[0].type);
 
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
