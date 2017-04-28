@@ -184,6 +184,9 @@ class Appeal < ActiveRecord::Base
     documents_with_type("Form 9").first
   end
 
+  # This represents the *date* that the decision occurred,
+  # *NOT* a datetime. So if a decision was made in Manila,
+  # it will be the date from Manila's perspective
   def serialized_decision_date
     decision_date ? decision_date.to_formatted_s(:json_date) : ""
   end

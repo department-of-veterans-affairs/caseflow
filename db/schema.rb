@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170424151347) do
+ActiveRecord::Schema.define(version: 20170427191501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,6 +126,14 @@ ActiveRecord::Schema.define(version: 20170424151347) do
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
+  create_table "documents_tags", id: false, force: :cascade do |t|
+    t.integer "document_id", null: false
+    t.integer "tag_id",      null: false
+  end
+
+  add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", using: :btree
+  add_index "documents_tags", ["tag_id", "document_id"], name: "index_documents_tags_on_tag_id_and_document_id", using: :btree
+
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
     t.string   "vacols_id"
@@ -199,9 +207,8 @@ ActiveRecord::Schema.define(version: 20170424151347) do
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
-    t.integer  "document_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tasks", force: :cascade do |t|

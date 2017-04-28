@@ -3,6 +3,9 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { connect } from 'react-redux';
+import { handleClearCommentState, handlePlaceComment,
+  handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -13,8 +16,6 @@ export class PdfViewer extends React.Component {
     this.state = {
       comments: [],
       editingComment: null,
-      isAddingComment: false,
-      isPlacingNote: false,
       onSaveCommentAdd: null,
       onConfirmDelete: null
     };
@@ -79,14 +80,12 @@ export class PdfViewer extends React.Component {
 
   onAddComment = () => {
     if (!this.isUserActive()) {
-      this.setState({
-        isPlacingNote: true
-      });
+      this.props.handlePlaceComment();
     }
   }
 
   placeComment = (pageNumber, coordinates) => {
-    if (this.state.isPlacingNote) {
+    if (this.props.commentFlowState === PLACING_COMMENT_STATE) {
       let annotation = {
         class: 'Annotation',
         page: pageNumber,
@@ -95,9 +94,8 @@ export class PdfViewer extends React.Component {
         y: coordinates.yPosition
       };
 
+      this.props.handleWriteComment();
       this.setState({
-        isAddingComment: true,
-        isPlacingNote: false,
         onSaveCommentAdd: this.onSaveCommentAdd(annotation, pageNumber)
       });
     }
@@ -109,14 +107,15 @@ export class PdfViewer extends React.Component {
       this.props.doc.id,
       pageNumber,
       annotation
-    );
+    ).then((savedAnnotation) => {
+      this.props.handleSelectCommentIcon(savedAnnotation);
+    });
     this.onCancelCommentAdd();
   }
 
   onCancelCommentAdd = () => {
+    this.props.handleClearCommentState();
     this.setState({
-      isAddingComment: false,
-      isPlacingNote: false,
       onSaveCommentAdd: null
     });
   }
@@ -140,16 +139,15 @@ export class PdfViewer extends React.Component {
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.state.editingComment !== null ||
-      this.state.isAddingComment ||
-      this.state.isPlacingNote
+      this.props.commentFlowState
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
-      if (event.key === 'ArrowLeft') {
-        this.props.onPreviousPdf();
+      if (event.key === 'ArrowLeft' && this.props.prevDocId) {
+        this.props.selectCurrentPdf(this.props.prevDocId);
       }
-      if (event.key === 'ArrowRight') {
-        this.props.onNextPdf();
+      if (event.key === 'ArrowRight' && this.props.nextDocId) {
+        this.props.selectCurrentPdf(this.props.nextDocId);
       }
     }
   }
@@ -172,7 +170,7 @@ export class PdfViewer extends React.Component {
   }
 
   componentDidUpdate = () => {
-    if (this.state.isAddingComment) {
+    if (this.props.commentFlowState === WRITING_COMMENT_STATE) {
       let commentBox = document.getElementById('addComment');
 
       commentBox.focus();
@@ -211,8 +209,8 @@ export class PdfViewer extends React.Component {
             id="pdf"
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            onNextPdf={this.props.onNextPdf}
-            onPreviousPdf={this.props.onPreviousPdf}
+            prevDocId={this.props.prevDocId}
+            nextDocId={this.props.nextDocId}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
@@ -226,7 +224,6 @@ export class PdfViewer extends React.Component {
             doc={this.props.doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
-            isAddingComment={this.state.isAddingComment}
             comments={this.state.comments}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.onCancelCommentAdd}
@@ -259,25 +256,39 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: state.ui.pdf.scrollToComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
+const mapDispatchToProps = (dispatch) => ({
+  handlePlaceComment: () => dispatch(handlePlaceComment()),
+  handleWriteComment: () => dispatch(handleWriteComment()),
+  handleClearCommentState: () => dispatch(handleClearCommentState()),
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+});
 
 export default connect(
-  mapStateToProps, null
+  mapStateToProps, mapDispatchToProps
 )(PdfViewer);
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   file: PropTypes.string.isRequired,
-  label: PropTypes.string,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
+  handlePlaceComment: PropTypes.func,
+  handleWriteComment: PropTypes.func,
+  handleClearCommentState: PropTypes.func,
+  handleSelectCommentIcon: PropTypes.func,
+  nextDocId: PropTypes.number,
+  prevDocId: PropTypes.number,
+  selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

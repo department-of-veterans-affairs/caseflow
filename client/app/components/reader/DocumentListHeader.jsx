@@ -1,14 +1,18 @@
 import React, { PropTypes } from 'react';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setSearch } from '../../reader/actions';
+import _ from 'lodash';
 
-const DocumentListHeader = (props) => {
+export const DocumentListHeader = (props) => {
   return <div className="usa-grid-full document-list-header">
     <div className="usa-width-one-third">
       <SearchBar
         id="searchBar"
-        onChange={props.onFilter}
-        value={props.filterBy}
+        onChange={props.setSearch}
+        value={props.searchQuery}
       />
     </div>
     <div className="usa-width-one-third num-of-documents">
@@ -26,9 +30,18 @@ const DocumentListHeader = (props) => {
 };
 
 DocumentListHeader.propTypes = {
-  filterBy: PropTypes.string.isRequired,
-  onFilter: PropTypes.func.isRequired,
+  searchQuery: PropTypes.string.isRequired,
+  setSearch: PropTypes.func.isRequired,
   numberOfDocuments: PropTypes.number.isRequired
 };
 
-export default DocumentListHeader;
+const mapStateToProps = (state) => ({
+  numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
+  ..._.pick(state.ui.docFilterCriteria, 'searchQuery')
+});
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({ setSearch }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);
+
