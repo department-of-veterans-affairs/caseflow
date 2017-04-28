@@ -21,9 +21,9 @@ export default class EstablishClaimComplete extends React.Component {
     } = this.props;
 
     let casesAssigned, employeeCountInt,
-      hasQuotaReached, quotaReachedMessage, successMessages, totalCases;
+      hasQuotaReached, quotaReachedMessage, totalCases;
 
-   quotaReachedMessage = () => {
+    quotaReachedMessage = () => {
       if (hasQuotaReached) {
         return <span>
           <h2>Way to go!</h2> 💪💻🇺🇸<br/>
