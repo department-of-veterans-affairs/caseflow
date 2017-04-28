@@ -9,7 +9,7 @@ class TagController < ApplicationController
     document = Document.find(document_id)
 
     tags_request = tag_params[:tags]
-    tags_request.each do | tag |
+    tags_request.each do |tag|
       tag = Tag.find_or_create_by(tag)
       document.tags << tag
     end
@@ -21,8 +21,7 @@ class TagController < ApplicationController
     document_id = params[:document_id]
     tag_id = params[:id]
 
-    tag = Tag.find(tag_id)
-    document = Document.find(params[:document_id])
+    document = Document.find(document_id)
 
     document.tags.delete(tag_id)
     render(json: { status: :no_content })
