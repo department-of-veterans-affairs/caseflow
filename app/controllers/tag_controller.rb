@@ -10,8 +10,8 @@ class TagController < ApplicationController
 
     tags_request = tag_params[:tags]
     tags_request.each do |tag|
-      tag = Tag.find_or_create_by(tag)
-      document.tags << tag
+      new_tag = Tag.find_or_create_by(tag)
+      document.tags << new_tag
     end
 
     render({ json: document.tags }, status: :created)
