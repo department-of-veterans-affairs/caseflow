@@ -48,6 +48,6 @@ TextareaField.propTypes = {
   onChange: PropTypes.func.isRequired,
   onKeyDown: PropTypes.func,
   type: PropTypes.string,
-  validationError: PropTypes.string,
+  errorMessage: PropTypes.string,
   value: PropTypes.string
 };

@@ -2,7 +2,7 @@ import * as Constants from '../constants';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import StringUtil from '../../util/StringUtil';
 
-export let getSpecialIssuesInitialState = function(props = {}) {
+export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
