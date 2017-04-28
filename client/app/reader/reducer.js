@@ -3,18 +3,81 @@ import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
 
+const metadataContainsString = (searchQuery) => (doc) =>
+  doc.type.toLowerCase().includes(searchQuery) || doc.receivedAt.toLowerCase().includes(searchQuery);
+
+const updateFilteredDocIds = (nextState) => {
+  const { docFilterCriteria } = nextState.ui;
+  const activeCategoryFilters = _(docFilterCriteria.category).
+        toPairs().
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => categoryFieldNameOfCategoryName(key)).
+        value();
+
+  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+
+  const filteredIds = _(nextState.documents).
+    filter(
+      (doc) => !activeCategoryFilters.length ||
+        _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    ).
+    filter(
+      metadataContainsString(searchQuery)
+    ).
+    sortBy(docFilterCriteria.sort.sortBy).
+    map('id').
+    value();
+
+  if (docFilterCriteria.sort.sortAscending) {
+    filteredIds.reverse();
+  }
+
+  return update(nextState, {
+    ui: {
+      filteredDocIds: {
+        $set: filteredIds
+      }
+    }
+  });
+};
+
+const updateLastReadDoc = (state, docId) =>
+  update(
+    state,
+    {
+      ui: {
+        pdfList: {
+          lastReadDocId: {
+            $set: docId
+          }
+        }
+      }
+    }
+  );
+
 export const initialState = {
   ui: {
-    pdf: {},
+    filteredDocIds: null,
+    docFilterCriteria: {
+      sort: {
+        sortBy: 'receivedAt',
+        sortAscending: false
+      },
+      category: {},
+      searchQuery: ''
+    },
+    pdf: {
+      currentRenderedFile: null,
+      pdfsReadyToShow: {},
+      hidePdfSidebar: false
+    },
     pdfSidebar: {
       showTagErrorMsg: false,
+      commentFlowState: null,
       hidePdfSidebar: false
     },
     pdfList: {
       lastReadDocId: null,
-      filters: {
-        category: {}
-      },
       dropdowns: {
         category: false
       }
@@ -28,17 +91,87 @@ export default (state = initialState, action = {}) => {
 
   switch (action.type) {
   case Constants.RECEIVE_DOCUMENTS:
-    return update(
+    return updateFilteredDocIds(update(
       state,
       {
         documents: {
           $set: _(action.payload).
-            map((doc) => [doc.id, doc]).
+            map((doc) => [
+              doc.id, {
+                ...doc,
+                receivedAt: doc.received_at
+              }
+            ]).
             fromPairs().
             value()
         }
       }
-    );
+    ));
+  case Constants.SET_SEARCH:
+    return updateFilteredDocIds(update(state, {
+      ui: {
+        docFilterCriteria: {
+          searchQuery: {
+            $set: action.payload.searchQuery
+          }
+        }
+      }
+    }));
+  case Constants.SET_SORT:
+    return updateFilteredDocIds(update(state, {
+      ui: {
+        docFilterCriteria: {
+          sort: {
+            sortBy: {
+              $set: action.payload.sortBy
+            },
+            sortAscending: {
+              $apply: (prevVal) => !prevVal
+            }
+          }
+        }
+      }
+    }));
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
+    return updateLastReadDoc(update(state, {
+      ui: {
+        pdfSidebar: { showTagErrorMsg: { $set: false } },
+        pdf: {
+          currentRenderedFile: {
+            $set: action.payload.docId
+          }
+        }
+      },
+      documents: {
+        [action.payload.docId]: {
+          $merge: {
+            opened_by_current_user: true
+          }
+        }
+      }
+    }), action.payload.docId);
+  case Constants.UNSELECT_CURRENT_VIEWER_PDF:
+    return update(updateFilteredDocIds(state), {
+      ui: {
+        pdf: {
+          currentRenderedFile: {
+            $set: null
+          }
+        }
+      }
+    });
+  case Constants.SET_PDF_READY_TO_SHOW:
+    return update(state, {
+      ui: {
+        pdf: {
+          pdfsReadyToShow: {
+            $set: {
+              [action.payload.docId]: true
+            }
+          }
+        }
+      }
+    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
 
@@ -117,21 +250,19 @@ export default (state = initialState, action = {}) => {
       }
     );
   case Constants.SET_CATEGORY_FILTER:
-    return update(
+    return updateFilteredDocIds(update(
       state,
       {
         ui: {
-          pdfList: {
-            filters: {
-              category: {
-                [action.payload.categoryName]: {
-                  $set: action.payload.checked
-                }
+          docFilterCriteria: {
+            category: {
+              [action.payload.categoryName]: {
+                $set: action.payload.checked
               }
             }
           }
         }
-      });
+      }));
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
@@ -193,13 +324,6 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SET_CURRENT_RENDERED_FILE:
-    return update(state, {
-      ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
-        pdf: { $merge: _.pick(action.payload, 'currentRenderedFile') }
-      }
-    });
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
@@ -230,18 +354,7 @@ export default (state = initialState, action = {}) => {
       }
     );
   case Constants.LAST_READ_DOCUMENT:
-    return update(
-      state,
-      {
-        ui: {
-          pdfList: {
-            lastReadDocId: {
-              $set: action.payload.docId
-            }
-          }
-        }
-      }
-    );
+    return updateLastReadDoc(state, action.payload.docId);
   case Constants.SET_COMMENT_FLOW_STATE:
     return update(
       state,
