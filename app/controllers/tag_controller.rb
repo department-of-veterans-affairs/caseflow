@@ -25,13 +25,6 @@ class TagController < ApplicationController
     document = Document.find(params[:document_id])
 
     document.tags.delete(tag_id)
-
-    # if the tag is not associated to any document
-    # document is deleted.
-    if tag.documents.length == 0
-      tag.destroy
-    end
-
     render(json: { status: :no_content })
   end
 
