@@ -72,6 +72,5 @@ RSpec.feature "Admin" do
 
     # ensure that the task is unassigned
     expect(Task.to_complete.count).to eq(2)
-    expect(Task.last.prepared_at).not_to be_nil
   end
 end
