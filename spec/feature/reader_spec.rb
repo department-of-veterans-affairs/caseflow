@@ -100,9 +100,12 @@ RSpec.feature "Reader" do
 
       # Add a comment
       click_on "button-AddComment"
+      expect(page).to have_css(".cf-pdf-placing-comment")
 
       # pageContainer1 is the id pdfJS gives to the div holding the first page.
       find("#pageContainer1").click
+
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
       fill_in "addComment", with: "Foo"
       click_on "Save"
 

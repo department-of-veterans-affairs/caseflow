@@ -42,7 +42,7 @@ export class EstablishClaimDecision extends React.Component {
       loading,
       decisionType,
       handleSubmit,
-      handleCancelTask,
+      handleToggleCancelTaskModal,
       handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
@@ -183,7 +183,7 @@ export class EstablishClaimDecision extends React.Component {
              label="Decision type"
              name="decisionType"
              readOnly={true}
-             {...decisionType}
+             value={decisionType}
             />
           </div>
 
@@ -208,7 +208,7 @@ export class EstablishClaimDecision extends React.Component {
           <div className="cf-push-right">
             <Button
                 name="Cancel"
-                onClick={handleCancelTask}
+                onClick={handleToggleCancelTaskModal}
                 classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
@@ -225,8 +225,8 @@ export class EstablishClaimDecision extends React.Component {
 }
 
 EstablishClaimDecision.propTypes = {
-  decisionType: PropTypes.object.isRequired,
-  handleCancelTask: PropTypes.func.isRequired,
+  decisionType: PropTypes.string.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
@@ -234,25 +234,24 @@ EstablishClaimDecision.propTypes = {
   task: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return {
-    specialIssues: state.specialIssues
-  };
-};
+const mapStateToProps = (state) => ({
+  specialIssues: state.specialIssues
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleSpecialIssueFieldChange: (specialIssue) => (value) => {
-      dispatch({
-        type: Constants.CHANGE_SPECIAL_ISSUE,
-        payload: {
-          specialIssue,
-          value
-        }
-      });
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  handleToggleCancelTaskModal: () => {
+    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
+  },
+  handleSpecialIssueFieldChange: (specialIssue) => (value) => {
+    dispatch({
+      type: Constants.CHANGE_SPECIAL_ISSUE,
+      payload: {
+        specialIssue,
+        value
+      }
+    });
+  }
+});
 
 const ConnectedEstablishClaimDecision = connect(
     mapStateToProps,
