@@ -107,8 +107,8 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def savePreparedAt
-    write_attribute(:prepared_at, Time.zone.now)
+  def save_prepared_at
+    self[:prepared_at] = Time.zone.now
     save!
   end
 
@@ -120,7 +120,7 @@ class Task < ActiveRecord::Base
     #  tasks attached to appeals that do not have decision documents. Tasks that are
     #  in this state cannot be assigned to users. All tasks are in this state
     #  immediately after creation.
-    event :prepare, :after => :savePreparedAt do
+    event :prepare, after: :save_prepared_at do
       transitions from: :unprepared, to: :unassigned
     end
 
