@@ -7,6 +7,13 @@ export const onReceiveDocs = (documents) => ({
   payload: documents
 });
 
+export const setSearch = (searchQuery) => ({
+  type: Constants.SET_SEARCH,
+  payload: {
+    searchQuery
+  }
+});
+
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
   payload: { scrollToComment }
@@ -63,8 +70,23 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
-export const selectCurrentPdf = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
+export const selectCurrentPdf = (docId) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}/mark-as-read`).
+    catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error marking as read', docId, err);
+    });
+
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
+};
+
+export const unselectPdf = (docId) => ({
+  type: Constants.UNSELECT_CURRENT_VIEWER_PDF,
   payload: {
     docId
   }
@@ -83,6 +105,13 @@ export const removeTagRequestSuccess = (docId, tagId) => ({
   payload: {
     docId,
     tagId
+  }
+});
+
+export const setPdfReadyToShow = (docId) => ({
+  type: Constants.SET_PDF_READY_TO_SHOW,
+  payload: {
+    docId
   }
 });
 

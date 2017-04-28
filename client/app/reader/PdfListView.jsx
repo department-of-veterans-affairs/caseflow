@@ -92,13 +92,7 @@ export class PdfListView extends React.Component {
   }
 
   getDocumentColumns = () => {
-    let className;
-
-    if (this.props.sortDirection === 'ascending') {
-      className = 'fa-caret-down';
-    } else {
-      className = 'fa-caret-up';
-    }
+    const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-up' : 'fa-caret-down';
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
       aria-hidden="true"></i>;
@@ -121,7 +115,7 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.pdfList.filters.category));
+    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.category));
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -190,7 +184,7 @@ export class PdfListView extends React.Component {
                 isClearEnabled={anyCategoryFiltersAreSet}
                 handleClose={toggleCategoryDropdownFilterVisiblity}>
                 <DocCategoryPicker
-                  categoryToggleStates={this.props.pdfList.filters.category}
+                  categoryToggleStates={this.props.docFilterCriteria.category}
                   handleCategoryToggle={this.props.setCategoryFilter} />
               </DropdownFilter>
             }
@@ -202,8 +196,8 @@ export class PdfListView extends React.Component {
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
-            onClick={this.props.changeSortState('date')}>
-            Receipt Date {this.props.sortBy === 'date' ? sortIcon : notsortedIcon}
+            onClick={() => this.props.changeSortState('receivedAt')}>
+            Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
@@ -211,8 +205,8 @@ export class PdfListView extends React.Component {
             </span>
         },
         {
-          header: <div id="type-header" onClick={this.props.changeSortState('type')}>
-            Document Type {this.props.sortBy === 'type' ? sortIcon : notsortedIcon}
+          header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
+            Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) => boldUnreadContent(
             <a
@@ -242,7 +236,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => {
             const numberOfComments = this.props.annotationStorage.
               getAnnotationByDocumentId(doc.id).length;
-            const icon = `fa fa-3 ${this.props.reduxDocuments[doc.id].listComments ?
+            const icon = `fa fa-3 ${doc.listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
 
@@ -278,7 +272,9 @@ export class PdfListView extends React.Component {
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
-      if (this.props.reduxDocuments[row.id].listComments) {
+      const doc = _.find(this.props.documents, _.pick(row, 'id'));
+
+      if (doc.listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -291,12 +287,7 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <DocumentListHeader
-            documents={this.props.documents}
-            onFilter={this.props.onFilter}
-            filterBy={this.props.filterBy}
-            numberOfDocuments={this.props.numberOfDocuments}
-          />
+          <DocumentListHeader documents={this.props.documents} />
           <div>
             <Table
               columns={this.getDocumentColumns()}
@@ -313,13 +304,19 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'pdfList'),
-
-  // Should be merged with documents when we finish integrating redux
-  reduxDocuments: state.documents
+  ..._.pick(state.ui, ['pdfList']),
+  ..._.pick(state.ui, ['docFilterCriteria'])
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  changeSortState(sortBy) {
+    dispatch({
+      type: Constants.SET_SORT,
+      payload: {
+        sortBy
+      }
+    });
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
@@ -353,12 +350,8 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  filterBy: PropTypes.string.isRequired,
-  numberOfDocuments: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
-  reduxDocuments: PropTypes.object.isRequired,
   handleToggleCommentOpened: PropTypes.func.isRequired,
   pdfList: PropTypes.shape({
     lastReadDocId: PropTypes.number

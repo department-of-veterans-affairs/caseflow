@@ -46,26 +46,6 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
-      context('when onNextPdf function is supplied', () => {
-        it('renders the next PDF button', () => {
-          expect(wrapper.find({ name: 'next' })).to.have.length(0);
-          let onNextPdf = sinon.spy();
-
-          wrapper.setProps({ onNextPdf });
-          expect(wrapper.find({ name: 'next' })).to.have.length(1);
-        });
-      });
-
-      context('when onPreviousPdf function is supplied', () => {
-        it('renders the previous PDF button', () => {
-          expect(wrapper.find({ name: 'previous' })).to.have.length(0);
-          let onPreviousPdf = sinon.spy();
-
-          wrapper.setProps({ onPreviousPdf });
-          expect(wrapper.find({ name: 'previous' })).to.have.length(1);
-        });
-      });
-
       context('when onShowList function is supplied', () => {
         it('renders the back to document list button', () => {
           expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);

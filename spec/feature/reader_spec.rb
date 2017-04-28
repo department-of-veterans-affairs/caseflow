@@ -216,8 +216,8 @@ RSpec.feature "Reader" do
     end
 
     scenario "Open single document view and manipulate UI" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}?" \
-            "type=BVA%20Decision&received_at=2017-04-14&filename=filename.pdf"
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
 
       # Expect only the first page of the pdf to be rendered
       find("#button-hide-menu").click

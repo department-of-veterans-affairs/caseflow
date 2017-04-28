@@ -5,9 +5,9 @@ import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import _ from 'lodash';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 
@@ -24,12 +24,13 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
+    const store = createStore(readerReducer, applyMiddleware(thunk));
+
     wrapper = mount(
-      <Provider store={createStore(readerReducer)}>
+      <Provider store={store}>
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
-          onReceiveDocs={_.noop}
           pdfWorker="worker"
           url="url"
         />
@@ -90,9 +91,9 @@ describe('DecisionReviewer', () => {
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
-        // Filter documents on the second document's comment
+        // Filter documents on the second document's type
         wrapper.find('input').simulate('change',
-          { target: { value: annotations[0].comment } });
+          { target: { value: documents[1].type } });
 
         // Enter the pdf view
         wrapper.find('a').findWhere(
@@ -340,21 +341,21 @@ describe('DecisionReviewer', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-down')).to.be.true;
+          hasClass('fa-caret-up')).to.be.true;
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[0].type);
-        expect(textArray[2]).to.include(documents[1].type);
+        expect(textArray[1]).to.include(documents[1].type);
+        expect(textArray[2]).to.include(documents[0].type);
 
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-up')).to.be.true;
+          hasClass('fa-caret-down')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[1].type);
-        expect(textArray[2]).to.include(documents[0].type);
+        expect(textArray[1]).to.include(documents[0].type);
+        expect(textArray[2]).to.include(documents[1].type);
       });
     });
 
@@ -389,7 +390,8 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(3);
       });
 
-      it('comment displays properly', () => {
+      // We are temporarily dropping this functionality.
+      it.skip('comment displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: annotations[0].comment } });
 

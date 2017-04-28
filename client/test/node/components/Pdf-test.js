@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { Pdf } from '../../../app/components/Pdf';
 import sinon from 'sinon';
+import _ from 'lodash';
 
 import PdfJsStub from '../../helpers/PdfJsStub';
 
@@ -30,6 +31,7 @@ describe('Pdf', () => {
         documentId={documents[0].id}
         file="test.pdf"
         id={pdfId}
+        setPdfReadyToShow={_.noop}
         pdfWorker="noworker"
         scale={1}
       />, { attachTo: document.getElementById('app') });
