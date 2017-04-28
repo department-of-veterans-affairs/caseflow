@@ -8,17 +8,29 @@ const metadataContainsString = (searchQuery, doc) =>
   doc.receivedAt.toLowerCase().includes(searchQuery);
 
 const commentContainsString = (searchQuery, annotationStorage, doc) =>
-  annotationStorage.getAnnotationByDocumentId(doc.id).reduce((acc, annotation) => {
-    return acc || annotation.comment.toLowerCase().includes(searchQuery);
-  }, false);
+  annotationStorage.getAnnotationByDocumentId(doc.id).reduce((acc, annotation) =>
+    acc || annotation.comment.toLowerCase().includes(searchQuery)
+  , false);
 
 const categoryContainsString = (searchQuery, doc) => 
-  doc[categoryFieldNameOfCategoryName(searchQuery)];
+  Object.keys(Constants.documentCategories).reduce((acc, category) =>
+    acc || (category.includes(searchQuery) &&
+      doc[categoryFieldNameOfCategoryName(category)])
+  , false);
+
+const tagContainsString = (searchQuery, doc) =>
+  Object.keys(doc.tags).reduce((acc, tag) => {
+    return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery)) }
+  , false);
 
 const searchString = (searchQuery, annotationStorage) => (doc) =>
-  metadataContainsString(searchQuery, doc) ||
-  categoryContainsString(searchQuery, doc) ||
-  commentContainsString(searchQuery, annotationStorage, doc);
+  !searchQuery || searchQuery.split(' ').some((searchWord) => {
+    return searchWord.length > 0 && (
+      metadataContainsString(searchWord, doc) ||
+      categoryContainsString(searchWord, doc) ||
+      commentContainsString(searchWord, annotationStorage, doc) ||
+      tagContainsString(searchWord, doc));
+  })
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -33,7 +45,7 @@ const updateFilteredDocIds = (nextState) => {
   const filteredIds = _(nextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
-        _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
     filter(
       searchString(searchQuery, nextState.annotationStorage)

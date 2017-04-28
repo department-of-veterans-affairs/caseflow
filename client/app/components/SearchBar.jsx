@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { closeIcon } from './RenderFunctions'
+import { closeIcon } from './RenderFunctions';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
