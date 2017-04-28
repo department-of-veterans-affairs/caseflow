@@ -137,12 +137,12 @@ class EstablishClaimsController < TasksController
   end
 
   def team_quota
-    tasks.todays_quota
+    @team_quota ||= tasks.todays_quota
   end
   helper_method :team_quota
 
   def user_quota
-    team_quota.assigned_quotas.find_by(user: current_user)
+    @user_quota ||= team_quota.assigned_quotas.find_by(user: current_user)
   end
   helper_method :user_quota
 
