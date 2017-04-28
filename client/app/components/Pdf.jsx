@@ -6,7 +6,7 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -382,14 +382,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setPdfReadyToShow(docId) {
-    dispatch({
-      type: Constants.SET_PDF_READY_TO_SHOW,
-      payload: {
-        docId
-      }
-    });
-  },
+  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
@@ -426,5 +419,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   commentFlowState: PropTypes.string,
+  setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };

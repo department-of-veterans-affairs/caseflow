@@ -136,7 +136,7 @@ export class PdfUI extends React.Component {
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
-              onClick={() => this.props.goToDoc(this.props.prevDocId)}
+              onClick={() => this.props.selectCurrentPdf(this.props.prevDocId)}
               ariaLabel="previous PDF">
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
@@ -146,7 +146,7 @@ export class PdfUI extends React.Component {
             <Button
               name="next"
               classNames={['cf-pdf-button cf-right-side']}
-              onClick={() => this.props.goToDoc(this.props.nextDocId)}
+              onClick={() => this.props.selectCurrentPdf(this.props.nextDocId)}
               ariaLabel="next PDF">
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
             </Button>
@@ -178,9 +178,7 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => state.ui.pdf;
 const mapDispatchToProps = (dispatch) => ({
-  goToDoc(docId) {
-    dispatch(selectCurrentPdf(docId));
-  },
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   handleTogglePdfSidebar() {
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
@@ -214,5 +212,8 @@ PdfUI.propTypes = {
   onCommentScrolledTo: PropTypes.func,
   onIconMoved: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
+  nextDocId: PropTypes.number,
+  prevDocId: PropTypes.number,
+  selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

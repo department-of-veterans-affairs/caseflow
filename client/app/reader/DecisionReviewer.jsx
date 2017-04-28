@@ -84,12 +84,6 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  selectComments = () => {
-    this.setState({
-      isCommentLabelSelected: !this.state.isCommentLabelSelected
-    });
-  }
-
   onJumpToComment = (comment) => () => {
     this.props.selectCurrentPdf(comment.documentId);
     this.props.onScrollToComment(comment);
@@ -122,7 +116,6 @@ export class DecisionReviewer extends React.Component {
           showPdf={this.showPdf}
           sortBy={this.state.sortBy}
           selectedLabels={this.state.selectedLabels}
-          selectComments={this.selectComments}
           isCommentLabelSelected={this.state.isCommentLabelSelected}
           onJumpToComment={this.onJumpToComment} />}
         {shouldRenderPdf && <PdfViewer
