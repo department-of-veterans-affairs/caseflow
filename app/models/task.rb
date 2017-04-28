@@ -107,11 +107,6 @@ class Task < ActiveRecord::Base
     end
   end
 
-  def save_prepared_at
-    self[:prepared_at] = Time.zone.now
-    save!
-  end
-
   aasm do
     state :unprepared, initial: true
     state :unassigned, :assigned, :started, :reviewed, :completed
@@ -120,7 +115,8 @@ class Task < ActiveRecord::Base
     #  tasks attached to appeals that do not have decision documents. Tasks that are
     #  in this state cannot be assigned to users. All tasks are in this state
     #  immediately after creation.
-    event :prepare, after: :save_prepared_at do
+    event :prepare do
+      before :before_prepared
       transitions from: :unprepared, to: :unassigned
     end
 
@@ -233,6 +229,10 @@ class Task < ActiveRecord::Base
 
   def before_started
     assign_attributes(started_at: Time.now.utc)
+  end
+
+  def before_prepared
+    assign_attributes(prepared_at: Time.now.utc)
   end
 
   def before_invalidation
