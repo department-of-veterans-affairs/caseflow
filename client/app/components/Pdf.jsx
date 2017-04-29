@@ -6,7 +6,7 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
 const DOCUMENT_DEBOUNCE_TIME = 500;
 
@@ -205,12 +205,11 @@ export class Pdf extends React.Component {
         }, () => {
           resolve();
         });
+        this.props.setPdfReadyToShow(this.props.documentId);
 
         if (this.props.onPageChange) {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
-
-        this.props.handleSetCurrentRenderedFile(this.props.documentId);
 
         // Scroll to the correct location on the page
         this.scrollWindow.scrollTop = scrollLocation;
@@ -273,7 +272,7 @@ export class Pdf extends React.Component {
 
     if (this.props.scrollToComment) {
       if (this.props.currentRenderedFile === this.props.scrollToComment.documentId &&
-        this.state.pdfDocument) {
+        this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
       }
@@ -379,6 +378,7 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
     currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
     commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
@@ -386,12 +386,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleSetCurrentRenderedFile(currentRenderedFile) {
-    dispatch({
-      type: Constants.SET_CURRENT_RENDERED_FILE,
-      payload: { currentRenderedFile }
-    });
-  },
+  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
@@ -415,7 +410,6 @@ Pdf.propTypes = {
   currentRenderedFile: PropTypes.number,
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
-  handleSetCurrentRenderedFile: PropTypes.func.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
@@ -429,5 +423,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   commentFlowState: PropTypes.string,
+  setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };

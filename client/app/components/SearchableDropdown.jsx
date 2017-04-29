@@ -4,8 +4,6 @@ import _ from 'lodash';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
-
-
 const DEFAULT_PLACEHOLDER = 'Select option';
 
 class SearchableDropdown extends Component {
