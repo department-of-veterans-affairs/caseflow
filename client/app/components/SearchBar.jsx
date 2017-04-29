@@ -28,6 +28,7 @@ export default class SearchBar extends React.Component {
         value={value}/>
       {onClearSearch &&
         <Button
+          ariaLabel="clear search"
           name="clear search"
           classNames={['cf-pdf-button cf-search-close-icon']}
           onClick={onClearSearch}>
