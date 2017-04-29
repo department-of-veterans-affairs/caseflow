@@ -7,7 +7,7 @@ import React from 'react';
   render () {
     return (
       <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt"></div>
-        
+       
      );
   }
 }
