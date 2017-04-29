@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { closeIcon } from './RenderFunctions';
+import Button from './Button';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -26,11 +27,12 @@ export default class SearchBar extends React.Component {
         name="search"
         value={value}/>
       {onClearSearch &&
-        <span
-          className="cf-search-close-icon"
+        <Button
+          name="clear search"
+          classNames={['cf-pdf-button cf-search-close-icon']}
           onClick={onClearSearch}>
           {closeIcon()}
-        </span>}
+        </Button>}
       <button onClick={onClick} type="submit">
         <span className="usa-sr-only">Search</span>
       </button>

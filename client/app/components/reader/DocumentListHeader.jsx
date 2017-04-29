@@ -43,6 +43,7 @@ export const DocumentListHeader = (props) => {
         <h3 className="usa-alert-heading">Showing limited results</h3>
         <p className="usa-alert-text">Documents are currently
           filtered by {filteredCategories}. <a
+            href="#"
             id="clear-filters"
             onClick={props.clearAllFilters}>
           Click here to see all documents.</a></p>

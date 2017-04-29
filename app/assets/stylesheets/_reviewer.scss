@@ -171,7 +171,7 @@ svg[aria-hidden=true],
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 8px !important;
+  margin: 0 8px;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -400,7 +400,7 @@ input[type="search"].cf-search-input-with-close {
 }
 // scss-lint:enable QualifyingElement
 
-.cf-search-close-icon {
+[type="button"].cf-search-close-icon {
   margin-left: -20px;
   margin-top: 6px;
   position: absolute;
