@@ -1,64 +1,19 @@
 import React from 'react';
-import InlineForm from '../../components/InlineForm';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import DropdownMenu from '../../components/DropdownMenu';
+import Actions from '../../components/Actions';
 import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
 
 export default class StyleGuideLayout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
-  handleMenuClick = () => {
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
-
-  options = () => {
-    return [
-      {
-        title: 'Help',
-        link: '#layout'
-      },
-      {
-        title: 'Send feedback',
-        link: '#layout'
-      },
-      {
-        title: 'Whats New?*',
-        link: '#layout'
-      },
-      {
-        title: 'Switch User',
-        link: '#layout'
-      },
-      {
-        title: 'Sign out',
-        link: '#layout'
-      }
-    ];
-  }
-
-  render() {
-    let {
-      name
-    } = this.props;
-
-    name = 'Dispatch';
-
-    return <div>
+   render () {
+    return ( 
+   <div>
       <StyleGuideComponentTitle
         title="Layout"
         id="layout"
         link="StyleGuideLayout.jsx"
+        isSubsection={true}
       />
-
-      <h3> Actions </h3>
-
       <p>
         For most task-based pages, Primary and Secondary Actions sit under the App Canvas.
         The number of actions per page should be limited intentionally.
@@ -76,31 +31,13 @@ export default class StyleGuideLayout extends React.Component {
         These are actions that allow the user to move back a step
         or completely leave the task they’re working on.
       </p>
-
-      <p>
+       <p>
         The consistent layout and arrangement of these actions reinforces the users mental model as the use Caseflow.
         You should avoid placing these actions in other parts of the page without good reason.
-      </p>
-
-      <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-          <a href="#" id="cf-logo-link">
-            <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-dispatch">
-            </span>Caseflow</h1>
-          </a>
-          <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
-
-           <div className="cf-dropdown cf-nav-dropdown">
-            <DropdownMenu
-              options={this.options()}
-              onClick={this.handleMenuClick}
-              onBlur={this.handleMenuClick}
-              label="Establish Claim(DSUSER)"
-              menu={this.state.menu}
-              />
-           </div>
-      </div>
+       </p>
+      <Actions />
       <p>
-        <div className="cf-app-segment" id="establish-claim-buttons">
+         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="usa-width-one-half">
            <InlineForm>
             <span><Button
@@ -119,8 +56,8 @@ export default class StyleGuideLayout extends React.Component {
           />
          </div>
         </div>
-      </p>
-
-    </div>;
-  }
+        </p>
+    </div> 
+      );
+     }
   }
