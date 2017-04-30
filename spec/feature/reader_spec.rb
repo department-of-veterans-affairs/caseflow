@@ -73,6 +73,8 @@ RSpec.feature "Reader" do
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
 
+      expect(page).to have_content("Showing limited results")
+
       find("#receipt-date-header").click
       expect_dropdown_filter_to_be_hidden
 
@@ -84,8 +86,12 @@ RSpec.feature "Reader" do
       find("#categories-header .table-icon").send_keys :enter
       expect_dropdown_filter_to_be_hidden
 
+      find("#clear-filters").click
+
       find("#categories-header .table-icon").send_keys :enter
       expect_dropdown_filter_to_be_visible
+
+      expect(find("#procedural", visible: false).checked?).to be false
     end
 
     scenario "Add comment" do
@@ -170,6 +176,25 @@ RSpec.feature "Reader" do
             y: 750
           )
         ]
+      end
+
+      scenario "Expand All button" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on "Expand all"
+        expect(page).to have_content("another comment")
+        expect(page).to have_content("how's it going")
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when a comment is closed, the button is changed to expand all
+        expect(page).to have_button("Expand all")
+
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when that comment is reopened, the button is changed to collapse all
+        click_on "Collapse all"
+        expect(page).not_to have_content("another comment")
+        expect(page).not_to have_content("how's it going")
       end
 
       scenario "Scroll to comment" do
@@ -326,6 +351,19 @@ RSpec.feature "Reader" do
 
       # verify that the tags on the previous document still exist
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+    end
+
+    scenario "Search and Filter" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      fill_in "searchBar", with: "BVA"
+
+      expect(page).to have_content("BVA")
+      expect(page).to_not have_content("Form 9")
+
+      find(".cf-search-close-icon").click
+
+      expect(page).to have_content("Form 9")
     end
   end
 
