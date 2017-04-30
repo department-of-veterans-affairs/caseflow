@@ -1,6 +1,4 @@
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
-import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
 
 const TagSelector = (props) => {

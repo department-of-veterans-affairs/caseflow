@@ -79,12 +79,6 @@ export class PdfListView extends React.Component {
     this.setTagFilterIconPosition();
   }
 
-  componentDidUpdate() {
-    console.log("did update");
-    //this.setCategoryFilterIconPosition();
-    //this.setTagFilterIconPosition();
-  }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.setCategoryFilterIconPosition);
     window.removeEventListener('resize', this.setTagFilterIconPosition);
