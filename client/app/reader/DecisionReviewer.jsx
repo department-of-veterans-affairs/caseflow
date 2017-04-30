@@ -114,7 +114,6 @@ export class DecisionReviewer extends React.Component {
       sortBy={this.state.sortBy}
       selectedLabels={this.state.selectedLabels}
       isCommentLabelSelected={this.state.isCommentLabelSelected}
-      documentPathBase={`/${vacolsId}/documents/`}
       onJumpToComment={this.onJumpToComment}
       {...routerProps}
     />;
@@ -141,15 +140,13 @@ export class DecisionReviewer extends React.Component {
 
   render() {
     return <Router basename="/reader/appeal">
-      <div>
+      <div className="section--document-list">
         <Route path="/:vacolsId/documents"
           component={this.routedPdfListView}
         />
-      <div className="section--document-list">
         <Route path="/:vacolsId/documents/:docId"
           component={this.routedPdfViewer}
         />
-      </div>
     </div>
    </Router>;
   }

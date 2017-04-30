@@ -13,7 +13,7 @@ export const linkToSingleDocumentView = (doc) => {
   let type = doc.type;
   let receivedAt = doc.receivedAt;
 
-  return `${window.location.href}/${id}?type=${type}` +
+  return `${window.location.href}?type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
