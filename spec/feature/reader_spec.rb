@@ -178,15 +178,17 @@ RSpec.feature "Reader" do
         click_on "Expand all"
         expect(page).to have_content("another comment")
         expect(page).to have_content("how's it going")
-        expect(page).to have_content("my mother is a fish")
-        expect(page).to have_content("baby metal 4 lyfe")
-        expect(page).to have_content("hello world")
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when a comment is closed, the button is changed to expand all
+        expect(page).to have_button("Expand all")
+
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when that comment is reopened, the button is changed to collapse all
         click_on "Collapse all"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
-        expect(page).not_to have_content("my mother is a fish")
-        expect(page).not_to have_content("baby metal 4 lyfe")
-        expect(page).not_to have_content("hello world")
       end
 
       scenario "Scroll to comment" do
