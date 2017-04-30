@@ -85,17 +85,17 @@ export class PdfListView extends React.Component {
   }
 
   setCategoryFilterIconPosition = () => {
-    this.setState({
-      filterPositions: _.merge(this.state.filterPositions, {
-        category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
-      })
-    });
+    this.setFilterIconPosition('category', this.categoryFilterIcon);
   }
 
   setTagFilterIconPosition = () => {
+    this.setFilterIconPosition('tag', this.tagFilterIcon);
+  }
+
+  setFilterIconPosition = (filterType, icon) => {
     this.setState({
       filterPositions: _.merge(this.state.filterPositions, {
-        tag: _.merge({}, this.tagsFilterIcon.getBoundingClientRect())
+        [filterType]: _.merge({}, icon.getBoundingClientRect())
       })
     });
   }
@@ -131,8 +131,12 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.category));
-    const anyTagFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.tag));
+    const anyFiltersSet = (filterType) => (
+      Boolean(_.some(this.props.docFilterCriteria[filterType]))
+    );
+
+    const anyCategoryFiltersAreSet = anyFiltersSet('category');
+    const anyTagFiltersAreSet = anyFiltersSet('tag');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -242,8 +246,8 @@ export class PdfListView extends React.Component {
             Issue Tags <FilterIcon
               label="Filter by tag"
               idPrefix="tag"
-              getRef={(tagsFilterIcon) => {
-                this.tagsFilterIcon = tagsFilterIcon;
+              getRef={(tagFilterIcon) => {
+                this.tagFilterIcon = tagFilterIcon;
               }}
               selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
               handleActivate={toggleTagDropdownFilterVisiblity}
