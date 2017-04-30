@@ -1,10 +1,9 @@
+/* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
-
-const metadataContainsString = (searchQuery) => (doc) =>
-  doc.type.toLowerCase().includes(searchQuery) || doc.receivedAt.toLowerCase().includes(searchQuery);
+import { searchString } from './search';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -19,10 +18,10 @@ const updateFilteredDocIds = (nextState) => {
   const filteredIds = _(nextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
-        _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
     filter(
-      metadataContainsString(searchQuery)
+      searchString(searchQuery, nextState.annotationStorage)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -75,6 +74,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  annotationStorage: null,
   ui: {
     filteredDocIds: null,
     expandAll: false,
@@ -84,6 +84,7 @@ export const initialState = {
         sortAscending: false
       },
       category: {},
+      tag: {},
       searchQuery: ''
     },
     pdf: {
@@ -304,6 +305,21 @@ export default (state = initialState, action = {}) => {
           }
         }
       }));
+  case Constants.CLEAR_ALL_FILTERS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            category: {
+              $set: {}
+            },
+            tag: {
+              $set: {}
+            }
+          }
+        }
+      }));
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
@@ -421,7 +437,30 @@ export default (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_ANNOTATION_STORAGE:
+    return update(
+      state,
+      {
+        annotationStorage: {
+          $set: action.payload.annotationStorage
+        }
+      }
+    );
+  case Constants.CLEAR_ALL_SEARCH:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            searchQuery: {
+              $set: ''
+            }
+          }
+        }
+      }
+    ));
   default:
     return state;
   }
 };
+/* eslint-enable max-lines */
