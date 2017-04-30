@@ -12,6 +12,7 @@ import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
+import DocTagPicker from './DocTagPicker';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -73,18 +74,35 @@ export class PdfListView extends React.Component {
     }
 
     window.addEventListener('resize', this.setCategoryFilterIconPosition);
+    window.addEventListener('resize', this.setTagFilterIconPosition);
     this.setCategoryFilterIconPosition();
+    this.setTagFilterIconPosition();
+  }
+
+  componentDidUpdate() {
+    console.log("did update");
+    //this.setCategoryFilterIconPosition();
+    //this.setTagFilterIconPosition();
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.setCategoryFilterIconPosition);
+    window.removeEventListener('resize', this.setTagFilterIconPosition);
   }
 
   setCategoryFilterIconPosition = () => {
     this.setState({
-      filterPositions: {
+      filterPositions: _.merge(this.state.filterPositions, {
         category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
-      }
+      })
+    });
+  }
+
+  setTagFilterIconPosition = () => {
+    this.setState({
+      filterPositions: _.merge(this.state.filterPositions, {
+        tag: _.merge({}, this.tagsFilterIcon.getBoundingClientRect())
+      })
     });
   }
 
@@ -110,6 +128,9 @@ export class PdfListView extends React.Component {
 
     const toggleCategoryDropdownFilterVisiblity = () =>
       this.props.toggleDropdownFilterVisiblity('category');
+
+    const toggleTagDropdownFilterVisiblity = () =>
+      this.props.toggleDropdownFilterVisiblity('tag');
 
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
@@ -151,6 +172,9 @@ export class PdfListView extends React.Component {
       const isCategoryDropdownFilterOpen =
         _.get(this.props.pdfList, ['dropdowns', 'category']);
 
+      const isTagDropdownFilterOpen =
+        _.get(this.props.pdfList, ['dropdowns', 'tag']);
+
       return [
         {
           valueFunction: (doc) => {
@@ -182,6 +206,7 @@ export class PdfListView extends React.Component {
             {isCategoryDropdownFilterOpen &&
               <DropdownFilter baseCoordinates={this.state.filterPositions.category}
                 clearFilters={clearFilters}
+                name="category"
                 isClearEnabled={anyCategoryFiltersAreSet}
                 handleClose={toggleCategoryDropdownFilterVisiblity}>
                 <DocCategoryPicker
@@ -217,9 +242,29 @@ export class PdfListView extends React.Component {
             </a>, doc)
         },
         {
-          header: <div id="issue-tags-header"
-            className="document-list-header-issue-tags">
-            Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
+          header: <div id="tag-tags-header"
+            className="document-list-header-tag-tags">
+            Issue Tags <FilterIcon
+              label="Filter by tag"
+              idPrefix="tag"
+              getRef={(tagsFilterIcon) => {
+                this.tagsFilterIcon = tagsFilterIcon;
+              }}
+              selected={''}
+              handleActivate={toggleTagDropdownFilterVisiblity}
+            />
+            {isTagDropdownFilterOpen &&
+              <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
+                clearFilters={clearFilters}
+                name="tag"
+                isClearEnabled={anyCategoryFiltersAreSet}
+                handleClose={toggleTagDropdownFilterVisiblity}>
+                <DocTagPicker
+                  tags={this.props.tagOptions}
+                  tagToggleStates={this.props.docFilterCriteria.tag}
+                  handleTagToggle={this.props.setTagFilter} />
+              </DropdownFilter>
+            }
           </div>,
           valueFunction: (doc) => {
             return <TagTableColumn
@@ -307,6 +352,7 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  ..._.pick(state, ['tagOptions']),
   ..._.pick(state.ui, ['pdfList']),
   ..._.pick(state.ui, ['docFilterCriteria'])
 });
@@ -333,6 +379,15 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SET_CATEGORY_FILTER,
       payload: {
         categoryName,
+        checked
+      }
+    });
+  },
+  setTagFilter(text, checked) {
+    dispatch({
+      type: Constants.SET_TAG_FILTER,
+      payload: {
+        text,
         checked
       }
     });
