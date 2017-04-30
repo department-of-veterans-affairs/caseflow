@@ -36,27 +36,7 @@ export default class StyleGuideLayout extends React.Component {
         You should avoid placing these actions in other parts of the page without good reason.
        </p>
       <Actions />
-      <p>
-         <div className="cf-app-segment" id="establish-claim-buttons">
-          <div className="usa-width-one-half">
-           <InlineForm>
-            <span><Button
-               name="Back to Preview"
-               classNames={['cf-btn-link']} />
-            </span>
-          </InlineForm>
-         </div>
-
-         <div className ="cf-push-right">
-           <Button
-            name="Cancel"
-           classNames={['cf-btn-link']}/>
-          <Button
-            name="Submit End Product"
-          />
-         </div>
-        </div>
-        </p>
+      
     </div> 
       );
      }
