@@ -1,8 +1,11 @@
 import React, { PropTypes } from 'react';
+import _ from 'lodash';
+import { connect } from 'react-redux';
+
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
+import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { connect } from 'react-redux';
 import { handleClearCommentState, handlePlaceComment,
   handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
@@ -23,7 +26,14 @@ export class PdfViewer extends React.Component {
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  onCommentChange = (documentId = this.props.doc.id) => {
+  componentWillMount() {
+    // On fresh page load, ensure we sync react router with redux
+    if (!this.props.selectedDocId) {
+      this.props.handleSelectCurrentPdf(Number(this.props.match.params.docId));
+    }
+  }
+
+  onCommentChange = (documentId = this.selectedDocId()) => {
     this.setState({
       comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)]
     });
@@ -38,7 +48,7 @@ export class PdfViewer extends React.Component {
   onDeleteComment = (uuid) => {
     let onConfirmDelete = () => {
       this.props.annotationStorage.deleteAnnotation(
-        this.props.doc.id,
+        this.selectedDocId(),
         uuid
       );
       this.closeConfirmDeleteModal();
@@ -59,12 +69,12 @@ export class PdfViewer extends React.Component {
 
   onSaveCommentEdit = (comment) => {
     this.props.annotationStorage.getAnnotation(
-      this.props.doc.id,
+      this.selectedDocId(),
       this.state.editingComment
     ).then((annotation) => {
       annotation.comment = comment;
       this.props.annotationStorage.editAnnotation(
-        this.props.doc.id,
+        this.selectedDocId(),
         annotation.uuid,
         annotation
       );
@@ -104,7 +114,7 @@ export class PdfViewer extends React.Component {
   onSaveCommentAdd = (annotation, pageNumber) => (content) => {
     annotation.comment = content;
     this.props.annotationStorage.addAnnotation(
-      this.props.doc.id,
+      this.selectedDocId(),
       pageNumber,
       annotation
     ).then((savedAnnotation) => {
@@ -122,14 +132,14 @@ export class PdfViewer extends React.Component {
 
   onIconMoved = (uuid, coordinates, page) => {
     this.props.annotationStorage.getAnnotation(
-      this.props.doc.id,
+      this.selectedDocId(),
       uuid
     ).then((annotation) => {
       annotation.x = coordinates.x;
       annotation.y = coordinates.y;
       annotation.page = page;
       this.props.annotationStorage.editAnnotation(
-        this.props.doc.id,
+        this.selectedDocId(),
         annotation.uuid,
         annotation
       );
@@ -143,11 +153,11 @@ export class PdfViewer extends React.Component {
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
-      if (event.key === 'ArrowLeft' && this.props.prevDocId) {
-        this.props.selectCurrentPdf(this.props.prevDocId);
+      if (event.key === 'ArrowLeft' && this.previousDocId()) {
+        this.props.selectCurrentPdf(this.previousDocId());
       }
-      if (event.key === 'ArrowRight' && this.props.nextDocId) {
-        this.props.selectCurrentPdf(this.props.nextDocId);
+      if (event.key === 'ArrowRight' && this.nextDocId()) {
+        this.props.selectCurrentPdf(this.nextDocId());
       }
     }
   }
@@ -187,8 +197,8 @@ export class PdfViewer extends React.Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (nextProps.doc.id !== this.props.doc.id) {
-      this.onCommentChange(nextProps.doc.id);
+    if (nextProps.selectedDocId !== this.props.selectedDocId) {
+      this.onCommentChange(nextProps.selectedDocId);
     }
 
     if (nextProps.scrollToComment &&
@@ -197,21 +207,61 @@ export class PdfViewer extends React.Component {
     }
   }
 
+  selectedDocIndex = () => (
+    _.findIndex(this.props.documents, { id: this.props.selectedDocId })
+  )
+
+  selectedDoc = () => (
+    this.props.documents[this.selectedDocIndex()]
+  )
+
+  selectedDocId = () => this.props.selectedDocId
+
+  previousDocId = () => {
+    const previousDocExists = this.selectedDocIndex() > 0;
+
+    if (previousDocExists) {
+      return this.props.documents[this.selectedDocIndex() - 1].id;
+    }
+  }
+
+  nextDocId = () => {
+    const selectedDocIndex = this.selectedDocIndex();
+    const nextDocExists = selectedDocIndex + 1 < _.size(this.props.documents);
+
+    if (nextDocExists) {
+      return this.props.documents[selectedDocIndex + 1].id;
+    }
+  }
+
   render() {
+    const doc = this.selectedDoc();
+
+    // If we don't have a currently selected document, we
+    // shouldn't render anything. On the next tick we dispatch
+    // the action to redux that populates the documents and then we
+    // render
+    // TODO(jd): We should refactor and potentially create the store
+    // with the documents already added
+    if (!doc) {
+      return null;
+    }
+
     return (
       <div>
         <div className="cf-pdf-page-container">
           <PdfUI
             comments={this.state.comments}
-            doc={this.props.doc}
-            file={this.props.file}
+            doc={doc}
+            file={documentPath(this.props.selectedDocId)}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.props.prevDocId}
-            nextDocId={this.props.nextDocId}
+            prevDocId={this.previousDocId()}
+            nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
+            showDocumentsListNavigation={this.props.documents.length !== 1}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
@@ -222,7 +272,7 @@ export class PdfViewer extends React.Component {
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
             showTagErrorMsg={this.props.showTagErrorMsg}
-            doc={this.props.doc}
+            doc={doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
             comments={this.state.comments}
@@ -259,14 +309,16 @@ const mapStateToProps = (state) => {
   return {
     commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: state.ui.pdf.scrollToComment,
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    selectedDocId: state.ui.pdf.currentRenderedFile
   };
 };
 const mapDispatchToProps = (dispatch) => ({
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
   handleClearCommentState: () => dispatch(handleClearCommentState()),
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),
+  handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
 export default connect(
@@ -276,7 +328,6 @@ export default connect(
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
   doc: PropTypes.object,
-  file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
@@ -287,8 +338,7 @@ PdfViewer.propTypes = {
   handleWriteComment: PropTypes.func,
   handleClearCommentState: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
-  nextDocId: PropTypes.number,
-  prevDocId: PropTypes.number,
+  documents: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };

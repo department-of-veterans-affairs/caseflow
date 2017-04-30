@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
-import createHistory from 'history/createBrowserHistory'
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
@@ -12,6 +11,8 @@ import * as ReaderActions from './actions';
 import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
+
+export const documentPath = (id) => `/document/${id}/pdf`;
 
 export class DecisionReviewer extends React.Component {
   constructor(props) {
@@ -27,7 +28,6 @@ export class DecisionReviewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if (this.props.appealDocuments !== nextProps.appealDocuments) {
       this.props.onReceiveDocs(nextProps.appealDocuments);
     }
@@ -62,7 +62,7 @@ export class DecisionReviewer extends React.Component {
 
     event.preventDefault();
     this.props.selectCurrentPdf(docId);
-    history.push(`/${vacolsId}/documents/${docId}`)
+    history.push(`/${vacolsId}/documents/${docId}`);
   }
 
   onShowList = (history, vacolsId) => () => {
@@ -98,11 +98,11 @@ export class DecisionReviewer extends React.Component {
     this.props.onScrollToComment(null);
   }
 
-  documents = () => (
-    this.props.filteredDocIds ?
+  documents = () => {
+    return this.props.filteredDocIds ?
       _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) :
-      _.values(this.props.storeDocuments)
-  )
+      _.values(this.props.storeDocuments);
+  }
 
   routedPdfListView = (routerProps) => {
     const vacolsId = routerProps.match.params.vacolsId;
@@ -121,37 +121,14 @@ export class DecisionReviewer extends React.Component {
   }
 
   routedPdfViewer = (routerProps) => {
-    const docId = +routerProps.match.params.docId;
     const vacolsId = routerProps.match.params.vacolsId;
-
-    const documents = this.documents();
-    const activeDocIndex = _.findIndex(documents, { id: docId });
-    const activeDoc = documents[activeDocIndex];
-
-    if (!activeDoc) { return <div/>; }
-
-    let nextDocId, prevDocId;
-
-    const nextDocExists = activeDocIndex + 1 < _.size(documents);
-    const previousDocExists = activeDocIndex > 0;
-
-    if (nextDocExists) {
-      nextDocId = nextDocExists && documents[activeDocIndex + 1].id;
-    }
-
-    if (prevDocId) {
-      prevDocId = previousDocExists && documents[activeDocIndex - 1].id;
-    }
 
     return <PdfViewer
       addNewTag={this.props.addNewTag}
       removeTag={this.props.removeTag}
       showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
       annotationStorage={this.annotationStorage}
-      file={this.documentUrl(activeDoc)}
-      doc={activeDoc}
-      nextDocId={nextDocId}
-      prevDocId={prevDocId}
+      documents={this.documents()}
       pdfWorker={this.props.pdfWorker}
       onShowList={this.onShowList(routerProps.history, vacolsId)}
       showPdf={this.showPdf(routerProps.history, vacolsId)}
@@ -166,11 +143,11 @@ export class DecisionReviewer extends React.Component {
     return <Router basename="/reader/appeal">
       <div>
         <Route path="/:vacolsId/documents"
-          component={this.wrappedPdfListView}
+          component={this.routedPdfListView}
         />
       <div className="section--document-list">
         <Route path="/:vacolsId/documents/:docId"
-          component={this.wrappedPdfViewer}
+          component={this.routedPdfViewer}
         />
       </div>
     </div>

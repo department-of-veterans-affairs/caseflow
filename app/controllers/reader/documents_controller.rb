@@ -5,7 +5,7 @@ class Reader::DocumentsController < ApplicationController
     # If we have sufficient metadata to show a single document,
     # then we'll render the show. Otherwise we want to render index
     # which will grab the metadata for all documents
-    return render(:index) unless has_metadata
+    return render(:index) unless metadata?
   end
 
   private
@@ -33,7 +33,7 @@ class Reader::DocumentsController < ApplicationController
   end
   helper_method :documents
 
-  def has_metadata
+  def metadata?
     params[:received_at] && params[:type] && params[:filename]
   end
 
