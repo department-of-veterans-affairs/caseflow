@@ -132,6 +132,7 @@ export class PdfListView extends React.Component {
     };
 
     const anyCategoryFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.category));
+    const anyTagFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.tag));
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -244,14 +245,14 @@ export class PdfListView extends React.Component {
               getRef={(tagsFilterIcon) => {
                 this.tagsFilterIcon = tagsFilterIcon;
               }}
-              selected={''}
+              selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
               handleActivate={toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen &&
               <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
                 clearFilters={clearFilters}
                 name="tag"
-                isClearEnabled={anyCategoryFiltersAreSet}
+                isClearEnabled={anyTagFiltersAreSet}
                 handleClose={toggleTagDropdownFilterVisiblity}>
                 <DocTagPicker
                   tags={this.props.tagOptions}
