@@ -178,6 +178,25 @@ RSpec.feature "Reader" do
         ]
       end
 
+      scenario "Expand All button" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on "Expand all"
+        expect(page).to have_content("another comment")
+        expect(page).to have_content("how's it going")
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when a comment is closed, the button is changed to expand all
+        expect(page).to have_button("Expand all")
+
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when that comment is reopened, the button is changed to collapse all
+        click_on "Collapse all"
+        expect(page).not_to have_content("another comment")
+        expect(page).not_to have_content("how's it going")
+      end
+
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 

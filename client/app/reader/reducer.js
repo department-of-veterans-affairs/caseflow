@@ -54,10 +54,30 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
+const SHOW_EXPAND_ALL = false;
+
+/**
+ * This function takes all the documents and check the status of the
+ * list comments in the document to see if Show All or Collapse All should be
+ * shown based on the state.
+ */
+const getExpandAllState = (documents) => {
+  let allExpanded = !SHOW_EXPAND_ALL;
+
+  _.forOwn(documents, (doc) => {
+    if (!doc.listComments) {
+      allExpanded = SHOW_EXPAND_ALL;
+    }
+  });
+
+  return Boolean(allExpanded);
+};
+
 export const initialState = {
   annotationStorage: null,
   ui: {
     filteredDocIds: null,
+    expandAll: false,
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -92,6 +112,7 @@ export default (state = initialState, action = {}) => {
   let categoryKey;
   let allTags;
   let uniqueTags;
+  let modifiedDocuments;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -119,7 +140,8 @@ export default (state = initialState, action = {}) => {
             map((doc) => [
               doc.id, {
                 ...doc,
-                receivedAt: doc.received_at
+                receivedAt: doc.received_at,
+                listComments: false
               }
             ]).
             fromPairs().
@@ -363,19 +385,33 @@ export default (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
+  case Constants.TOGGLE_EXPAND_ALL:
+    return update(state, {
+      documents: {
+        $set: _.mapValues(state.documents, (document) => {
+          return update(document, { listComments: { $set: !state.ui.expandAll } });
+        })
+      },
+      ui: {
+        $merge: { expandAll: !state.ui.expandAll }
+      }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
+    modifiedDocuments = update(state.documents,
+      {
+        [action.payload.docId]: {
+          $merge: {
+            listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      });
+
     return update(
       state,
       {
-        documents: {
-          [action.payload.docId]: {
-            listComments: {
-              $set: !state.documents[action.payload.docId].listComments
-            }
-          }
-        }
-      }
-    );
+        documents: { $set: modifiedDocuments },
+        ui: { $merge: { expandAll: getExpandAllState(modifiedDocuments) } }
+      });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
       {},

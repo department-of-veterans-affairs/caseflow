@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
@@ -220,9 +221,10 @@ export class PdfListView extends React.Component {
             className="document-list-header-issue-tags">
             Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
           </div>,
-          valueFunction: () => {
-            return <div className="document-list-issue-tags">
-            </div>;
+          valueFunction: (doc) => {
+            return <TagTableColumn
+              doc={doc}
+            />;
           }
         },
         {
@@ -274,7 +276,8 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (doc.listComments) {
+      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
+        doc.listComments) {
         acc.push({
           ...row,
           isComment: true

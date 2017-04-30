@@ -2,10 +2,12 @@ import React, { PropTypes } from 'react';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
 import { connect } from 'react-redux';
-import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
+import { setSearch, clearAllFilters, clearSearch, toggleExpandAll } from '../../reader/actions';
 import _ from 'lodash';
 
 export const DocumentListHeader = (props) => {
+  const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
+
   const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
     props.docFilterCriteria.category[category]
   );
@@ -32,8 +34,9 @@ export const DocumentListHeader = (props) => {
       <div className="usa-width-one-third">
         <span className="cf-right-side">
           <Button
+            name={buttonText}
+            onClick={props.toggleExpandAll}
             id="btn-default"
-            name="Expand all"
           />
         </span>
       </div>
@@ -55,11 +58,14 @@ export const DocumentListHeader = (props) => {
 DocumentListHeader.propTypes = {
   searchQuery: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
+  expandAll: PropTypes.bool,
+  toggleExpandAll: PropTypes.func,
   clearAllFilters: PropTypes.func,
   numberOfDocuments: PropTypes.number.isRequired
 };
 
 const mapStateToProps = (state) => ({
+  expandAll: state.ui.expandAll,
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
   docFilterCriteria: state.ui.docFilterCriteria
 });
@@ -70,6 +76,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   clearSearch: () => {
     dispatch(clearSearch());
+  },
+  toggleExpandAll: () => {
+    dispatch(toggleExpandAll());
   }
 });
 
