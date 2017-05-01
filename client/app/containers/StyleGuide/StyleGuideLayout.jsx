@@ -3,8 +3,8 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import StyleGuideAction from './StyleGuideAction';
 
 
-export default class StyleGuideLayout extends React.Component {
-  render () {
+ let StyleGuideLayout  = () => {
+
     return (
     <div>
        <StyleGuideComponentTitle
@@ -40,5 +40,5 @@ export default class StyleGuideLayout extends React.Component {
     </div>
 
     );
-  }
-}
+};
+export default StyleGuideLayout;
