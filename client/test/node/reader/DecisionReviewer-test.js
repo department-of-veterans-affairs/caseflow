@@ -432,22 +432,22 @@ describe('DecisionReviewer', () => {
     });
 
     context('when filtered by', () => {
-      const openMenu = (wrapper, menuName) => {
-        wrapper.find(`#${menuName}-header`).find('svg').simulate('click');
-      }
+      const openMenu = (node, menuName) => {
+        node.find(`#${menuName}-header`).find('svg').
+          simulate('click');
+      };
 
-      const checkBox = (wrapper, text, value) => {
-        wrapper.find('Checkbox').filterWhere((box) => box.text().
-          includes(text)).find('input').
+      const checkBox = (node, text, value) => {
+        node.find('Checkbox').filterWhere((box) => box.text().
+          includes(text)).
+          find('input').
           simulate('change', { target: { checked: value } });
-      }
+      };
 
       it('category displays properly', () => {
         openMenu(wrapper, 'categories');
 
         checkBox(wrapper, 'Procedural', true);
-
-        console.log(wrapper.debug());
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
