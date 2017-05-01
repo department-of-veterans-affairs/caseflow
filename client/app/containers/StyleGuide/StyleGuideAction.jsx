@@ -4,7 +4,7 @@ import Button from '../../components/Button';
 import InlineForm from '../../components/InlineForm';
 
 
-export default class Actions extends React.Component {
+export default class StyleGuideAction extends React.Component {
 
   render () {
     return (
@@ -28,8 +28,8 @@ export default class Actions extends React.Component {
             name="Submit End Product"
           />
          </div>
-        </div>   
-      </p>      
+        </div>
+        </p>   
      </div>
 
     );
