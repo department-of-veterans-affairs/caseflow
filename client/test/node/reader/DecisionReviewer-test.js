@@ -443,9 +443,20 @@ describe('DecisionReviewer', () => {
     });
 
     context('when filtered by', () => {
-      it.only('category displays properly', () => {
-        wrapper.find('#categories-header').find('svg').simulate('click');
-        wrapper.find('.checkbox-wrapper-procedural').simulate('change');
+      const openMenu = (wrapper, menuName) => {
+        wrapper.find(`#${menuName}-header`).find('svg').simulate('click');
+      }
+
+      const checkBox = (wrapper, text, value) => {
+        wrapper.find('Checkbox').filterWhere((box) => box.text().
+          includes(text)).find('input').
+          simulate('change', { target: { checked: value } });
+      }
+
+      it('category displays properly', () => {
+        openMenu(wrapper, 'categories');
+
+        checkBox(wrapper, 'Procedural', true);
 
         console.log(wrapper.debug());
 
@@ -455,16 +466,18 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(2);
 
         // Should only display the first document
-        expect(textArray[1]).to.include(documents[0].type);
+        expect(textArray[1]).to.include(documents[1].type);
 
-        wrapper.find('input').simulate('change', { target: { value: '' } });
+        checkBox(wrapper, 'Procedural', false);
+
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
 
       it('tag displays properly', () => {
-        wrapper.find('input').simulate('change',
-          { target: { value: 'mytag' } });
+        openMenu(wrapper, 'tags');
+
+        checkBox(wrapper, 'mytag', true);
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -474,9 +487,7 @@ describe('DecisionReviewer', () => {
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
 
-        wrapper.find('input').simulate('change', { target: { value: '' } });
-        textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray).to.have.length(3);
+        checkBox(wrapper, 'mytag', false);
       });
     });
   });
