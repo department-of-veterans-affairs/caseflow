@@ -17,11 +17,9 @@ $tag-backgrond-color: #d6d7d9;
 
   .usa-grid {
     max-width: 85vw;
-    min-width: 925px;
 
     .usa-grid-full.document-list-header {
       max-width: 85vw;
-      min-width: 925px;
     }
   }
 
@@ -29,9 +27,10 @@ $tag-backgrond-color: #d6d7d9;
     min-width: 810px;
   }
 
+  $last-read-column-width: 41px;
   .last-read-column {
     // This value is determined by the size of the SVG.
-    min-width: 41px;
+    min-width: $last-read-column-width;
   }
 
   .categories-column {
@@ -53,6 +52,7 @@ $tag-backgrond-color: #d6d7d9;
 
   .comments-column {
     width: 112px;
+    min-width: 112px;
   }
 
   .bordered-icon {
@@ -74,6 +74,19 @@ $tag-backgrond-color: #d6d7d9;
     display: block;
     max-height: 65vh;
     overflow: auto;
+
+    .horizontal-comment {
+      display: flex;
+      margin-left: $last-read-column-width;
+
+      .comment-page-number {
+        width: 10rem;
+      }
+
+      .comment-jump-to-section {
+        width: 20rem;
+      }
+    }
   }
 
   .document-list-receipt-date {
