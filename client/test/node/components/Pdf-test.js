@@ -1,11 +1,12 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { Pdf } from '../../../app/components/Pdf';
+import { Pdf, DOCUMENT_DEBOUNCE_TIME } from '../../../app/components/Pdf';
 import sinon from 'sinon';
 import _ from 'lodash';
 
 import PdfJsStub from '../../helpers/PdfJsStub';
+import { asyncTest, pause } from '../../helpers/AsyncTests';
 
 import { documents } from '../../data/documents';
 
@@ -60,13 +61,12 @@ describe('Pdf', () => {
           });
         });
 
-        it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, (done) => {
-          wrapper.instance().setupPdf('test.pdf').
-            then(() => {
-              expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
-              done();
-            });
-        });
+        it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
+          wrapper.instance().setupPdf('test.pdf');
+          await pause(DOCUMENT_DEBOUNCE_TIME + 50);
+
+          expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
+        }));
       });
     });
 
