@@ -4,6 +4,8 @@ import { shallow } from 'enzyme';
 import { PdfUI } from '../../../app/components/PdfUI';
 import sinon from 'sinon';
 
+const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
+
 /* eslint-disable no-unused-expressions */
 describe('PdfUI', () => {
   context('shallow create PdfUI', () => {
@@ -23,6 +25,7 @@ describe('PdfUI', () => {
         file="test.pdf"
         id="pdf"
         pdfWorker="noworker"
+        documentPathBase={DOCUMENT_PATH_BASE}
       />);
     });
 
@@ -46,32 +49,11 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
-      context('when onNextPdf function is supplied', () => {
-        it('renders the next PDF button', () => {
-          expect(wrapper.find({ name: 'next' })).to.have.length(0);
-          let onNextPdf = sinon.spy();
-
-          wrapper.setProps({ onNextPdf });
-          expect(wrapper.find({ name: 'next' })).to.have.length(1);
-        });
-      });
-
-      context('when onPreviousPdf function is supplied', () => {
-        it('renders the previous PDF button', () => {
-          expect(wrapper.find({ name: 'previous' })).to.have.length(0);
-          let onPreviousPdf = sinon.spy();
-
-          wrapper.setProps({ onPreviousPdf });
-          expect(wrapper.find({ name: 'previous' })).to.have.length(1);
-        });
-      });
-
-      context('when onShowList function is supplied', () => {
+      context('when showDocumentsListNavigation is true', () => {
         it('renders the back to document list button', () => {
           expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);
-          let onShowList = sinon.spy();
 
-          wrapper.setProps({ onShowList });
+          wrapper.setProps({ showDocumentsListNavigation: true });
           expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(1);
         });
       });
@@ -133,7 +115,7 @@ describe('PdfUI', () => {
 
       context('document name', () => {
         it('tries to open document in new tab', () => {
-          let url = `${window.location.href}/${doc.id}?type=${doc.type}` +
+          let url = `${DOCUMENT_PATH_BASE}/${doc.id}?type=${doc.type}` +
             `&received_at=${doc.receivedAt}&filename=${doc.filename}`;
           let open = sinon.spy(window, 'open');
 

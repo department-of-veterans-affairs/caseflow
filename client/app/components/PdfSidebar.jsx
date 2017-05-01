@@ -65,7 +65,8 @@ export class PdfSidebar extends React.Component {
 
     const {
       doc,
-      showTagErrorMsg
+      showTagErrorMsg,
+      tagOptions
     } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
@@ -145,7 +146,7 @@ export class PdfSidebar extends React.Component {
             label="Click in the box to select, or add issue(s)"
             multi={true}
             creatable={true}
-            options={this.generateOptionsFromTags(doc.tags)}
+            options={this.generateOptionsFromTags(tagOptions)}
             placeholder=""
             value={this.generateOptionsFromTags(doc.tags)}
             onChange={this.onChange}
@@ -208,7 +209,8 @@ const mapStateToProps = (state) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
-    documents: state.documents
+    documents: state.documents,
+    tagOptions: state.tagOptions
   };
 };
 const mapDispatchToProps = (dispatch) => ({

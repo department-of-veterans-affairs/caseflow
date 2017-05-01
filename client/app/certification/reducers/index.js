@@ -54,7 +54,7 @@ export const certificationReducers = function(state = initialState, action = {})
       // If we change the answer for the hearing doc in VBMS question,
       // also wipe the state for the type of hearing the Veteran prefers,
       // since the previous answer is no longer valid.
-      hearingType: null
+      hearingPreference: null
     });
   case Constants.CHANGE_TYPE_OF_FORM9:
     return Object.assign({}, state, {
@@ -62,11 +62,11 @@ export const certificationReducers = function(state = initialState, action = {})
       // If we change the answer for the form 9 type question,
       // also wipe the state for the type of hearing the Veteran prefers,
       // since the previous answer is no longer valid.
-      hearingType: null
+      hearingPreference: null
     });
   case Constants.CHANGE_TYPE_OF_HEARING:
     return Object.assign({}, state, {
-      hearingType: action.payload.hearingType
+      hearingPreference: action.payload.hearingPreference
     });
   case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
     return changeSignAndCertifyForm(state, action);
@@ -77,6 +77,13 @@ export const certificationReducers = function(state = initialState, action = {})
   // TODO: rename this to something else, it's more like a Page Load action now.
   case Constants.UPDATE_PROGRESS_BAR:
     return CertificationReducers.updateProgressBar(state, action);
+  case Constants.RESET_STATE:
+    return Object.assign({}, state, {
+      // reset some parts of state so we don't skip pages or end up in loops
+      updateFailed: null,
+      updateSucceeded: null,
+      loading: false
+    });
   case Constants.ON_CONTINUE_CLICK_FAILED:
     return CertificationReducers.onContinueClickFailed(state, action);
   case Constants.ON_CONTINUE_CLICK_SUCCESS:
@@ -93,6 +100,17 @@ export const certificationReducers = function(state = initialState, action = {})
   }
 };
 export default certificationReducers;
+
+export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
+  switch (hearingDocumentIsInVbms) {
+  case true:
+    return Constants.vbmsHearingDocument.FOUND;
+  case false:
+    return Constants.vbmsHearingDocument.NOT_FOUND;
+  default:
+    return null;
+  }
+};
 
 export const mapDataToInitialState = function(state) {
   return {
@@ -113,7 +131,9 @@ export const mapDataToInitialState = function(state) {
     veteranName: state.appeal.veteran_name,
     certificationStatus: state.certification_status,
     vacolsId: state.vacols_id,
-
+    hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
+    hearingPreference: state.hearing_preference,
+    form9Type: state.form9_type,
     certifyingOffice: state.form8.certifying_office,
     certifyingUsername: state.form8.certifying_username,
     certificationDate: state.form8.certification_date

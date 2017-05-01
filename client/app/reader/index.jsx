@@ -5,31 +5,9 @@ import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 
-export const initialState = {
-  ui: {
-    pdf: {},
-    pdfSidebar: {
-      showTagErrorMsg: false,
-      commentFlowState: null,
-      hidePdfSidebar: false
-    },
-    pdfList: {
-      lastReadDocId: null,
-      filters: {
-        category: {}
-      },
-      dropdowns: {
-        category: false
-      }
-    }
-  },
-  documents: {}
-};
-
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store =
-  createStore(readerReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(readerReducer, composeEnhancers(applyMiddleware(thunk)));
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
