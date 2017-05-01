@@ -11,6 +11,7 @@ import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 const PAGE_MARGIN_BOTTOM = 25;
 // const PAGE_WIDTH = 816;
 // const PAGE_HEIGHT = 1056;
+export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -42,12 +43,11 @@ export class Pdf extends React.Component {
 
   setIsRendered = (index, value) => {
     this.isRendering[index] = false;
+    let isRendered = [...this.state.isRendered];
+
+    isRendered[index] = value;
     this.setState({
-      isRendered: [
-        ...this.state.isRendered.slice(0, index),
-        value,
-        ...this.state.isRendered.slice(index + 1)
-      ]
+      isRendered
     });
   }
 
@@ -70,8 +70,8 @@ export class Pdf extends React.Component {
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index >= this.state.numPages) {
-        resolve();
+      if (index > this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+        return resolve();
       }
 
       // Page numbers are one-indexed
@@ -81,7 +81,7 @@ export class Pdf extends React.Component {
       let page = this.pageContainers[pageNumber - 1];
 
       if (!canvas || !container || !page) {
-        reject();
+        return reject();
       }
 
       pdfDocument.getPage(pageNumber).then((pdfPage) => {
@@ -200,7 +200,7 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = (file, scrollLocation = 0) => {
+  setupPdf = _.debounce((file, scrollLocation = 0) => {
     return new Promise((resolve) => {
       PDFJS.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -220,7 +220,10 @@ export class Pdf extends React.Component {
         this.scrollLocation = scrollLocation;
       });
     });
-  }
+  }, DOCUMENT_DEBOUNCE_TIME, {
+    leading: true,
+    trailing: true
+  });
 
   onJumpToComment = (comment) => {
     if (comment) {
@@ -380,7 +383,7 @@ export class Pdf extends React.Component {
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
-      onScroll={this.scrollEvent}
+      onScroll={_.debounce(this.scrollEvent, 0)}
       ref={(scrollWindow) => {
         this.scrollWindow = scrollWindow;
       }}>
