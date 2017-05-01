@@ -26,13 +26,6 @@ export class PdfViewer extends React.Component {
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
   }
 
-  componentWillMount() {
-    // On fresh page load, ensure we sync react router with redux
-    if (!this.props.selectedDocId) {
-      this.props.handleSelectCurrentPdf(Number(this.props.match.params.docId));
-    }
-  }
-
   onCommentChange = (documentId = this.selectedDocId()) => {
     this.setState({
       comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)]
@@ -199,6 +192,12 @@ export class PdfViewer extends React.Component {
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.selectedDocId !== this.props.selectedDocId) {
       this.onCommentChange(nextProps.selectedDocId);
+    }
+
+    // Sync react-router with Redux's selectedDocid
+    const nextDocId = Number(nextProps.match.params.docId);
+    if (nextDocId !== nextProps.selectedDocId) {
+      this.props.handleSelectCurrentPdf(nextDocId);
     }
 
     if (nextProps.scrollToComment &&
