@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
-import SuccessMessage from '../../components/SuccessMessage';
+import StatusMessage from '../../components/StatusMessage';
 
 const PARSE_INT_RADIX = 10;
 
@@ -45,11 +45,15 @@ export default class EstablishClaimComplete extends React.Component {
         isConfirmation={true}
       />
 
-      <SuccessMessage
+    <StatusMessage
         title={firstHeader}
         leadMessageList={[secondHeader]}
         checklist={checklist}
+<<<<<<< HEAD
         messageText={hasQuotaReached && quotaReachedMessage()}
+=======
+        type="success"
+>>>>>>> master
         />
 
     <EstablishClaimToolbar
