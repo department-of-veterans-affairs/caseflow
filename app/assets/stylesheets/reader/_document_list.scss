@@ -15,6 +15,43 @@ $tag-backgrond-color: #d6d7d9;
     margin: 0;
   }
 
+  .usa-grid {
+    max-width: 85vw;
+
+    .usa-grid-full {
+      max-width: 85vw;
+    }
+  }
+
+  .documents-table {
+    min-width: 755px;
+  }
+
+  .last-read-column {
+    // This value is determined by the size of the SVG.
+    min-width: 41px;
+  }
+
+  .categories-column {
+    min-width: 140px;
+  }
+
+  .receipt-date-column {
+    min-width: 150px;
+  }
+
+  .doc-type-column {
+    width: 28vw;
+  }
+
+  .tags-column {
+    width: 28vw;
+  }
+
+  .comments-column {
+    width: 112px;
+  }
+
   .bordered-icon {
     border: 2px solid $color-gray;
     padding: 1px 2px;
@@ -25,16 +62,8 @@ $tag-backgrond-color: #d6d7d9;
   .cf-document-list-header-row tr {
     display: block;
 
-    th {
-      &:first-child {
-        min-width: inherit;
-      }
-
-      min-width: 180px;
-
-      > div {
-        display: flex;
-      }
+    th > div {
+      display: flex;
     }
   }
 
@@ -42,14 +71,6 @@ $tag-backgrond-color: #d6d7d9;
     display: block;
     max-height: 65vh;
     overflow: auto;
-
-    td {
-      &:first-child {
-        min-width: inherit;
-      }
-
-      min-width: 180px;
-    }
   }
 
   .document-list-receipt-date {

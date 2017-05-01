@@ -198,6 +198,7 @@ export class PdfListView extends React.Component {
 
       return [
         {
+          cellClass: 'last-read-column',
           valueFunction: (doc) => {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
@@ -212,6 +213,7 @@ export class PdfListView extends React.Component {
           }
         },
         {
+          cellClass: 'categories-column',
           header: <div
             id="categories-header"
             className="document-list-header-categories">
@@ -240,6 +242,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
         },
         {
+          cellClass: 'receipt-date-column',
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
@@ -252,6 +255,7 @@ export class PdfListView extends React.Component {
             </span>
         },
         {
+          cellClass: 'doc-type-column',
           header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
             Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
@@ -263,6 +267,7 @@ export class PdfListView extends React.Component {
             </a>, doc)
         },
         {
+          cellClass: 'tags-column',
           header: <div id="tags-header"
             className="document-list-header-issue-tags">
             Issue Tags <FilterIcon
@@ -294,6 +299,7 @@ export class PdfListView extends React.Component {
           }
         },
         {
+          cellClass: 'comments-column',
           header: <div
             id="comments-header"
             className="document-list-header-comments">
@@ -360,6 +366,7 @@ export class PdfListView extends React.Component {
               columns={this.getDocumentColumns()}
               rowObjects={rowObjects}
               summary="Document list"
+              className="documents-table"
               headerClassName="cf-document-list-header-row"
               bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
