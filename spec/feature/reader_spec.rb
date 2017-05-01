@@ -4,8 +4,8 @@ def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
 
-def scroll_to(value)
-  page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
+def scroll_to(element, value)
+  page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
 # This utility function returns true if an element is currently visible on the page
@@ -202,12 +202,14 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
+        element = "cf-comment-wrapper"
+        scroll_to(element, 0)
+
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
         # Click on the comment icon and ensure the scroll position of
         # the comment wrapper changes
-        element = "cf-comment-wrapper"
         original_scroll = scroll_position(element)
 
         # Click on the second to last comment icon (last comment icon is off screen)
@@ -228,7 +230,7 @@ RSpec.feature "Reader" do
       scenario "Scroll to comment icon" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on documents[0].filename
+        click_on documents[0].type
 
         expect(page).to have_content(annotations[0].comment)
 
@@ -265,7 +267,7 @@ RSpec.feature "Reader" do
       # But if we scroll second page should be rendered and
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
-      scroll_to(500)
+      scroll_to('scrollWindow', 500)
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
