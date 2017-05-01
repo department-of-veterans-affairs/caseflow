@@ -82,6 +82,9 @@ gem 'font-awesome-sass'
 
 gem 'redis-namespace'
 
+# catch problematic migrations at development/test time
+gem "zero_downtime_migrations"
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -122,8 +125,6 @@ group :development, :test do
   gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
-  # catch problematic migrations at development/test time
-  gem "zero_downtime_migrations"
 end
 
 group :development do
