@@ -85,6 +85,24 @@ $tag-backgrond-color: #d6d7d9;
       }
     }
 
+    .cf-document-tag-picker {
+      padding-bottom: 0;
+      margin: 0;
+      max-height: 325px;
+      overflow: scroll;
+
+      .cf-category-selector {
+        display: flex;
+        align-items: flex-start;
+        margin: .5em;
+
+        .cf-form-checkboxes {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+      }
+    }
+
     .cf-document-category-picker {
       margin-bottom: 0;
       margin-top: 0;
@@ -159,7 +177,7 @@ $tag-backgrond-color: #d6d7d9;
     }
   }
 
-  .cf-document-category-picker {
+  .cf-document-filter-picker {
     list-style-type: none;
     padding-left: 0;
     padding-bottom: 5px;
@@ -185,3 +203,6 @@ $tag-backgrond-color: #d6d7d9;
   }
 }
 
+.document-list-header-issue-tags {
+  min-width: 150px;
+}

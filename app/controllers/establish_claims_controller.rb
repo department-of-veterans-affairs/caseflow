@@ -5,11 +5,8 @@ class EstablishClaimsController < TasksController
   before_action :set_application
 
   def index
-    @tasks_completed_today = Task.completed_today
     @remaining_count_today = Task.to_complete.count
-    @completed_count_today = @tasks_completed_today.count
-    @to_complete_count = Task.to_complete.count
-    @tasks_completed_by_users = Task.tasks_completed_by_users(@tasks_completed_today)
+    @completed_count_today = Task.completed_on(Time.zone.today).count
 
     render index_template
   end
@@ -71,7 +68,7 @@ class EstablishClaimsController < TasksController
   end
 
   def update_employee_count
-    quota.update_assignee_count!(params[:count])
+    team_quota.update!(user_count: params[:count])
     render json: {}
   end
 
@@ -90,11 +87,6 @@ class EstablishClaimsController < TasksController
   end
 
   private
-
-  def user_completed_today
-    current_user ? tasks.completed_today_by_user(current_user.id).count : 0
-  end
-  helper_method :user_completed_today
 
   def to_complete_count
     tasks.to_complete.count
@@ -144,10 +136,15 @@ class EstablishClaimsController < TasksController
     RequestStore.store[:application] = "dispatch-arc"
   end
 
-  def quota
-    Quota.new(date: Time.zone.today, task_klass: EstablishClaim)
+  def team_quota
+    @team_quota ||= tasks.todays_quota
   end
-  helper_method :quota
+  helper_method :team_quota
+
+  def user_quota
+    @user_quota ||= team_quota.assigned_quotas.find_by(user: current_user)
+  end
+  helper_method :user_quota
 
   def review_complete_params
     { vacols_note: params[:vacols_note] }

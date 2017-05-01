@@ -9,7 +9,7 @@ class DropdownFilter extends React.PureComponent {
   }
 
   render() {
-    const { children, baseCoordinates } = this.props;
+    const { children, baseCoordinates, name } = this.props;
 
     if (!baseCoordinates) {
       return null;
@@ -36,7 +36,7 @@ class DropdownFilter extends React.PureComponent {
         <button className="cf-text-button" onClick={this.props.clearFilters}
             disabled={!this.props.isClearEnabled}>
           <div className="cf-clear-filter-button-wrapper">
-              Clear category filter
+              { `Clear ${name} filter` }
           </div>
         </button>
       </div>
