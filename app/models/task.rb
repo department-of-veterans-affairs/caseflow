@@ -60,12 +60,8 @@ class Task < ActiveRecord::Base
       order(created_at: :asc)
     end
 
-    def completed_today
-      where(aasm_state: "completed", completed_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day)
-    end
-
-    def completed_today_by_user(user_id)
-      completed_today.where(user_id: user_id)
+    def completed_on(date)
+      where(aasm_state: "completed", completed_at: date.beginning_of_day..date.end_of_day)
     end
 
     def to_complete
@@ -80,16 +76,14 @@ class Task < ActiveRecord::Base
       to_complete.where(appeal: appeal)
     end
 
-    def tasks_completed_by_users(tasks)
-      tasks.each_with_object({}) do |task, user_numbers|
-        user_numbers[task.user.full_name] = (user_numbers[task.user.full_name] || 0) + 1
-      end
-    end
-
     # Generic relation method for joining the result of the task
     # ie: EstablishClaim.joins(:claim_establishment)
     def joins_task_result
       fail MustImplementInSubclassError
+    end
+
+    def todays_quota
+      TeamQuota.find_or_create_by!(date: Time.zone.today, task_type: self)
     end
 
     private
@@ -127,6 +121,8 @@ class Task < ActiveRecord::Base
 
     event :start do
       before :before_started
+      success :create_quota!
+
       transitions from: :assigned, to: :started
     end
 
@@ -142,7 +138,6 @@ class Task < ActiveRecord::Base
 
     event :complete do
       before { |*args| assign_completion_attribtues(*args); }
-      success :recalculate_quota_assignees!
 
       transitions from: :reviewed, to: :completed
       transitions from: :started, to: :completed
@@ -234,12 +229,8 @@ class Task < ActiveRecord::Base
     assign_attributes(completion_status: :invalidated)
   end
 
-  def recalculate_quota_assignees!
-    quota.recalculate_assignee_count!
-  end
-
-  def quota
-    Quota.new(date: Time.zone.today, task_klass: self.class)
+  def create_quota!
+    self.class.todays_quota.assigned_quotas.find_or_create_by!(user: user)
   end
 
   def check_and_invalidate!
