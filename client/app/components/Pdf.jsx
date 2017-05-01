@@ -8,6 +8,10 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
+const PAGE_MARGIN_BOTTOM = 25;
+// const PAGE_WIDTH = 816;
+// const PAGE_HEIGHT = 1056;
+
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
@@ -30,6 +34,8 @@ export class Pdf extends React.Component {
       pdfDocument: null,
       isRendered: []
     };
+
+    this.scrollLocation = 0;
 
     this.isRendering = [];
   }
@@ -211,7 +217,7 @@ export class Pdf extends React.Component {
         }
 
         // Scroll to the correct location on the page
-        this.scrollWindow.scrollTop = scrollLocation;
+        this.scrollLocation = scrollLocation;
       });
     });
   }
@@ -254,7 +260,11 @@ export class Pdf extends React.Component {
     } else if (nextProps.scale !== this.props.scale) {
       // The only way to scale the PDF is to re-render it,
       // so we call setupPdf again.
-      this.setupPdf(nextProps.file);
+      const zoomFactor = (nextProps.scale) / this.props.scale;
+      const scrollTo = this.scrollWindow.scrollTop * zoomFactor;
+
+      this.setupPdf(nextProps.file, scrollTo);
+
     }
     /* eslint-enable no-negated-condition */
   }
@@ -272,6 +282,11 @@ export class Pdf extends React.Component {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
       }
+    }
+
+    if (this.scrollLocation) {
+      this.scrollWindow.scrollTop = this.scrollLocation;
+      this.scrollLocation = 0;
     }
   }
 
@@ -335,6 +350,12 @@ export class Pdf extends React.Component {
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
         className={pageClassNames}
+        style={ {
+          marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
+          transform: `scale(${this.props.scale})`
+          // width: `${PAGE_WIDTH  * this.props.scale}px`,
+          // height: `${PAGE_HEIGHT * this.props.scale}px`
+        } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}

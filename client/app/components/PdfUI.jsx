@@ -39,14 +39,9 @@ export class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    // TODO: Fix scrolling when zooming
-    // let zoomFactor = (this.state.scale + delta) / this.state.scale;
-
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
-    // this.draw(this.props.file,
-    //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
   }
 
   fitToScreen = () => {
