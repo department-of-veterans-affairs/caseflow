@@ -1,7 +1,7 @@
 <% content_for :page_title do certification_header("Error 500") end %>
 
 <div class="cf-txt-c cf-app-segment cf-app-segment--alt">
-  <h1 class="cf-error cf-msg-screen-heading"><% if @error_title %><%= @error_title %><% else %>Something went wrong.<% end %></h1>
+  <h1 class="cf-red-text cf-msg-screen-heading"><% if @error_title %><%= @error_title %><% else %>Something went wrong.<% end %></h1>
   <% if @error_subtitle %>
   <h2 class="cf-msg-screen-deck"><%=@error_subtitle%></h2>
   <% end %>
