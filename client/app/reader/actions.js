@@ -22,12 +22,26 @@ export const toggleExpandAll = () => ({
   type: Constants.TOGGLE_EXPAND_ALL
 });
 
-export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
-  payload: {
-    searchQuery
-  }
+
+export const performSearch = () => ({
+  type: Constants.PERFORM_SEARCH
 });
+
+export const setSearch = (searchQuery) => (
+  (dispatch) => {
+    dispatch({
+      type: Constants.SET_SEARCH,
+      payload: {
+        searchQuery
+      }
+    });
+
+    // adding a slight delay for performing search
+    _.debounce(() => {
+      dispatch(performSearch());
+    }, 150)();
+  }
+);
 
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
