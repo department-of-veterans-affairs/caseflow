@@ -1,20 +1,19 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import Actions from '../../components/Actions';
-import Button from '../../components/Button';
-import InlineForm from '../../components/InlineForm';
+import StyleGuideAction from './StyleGuideAction';
+
 
 export default class StyleGuideLayout extends React.Component {
-   render () {
-    return ( 
-   <div>
-      <StyleGuideComponentTitle
-        title="Layout"
+  render () {
+    return (
+    <div>
+       <StyleGuideComponentTitle
+        title="Actions"
         id="layout"
         link="StyleGuideLayout.jsx"
         isSubsection={true}
       />
-      <p>
+     <p>
         For most task-based pages, Primary and Secondary Actions sit under the App Canvas.
         The number of actions per page should be limited intentionally.
         These tasks should relate specifically to the user’s goal for the page they are on.
@@ -35,9 +34,9 @@ export default class StyleGuideLayout extends React.Component {
         The consistent layout and arrangement of these actions reinforces the users mental model as the use Caseflow.
         You should avoid placing these actions in other parts of the page without good reason.
        </p>
-      <Actions />
-      
-    </div> 
-      );
-     }
+       <StyleGuideAction />
+    </div>
+
+    );
   }
+}

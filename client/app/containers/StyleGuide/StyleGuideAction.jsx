@@ -1,7 +1,10 @@
 import React from 'react';
-import Button from '../components/Button';
 
- export default class Actions extends React.Component {
+import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
+
+
+export default class Actions extends React.Component {
 
   render () {
     return (
@@ -10,15 +13,14 @@ import Button from '../components/Button';
        <p>
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="usa-width-one-half">
-           <div className ="cf-push-left">
+           <InlineForm>
             <span><Button
                name="Back to Preview"
                classNames={['cf-btn-link']} />
             </span>
-           </div>
+          </InlineForm>
          </div>
-
-         <div className ="cf-push-right">
+        <div className ="cf-push-right">
            <Button
             name="Cancel"
            classNames={['cf-btn-link']}/>
@@ -26,11 +28,10 @@ import Button from '../components/Button';
             name="Submit End Product"
           />
          </div>
-        </div>
-      </p>
-       
-     </div>  
-     );
+        </div>   
+      </p>      
+     </div>
+
+    );
   }
 }
-
