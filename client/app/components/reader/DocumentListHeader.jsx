@@ -56,16 +56,11 @@ export const DocumentListHeader = (props) => {
 };
 
 DocumentListHeader.propTypes = {
-  searchQuery: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
   expandAll: PropTypes.bool,
   toggleExpandAll: PropTypes.func,
   clearAllFilters: PropTypes.func,
   numberOfDocuments: PropTypes.number.isRequired
-};
-
-DocumentListHeader.defaultProps = {
-  searchQuery: ''
 };
 
 const mapStateToProps = (state) => ({
