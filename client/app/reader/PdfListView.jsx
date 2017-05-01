@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
-import { formatDate } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
@@ -16,6 +15,7 @@ import DocTagPicker from './DocTagPicker';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
+import * as moment from 'moment';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -248,7 +248,7 @@ export class PdfListView extends React.Component {
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {formatDate(doc.receivedAt)}
+              {moment(doc.receivedAt, "YYYY-MM-DD").format('MM-DD-YYYY')}
             </span>
         },
         {
