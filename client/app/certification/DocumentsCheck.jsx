@@ -19,6 +19,10 @@ class UnconnectedDocumentsCheck extends React.Component {
     this.props.updateProgressBar();
   }
 
+  reloadPage() {
+    window.location.reload();
+  }
+
   render() {
 
     let { certificationStatus,
@@ -74,10 +78,12 @@ class UnconnectedDocumentsCheck extends React.Component {
 
       <Footer
         certificationId={certificationId}
-        nextPageUrl={
-          `/certifications/${match.params.vacols_id}/confirm_case_details`
+        buttonText={ documentsMatch ? "Continue" : "Refresh page" }
+        nextPageUrl={ documentsMatch ?
+          `/certifications/${match.params.vacols_id}/confirm_case_details` :
+          ``
         }
-        hideContinue={!documentsMatch}/>
+        onClickContinue={ documentsMatch ? null : this.reloadPage }/>
     </div>;
   }
 }
