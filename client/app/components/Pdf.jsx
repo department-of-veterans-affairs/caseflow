@@ -8,7 +8,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
-const DOCUMENT_DEBOUNCE_TIME = 500;
+export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
