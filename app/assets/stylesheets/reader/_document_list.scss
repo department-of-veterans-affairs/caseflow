@@ -17,14 +17,16 @@ $tag-backgrond-color: #d6d7d9;
 
   .usa-grid {
     max-width: 85vw;
+    min-width: 925px;
 
     .usa-grid-full {
       max-width: 85vw;
+      min-width: 925px;
     }
   }
 
   .documents-table {
-    min-width: 755px;
+    min-width: 810px;
   }
 
   .last-read-column {
