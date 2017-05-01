@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import SuccessMessage from '../components/SuccessMessage';
+import StatusMessage from '../components/StatusMessage';
 
 const UnconnectedSuccess = ({
   veteranName,
@@ -13,12 +13,13 @@ const UnconnectedSuccess = ({
   const message = `${veteranName}'s case ${vbmsId} has been certified. You can now close this window and open another appeal in VACOLS.`;
 
 
-  return <SuccessMessage
+  return <StatusMessage
     title="Congratulations!"
     leadMessageList={[message]}
     checklist={checklist}
     messageText="Way to go! You can now close this window and open another
     appeal in VACOLS."
+    type="success"
     />;
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import SuccessMessage from '../../components/SuccessMessage';
+import StatusMessage from '../../components/StatusMessage';
 
 export default function StyleGuideSuccessMessages() {
   let successChecklist = ['Reviewed Remand Decision',
@@ -26,10 +26,11 @@ export default function StyleGuideSuccessMessages() {
     confirming the tasks the user has completed and displays actions performed by
     Caseflow in the background, such as automatically sending a letter or changing
     the location of a claim.</p>
-  <SuccessMessage
+  <StatusMessage
     example={true}
     checklist={successChecklist}
     title="Success!"
-    leadMessageList={messageList} />
+    leadMessageList={messageList}
+    type="success" />
   </div>;
 }

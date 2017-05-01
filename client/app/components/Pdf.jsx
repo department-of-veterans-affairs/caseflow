@@ -5,6 +5,10 @@ import CommentIcon from './CommentIcon';
 import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import classNames from 'classnames';
+import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
+
+export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -34,12 +38,11 @@ export class Pdf extends React.Component {
 
   setIsRendered = (index, value) => {
     this.isRendering[index] = false;
+    let isRendered = [...this.state.isRendered];
+
+    isRendered[index] = value;
     this.setState({
-      isRendered: [
-        ...this.state.isRendered.slice(0, index),
-        value,
-        ...this.state.isRendered.slice(index + 1)
-      ]
+      isRendered
     });
   }
 
@@ -62,8 +65,8 @@ export class Pdf extends React.Component {
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index >= this.state.numPages) {
-        resolve();
+      if (index > this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+        return resolve();
       }
 
       // Page numbers are one-indexed
@@ -73,7 +76,7 @@ export class Pdf extends React.Component {
       let page = this.pageContainers[pageNumber - 1];
 
       if (!canvas || !container || !page) {
-        reject();
+        return reject();
       }
 
       pdfDocument.getPage(pageNumber).then((pdfPage) => {
@@ -192,7 +195,7 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = (file, scrollLocation = 0) => {
+  setupPdf = _.debounce((file, scrollLocation = 0) => {
     return new Promise((resolve) => {
       PDFJS.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -202,18 +205,20 @@ export class Pdf extends React.Component {
         }, () => {
           resolve();
         });
+        this.props.setPdfReadyToShow(this.props.documentId);
 
         if (this.props.onPageChange) {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
 
-        this.props.handleSetCurrentRenderedFile(this.props.documentId);
-
         // Scroll to the correct location on the page
         this.scrollWindow.scrollTop = scrollLocation;
       });
     });
-  }
+  }, DOCUMENT_DEBOUNCE_TIME, {
+    leading: true,
+    trailing: true
+  });
 
   onJumpToComment = (comment) => {
     if (comment) {
@@ -267,7 +272,7 @@ export class Pdf extends React.Component {
 
     if (this.props.scrollToComment) {
       if (this.props.currentRenderedFile === this.props.scrollToComment.documentId &&
-        this.state.pdfDocument) {
+        this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
       }
@@ -321,12 +326,19 @@ export class Pdf extends React.Component {
     }, {});
 
     let pages = [];
+    const pageClassNames = classNames({
+      'cf-pdf-pdfjs-container': true,
+      page: true,
+      'cf-pdf-placing-comment': (this.props.commentFlowState ===
+        Constants.PLACING_COMMENT_STATE)
+    });
 
     this.pageContainers = [];
 
+
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       pages.push(<div
-        className="cf-pdf-pdfjs-container page"
+        className={pageClassNames}
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
@@ -351,7 +363,7 @@ export class Pdf extends React.Component {
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
-      onScroll={this.scrollEvent}
+      onScroll={_.debounce(this.scrollEvent, 0)}
       ref={(scrollWindow) => {
         this.scrollWindow = scrollWindow;
       }}>
@@ -366,26 +378,16 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
     currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
+    commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleSetCurrentRenderedFile(currentRenderedFile) {
-    dispatch({
-      type: Constants.SET_CURRENT_RENDERED_FILE,
-      payload: { currentRenderedFile }
-    });
-  },
-  handleSelectCommentIcon(comment) {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: comment
-      }
-    });
-  }
+  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
+  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
 
 export default connect(
@@ -408,7 +410,6 @@ Pdf.propTypes = {
   currentRenderedFile: PropTypes.number,
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
-  handleSetCurrentRenderedFile: PropTypes.func.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageClick: PropTypes.func,
@@ -421,5 +422,7 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
+  commentFlowState: PropTypes.string,
+  setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };

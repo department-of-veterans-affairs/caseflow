@@ -104,7 +104,8 @@ class VACOLS::Case < VACOLS::Record
     WASHINGTON_DC: { vacols_value: "1" },
     HEARING_TYPE_NOT_SPECIFIED: { vacols_value: "2", video_hearing: true },
     NO_HEARING_DESIRED: { vacols_value: "5" },
-    HEARING_CANCELLED: { vacols_value: "5" }
+    HEARING_CANCELLED: { vacols_value: "5" },
+    NO_BOX_SELECTED: { vacols_value: "5" }
   }.freeze
 
   # NOTE(jd): This is a list of the valid locations that Caseflow

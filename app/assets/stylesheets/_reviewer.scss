@@ -49,13 +49,12 @@ $bookmark-yellow: #efdf1a;
 .cf-pdf-scroll-view {
   background-color: $color-gray;
   width: 100%;
-  top: 0;
-  bottom: 0;
+  top: 50px;
+  bottom: 50px;
   position: absolute;
   overflow-y: scroll;
   overflow-x: visible;
   text-align: center;
-  padding: 30px 0;
   float: left;
 }
 
@@ -154,6 +153,7 @@ svg[aria-hidden=true],
 
 .cf-pdf-buttons {
   &-left {
+    min-height: 1px;
     text-align: left;
   }
 
@@ -172,7 +172,7 @@ svg[aria-hidden=true],
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 8px !important;
+  margin: 0 8px;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -244,6 +244,7 @@ svg[aria-hidden=true],
 .pdfViewer.singlePageView .page {
   box-shadow: 0 0 5px $color-gray-dark;
   margin: 5px;
+  margin-bottom: 25px;
   border-image: none;
   z-index: 5;
 }
@@ -379,4 +380,29 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   width: 100%;
   padding-right: 5px;
+}
+
+// I HATE IMPORTANTS, but I'm not sure how to get rid of this one.
+// We need this to apply to every page and all of its sub components,
+// or else when we mouse over a div with text on the page the cursor
+// switches to a text selector. But since the divs have a more specific
+// selector, it wins out.
+.cf-pdf-placing-comment {
+  outline: 10px solid $color-focus;
+
+  * {
+    cursor: url(asset-path('comment-cursor.svg')), auto !important;
+  }
+}
+
+// scss-lint:disable QualifyingElement
+input[type="search"].cf-search-input-with-close {
+  padding-right: 25px;
+}
+// scss-lint:enable QualifyingElement
+
+[type="button"].cf-search-close-icon {
+  margin-left: -20px;
+  margin-top: 6px;
+  position: absolute;
 }
