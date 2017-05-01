@@ -16,7 +16,6 @@ import DocTagPicker from './DocTagPicker';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
-import * as moment from 'moment';
 
 const NUMBER_OF_COLUMNS = 6;
 
