@@ -22,8 +22,34 @@ $tag-backgrond-color: #d6d7d9;
     font-size: 15px;
   }
 
-  .cf-document-list-header-row tr th > div {
-    display: flex;
+  .cf-document-list-header-row tr {
+    display: block;
+
+    th {
+      &:first-child {
+        min-width: inherit;
+      }
+
+      min-width: 180px;
+
+      &> div {
+        display: flex;
+      }
+    }
+  }
+
+  .cf-document-list-body {
+    display: block;
+    max-height: 65vh;
+    overflow: auto;
+
+    td {
+      &:first-child {
+        min-width: inherit;
+      }
+
+      min-width: 180px;
+    }
   }
 
   .document-list-receipt-date {

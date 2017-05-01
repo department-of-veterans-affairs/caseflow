@@ -92,7 +92,7 @@ export default class Table extends React.Component {
     };
 
     let BodyRows = (props) => {
-      return <tbody>
+      return <tbody className={this.props.bodyClassName}>
         {props.rowObjects.map((object, rowNumber) =>
           <Row
             rowObject={object}

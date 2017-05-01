@@ -294,11 +294,9 @@ export class PdfListView extends React.Component {
           }
         },
         {
-          align: 'center',
           header: <div
             id="comments-header"
-            className="document-list-header-comments"
-          >
+            className="document-list-header-comments">
             Comments
           </div>,
           valueFunction: (doc) => {
@@ -363,6 +361,7 @@ export class PdfListView extends React.Component {
               rowObjects={rowObjects}
               summary="Document list"
               headerClassName="cf-document-list-header-row"
+              bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
             />
           </div>
