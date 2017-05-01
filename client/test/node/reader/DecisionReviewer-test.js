@@ -1,5 +1,5 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 

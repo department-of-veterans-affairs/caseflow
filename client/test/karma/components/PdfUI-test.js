@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import { PdfUI } from '../../../app/components/PdfUI';
 import sinon from 'sinon';
 
-const DOCUMENT_PATH_BASE = "/reader/appeal/reader_id1"
+const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
 /* eslint-disable no-unused-expressions */
 describe('PdfUI', () => {
