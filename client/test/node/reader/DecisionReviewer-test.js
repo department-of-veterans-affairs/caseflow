@@ -1,8 +1,10 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
-import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
+
+import { MemoryRouter } from 'react-router-dom';
+import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
 import { createStore, applyMiddleware } from 'redux';
@@ -13,6 +15,13 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
+
+// This is the route history preset in react router
+// prior to tests running
+const INITIAL_ENTRIES = [
+  '/reader_id1/documents',
+  `/reader_id1/documents/${documents[0].id}`
+];
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
@@ -33,6 +42,11 @@ describe('DecisionReviewer', () => {
           annotations={annotations}
           pdfWorker="worker"
           url="url"
+          router={MemoryRouter}
+          routerTestProps={{
+            initialEntries: INITIAL_ENTRIES
+          }}
+
         />
       </Provider>, { attachTo: document.getElementById('app') });
   });
@@ -204,31 +218,6 @@ describe('DecisionReviewer', () => {
           to.be.true;
       }));
 
-      it('can be clicked on to jump to icon', asyncTest(async() => {
-        let commentId = 1;
-        let jumpTo = sinon.spy(wrapper.find('DecisionReviewer').
-          getNode(), 'onJumpToComment');
-
-        ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
-
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
-
-        wrapper.find('#button-AddComment').simulate('click');
-
-        await pause();
-        wrapper.find('#pageContainer1').simulate('click', event);
-
-        wrapper.find('#addComment').simulate('change', { target: { value: 'hello' } });
-
-        wrapper.find('#button-save').simulate('click');
-        await pause();
-
-        wrapper.find('#comment0').simulate('click');
-        assert(jumpTo.calledWith(sinon.match({ id: commentId })));
-      }));
-
       it('highlighted by clicking on the icon', asyncTest(async() => {
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[1].type).
@@ -359,7 +348,7 @@ describe('DecisionReviewer', () => {
       });
     });
 
-    context('when filtered by', () => {
+    context('when searched by', () => {
       it('date displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: documents[1].received_at } });
@@ -390,8 +379,7 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(3);
       });
 
-      // We are temporarily dropping this functionality.
-      it.skip('comment displays properly', () => {
+      it('comment displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: annotations[0].comment } });
 
@@ -406,6 +394,89 @@ describe('DecisionReviewer', () => {
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
+      });
+
+      it('category displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'medical' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[0].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+    });
+
+    context('when filtered by', () => {
+      const openMenu = (node, menuName) => {
+        node.find(`#${menuName}-header`).find('svg').
+          simulate('click');
+      };
+
+      const checkBox = (node, text, value) => {
+        node.find('Checkbox').filterWhere((box) => box.text().
+          includes(text)).
+          find('input').
+          simulate('change', { target: { checked: value } });
+      };
+
+      it('category displays properly', () => {
+        openMenu(wrapper, 'categories');
+
+        checkBox(wrapper, 'Procedural', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'Procedural', false);
+
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        openMenu(wrapper, 'tags');
+
+        checkBox(wrapper, 'mytag', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'mytag', false);
       });
     });
   });

@@ -1,6 +1,13 @@
 class Reader::DocumentsController < ApplicationController
   before_action :verify_access
 
+  def show
+    # If we have sufficient metadata to show a single document,
+    # then we'll render the show. Otherwise we want to render index
+    # which will grab the metadata for all documents
+    return render(:index) unless metadata?
+  end
+
   private
 
   def appeal
@@ -25,6 +32,10 @@ class Reader::DocumentsController < ApplicationController
     end
   end
   helper_method :documents
+
+  def metadata?
+    params[:received_at] && params[:type] && params[:filename]
+  end
 
   # :nocov:
   def single_document

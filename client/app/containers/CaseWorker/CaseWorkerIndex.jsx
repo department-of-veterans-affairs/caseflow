@@ -38,7 +38,8 @@ export default class CaseWorkerIndex extends BaseForm {
   render() {
     let {
       availableTasks,
-      buttonText
+      buttonText,
+      quota
     } = this.props;
 
     let workHistoryColumns = [
@@ -64,10 +65,14 @@ export default class CaseWorkerIndex extends BaseForm {
     return <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-width-one-whole task-start-wrapper">
             <div className="cf-left-side">
+              { !quota && <h3>Get Started!</h3> }
               <span className="cf-button-associated-text-right">
-                { availableTasks &&
-                  `${this.props.totalAssignedIssues} claims in your queue, ${
-                this.props.completedCountToday} claims completed`
+                { availableTasks && quota &&
+                  `${this.props.quota.task_count} claims in your queue, ${
+                this.props.quota.completed_tasks_count} claims completed`
+                }
+                { !quota && availableTasks &&
+                  'There are claims ready to get picked up for today.'
                 }
                 { !availableTasks &&
                   'There are no more claims in your queue.'

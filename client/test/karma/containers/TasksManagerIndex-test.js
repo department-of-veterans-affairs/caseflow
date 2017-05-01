@@ -9,12 +9,19 @@ describe('TasksManagerIndex', () => {
     let wrapper;
 
     let renderPage = () => {
+      const quotas = [{
+        user_name: 'Billy Bob Thorton',
+        task_count: 3,
+        completed_tasks_count: 1,
+        tasks_left_count: 2
+      }];
+
       wrapper = shallow(
         <TasksManagerIndex
           completedCountToday={5}
           employeeCount="3"
           toCompleteCount={10}
-          tasksCompletedByUsers={{ user: 10 }}
+          userQuotas={quotas}
         />
       );
     };
