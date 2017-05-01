@@ -51,7 +51,7 @@ export default class Footer extends React.Component {
           onClick={onClickContinue}
           loading={loading}
           disabled={disableContinue}>
-          { buttonText ? buttonText : "Continue" }
+          { buttonText ? buttonText : 'Continue' }
         </Button>
       </Link>
       }
