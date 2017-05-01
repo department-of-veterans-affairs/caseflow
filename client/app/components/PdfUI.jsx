@@ -7,13 +7,13 @@ import * as Constants from '../reader/constants';
 import { selectCurrentPdf } from '../reader/actions';
 import classNames from 'classnames';
 
-export const linkToSingleDocumentView = (doc) => {
+export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
   let receivedAt = doc.receivedAt;
 
-  return `${window.location.href}/${id}?type=${type}` +
+  return `${basePath}/${id}?type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
@@ -70,7 +70,7 @@ export class PdfUI extends React.Component {
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.onShowList && <Button
+          { this.props.showDocumentsListNavigation && <Button
             name="backToDocuments"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left']}
             onClick={this.props.onShowList}>
@@ -112,7 +112,7 @@ export class PdfUI extends React.Component {
                 classNames={['cf-pdf-button cf-pdf-doc-type-button']}
                 ariaLabel="open document in new tab"
                 onClick={() => window.open(
-                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                  linkToSingleDocumentView(this.props.documentPathBase, this.props.doc), '_blank')}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>
@@ -136,7 +136,7 @@ export class PdfUI extends React.Component {
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
-              onClick={() => this.props.selectCurrentPdf(this.props.prevDocId)}
+              onClick={this.props.showPdf(this.props.prevDocId)}
               ariaLabel="previous PDF">
               <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
             </Button>
@@ -146,7 +146,7 @@ export class PdfUI extends React.Component {
             <Button
               name="next"
               classNames={['cf-pdf-button cf-right-side']}
-              onClick={() => this.props.selectCurrentPdf(this.props.nextDocId)}
+              onClick={this.props.showPdf(this.props.nextDocId)}
               ariaLabel="next PDF">
               <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
             </Button>
@@ -215,5 +215,6 @@ PdfUI.propTypes = {
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
+  showDocumentsListNavigation: PropTypes.bool.isRequired,
   hidePdfSidebar: PropTypes.bool
 };

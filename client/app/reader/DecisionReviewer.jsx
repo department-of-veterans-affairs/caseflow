@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Route, BrowserRouter } from 'react-router-dom';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
@@ -10,6 +11,8 @@ import * as ReaderActions from './actions';
 import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
+
+export const documentPath = (id) => `/document/${id}/pdf`;
 
 export class DecisionReviewer extends React.Component {
   constructor(props) {
@@ -35,35 +38,40 @@ export class DecisionReviewer extends React.Component {
     return `/document/${doc.id}/pdf`;
   }
 
-  showPdf = (pdfId) => (event) => {
-    // If the user is trying to open the link in a new tab/window
-    // then follow the link. Otherwise if they just clicked the link
-    // keep them contained within the SPA.
-    // ctrlKey for windows
-    // shift key for opening in new window
-    // metaKey for Macs
-    // button for middle click
-    if (event.ctrlKey ||
-        event.shiftKey ||
-        event.metaKey ||
-        (event.button &&
-        event.button === 1)) {
+  showPdf = (history, vacolsId) => (docId) => (event) => {
+    if (event) {
+      // If the user is trying to open the link in a new tab/window
+      // then follow the link. Otherwise if they just clicked the link
+      // keep them contained within the SPA.
+      // ctrlKey for windows
+      // shift key for opening in new window
+      // metaKey for Macs
+      // button for middle click
+      if (event.ctrlKey ||
+          event.shiftKey ||
+          event.metaKey ||
+          (event.button &&
+          event.button === 1)) {
 
-      // For some reason calling this synchronosly prevents the new
-      // tab from opening. Move it to an asynchronus call.
-      setTimeout(() =>
-        this.props.handleSetLastRead(pdfId)
-      );
+        // For some reason calling this synchronosly prevents the new
+        // tab from opening. Move it to an asynchronus call.
+        setTimeout(() =>
+          this.props.handleSetLastRead(docId)
+        );
 
-      return true;
+        return true;
+      }
+
+      event.preventDefault();
     }
 
-    event.preventDefault();
-    this.props.selectCurrentPdf(pdfId);
+    this.props.selectCurrentPdf(docId);
+    history.push(`/${vacolsId}/documents/${docId}`);
   }
 
-  onShowList = () => {
+  onShowList = (history, vacolsId) => () => {
     this.props.unselectPdf();
+    history.push(`/${vacolsId}/documents`);
   }
 
   componentDidMount = () => {
@@ -85,8 +93,8 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  onJumpToComment = (comment) => () => {
-    this.props.selectCurrentPdf(comment.documentId);
+  onJumpToComment = (history, vacolsId) => (comment) => () => {
+    this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
   }
 
@@ -94,46 +102,61 @@ export class DecisionReviewer extends React.Component {
     this.props.onScrollToComment(null);
   }
 
-  render() {
-    const documents = this.props.filteredDocIds ?
+  documents = () => {
+    return this.props.filteredDocIds ?
       _.map(this.props.filteredDocIds, (docId) => this.props.storeDocuments[docId]) :
       _.values(this.props.storeDocuments);
-    const shouldRenderPdf = this.props.currentRenderedFile !== null;
+  }
 
-    const activeDocIndex = _.findIndex(documents, { id: this.props.currentRenderedFile });
-    const activeDoc = documents[activeDocIndex];
+  routedPdfListView = (routerProps) => {
+    const vacolsId = routerProps.match.params.vacolsId;
 
-    const nextDocExists = activeDocIndex + 1 < _.size(documents);
-    const nextDocId = nextDocExists && documents[activeDocIndex + 1].id;
+    return <PdfListView
+      annotationStorage={this.annotationStorage}
+      documents={this.documents()}
+      showPdf={this.showPdf(routerProps.history, vacolsId)}
+      sortBy={this.state.sortBy}
+      selectedLabels={this.state.selectedLabels}
+      isCommentLabelSelected={this.state.isCommentLabelSelected}
+      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
+      {...routerProps}
+    />;
+  }
 
-    const previousDocExists = activeDocIndex > 0;
-    const prevDocId = previousDocExists && documents[activeDocIndex - 1].id;
+  routedPdfViewer = (routerProps) => {
+    const vacolsId = routerProps.match.params.vacolsId;
 
-    return (
+    return <PdfViewer
+      addNewTag={this.props.addNewTag}
+      removeTag={this.props.removeTag}
+      showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
+      annotationStorage={this.annotationStorage}
+      documents={this.documents()}
+      allDocuments={_.values(this.props.storeDocuments)}
+      pdfWorker={this.props.pdfWorker}
+      onShowList={this.onShowList(routerProps.history, vacolsId)}
+      showPdf={this.showPdf(routerProps.history, vacolsId)}
+      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
+      onCommentScrolledTo={this.onCommentScrolledTo}
+      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+      {...routerProps}
+    />;
+  }
+
+  render() {
+    const Router = this.props.router || BrowserRouter;
+
+    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        {!shouldRenderPdf && <PdfListView
-          annotationStorage={this.annotationStorage}
-          documents={documents}
-          showPdf={this.showPdf}
-          sortBy={this.state.sortBy}
-          selectedLabels={this.state.selectedLabels}
-          isCommentLabelSelected={this.state.isCommentLabelSelected}
-          onJumpToComment={this.onJumpToComment} />}
-        {shouldRenderPdf && <PdfViewer
-          addNewTag={this.props.addNewTag}
-          removeTag={this.props.removeTag}
-          showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
-          annotationStorage={this.annotationStorage}
-          file={this.documentUrl(activeDoc)}
-          doc={activeDoc}
-          nextDocId={nextDocId}
-          prevDocId={prevDocId}
-          onShowList={this.onShowList}
-          pdfWorker={this.props.pdfWorker}
-          onJumpToComment={this.onJumpToComment}
-          onCommentScrolledTo={this.onCommentScrolledTo} />}
-      </div>
-    );
+        <Route exact path="/:vacolsId/documents"
+          component={this.routedPdfListView}
+        />
+        <Route path="/:vacolsId/documents/:docId"
+          component={this.routedPdfViewer}
+        />
+    </div>
+   </Router>;
   }
 }
 
@@ -144,7 +167,11 @@ DecisionReviewer.propTypes = {
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   setAnnotationStorage: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired
+  handleSetLastRead: PropTypes.func.isRequired,
+
+  // These two properties are exclusively for testing purposes
+  router: PropTypes.func,
+  routerProps: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
