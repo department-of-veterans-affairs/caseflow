@@ -136,6 +136,11 @@ export class PdfListView extends React.Component {
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
+    const clearTagFilters = () => {
+      _(this.props.docFilterCriteria.tag).keys().
+        forEach((tagText) => this.props.setTagFilter(tagText, false));
+    };
+
     const anyFiltersSet = (filterType) => (
       Boolean(_.some(this.props.docFilterCriteria[filterType]))
     );
@@ -259,7 +264,7 @@ export class PdfListView extends React.Component {
             />
             {isTagDropdownFilterOpen &&
               <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
-                clearFilters={clearFilters}
+                clearFilters={clearTagFilters}
                 name="tag"
                 isClearEnabled={anyTagFiltersAreSet}
                 handleClose={toggleTagDropdownFilterVisiblity}>
