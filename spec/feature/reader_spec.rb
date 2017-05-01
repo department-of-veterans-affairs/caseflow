@@ -267,7 +267,7 @@ RSpec.feature "Reader" do
       # But if we scroll second page should be rendered and
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
-      scroll_to('scrollWindow', 500)
+      scroll_to("scrollWindow", 500)
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
