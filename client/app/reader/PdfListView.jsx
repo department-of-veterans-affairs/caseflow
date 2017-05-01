@@ -251,8 +251,8 @@ export class PdfListView extends React.Component {
             </a>, doc)
         },
         {
-          header: <div id="tag-tags-header"
-            className="document-list-header-tag-tags">
+          header: <div id="tags-header"
+            className="document-list-header-issue-tags">
             Issue Tags <FilterIcon
               label="Filter by tag"
               idPrefix="tag"
