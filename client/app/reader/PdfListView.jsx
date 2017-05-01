@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
+import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
@@ -248,7 +249,7 @@ export class PdfListView extends React.Component {
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {moment(doc.receivedAt, "YYYY-MM-DD").format('MM-DD-YYYY')}
+              {formatDateStr(doc.receivedAt)}
             </span>
         },
         {
