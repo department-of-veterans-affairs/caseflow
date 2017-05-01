@@ -13,12 +13,22 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => categoryFieldNameOfCategoryName(key)).
         value();
 
+  const activeTagFilters = _(docFilterCriteria.tag).
+        toPairs().
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => key).
+        value();
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   const filteredIds = _(nextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
         _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    ).
+    filter(
+      (doc) => !activeTagFilters.length ||
+        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
       searchString(searchQuery, nextState.annotationStorage)
@@ -299,6 +309,20 @@ export default (state = initialState, action = {}) => {
           docFilterCriteria: {
             category: {
               [action.payload.categoryName]: {
+                $set: action.payload.checked
+              }
+            }
+          }
+        }
+      }));
+  case Constants.SET_TAG_FILTER:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            tag: {
+              [action.payload.text]: {
                 $set: action.payload.checked
               }
             }

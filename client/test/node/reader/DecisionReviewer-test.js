@@ -412,6 +412,72 @@ describe('DecisionReviewer', () => {
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
+
+      it('tag displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+    });
+
+    context('when filtered by', () => {
+      const openMenu = (node, menuName) => {
+        node.find(`#${menuName}-header`).find('svg').
+          simulate('click');
+      };
+
+      const checkBox = (node, text, value) => {
+        node.find('Checkbox').filterWhere((box) => box.text().
+          includes(text)).
+          find('input').
+          simulate('change', { target: { checked: value } });
+      };
+
+      it('category displays properly', () => {
+        openMenu(wrapper, 'categories');
+
+        checkBox(wrapper, 'Procedural', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'Procedural', false);
+
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        openMenu(wrapper, 'tags');
+
+        checkBox(wrapper, 'mytag', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'mytag', false);
+      });
     });
   });
 });
