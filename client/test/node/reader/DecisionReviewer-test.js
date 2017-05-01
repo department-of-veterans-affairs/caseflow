@@ -423,6 +423,61 @@ describe('DecisionReviewer', () => {
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
       });
+
+      it('tag displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+    });
+
+    context('when filtered by', () => {
+      it.only('category displays properly', () => {
+        wrapper.find('#categories-header').find('svg').simulate('click');
+        wrapper.find('.checkbox-wrapper-procedural').simulate('change');
+
+        console.log(wrapper.debug());
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[0].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
     });
   });
 });

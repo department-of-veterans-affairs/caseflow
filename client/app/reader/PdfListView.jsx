@@ -93,9 +93,14 @@ export class PdfListView extends React.Component {
   }
 
   setFilterIconPosition = (filterType, icon) => {
+    const boundingClientRect = {
+      bottom: icon.getBoundingClientRect().bottom + window.scrollY,
+      right: icon.getBoundingClientRect().right
+    };
+
     this.setState({
       filterPositions: _.merge(this.state.filterPositions, {
-        [filterType]: _.merge({}, icon.getBoundingClientRect())
+        [filterType]: _.merge({}, boundingClientRect)
       })
     });
   }
