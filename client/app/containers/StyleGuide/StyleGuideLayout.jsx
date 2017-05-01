@@ -3,7 +3,6 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import StyleGuideAction from './StyleGuideAction';
 
 
-
 export default class StyleGuideLayout extends React.Component {
   render () {
     return (
@@ -32,9 +31,9 @@ export default class StyleGuideLayout extends React.Component {
         or completely leave the task they’re working on.
       </p>
        <p>
-        The consistent layout and arrangement of these actions 
+        The consistent layout and arrangement of these actions
         reinforces the users mental model as the use Caseflow.
-        You should avoid placing these actions in other parts 
+        You should avoid placing these actions in other parts
         of the page without good reason.
       </p>
       <StyleGuideAction />

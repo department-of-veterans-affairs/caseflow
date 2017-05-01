@@ -29,7 +29,7 @@ export default class StyleGuideAction extends React.Component {
           />
          </div>
         </div>
-        </p>   
+        </p>
      </div>
 
     );
