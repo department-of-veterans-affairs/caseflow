@@ -16,7 +16,7 @@ const updateFilteredDocIds = (nextState) => {
   const activeTagFilters = _(docFilterCriteria.tag).
         toPairs().
         filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([value]) => value).
+        map(([key]) => key).
         value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
