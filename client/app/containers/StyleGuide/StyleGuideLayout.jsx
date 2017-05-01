@@ -3,9 +3,9 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import StyleGuideAction from './StyleGuideAction';
 
 
- let StyleGuideLayout  = () => {
+let StyleGuideLayout = () => {
 
-    return (
+  return (
     <div>
        <StyleGuideComponentTitle
         title="Actions"
@@ -39,6 +39,7 @@ import StyleGuideAction from './StyleGuideAction';
       <StyleGuideAction />
     </div>
 
-    );
+  );
 };
+
 export default StyleGuideLayout;

@@ -31,6 +31,7 @@ let StyleGuideAction = () => {
      </p>
     </div>
 
-    );
+  );
 };
+
 export default StyleGuideAction;
