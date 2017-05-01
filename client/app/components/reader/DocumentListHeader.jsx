@@ -64,6 +64,10 @@ DocumentListHeader.propTypes = {
   numberOfDocuments: PropTypes.number.isRequired
 };
 
+DocumentListHeader.defaultProps = {
+  searchQuery: ''
+};
+
 const mapStateToProps = (state) => ({
   expandAll: state.ui.expandAll,
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),

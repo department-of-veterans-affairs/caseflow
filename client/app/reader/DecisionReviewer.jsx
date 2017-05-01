@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
@@ -39,29 +39,32 @@ export class DecisionReviewer extends React.Component {
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
-    // If the user is trying to open the link in a new tab/window
-    // then follow the link. Otherwise if they just clicked the link
-    // keep them contained within the SPA.
-    // ctrlKey for windows
-    // shift key for opening in new window
-    // metaKey for Macs
-    // button for middle click
-    if (event.ctrlKey ||
-        event.shiftKey ||
-        event.metaKey ||
-        (event.button &&
-        event.button === 1)) {
+    if (event) {
+      // If the user is trying to open the link in a new tab/window
+      // then follow the link. Otherwise if they just clicked the link
+      // keep them contained within the SPA.
+      // ctrlKey for windows
+      // shift key for opening in new window
+      // metaKey for Macs
+      // button for middle click
+      if (event.ctrlKey ||
+          event.shiftKey ||
+          event.metaKey ||
+          (event.button &&
+          event.button === 1)) {
 
-      // For some reason calling this synchronosly prevents the new
-      // tab from opening. Move it to an asynchronus call.
-      setTimeout(() =>
-        this.props.handleSetLastRead(docId)
-      );
+        // For some reason calling this synchronosly prevents the new
+        // tab from opening. Move it to an asynchronus call.
+        setTimeout(() =>
+          this.props.handleSetLastRead(docId)
+        );
 
-      return true;
+        return true;
+      }
+
+      event.preventDefault();
     }
 
-    event.preventDefault();
     this.props.selectCurrentPdf(docId);
     history.push(`/${vacolsId}/documents/${docId}`);
   }
@@ -90,8 +93,8 @@ export class DecisionReviewer extends React.Component {
     }
   }
 
-  onJumpToComment = (comment) => () => {
-    this.props.selectCurrentPdf(comment.documentId);
+  onJumpToComment = (history, vacolsId) => (comment) => () => {
+    this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
   }
 
@@ -115,7 +118,8 @@ export class DecisionReviewer extends React.Component {
       sortBy={this.state.sortBy}
       selectedLabels={this.state.selectedLabels}
       isCommentLabelSelected={this.state.isCommentLabelSelected}
-      onJumpToComment={this.onJumpToComment}
+      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
       {...routerProps}
     />;
   }
@@ -129,20 +133,23 @@ export class DecisionReviewer extends React.Component {
       showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
       annotationStorage={this.annotationStorage}
       documents={this.documents()}
+      allDocuments={_.values(this.props.storeDocuments)}
       pdfWorker={this.props.pdfWorker}
       onShowList={this.onShowList(routerProps.history, vacolsId)}
       showPdf={this.showPdf(routerProps.history, vacolsId)}
-      onJumpToComment={this.onJumpToComment}
+      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
       onCommentScrolledTo={this.onCommentScrolledTo}
+      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
       {...routerProps}
     />;
   }
 
-
   render() {
-    return <Router basename="/reader/appeal">
+    const Router = this.props.router || BrowserRouter;
+
+    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        <Route path="/:vacolsId/documents"
+        <Route exact path="/:vacolsId/documents"
           component={this.routedPdfListView}
         />
         <Route path="/:vacolsId/documents/:docId"
@@ -160,7 +167,11 @@ DecisionReviewer.propTypes = {
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   setAnnotationStorage: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired
+  handleSetLastRead: PropTypes.func.isRequired,
+
+  // These two properties are exclusively for testing purposes
+  router: PropTypes.func,
+  routerProps: PropTypes.object
 };
 
 const mapStateToProps = (state) => {

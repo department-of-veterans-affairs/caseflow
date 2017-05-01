@@ -224,6 +224,35 @@ RSpec.feature "Reader" do
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
       end
+
+      scenario "Scroll to comment icon" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[0].filename
+
+        expect(page).to have_content(annotations[0].comment)
+
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+
+        # Click on the comment and ensure the scroll position changes
+        # by the y value the comment.
+        element = "scrollWindow"
+        original_scroll = scroll_position(element)
+
+        # Click on the off screen comment (0 through 3 are on screen)
+        find("#comment4").click
+        after_click_scroll = scroll_position(element)
+
+        expect(after_click_scroll - original_scroll).to be > 0
+
+        # Make sure the comment icon and comment are shown as selected
+        expect(page).to have_css(".comment-container-selected")
+        id = "#{annotations[4].id}-filter-1"
+
+        # This filter is the blue highlight around the comment icon
+        find("g[filter=\"url(##{id})\"]")
+      end
     end
 
     scenario "Scrolling renders pages" do
@@ -240,7 +269,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
-    scenario "Open single document view and manipulate UI" do
+    scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 

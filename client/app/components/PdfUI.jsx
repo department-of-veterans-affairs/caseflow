@@ -7,13 +7,13 @@ import * as Constants from '../reader/constants';
 import { selectCurrentPdf } from '../reader/actions';
 import classNames from 'classnames';
 
-export const linkToSingleDocumentView = (doc) => {
+export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
   let receivedAt = doc.receivedAt;
 
-  return `${window.location.href}?type=${type}` +
+  return `${basePath}/${id}?type=${type}` +
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
@@ -112,7 +112,7 @@ export class PdfUI extends React.Component {
                 classNames={['cf-pdf-button cf-pdf-doc-type-button']}
                 ariaLabel="open document in new tab"
                 onClick={() => window.open(
-                  linkToSingleDocumentView(this.props.doc), '_blank')}>
+                  linkToSingleDocumentView(this.props.documentPathBase, this.props.doc), '_blank')}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>

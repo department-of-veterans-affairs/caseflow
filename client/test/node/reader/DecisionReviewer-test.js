@@ -1,8 +1,10 @@
 import React from 'react';
 import { expect, assert } from 'chai';
 import { mount } from 'enzyme';
-import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
+
+import { MemoryRouter } from 'react-router-dom';
+import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
 import { createStore, applyMiddleware } from 'redux';
@@ -13,6 +15,13 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
+
+// This is the route history preset in react router
+// prior to tests running
+const INITIAL_ENTRIES = [
+  '/reader_id1/documents',
+  `/reader_id1/documents/${documents[0].id}`
+];
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
@@ -33,6 +42,11 @@ describe('DecisionReviewer', () => {
           annotations={annotations}
           pdfWorker="worker"
           url="url"
+          router={MemoryRouter}
+          routerTestProps={{
+            initialEntries: INITIAL_ENTRIES
+          }}
+
         />
       </Provider>, { attachTo: document.getElementById('app') });
   });
@@ -202,31 +216,6 @@ describe('DecisionReviewer', () => {
         expect(ApiUtilStub.apiDelete.
           calledWith(`/document/${documents[0].id}/annotation/${commentId}`)).
           to.be.true;
-      }));
-
-      it('can be clicked on to jump to icon', asyncTest(async() => {
-        let commentId = 1;
-        let jumpTo = sinon.spy(wrapper.find('DecisionReviewer').
-          getNode(), 'onJumpToComment');
-
-        ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
-
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
-
-        wrapper.find('#button-AddComment').simulate('click');
-
-        await pause();
-        wrapper.find('#pageContainer1').simulate('click', event);
-
-        wrapper.find('#addComment').simulate('change', { target: { value: 'hello' } });
-
-        wrapper.find('#button-save').simulate('click');
-        await pause();
-
-        wrapper.find('#comment0').simulate('click');
-        assert(jumpTo.calledWith(sinon.match({ id: commentId })));
       }));
 
       it('highlighted by clicking on the icon', asyncTest(async() => {

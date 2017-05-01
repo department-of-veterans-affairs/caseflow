@@ -154,10 +154,10 @@ export class PdfViewer extends React.Component {
   keyListener = (event) => {
     if (!this.isUserActive()) {
       if (event.key === 'ArrowLeft' && this.previousDocId()) {
-        this.props.selectCurrentPdf(this.previousDocId());
+        this.props.showPdf(this.previousDocId())();
       }
       if (event.key === 'ArrowRight' && this.nextDocId()) {
-        this.props.selectCurrentPdf(this.nextDocId());
+        this.props.showPdf(this.nextDocId())();
       }
     }
   }
@@ -234,6 +234,8 @@ export class PdfViewer extends React.Component {
     }
   }
 
+  showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
+
   render() {
     const doc = this.selectedDoc();
 
@@ -256,12 +258,13 @@ export class PdfViewer extends React.Component {
             file={documentPath(this.props.selectedDocId)}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
+            documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
             prevDocId={this.previousDocId()}
             nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
-            showDocumentsListNavigation={this.props.documents.length !== 1}
+            showDocumentsListNavigation={this.showDocumentsListNavigation()}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentClick={this.onCommentClick}
@@ -339,6 +342,7 @@ PdfViewer.propTypes = {
   handleClearCommentState: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   documents: PropTypes.array.isRequired,
+  allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
   hidePdfSidebar: PropTypes.bool
 };
