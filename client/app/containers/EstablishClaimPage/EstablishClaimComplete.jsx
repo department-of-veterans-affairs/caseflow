@@ -49,11 +49,8 @@ export default class EstablishClaimComplete extends React.Component {
         title={firstHeader}
         leadMessageList={[secondHeader]}
         checklist={checklist}
-<<<<<<< HEAD
         messageText={hasQuotaReached && quotaReachedMessage()}
-=======
         type="success"
->>>>>>> master
         />
 
     <EstablishClaimToolbar
