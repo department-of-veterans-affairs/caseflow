@@ -14,6 +14,6 @@ export const formatDate = function(dateString) {
   return `${month}/${day}/${year}`;
 };
 
-export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = 'MM-DD-YYYY') => (
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => (
   moment(dateString, dateFormat).format(expectedFormat)
 );
