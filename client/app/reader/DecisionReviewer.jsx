@@ -70,7 +70,6 @@ export class DecisionReviewer extends React.Component {
   }
 
   onShowList = (history, vacolsId) => () => {
-    this.props.unselectPdf();
     history.push(`/${vacolsId}/documents`);
   }
 
@@ -181,7 +180,6 @@ const mapStateToProps = (state) => {
         showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
       }
     },
-    currentRenderedFile: state.ui.pdf.currentRenderedFile,
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
     storeDocuments: state.documents

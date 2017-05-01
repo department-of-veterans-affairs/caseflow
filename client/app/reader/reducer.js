@@ -98,7 +98,6 @@ export const initialState = {
       searchQuery: ''
     },
     pdf: {
-      currentRenderedFile: null,
       pdfsReadyToShow: {},
       hidePdfSidebar: false
     },
@@ -184,34 +183,6 @@ export default (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
-      ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
-        pdf: {
-          currentRenderedFile: {
-            $set: action.payload.docId
-          }
-        }
-      },
-      documents: {
-        [action.payload.docId]: {
-          $merge: {
-            opened_by_current_user: true
-          }
-        }
-      }
-    }), action.payload.docId);
-  case Constants.UNSELECT_CURRENT_VIEWER_PDF:
-    return update(updateFilteredDocIds(state), {
-      ui: {
-        pdf: {
-          currentRenderedFile: {
-            $set: null
-          }
-        }
-      }
-    });
   case Constants.SET_PDF_READY_TO_SHOW:
     return update(state, {
       ui: {

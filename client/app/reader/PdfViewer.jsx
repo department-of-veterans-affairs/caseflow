@@ -27,10 +27,7 @@ export class PdfViewer extends React.Component {
   }
 
   componentWillMount() {
-    // On fresh page load, ensure we sync react router with redux
-    if (!this.props.selectedDocId) {
-      this.props.handleSelectCurrentPdf(Number(this.props.match.params.docId));
-    }
+    this.props.handleSelectCurrentPdf(Number(this.props.match.params.docId));
   }
 
   onCommentChange = (documentId = this.selectedDocId()) => {
@@ -197,8 +194,10 @@ export class PdfViewer extends React.Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (nextProps.selectedDocId !== this.props.selectedDocId) {
-      this.onCommentChange(nextProps.selectedDocId);
+    const nextDocId = Number(nextProps.match.params.docId);
+
+    if (nextDocId !== this.selectedDocId()) {
+      this.onCommentChange(nextDocId);
     }
 
     if (nextProps.scrollToComment &&
@@ -208,14 +207,14 @@ export class PdfViewer extends React.Component {
   }
 
   selectedDocIndex = () => (
-    _.findIndex(this.props.documents, { id: this.props.selectedDocId })
+    _.findIndex(this.props.documents, { id: this.selectedDocId() })
   )
 
   selectedDoc = () => (
     this.props.documents[this.selectedDocIndex()]
   )
 
-  selectedDocId = () => this.props.selectedDocId
+  selectedDocId = () => Number(this.props.match.params.docId)
 
   previousDocId = () => {
     const previousDocExists = this.selectedDocIndex() > 0;
@@ -255,7 +254,7 @@ export class PdfViewer extends React.Component {
           <PdfUI
             comments={this.state.comments}
             doc={doc}
-            file={documentPath(this.props.selectedDocId)}
+            file={documentPath(this.selectedDocId())}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
@@ -312,8 +311,7 @@ const mapStateToProps = (state) => {
   return {
     commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: state.ui.pdf.scrollToComment,
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
-    selectedDocId: state.ui.pdf.currentRenderedFile
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => ({
