@@ -345,3 +345,9 @@ select {
 .cf-icon-button {
   cursor: pointer;
 }
+
+.cf-msg-screen-deck {
+  &.cf-success-emoji-text {
+    width: auto;
+  }
+}
