@@ -186,6 +186,10 @@
 
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
+
+  &.cf-success-emoji-text {
+    width: auto;
+  }
 }
 
 .cf-tab-window-body {
@@ -344,10 +348,4 @@ select {
 
 .cf-icon-button {
   cursor: pointer;
-}
-
-.cf-msg-screen-deck {
-  &.cf-success-emoji-text {
-    width: auto;
-  }
 }
