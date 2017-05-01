@@ -194,8 +194,9 @@ export class PdfViewer extends React.Component {
       this.onCommentChange(nextProps.selectedDocId);
     }
 
-    // Sync react-router with Redux's selectedDocid
     const nextDocId = Number(nextProps.match.params.docId);
+
+    // Sync react-router with Redux's selectedDocid
     if (nextDocId !== nextProps.selectedDocId) {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
