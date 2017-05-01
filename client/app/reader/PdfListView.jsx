@@ -61,7 +61,10 @@ export class PdfListView extends React.Component {
   constructor() {
     super();
     this.state = {
-      filterPositions: {}
+      filterPositions: {
+        tag: {},
+        category: {}
+      }
     };
   }
 
@@ -73,15 +76,16 @@ export class PdfListView extends React.Component {
       document.body.scrollTop = boundingBox.top - halfWindowHeight;
     }
 
-    window.addEventListener('resize', this.setCategoryFilterIconPosition);
-    window.addEventListener('resize', this.setTagFilterIconPosition);
-    this.setCategoryFilterIconPosition();
-    this.setTagFilterIconPosition();
+    this.setFilterIconPositions();
+    window.addEventListener('resize', this.setFilterIconPositions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.setCategoryFilterIconPosition);
-    window.removeEventListener('resize', this.setTagFilterIconPosition);
+    window.removeEventListener('resize', this.setFilterIconPositions);
+  }
+
+  componentDidUpdate() {
+    this.setFilterIconPositions();
   }
 
   setCategoryFilterIconPosition = () => {
@@ -92,17 +96,25 @@ export class PdfListView extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
+  setFilterIconPositions = () => {
+    this.setCategoryFilterIconPosition();
+    this.setTagFilterIconPosition();
+  }
+
   setFilterIconPosition = (filterType, icon) => {
     const boundingClientRect = {
       bottom: icon.getBoundingClientRect().bottom + window.scrollY,
       right: icon.getBoundingClientRect().right
     };
 
-    this.setState({
-      filterPositions: _.merge(this.state.filterPositions, {
-        [filterType]: _.merge({}, boundingClientRect)
-      })
-    });
+    if (this.state.filterPositions[filterType].bottom !== boundingClientRect.bottom ||
+      this.state.filterPositions[filterType].right !== boundingClientRect.right) {
+      this.setState({
+        filterPositions: _.merge(this.state.filterPositions, {
+          [filterType]: _.merge({}, boundingClientRect)
+        })
+      });
+    }
   }
 
   toggleComments = (id) => () => {
