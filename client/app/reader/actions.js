@@ -18,6 +18,10 @@ export const onReceiveDocs = (documents) => (
   }
 );
 
+export const toggleExpandAll = () => ({
+  type: Constants.TOGGLE_EXPAND_ALL
+});
+
 export const setSearch = (searchQuery) => ({
   type: Constants.SET_SEARCH,
   payload: {
@@ -138,6 +142,21 @@ export const setPdfReadyToShow = (docId) => ({
   payload: {
     docId
   }
+});
+
+export const clearAllFilters = () => ({
+  type: Constants.CLEAR_ALL_FILTERS
+});
+
+export const setAnnotationStorage = (annotationStorage) => ({
+  type: Constants.SET_ANNOTATION_STORAGE,
+  payload: {
+    annotationStorage
+  }
+});
+
+export const clearSearch = () => ({
+  type: Constants.CLEAR_ALL_SEARCH
 });
 
 export const removeTag = (doc, tagId) => (
