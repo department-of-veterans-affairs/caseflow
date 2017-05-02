@@ -3,6 +3,7 @@ create_establish_claim_tasks_job:
   cron: "1 0 * * * America/New_York"
   class: "CreateEstablishClaimTasksJob"
   queue: default
+  active_job: true
 
 reassign_old_tasks:
   cron: "1 0 * * * America/New_York"
@@ -22,7 +23,7 @@ prepare_establish_claim_tasks_job:
 # It is scheduled to run every 5 minute to make sure Sidekiq and Sidekiq Cron
 # are both operational. It will be removed once the issue is fixed.
 heartbeat_tasks_job:
-  cron: "* * * * * America/New_York"
+  cron: "*/5 * * * * America/New_York"
   class: "HeartbeatTasksJob"
   queue: default
   active_job: true
