@@ -130,13 +130,8 @@ ActiveRecord::Schema.define(version: 20170428182122) do
     t.integer "tag_id",      null: false
   end
 
-<<<<<<< HEAD
   add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", using: :btree
   add_index "documents_tags", ["tag_id", "document_id"], name: "index_documents_tags_on_tag_id_and_document_id", using: :btree
-=======
-  add_index "documents_tags", ["document_id"], name: "index_documents_tags_on_document_id", using: :btree
-  add_index "documents_tags", ["tag_id"], name: "index_documents_tags_on_tag_id", using: :btree
->>>>>>> master
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
