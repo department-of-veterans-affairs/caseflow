@@ -7,10 +7,12 @@ import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
+import DocTagPicker from './DocTagPicker';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -59,7 +61,10 @@ export class PdfListView extends React.Component {
   constructor() {
     super();
     this.state = {
-      filterPositions: {}
+      filterPositions: {
+        tag: {},
+        category: {}
+      }
     };
   }
 
@@ -71,20 +76,45 @@ export class PdfListView extends React.Component {
       document.body.scrollTop = boundingBox.top - halfWindowHeight;
     }
 
-    window.addEventListener('resize', this.setCategoryFilterIconPosition);
-    this.setCategoryFilterIconPosition();
+    this.setFilterIconPositions();
+    window.addEventListener('resize', this.setFilterIconPositions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.setCategoryFilterIconPosition);
+    window.removeEventListener('resize', this.setFilterIconPositions);
+  }
+
+  componentDidUpdate() {
+    this.setFilterIconPositions();
   }
 
   setCategoryFilterIconPosition = () => {
-    this.setState({
-      filterPositions: {
-        category: _.merge({}, this.categoryFilterIcon.getBoundingClientRect())
-      }
-    });
+    this.setFilterIconPosition('category', this.categoryFilterIcon);
+  }
+
+  setTagFilterIconPosition = () => {
+    this.setFilterIconPosition('tag', this.tagFilterIcon);
+  }
+
+  setFilterIconPositions = () => {
+    this.setCategoryFilterIconPosition();
+    this.setTagFilterIconPosition();
+  }
+
+  setFilterIconPosition = (filterType, icon) => {
+    const boundingClientRect = {
+      bottom: icon.getBoundingClientRect().bottom + window.scrollY,
+      right: icon.getBoundingClientRect().right
+    };
+
+    if (this.state.filterPositions[filterType].bottom !== boundingClientRect.bottom ||
+      this.state.filterPositions[filterType].right !== boundingClientRect.right) {
+      this.setState({
+        filterPositions: _.merge(this.state.filterPositions, {
+          [filterType]: _.merge({}, boundingClientRect)
+        })
+      });
+    }
   }
 
   toggleComments = (id) => () => {
@@ -110,12 +140,25 @@ export class PdfListView extends React.Component {
     const toggleCategoryDropdownFilterVisiblity = () =>
       this.props.toggleDropdownFilterVisiblity('category');
 
+    const toggleTagDropdownFilterVisiblity = () =>
+      this.props.toggleDropdownFilterVisiblity('tag');
+
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
     };
 
-    const anyCategoryFiltersAreSet = Boolean(_.some(this.props.docFilterCriteria.category));
+    const clearTagFilters = () => {
+      _(this.props.docFilterCriteria.tag).keys().
+        forEach((tagText) => this.props.setTagFilter(tagText, false));
+    };
+
+    const anyFiltersSet = (filterType) => (
+      Boolean(_.some(this.props.docFilterCriteria[filterType]))
+    );
+
+    const anyCategoryFiltersAreSet = anyFiltersSet('category');
+    const anyTagFiltersAreSet = anyFiltersSet('tag');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -150,8 +193,12 @@ export class PdfListView extends React.Component {
       const isCategoryDropdownFilterOpen =
         _.get(this.props.pdfList, ['dropdowns', 'category']);
 
+      const isTagDropdownFilterOpen =
+        _.get(this.props.pdfList, ['dropdowns', 'tag']);
+
       return [
         {
+          cellClass: 'last-read-column',
           valueFunction: (doc) => {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
@@ -166,6 +213,7 @@ export class PdfListView extends React.Component {
           }
         },
         {
+          cellClass: 'categories-column',
           header: <div
             id="categories-header"
             className="document-list-header-categories">
@@ -181,6 +229,7 @@ export class PdfListView extends React.Component {
             {isCategoryDropdownFilterOpen &&
               <DropdownFilter baseCoordinates={this.state.filterPositions.category}
                 clearFilters={clearFilters}
+                name="category"
                 isClearEnabled={anyCategoryFiltersAreSet}
                 handleClose={toggleCategoryDropdownFilterVisiblity}>
                 <DocCategoryPicker
@@ -193,6 +242,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
         },
         {
+          cellClass: 'receipt-date-column',
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
@@ -205,32 +255,54 @@ export class PdfListView extends React.Component {
             </span>
         },
         {
+          cellClass: 'doc-type-column',
           header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
             Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
           valueFunction: (doc) => boldUnreadContent(
             <a
-              href={linkToSingleDocumentView(doc)}
+              href={linkToSingleDocumentView(this.props.documentPathBase, doc)}
               onMouseUp={this.props.showPdf(doc.id)}>
               {doc.type}
             </a>, doc)
         },
         {
-          header: <div id="issue-tags-header"
+          cellClass: 'tags-column',
+          header: <div id="tags-header"
             className="document-list-header-issue-tags">
-            Issue Tags <FilterIcon label="Filter by issue" idPrefix="issue" />
+            Issue Tags <FilterIcon
+              label="Filter by tag"
+              idPrefix="tag"
+              getRef={(tagFilterIcon) => {
+                this.tagFilterIcon = tagFilterIcon;
+              }}
+              selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
+              handleActivate={toggleTagDropdownFilterVisiblity}
+            />
+            {isTagDropdownFilterOpen &&
+              <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
+                clearFilters={clearTagFilters}
+                name="tag"
+                isClearEnabled={anyTagFiltersAreSet}
+                handleClose={toggleTagDropdownFilterVisiblity}>
+                <DocTagPicker
+                  tags={this.props.tagOptions}
+                  tagToggleStates={this.props.docFilterCriteria.tag}
+                  handleTagToggle={this.props.setTagFilter} />
+              </DropdownFilter>
+            }
           </div>,
-          valueFunction: () => {
-            return <div className="document-list-issue-tags">
-            </div>;
+          valueFunction: (doc) => {
+            return <TagTableColumn
+              doc={doc}
+            />;
           }
         },
         {
-          align: 'center',
+          cellClass: 'comments-column',
           header: <div
             id="comments-header"
-            className="document-list-header-comments"
-          >
+            className="document-list-header-comments">
             Comments
           </div>,
           valueFunction: (doc) => {
@@ -274,7 +346,8 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (doc.listComments) {
+      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
+        doc.listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -293,7 +366,9 @@ export class PdfListView extends React.Component {
               columns={this.getDocumentColumns()}
               rowObjects={rowObjects}
               summary="Document list"
+              className="documents-table"
               headerClassName="cf-document-list-header-row"
+              bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
             />
           </div>
@@ -304,6 +379,7 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  ..._.pick(state, ['tagOptions']),
   ..._.pick(state.ui, ['pdfList']),
   ..._.pick(state.ui, ['docFilterCriteria'])
 });
@@ -330,6 +406,15 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SET_CATEGORY_FILTER,
       payload: {
         categoryName,
+        checked
+      }
+    });
+  },
+  setTagFilter(text, checked) {
+    dispatch({
+      type: Constants.SET_TAG_FILTER,
+      payload: {
+        text,
         checked
       }
     });

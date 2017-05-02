@@ -16,9 +16,10 @@ describe Task do
   before { Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0)) }
 
   let(:appeal) { Generators::Appeal.create }
-  let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state) }
+  let(:task) { FakeTask.create(appeal: appeal, aasm_state: aasm_state, user: assigned_user) }
   let(:user) { Generators::User.create(full_name: "Robert Smith") }
   let(:aasm_state) { :unassigned }
+  let(:assigned_user) { nil }
 
   context ".newest_first" do
     subject { Task.newest_first.all }
@@ -49,27 +50,8 @@ describe Task do
     it { is_expected.to eq([unassigned_task, reviewed_task]) }
   end
 
-  context ".tasks_completed_by_users" do
-    subject { Task.tasks_completed_by_users(tasks) }
-
-    let!(:user_one_task) { Generators::User.create(full_name: "Klay Thompson") }
-    let!(:user_two_tasks) { Generators::User.create(full_name: "Steph Curry") }
-
-    let!(:tasks) do
-      [
-        FakeTask.create(aasm_state: :completed, user: user_one_task),
-        FakeTask.create(aasm_state: :completed, user: user_two_tasks),
-        FakeTask.create(aasm_state: :completed, user: user_two_tasks)
-      ]
-    end
-
-    it "returns hash with each user and their completed number of tasks" do
-      is_expected.to eq("Klay Thompson" => 1, "Steph Curry" => 2)
-    end
-  end
-
-  context ".completed_today" do
-    subject { FakeTask.completed_today.all }
+  context ".completed_on" do
+    subject { FakeTask.completed_on(Time.zone.today).all }
 
     let!(:task_completed_this_morning) do
       FakeTask.create(aasm_state: :completed, completed_at: Time.zone.now.beginning_of_day)
@@ -140,10 +122,22 @@ describe Task do
 
     context "when assigned" do
       let(:aasm_state) { :assigned }
+      let(:assigned_user) { user }
 
-      it "is successful and sets started_at" do
+      it "is successful, sets started_at, and creates a new user quota" do
         is_expected.to be_truthy
         expect(task.reload.started_at).to eq(Time.zone.now)
+
+        expect(FakeTask.todays_quota.assigned_quotas.find_by(user: user)).to_not be_nil
+      end
+
+      context "when a quota already exists" do
+        let!(:user_quota) { FakeTask.todays_quota.assigned_quotas.create!(user: user) }
+
+        it "doesn't create new quota" do
+          is_expected.to be_truthy
+          expect(FakeTask.todays_quota.assigned_quotas.where(user: user).count).to eq(1)
+        end
       end
     end
 
@@ -205,16 +199,6 @@ describe Task do
           completion_status: "routed_to_ro",
           outgoing_reference_id: "123WOO"
         )
-      end
-
-      let(:quota) { Quota.new(date: Time.zone.today, task_klass: FakeTask) }
-
-      it "recalculates current quota assignee count" do
-        # Create a task completed by another user to bring the number of active employees to 2
-        FakeTask.create!(aasm_state: :completed, completed_at: Time.zone.now, user: Generators::User.create)
-
-        subject
-        expect(quota.assignee_count).to eq(2)
       end
     end
 
@@ -520,6 +504,20 @@ describe Task do
     context "when completion_status has special text" do
       let(:completion_status) { :assigned_existing_ep }
       it { is_expected.to eq("Assigned Existing EP") }
+    end
+  end
+
+  context ".todays_quota" do
+    subject { FakeTask.todays_quota }
+
+    context "when team_quota already exists for task today" do
+      let!(:team_quota) { TeamQuota.create!(task_type: FakeTask, date: Time.zone.today) }
+      it { is_expected.to eq(team_quota) }
+    end
+
+    context "when no team_quota exists for task today" do
+      let!(:old_team_quota) { TeamQuota.create!(task_type: FakeTask, date: Time.zone.yesterday) }
+      it { is_expected.to have_attributes(date: Time.zone.today, task_type: "FakeTask") }
     end
   end
 end

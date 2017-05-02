@@ -2,9 +2,24 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 
-export const onReceiveDocs = (documents) => ({
-  type: Constants.RECEIVE_DOCUMENTS,
+
+export const collectAllTags = (documents) => ({
+  type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
+});
+
+export const onReceiveDocs = (documents) => (
+  (dispatch) => {
+    dispatch(collectAllTags(documents));
+    dispatch({
+      type: Constants.RECEIVE_DOCUMENTS,
+      payload: documents
+    });
+  }
+);
+
+export const toggleExpandAll = () => ({
+  type: Constants.TOGGLE_EXPAND_ALL
 });
 
 export const setSearch = (searchQuery) => ({
@@ -54,13 +69,20 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
-export const newTagRequestSuccess = (docId, createdTags) => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
-  payload: {
-    docId,
-    createdTags
+export const newTagRequestSuccess = (docId, createdTags) => (
+  (dispatch, getState) => {
+    dispatch({
+      type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
+      payload: {
+        docId,
+        createdTags
+      }
+    });
+    const { documents } = getState();
+
+    dispatch(collectAllTags(documents));
   }
-});
+);
 
 export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
   type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
@@ -100,19 +122,41 @@ export const removeTagRequestFailure = (docId, tagId) => ({
   }
 });
 
-export const removeTagRequestSuccess = (docId, tagId) => ({
-  type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
-  payload: {
-    docId,
-    tagId
+export const removeTagRequestSuccess = (docId, tagId) => (
+  (dispatch, getState) => {
+    dispatch({
+      type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
+      payload: {
+        docId,
+        tagId
+      }
+    });
+    const { documents } = getState();
+
+    dispatch(collectAllTags(documents));
   }
-});
+);
 
 export const setPdfReadyToShow = (docId) => ({
   type: Constants.SET_PDF_READY_TO_SHOW,
   payload: {
     docId
   }
+});
+
+export const clearAllFilters = () => ({
+  type: Constants.CLEAR_ALL_FILTERS
+});
+
+export const setAnnotationStorage = (annotationStorage) => ({
+  type: Constants.SET_ANNOTATION_STORAGE,
+  payload: {
+    annotationStorage
+  }
+});
+
+export const clearSearch = () => ({
+  type: Constants.CLEAR_ALL_SEARCH
 });
 
 export const removeTag = (doc, tagId) => (

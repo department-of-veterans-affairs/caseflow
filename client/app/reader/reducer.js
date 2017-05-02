@@ -1,10 +1,9 @@
+/* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import update from 'immutability-helper';
-
-const metadataContainsString = (searchQuery) => (doc) =>
-  doc.type.toLowerCase().includes(searchQuery) || doc.receivedAt.toLowerCase().includes(searchQuery);
+import { searchString } from './search';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -14,15 +13,25 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => categoryFieldNameOfCategoryName(key)).
         value();
 
+  const activeTagFilters = _(docFilterCriteria.tag).
+        toPairs().
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => key).
+        value();
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   const filteredIds = _(nextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
-        _.every(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
     ).
     filter(
-      metadataContainsString(searchQuery)
+      (doc) => !activeTagFilters.length ||
+        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
+    ).
+    filter(
+      searchString(searchQuery, nextState.annotationStorage)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -55,15 +64,37 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
+const SHOW_EXPAND_ALL = false;
+
+/**
+ * This function takes all the documents and check the status of the
+ * list comments in the document to see if Show All or Collapse All should be
+ * shown based on the state.
+ */
+const getExpandAllState = (documents) => {
+  let allExpanded = !SHOW_EXPAND_ALL;
+
+  _.forOwn(documents, (doc) => {
+    if (!doc.listComments) {
+      allExpanded = SHOW_EXPAND_ALL;
+    }
+  });
+
+  return Boolean(allExpanded);
+};
+
 export const initialState = {
+  annotationStorage: null,
   ui: {
     filteredDocIds: null,
+    expandAll: false,
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
         sortAscending: false
       },
       category: {},
+      tag: {},
       searchQuery: ''
     },
     pdf: {
@@ -83,13 +114,33 @@ export const initialState = {
       }
     }
   },
+  tagOptions: [],
   documents: {}
 };
 
 export default (state = initialState, action = {}) => {
   let categoryKey;
+  let allTags;
+  let uniqueTags;
+  let modifiedDocuments;
 
   switch (action.type) {
+  case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
+    allTags = Array.prototype.concat.apply([], _(action.payload).
+      map((doc) => {
+        return doc.tags ? doc.tags : [];
+      }).
+      value());
+    uniqueTags = _.uniqWith(allTags, _.isEqual);
+
+    return update(
+      state,
+      {
+        tagOptions: {
+          $set: uniqueTags
+        }
+      }
+    );
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -99,7 +150,8 @@ export default (state = initialState, action = {}) => {
             map((doc) => [
               doc.id, {
                 ...doc,
-                receivedAt: doc.received_at
+                receivedAt: doc.received_at,
+                listComments: false
               }
             ]).
             fromPairs().
@@ -263,6 +315,35 @@ export default (state = initialState, action = {}) => {
           }
         }
       }));
+  case Constants.SET_TAG_FILTER:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            tag: {
+              [action.payload.text]: {
+                $set: action.payload.checked
+              }
+            }
+          }
+        }
+      }));
+  case Constants.CLEAR_ALL_FILTERS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            category: {
+              $set: {}
+            },
+            tag: {
+              $set: {}
+            }
+          }
+        }
+      }));
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
@@ -328,19 +409,33 @@ export default (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
+  case Constants.TOGGLE_EXPAND_ALL:
+    return update(state, {
+      documents: {
+        $set: _.mapValues(state.documents, (document) => {
+          return update(document, { listComments: { $set: !state.ui.expandAll } });
+        })
+      },
+      ui: {
+        $merge: { expandAll: !state.ui.expandAll }
+      }
+    });
   case Constants.TOGGLE_COMMENT_LIST:
+    modifiedDocuments = update(state.documents,
+      {
+        [action.payload.docId]: {
+          $merge: {
+            listComments: !state.documents[action.payload.docId].listComments
+          }
+        }
+      });
+
     return update(
       state,
       {
-        documents: {
-          [action.payload.docId]: {
-            listComments: {
-              $set: !state.documents[action.payload.docId].listComments
-            }
-          }
-        }
-      }
-    );
+        documents: { $set: modifiedDocuments },
+        ui: { $merge: { expandAll: getExpandAllState(modifiedDocuments) } }
+      });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
       {},
@@ -366,7 +461,30 @@ export default (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_ANNOTATION_STORAGE:
+    return update(
+      state,
+      {
+        annotationStorage: {
+          $set: action.payload.annotationStorage
+        }
+      }
+    );
+  case Constants.CLEAR_ALL_SEARCH:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            searchQuery: {
+              $set: ''
+            }
+          }
+        }
+      }
+    ));
   default:
     return state;
   }
 };
+/* eslint-enable max-lines */

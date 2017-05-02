@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import EstablishClaimProgressBar from './EstablishClaimProgressBar';
 import EstablishClaimToolbar from './EstablishClaimToolbar';
-import SuccessMessage from '../../components/SuccessMessage';
+import StatusMessage from '../../components/StatusMessage';
 
 const PARSE_INT_RADIX = 10;
 
@@ -21,16 +21,19 @@ export default class EstablishClaimComplete extends React.Component {
     } = this.props;
 
     let casesAssigned, employeeCountInt,
-      hasQuotaReached, quotaReachedMessage, successMessages, totalCases;
+      hasQuotaReached, quotaReachedMessage, totalCases;
 
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
         return <span>
-          Way to go! 💻💪🇺🇸<br/>
-          You have completed all of the total cases assigned to you today.
-        </span>;
+            <h2>Way to go!</h2> 💪💻🇺🇸<br/>
+            <h2 className ="cf-msg-screen-deck cf-success-emoji-text">
+             You have completed all of the total cases assigned to you today.
+            </h2>
+          </span>;
       }
     };
+
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
@@ -39,17 +42,17 @@ export default class EstablishClaimComplete extends React.Component {
       Math.ceil(totalCases / employeeCountInt) : 0;
     hasQuotaReached = (totalCasesCompleted >= casesAssigned) && (casesAssigned > 0);
 
-    successMessages = [secondHeader, quotaReachedMessage()];
-
     return <div>
       <EstablishClaimProgressBar
         isConfirmation={true}
       />
 
-      <SuccessMessage
+    <StatusMessage
         title={firstHeader}
-        leadMessageList={successMessages}
+        leadMessageList={[secondHeader]}
         checklist={checklist}
+        messageText={hasQuotaReached && quotaReachedMessage()}
+        type="success"
         />
 
     <EstablishClaimToolbar
