@@ -153,6 +153,7 @@ svg[aria-hidden=true],
 
 .cf-pdf-buttons {
   &-left {
+    min-height: 1px;
     text-align: left;
   }
 
@@ -171,7 +172,7 @@ svg[aria-hidden=true],
 
 // TODO: Remove !important
 [type="button"].cf-pdf-button {
-  margin: 0 8px !important;
+  margin: 0 8px;
   color: inherit;
   padding: 0;
   background-color: transparent;
@@ -392,4 +393,16 @@ svg[aria-hidden=true],
   * {
     cursor: url(asset-path('comment-cursor.svg')), auto !important;
   }
+}
+
+// scss-lint:disable QualifyingElement
+input[type="search"].cf-search-input-with-close {
+  padding-right: 25px;
+}
+// scss-lint:enable QualifyingElement
+
+[type="button"].cf-search-close-icon {
+  margin-left: -20px;
+  margin-top: 6px;
+  position: absolute;
 }

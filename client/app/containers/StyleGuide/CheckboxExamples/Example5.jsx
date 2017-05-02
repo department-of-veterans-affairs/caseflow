@@ -36,12 +36,11 @@ export default class Example5 extends React.Component {
     ];
 
     return <CheckboxGroup
-      label="Horizontal checkboxes forced vertically:"
+      label={<h3>Forced Vertical Checkboxes</h3>}
       name="checkbox_example_5"
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-      hideLabel={true}
       vertical={true}
     ></CheckboxGroup>;
   }
