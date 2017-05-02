@@ -178,7 +178,7 @@ describe Task do
       end
     end
 
-    context "when reviewed" do
+    context "when reviewed", focus: true do
       let(:aasm_state) { :reviewed }
 
       it "completes the task without outgoing_reference_id and creates a quota" do
@@ -208,6 +208,7 @@ describe Task do
 
   context "#expire!" do
     subject { task.expire! }
+    let(:assigned_user) { user }
     let(:aasm_state) { :started }
 
     it "sets status to completed and completion_status to expired" do
@@ -239,6 +240,7 @@ describe Task do
     subject { task.cancel!("feedbackz") }
 
     let(:aasm_state) { :started }
+    let(:assigned_user) { user }
 
     it "sets task to cancelled and saves feedback" do
       is_expected.to be_truthy
