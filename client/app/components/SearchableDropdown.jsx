@@ -30,8 +30,11 @@ class SearchableDropdown extends Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
-      newValue = null;
+    if (Array.isArray(value)) {
+      newValue = newValue.map((tag) => ({ ...tag, label: tag.label.trim(), value: tag.value.trim() }));
+      if (!this.props.multi && value.length <= 0) {
+        newValue = null;
+      }
     }
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
@@ -77,7 +80,18 @@ class SearchableDropdown extends Component {
           creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG
         ),
 
-        promptTextCreator: (tagName) => `Create a tag for "${tagName}"`,
+        newOptionCreator: ({ label, labelKey, valueKey }) => ({
+          [labelKey]: _.trim(label),
+          [valueKey]: _.trim(label),
+          className: 'Select-create-option-placeholder'
+        }),
+
+        isValidNewOption: ({label}) => {
+          debugger;
+          return label && (/\S/).test(label)
+        },
+
+        promptTextCreator: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
         ..._.pick(creatableOptions, 'promptTextCreator')
       };
     }
