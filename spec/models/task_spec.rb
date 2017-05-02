@@ -151,6 +151,7 @@ describe Task do
   context "#complete!" do
     subject { task.complete!(params) }
     let(:params) { { status: :routed_to_ro, outgoing_reference_id: "123WOO" } }
+    let(:assigned_user) { user }
 
     context "when in a non-completable state" do
       let(:aasm_state) { :unassigned }
@@ -180,7 +181,7 @@ describe Task do
     context "when reviewed" do
       let(:aasm_state) { :reviewed }
 
-      it "completes the task without outgoing_reference_id" do
+      it "completes the task without outgoing_reference_id and creates a quota" do
         subject
 
         expect(task.reload).to have_attributes(
@@ -188,6 +189,8 @@ describe Task do
           completion_status: "routed_to_ro",
           outgoing_reference_id: nil
         )
+
+        expect(FakeTask.todays_quota.assigned_quotas.find_by(user: user)).to_not be_nil
       end
     end
 
