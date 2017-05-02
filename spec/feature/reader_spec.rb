@@ -285,25 +285,43 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
-    scenario "Zooming changes the size of pages" do
+    scenario "Zooming changes the size of pages", focus: true do
+      scroll_amount = 500
+      zoom_rate = 1.3
+
       visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
 
       old_height_1 = get_size("pageContainer1")[:height]
       old_height_10 = get_size("pageContainer10")[:height]
+
+      scroll_to("scrollWindow", scroll_amount)
+
       find("#button-zoomIn").click
 
       # Rendered page is zoomed
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
-      expect(ratio).to eq(1.3)
+      expect(ratio).to eq(zoom_rate)
+
+      # We should scroll further down since we zoomed
+      expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
 
       # Non-rendered page is zoomed
       ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
-      expect(ratio).to eq(1.3)
+      expect(ratio).to eq(zoom_rate)
 
       find("#button-fit").click
 
       # Fit to screen should make the height of the page the same as the height of the scroll window
       expect(get_size("pageContainer1")[:height].round).to eq(get_size("scrollWindow")[:height].round)
+
+      # Zoom out to find text on the last page
+      expect(page).to_not have_content("Office of the General Counsel (022D)")
+
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      
+      expect(page).to have_content("Office of the General Counsel (022D)")
     end
 
     scenario "Open single document view and open/close sidebar" do
