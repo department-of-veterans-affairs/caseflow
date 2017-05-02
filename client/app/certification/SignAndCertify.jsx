@@ -71,7 +71,6 @@ class UnconnectedSignAndCertify extends React.Component {
 
       return;
     }
-
     // Sets continueClicked to false for the next page.
     this.props.onContinueClickSuccess();
 
@@ -145,7 +144,7 @@ class UnconnectedSignAndCertify extends React.Component {
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
-            name="Decision Date:"
+            name="Date:"
             value={certificationDate}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>

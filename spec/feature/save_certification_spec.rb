@@ -323,7 +323,6 @@ RSpec.feature "Save Certification" do
     end
 
     context "Save certification data in the DB" do
-
       scenario "For the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
@@ -389,7 +388,7 @@ RSpec.feature "Save Certification" do
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        page.execute_script("$('#Decision Date').val('02/01/2016')")
+        fill_in "Date:", with: "02/01/2016"
 
         click_button("Continue")
         expect(page).to have_content "Congratulations"
@@ -402,7 +401,7 @@ RSpec.feature "Save Certification" do
         within_fieldset("Title of certifying official") do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
-        expect(find_field("Decision Date").value).to eq "02/01/2016"
+        expect(find_field("Date").value).to eq "02/01/2016"
       end
     end
   end
