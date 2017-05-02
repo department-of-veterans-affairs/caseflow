@@ -179,8 +179,10 @@ export class PdfViewer extends React.Component {
       commentBox.focus();
     }
   }
+
   componentDidMount = () => {
     this.onCommentChange();
+    this.props.handleSelectCurrentPdf(this.selectedDocId());
 
     window.addEventListener('keydown', this.keyListener);
   }

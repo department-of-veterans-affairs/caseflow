@@ -65,7 +65,6 @@ export class DecisionReviewer extends React.Component {
       event.preventDefault();
     }
 
-    this.props.selectCurrentPdf(docId);
     history.push(`/${vacolsId}/documents/${docId}`);
   }
 
