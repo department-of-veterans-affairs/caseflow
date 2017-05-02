@@ -43,6 +43,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       expect(page).to have_content("ARC Work Assignments")
 
+      # Validate help link
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Caseflow Dispatch Help")
+      page.driver.go_back
+
       fill_in "the number of people", with: "2"
       safe_click_on "Update"
       visit "/dispatch/establish-claim"
