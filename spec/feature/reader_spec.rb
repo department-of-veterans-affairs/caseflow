@@ -14,6 +14,20 @@ def in_viewport(element)
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
 end
 
+def get_size(element)
+  size = page.driver.evaluate_script <<-EOS
+    function() {
+      var ele  = document.getElementById('#{element}');
+      var rect = ele.getBoundingClientRect();
+      return [rect.width, rect.height];
+    }();
+  EOS
+  {
+    width: size[0],
+    height: size[1]
+  }
+end
+
 RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
@@ -49,7 +63,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 3
+          vbms_document_id: 4
         )
       ]
     end
@@ -269,6 +283,27 @@ RSpec.feature "Reader" do
       expect(page).to_not have_content("Banana. Banana who")
       scroll_to("scrollWindow", 500)
       expect(page).to have_content("Banana. Banana who", wait: 3)
+    end
+
+    scenario "Zooming changes the size of pages" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
+
+      old_height_1 = get_size("pageContainer1")[:height]
+      old_height_10 = get_size("pageContainer10")[:height]
+      find("#button-zoomIn").click
+
+      # Rendered page is zoomed
+      ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
+      expect(ratio).to eq(1.3)
+
+      # Non-rendered page is zoomed
+      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
+      expect(ratio).to eq(1.3)
+
+      find("#button-fit").click
+
+      # Fit to screen should make the height of the page the same as the height of the scroll window
+      expect(get_size("pageContainer1")[:height].round).to eq(get_size("scrollWindow")[:height].round)
     end
 
     scenario "Open single document view and open/close sidebar" do
