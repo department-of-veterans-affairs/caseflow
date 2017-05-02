@@ -25,6 +25,7 @@ describe('.onSignAndCertifyFormChange', () => {
         certifyingUsername
       }
     };
+
     expect(Actions.onSignAndCertifyFormChange('certifyingUsername', certifyingUsername)).to.eql(expectedAction);
   });
 });
