@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170428182122) do
+ActiveRecord::Schema.define(version: 20170502203511) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -130,8 +131,8 @@ ActiveRecord::Schema.define(version: 20170428182122) do
     t.integer "tag_id",      null: false
   end
 
-  add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", using: :btree
-  add_index "documents_tags", ["tag_id", "document_id"], name: "index_documents_tags_on_tag_id_and_document_id", using: :btree
+  add_index "documents_tags", ["document_id"], name: "index_documents_tags_on_document_id", using: :btree
+  add_index "documents_tags", ["tag_id"], name: "index_documents_tags_on_tag_id", using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
