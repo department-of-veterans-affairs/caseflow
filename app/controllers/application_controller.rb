@@ -71,6 +71,18 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_name
 
+  def application
+    RequestStore.store[:application].to_s.downcase
+  end
+
+  def help_url
+    {
+      "certification" => certification_help_path,
+      "dispatch-arc" => dispatch_help_path
+    }[application] || help_path
+  end
+  helper_method :help_url
+
   # Link used when clicking logo
   def logo_path
     root_path
