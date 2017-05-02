@@ -143,7 +143,7 @@ export class PdfSidebar extends React.Component {
               message="Unable to save. Please try again." />}
           <SearchableDropdown
             name="tags"
-            label="Click in the box to select, or add issue(s)"
+            label="Select or tag issue(s)"
             multi={true}
             creatable={true}
             options={this.generateOptionsFromTags(tagOptions)}
