@@ -27,11 +27,8 @@ export default class StyleGuideCheckboxes extends React.Component {
       <Example1 />
       <h3>Single Checkbox with value set</h3>
       <Example2 />
-      <h3>Vertical Checkboxes</h3>
       <Example3 />
-      <h3>Horizontal Checkboxes</h3>
       <Example4 />
-      <h3>Forced Vertical Checkboxes</h3>
       <Example5 />
       <h3>Required Checkboxes</h3>
       <Example6 />

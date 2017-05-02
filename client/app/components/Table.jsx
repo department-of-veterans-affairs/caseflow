@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import _ from 'lodash';
 
 /**
@@ -35,7 +36,7 @@ export default class Table extends React.Component {
     };
 
     let cellClasses = (column) => {
-      return alignmentClasses[column.align];
+      return classnames([alignmentClasses[column.align], column.cellClass]);
     };
 
     let getColumns = (props) => {
@@ -92,7 +93,7 @@ export default class Table extends React.Component {
     };
 
     let BodyRows = (props) => {
-      return <tbody>
+      return <tbody className={this.props.bodyClassName}>
         {props.rowObjects.map((object, rowNumber) =>
           <Row
             rowObject={object}
@@ -113,7 +114,7 @@ export default class Table extends React.Component {
 
     return <table
               id={id}
-              className="usa-table-borderless cf-table-borderless"
+              className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
 
         <HeaderRow columns={columns} />
@@ -130,5 +131,6 @@ Table.propTypes = {
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
+  className: PropTypes.string,
   id: PropTypes.string
 };
