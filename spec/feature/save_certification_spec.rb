@@ -322,58 +322,86 @@ RSpec.feature "Save Certification" do
       FeatureToggle.disable!(:certification_v2)
     end
 
-    scenario "Save certification confirm case details in the DB" do
-      visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-      expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
+    context "Save certification data in the DB" do
+      scenario "For the confirm hearing page" do
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
 
-      within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
-        find("label", text: "Yes").click
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "Yes").click
+        end
+
+        within_fieldset("What did the appellant request in the document you found?") do
+          find("label", text: "They cancelled their hearing request").click
+        end
+
+        click_button("Continue")
+
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          expect(find_field("Yes", visible: false)).to be_checked
+        end
+
+        within_fieldset("What did the appellant request in the document you found?") do
+          expect(find_field("They cancelled their hearing request", visible: false)).to be_checked
+        end
+
+        # path 1 - select 'yes' first question
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          expect(find_field("Yes", visible: false)).to be_checked
+        end
+        within_fieldset("What did the appellant request in the document you found?") do
+          expect(find_field("They cancelled their hearing request", visible: false)).to be_checked
+        end
+
+        # path 2 - select 'no' first question and select informal form 9
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "No").click
+        end
+        within_fieldset("Caseflow found the document below, labeled as a Form 9") do
+          find("label", text: "Statement in lieu of Form 9").click
+        end
+        within_fieldset("What optional board hearing preference, if any, did the appellant request?") do
+          find("label", text: "Wants a board hearing in Washington, DC.").click
+        end
+
+        click_button("Continue")
+
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          expect(find_field("No", visible: false)).to be_checked
+        end
+
+        within_fieldset("What optional board hearing preference, if any, did the appellant request?") do
+          expect(find_field("Wants a board hearing in Washington, DC.", visible: false)).to be_checked
+        end
       end
 
-      within_fieldset("What did the appellant request in the document you found?") do
-        find("label", text: "They cancelled their hearing request").click
-      end
+      scenario "For the sign and certify page" do
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
 
-      click_button("Continue")
+        fill_in "Name and location of certifying office", with: "Office in DC"
+        fill_in "Organizational elements certifying appeal", with: "User4567"
+        fill_in "Name of certifying official", with: "Tom Cruz"
+        within_fieldset("Title of certifying official") do
+          find("label", text: "Veterans Service Representative").click
+        end
+        fill_in "Date:", with: "02/01/2016"
 
-      visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-      within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
-        expect(find_field("Yes", visible: false)).to be_checked
-      end
+        click_button("Continue")
+        expect(page).to have_content "Congratulations"
 
-      within_fieldset("What did the appellant request in the document you found?") do
-        expect(find_field("They cancelled their hearing request", visible: false)).to be_checked
-      end
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        expect(find_field("Name and location of certifying office").value).to eq "Office in DC"
+        expect(find_field("Organizational elements certifying appeal").value).to eq "User4567"
+        expect(find_field("Name of certifying official").value).to eq "Tom Cruz"
 
-      # path 1 - select 'yes' first question
-      visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-      within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
-        expect(find_field("Yes", visible: false)).to be_checked
-      end
-      within_fieldset("What did the appellant request in the document you found?") do
-        expect(find_field("They cancelled their hearing request", visible: false)).to be_checked
-      end
-
-      # path 2 - select 'no' first question and select informal form 9
-      within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
-        find("label", text: "No").click
-      end
-      within_fieldset("Caseflow found the document below, labeled as a Form 9") do
-        find("label", text: "Statement in lieu of Form 9").click
-      end
-      within_fieldset("What optional board hearing preference, if any, did the appellant request?") do
-        find("label", text: "Wants a board hearing in Washington, DC.").click
-      end
-
-      click_button("Continue")
-
-      visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-      within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
-        expect(find_field("No", visible: false)).to be_checked
-      end
-
-      within_fieldset("What optional board hearing preference, if any, did the appellant request?") do
-        expect(find_field("Wants a board hearing in Washington, DC.", visible: false)).to be_checked
+        within_fieldset("Title of certifying official") do
+          expect(find_field("Veterans Service Representative", visible: false)).to be_checked
+        end
+        expect(find_field("Date").value).to eq "02/01/2016"
       end
     end
   end

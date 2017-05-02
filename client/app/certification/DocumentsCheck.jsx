@@ -34,12 +34,17 @@ class UnconnectedDocumentsCheck extends React.Component {
       certificationId
     } = this.props;
 
+    let reloadPage = () => {
+      window.location.reload();
+    };
+
     if (certificationStatus === 'data_missing') {
       return <NotReady/>;
     }
     if (certificationStatus === 'already_certified') {
       return <AlreadyCertified/>;
     }
+
 
     const missingInformation =
       <div>
@@ -74,10 +79,12 @@ class UnconnectedDocumentsCheck extends React.Component {
 
       <Footer
         certificationId={certificationId}
-        nextPageUrl={
-          `/certifications/${match.params.vacols_id}/confirm_case_details`
+        buttonText={ documentsMatch ? 'Continue' : 'Refresh page' }
+        nextPageUrl={ documentsMatch ?
+          `/certifications/${match.params.vacols_id}/confirm_case_details` :
+          ''
         }
-        hideContinue={!documentsMatch}/>
+        onClickContinue={ documentsMatch ? null : reloadPage }/>
     </div>;
   }
 }

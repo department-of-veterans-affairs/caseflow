@@ -76,19 +76,15 @@ export default class Comment extends React.Component {
 
     if (this.props.horizontalLayout) {
       className = `${className} comment-horizontal-container`;
-      commentToRender = <div className="usa-grid-full">
-        <span className="usa-width-one-fourth">
-          <span className="usa-grid-full">
-            <span className="usa-width-one-third">
-              <h4>Page {this.props.page}</h4>
-            </span>
-            <span className="usa-width-two-thirds">
-              <strong>{jumpToSectionButton}</strong>
-            </span>
-          </span>
-        </span>
+      commentToRender = <div className="horizontal-comment">
+        <div className="comment-page-number">
+          <h4>Page {this.props.page}</h4>
+        </div>
+        <div className="comment-jump-to-section">
+          <strong>{jumpToSectionButton}</strong>
+        </div>
         <div
-          className={`${className} usa-width-three-fourths`}
+          className={`${className} comment-content`}
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
