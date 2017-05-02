@@ -25,30 +25,29 @@ export default class TasksManagerIndex extends BaseForm {
   getUserColumns = () => {
     // We return an empty row if there are no users in the table. Otherwise
     // we use the footer to display the totals.
-    let noUsers = Object.keys(this.props.tasksCompletedByUsers).length === 0;
+    let noUsers = this.props.userQuotas.length === 0;
 
     return [
       {
         header: 'Employee Name',
-        valueName: 'name',
+        valueName: 'user_name',
         footer: noUsers ? '' : <b>Employee Total</b>
       },
       {
         header: 'Cases Assigned',
-        valueFunction: () => this.state.assignedCases,
+        valueName: 'task_count',
         footer: noUsers ?
           '0' :
           <b>{this.props.toCompleteCount + this.props.completedCountToday}</b>
       },
       {
         header: 'Cases Completed',
-        valueName: 'numberOfTasks',
+        valueName: 'tasks_completed_count',
         footer: noUsers ? '0' : <b>{this.props.completedCountToday}</b>
       },
       {
         header: 'Cases Remaining',
-        valueFunction: (user) =>
-          Math.max(this.state.assignedCases - user.numberOfTasks, 0),
+        valueName: 'tasks_left_count',
         footer: this.props.toCompleteCount
       }
     ];
@@ -71,12 +70,9 @@ export default class TasksManagerIndex extends BaseForm {
   render() {
     let {
       completedCountToday,
-      toCompleteCount
+      toCompleteCount,
+      userQuotas
     } = this.props;
-
-    let tasksCompletedByUsers = Object.keys(this.props.tasksCompletedByUsers).
-      map((name) => ({ name,
-        numberOfTasks: this.props.tasksCompletedByUsers[name] }));
 
     return <div className="cf-app-segment cf-app-segment--alt">
       <h1>ARC Work Assignments
@@ -85,19 +81,22 @@ export default class TasksManagerIndex extends BaseForm {
           of {(toCompleteCount + completedCountToday)} cases completed today
         </span>
       </h1>
+
       <TasksManagerEmployeeCount
         employeeCountForm={this.state.employeeCountForm}
         handleEmployeeCountUpdate={this.handleEmployeeCountUpdate}
         handleFieldChange={this.handleFieldChange}
       />
+
       <div className="cf-right-side">
         <a href="/dispatch/stats">
           <i className="fa fa-line-chart" aria-hidden="true"></i> View Dashboard
         </a>
       </div>
+
       <Table
         columns={this.getUserColumns()}
-        rowObjects={tasksCompletedByUsers}
+        rowObjects={userQuotas}
         summary="Appeals worked by user"
       />
     </div>;
@@ -105,8 +104,8 @@ export default class TasksManagerIndex extends BaseForm {
 }
 
 TasksManagerIndex.propTypes = {
+  userQuotas: PropTypes.arrayOf(PropTypes.object).isRequired,
   completedCountToday: PropTypes.number.isRequired,
   employeeCount: PropTypes.string.isRequired,
-  tasksCompletedByUsers: PropTypes.object.isRequired,
   toCompleteCount: PropTypes.number.isRequired
 };

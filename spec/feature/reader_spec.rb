@@ -4,8 +4,8 @@ def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
 
-def scroll_to(value)
-  page.execute_script("document.getElementById('scrollWindow').scrollTop=#{value}")
+def scroll_to(element, value)
+  page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
 # This utility function returns true if an element is currently visible on the page
@@ -73,6 +73,8 @@ RSpec.feature "Reader" do
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
 
+      expect(page).to have_content("Showing limited results")
+
       find("#receipt-date-header").click
       expect_dropdown_filter_to_be_hidden
 
@@ -84,8 +86,12 @@ RSpec.feature "Reader" do
       find("#categories-header .table-icon").send_keys :enter
       expect_dropdown_filter_to_be_hidden
 
+      find("#clear-filters").click
+
       find("#categories-header .table-icon").send_keys :enter
       expect_dropdown_filter_to_be_visible
+
+      expect(find("#procedural", visible: false).checked?).to be false
     end
 
     scenario "Add comment" do
@@ -172,17 +178,38 @@ RSpec.feature "Reader" do
         ]
       end
 
+      scenario "Expand All button" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on "Expand all"
+        expect(page).to have_content("another comment")
+        expect(page).to have_content("how's it going")
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when a comment is closed, the button is changed to expand all
+        expect(page).to have_button("Expand all")
+
+        click_button("expand-#{documents[0].id}-comments-button")
+
+        # when that comment is reopened, the button is changed to collapse all
+        click_on "Collapse all"
+        expect(page).not_to have_content("another comment")
+        expect(page).not_to have_content("how's it going")
+      end
+
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
+
+        element = "cf-comment-wrapper"
+        scroll_to(element, 0)
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
         # Click on the comment icon and ensure the scroll position of
         # the comment wrapper changes
-        element = "cf-comment-wrapper"
         original_scroll = scroll_position(element)
 
         # Click on the second to last comment icon (last comment icon is off screen)
@@ -199,6 +226,35 @@ RSpec.feature "Reader" do
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
       end
+
+      scenario "Scroll to comment icon" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[0].type
+
+        expect(page).to have_content(annotations[0].comment)
+
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+
+        # Click on the comment and ensure the scroll position changes
+        # by the y value the comment.
+        element = "scrollWindow"
+        original_scroll = scroll_position(element)
+
+        # Click on the off screen comment (0 through 3 are on screen)
+        find("#comment4").click
+        after_click_scroll = scroll_position(element)
+
+        expect(after_click_scroll - original_scroll).to be > 0
+
+        # Make sure the comment icon and comment are shown as selected
+        expect(page).to have_css(".comment-container-selected")
+        id = "#{annotations[4].id}-filter-1"
+
+        # This filter is the blue highlight around the comment icon
+        find("g[filter=\"url(##{id})\"]")
+      end
     end
 
     scenario "Scrolling renders pages" do
@@ -211,11 +267,11 @@ RSpec.feature "Reader" do
       # But if we scroll second page should be rendered and
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
-      scroll_to(500)
+      scroll_to("scrollWindow", 500)
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
-    scenario "Open single document view and manipulate UI" do
+    scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
@@ -326,6 +382,19 @@ RSpec.feature "Reader" do
 
       # verify that the tags on the previous document still exist
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+    end
+
+    scenario "Search and Filter" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      fill_in "searchBar", with: "BVA"
+
+      expect(page).to have_content("BVA")
+      expect(page).to_not have_content("Form 9")
+
+      find(".cf-search-close-icon").click
+
+      expect(page).to have_content("Form 9")
     end
   end
 
