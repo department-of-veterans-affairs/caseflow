@@ -9,8 +9,7 @@ import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
 const PAGE_MARGIN_BOTTOM = 25;
-// const PAGE_WIDTH = 816;
-// const PAGE_HEIGHT = 1056;
+const RENDER_WITHIN_SCROLL = 1000;
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -36,7 +35,12 @@ export class Pdf extends React.Component {
       isRendered: []
     };
 
-    this.scrollLocation = 0;
+    this.scrollLocation = {
+      page: null,
+      locationOnPage: 0
+    };
+
+    this.currentPage = 0;
 
     this.isRendering = [];
   }
@@ -60,11 +64,13 @@ export class Pdf extends React.Component {
   // likey remain complicated.
   renderPage = (index) => {
     if (this.isRendering[index] ||
-      this.state.isRendered[index] === this.state.pdfDocument) {
+      (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
+      _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
       return Promise.resolve();
     }
 
     let pdfDocument = this.state.pdfDocument;
+    let scale = this.props.scale;
 
     // Mark that we are rendering this page.
     this.isRendering[index] = true;
@@ -135,7 +141,10 @@ export class Pdf extends React.Component {
         // should render this page again with the new file.
         if (pdfDocument === this.state.pdfDocument) {
           // If it is the same, then we mark this page as rendered
-          this.setIsRendered(index, pdfDocument);
+          this.setIsRendered(index, {
+            pdfDocument,
+            scale
+          });
           resolve();
         } else {
           // If it is not, then we try to render it again.
@@ -172,6 +181,15 @@ export class Pdf extends React.Component {
   }
 
   scrollEvent = () => {
+    this.scrollLocation = {
+      page: null,
+      locationOnPage: 0
+    };
+
+    this.renderInViewPages();
+  }
+
+  renderInViewPages = () => {
     let page = document.getElementsByClassName('page');
 
     Array.prototype.forEach.call(page, (ele, index) => {
@@ -182,7 +200,12 @@ export class Pdf extends React.Component {
       if (this.props.onPageChange &&
           boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-        this.props.onPageChange(index + 1, this.state.numPages);
+
+        this.props.onPageChange(
+          index + 1,
+          this.state.numPages,
+          this.scrollWindow.offsetHeight / (this.pageContainers[index].offsetHeight / this.props.scale));
+        this.currentPage = index + 1;
       }
 
       // This renders each page as it comes into view. i.e. when
@@ -191,8 +214,8 @@ export class Pdf extends React.Component {
       // above is within a thousand pixels of the current view
       // we also redner it.
       // TODO: Make this more robust and avoid magic numbers.
-      if (boundingRect.bottom > -1000 &&
-          boundingRect.top < this.scrollWindow.clientHeight + 1000) {
+      if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
+          boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
         this.renderPage(index, this.props.file);
       }
     });
@@ -200,7 +223,7 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = _.debounce((file, scrollLocation = 0) => {
+  setupPdf = _.debounce((file) => {
     return new Promise((resolve) => {
       PDFJS.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -215,9 +238,6 @@ export class Pdf extends React.Component {
         if (this.props.onPageChange) {
           this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
         }
-
-        // Scroll to the correct location on the page
-        this.scrollLocation = scrollLocation;
       });
     });
   }, DOCUMENT_DEBOUNCE_TIME, {
@@ -261,23 +281,21 @@ export class Pdf extends React.Component {
       this.scrollWindow.scrollTop = 0;
       this.setupPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
-      // The only way to scale the PDF is to re-render it,
-      // so we call setupPdf again.
+      // We mark all the pages as not rendered so we render them
+      // again at the right scale.
       const zoomFactor = (nextProps.scale) / this.props.scale;
-      const scrollTo = this.scrollWindow.scrollTop * zoomFactor;
 
-      this.setupPdf(nextProps.file, scrollTo);
-
+      console.log(this.pageContainers[this.currentPage - 1].offsetTop, this.scrollWindow.scrollTop);
+      this.scrollLocation = {
+        page: this.currentPage,
+        locationOnPage: (this.scrollWindow.scrollTop - this.pageContainers[this.currentPage - 1].offsetTop) * zoomFactor
+      };
     }
     /* eslint-enable no-negated-condition */
   }
 
   componentDidUpdate = () => {
-    for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
-      if (!this.state.isRendered[index] && this.pageContainers[index]) {
-        this.renderPage(index, this.props.file);
-      }
-    }
+    this.renderInViewPages();
 
     if (this.props.scrollToComment) {
       if (this.props.currentRenderedFile === this.props.scrollToComment.documentId &&
@@ -287,9 +305,8 @@ export class Pdf extends React.Component {
       }
     }
 
-    if (this.scrollLocation) {
-      this.scrollWindow.scrollTop = this.scrollLocation;
-      this.scrollLocation = 0;
+    if (this.scrollLocation.page) {
+      this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage + this.pageContainers[this.scrollLocation.page - 1].offsetTop;
     }
   }
 
@@ -318,7 +335,8 @@ export class Pdf extends React.Component {
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (this.state.isRendered[comment.page - 1] !== this.state.pdfDocument) {
+      if (_.get(this.state.isRendered[comment.page - 1], 'pdfDocument')
+        !== this.state.pdfDocument) {
         return acc;
       }
       if (!acc[comment.page]) {
@@ -354,10 +372,7 @@ export class Pdf extends React.Component {
       pages.push(<div
         className={pageClassNames}
         style={ {
-          marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-          transform: `scale(${this.props.scale})`
-          // width: `${PAGE_WIDTH  * this.props.scale}px`,
-          // height: `${PAGE_HEIGHT * this.props.scale}px`
+          marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`
         } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}

@@ -46,14 +46,15 @@ export class PdfUI extends React.Component {
 
   fitToScreen = () => {
     this.setState({
-      scale: 1
+      scale: this.state.fitToScreenZoom
     });
   }
 
-  onPageChange = (currentPage, numPages) => {
+  onPageChange = (currentPage, numPages, fitToScreenZoom) => {
     this.setState({
       currentPage,
-      numPages
+      numPages,
+      fitToScreenZoom
     });
   }
 
