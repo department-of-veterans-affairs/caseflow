@@ -44,6 +44,7 @@ bundler_args: "--deployment --without development staging production"
 cache:
   directories:
     - vendor/bundle
+    - client/node_modules
 
 notifications:
   email: false
