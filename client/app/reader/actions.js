@@ -99,7 +99,12 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
       console.log('Error marking as read', docId, err);
     });
 
-  dispatch(handleSetLastRead(docId));
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
 };
 
 export const removeTagRequestFailure = (docId, tagId) => ({

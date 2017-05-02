@@ -183,6 +183,19 @@ export default (state = initialState, action = {}) => {
         }
       }
     }));
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
+    return updateLastReadDoc(update(state, {
+      ui: {
+        pdfSidebar: { showTagErrorMsg: { $set: false } },
+      },
+      documents: {
+        [action.payload.docId]: {
+          $merge: {
+            opened_by_current_user: true
+          }
+        }
+      }
+    }), action.payload.docId);
   case Constants.SET_PDF_READY_TO_SHOW:
     return update(state, {
       ui: {
