@@ -6,10 +6,11 @@ let StyleGuideLayout = () => {
 
   return (
   <div>
+    
     <StyleGuideComponentTitle
         title="Actions"
         id="layout"
-        link="StyleGuideLayout.jsx"
+        link="StyleGuideAction.jsx"
         isSubsection={true}
     />
     <p>

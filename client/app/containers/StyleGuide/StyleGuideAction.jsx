@@ -1,5 +1,5 @@
 import React from 'react';
-
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import Button from '../../components/Button';
 import InlineForm from '../../components/InlineForm';
 
