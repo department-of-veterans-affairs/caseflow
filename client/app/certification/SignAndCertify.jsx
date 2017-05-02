@@ -94,6 +94,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certificationDate,
       continueClicked,
       certificationId,
+      loading,
       updateSucceeded,
       updateFailed,
       match
@@ -152,6 +153,7 @@ class UnconnectedSignAndCertify extends React.Component {
       </form>
     <Footer
       disableContinue={disableContinue}
+      loading={loading}
       onClickContinue={this.onClickContinue.bind(this)}
       certificationId={certificationId}
     />
