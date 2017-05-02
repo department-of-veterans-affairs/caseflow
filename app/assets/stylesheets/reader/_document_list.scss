@@ -15,6 +15,47 @@ $tag-backgrond-color: #d6d7d9;
     margin: 0;
   }
 
+  .usa-grid {
+    max-width: 85vw;
+
+    .usa-grid-full.document-list-header {
+      max-width: 85vw;
+    }
+  }
+
+  .documents-table {
+    min-width: 810px;
+  }
+
+  $last-read-column-width: 41px;
+
+  .last-read-column {
+    // This value is determined by the size of the SVG.
+    min-width: $last-read-column-width;
+  }
+
+  .categories-column {
+    min-width: 140px;
+  }
+
+  .receipt-date-column {
+    min-width: 150px;
+  }
+
+  .doc-type-column {
+    width: 28vw;
+    min-width: 185px;
+  }
+
+  .tags-column {
+    width: 28vw;
+  }
+
+  .comments-column {
+    width: 112px;
+    min-width: 112px;
+  }
+
   .bordered-icon {
     border: 2px solid $color-gray;
     padding: 1px 2px;
@@ -22,8 +63,31 @@ $tag-backgrond-color: #d6d7d9;
     font-size: 15px;
   }
 
-  .cf-document-list-header-row tr th > div {
-    display: flex;
+  .cf-document-list-header-row tr {
+    display: block;
+
+    th > div {
+      display: flex;
+    }
+  }
+
+  .cf-document-list-body {
+    display: block;
+    max-height: 65vh;
+    overflow: auto;
+
+    .horizontal-comment {
+      display: flex;
+      margin-left: $last-read-column-width;
+
+      .comment-page-number {
+        width: 10rem;
+      }
+
+      .comment-jump-to-section {
+        width: 20rem;
+      }
+    }
   }
 
   .document-list-receipt-date {
