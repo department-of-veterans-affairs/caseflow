@@ -31,7 +31,9 @@ class SearchableDropdown extends Component {
      * https://github.com/JedWatson/react-select/pull/773
      */
     if (Array.isArray(value)) {
-      newValue = newValue.map((tag) => ({ ...tag, label: tag.label.trim(), value: tag.value.trim() }));
+      newValue = newValue.map((tag) => ({ ...tag,
+        label: tag.label.trim(),
+        value: tag.value.trim() }));
       if (!this.props.multi && value.length <= 0) {
         newValue = null;
       }
@@ -86,15 +88,16 @@ class SearchableDropdown extends Component {
           className: 'Select-create-option-placeholder'
         }),
 
-        isValidNewOption: ({label}) => {
-          debugger;
-          return label && (/\S/).test(label)
-        },
+        isValidNewOption: ({ label }) => label && (/\S/).test(label),
 
         promptTextCreator: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
         ..._.pick(creatableOptions, 'promptTextCreator')
       };
     }
+
+    // TODO We will get the "tag already exists" message even when the input is invalid,
+    // because if the selector filters the options to be [], it will show the "no results found"
+    // message. We can get around this by unsetting `noResultsText`.
 
     if (_.isEmpty(options)) {
       addCreatableOptions.noResultsText = '';
