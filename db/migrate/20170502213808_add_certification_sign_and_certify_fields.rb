@@ -1,4 +1,4 @@
-class AddCertificationV2Fields2 < ActiveRecord::Migration
+class AddCertificationSignAndCertifyFields < ActiveRecord::Migration
   def change
     add_column :certifications, :certifying_office, :string
     add_column :certifications, :certifying_username, :string
