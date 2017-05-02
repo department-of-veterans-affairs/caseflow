@@ -82,12 +82,14 @@ class SearchableDropdown extends Component {
           creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG
         ),
 
+        // eslint-disable-next-line no-shadow
         newOptionCreator: ({ label, labelKey, valueKey }) => ({
           [labelKey]: _.trim(label),
           [valueKey]: _.trim(label),
           className: 'Select-create-option-placeholder'
         }),
 
+        // eslint-disable-next-line no-shadow
         isValidNewOption: ({ label }) => label && (/\S/).test(label),
 
         promptTextCreator: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
