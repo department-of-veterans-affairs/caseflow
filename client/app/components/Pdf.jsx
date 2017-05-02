@@ -186,6 +186,8 @@ export class Pdf extends React.Component {
   }
 
   scrollEvent = () => {
+    // Now that the user is scrolling we reset the scroll location
+    // so that we do not keep scrolling the user back.
     this.scrollLocation = {
       page: null,
       locationOnPage: 0
@@ -286,8 +288,8 @@ export class Pdf extends React.Component {
       this.scrollWindow.scrollTop = 0;
       this.setupPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
-      // We mark all the pages as not rendered so we render them
-      // again at the right scale.
+      // Set the scroll location based on the current page and where you
+      // are on that page scaled by the zoom factor.
       const zoomFactor = (nextProps.scale) / this.props.scale;
 
       this.scrollLocation = {

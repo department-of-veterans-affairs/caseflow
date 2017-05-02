@@ -302,7 +302,8 @@ RSpec.feature "Reader" do
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
       expect(ratio).to eq(zoom_rate)
 
-      # We should scroll further down since we zoomed
+      # We should scroll further down since we zoomed but not further than the room rate
+      # times how much we've scrolled.
       expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
 
       # Non-rendered page is zoomed
