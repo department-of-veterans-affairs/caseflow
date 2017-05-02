@@ -297,11 +297,12 @@ class AppealRepository
     send_and_log_request(appeal.vbms_id, request)
   end
 
-  def self.send_and_log_request(vbms_id, request)
+  def self.send_and_log_request(id, request)
     name = request.class.name.split("::").last
-    MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
+    MetricsService.record("sent VBMS request #{request.class} for #{id}",
                           service: :vbms,
-                          name: name) do
+                          name: name,
+                          id: id) do
       @vbms_client.send_request(request)
     end
 
@@ -333,13 +334,13 @@ class AppealRepository
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
-    vbms_id = document.vbms_document_id
+    vbms_document_id = document.vbms_document_id
     request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
                 VBMS::Requests::GetDocumentContent.new(vbms_id)
               else
                 VBMS::Requests::FetchDocumentById.new(vbms_id)
               end
-    result = send_and_log_request(vbms_id, request)
+    result = send_and_log_request(vbms_document_id, request)
     result && result.content
   end
 

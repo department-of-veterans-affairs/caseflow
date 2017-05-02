@@ -1,5 +1,6 @@
 class Reader::DocumentsController < ApplicationController
   before_action :verify_access
+  before_action :set_application
 
   def show
     # If we have sufficient metadata to show a single document,
@@ -50,6 +51,10 @@ class Reader::DocumentsController < ApplicationController
 
   def logo_name
     "Reader"
+  end
+
+  def set_application
+    RequestStore.store[:application] = "reader"
   end
 
   def appeal_id

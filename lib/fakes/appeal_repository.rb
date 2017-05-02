@@ -128,24 +128,36 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || @documents || []
+    name = "ListDocuments"
+    MetricsService.record("sent VBMS request #{name} for #{appeal.sanitized_vbms_id}",
+                  service: :vbms,
+                  name: name,
+                  id: appeal.sanitized_vbms_id) do
+      (document_records || {})[appeal.vbms_id] || @documents || []
+    end
   end
 
   def self.fetch_document_file(document)
-    path =
-      case document.vbms_document_id
-      when "1"
-        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-      when "2"
-        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-      when "3"
-        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-      when "4"
-        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-      else
-        File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
-      end
-    IO.binread(path)
+    name = "FetchDocumentById"
+    MetricsService.record("sent VBMS request #{name} for #{document.vbms_document_id}",
+                  service: :vbms,
+                  name: name,
+                  id: document.vbms_document_id) do
+      path =
+        case document.vbms_document_id
+        when "1"
+          File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+        when "2"
+          File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
+        when "3"
+          File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+        when "4"
+          File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+        else
+          File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
+        end
+      IO.binread(path)
+    end
   end
 
   def self.remands_ready_for_claims_establishment

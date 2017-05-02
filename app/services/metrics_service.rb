@@ -3,7 +3,7 @@ require "benchmark"
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
   # rubocop:disable Metrics/MethodLength
-  def self.record(description, service: nil, name: "unknown")
+  def self.record(description, service: nil, name: "unknown", id: nil)
     return_value = nil
     app = RequestStore[:application] || "other"
 
@@ -15,7 +15,7 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_latency".to_sym)
 
-      metric.set({ app: app, name: name }, stopwatch.real)
+      metric.set({ app: app, name: name, id: id}, stopwatch.real)
 
     end
 
@@ -24,7 +24,7 @@ class MetricsService
   rescue
     if service
       metric = PrometheusService.send("#{service}_request_error_counter".to_sym)
-      metric.increment(app: app, name: name)
+      metric.increment(app: app, name: name, id: id)
     end
 
     # Reraise the same error. We don't want to interfere at all in normal error handling
@@ -33,7 +33,7 @@ class MetricsService
   ensure
     if service
       metric = PrometheusService.send("#{service}_request_attempt_counter".to_sym)
-      metric.increment(app: app, name: name)
+      metric.increment(app: app, name: name, id: id)
     end
   end
 end
