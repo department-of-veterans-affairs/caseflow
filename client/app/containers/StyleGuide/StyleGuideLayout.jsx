@@ -6,13 +6,17 @@ let StyleGuideLayout = () => {
 
   return (
   <div>
-    
+    <div className="usa-width-one-whole">
+    <h2 id="layout">Layout</h2>
+  </div>
+
     <StyleGuideComponentTitle
-        title="Actions"
-        id="layout"
+        title="Action"
+        id="action"
         link="StyleGuideAction.jsx"
         isSubsection={true}
     />
+
     <p>
       For most task-based pages, Primary and Secondary Actions sit under the App Canvas.
       The number of actions per page should be limited intentionally.
