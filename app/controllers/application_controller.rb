@@ -71,11 +71,15 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_name
 
+  def application
+    RequestStore.store[:application].to_s.downcase
+  end
+
   def help_url
     {
-      "Certification" => certification_help_path,
-      "Dispatch" => dispatch_help_path
-    }[logo_name] || help_path
+      "certification" => certification_help_path,
+      "dispatch-arc" => dispatch_help_path
+    }[application] || help_path
   end
   helper_method :help_url
 
