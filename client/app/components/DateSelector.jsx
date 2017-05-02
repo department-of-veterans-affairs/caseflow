@@ -9,16 +9,17 @@ const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 export default class DateSelector extends React.Component {
 
   dateFill = (initialValue) => {
-    let value = initialValue;
+    let value = initialValue || '';
+    let propsValue = this.props.value || '';
 
     // If the user added characters we append a '/' before putting
     // it through the regex. If this spot doesn't accept a '/' then
     // the regex test will strip it. Otherwise, the user doesn't have
     // to type a '/'. If the user removed characters we check if the
     // last character is a '/' and remove it for them.
-    if (value.length > this.props.value.length) {
+    if (value.length > propsValue.length) {
       value = `${value}/`;
-    } else if (this.props.value.charAt(this.props.value.length - 1) === '/') {
+    } else if (propsValue.charAt(propsValue.length - 1) === '/') {
       value = value.substr(0, value.length - 1);
     }
 
