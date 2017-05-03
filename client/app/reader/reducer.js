@@ -230,7 +230,7 @@ export default (state = initialState, action = {}) => {
     return update(
       state,
       {
-        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
+        ui: { pdfSidebar: { showErrorMessage: { category: { $set: true } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
