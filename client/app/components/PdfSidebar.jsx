@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { formatDate } from '../util/DateUtil';
+import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
@@ -127,7 +127,7 @@ export class PdfSidebar extends React.Component {
             </span>
           </p>
           <p className="cf-pdf-meta-title">
-            <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
+            <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
           </p>
           <DocCategoryPicker
             handleCategoryToggle={
