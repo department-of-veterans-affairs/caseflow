@@ -322,6 +322,7 @@ class Fakes::AppealRepository
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
     FeatureToggle.enable!(:reader)
 
