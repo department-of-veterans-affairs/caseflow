@@ -73,7 +73,7 @@ export class Pdf extends React.Component {
     }
 
     let pdfDocument = this.state.pdfDocument;
-    let scale = this.props.scale;
+    let { scale } = this.props;
 
     // Mark that we are rendering this page.
     this.isRendering[index] = true;
@@ -147,8 +147,7 @@ export class Pdf extends React.Component {
           this.setIsRendered(index, {
             pdfDocument,
             scale,
-            width: viewport.width,
-            height: viewport.height
+            ..._.pick(viewport, ['width', 'height'])
           });
           resolve();
         } else {
@@ -290,7 +289,7 @@ export class Pdf extends React.Component {
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
-      const zoomFactor = (nextProps.scale) / this.props.scale;
+      const zoomFactor = nextProps.scale / this.props.scale;
 
       this.scrollLocation = {
         page: this.currentPage,
@@ -377,13 +376,15 @@ export class Pdf extends React.Component {
 
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       const relativeScale = this.props.scale / _.get(this.state.isRendered[pageNumber - 1], 'scale', 1);
+      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
+      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
 
       pages.push(<div
         className={pageClassNames}
         style={ {
           marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-          width: `${relativeScale * _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH)}px`,
-          height: `${relativeScale * _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT)}px`
+          width: `${relativeScale * currentWidth}px`,
+          height: `${relativeScale * currentHeight}px`
         } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}

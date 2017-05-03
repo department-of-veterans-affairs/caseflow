@@ -17,7 +17,7 @@ end
 def get_size(element)
   size = page.driver.evaluate_script <<-EOS
     function() {
-      var ele  = document.getElementById('#{element}');
+      var ele = document.getElementById('#{element}');
       var rect = ele.getBoundingClientRect();
       return [rect.width, rect.height];
     }();
@@ -302,7 +302,7 @@ RSpec.feature "Reader" do
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
       expect(ratio).to eq(zoom_rate)
 
-      # We should scroll further down since we zoomed but not further than the room rate
+      # We should scroll further down since we zoomed but not further than the zoom rate
       # times how much we've scrolled.
       expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
 
