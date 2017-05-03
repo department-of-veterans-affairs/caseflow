@@ -107,13 +107,6 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
   });
 };
 
-export const unselectPdf = (docId) => ({
-  type: Constants.UNSELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
-
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
   payload: {
