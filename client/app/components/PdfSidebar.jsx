@@ -66,7 +66,7 @@ export class PdfSidebar extends React.Component {
 
     const {
       doc,
-      showTagErrorMsg,
+      showErrorMessage,
       tagOptions
     } = this.props;
 
@@ -139,7 +139,7 @@ export class PdfSidebar extends React.Component {
             Related Issues
           </div>
           {/* This error alert needs to be formatted according to #1573 */}
-          {showTagErrorMsg &&
+          {showErrorMessage.tag &&
             <Alert type="error" title={''}
               message="Unable to save. Please try again." />}
           <SearchableDropdown
@@ -199,6 +199,11 @@ PdfSidebar.propTypes = {
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   commentFlowState: PropTypes.string,
+  showErrorMessage: PropTypes.shape({
+    tag: PropTypes.bool,
+    category: PropTypes.bool,
+    comment: PropTypes.bool
+  }),
   scrollToSidebarComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
@@ -210,6 +215,7 @@ const mapStateToProps = (state) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,
     tagOptions: state.tagOptions
   };

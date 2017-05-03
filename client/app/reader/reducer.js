@@ -66,6 +66,12 @@ const updateLastReadDoc = (state, docId) =>
 
 const SHOW_EXPAND_ALL = false;
 
+const initialShowErrorMessageState = {
+  tag: false,
+  category: false,
+  comment: false
+};
+
 /**
  * This function takes all the documents and check the status of the
  * list comments in the document to see if Show All or Collapse All should be
@@ -99,12 +105,11 @@ export const initialState = {
     },
     pdf: {
       pdfsReadyToShow: {},
+      commentFlowState: null,
       hidePdfSidebar: false
     },
     pdfSidebar: {
-      showTagErrorMsg: false,
-      commentFlowState: null,
-      hidePdfSidebar: false
+      showErrorMessage: initialShowErrorMessageState
     },
     pdfList: {
       lastReadDocId: null,
@@ -185,7 +190,7 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } }
+        pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
       },
       documents: {
         [action.payload.docId]: {
@@ -211,6 +216,7 @@ export default (state = initialState, action = {}) => {
     return update(
       state,
       {
+        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -224,6 +230,7 @@ export default (state = initialState, action = {}) => {
     return update(
       state,
       {
+        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -257,7 +264,7 @@ export default (state = initialState, action = {}) => {
     })();
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -268,7 +275,7 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -392,7 +399,7 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -412,7 +419,7 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
