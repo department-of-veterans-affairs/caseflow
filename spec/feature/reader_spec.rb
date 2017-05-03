@@ -469,8 +469,8 @@ RSpec.feature "Reader" do
     scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # Click on the document at the bottom
-      click_on documents[0].type
+      # Click on the document at the top
+      click_on documents.last.type
 
       click_on "Back to all documents"
 
