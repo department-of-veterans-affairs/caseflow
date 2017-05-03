@@ -178,7 +178,7 @@ describe Task do
       end
     end
 
-    context "when reviewed", focus: true do
+    context "when reviewed" do
       let(:aasm_state) { :reviewed }
 
       it "completes the task without outgoing_reference_id and creates a quota" do
