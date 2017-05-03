@@ -12,6 +12,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
+import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
@@ -313,8 +314,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[0].received_at);
-        expect(textArray[2]).to.include(documents[1].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[1].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
         expect(wrapper.find('#receipt-date-header').
@@ -322,8 +323,8 @@ describe('DecisionReviewer', () => {
           hasClass('fa-caret-up')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[1].received_at);
-        expect(textArray[2]).to.include(documents[0].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
       });
 
       it('type ordered correctly', () => {
@@ -357,7 +358,7 @@ describe('DecisionReviewer', () => {
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
-        expect(textArray[1]).to.include(documents[1].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
 
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
