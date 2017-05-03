@@ -186,7 +186,7 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
+        pdfSidebar: { showTagErrorMsg: { $set: false } }
       },
       documents: {
         [action.payload.docId]: {
