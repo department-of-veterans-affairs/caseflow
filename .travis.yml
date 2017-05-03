@@ -38,12 +38,17 @@ before_script:
 script:
   - bundle exec rake spec
   - bundle exec rake ci:other
-  - rm -rf node_modules && npm install --production --no-optional && npm run build:production
+  # Move our node modules, then do a production install & webpack build
+  # This verifies our production webpack build step is working
+  - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
+  # Move the non-production node_modules back so that it's cached for next travis test run
+  - rm -rf node_modules && mv node_modules_bak node_modules
 
 bundler_args: "--deployment --without development staging production"
 cache:
   directories:
     - vendor/bundle
+    - client/node_modules
 
 notifications:
   email: false
