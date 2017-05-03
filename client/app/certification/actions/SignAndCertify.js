@@ -38,7 +38,12 @@ export const certificationUpdateStart = (params, dispatch) => {
 
   ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
     then(() => {
-      dispatch(certificationUpdateSuccess());
+      ApiUtil.post(`/certifications/${params.vacolsId}/certify_v2`, { data: { update } }).
+        then(() => {
+          dispatch(certificationUpdateSuccess());
+        }, (err) => {
+          dispatch(certificationUpdateFailure(err));
+        });
     }, (err) => {
       dispatch(certificationUpdateFailure(err));
     });

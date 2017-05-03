@@ -37,6 +37,19 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
+  def certify_v2
+    form8.update_from_string_params(
+      representative_type: certification.representative_type,
+      representative_name: certification.representative_name,
+      certifying_username:  params[:certifying_username],
+      certifying_official_name: params[:certifying_official_name],
+      certifying_official_title: params[:certifying_official_title]
+    )
+    form8.save_pdf!
+    @certification.complete!(current_user.id)
+    render json: {}
+  end
+
   # TODO: update for certification v2- should we use hidden form params?
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
