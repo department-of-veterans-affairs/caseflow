@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 9b7bbe5719557f25a49709bb1c7fc82d99084885
-  ref: 9b7bbe5719557f25a49709bb1c7fc82d99084885
+  revision: cc7572a2d8d8422de29ddd490664085fd8215873
+  ref: cc7572a2d8d8422de29ddd490664085fd8215873
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -107,13 +107,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.9.12)
-      aws-sdk-resources (= 2.9.12)
-    aws-sdk-core (2.9.12)
+    aws-sdk (2.9.14)
+      aws-sdk-resources (= 2.9.14)
+    aws-sdk-core (2.9.14)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.9.12)
-      aws-sdk-core (= 2.9.12)
+    aws-sdk-resources (2.9.14)
+      aws-sdk-core (= 2.9.14)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
