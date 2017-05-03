@@ -18,6 +18,7 @@ import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
+import StyleGuideDashboard from './StyleGuideDashboard';
 
 export default function StyleGuideIndex() {
 
@@ -209,9 +210,7 @@ export default function StyleGuideIndex() {
           title="Branding"
           id="branding" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Dashboard"
-          id="dashboard" />
+        <StyleGuideDashboard />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />
         <div className="cf-help-divider"></div>

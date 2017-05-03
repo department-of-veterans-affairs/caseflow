@@ -13,6 +13,7 @@
 <% end %>
 
 <div class="cf-app-segment cf-app-segment--alt">
+  <h1>Certification Dashboard</h1>
   <div class="cf-stats">
     <ul class="cf-tab-navigation">
       <% CertificationStats::INTERVALS.each do |interval| %>
@@ -27,7 +28,7 @@
     </ul>
 
     <div class="cf-stats-section -activity">
-      <h3>Activity <span class="data-date"></span></h3>
+      <h4>Activity <span class="data-date"></span></h4>
       <div class="cf-stat-panel data-chart" data-key="certifications_started">
         <h4 class="cf-stat-title">
           Certifications Started
@@ -48,7 +49,7 @@
     </div>
 
     <div class="cf-stats-section -certification">
-      <h3>Certification Rate <span class="data-date"></span></h3>
+      <h4>Certification Rate <span class="data-date"></span></h4>
 
       <div class="cf-stat-panel data-chart" data-key="same_period_completions/certifications_started">
         <h4 class="cf-stat-title">
@@ -70,7 +71,7 @@
     </div>
 
     <div class="cf-stats-section -timing">
-      <h3 id="time-to-certify-header">Time to Certify <span class="data-date"></span></h3>
+      <h4 id="time-to-certify-header">Time to Certify <span class="data-date"></span></h4>
       <div class="cf-stat-panel -toggle"
         id="time-to-certify-toggle"
         role="button" tabindex="0"
@@ -117,7 +118,7 @@
     </div>
 
     <div class="cf-stats-section -missing">
-      <h3>Missing Documents <span class="data-date"></span></h3>
+      <h4>Missing Documents <span class="data-date"></span></h4>
 
       <div class="cf-stat-panel data-chart" data-key="missing_doc/certifications_started">
         <h4 class="cf-stat-title">
