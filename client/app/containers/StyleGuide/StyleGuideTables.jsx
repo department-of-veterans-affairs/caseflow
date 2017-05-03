@@ -53,7 +53,7 @@ export default function StyleGuideTables() {
 
   let summary = 'Example styleguide table';
 
-  return <div>
+  return <div className="cf-sg-tables-section">
     <StyleGuideComponentTitle
       title="Tables"
       id="tables"
