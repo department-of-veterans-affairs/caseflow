@@ -95,6 +95,10 @@ svg[aria-hidden=true],
   &.hidden-sidebar {
     visibility: hidden;
   }
+
+  .usa-alert {
+    margin-top: 15px;
+  }
 }
 
 .cf-sidebar-header {
@@ -113,8 +117,14 @@ svg[aria-hidden=true],
 .cf-comment-wrapper {
   padding: 0 30px;
   width: 380px;
-  margin-top: 15px;
+  $comment-wrapper-vertical-margin: 15px;
+  margin-top: $comment-wrapper-vertical-margin;
   overflow-y: scroll;
+
+  .usa-alert {
+    margin-top: 0rem;
+    margin-bottom: $comment-wrapper-vertical-margin;
+  }
 }
 
 .cf-pdf-toolbar {

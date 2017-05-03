@@ -109,7 +109,7 @@ export class PdfSidebar extends React.Component {
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
-    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
+    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." appSegment={false} />;
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -155,7 +155,6 @@ export class PdfSidebar extends React.Component {
           />
           <div className="cf-sidebar-heading">
             Comments
-            {showErrorMessage.comment && cannotSaveAlert}
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
@@ -170,6 +169,7 @@ export class PdfSidebar extends React.Component {
           ref={(commentListElement) => {
             this.commentListElement = commentListElement;
           }}>
+          {showErrorMessage.comment && cannotSaveAlert}
           <div className="cf-pdf-comment-list">
             {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
               <EditComment

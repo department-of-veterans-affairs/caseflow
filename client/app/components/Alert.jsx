@@ -25,13 +25,15 @@ export default class Alert extends React.Component {
     let {
       message,
       title,
+      appSegment,
       type
     } = this.props;
 
     let typeClass = `usa-alert-${type}`;
 
-    const className = classnames('cf-app-segment usa-alert', typeClass, {
-      'no-title': !title
+    const className = classnames('usa-alert', typeClass, {
+      'no-title': !title,
+      'cf-app-segment': appSegment
     });
 
     return <div className={className} {...this.getRole()}>
@@ -44,6 +46,7 @@ export default class Alert extends React.Component {
 }
 
 Alert.defaultProps = {
+  appSegment: true,
   scrollOnAlert: true
 };
 
