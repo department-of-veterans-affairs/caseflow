@@ -5,14 +5,15 @@ import * as Constants from '../../../app/reader/constants';
 describe('Reader reducer', () => {
   describe(Constants.REQUEST_NEW_TAG_CREATION_SUCCESS, () => {
     it('successfully merges tags', () => {
-      const reduceActions = (actions) => actions.reduce((action, state) => reducer(state, action));
+      // eslint-disable-next-line no-undefined
+      const reduceActions = (actions) => actions.reduce(reducer, reducer(undefined, {}));
 
       const state = reduceActions([
-        {},
         {
           type: Constants.RECEIVE_DOCUMENTS,
           payload: [{
-            id: 0
+            id: 0,
+            tags: []
           }]
         },
         {
