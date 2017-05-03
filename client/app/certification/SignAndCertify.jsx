@@ -8,6 +8,8 @@ import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
+import requiredValidator from '../util/validators/RequiredValidator';
+import dateValidator from '../util/validators/DateValidator';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -38,24 +40,23 @@ class UnconnectedSignAndCertify extends React.Component {
 
     const erroredFields = [];
 
-    if (!this.props.certifyingOffice) {
+    if (requiredValidator('Please enter a certifying office.')(this.props.certifyingOffice)) {
       erroredFields.push('certifyingOffice');
     }
 
-    if (!this.props.certifyingUsername) {
+    if (requiredValidator('Please enter a certifying username.')(this.props.certifyingUsername)) {
       erroredFields.push('certifyingUsername');
     }
 
-    if (!this.props.certifyingOfficialName) {
+    if (requiredValidator('Please enter an official name.')(this.props.certifyingOfficialName)) {
       erroredFields.push('certifyingOfficialName');
     }
 
-    if (!this.props.certifyingOfficialTitle) {
+    if (requiredValidator('Please enter an official title.')(this.props.certifyingOfficialTitle)) {
       erroredFields.push('certifyingOfficialTitle');
     }
 
-    // TODO: we should validate that it's a datetype
-    if (!this.props.certificationDate) {
+    if (dateValidator('Please enter a date.')(this.props.certificationDate)) {
       erroredFields.push('certificationDate');
     }
 

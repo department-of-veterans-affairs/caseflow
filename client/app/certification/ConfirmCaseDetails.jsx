@@ -5,6 +5,7 @@ import * as actions from './actions/ConfirmCaseDetails';
 import * as certificationActions from './actions/Certification';
 import { Redirect } from 'react-router-dom';
 
+import requiredValidator from '../util/validators/RequiredValidator';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
 import Footer from './Footer';
@@ -80,18 +81,18 @@ export class ConfirmCaseDetails extends React.Component {
 
     // Unless the type of representative is "None",
     // we need a representative name.
-    if (!representativeName && !this.representativeTypeIsNone()) {
+    if (requiredValidator('Please enter a representative name.')(representativeName) && !this.representativeTypeIsNone()) {
       erroredFields.push('representativeName');
     }
 
     // We always need a representative type.
-    if (!representativeType) {
+    if (requiredValidator('Please enter a representative type.')(representativeType)) {
       erroredFields.push('representativeType');
     }
 
     // If the representative type is "Other",
     // fill out the representative type.
-    if (this.representativeTypeIsOther() && !otherRepresentativeType) {
+    if (this.representativeTypeIsOther() && requiredValidator('Please enter the representative type.')(otherRepresentativeType)) {
       erroredFields.push('otherRepresentativeType');
     }
 
