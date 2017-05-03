@@ -16,15 +16,15 @@ export default class StyleGuideComponentTitle extends React.Component {
     let getBaseUrl = () => {
         /* eslint-disable max-len */
       if (isExternalLink) {
-        //isExternalLink is for any code sample that's outside the StyleGuide container directory
-        baseUrl = "https://github.com/department-of-veterans-affairs/caseflow";
-      }
-      else {
+        // isExternalLink is for any code sample that's outside the StyleGuide container directory
+        baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow';
+      } else {
         baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/app/containers/StyleGuide/';
       }
       /* eslint-enable max-len */
+
       return baseUrl;
-    }
+    };
 
     let ViewSourceCodeLink = (props) => {
 
