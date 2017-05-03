@@ -46,11 +46,11 @@ class CertificationsController < ApplicationController
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,
-      certifying_office: params[:update][:certifying_office],
-      certifying_username:  params[:update][:certifying_username],
-      certifying_official_name: params[:update][:certifying_official_name],
-      certifying_official_title: params[:update][:certifying_official_title],
-      certification_date: params[:update][:certification_date]
+      certifying_office: certification.certifying_office,
+      certifying_username:  certification.certifying_username,
+      certifying_official_name: certification.certifying_official_name,
+      certifying_official_title: certification.certifying_official_title,
+      certification_date: certification.certification_date
     )
     form8.save_pdf!
     @certification.complete!(current_user.id)
