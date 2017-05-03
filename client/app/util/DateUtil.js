@@ -1,4 +1,5 @@
 import StringUtil from './StringUtil';
+import moment from 'moment';
 
 const ZERO_INDEX_MONTH_OFFSET = 1;
 
@@ -12,3 +13,7 @@ export const formatDate = function(dateString) {
 
   return `${month}/${day}/${year}`;
 };
+
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => (
+  moment(dateString, dateFormat).format(expectedFormat)
+);

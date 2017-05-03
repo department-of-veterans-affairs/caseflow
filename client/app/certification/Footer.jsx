@@ -25,6 +25,7 @@ export default class Footer extends React.Component {
     this.setState({ modal: false });
   };
 
+
   render() {
     let cancelModalDisplay = this.state.modal;
     let {
@@ -32,6 +33,7 @@ export default class Footer extends React.Component {
       disableContinue,
       hideContinue,
       onClickContinue,
+      buttonText,
       nextPageUrl,
       certificationId
     } = this.props;
@@ -49,7 +51,7 @@ export default class Footer extends React.Component {
           onClick={onClickContinue}
           loading={loading}
           disabled={disableContinue}>
-          Continue
+          { buttonText ? buttonText : 'Continue' }
         </Button>
       </Link>
       }
