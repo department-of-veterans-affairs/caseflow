@@ -110,6 +110,7 @@ class Task < ActiveRecord::Base
     #  in this state cannot be assigned to users. All tasks are in this state
     #  immediately after creation.
     event :prepare do
+      before :before_prepared
       transitions from: :unprepared, to: :unassigned
     end
 
@@ -224,6 +225,10 @@ class Task < ActiveRecord::Base
 
   def before_started
     assign_attributes(started_at: Time.now.utc)
+  end
+
+  def before_prepared
+    assign_attributes(prepared_at: Time.now.utc)
   end
 
   def before_invalidation

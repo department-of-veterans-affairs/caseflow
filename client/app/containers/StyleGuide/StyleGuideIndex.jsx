@@ -122,7 +122,7 @@ export default function StyleGuideIndex() {
           ))
         }
       </StickyNav>
-      <div className="cf-push-right cf-sg-content">
+      <div className="cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.

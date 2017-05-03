@@ -322,7 +322,10 @@ class Fakes::AppealRepository
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
+    FeatureToggle.enable!(:reader)
+
     Generators::Appeal.build(
       vacols_id: "reader_id1",
       vbms_id: "reader_id1",
