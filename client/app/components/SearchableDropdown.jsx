@@ -30,13 +30,8 @@ class SearchableDropdown extends Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (Array.isArray(value)) {
-      newValue = newValue.map((tag) => ({ ...tag,
-        label: tag.label.trim(),
-        value: tag.value.trim() }));
-      if (!this.props.multi && value.length <= 0) {
-        newValue = null;
-      }
+    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
+      newValue = null;
     }
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
