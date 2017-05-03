@@ -230,13 +230,13 @@ const mapDispatchToProps = (dispatch) => ({
       `/document/${docId}`,
       { data: { [categoryKey]: toggleState } }
     ).catch(() =>
-      dispatch(toggleDocumentCategoryFail(docId))
+      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
     );
 
     dispatch({
       type: Constants.TOGGLE_DOCUMENT_CATEGORY,
       payload: {
-        categoryName,
+        categoryKey,
         toggleState,
         docId
       }

@@ -118,7 +118,6 @@ export const initialState = {
 };
 
 export default (state = initialState, action = {}) => {
-  let categoryKey;
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -209,15 +208,26 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
-
     return update(
       state,
       {
         documents: {
           [action.payload.docId]: {
-            [categoryKey]: {
+            [action.payload.categoryKey]: {
               $set: action.payload.toggleState
+            }
+          }
+        }
+      }
+    );
+  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
+    return update(
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            [action.payload.categoryKey]: {
+              $set: action.payload.categoryValueToRevertTo
             }
           }
         }

@@ -18,10 +18,12 @@ export const onReceiveDocs = (documents) => (
   }
 );
 
-export const toggleDocumentCategoryFail = (docId) => ({
+export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
   payload: {
-    docId
+    docId,
+    categoryKey,
+    categoryValueToRevertTo
   }
 });
 
