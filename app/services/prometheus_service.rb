@@ -134,6 +134,9 @@ end
 # and a summary. This class provides a simple `.set()` interface
 # for updating both at the same time
 class PrometheusGaugeSummary
+  LAST_SUMMARY_OBSERVATION_REDIS_KEY = "prometheus_last_summary_observation".freeze
+  SUMMARY_OBSERVATION_THRESHOLD = 1.minute
+
   attr_accessor :gauge, :summary
   def initialize(gauge, summary)
     @gauge = gauge
@@ -142,6 +145,25 @@ class PrometheusGaugeSummary
 
   def set(label, value)
     gauge.set(label, value)
+    record_summary_observation(label, value) if should_observe_summary?
+  end
+
+  private
+
+  def record_summary_observation(label, value)
     summary.observe(label, value)
+    set_last_summary_observation
+  end
+
+  def set_last_summary_observation
+    Rails.cache.write(LAST_SUMMARY_OBSERVATION_REDIS_KEY, Time.now.utc)
+  end
+
+  def should_observe_summary?
+    Time.now.utc > (last_summary_observation + SUMMARY_OBSERVATION_THRESHOLD)
+  end
+
+  def last_summary_observation
+    Rails.cache.read(LAST_SUMMARY_OBSERVATION_REDIS_KEY) || Time.at(0)
   end
 end
