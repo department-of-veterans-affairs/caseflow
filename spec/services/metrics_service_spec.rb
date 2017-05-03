@@ -3,7 +3,7 @@ describe MetricsService do
     before do
       RequestStore.store[:application] = "fake-app"
     end
-    let(:labels) { { app: "fake-app", name: "ListDocuments" } }
+    let(:labels) { { app: "fake-app", name: "ListDocuments", id: nil } }
     let(:yield_val) { 5 }
     subject do
       MetricsService.record("fake api call", service: "vbms", name: "ListDocuments") { yield_val }
