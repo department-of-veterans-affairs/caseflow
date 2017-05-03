@@ -27,6 +27,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   // Translate camelcase React names into snake case
   // Rails key names.
   /* eslint-disable camelcase */
+
   const update = {
     certifying_office: params.certifyingOffice,
     certifying_username: params.certifyingUsername,
@@ -34,9 +35,10 @@ export const certificationUpdateStart = (params, dispatch) => {
     certifying_official_title: params.certifyingOfficialTitle,
     certification_date: params.certificationDate
   };
+
   /* eslint-enable "camelcase" */
 
-  ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
+  ApiUtil.post(`/certifications/${params.vacolsId}/certify_v2`, { data: { update } }).
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
