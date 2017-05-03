@@ -8,7 +8,6 @@ class DocumentController < ApplicationController
   def update
     document = Document.find(params[:id])
     document.update!(update_params)
-    fak
     render json: {}
   end
 
