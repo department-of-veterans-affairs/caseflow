@@ -23,4 +23,10 @@ This is being piloted by the Whiskey team.
 1. If a specific component from the styleguide is supposed to be used, please name that component.
 
 ## Ready For PR
+1. The PR improves the app in some way
 1. Tests are passing on Travis
+1. New tests are added for new functionality
+1. Best practices
+  1. No computed state is being stored in Redux
+  1. Lodash is being used effectively
+1. Feedback from previous PRs about style and best practices is applied in this PR as well
