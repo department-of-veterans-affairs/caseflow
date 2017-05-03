@@ -109,6 +109,8 @@ export class PdfSidebar extends React.Component {
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
+    const cannotSaveAlert = <Alert type="error" title={''} message="Unable to save. Please try again." />;
+
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
@@ -130,6 +132,7 @@ export class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
           </p>
+          {showErrorMessage.category && cannotSaveAlert}
           <DocCategoryPicker
             handleCategoryToggle={
               _.partial(this.props.handleCategoryToggle, this.props.doc.id)
@@ -138,10 +141,7 @@ export class PdfSidebar extends React.Component {
           <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
             Related Issues
           </div>
-          {/* This error alert needs to be formatted according to #1573 */}
-          {showErrorMessage.tag &&
-            <Alert type="error" title={''}
-              message="Unable to save. Please try again." />}
+          {showErrorMessage.tag && cannotSaveAlert}
           <SearchableDropdown
             name="tags"
             label="Select or tag issue(s)"
@@ -155,6 +155,7 @@ export class PdfSidebar extends React.Component {
           />
           <div className="cf-sidebar-heading">
             Comments
+            {showErrorMessage.comment && cannotSaveAlert}
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
