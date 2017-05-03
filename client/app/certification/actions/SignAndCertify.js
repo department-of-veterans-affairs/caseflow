@@ -36,17 +36,11 @@ export const certificationUpdateStart = (params, dispatch) => {
     certification_date: params.certificationDate
   };
 
-  const form8 = update;
   /* eslint-enable "camelcase" */
 
-  ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
+  ApiUtil.post(`/certifications/${params.vacolsId}/certify_v2`, { data: { update } }).
     then(() => {
-      ApiUtil.post(`/certifications/${params.vacolsId}/certify_v2`, { data: { form8 } }).
-        then(() => {
-          dispatch(certificationUpdateSuccess());
-        }, (err) => {
-          dispatch(certificationUpdateFailure(err));
-        });
+      dispatch(certificationUpdateSuccess());
     }, (err) => {
       dispatch(certificationUpdateFailure(err));
     });

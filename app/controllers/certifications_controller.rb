@@ -20,7 +20,7 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def update_v2
+  def update_v2_params
     permitted = params
                 .require("update")
                 .permit("representative_name",
@@ -34,18 +34,23 @@ class CertificationsController < ApplicationController
                         "certifying_official_title",
                         "certification_date")
     certification.update!(permitted)
+  end
+
+  def update_v2
+    update_v2_params
     render json: {}
   end
 
   def certify_v2
+    update_v2_params
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,
-      certifying_office: params[:form8][:certifying_office],
-      certifying_username:  params[:form8][:certifying_username],
-      certifying_official_name: params[:form8][:certifying_official_name],
-      certifying_official_title: params[:form8][:certifying_official_title],
-      certification_date: params[:form8][:certification_date]
+      certifying_office: params[:update][:certifying_office],
+      certifying_username:  params[:update][:certifying_username],
+      certifying_official_name: params[:update][:certifying_official_name],
+      certifying_official_title: params[:update][:certifying_official_title],
+      certification_date: params[:update][:certification_date]
     )
     form8.save_pdf!
     @certification.complete!(current_user.id)
