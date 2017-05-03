@@ -20,7 +20,8 @@ describe EstablishClaim do
       aasm_state: aasm_state,
       completion_status: completion_status,
       claim_establishment: claim_establishment,
-      outgoing_reference_id: outgoing_reference_id
+      outgoing_reference_id: outgoing_reference_id,
+      user: assigned_user
     )
   end
 
@@ -41,6 +42,8 @@ describe EstablishClaim do
   let(:special_issues) { {} }
   let(:ep_code) { nil }
   let(:outgoing_reference_id) { nil }
+  let(:user) { Generators::User.create(full_name: "Robert Smith") }
+  let(:assigned_user) { nil }
 
   context "#should_invalidate?" do
     subject { establish_claim.should_invalidate? }
@@ -234,6 +237,7 @@ describe EstablishClaim do
   context "#complete_with_review!" do
     subject { establish_claim.complete_with_review!(vacols_note: vacols_note) }
 
+    let(:assigned_user) { user }
     let(:aasm_state) { :reviewed }
     let(:vacols_note) { "This is my note." }
     let(:vacols_update) { Fakes::AppealRepository.vacols_dispatch_update }
@@ -309,6 +313,7 @@ describe EstablishClaim do
 
     let(:params) { { email_recipient: "shane@va.gov", email_ro_id: "RO22" } }
     let(:aasm_state) { :started }
+    let(:assigned_user) { user }
 
     it "completes the task" do
       subject
@@ -352,6 +357,7 @@ describe EstablishClaim do
     subject { establish_claim.assign_existing_end_product!(end_product_id) }
     let(:end_product_id) { "123YAY" }
     let(:aasm_state) { :started }
+    let(:assigned_user) { user }
 
     it "completes the task and sets reference to end product" do
       subject
