@@ -321,7 +321,7 @@ RSpec.feature "Reader" do
       find("#button-zoomOut").click
       find("#button-zoomOut").click
       find("#button-zoomOut").click
-      
+
       expect(page).to have_content("Office of the General Counsel (022D)")
     end
 

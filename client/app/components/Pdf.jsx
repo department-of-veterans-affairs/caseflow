@@ -393,7 +393,7 @@ export class Pdf extends React.Component {
       const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
 
       // Only pages that are the correct scale should be visible
-      const pageContentsVisibleClass = Math.abs(relativeScale - 1) < .01 ? '' : 'cf-pdf-page-hidden';
+      const pageContentsVisibleClass = Math.abs(relativeScale - 1) < 0.01 ? '' : 'cf-pdf-page-hidden';
 
       pages.push(<div
         className={pageClassNames}
