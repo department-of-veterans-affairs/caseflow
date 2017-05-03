@@ -27,7 +27,12 @@ class CertificationsController < ApplicationController
                         "representative_type",
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
-                        "hearing_preference")
+                        "hearing_preference",
+                        "certifying_office",
+                        "certifying_username",
+                        "certifying_official_name",
+                        "certifying_official_title",
+                        "certification_date")
     certification.update!(permitted)
     render json: {}
   end

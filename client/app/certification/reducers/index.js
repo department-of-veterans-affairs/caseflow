@@ -134,8 +134,11 @@ export const mapDataToInitialState = function(state) {
     hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
     hearingPreference: state.hearing_preference,
     form9Type: state.form9_type,
-    certifyingOffice: state.form8.certifying_office,
-    certifyingUsername: state.form8.certifying_username,
-    certificationDate: state.form8.certification_date
+    // Pull these values from form8??
+    certifyingOffice: state.certifying_office,
+    certifyingUsername: state.certifying_username,
+    certificationDate: state.certification_date,
+    certifyingOfficialName: state.certifying_official_name,
+    certifyingOfficialTitle: state.certifying_official_title
   };
 };
