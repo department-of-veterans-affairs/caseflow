@@ -6,9 +6,16 @@ import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import InlineForm from '../../components/InlineForm';
 
-export default function StyleGuideInlineForm() {
-  return <div>
-      <br />
+export default class StyleGuideInlineForm extends React.Component {
+
+  componentDidMount() {
+    this.state = {
+      value: null
+    };
+  }
+
+  render = () => {
+    return <div>
       <StyleGuideComponentTitle
         title="Inline Form"
         id="inline_form"
@@ -21,15 +28,20 @@ export default function StyleGuideInlineForm() {
         placed after labels and descriptions to provide users context and
         actionable steps.
       </p>
-    <InlineForm>
-      <TextField
-        label="Enter the number of people working today"
-        name="dummyEmployeeCount"
-        type="number"
-      />
-      <Button
-        name="Update"
-      />
-  </InlineForm>
-  </div>;
+      <InlineForm>
+        <TextField
+          label="Enter the number of people working today"
+          name="dummyEmployeeCount"
+          type="number"
+          value={this.state.value}
+          onChange={(value) => {
+            this.setState({ value });
+          }}
+        />
+        <Button
+          name="Update"
+        />
+      </InlineForm>
+    </div>;
+  }
 }
