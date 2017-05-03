@@ -1,12 +1,16 @@
 import React from 'react';
+import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 let StyleGuideDashboard = () => {
 
   return (
-  <div>
-    <div className="usa-width-one-whole">
-    <h2 id="dashboard">Dashboard</h2>
-  </div>
+    <div>
+    <StyleGuideComponentTitle
+      title="Dashboard"
+      id="dashboard"
+      link="-efolder/blob/master/app/views/stats/show.html.erb"
+      isExternalLink={true}
+    />
     <p>
       Each Caseflow application has a business dashboard to help the team and our
       stakeholders track the performance of the application. Metrics specific to
