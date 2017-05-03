@@ -14,6 +14,19 @@ def in_viewport(element)
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
 end
 
+def add_comment(text)
+  # Add a comment
+  click_on "button-AddComment"
+  expect(page).to have_css(".cf-pdf-placing-comment")
+
+  # pageContainer1 is the id pdfJS gives to the div holding the first page.
+  find("#pageContainer1").click
+
+  expect(page).to_not have_css(".cf-pdf-placing-comment")
+  fill_in "addComment", with: text
+  click_on "Save"
+end
+
 RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
@@ -104,16 +117,7 @@ RSpec.feature "Reader" do
       # Ensure PDF content loads (using :all because the text is hidden)
       expect(page).to have_content(:all, "Important Decision Document!!!")
 
-      # Add a comment
-      click_on "button-AddComment"
-      expect(page).to have_css(".cf-pdf-placing-comment")
-
-      # pageContainer1 is the id pdfJS gives to the div holding the first page.
-      find("#pageContainer1").click
-
-      expect(page).to_not have_css(".cf-pdf-placing-comment")
-      fill_in "addComment", with: "Foo"
-      click_on "Save"
+      add_comment("Foo")
 
       # Expect comment to be visible on page
       expect(page).to have_content("Foo")
@@ -145,6 +149,25 @@ RSpec.feature "Reader" do
 
       # Expect the comment to be removed from the database
       expect(documents[0].reload.annotations.count).to eq(0)
+
+      # Try to add an empty comment
+      add_comment("")
+
+      # Should not show up
+      expect(page).to_not have_css(".comment-container")
+
+      # Try to edit a comment to contain no text
+      add_comment("A")
+
+      click_on "Edit"
+      find("#editCommentBox").send_keys(:backspace)
+      click_on "Save"
+
+      # Delete modal should appear
+      click_on "Confirm delete"
+
+      # Comment should be removed
+      expect(page).to_not have_css(".comment-container")
     end
 
     context "When there is an existing annotation" do
