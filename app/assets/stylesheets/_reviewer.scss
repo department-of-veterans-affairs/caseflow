@@ -247,6 +247,7 @@ svg[aria-hidden=true],
   margin-bottom: 25px;
   border-image: none;
   z-index: 5;
+  overflow: hidden;
 }
 
 .cf-label {
@@ -405,4 +406,8 @@ input[type="search"].cf-search-input-with-close {
   margin-left: -20px;
   margin-top: 6px;
   position: absolute;
+}
+
+.cf-pdf-page-hidden {
+  visibility: hidden;
 }

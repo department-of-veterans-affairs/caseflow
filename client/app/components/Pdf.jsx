@@ -10,8 +10,13 @@ import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
 const PAGE_MARGIN_BOTTOM = 25;
 const RENDER_WITHIN_SCROLL = 1000;
-const PAGE_WIDTH = 816;
+// We don't want to expand the width of the window
+// because of unrendered pages
+const PAGE_WIDTH = 1;
+// We want to expand the height of the window because
+// of unrenedered pages.
 const PAGE_HEIGHT = 1056;
+
 
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
@@ -44,7 +49,6 @@ export class Pdf extends React.Component {
     };
 
     this.currentPage = 0;
-
     this.isRendering = [];
   }
 
@@ -207,11 +211,8 @@ export class Pdf extends React.Component {
           boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
 
-        this.props.onPageChange(
-          index + 1,
-          this.state.numPages,
-          this.scrollWindow.offsetHeight / (this.pageContainers[index].offsetHeight / this.props.scale));
         this.currentPage = index + 1;
+        this.setFitToScreenSize();
       }
 
       // This renders each page as it comes into view. i.e. when
@@ -273,9 +274,21 @@ export class Pdf extends React.Component {
     this.props.handleSelectCommentIcon(comment);
   }
 
+  setFitToScreenSize = () => {
+    this.props.onPageChange(
+      this.currentPage - 1,
+      this.state.numPages,
+      this.scrollWindow.offsetHeight / (this.pageContainers[this.currentPage - 1].offsetHeight / this.props.scale));
+  }
+
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
+    window.addEventListener('resize', this.setFitToScreenSize);
     this.setupPdf(this.props.file);
+  }
+
+  comopnentWillUnmount = () => {
+    window.removeEventListener('resize', this.setFitToScreenSize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -379,6 +392,9 @@ export class Pdf extends React.Component {
       const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
       const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
 
+      // Only pages that are the correct scale should be visible
+      const pageContentsVisibleClass = Math.abs(relativeScale - 1) < .01 ? '' : 'cf-pdf-page-hidden';
+
       pages.push(<div
         className={pageClassNames}
         style={ {
@@ -394,15 +410,17 @@ export class Pdf extends React.Component {
         ref={(pageContainer) => {
           this.pageContainers[pageNumber - 1] = pageContainer;
         }}>
-          <canvas
-            id={`canvas${pageNumber}`}
-            className="canvasWrapper" />
-          <div className="cf-pdf-annotationLayer">
-            {commentIcons[pageNumber]}
+          <div className={pageContentsVisibleClass}>
+            <canvas
+              id={`canvas${pageNumber}`}
+              className="canvasWrapper" />
+            <div className="cf-pdf-annotationLayer">
+              {commentIcons[pageNumber]}
+            </div>
+            <div
+              id={`textLayer${pageNumber}`}
+              className="textLayer"/>
           </div>
-          <div
-            id={`textLayer${pageNumber}`}
-            className="textLayer"/>
         </div>);
     }
     this.scrollWindow = null;
