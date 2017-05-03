@@ -8,7 +8,7 @@ describe('DateUtil', () => {
     });
   });
 
-  context('.formatDate', () => {
+  context('.formatDateStr', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       expect(formatDateStr('2017-04-24')).to.eq('04/24/2017');
     });
