@@ -38,7 +38,7 @@ export default class StyleGuideComponentTitle extends React.Component {
     /* Link is only the name of the file that you want to link to in the
     Style Guide (aka StyleGuideModal.jsx). If you use isExternalLink===true
     then you will use the full path after the caseflow repo.*/
-    return <div className="usa-width-one-whole">
+    return <div className="cf-sg-section-source">
       <div className="cf-push-left">
         {!isSubsection && <h2 id={id}>{title}</h2>}
         {isSubsection && <h3 id={id} className="cf-sg-subsection">{title}</h3>}
