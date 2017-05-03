@@ -207,12 +207,10 @@ export class Pdf extends React.Component {
 
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (this.props.onPageChange &&
-          boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
 
-        this.currentPage = index + 1;
-        this.setFitToScreenSize();
+        this.onPageChange(index + 1);
       }
 
       // This renders each page as it comes into view. i.e. when
@@ -242,9 +240,7 @@ export class Pdf extends React.Component {
         });
         this.props.setPdfReadyToShow(this.props.documentId);
 
-        if (this.props.onPageChange) {
-          this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
-        }
+        this.onPageChange(1);
       });
     });
   }, DOCUMENT_DEBOUNCE_TIME, {
@@ -274,21 +270,24 @@ export class Pdf extends React.Component {
     this.props.handleSelectCommentIcon(comment);
   }
 
-  setFitToScreenSize = () => {
-    this.props.onPageChange(
-      this.currentPage - 1,
-      this.state.numPages,
-      this.scrollWindow.offsetHeight / (this.pageContainers[this.currentPage - 1].offsetHeight / this.props.scale));
+  onPageChange = (currentPage) => {
+    this.currentPage = currentPage;
+    if (this.props.onPageChange) {
+      this.props.onPageChange(
+        currentPage - 1,
+        this.state.numPages,
+        this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
+    }
   }
 
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
-    window.addEventListener('resize', this.setFitToScreenSize);
+    window.addEventListener('resize', this.renderInViewPages);
     this.setupPdf(this.props.file);
   }
 
   comopnentWillUnmount = () => {
-    window.removeEventListener('resize', this.setFitToScreenSize);
+    window.removeEventListener('resize', this.renderInViewPages);
   }
 
   componentWillReceiveProps(nextProps) {
