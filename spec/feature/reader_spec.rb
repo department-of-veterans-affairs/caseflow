@@ -349,7 +349,7 @@ RSpec.feature "Reader" do
       expect(find("#other", visible: false).checked?).to be false
     end
 
-    scenario "Tags" do
+    scenario "Tags", focus: true do
       TAG1 = "Medical".freeze
       TAG2 = "Law document".freeze
 
@@ -361,6 +361,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       input_element = find(".Select-input > input")
+      binding.pry
       input_element.click.native.send_keys(TAG1)
 
       # making sure there is a dropdown showing up when text is entered
