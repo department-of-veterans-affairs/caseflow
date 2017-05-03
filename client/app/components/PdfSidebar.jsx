@@ -8,6 +8,7 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import { toggleDocumentCategoryFail } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
@@ -228,10 +229,9 @@ const mapDispatchToProps = (dispatch) => ({
     ApiUtil.patch(
       `/document/${docId}`,
       { data: { [categoryKey]: toggleState } }
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Saving document category failed', err);
-    });
+    ).catch(() =>
+      dispatch(toggleDocumentCategoryFail(docId))
+    );
 
     dispatch({
       type: Constants.TOGGLE_DOCUMENT_CATEGORY,
