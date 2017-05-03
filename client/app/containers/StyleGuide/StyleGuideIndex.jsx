@@ -17,6 +17,7 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
+import StyleGuideLayout from './StyleGuideLayout';
 
 export default function StyleGuideIndex() {
 
@@ -197,9 +198,8 @@ export default function StyleGuideIndex() {
           title="Alerts"
           id="alerts" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Layout"
-          id="layout" />
+        <StyleGuideLayout />
+        <div className="cf-help-divider"></div>
         <StyleGuideNavigationBar />
         <StyleGuideUserDropdownMenu />
         <div className="cf-help-divider"></div>

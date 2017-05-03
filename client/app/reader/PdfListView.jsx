@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
-import { formatDate } from '../util/DateUtil';
+import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
@@ -198,6 +198,7 @@ export class PdfListView extends React.Component {
 
       return [
         {
+          cellClass: 'last-read-column',
           valueFunction: (doc) => {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
@@ -212,6 +213,7 @@ export class PdfListView extends React.Component {
           }
         },
         {
+          cellClass: 'categories-column',
           header: <div
             id="categories-header"
             className="document-list-header-categories">
@@ -240,6 +242,7 @@ export class PdfListView extends React.Component {
           valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
         },
         {
+          cellClass: 'receipt-date-column',
           header: <div
             id="receipt-date-header"
             className="document-list-header-recepit-date"
@@ -248,10 +251,11 @@ export class PdfListView extends React.Component {
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {formatDate(doc.receivedAt)}
+              {formatDateStr(doc.receivedAt)}
             </span>
         },
         {
+          cellClass: 'doc-type-column',
           header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
             Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
           </div>,
@@ -263,6 +267,7 @@ export class PdfListView extends React.Component {
             </a>, doc)
         },
         {
+          cellClass: 'tags-column',
           header: <div id="tags-header"
             className="document-list-header-issue-tags">
             Issue Tags <FilterIcon
@@ -294,11 +299,10 @@ export class PdfListView extends React.Component {
           }
         },
         {
-          align: 'center',
+          cellClass: 'comments-column',
           header: <div
             id="comments-header"
-            className="document-list-header-comments"
-          >
+            className="document-list-header-comments">
             Comments
           </div>,
           valueFunction: (doc) => {
@@ -362,7 +366,9 @@ export class PdfListView extends React.Component {
               columns={this.getDocumentColumns()}
               rowObjects={rowObjects}
               summary="Document list"
+              className="documents-table"
               headerClassName="cf-document-list-header-row"
+              bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
             />
           </div>
