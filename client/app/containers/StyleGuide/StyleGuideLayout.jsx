@@ -4,11 +4,8 @@ import StyleGuideAction from './StyleGuideAction';
 
 let StyleGuideLayout = () => {
 
-  return (
-  <div>
-    <div className="usa-width-one-whole">
+  return <div>
     <h2 id="layout">Layout</h2>
-  </div>
 
     <StyleGuideComponentTitle
         title="Action"
@@ -42,8 +39,6 @@ let StyleGuideLayout = () => {
     </p>
     <StyleGuideAction />
   </div>
-
-  );
 };
 
 export default StyleGuideLayout;
