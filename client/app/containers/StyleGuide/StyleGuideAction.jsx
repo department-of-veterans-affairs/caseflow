@@ -8,7 +8,7 @@ let StyleGuideAction = () => {
     <div className="cf-app-segment" id="establish-claim-buttons">
       <div className="cf-push-left">
         <Button
-          name="Back to preview"
+          name="Back To Preview"
           classNames={['cf-btn-link']}
         />
       </div>
@@ -18,7 +18,7 @@ let StyleGuideAction = () => {
           classNames={['cf-btn-link', 'cf-adjacent-buttons']}
         />
         <Button
-          name="Submit end product"
+          name="Submit End Product"
           classNames={['usa-button-primary']}
         />
       </div>
