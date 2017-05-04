@@ -9,17 +9,37 @@ describe PrometheusService do
 
     context ".set" do
       before do
-        @metric.set({}, 5)
-        allow_any_instace_of(PrometheusGaugeSummary.new).to
-          receive(:record_summary_observation).and_call_original
+        @val = 5
+        @metric.set({}, @val)
       end
 
       it "sets values for gauge & summary" do
-        expect(@gauge.values[{}]).to eq(5)
-        expect(@summary.values[{}][0.5]).to eq(5)
+        expect(@gauge.values[{}]).to eq(@val)
+        expect(@summary.values[{}][0.5]).to eq(@val)
       end
 
       it "sets a summary observation at most once every 5 minutes" do
+        new_val = 6
+        expect(@metric.last_summary_observation).to eq(@time)
+
+        # Call the metric set() again to record a 2nd value
+        @metric.set({}, new_val)
+
+        # Verify the gauge updated as expected
+        expect(@gauge.values[{}]).to eq(new_val)
+
+        # Verify the summary did *NOT* update
+        expect(@summary.values[{}][0.5]).to eq(@val)
+
+        new_time = Timecop.freeze(@time + 6.minutes)
+
+        # Call the metric set() again to record a 3rd value
+        @metric.set({}, new_val)
+
+        # Since 5 minutes have passed,
+        # verify the summary updated as expected,
+        expect(@summary.values[{}][0.5]).to eq(new_val)
+        expect(@metric.last_summary_observation).to eq(new_time)
       end
     end
   end

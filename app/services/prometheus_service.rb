@@ -148,6 +148,10 @@ class PrometheusGaugeSummary
     record_summary_observation(label, value) if should_observe_summary?
   end
 
+  def last_summary_observation
+    Rails.cache.read(LAST_SUMMARY_OBSERVATION_REDIS_KEY) || Time.at(0)
+  end
+
   private
 
   def record_summary_observation(label, value)
@@ -163,7 +167,4 @@ class PrometheusGaugeSummary
     Time.now.utc > (last_summary_observation + SUMMARY_OBSERVATION_THRESHOLD)
   end
 
-  def last_summary_observation
-    Rails.cache.read(LAST_SUMMARY_OBSERVATION_REDIS_KEY) || Time.at(0)
-  end
 end
