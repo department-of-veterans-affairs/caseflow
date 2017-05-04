@@ -58,6 +58,13 @@ export const handlePlaceComment = () => ({
   }
 });
 
+export const createAnnotation = (content) => ({
+  type: Constants.CREATE_ANNOTATION,
+  payload: {
+    content
+  }
+});
+
 export const handleWriteComment = () => ({
   type: Constants.SET_COMMENT_FLOW_STATE,
   payload: {
