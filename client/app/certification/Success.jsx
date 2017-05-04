@@ -21,7 +21,8 @@ const UnconnectedSuccess = ({
     'Verified documents were in eFolder',
     'Completed and uploaded Form 8',
     'Representative and hearing fields updated in VACOLS'];
-  const message = `${veteranName}'s case ${vbmsId} has been certified. You can now close this window and open another appeal in VACOLS.`;
+  const message = `${veteranName}'s case ${vbmsId} has been certified. 
+  You can now close this window and open another appeal in VACOLS.`;
 >>>>>>> 3a377a3421773c41115a9d26ffc42e2ed50d02d0
 
 
