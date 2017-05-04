@@ -13,6 +13,7 @@ import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import { getAnnotationByDocumentId } from './util/AnnotationUtil';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -167,8 +168,7 @@ export class PdfListView extends React.Component {
       if (row && row.isComment) {
         return [{
           valueFunction: (doc) => {
-            const comments = this.props.annotationStorage.
-              getAnnotationByDocumentId(doc.id);
+            const comments = getAnnotationByDocumentId(this.props.annotations, doc.id);
             const commentNodes = comments.map((comment, commentIndex) => {
               return <Comment
                 key={comment.uuid}
@@ -346,7 +346,7 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
+      if (getAnnotationByDocumentId(this.props.annotations, row.id).length &&
         doc.listComments) {
         acc.push({
           ...row,
@@ -379,9 +379,8 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state, ['tagOptions']),
-  ..._.pick(state.ui, ['pdfList']),
-  ..._.pick(state.ui, ['docFilterCriteria'])
+  ..._.pick(state, 'tagOptions', 'annotations'),
+  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
 });
 
 const mapDispatchToProps = (dispatch) => ({

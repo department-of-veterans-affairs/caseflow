@@ -164,7 +164,7 @@ export default (state = initialState, action = {}) => {
       state,
       {
         annotations: {
-          $set: action.payload.annotations
+          $set: _.groupBy(action.payload.annotations, 'document_id')
         }
       }
     ));
