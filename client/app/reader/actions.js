@@ -63,8 +63,8 @@ export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANN
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
-    page: pageNumber, 
-    x: coordinates.xPosition, 
+    page: pageNumber,
+    x: coordinates.xPosition,
     y: coordinates.yPosition,
     documentId
   }
@@ -172,11 +172,11 @@ export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTAT
 
 export const deleteAnnotation = (docId, annotationId) =>
   (dispatch) => {
-    // I don't know why, but the request was not going through if 
+    // I don't know why, but the request was not going through if
     // we were not listening for the promise.
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`)
-      .then(console.log, console.log);
-      
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
+      then(console.log, console.log);
+
     dispatch({
       type: Constants.REQUEST_DELETE_ANNOTATION,
       payload: {

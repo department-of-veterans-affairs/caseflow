@@ -447,7 +447,7 @@ export default (state = initialState, action = {}) => {
           isPlacingAnnotation: { $set: false }
         }
       }
-    })
+    });
   case Constants.START_PLACING_ANNOTATION:
     return update(state, {
       ui: {
@@ -455,7 +455,7 @@ export default (state = initialState, action = {}) => {
           isPlacingAnnotation: { $set: true }
         }
       }
-    })
+    });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
       ui: {
@@ -463,7 +463,7 @@ export default (state = initialState, action = {}) => {
           isPlacingAnnotation: { $set: false }
         }
       }
-    })
+    });
   case Constants.CREATE_ANNOTATION:
     return (() => {
       let newAnnotation = state.ui.placedButUnsavedAnnotation;
@@ -554,17 +554,6 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
-  case Constants.START_PLACING_ANNOTATION:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            isPlacingAnnotation: { $set: true }
-          }
-        }
-      }
-    );
   case Constants.CLEAR_ALL_SEARCH:
     return updateFilteredDocIds(update(
       state,

@@ -319,12 +319,12 @@ export class Pdf extends React.Component {
     this.pageContainers = [];
 
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
-      
+
       const onPageClick = (event) => {
         if (!this.props.isPlacingAnnotation) {
           return;
         }
-        
+
         let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
         let xPosition = (event.pageX - container.left) / this.props.scale;
         let yPosition = (event.pageY - container.top) / this.props.scale;
