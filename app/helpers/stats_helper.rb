@@ -19,4 +19,8 @@ module StatsHelper
     return "#{format('%.2f', seconds / 360)} <span class=\"cf-stat-unit\">hours</span>".html_safe if seconds / 360 < 24
     "#{format('%.2f', seconds / 360 / 24)} <span class=\"cf-stat-unit\">days</span>".html_safe
   end
+
+  def stats_header
+    "&nbsp &#124; &nbsp ".html_safe + "Dashboard"
+  end
 end

@@ -1,4 +1,4 @@
-<% content_for :page_title do %>&nbsp &gt &nbspDispatch Dashboard<% end %>
+<% content_for :page_title do stats_header end %>
 
 <% content_for :head do %>
     <%= javascript_include_tag 'stats' %>
@@ -13,6 +13,7 @@
 <% end %>
 
 <div class="cf-app-segment cf-app-segment--alt">
+  <h1>Dispatch Dashboard</h1>
   <div class="cf-stats">
     <ul class="cf-tab-navigation">
       <% DispatchStats::INTERVALS.each do |interval| %>
