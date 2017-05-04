@@ -251,7 +251,7 @@ export class PdfViewer extends React.Component {
       <div>
         <div className="cf-pdf-page-container">
           <PdfUI
-            comments={this.state.comments}
+            comments={this.props.annotations}
             doc={doc}
             file={documentPath(this.selectedDocId())}
             pdfWorker={this.props.pdfWorker}
@@ -276,7 +276,7 @@ export class PdfViewer extends React.Component {
             doc={doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
-            comments={this.state.comments}
+            comments={this.props.annotations}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.onCancelCommentAdd}
             onSaveCommentEdit={this.onSaveCommentEdit}
@@ -306,13 +306,10 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    commentFlowState: state.ui.pdf.commentFlowState,
-    scrollToComment: state.ui.pdf.scrollToComment,
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  annotations: state.annotations[ownProps.match.params.docId],
+  ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
+});
 const mapDispatchToProps = (dispatch) => ({
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
@@ -327,6 +324,7 @@ export default connect(
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
+  annotations: PropTypes.arrayOf(PropTypes.object),
   doc: PropTypes.object,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
