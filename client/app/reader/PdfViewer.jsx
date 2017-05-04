@@ -6,7 +6,7 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { handleClearCommentState, handlePlaceComment, closeAnnotationDeleteModal,
+import { handleClearCommentState, handlePlaceComment, closeAnnotationDeleteModal, deleteAnnotation,
   handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
 import { bindActionCreators } from 'redux';
@@ -30,15 +30,6 @@ export class PdfViewer extends React.Component {
     this.setState({
       comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)]
     });
-  }
-
-  onDeleteComment = (uuid) => {
-    let onConfirmDelete = () => {
-      this.props.annotationStorage.deleteAnnotation(
-        this.selectedDocId(),
-        uuid
-      );
-    };
   }
 
   onEditComment = (uuid) => {
@@ -273,7 +264,7 @@ export class PdfViewer extends React.Component {
             onJumpToComment={this.props.onJumpToComment}
           />
         </div>
-        {this.props.deleteAnnotationModalIsOpen && <Modal
+        {this.props.deleteAnnotationModalIsOpenFor && <Modal
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
@@ -281,7 +272,10 @@ export class PdfViewer extends React.Component {
             },
             { classNames: ['usa-button', 'usa-button-secondary'],
               name: 'Confirm delete',
-              onClick: this.state.onConfirmDelete
+              onClick: () => this.props.deleteAnnotation(
+                this.props.match.params.docId,
+                this.props.deleteAnnotationModalIsOpenFor
+              )
             }
           ]}
           closeHandler={this.props.closeAnnotationDeleteModal}
@@ -295,11 +289,14 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   annotations: state.annotations[ownProps.match.params.docId],
-  ..._.pick(state.ui, 'deleteAnnotationModalIsOpen'),
+  ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({ closeAnnotationDeleteModal }, dispatch),
+  ...bindActionCreators({ 
+    closeAnnotationDeleteModal, 
+    deleteAnnotation 
+  }, dispatch),
 
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
