@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import { getAnnotationByDocumentId } from './util/AnnotationUtil';
 
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
@@ -288,7 +289,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  annotations: state.annotations[ownProps.match.params.docId],
+  annotations: getAnnotationByDocumentId(state.annotations, ownProps.match.params.docId),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
@@ -317,7 +318,7 @@ PdfViewer.propTypes = {
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
-  deleteAnnotationModalIsOpen: PropTypes.bool.isRequired,
+  deleteAnnotationModalIsOpenFor: PropTypes.number,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handlePlaceComment: PropTypes.func,
