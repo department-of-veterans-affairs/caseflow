@@ -35,6 +35,27 @@ class Fakes::AppealRepository
     end
   end
 
+  READER_REDACTED_DOCS = [
+    "VA 8 Certification of Appeal",
+    "Supplemental Statement of the Case",
+    "CAPRI",
+    "Notice of Disagreement",
+    "Rating Decision - Codesheet",
+    "Rating Decision - Narrative",
+    "Correspondence",
+    "VA 21-526EZ, Fully Developed Claim",
+    "STR - Medical",
+    "Military Personnel Record",
+    "Private Medical Treatment Record",
+    "Map-D Development Letter",
+    "Third Party Correspondence",
+    "VA 9 Appeal to Board of Appeals",
+    "Correspondence",
+    "VA 21-4142 Authorization to Disclose Information to VA",
+    "VA 21-4138 Statement in Support of Claim",
+    "VA Memo"
+  ].freeze
+
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
   RASIE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
 
@@ -144,7 +165,7 @@ class Fakes::AppealRepository
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       else
         file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") if !File.exist?(file)
+        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
         file
       end
     IO.binread(path)
@@ -325,31 +346,11 @@ class Fakes::AppealRepository
   end
 
   def self.redacted_reader_documents
-    document_types = [
-      "VA 8 Certification of Appeal",
-      "Supplemental Statement of the Case",
-      "CAPRI",
-      "Notice of Disagreement",
-      "Rating Decision - Codesheet",
-      "Rating Decision - Narrative",
-      "Correspondence",
-      "VA 21-526EZ, Fully Developed Claim",
-      "STR - Medical",
-      "Military Personnel Record",
-      "Private Medical Treatment Record",
-      "Map-D Development Letter",
-      "Third Party Correspondence",
-      "VA 9 Appeal to Board of Appeals",
-      "Correspondence",
-      "VA 21-4142 Authorization to Disclose Information to VA",
-      "VA 21-4138 Statement in Support of Claim",
-      "VA Memo"
-    ]
-    document_types.each_with_index.map do |doc_type, index|
+    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
       Generators::Document.build(
         vbms_document_id: (100 + index),
         type: doc_type
-      ) 
+      )
     end
   end
 
