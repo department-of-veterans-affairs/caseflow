@@ -427,7 +427,7 @@ export default (state = initialState, action = {}) => {
       },
       annotations: {
         [action.payload.docId]: {
-          $apply: (annotations) => _.reject(annotations, {id: action.payload.annotationId})
+          $apply: (annotations) => _.reject(annotations, { id: action.payload.annotationId })
         }
       }
     });

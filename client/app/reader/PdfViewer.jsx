@@ -293,9 +293,9 @@ const mapStateToProps = (state, ownProps) => ({
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({ 
-    closeAnnotationDeleteModal, 
-    deleteAnnotation 
+  ...bindActionCreators({
+    closeAnnotationDeleteModal,
+    deleteAnnotation
   }, dispatch),
 
   handlePlaceComment: () => dispatch(handlePlaceComment()),
