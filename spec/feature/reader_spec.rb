@@ -285,7 +285,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Banana. Banana who", wait: 3)
     end
 
-    scenario "Zooming changes the size of pages", focus: true do
+    scenario "Zooming changes the size of pages" do
       scroll_amount = 500
       zoom_rate = 1.3
 
@@ -308,6 +308,10 @@ RSpec.feature "Reader" do
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
       expect(ratio).to eq(zoom_rate)
 
+      # Non-rendered page is zoomed
+      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
+      expect(ratio).to eq(zoom_rate)
+
       # We should scroll further down since we zoomed but not further than the zoom rate
       # times how much we've scrolled.
       expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
@@ -318,12 +322,9 @@ RSpec.feature "Reader" do
       find("#button-zoomOut").click
       find("#button-zoomOut").click
       find("#button-zoomOut").click
+      find("#button-zoomOut").click
 
       expect(page).to have_content("Office of the General Counsel (022D)")
-
-      # Non-rendered page is zoomed
-      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
-      expect(ratio).to eq(zoom_rate)
 
       find("#button-fit").click
 
