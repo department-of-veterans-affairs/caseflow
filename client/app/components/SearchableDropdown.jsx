@@ -114,10 +114,6 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    if (this.select) {
-      this.select.inputValue = '';
-    }
-
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
