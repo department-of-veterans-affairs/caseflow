@@ -51,10 +51,10 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const createAnnotation = (content) => ({
+export const createAnnotation = (comment) => ({
   type: Constants.CREATE_ANNOTATION,
   payload: {
-    content
+    comment
   }
 });
 

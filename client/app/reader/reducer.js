@@ -466,7 +466,10 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.CREATE_ANNOTATION:
     return (() => {
-      let newAnnotation = state.ui.placedButUnsavedAnnotation;
+      let newAnnotation = {
+        ...state.ui.placedButUnsavedAnnotation, 
+        ..._.pick(action.payload, 'comment')
+      };
 
       return update(state, {
         ui: {
@@ -474,7 +477,11 @@ export default (state = initialState, action = {}) => {
         },
         annotations: {
           [newAnnotation.documentId]: {
-            $apply: (prevAnnotations) => [newAnnotation].concat(prevAnnotations).sort()
+            $apply: (prevAnnotations) => _(prevAnnotations).
+              concat(newAnnotation).
+              sortBy().
+              compact().
+              value()
           }
         }
       });

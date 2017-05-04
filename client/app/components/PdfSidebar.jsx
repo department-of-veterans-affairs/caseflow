@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
@@ -78,7 +78,7 @@ export class PdfSidebar extends React.Component {
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
             onSaveCommentEdit={this.props.onSaveCommentEdit}
-            key={comment.id}
+            key={keyOfAnnotation(comment)}
           >
             {comment.comment}
           </EditComment>;
@@ -87,7 +87,7 @@ export class PdfSidebar extends React.Component {
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;
       }}
-        key={comment.id}>
+        key={keyOfAnnotation(comment)}>
         <Comment
           id={`comment${index}`}
           selected={false}

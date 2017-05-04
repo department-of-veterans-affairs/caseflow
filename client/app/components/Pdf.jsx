@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
+import { keyOfAnnotation } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
@@ -300,7 +301,7 @@ export class Pdf extends React.Component {
             x: comment.x * this.props.scale,
             y: comment.y * this.props.scale
           }}
-          key={comment.uuid}
+          key={keyOfAnnotation(comment)}
           selected={comment.selected}
           uuid={comment.uuid}
           page={comment.page}
