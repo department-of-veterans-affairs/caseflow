@@ -271,7 +271,7 @@ export class Pdf extends React.Component {
     }
 
     if (this.props.scrollToComment) {
-      if (this.props.currentRenderedFile === this.props.scrollToComment.documentId &&
+      if (this.props.documentId === this.props.scrollToComment.documentId &&
         this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
@@ -379,7 +379,6 @@ export class Pdf extends React.Component {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
-    currentRenderedFile: _.get(state, 'ui.pdf.currentRenderedFile'),
     commentFlowState: state.ui.pdf.commentFlowState,
     scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
   };
@@ -407,7 +406,6 @@ Pdf.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
-  currentRenderedFile: PropTypes.number,
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,

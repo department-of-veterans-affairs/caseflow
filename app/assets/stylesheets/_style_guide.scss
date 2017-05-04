@@ -39,7 +39,7 @@ div {
 }
 
 .cf-sg-content {
-  width: 78%;
+  padding-left: 190px;
 }
 
 .usa-accordion {
@@ -194,4 +194,20 @@ pre {
   padding: .75rem;
   margin-bottom: 10px;
   width: 50%;
+}
+
+.cf-sg-section-source {
+  overflow: auto;
+  margin: 1.5rem auto;
+
+  h2,
+  h3 {
+    margin-bottom: 0;
+  }
+}
+
+.cf-sg-tables-section {
+  table:last-child {
+    margin-bottom: 6rem;
+  }
 }
