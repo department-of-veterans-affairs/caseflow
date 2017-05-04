@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "3341005efa746c998e662c24bd5b9e1aab17420a"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "9b7bbe5719557f25a49709bb1c7fc82d99084885"
 
 gem "moment_timezone-rails"
 
@@ -82,6 +82,9 @@ gem 'font-awesome-sass'
 
 gem 'redis-namespace'
 
+# catch problematic migrations at development/test time
+gem "zero_downtime_migrations"
+
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'
@@ -122,13 +125,12 @@ group :development, :test do
   gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
-  # catch problematic migrations at development/test time
-  gem "zero_downtime_migrations"
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0', platforms: :ruby
+  gem 'foreman'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby

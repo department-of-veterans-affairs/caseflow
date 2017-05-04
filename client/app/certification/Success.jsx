@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import StatusMessage from '../components/StatusMessage';
 
 const UnconnectedSuccess = ({
   veteranName,
   vbmsId
 }) => {
+<<<<<<< HEAD
   return <div id="certifications-generate"
     className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
     <h1 className="cf-success cf-msg-screen-heading">
@@ -14,24 +16,28 @@ const UnconnectedSuccess = ({
       {veteranName}'s case {vbmsId} has been certified. 
       You can now close this window and open another appeal in VACOLS.
     </h2>
+=======
+  const checklist = [
+    'Verified documents were in eFolder',
+    'Completed and uploaded Form 8',
+    'Representative and hearing fields updated in VACOLS'];
+  const message = `${veteranName}'s case ${vbmsId} has been certified. You can now close this window and open another appeal in VACOLS.`;
+>>>>>>> 3a377a3421773c41115a9d26ffc42e2ed50d02d0
 
-    <ul className="cf-checklist">
-        <li>
-          <span className="cf-icon-success--bg"></span>
-          Verified documents were in eFolder
-        </li>
-        <li>
-          <span className="cf-icon-success--bg cf-success"></span>
-          Completed and uploaded Form 8
-        </li>
-        <li>
-          <span className="cf-icon-success--bg cf-success"></span>
-          Representative and hearing fields updated in VACOLS
-        </li>
-    </ul>
 
+<<<<<<< HEAD
 
   </div>;
+=======
+  return <StatusMessage
+    title="Congratulations!"
+    leadMessageList={[message]}
+    checklist={checklist}
+    messageText="Way to go! You can now close this window and open another
+    appeal in VACOLS."
+    type="success"
+    />;
+>>>>>>> 3a377a3421773c41115a9d26ffc42e2ed50d02d0
 };
 
 const mapStateToProps = (state) => ({

@@ -34,7 +34,6 @@ module.exports = {
     "comma-dangle": "error",
     "comma-spacing": "error",
     "comma-style": "error",
-    "complexity": "error",
     "computed-property-spacing": "error",
     "consistent-this": "error",
     "curly": "error",
@@ -67,7 +66,7 @@ module.exports = {
     "lines-around-comment": "error",
     "lines-around-directive": "error",
     "max-depth": "error",
-    "max-len": ["error", 90],
+    "max-len": ["error", 120],
     "max-lines": [
       "error",
       {

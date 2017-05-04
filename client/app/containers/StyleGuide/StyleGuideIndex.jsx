@@ -7,15 +7,17 @@ import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
-import StyleGuideTextInput from './StyleGuideTextInput';
+import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
+import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
+import StyleGuideLayout from './StyleGuideLayout';
 
 export default function StyleGuideIndex() {
 
@@ -143,11 +145,11 @@ export default function StyleGuideIndex() {
         <StyleGuidePlaceholder
           title="Headings and Body"
           id="headings_and_body"
-          subsection={true} />
+          isSubsection={true} />
         <StyleGuidePlaceholder
           title="Styles"
           id="styles"
-          subsection={true} />
+          isSubsection={true} />
         <div className="cf-help-divider"></div>
         <StyleGuideColors />
         <div className="cf-help-divider"></div>
@@ -184,7 +186,11 @@ export default function StyleGuideIndex() {
         <StyleGuidePlaceholder
           title="Forms Fields"
           id="forms_fields" />
-        <StyleGuideTextInput />
+        <StyleGuidePlaceholder
+          title="Text Input"
+          id="text_input"
+          isSubsection={true} />
+        <StyleGuideInlineForm />
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
@@ -192,15 +198,12 @@ export default function StyleGuideIndex() {
           title="Alerts"
           id="alerts" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Layout"
-          id="layout" />
+        <StyleGuideLayout />
+        <div className="cf-help-divider"></div>
         <StyleGuideNavigationBar />
         <StyleGuideUserDropdownMenu />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Messages"
-          id="messages" />
+        <StyleGuideMessages />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Branding"

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { formatDate } from '../util/DateUtil';
+import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
@@ -14,16 +14,40 @@ import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
 
+const COMMENT_SCROLL_FROM_THE_TOP = 50;
+
 // PdfSidebar shows relevant document information and comments.
 // It is intended to be used with the PdfUI component to
 // show a PDF with its corresponding information.
 export class PdfSidebar extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.commentElements = {};
+  }
+
+  componentDidUpdate = () => {
+    if (this.props.scrollToSidebarComment) {
+      const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
+
+      this.commentListElement.scrollTop = this.commentListElement.scrollTop +
+        this.commentElements[
+          this.props.scrollToSidebarComment.id
+        ].getBoundingClientRect().top - commentListBoundingBox.top -
+        COMMENT_SCROLL_FROM_THE_TOP;
+      this.props.handleFinishScrollToSidebarComment();
+    }
+  }
+
   generateOptionsFromTags = (tags) =>
-    _.map(tags, (tag) => ({
-      value: tag.text,
-      label: tag.text,
-      tagId: tag.id })
-    );
+    _(tags).
+      reject('pendingRemoval').
+      map((tag) => ({
+        value: tag.text,
+        label: tag.text,
+        tagId: tag.id })
+      ).
+      value();
 
   onChange = (values, deletedValue) => {
     if (_.size(deletedValue)) {
@@ -41,7 +65,8 @@ export class PdfSidebar extends React.Component {
 
     const {
       doc,
-      showTagErrorMsg
+      showTagErrorMsg,
+      tagOptions
     } = this.props;
 
     comments = this.props.comments.map((comment, index) => {
@@ -50,24 +75,28 @@ export class PdfSidebar extends React.Component {
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
             onSaveCommentEdit={this.props.onSaveCommentEdit}
-            key={comment.comment}
+            key={comment.id}
           >
             {comment.comment}
           </EditComment>;
       }
 
-      return <Comment
-        id={`comment${index}`}
-        selected={false}
-        onDeleteComment={this.props.onDeleteComment}
-        onEditComment={this.props.onEditComment}
-        uuid={comment.uuid}
-        selected={comment.selected}
-        onClick={this.props.onJumpToComment(comment)}
-        page={comment.page}
-        key={comment.comment}>
-          {comment.comment}
-        </Comment>;
+      return <div ref={(commentElement) => {
+        this.commentElements[comment.id] = commentElement;
+      }}
+        key={comment.id}>
+        <Comment
+          id={`comment${index}`}
+          selected={false}
+          onDeleteComment={this.props.onDeleteComment}
+          onEditComment={this.props.onEditComment}
+          uuid={comment.uuid}
+          selected={comment.selected}
+          onClick={this.props.onJumpToComment(comment)}
+          page={comment.page}>
+            {comment.comment}
+          </Comment>
+        </div>;
     });
 
     const sidebarClass = classNames(
@@ -98,7 +127,7 @@ export class PdfSidebar extends React.Component {
             </span>
           </p>
           <p className="cf-pdf-meta-title">
-            <b>Receipt Date:</b> {formatDate(this.props.doc.receivedAt)}
+            <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
           </p>
           <DocCategoryPicker
             handleCategoryToggle={
@@ -114,10 +143,10 @@ export class PdfSidebar extends React.Component {
               message="Unable to save. Please try again." />}
           <SearchableDropdown
             name="tags"
-            label="Click in the box to select, or add issue(s)"
+            label="Select or tag issue(s)"
             multi={true}
             creatable={true}
-            options={this.generateOptionsFromTags(doc.tags)}
+            options={this.generateOptionsFromTags(tagOptions)}
             placeholder=""
             value={this.generateOptionsFromTags(doc.tags)}
             onChange={this.onChange}
@@ -135,9 +164,12 @@ export class PdfSidebar extends React.Component {
           </div>
         </div>
 
-        <div className="cf-comment-wrapper">
+        <div id="cf-comment-wrapper" className="cf-comment-wrapper"
+          ref={(commentListElement) => {
+            this.commentListElement = commentListElement;
+          }}>
           <div className="cf-pdf-comment-list">
-            {this.props.isAddingComment &&
+            {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
               <EditComment
                 id="addComment"
                 onCancelCommentEdit={this.props.onCancelCommentAdd}
@@ -157,7 +189,7 @@ PdfSidebar.propTypes = {
     uuid: React.PropTypes.number
   })),
   editingComment: React.PropTypes.number,
-  isAddingComment: PropTypes.bool,
+  isWritingComment: PropTypes.bool,
   onSaveCommentAdd: PropTypes.func,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func,
@@ -165,14 +197,31 @@ PdfSidebar.propTypes = {
   onDeleteComment: PropTypes.func,
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
+  commentFlowState: PropTypes.string,
+  scrollToSidebarComment: PropTypes.shape({
+    id: React.PropTypes.number
+  }),
   hidePdfSidebar: PropTypes.bool
 };
 
-const mapPropsToState = (state) => ({
-  documents: state.documents,
-  hidePdfSidebar: state.ui.pdf.hidePdfSidebar
-});
-const mapDispatchToState = (dispatch) => ({
+const mapStateToProps = (state) => {
+  return {
+    scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
+    commentFlowState: state.ui.pdf.commentFlowState,
+    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    documents: state.documents,
+    tagOptions: state.tagOptions
+  };
+};
+const mapDispatchToProps = (dispatch) => ({
+  handleFinishScrollToSidebarComment() {
+    dispatch({
+      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+      payload: {
+        scrollToSidebarComment: null
+      }
+    });
+  },
   handleCategoryToggle(docId, categoryName, toggleState) {
     const categoryKey = categoryFieldNameOfCategoryName(categoryName);
 
@@ -201,5 +250,5 @@ const mapDispatchToState = (dispatch) => ({
 });
 
 export default connect(
-  mapPropsToState, mapDispatchToState
+  mapStateToProps, mapDispatchToProps
 )(PdfSidebar);

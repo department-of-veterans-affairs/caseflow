@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 
 const devBuild = process.env.NODE_ENV !== 'production';
-const nodeEnv = devBuild ? 'development' : 'production';
 
 const config = {
   entry: [
@@ -23,7 +22,7 @@ const config = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      // This does not actually appear to be necessary, but it does silence 
+      // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
       ie: 'component-ie'
     }

@@ -18,6 +18,8 @@ export const CERTIFICATION_UPDATE_SUCCESS = 'CERTIFICATION_UPDATE_SUCCESS';
 export const ON_CONTINUE_CLICK_FAILED = 'ON_CONTINUE_CLICK_FAILED';
 export const ON_CONTINUE_CLICK_SUCCESS = 'ON_CONTINUE_CLICK_SUCCESS';
 
+export const RESET_STATE = 'RESET_STATE';
+
 // types of hearings
 //
 // TODO:
@@ -26,13 +28,14 @@ export const ON_CONTINUE_CLICK_SUCCESS = 'ON_CONTINUE_CLICK_SUCCESS';
 // and HEARING_CANCELLED should result in a cancellation
 // checkbox being checked, but the original hearing type
 // should be undisturbed.
-export const hearingTypes = {
+export const hearingPreferences = {
   VIDEO: 'VIDEO',
   TRAVEL_BOARD: 'TRAVEL_BOARD',
   WASHINGTON_DC: 'WASHINGTON_DC',
   HEARING_TYPE_NOT_SPECIFIED: 'HEARING_TYPE_NOT_SPECIFIED',
   NO_HEARING_DESIRED: 'NO_HEARING_DESIRED',
-  HEARING_CANCELLED: 'HEARING_CANCELLED'
+  HEARING_CANCELLED: 'HEARING_CANCELLED',
+  NO_BOX_SELECTED: 'NO_BOX_SELECTED'
 };
 
 // form9 values

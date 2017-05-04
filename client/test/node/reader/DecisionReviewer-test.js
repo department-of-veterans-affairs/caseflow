@@ -1,18 +1,28 @@
 import React from 'react';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { mount } from 'enzyme';
-import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import sinon from 'sinon';
+
+import { MemoryRouter } from 'react-router-dom';
+import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import _ from 'lodash';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
+import { formatDateStr } from '../../../app/util/DateUtil';
 
-import { readerReducer } from '../../../app/reader/index';
+import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
+
+// This is the route history preset in react router
+// prior to tests running
+const INITIAL_ENTRIES = [
+  '/reader_id1/documents',
+  `/reader_id1/documents/${documents[0].id}`
+];
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
@@ -24,14 +34,20 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
+    const store = createStore(readerReducer, applyMiddleware(thunk));
+
     wrapper = mount(
-      <Provider store={createStore(readerReducer)}>
+      <Provider store={store}>
         <DecisionReviewer
           appealDocuments={documents}
           annotations={annotations}
-          onReceiveDocs={_.noop}
           pdfWorker="worker"
           url="url"
+          router={MemoryRouter}
+          routerTestProps={{
+            initialEntries: INITIAL_ENTRIES
+          }}
+
         />
       </Provider>, { attachTo: document.getElementById('app') });
   });
@@ -90,9 +106,9 @@ describe('DecisionReviewer', () => {
       }));
 
       it('are hidden when there is no next or previous pdf', () => {
-        // Filter documents on the second document's comment
+        // Filter documents on the second document's type
         wrapper.find('input').simulate('change',
-          { target: { value: annotations[0].comment } });
+          { target: { value: documents[1].type } });
 
         // Enter the pdf view
         wrapper.find('a').findWhere(
@@ -203,44 +219,14 @@ describe('DecisionReviewer', () => {
           to.be.true;
       }));
 
-      it('can be clicked on to jump to icon', asyncTest(async() => {
-        let commentId = 1;
-        let jumpTo = sinon.spy(wrapper.find('DecisionReviewer').
-          getNode(), 'onJumpToComment');
-
-        ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
-
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
-
-        wrapper.find('#button-AddComment').simulate('click');
-
-        await pause();
-        wrapper.find('#pageContainer1').simulate('click', event);
-
-        wrapper.find('#addComment').simulate('change', { target: { value: 'hello' } });
-
-        wrapper.find('#button-save').simulate('click');
-        await pause();
-
-        wrapper.find('#comment0').simulate('click');
-        assert(jumpTo.calledWith(sinon.match({ id: commentId })));
-      }));
-
       it('highlighted by clicking on the icon', asyncTest(async() => {
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
-        let clickedOnCommentEvent = {
-          getAttribute: () => {
-            return annotations[0].id;
-          }
-        };
-
         wrapper.find('Pdf').getNode().
-          onCommentClick(clickedOnCommentEvent);
+          onCommentClick(annotations[0])();
+
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
       }));
@@ -328,8 +314,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[0].received_at);
-        expect(textArray[2]).to.include(documents[1].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[1].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
         expect(wrapper.find('#receipt-date-header').
@@ -337,33 +323,33 @@ describe('DecisionReviewer', () => {
           hasClass('fa-caret-up')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[1].received_at);
-        expect(textArray[2]).to.include(documents[0].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
       });
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-down')).to.be.true;
+          hasClass('fa-caret-up')).to.be.true;
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[0].type);
-        expect(textArray[2]).to.include(documents[1].type);
+        expect(textArray[1]).to.include(documents[1].type);
+        expect(textArray[2]).to.include(documents[0].type);
 
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-up')).to.be.true;
+          hasClass('fa-caret-down')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[1].type);
-        expect(textArray[2]).to.include(documents[0].type);
+        expect(textArray[1]).to.include(documents[0].type);
+        expect(textArray[2]).to.include(documents[1].type);
       });
     });
 
-    context('when filtered by', () => {
+    context('when searched by', () => {
       it('date displays properly', () => {
         wrapper.find('input').simulate('change',
           { target: { value: documents[1].received_at } });
@@ -372,7 +358,7 @@ describe('DecisionReviewer', () => {
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
-        expect(textArray[1]).to.include(documents[1].received_at);
+        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
 
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
@@ -409,6 +395,89 @@ describe('DecisionReviewer', () => {
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
+      });
+
+      it('category displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'medical' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[0].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag' } });
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+    });
+
+    context('when filtered by', () => {
+      const openMenu = (node, menuName) => {
+        node.find(`#${menuName}-header`).find('svg').
+          simulate('click');
+      };
+
+      const checkBox = (node, text, value) => {
+        node.find('Checkbox').filterWhere((box) => box.text().
+          includes(text)).
+          find('input').
+          simulate('change', { target: { checked: value } });
+      };
+
+      it('category displays properly', () => {
+        openMenu(wrapper, 'categories');
+
+        checkBox(wrapper, 'Procedural', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the first document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'Procedural', false);
+
+        textArray = wrapper.find('tr').map((node) => node.text());
+        expect(textArray).to.have.length(3);
+      });
+
+      it('tag displays properly', () => {
+        openMenu(wrapper, 'tags');
+
+        checkBox(wrapper, 'mytag', true);
+
+        let textArray = wrapper.find('tr').map((node) => node.text());
+
+        // Header and one filtered row.
+        expect(textArray).to.have.length(2);
+
+        // Should only display the second document
+        expect(textArray[1]).to.include(documents[1].type);
+
+        checkBox(wrapper, 'mytag', false);
       });
     });
   });

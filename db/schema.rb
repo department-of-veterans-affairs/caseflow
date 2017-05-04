@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170424151347) do
+ActiveRecord::Schema.define(version: 20170502213808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,11 @@ ActiveRecord::Schema.define(version: 20170424151347) do
     t.string   "form9_type"
     t.string   "vacols_hearing_preference"
     t.string   "hearing_preference"
+    t.string   "certifying_office"
+    t.string   "certifying_username"
+    t.string   "certifying_official_name"
+    t.string   "certifying_official_title"
+    t.string   "certification_date"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
@@ -125,6 +130,14 @@ ActiveRecord::Schema.define(version: 20170424151347) do
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
+
+  create_table "documents_tags", id: false, force: :cascade do |t|
+    t.integer "document_id", null: false
+    t.integer "tag_id",      null: false
+  end
+
+  add_index "documents_tags", ["document_id"], name: "index_documents_tags_on_document_id", using: :btree
+  add_index "documents_tags", ["tag_id"], name: "index_documents_tags_on_tag_id", using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
@@ -199,9 +212,8 @@ ActiveRecord::Schema.define(version: 20170424151347) do
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
-    t.integer  "document_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -219,6 +231,25 @@ ActiveRecord::Schema.define(version: 20170424151347) do
     t.string   "outgoing_reference_id"
     t.string   "aasm_state"
   end
+
+  create_table "team_quotas", force: :cascade do |t|
+    t.date     "date",       null: false
+    t.string   "task_type",  null: false
+    t.integer  "user_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "team_quotas", ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true, using: :btree
+
+  create_table "user_quotas", force: :cascade do |t|
+    t.integer  "team_quota_id", null: false
+    t.integer  "user_id",       null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false

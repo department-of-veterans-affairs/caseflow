@@ -103,8 +103,8 @@
 }
 
 * + .cf-form-dropdown {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-top: 1.6rem;
+  margin-bottom: 1.6rem;
 }
 
 .cf-form-textinput[readonly] {
@@ -167,8 +167,29 @@
   }
 }
 
+// add to commons
+.cf-success-checklist {
+  position: relative;
+  max-width: 400px;
+  margin: 50px 0 65px 25%;
+  list-style-type: none;
+
+  li {
+    background: url('icons/icon-check.svg') no-repeat left top transparent;
+    background-size: 22px 17px;
+    background-position-y: 7px;
+    padding-left: 38px;
+    padding-top: 3px;
+  }
+}
+
+
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
+
+  &.cf-success-emoji-text {
+    width: auto;
+  }
 }
 
 .cf-tab-window-body {
@@ -246,6 +267,8 @@ select {
 
 .cf-left-padding {
   padding-left: 75px;
+  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
 .cf-push-left {

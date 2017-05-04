@@ -40,11 +40,12 @@ class StyleGuideSearchableDropdown extends Component {
           title="Searchable Dropdowns"
           id="searchable_dropdown"
           link="StyleGuideSearchableDropdown.jsx"
+          isSubsection={true}
         />
         <h3>Single Select Searchable Dropdown</h3>
         <SearchableDropdown
           label="Searchable dropdown"
-          name="countries"
+          name="single-select-countries"
           options={options}
           onChange={this.onChange}
           required={true}
@@ -53,7 +54,7 @@ class StyleGuideSearchableDropdown extends Component {
         <SearchableDropdown
           creatable={true}
           label="Click in the box below to select, type, or add issue(s)"
-          name="countries"
+          name="multi-select-countries"
           options={options}
           required={true}
           multi={true}
