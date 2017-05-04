@@ -376,13 +376,7 @@ export class Pdf extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
-    commentFlowState: state.ui.pdf.commentFlowState,
-    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
-  };
-};
+const mapStateToProps = (state) => state.ui.pdf;
 
 const mapDispatchToProps = (dispatch) => ({
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),

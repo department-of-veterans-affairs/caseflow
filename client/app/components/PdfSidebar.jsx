@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -8,6 +9,7 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import { toggleDocumentCategoryFail, handlePlaceComment } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
@@ -157,7 +159,7 @@ export class PdfSidebar extends React.Component {
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
-                onClick={this.props.onAddComment}>
+                onClick={this.props.handlePlaceComment}>
                 <span>{ plusIcon() } &nbsp; Add a comment</span>
               </Button>
             </span>
@@ -182,7 +184,6 @@ export class PdfSidebar extends React.Component {
 }
 
 PdfSidebar.propTypes = {
-  onAddComment: PropTypes.func,
   doc: PropTypes.object,
   comments: React.PropTypes.arrayOf(React.PropTypes.shape({
     comment: React.PropTypes.string,
@@ -214,6 +215,10 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    handlePlaceComment
+  }, dispatch),
+
   handleFinishScrollToSidebarComment() {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,

@@ -62,12 +62,6 @@ export class PdfViewer extends React.Component {
     });
   }
 
-  onAddComment = () => {
-    if (!this.isUserActive()) {
-      this.props.handlePlaceComment();
-    }
-  }
-
   placeComment = (pageNumber, coordinates) => {
     if (this.props.commentFlowState === PLACING_COMMENT_STATE) {
       let annotation = {
