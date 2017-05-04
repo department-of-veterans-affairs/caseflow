@@ -41,6 +41,17 @@ describe PrometheusService do
         expect(@summary.values[{}][0.5]).to eq(new_val)
         expect(@metric.last_summary_observation).to eq(new_time)
       end
+
+      it "does not clash with other summary metric's last_observation" do
+        gauge2 = Prometheus::Client::Gauge.new(:bar_gauge, "bar")
+        summary2 = Prometheus::Client::Summary.new(:bar_summary, "bar")
+        metric2 = PrometheusGaugeSummary.new(gauge2, summary2)
+
+        # Verify no last_summary_observation has been set
+        expect(metric2.last_summary_observation).to eq(Time.at(0))
+        metric2.set({}, 10)
+        expect(summary2.values[{}][0.5]).to eq(10)
+      end
     end
   end
 end
