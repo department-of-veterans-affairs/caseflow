@@ -70,6 +70,12 @@ input {
   }
 }
 
+.cf-btn-link {
+  &.cf-adjacent-buttons {
+    margin-right: 30px;
+  }
+}
+
 .copy-note-button {
   margin-top: 17px;
   margin-bottom: 35px;
