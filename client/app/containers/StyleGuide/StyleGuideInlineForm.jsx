@@ -8,7 +8,9 @@ import InlineForm from '../../components/InlineForm';
 
 export default class StyleGuideInlineForm extends React.Component {
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+
     this.state = {
       value: null
     };
