@@ -345,7 +345,7 @@ RSpec.feature "Reader" do
 
       input_element = find(".Select-input > input")
       input_element.click.native.send_keys(TAG1)
-      
+
       # making sure there is a dropdown showing up when text is entered
       expect(page).to have_css(".Select-menu-outer")
 
@@ -356,13 +356,11 @@ RSpec.feature "Reader" do
       find("body").click
       input_element.click
       expect(page).to_not have_content(suggested_option)
-      input_element.native.send_keys(TAG1)
 
-      # submit entering the tag
-      input_element.send_keys(:enter)
+      # submit entering two tags
+      input_element.click.native.send_keys(TAG1, :enter)
+      input_element.click.native.send_keys(TAG2, :enter)
 
-      find(".Select-input > input").click.native.send_keys(TAG2, :enter)
-      
       # expecting the multi-selct to have the two new fields
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
