@@ -171,7 +171,7 @@ export class PdfSidebar extends React.Component {
             this.commentListElement = commentListElement;
           }}>
           <div className="cf-pdf-comment-list">
-            {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
+            {this.props.placedButUnsavedAnnotation &&
               <EditComment
                 id="addComment"
                 onCancelCommentEdit={this.props.onCancelCommentAdd}
@@ -206,6 +206,7 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    ..._.pick(state.ui, 'placedButUnsavedAnnotation'),
     comments: getAnnotationByDocumentId(state.annotations, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,

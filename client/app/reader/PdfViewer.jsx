@@ -293,7 +293,6 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch),
 
   handlePlaceComment: () => dispatch(handlePlaceComment()),
-  handleWriteComment: () => dispatch(handleWriteComment()),
   handleClearCommentState: () => dispatch(handleClearCommentState()),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
@@ -315,7 +314,6 @@ PdfViewer.propTypes = {
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handlePlaceComment: PropTypes.func,
-  handleWriteComment: PropTypes.func,
   handleClearCommentState: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   documents: PropTypes.array.isRequired,

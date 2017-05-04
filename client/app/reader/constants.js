@@ -38,9 +38,7 @@ export const REQUEST_DELETE_ANNOTATION = 'REQUEST_DELETE_ANNOTATION';
 export const CREATE_ANNOTATION = 'CREATE_ANNOTATION';
 export const PLACE_ANNOTATION = 'PLACE_ANNOTATION';
 
-// comment flow states
 export const PLACING_COMMENT_STATE = 'PLACING_COMMENT';
-export const WRITING_COMMENT_STATE = 'WRITING_COMMENT';
 
 export const documentCategories = {
   procedural: {
