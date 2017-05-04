@@ -24,8 +24,8 @@ class SearchableDropdown extends Component {
     // select for every render.
     // This is for resetting the suggestion of creating
     // a new option when blurred.
-    if (this.select) {
-      this.select.inputValue = '';
+    if (this.selectElem) {
+      this.selectElem.inputValue = '';
     }
   }
 
@@ -120,7 +120,7 @@ class SearchableDropdown extends Component {
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
-        ref={(ref) => (this.select = ref)}
+        ref={(ref) => (this.selectElem = ref)}
         inputProps={{ id: name }}
         options={options}
         onChange={this.onChange}
