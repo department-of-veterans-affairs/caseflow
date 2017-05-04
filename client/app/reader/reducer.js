@@ -87,6 +87,7 @@ export const initialState = {
   annotationStorage: null,
   ui: {
     deleteAnnotationModalIsOpenFor: null,
+    placedButUnsavedAnnotation: null,
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -431,6 +432,18 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.PLACE_ANNOTATION:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: {
+          $set: {
+            ...action.payload,
+            class: 'Annotation',
+            type: 'point'
+          }
+        }
+      }
+    })
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {

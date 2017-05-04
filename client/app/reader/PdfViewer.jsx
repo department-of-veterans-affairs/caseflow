@@ -250,7 +250,6 @@ export class PdfViewer extends React.Component {
             showTagErrorMsg={this.props.showTagErrorMsg}
             doc={doc}
             editingComment={this.state.editingComment}
-            onAddComment={this.onAddComment}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.onCancelCommentAdd}
             onSaveCommentEdit={this.onSaveCommentEdit}

@@ -65,6 +65,16 @@ export const createAnnotation = (content) => ({
   }
 });
 
+export const placeAnnotation = (pageNumber, coordinates, docId) => ({
+  type: Constants.PLACE_ANNOTATION,
+  payload: {
+    page: pageNumber, 
+    x: coordinates.xPosition, 
+    y: coordinates.yPosition,
+    docId
+  }
+});
+
 export const handleWriteComment = () => ({
   type: Constants.SET_COMMENT_FLOW_STATE,
   payload: {

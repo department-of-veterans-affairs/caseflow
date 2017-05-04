@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { bindActionCreators } from 'redux';
 
 import CommentIcon from './CommentIcon';
 import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation } from '../reader/actions';
 
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
@@ -148,22 +149,6 @@ export class Pdf extends React.Component {
         reject();
       });
     });
-  }
-
-  onPageClick = (pageNumber) => (event) => {
-    if (this.props.onPageClick) {
-      let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
-      let xPosition = (event.pageX - container.left) / this.props.scale;
-      let yPosition = (event.pageY - container.top) / this.props.scale;
-
-      this.props.onPageClick(
-        pageNumber,
-        {
-          xPosition,
-          yPosition
-        }
-      );
-    }
   }
 
   scrollEvent = () => {
@@ -335,14 +320,29 @@ export class Pdf extends React.Component {
 
     this.pageContainers = [];
 
-
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
+      
+      const onPageClick = (event) => {
+        if (this.props.commentFlowState !== Constants.PLACING_COMMENT_STATE) {
+          return;
+        }
+        
+        let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
+        let xPosition = (event.pageX - container.left) / this.props.scale;
+        let yPosition = (event.pageY - container.top) / this.props.scale;
+
+        this.props.placeAnnotation(pageNumber, {
+          xPosition,
+          yPosition
+        }, this.props.documentId);
+      };
+
       pages.push(<div
         className={pageClassNames}
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
-        onClick={this.onPageClick(pageNumber)}
+        onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
         ref={(pageContainer) => {
           this.pageContainers[pageNumber - 1] = pageContainer;
@@ -379,6 +379,7 @@ export class Pdf extends React.Component {
 const mapStateToProps = (state) => state.ui.pdf;
 
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({ placeAnnotation }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
@@ -404,7 +405,6 @@ Pdf.propTypes = {
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
-  onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
   onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
