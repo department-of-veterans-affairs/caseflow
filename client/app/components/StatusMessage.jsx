@@ -34,14 +34,14 @@ export default class StatusMessage extends React.Component {
     return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment
       cf-app-segment--alt">
       <h1 className={getClassNames()}>{title}</h1>
-      {leadMessageList.map((listValue) =>
-        <h2 className="cf-msg-screen-deck" key={listValue}>
+      {leadMessageList.map((listValue, i) =>
+        <h2 className="cf-msg-screen-deck" key={i}>
           {listValue}
         </h2>)
       }
 
       {type === 'success' && <ul className={classNames.join(' ')}>
-        {checklist.map((listValue) => <li key={listValue}>{listValue}</li>)}
+        {checklist.map((listValue, i) => <li key={i}>{listValue}</li>)}
       </ul>}
       <p className="cf-msg-screen-text">
         { messageText }

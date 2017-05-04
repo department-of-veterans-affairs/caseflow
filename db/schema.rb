@@ -230,6 +230,7 @@ ActiveRecord::Schema.define(version: 20170503153606) do
     t.string   "comment"
     t.string   "outgoing_reference_id"
     t.string   "aasm_state"
+    t.datetime "prepared_at"
   end
 
   create_table "team_quotas", force: :cascade do |t|

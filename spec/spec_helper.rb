@@ -98,8 +98,3 @@ end
 def find_label_for(val)
   find(:xpath, "//label[@for='#{val}']")
 end
-
-# TODO: This was to tip-toe around PhantomJS crashes, delete it when we are 100% with chrome
-def safe_click_on(text)
-  click_on(text)
-end

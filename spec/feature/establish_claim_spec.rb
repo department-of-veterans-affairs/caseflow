@@ -50,7 +50,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       page.driver.go_back
 
       fill_in "the number of people", with: "2"
-      safe_click_on "Update"
+      click_on "Update"
       visit "/dispatch/establish-claim"
       expect(find_field("the number of people").value).to have_content("2")
 
@@ -71,7 +71,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       fill_in "the number of people", with: "2"
-      safe_click_on "Update"
+      click_on "Update"
       expect(find_field("the number of people").value).to have_content("3")
 
       # Validate remanders are handled correctly
@@ -169,7 +169,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # The oldest task (task local var) is now set to a higher security level so
       # it will be skipped for task_with_access
-      safe_click_on "Establish next claim"
+      click_on "Establish next claim"
 
       # Validate the unassigned task was assigned to me
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -184,7 +184,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(invalid_task.reload).to be_invalidated
 
       visit "/dispatch/establish-claim"
-      safe_click_on "Establish next claim"
+      click_on "Establish next claim"
 
       # Validate I cannot assign myself a new task before completing the old one
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -202,7 +202,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       visit "/dispatch/establish-claim/#{task.id}"
 
-      safe_click_on "Route claim"
+      click_on "Route claim"
 
       find_label_for("gulfWarRegistry").click
       expect(page).to have_content("Create End Product")
@@ -211,7 +211,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       expect(page).to have_content("Review Decision")
 
-      safe_click_on "Route claim"
+      click_on "Route claim"
 
       expect(page).to have_content("Create End Product")
 
@@ -227,7 +227,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       task.complete!(status: 0)
 
-      safe_click_on "Route claim"
+      click_on "Route claim"
       expect(page).to have_content("This task was already completed")
     end
 
@@ -238,22 +238,22 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # can adequetly test both of them.
       visit "/dispatch/establish-claim/#{task.id}"
       find_label_for("riceCompliance").click
-      safe_click_on "Cancel"
+      click_on "Cancel"
 
       expect(page).to have_css(".cf-modal")
 
       # Validate I can't cancel without entering an explanation
-      safe_click_on "Stop processing claim"
+      click_on "Stop processing claim"
       expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
       expect(page).to have_css(".cf-modal")
       expect(page).to have_content("Please enter an explanation")
 
       # Validate closing the cancellation modal
-      safe_click_on "Close"
+      click_on "Close"
       expect(page).to_not have_css(".cf-modal")
 
       # Open modal
-      safe_click_on "Cancel"
+      click_on "Cancel"
       expect(page).to have_css(".cf-modal")
 
       # Fill in explanation and cancel
@@ -276,8 +276,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{task.id}"
-      safe_click_on "Route claim"
-      safe_click_on "Create End Product"
+      click_on "Route claim"
+      click_on "Create End Product"
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("An EP with that modifier was previously created for this claim.")
@@ -300,7 +300,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       scenario "Review page lets users choose which document to use" do
         visit "/dispatch/establish-claim"
-        safe_click_on "Establish next claim"
+        click_on "Establish next claim"
 
         expect(page).to have_content("Multiple Decision Documents")
 
@@ -309,18 +309,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         find("#main-tab-1").click
 
         expect(page).to have_content("Route claim for Decision 2")
-        safe_click_on "Route claim for Decision 2"
+        click_on "Route claim for Decision 2"
 
         expect(page).to have_content("Benefit Type")
       end
 
       scenario "the EP creation page has a link back to decision review" do
         visit "/dispatch/establish-claim"
-        safe_click_on "Establish next claim"
+        click_on "Establish next claim"
 
         expect(page).to have_content("Multiple Decision Documents")
-        safe_click_on "Route claim for Decision 1"
-        safe_click_on "< Back to Review Decision"
+        click_on "Route claim for Decision 1"
+        click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
     end
@@ -340,13 +340,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Validate it routes correctly even if an unsupported special issue is checked
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
 
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
 
-        safe_click_on "Create End Product"
+        click_on "Create End Product"
         find_label_for("confirmNote").click
-        safe_click_on "Finish routing claim"
+        click_on "Finish routing claim"
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("Reviewed Full Grant decision")
@@ -364,11 +364,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim/#{task.id}"
         find_label_for("riceCompliance").click
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         expect(find_field("Station of Jurisdiction").value).to eq("321 - New Orleans, LA")
 
-        safe_click_on "Create End Product"
+        click_on "Create End Product"
 
         # Form Page
         expect(page).to have_content("Route Claim: Add VBMS Note")
@@ -380,7 +380,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Cannot edit end product")
 
         find_label_for("confirmNote").click
-        safe_click_on "Finish routing claim"
+        click_on "Finish routing claim"
 
         # Confirmation Page
         expect(page).to have_content("Success!")
@@ -394,16 +394,16 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim/#{task.id}"
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         # Validate I can return to Review Decision from the VACOLS Update page
-        safe_click_on "< Back to Review Decision"
-        safe_click_on "Route claim"
+        click_on "< Back to Review Decision"
+        click_on "Route claim"
 
         expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
 
         find_label_for("confirmEmail").click
-        safe_click_on "Finish routing claim"
+        click_on "Finish routing claim"
 
         expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
                                      "Milwaukee Pension Center, WI - re: DIC - death, or accrued benefits")
@@ -426,13 +426,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         scenario "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
+          click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           # set special issue to ensure it is saved in the database
           find_label_for("mustardGas").click
 
-          safe_click_on "Route claim"
+          click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("EP & Claim Label Modifiers in use")
 
@@ -460,7 +460,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim"
         # Decision Page
-        safe_click_on "Establish next claim"
+        click_on "Establish next claim"
 
         expect(page).to have_content("Review Decision")
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -470,14 +470,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Confirmation")
 
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
         expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
         # Test text, radio button, & checkbox inputs
         find_label_for("gulfWarRegistry").click
-        safe_click_on "Create End Product"
+        click_on "Create End Product"
 
         # Confirmation Page
         expect(page).to have_content("Success!")
@@ -527,7 +527,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       scenario "Establish a new claim with special issues" do
         visit "/dispatch/establish-claim"
 
-        safe_click_on "Establish next claim"
+        click_on "Establish next claim"
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
         # Select special issues
@@ -535,14 +535,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         find_label_for("privateAttorneyOrAgent").click
 
         # Move on to note page
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         expect(page).to have_content("Create End Product")
 
         # Test that special issues were saved
         expect(task.appeal.reload.rice_compliance).to be_truthy
 
-        safe_click_on "Create End Product"
+        click_on "Create End Product"
 
         expect(page).to have_content("Route Claim: Confirm VACOLS Update, Add VBMS Note")
 
@@ -572,7 +572,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
         find_label_for("confirmNote").click
 
-        safe_click_on "Finish routing claim"
+        click_on "Finish routing claim"
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("VACOLS Updated: Changed Location to 50")
@@ -605,7 +605,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         visit "/dispatch/establish-claim/#{task.id}"
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
-        safe_click_on "Route claim"
+        click_on "Route claim"
 
         expect(page).to have_content("Route Claim: Confirm VACOLS Update")
 
@@ -617,13 +617,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Validate I can return to Review Decision from the VACOLS Update page
         expect(page).to have_content("< Back to Review Decision")
-        safe_click_on "< Back to Review Decision"
-        safe_click_on "Route claim"
+        click_on "< Back to Review Decision"
+        click_on "Route claim"
 
         # Valdiate correct vacols location
         expect(page).to have_content("50")
 
-        safe_click_on "Finish routing claim"
+        click_on "Finish routing claim"
 
         expect(page).to have_content("Success!")
         expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
@@ -644,19 +644,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         scenario "Establish a new claim defaults to creating a 171 EP" do
           visit "/dispatch/establish-claim"
-          safe_click_on "Establish next claim"
-          safe_click_on "Route claim"
+          click_on "Establish next claim"
+          click_on "Route claim"
 
           expect(page).to have_content("Existing EP")
 
           # Validate the Back link takes you back to the Review Decision page
-          safe_click_on "< Back to Review Decision"
+          click_on "< Back to Review Decision"
 
           expect(page).to have_content("Review Decision")
 
-          safe_click_on "Route claim"
-          safe_click_on "Create new EP"
-          safe_click_on "Create End Product"
+          click_on "Route claim"
+          click_on "Create new EP"
+          click_on "Create End Product"
 
           expect(page).to have_content("Success!")
 

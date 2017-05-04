@@ -98,7 +98,6 @@ export const initialState = {
       searchQuery: ''
     },
     pdf: {
-      currentRenderedFile: null,
       pdfsReadyToShow: {},
       hidePdfSidebar: false
     },
@@ -187,12 +186,7 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
-        pdf: {
-          currentRenderedFile: {
-            $set: action.payload.docId
-          }
-        }
+        pdfSidebar: { showTagErrorMsg: { $set: false } }
       },
       documents: {
         [action.payload.docId]: {
@@ -202,16 +196,6 @@ export default (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.UNSELECT_CURRENT_VIEWER_PDF:
-    return update(updateFilteredDocIds(state), {
-      ui: {
-        pdf: {
-          currentRenderedFile: {
-            $set: null
-          }
-        }
-      }
-    });
   case Constants.SET_PDF_READY_TO_SHOW:
     return update(state, {
       ui: {
@@ -295,7 +279,39 @@ export default (state = initialState, action = {}) => {
         documents: {
           [action.payload.docId]: {
             tags: {
-              $set: action.payload.createdTags
+
+              /**
+               * We can't just `$set: action.payload.createdTags` here, because that may wipe out additional tags
+               * that have been created on the client since this new tag was created. Consider the following sequence
+               * of events:
+               *
+               *  1) REQUEST_NEW_TAG_CREATION (newTag = 'first')
+               *  2) REQUEST_NEW_TAG_CREATION (newTag = 'second')
+               *  3) REQUEST_NEW_TAG_CREATION_SUCCESS (newTag = 'first')
+               *
+               * At this point, the doc tags are [{text: 'first'}, {text: 'second'}].
+               * Action (3) gives us [{text: 'first}]. If we just do a `$set`, we'll end up with:
+               *
+               *  [{text: 'first'}]
+               *
+               * and we've erroneously erased {text: 'second'}. To fix this, we'll do a merge instead. If we have tags
+               * that have not yet been saved on the server, but we see those tags in action.payload.createdTags, we'll
+               * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
+               * we'll leave it be.
+               */
+              $apply: (docTags) => _.map(docTags, (docTag) => {
+                if (docTag.id) {
+                  return docTag;
+                }
+
+                const createdTag = _.find(action.payload.createdTags, _.pick(docTag, 'text'));
+
+                if (createdTag) {
+                  return createdTag;
+                }
+
+                return docTag;
+              })
             }
           }
         }
