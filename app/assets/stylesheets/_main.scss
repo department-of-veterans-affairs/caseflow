@@ -167,23 +167,6 @@
   }
 }
 
-// add to commons
-.cf-success-checklist {
-  position: relative;
-  max-width: 400px;
-  margin: 50px 0 65px 25%;
-  list-style-type: none;
-
-  li {
-    background: url('icons/icon-check.svg') no-repeat left top transparent;
-    background-size: 22px 17px;
-    background-position-y: 7px;
-    padding-left: 38px;
-    padding-top: 3px;
-  }
-}
-
-
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
 
@@ -290,66 +273,12 @@ select {
   }
 }
 
-// caseflow-commons
-.cf-form-checkboxes-inline {
-  .checkbox {
-    float: left;
-    padding-right: rem(30px);
-    margin-bottom: .5em;
-  }
-}
-
-// caseflow-commons
-[class*='cf-form-checkbox'] {
-  legend {
-    margin-bottom: .75em;
-  }
-}
-
-// caseflow-commons - replace exising rule with this one:
-.usa-input-error [type="radio"] {
-  + label::before {
-    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
-  }
-}
-
-// caseflow-commons
-.cf-secondary-disabled {
-  opacity: .25;
-}
-
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
   line-height: 1;
 }
 
-// Make a button look like a link
-// caseflow commons
-.cf-btn-link {
-  &:hover,
-  &.button-hover {
-    background-color: $color-white;
-    color: $color-primary-darker;
-    text-decoration: underline;
-  }
-
-  &:active,
-  &.button-active {
-    background-color: $color-white;
-    color: $color-primary-darkest;
-    text-decoration: underline;
-  }
-
-  &.usa-button-disabled {
-    color: $color-gray-light;
-  }
-}
-
 .cf-icon-button {
   cursor: pointer;
-}
-
-.cf-help-divider {
-  margin: 1rem 0;
 }
