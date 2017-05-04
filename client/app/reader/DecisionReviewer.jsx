@@ -115,7 +115,6 @@ export class DecisionReviewer extends React.Component {
     const vacolsId = routerProps.match.params.vacolsId;
 
     return <PdfListView
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       showPdf={this.showPdf(routerProps.history, vacolsId)}
       sortBy={this.state.sortBy}

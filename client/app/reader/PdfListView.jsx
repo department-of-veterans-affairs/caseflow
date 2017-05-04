@@ -306,8 +306,7 @@ export class PdfListView extends React.Component {
             Comments
           </div>,
           valueFunction: (doc) => {
-            const numberOfComments = this.props.annotationStorage.
-              getAnnotationByDocumentId(doc.id).length;
+            const numberOfComments = getAnnotationByDocumentId(this.props.annotations, doc.id).length;
             const icon = `fa fa-3 ${doc.listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
@@ -434,6 +433,7 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   handleToggleCommentOpened: PropTypes.func.isRequired,
