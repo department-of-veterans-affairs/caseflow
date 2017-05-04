@@ -29,7 +29,7 @@ class SearchableDropdown extends Component {
     }
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate() {
     this.resetSelectInputValue();
   }
 
@@ -130,7 +130,7 @@ class SearchableDropdown extends Component {
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
         disabled={readOnly}
         multi={multi}
-        onBlur={() => this.resetSelectInputValue()}
+        onBlur={this.resetSelectInputValue}
         {...addCreatableOptions}
       />
     </div>;
