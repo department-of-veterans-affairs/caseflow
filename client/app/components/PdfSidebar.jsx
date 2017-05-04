@@ -13,6 +13,7 @@ import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
+import { getAnnotationByDocumentId } from '../reader/util/AnnotationUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -204,8 +205,9 @@ PdfSidebar.propTypes = {
   hidePdfSidebar: PropTypes.bool
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
+    comments: getAnnotationByDocumentId(state.annotations, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,

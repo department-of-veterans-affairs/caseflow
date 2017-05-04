@@ -276,7 +276,6 @@ export class PdfViewer extends React.Component {
             doc={doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
-            comments={this.props.annotations}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.onCancelCommentAdd}
             onSaveCommentEdit={this.onSaveCommentEdit}
