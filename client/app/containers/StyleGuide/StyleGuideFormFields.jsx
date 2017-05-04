@@ -1,5 +1,4 @@
 import React from 'react';
-import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideInlineForm from './StyleGuideInlineForm';
 
