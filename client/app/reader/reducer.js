@@ -101,6 +101,7 @@ export const initialState = {
     },
     pdf: {
       pdfsReadyToShow: {},
+      isPlacingAnnotation: false,
       hidePdfSidebar: false
     },
     pdfSidebar: {
@@ -441,6 +442,25 @@ export default (state = initialState, action = {}) => {
             class: 'Annotation',
             type: 'point'
           }
+        },
+        pdf: {
+          isPlacingAnnotation: { $set: false }
+        }
+      }
+    })
+  case Constants.START_PLACING_ANNOTATION:
+    return update(state, {
+      ui: {
+        pdf: {
+          isPlacingAnnotation: { $set: true }
+        }
+      }
+    })
+  case Constants.STOP_PLACING_ANNOTATION:
+    return update(state, {
+      ui: {
+        pdf: {
+          isPlacingAnnotation: { $set: false }
         }
       }
     })
@@ -519,13 +539,13 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
-  case Constants.SET_COMMENT_FLOW_STATE:
+  case Constants.START_PLACING_ANNOTATION:
     return update(
       state,
       {
         ui: {
           pdf: {
-            commentFlowState: { $set: action.payload.state }
+            isPlacingAnnotation: { $set: true }
           }
         }
       }

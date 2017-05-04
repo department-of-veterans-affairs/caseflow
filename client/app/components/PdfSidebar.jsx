@@ -9,7 +9,7 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, handlePlaceComment } from '../reader/actions';
+import { toggleDocumentCategoryFail, startPlacingAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
@@ -159,7 +159,7 @@ export class PdfSidebar extends React.Component {
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
-                onClick={this.props.handlePlaceComment}>
+                onClick={this.props.startPlacingAnnotation}>
                 <span>{ plusIcon() } &nbsp; Add a comment</span>
               </Button>
             </span>
@@ -217,7 +217,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    handlePlaceComment
+    startPlacingAnnotation
   }, dispatch),
 
   handleFinishScrollToSidebarComment() {

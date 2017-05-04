@@ -51,19 +51,14 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const handlePlaceComment = () => ({
-  type: Constants.SET_COMMENT_FLOW_STATE,
-  payload: {
-    state: Constants.PLACING_COMMENT_STATE
-  }
-});
-
 export const createAnnotation = (content) => ({
   type: Constants.CREATE_ANNOTATION,
   payload: {
     content
   }
 });
+
+export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
 export const placeAnnotation = (pageNumber, coordinates, docId) => ({
   type: Constants.PLACE_ANNOTATION,
@@ -75,12 +70,7 @@ export const placeAnnotation = (pageNumber, coordinates, docId) => ({
   }
 });
 
-export const handleClearCommentState = () => ({
-  type: Constants.SET_COMMENT_FLOW_STATE,
-  payload: {
-    state: null
-  }
-});
+export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
 export const handleSelectCommentIcon = (comment) => ({
   type: Constants.SCROLL_TO_SIDEBAR_COMMENT,

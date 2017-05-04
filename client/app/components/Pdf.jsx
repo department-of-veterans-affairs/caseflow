@@ -3,7 +3,6 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 
 import CommentIcon from './CommentIcon';
-import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -314,8 +313,7 @@ export class Pdf extends React.Component {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
-      'cf-pdf-placing-comment': (this.props.commentFlowState ===
-        Constants.PLACING_COMMENT_STATE)
+      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
     this.pageContainers = [];
@@ -323,7 +321,7 @@ export class Pdf extends React.Component {
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       
       const onPageClick = (event) => {
-        if (this.props.commentFlowState !== Constants.PLACING_COMMENT_STATE) {
+        if (!this.props.isPlacingAnnotation) {
           return;
         }
         

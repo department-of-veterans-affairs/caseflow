@@ -7,9 +7,8 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { handleClearCommentState, handlePlaceComment, closeAnnotationDeleteModal, deleteAnnotation,
-  handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
-import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
+import { closeAnnotationDeleteModal, deleteAnnotation,
+  stopPlacingAnnotation, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 
 // PdfViewer is a smart component that renders the entire
@@ -62,23 +61,6 @@ export class PdfViewer extends React.Component {
     });
   }
 
-  placeComment = (pageNumber, coordinates) => {
-    if (this.props.commentFlowState === PLACING_COMMENT_STATE) {
-      let annotation = {
-        class: 'Annotation',
-        page: pageNumber,
-        type: 'point',
-        x: coordinates.xPosition,
-        y: coordinates.yPosition
-      };
-
-      this.props.handleWriteComment();
-      this.setState({
-        onSaveCommentAdd: this.onSaveCommentAdd(annotation, pageNumber)
-      });
-    }
-  }
-
   onSaveCommentAdd = (annotation, pageNumber) => (content) => {
     annotation.comment = content;
     this.props.annotationStorage.addAnnotation(
@@ -88,14 +70,7 @@ export class PdfViewer extends React.Component {
     ).then((savedAnnotation) => {
       this.props.handleSelectCommentIcon(savedAnnotation);
     });
-    this.onCancelCommentAdd();
-  }
-
-  onCancelCommentAdd = () => {
-    this.props.handleClearCommentState();
-    this.setState({
-      onSaveCommentAdd: null
-    });
+    this.props.stopPlacingAnnotation();
   }
 
   onIconMoved = (uuid, coordinates, page) => {
@@ -148,7 +123,7 @@ export class PdfViewer extends React.Component {
   }
 
   componentDidUpdate = () => {
-    if (this.props.commentFlowState === WRITING_COMMENT_STATE) {
+    if (this.props.placedButUnsavedAnnotation) {
       let commentBox = document.getElementById('addComment');
 
       commentBox.focus();
@@ -251,7 +226,7 @@ export class PdfViewer extends React.Component {
             doc={doc}
             editingComment={this.state.editingComment}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
-            onCancelCommentAdd={this.onCancelCommentAdd}
+            onCancelCommentAdd={this.props.stopPlacingAnnotation}
             onSaveCommentEdit={this.onSaveCommentEdit}
             onCancelCommentEdit={this.onCancelCommentEdit}
             onEditComment={this.onEditComment}
@@ -283,17 +258,16 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   annotations: getAnnotationByDocumentId(state.annotations, ownProps.match.params.docId),
-  ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor'),
+  ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     closeAnnotationDeleteModal,
-    deleteAnnotation
+    deleteAnnotation,
+    stopPlacingAnnotation
   }, dispatch),
 
-  handlePlaceComment: () => dispatch(handlePlaceComment()),
-  handleClearCommentState: () => dispatch(handleClearCommentState()),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
@@ -313,8 +287,6 @@ PdfViewer.propTypes = {
   deleteAnnotationModalIsOpenFor: PropTypes.number,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  handlePlaceComment: PropTypes.func,
-  handleClearCommentState: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
