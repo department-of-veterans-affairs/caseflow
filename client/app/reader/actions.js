@@ -162,7 +162,8 @@ export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH
 });
 
-export const openAnnotationDeleteModal = () => (dispatch) => dispatch({type: Constants.OPEN_ANNOTATION_DELETE_MODAL})
+export const openAnnotationDeleteModal = () => ({type: Constants.OPEN_ANNOTATION_DELETE_MODAL });
+export const closeAnnotationDeleteModal = () => ({type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
 
 export const deleteAnnotation = (docId, annotationId) => 
   (dispatch) => {

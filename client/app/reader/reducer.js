@@ -410,6 +410,14 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
+    return update(state, {
+      ui: {
+        deleteAnnotationModalIsOpen: {
+          $set: false
+        }
+      }
+    });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {

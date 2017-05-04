@@ -6,9 +6,10 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { handleClearCommentState, handlePlaceComment,
+import { handleClearCommentState, handlePlaceComment, closeAnnotationDeleteModal,
   handleWriteComment, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { PLACING_COMMENT_STATE, WRITING_COMMENT_STATE } from './constants';
+import { bindActionCreators } from 'redux';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -19,8 +20,7 @@ export class PdfViewer extends React.Component {
     this.state = {
       comments: [],
       editingComment: null,
-      onSaveCommentAdd: null,
-      onConfirmDelete: null
+      onSaveCommentAdd: null
     };
 
     this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
@@ -32,24 +32,13 @@ export class PdfViewer extends React.Component {
     });
   }
 
-  closeConfirmDeleteModal = () => {
-    this.setState({
-      onConfirmDelete: null
-    });
-  }
-
   onDeleteComment = (uuid) => {
     let onConfirmDelete = () => {
       this.props.annotationStorage.deleteAnnotation(
         this.selectedDocId(),
         uuid
       );
-      this.closeConfirmDeleteModal();
     };
-
-    this.setState({
-      onConfirmDelete
-    });
   }
 
   onEditComment = (uuid) => {
@@ -288,14 +277,14 @@ export class PdfViewer extends React.Component {
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
-              onClick: this.closeConfirmDeleteModal
+              onClick: this.props.closeAnnotationDeleteModal
             },
             { classNames: ['usa-button', 'usa-button-secondary'],
               name: 'Confirm delete',
               onClick: this.state.onConfirmDelete
             }
           ]}
-          closeHandler={this.closeConfirmDeleteModal}
+          closeHandler={this.props.closeAnnotationDeleteModal}
           title="Delete Comment">
           Are you sure you want to delete this comment?
         </Modal>}
@@ -310,6 +299,8 @@ const mapStateToProps = (state, ownProps) => ({
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({ closeAnnotationDeleteModal }, dispatch),
+
   handlePlaceComment: () => dispatch(handlePlaceComment()),
   handleWriteComment: () => dispatch(handleWriteComment()),
   handleClearCommentState: () => dispatch(handleClearCommentState()),
