@@ -13,6 +13,10 @@ class DispatchStatsController < ApplicationController
     }[interval].map { |i| DispatchStats.offset(time: DispatchStats.now, interval: interval, offset: i) }
   end
 
+  def logo_name
+    "Dispatch"
+  end
+
   def interval
     @interval ||= DispatchStats::INTERVALS.find { |i| i.to_s == params[:interval] } || :hourly
   end
