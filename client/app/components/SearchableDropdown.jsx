@@ -100,7 +100,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    // if ref input exists, clear it's value
+    // if ref input exists, clear its value
     // this resets input value of
     // select for every render
     // this is for reseting the suggestion of creating
