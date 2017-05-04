@@ -48,7 +48,7 @@ describe PrometheusService do
         metric2 = PrometheusGaugeSummary.new(gauge2, summary2)
 
         # Verify no last_summary_observation has been set
-        expect(metric2.last_summary_observation).to eq(Time.at(0))
+        expect(metric2.last_summary_observation).to eq(Time.at.utc(0).utc)
         metric2.set({}, 10)
         expect(summary2.values[{}][0.5]).to eq(10)
       end
