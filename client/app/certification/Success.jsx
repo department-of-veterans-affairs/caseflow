@@ -11,7 +11,8 @@ const UnconnectedSuccess = ({
       Success!
     </h1>
     <h2 className="cf-msg-screen-deck">
-      {veteranName}'s case {vbmsId} has been certified. You can now close this window and open another appeal in VACOLS.
+      {veteranName}'s case {vbmsId} has been certified. 
+      You can now close this window and open another appeal in VACOLS.
     </h2>
 
     <ul className="cf-checklist">
@@ -29,7 +30,7 @@ const UnconnectedSuccess = ({
         </li>
     </ul>
 
-   
+
   </div>;
 };
 
