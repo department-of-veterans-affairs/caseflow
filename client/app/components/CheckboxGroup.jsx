@@ -64,7 +64,7 @@ CheckboxGroup.defaultProps = {
 };
 
 CheckboxGroup.propTypes = {
-  label: PropTypes.string,
+  label: PropTypes.node,
   hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(
