@@ -2,7 +2,6 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 
-
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
@@ -159,16 +158,23 @@ export const clearAllFilters = () => ({
   type: Constants.CLEAR_ALL_FILTERS
 });
 
-export const setAnnotationStorage = (annotationStorage) => ({
-  type: Constants.SET_ANNOTATION_STORAGE,
-  payload: {
-    annotationStorage
-  }
-});
-
 export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH
 });
+
+export const openAnnotationDeleteModal = () => (dispatch) => dispatch({type: Constants.OPEN_ANNOTATION_DELETE_MODAL})
+
+export const deleteAnnotation = (docId, annotationId) => 
+  (dispatch) => {
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`);
+    dispatch({
+      type: Constants.REQUEST_DELETE_ANNOTATION,
+      payload: {
+        docId,
+        annotationId
+      }
+    });
+  };
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {

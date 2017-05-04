@@ -86,6 +86,7 @@ const getExpandAllState = (documents) => {
 export const initialState = {
   annotationStorage: null,
   ui: {
+    deleteAnnotationModalIsOpen: false,
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -398,6 +399,14 @@ export default (state = initialState, action = {}) => {
           tags: {
             $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
           }
+        }
+      }
+    });
+  case Constants.OPEN_ANNOTATION_DELETE_MODAL:
+    return update(state, {
+      ui: {
+        deleteAnnotationModalIsOpen: {
+          $set: true
         }
       }
     });

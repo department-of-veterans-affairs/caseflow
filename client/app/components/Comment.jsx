@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react';
 import Button from '../components/Button';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { openAnnotationDeleteModal } from '../reader/actions';
 
 // A rounded rectangle with a user's comment inside.
 // Comes with edit and delete buttons
-export default class Comment extends React.Component {
-  onDeleteComment = () => {
-    this.props.onDeleteComment(this.props.uuid);
-  }
-
+export class Comment extends React.Component {
   onClick = () => {
     this.props.onClick(this.props.uuid);
   }
@@ -18,15 +17,11 @@ export default class Comment extends React.Component {
   }
 
   getControlButtons = () => {
-    if (!(this.props.onEditComment && this.props.onDeleteComment)) {
-      return;
-    }
-
     return <div>
         <Button
           name="delete"
           classNames={['cf-btn-link comment-control-button']}
-          onClick={this.onDeleteComment}>
+          onClick={() => this.props.openAnnotationDeleteModal(this.props.uuid)}>
           Delete
         </Button>
         <span className="comment-control-button-divider">
@@ -106,10 +101,16 @@ Comment.propTypes = {
   id: PropTypes.string,
   selected: PropTypes.bool,
   onEditComment: PropTypes.func,
-  onDeleteComment: PropTypes.func,
+  openAnnotationDeleteModal: PropTypes.func,
   onJumpToComment: PropTypes.func,
   onClick: PropTypes.func,
   page: PropTypes.number,
   uuid: PropTypes.number,
   horizontalLayout: PropTypes.bool
 };
+
+const mapStateToProps = null;
+const mapDispatchToProps = (dispatch) => bindActionCreators({ openAnnotationDeleteModal }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Comment);
+

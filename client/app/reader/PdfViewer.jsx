@@ -280,12 +280,11 @@ export class PdfViewer extends React.Component {
             onCancelCommentAdd={this.onCancelCommentAdd}
             onSaveCommentEdit={this.onSaveCommentEdit}
             onCancelCommentEdit={this.onCancelCommentEdit}
-            onDeleteComment={this.onDeleteComment}
             onEditComment={this.onEditComment}
             onJumpToComment={this.props.onJumpToComment}
           />
         </div>
-        {this.state.onConfirmDelete && <Modal
+        {this.props.deleteAnnotationModalIsOpen && <Modal
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
@@ -307,6 +306,7 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   annotations: state.annotations[ownProps.match.params.docId],
+  ..._.pick(state.ui, 'deleteAnnotationModalIsOpen'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
@@ -329,6 +329,7 @@ PdfViewer.propTypes = {
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
+  deleteAnnotationModalIsOpen: PropTypes.bool.isRequired,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handlePlaceComment: PropTypes.func,
