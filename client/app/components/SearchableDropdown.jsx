@@ -20,7 +20,7 @@ class SearchableDropdown extends Component {
   };
 
   resetSelectInputValue = () => {
-    // If ref input exists, clear its value this resets input value of
+    // If ref input exists, clear its value. This resets the input value of
     // select for every render.
     // This is for resetting the suggestion of creating
     // a new option when blurred.
