@@ -19,6 +19,16 @@ class SearchableDropdown extends Component {
     this.setState({ value: nextProps.value || null });
   };
 
+  componentDidUpdate = () => {
+    // If ref input exists, clear its value this resets input value of
+    // select for every render.
+    // This is for resetting the suggestion of creating
+    // a new option when blurred.
+    if (this.select) {
+      this.select.inputValue = '';
+    }
+  }
+
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
@@ -64,7 +74,7 @@ class SearchableDropdown extends Component {
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
 
-    /* If the creatable option is passed in, these additonal props are added to
+    /* If the creatable option is passed in, these additional props are added to
      * the select component.
      * tagAlreadyExistsMsg: This message is used to as a message to show when a
      * custom tag entered already exits.
@@ -94,19 +104,10 @@ class SearchableDropdown extends Component {
 
     // TODO We will get the "tag already exists" message even when the input is invalid,
     // because if the selector filters the options to be [], it will show the "no results found"
-    // message. We can get around this by unsetting `noResultsText`.
+    // message. We can get around this by un-setting `noResultsText`.
 
     if (_.isEmpty(options)) {
       addCreatableOptions.noResultsText = '';
-    }
-
-    // if ref input exists, clear its value
-    // this resets input value of
-    // select for every render
-    // this is for reseting the suggestion of creating
-    // a new option when blured.
-    if (this.select) {
-      this.select.inputValue = '';
     }
 
     return <div className="cf-form-dropdown">
