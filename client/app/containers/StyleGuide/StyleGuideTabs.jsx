@@ -47,7 +47,6 @@ export default class StyleGuideTabs extends React.Component {
     ];
 
     return <div>
-      <br />
       <StyleGuideComponentTitle
         title="Tabs"
         id="tabs"

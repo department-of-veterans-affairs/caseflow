@@ -4,10 +4,9 @@ import StyleGuideAction from './StyleGuideAction';
 
 let StyleGuideLayout = () => {
 
-  return (
-  <div>
-    <div className="usa-width-one-whole">
+  return <div>
     <h2 id="layout">Layout</h2>
+<<<<<<< HEAD
 
     <h3 id="app-canvas">App Canvas</h3>
 
@@ -18,6 +17,8 @@ let StyleGuideLayout = () => {
       It then contains any interaction that well help this to accomplish their task including forms,
       document previews, tables, error messages, and more.</p>
     </div>
+=======
+>>>>>>> master
 
     <StyleGuideComponentTitle
         title="Action"
@@ -50,9 +51,7 @@ let StyleGuideLayout = () => {
       of the page without good reason.
     </p>
     <StyleGuideAction />
-  </div>
-
-  );
+  </div>;
 };
 
 export default StyleGuideLayout;

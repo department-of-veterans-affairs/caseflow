@@ -27,7 +27,7 @@
     </ul>
 
     <div class="cf-stats-section -activity">
-      <h3>Establish Claim Tasks Identified <span class="data-date"></span></h3>
+      <h3>Establish Claim Tasks Identified from VACOLS <span class="data-date"></span></h3>
 
       <div class="cf-stat-panel data-chart" data-key="establish_claim_identified">
         <h4 class="cf-stat-title">
@@ -207,5 +207,35 @@
         </div>
       </div>
     </div>
+
+    <div class="cf-stats-section -activity">
+      <h3>Establish Claim Tasks with Decisions Uploaded to VBMS <span class="data-date"></span></h3>
+
+      <div class="cf-stat-panel data-chart" data-key="establish_claim_identified">
+        <h4 class="cf-stat-title">
+          All
+        </h4>
+        <div class="cf-stat-figure data-value" data-key="establish_claim_identified">
+          <%= @stats[0].values[:establish_claim_identified] %>
+        </div>
+      </div>
+      <div class="cf-stat-panel data-chart" data-key="establish_claim_identified_full_grant">
+        <h4 class="cf-stat-title">
+          Full Grants
+        </h4>
+        <div class="cf-stat-figure data-value" data-key="establish_claim_identified_full_grant">
+          <%= @stats[0].values[:establish_claim_identified_full_grant] %>
+        </div>
+      </div>
+      <div class="cf-stat-panel data-chart" data-key="establish_claim_identified_partial_grant_remand">
+        <h4 class="cf-stat-title">
+          Partial Grants & Remands
+        </h4>
+        <div class="cf-stat-figure data-value" data-key="establish_claim_identified_partial_grant_remand">
+          <%= @stats[0].values[:establish_claim_identified_partial_grant_remand] %>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

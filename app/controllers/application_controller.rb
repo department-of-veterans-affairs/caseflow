@@ -134,6 +134,14 @@ class ApplicationController < ActionController::Base
     redirect_to login_path
   end
 
+  def verify_feature_enabled(feature)
+    return true if FeatureToggle.enabled?(feature, user: current_user)
+    Rails.logger.info("User id #{current_user.id} attempted to access #{feature} "\
+                      " feature but it was not enabled for them #{request.original_url}")
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
+  end
+
   def verify_authorized_roles(*roles)
     return true if current_user && roles.all? { |r| current_user.can?(r) }
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
