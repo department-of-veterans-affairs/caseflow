@@ -360,17 +360,15 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
 
-      input_element = find(".Select-input > input")
-      binding.pry
-      input_element.click.native.send_keys(TAG1)
+      fill_in "tags", with: TAG1
 
       # making sure there is a dropdown showing up when text is entered
       expect(page).to have_css(".Select-menu-outer")
 
       # submit entering the tag
-      input_element.send_keys(:enter)
+      fill_in "tags", with: (TAG1 + "\n")
 
-      find(".Select-input > input").click.native.send_keys(TAG2, :enter)
+      fill_in "tags", with: (TAG2 + "\n")
 
       # expecting the multi-selct to have the two new fields
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
@@ -379,9 +377,8 @@ RSpec.feature "Reader" do
       # adding new tags to 2nd document
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[1].type
-      find(".Select-control").click
-      input_element = find(".Select-input > input")
-      input_element.click.native.send_keys(DOC2_TAG1, :enter)
+
+      fill_in "tags", with: (DOC2_TAG1 + "\n")
 
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 3)
