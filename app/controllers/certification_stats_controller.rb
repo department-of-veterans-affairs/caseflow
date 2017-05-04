@@ -13,6 +13,10 @@ class CertificationStatsController < ApplicationController
     }[interval].map { |i| CertificationStats.offset(time: CertificationStats.now, interval: interval, offset: i) }
   end
 
+  def logo_name
+    "Certification"
+  end
+
   private
 
   def verify_access
