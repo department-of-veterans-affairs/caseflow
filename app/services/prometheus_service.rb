@@ -135,7 +135,7 @@ end
 # for updating both at the same time
 class PrometheusGaugeSummary
   LAST_SUMMARY_OBSERVATION_REDIS_KEY_PREFIX = "prometheus_last_summary_observation".freeze
-  SUMMARY_OBSERVATION_THRESHOLD = 5.minutes
+  SUMMARY_OBSERVATION_THRESHOLD = 1.minute
 
   attr_accessor :gauge, :summary
   def initialize(gauge, summary)

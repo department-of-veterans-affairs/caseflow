@@ -31,7 +31,7 @@ describe PrometheusService do
         # Verify the summary did *NOT* update
         expect(@summary.values[{}][0.5]).to eq(@val)
 
-        new_time = Timecop.freeze(@time + 6.minutes)
+        new_time = Timecop.freeze(@time + 2.minutes)
 
         # Call the metric set() again to record a 3rd value
         @metric.set({}, new_val)
