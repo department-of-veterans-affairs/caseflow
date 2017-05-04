@@ -61,6 +61,7 @@ class Reader::DocumentsController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Reader")
+    verify_feature_enabled(:reader) &&
+      verify_authorized_roles("Reader")
   end
 end

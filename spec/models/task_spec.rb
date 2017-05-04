@@ -148,6 +148,31 @@ describe Task do
     end
   end
 
+  context "#prepare!" do
+    subject { task.prepare! }
+
+    context "when unprepared" do
+      let(:aasm_state) { :unprepared }
+
+      it "prepared_at should be nil" do
+        expect(task.prepared_at).to be_nil
+      end
+
+      it "sets prepared_at" do
+        task.prepare!
+        expect(task.reload.prepared_at).to eq(Time.zone.now)
+      end
+    end
+
+    context "when already prepared" do
+      let(:aasm_state) { :unassigned }
+
+      it "raises InvalidTransition" do
+        expect { subject }.to raise_error(AASM::InvalidTransition)
+      end
+    end
+  end
+
   context "#complete!" do
     subject { task.complete!(params) }
     let(:params) { { status: :routed_to_ro, outgoing_reference_id: "123WOO" } }

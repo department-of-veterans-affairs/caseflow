@@ -77,10 +77,24 @@ class SearchableDropdown extends Component {
           creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG
         ),
 
-        promptTextCreator: (tagName) => `Create a tag for "${tagName}"`,
+        // eslint-disable-next-line no-shadow
+        newOptionCreator: ({ label, labelKey, valueKey }) => ({
+          [labelKey]: _.trim(label),
+          [valueKey]: _.trim(label),
+          className: 'Select-create-option-placeholder'
+        }),
+
+        // eslint-disable-next-line no-shadow
+        isValidNewOption: ({ label }) => label && (/\S/).test(label),
+
+        promptTextCreator: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
         ..._.pick(creatableOptions, 'promptTextCreator')
       };
     }
+
+    // TODO We will get the "tag already exists" message even when the input is invalid,
+    // because if the selector filters the options to be [], it will show the "no results found"
+    // message. We can get around this by unsetting `noResultsText`.
 
     if (_.isEmpty(options)) {
       addCreatableOptions.noResultsText = '';
