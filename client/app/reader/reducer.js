@@ -479,7 +479,7 @@ export default (state = initialState, action = {}) => {
           [newAnnotation.documentId]: {
             $apply: (prevAnnotations) => _(prevAnnotations).
               concat(newAnnotation).
-              sortBy().
+              sortBy('page', 'y').
               compact().
               value()
           }
