@@ -291,12 +291,18 @@ RSpec.feature "Reader" do
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
 
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
+
       old_height_1 = get_size("pageContainer1")[:height]
       old_height_10 = get_size("pageContainer10")[:height]
 
       scroll_to("scrollWindow", scroll_amount)
 
       find("#button-zoomIn").click
+
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
 
       # Rendered page is zoomed
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
@@ -306,15 +312,6 @@ RSpec.feature "Reader" do
       # times how much we've scrolled.
       expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
 
-      # Non-rendered page is zoomed
-      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
-      expect(ratio).to eq(zoom_rate)
-
-      find("#button-fit").click
-
-      # Fit to screen should make the height of the page the same as the height of the scroll window
-      expect(get_size("pageContainer1")[:height].round).to eq(get_size("scrollWindow")[:height].round)
-
       # Zoom out to find text on the last page
       expect(page).to_not have_content("Office of the General Counsel (022D)")
 
@@ -323,6 +320,15 @@ RSpec.feature "Reader" do
       find("#button-zoomOut").click
 
       expect(page).to have_content("Office of the General Counsel (022D)")
+
+      # Non-rendered page is zoomed
+      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
+      expect(ratio).to eq(zoom_rate)
+
+      find("#button-fit").click
+
+      # Fit to screen should make the height of the page the same as the height of the scroll window
+      expect(get_size("pageContainer1")[:height].round).to eq(get_size("scrollWindow")[:height].round)
     end
 
     scenario "Open single document view and open/close sidebar" do
