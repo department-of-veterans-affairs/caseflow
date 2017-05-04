@@ -275,7 +275,7 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
