@@ -60,13 +60,13 @@ export const createAnnotation = (content) => ({
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
-export const placeAnnotation = (pageNumber, coordinates, docId) => ({
+export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
     page: pageNumber, 
     x: coordinates.xPosition, 
     y: coordinates.yPosition,
-    docId
+    documentId
   }
 });
 

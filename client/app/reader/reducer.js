@@ -464,6 +464,21 @@ export default (state = initialState, action = {}) => {
         }
       }
     })
+  case Constants.CREATE_ANNOTATION:
+    return (() => {
+      let newAnnotation = state.ui.placedButUnsavedAnnotation;
+
+      return update(state, {
+        ui: {
+          placedButUnsavedAnnotation: { $set: null }
+        },
+        annotations: {
+          [newAnnotation.documentId]: {
+            $apply: (prevAnnotations) => [newAnnotation].concat(prevAnnotations).sort()
+          }
+        }
+      });
+    })();
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
