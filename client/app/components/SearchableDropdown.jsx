@@ -19,7 +19,7 @@ class SearchableDropdown extends Component {
     this.setState({ value: nextProps.value || null });
   };
 
-  componentDidUpdate = () => {
+  resetSelectInputValue = () => {
     // If ref input exists, clear its value this resets input value of
     // select for every render.
     // This is for resetting the suggestion of creating
@@ -27,6 +27,10 @@ class SearchableDropdown extends Component {
     if (this.select) {
       this.select.inputValue = '';
     }
+  }
+
+  componentDidUpdate = () => {
+    this.resetSelectInputValue();
   }
 
   onChange = (value) => {
@@ -73,7 +77,7 @@ class SearchableDropdown extends Component {
 
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
-
+    
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
      * tagAlreadyExistsMsg: This message is used to as a message to show when a
@@ -110,6 +114,10 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
+    if (this.select) {
+      this.select.inputValue = '';
+    }
+
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
@@ -126,6 +134,7 @@ class SearchableDropdown extends Component {
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
         disabled={readOnly}
         multi={multi}
+        onBlur={() => this.resetSelectInputValue()}
         {...addCreatableOptions}
       />
     </div>;
