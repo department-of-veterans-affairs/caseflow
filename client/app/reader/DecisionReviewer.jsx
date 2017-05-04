@@ -26,7 +26,6 @@ export class DecisionReviewer extends React.Component {
     this.props.onReceiveAnnotations(this.props.annotations);
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    this.props.setAnnotationStorage(this.annotationStorage);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -168,7 +167,6 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  setAnnotationStorage: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
 
   // These two properties are exclusively for testing purposes

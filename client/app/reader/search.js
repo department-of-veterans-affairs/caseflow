@@ -1,12 +1,13 @@
 import * as Constants from './constants';
 import { categoryFieldNameOfCategoryName } from './utils';
+import { getAnnotationByDocumentId } from './util/AnnotationUtil';
 
 const metadataContainsString = (searchQuery, doc) =>
   doc.type.toLowerCase().includes(searchQuery) ||
   doc.receivedAt.toLowerCase().includes(searchQuery);
 
-const commentContainsString = (searchQuery, annotationStorage, doc) =>
-  annotationStorage.getAnnotationByDocumentId(doc.id).reduce((acc, annotation) =>
+const commentContainsString = (searchQuery, annotations, doc) =>
+  getAnnotationByDocumentId(annotations, doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
 
@@ -22,11 +23,11 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, annotationStorage) => (doc) =>
+export const searchString = (searchQuery, annotations) => (doc) =>
   !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
       metadataContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
-      commentContainsString(searchWord, annotationStorage, doc) ||
+      commentContainsString(searchWord, annotations, doc) ||
       tagContainsString(searchWord, doc));
   });

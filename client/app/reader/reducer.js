@@ -31,7 +31,7 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState.annotationStorage)
+      searchString(searchQuery, nextState.annotations)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -484,15 +484,6 @@ export default (state = initialState, action = {}) => {
           pdf: {
             commentFlowState: { $set: action.payload.state }
           }
-        }
-      }
-    );
-  case Constants.SET_ANNOTATION_STORAGE:
-    return update(
-      state,
-      {
-        annotationStorage: {
-          $set: action.payload.annotationStorage
         }
       }
     );
