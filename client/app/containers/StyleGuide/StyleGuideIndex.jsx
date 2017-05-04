@@ -19,6 +19,7 @@ import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
+import StyleGuideTypography from './StyleGuideTypography';
 
 export default function StyleGuideIndex() {
 
@@ -140,9 +141,8 @@ export default function StyleGuideIndex() {
           Download UI Kit</a>
         </p>
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Typography"
-          id="typography" />
+        <StyleGuideTypography />
+        <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Headings and Body"
           id="headings_and_body"
