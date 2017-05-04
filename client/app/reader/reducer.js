@@ -114,6 +114,7 @@ export const initialState = {
     }
   },
   tagOptions: [],
+  annotations: [],
   documents: {}
 };
 
@@ -155,6 +156,15 @@ export default (state = initialState, action = {}) => {
             ]).
             fromPairs().
             value()
+        }
+      }
+    ));
+  case Constants.RECEIVE_ANNOTATIONS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        annotations: {
+          $set: action.payload.annotations
         }
       }
     ));

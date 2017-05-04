@@ -3,6 +3,7 @@ import { docCategoryIcon } from '../components/RenderFunctions';
 // actions
 export const TOGGLE_DOCUMENT_CATEGORY = 'TOGGLE_DOCUMENT_CATEGORY';
 export const RECEIVE_DOCUMENTS = 'RECEIVE_DOCUMENTS';
+export const RECEIVE_ANNOTATIONS = 'RECEIVE_ANNOTATIONS';
 export const TOGGLE_FILTER_DROPDOWN = 'TOGGLE_FILTER_DROPDOWN';
 export const SET_CATEGORY_FILTER = 'SET_CATEGORY_FILTER';
 export const SET_TAG_FILTER = 'SET_TAG_FILTER';

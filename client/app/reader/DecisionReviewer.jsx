@@ -23,6 +23,7 @@ export class DecisionReviewer extends React.Component {
     };
 
     this.props.onReceiveDocs(this.props.appealDocuments);
+    this.props.onReceiveAnnotations(this.props.annotations);
 
     this.annotationStorage = new AnnotationStorage(this.props.annotations);
     this.props.setAnnotationStorage(this.annotationStorage);
@@ -31,6 +32,10 @@ export class DecisionReviewer extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.appealDocuments !== nextProps.appealDocuments) {
       this.props.onReceiveDocs(nextProps.appealDocuments);
+    }
+
+    if (this.props.annotations !== nextProps.annotations) {
+      this.props.onReceiveAnnotations(nextProps.annotations);
     }
   }
 
