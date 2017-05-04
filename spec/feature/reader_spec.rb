@@ -349,7 +349,7 @@ RSpec.feature "Reader" do
       expect(find("#other", visible: false).checked?).to be false
     end
 
-    scenario "Tags", focus: true do
+    scenario "Tags" do
       TAG1 = "Medical".freeze
       TAG2 = "Law document".freeze
 
@@ -381,10 +381,9 @@ RSpec.feature "Reader" do
       fill_in "tags", with: (DOC2_TAG1 + "\n")
 
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 3)
 
       # getting remove buttons of all tags
-      cancel_icons = page.all(".Select-value-icon", count: 3)
+      cancel_icons = page.all(".Select-value-icon", count: 1)
 
       # rubocop:disable all
       # delete all tags
@@ -402,7 +401,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 2)
     end
 
     scenario "Search and Filter" do
