@@ -100,12 +100,22 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
+    // if ref input exists, clear it's value
+    // this resets input value of
+    // select for every render
+    // this is for reseting the suggestion of creating
+    // a new option when blured.
+    if (this.select) {
+      this.select.inputValue = '';
+    }
+
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
+        ref={(ref) => (this.select = ref)}
         inputProps={{ id: name }}
         options={options}
         onChange={this.onChange}
