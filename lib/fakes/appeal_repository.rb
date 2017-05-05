@@ -183,7 +183,7 @@ class Fakes::AppealRepository
                           service: :vbms,
                           name: name,
                           id: document.vbms_document_id) do
-      fetch_document_file_from_drive
+      fetch_document_file_from_drive(document)
     end
   end
 
