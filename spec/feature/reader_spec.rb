@@ -288,12 +288,15 @@ RSpec.feature "Reader" do
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
       scroll_to("scrollWindow", 500)
-      expect(page).to have_content("Banana. Banana who", wait: 3)
+      expect(page).to have_content("Banana. Banana who", wait: 4)
     end
 
     scenario "Zooming changes the size of pages" do
       scroll_amount = 500
       zoom_rate = 1.3
+
+      # The margin of error we accept due to float arithmatic rounding
+      size_margin_of_error = 5
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
 
@@ -335,7 +338,8 @@ RSpec.feature "Reader" do
       find("#button-fit").click
 
       # Fit to screen should make the height of the page the same as the height of the scroll window
-      expect(get_size("pageContainer1")[:height].round).to eq(get_size("scrollWindow")[:height].round)
+      height_difference = get_size("pageContainer1")[:height].round - get_size("scrollWindow")[:height].round
+      expect(height_difference.abs).to be < size_margin_of_error
     end
 
     scenario "Open single document view and open/close sidebar" do
