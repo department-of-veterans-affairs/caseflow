@@ -15,8 +15,14 @@ def in_viewport(element)
 end
 
 RSpec.feature "Reader" do
+  before do
+    FeatureToggle.disable!(:reader)
+    FeatureToggle.enable!(:reader)
+  end
+
   let(:vacols_record) { :remand_decided }
 
+  let(:documents) { [] }
   let(:appeal) do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
   end
@@ -424,6 +430,17 @@ RSpec.feature "Reader" do
 
       # Make sure the document is scrolled
       expect(in_viewport("read-indicator")).to be true
+    end
+  end
+
+  context "When user is not whitelisted" do
+    before do
+      FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
+    end
+
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
     end
   end
 end

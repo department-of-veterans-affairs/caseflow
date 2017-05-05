@@ -18,6 +18,7 @@ import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
+import StyleGuideDashboard from './StyleGuideDashboard';
 
 export default function StyleGuideIndex() {
 
@@ -122,7 +123,7 @@ export default function StyleGuideIndex() {
           ))
         }
       </StickyNav>
-      <div className="cf-push-right cf-sg-content">
+      <div className="cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.
@@ -209,9 +210,7 @@ export default function StyleGuideIndex() {
           title="Branding"
           id="branding" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Dashboard"
-          id="dashboard" />
+        <StyleGuideDashboard />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />
         <div className="cf-help-divider"></div>
