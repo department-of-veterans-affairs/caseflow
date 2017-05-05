@@ -75,12 +75,14 @@ export default class BaseContainer extends React.Component {
     let PageComponent = Pages[page];
 
     return <div>
-      {alert && <Alert
-        type={alert.type}
-        title={alert.title}
-        message={alert.message}
-        handleClear={this.handleAlertClear}
-      />}
+      {alert && <div className="cf-app-segment">
+          <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          handleClear={this.handleAlertClear}
+        />
+      </div>}
       <PageComponent
         {...rest}
         handleAlert={this.handleAlert}
