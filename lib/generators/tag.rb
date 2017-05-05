@@ -3,7 +3,7 @@ class Generators::Tag
 
   class << self
     def build(attrs)
-      attrs[:text] ||= "This is a tag"
+      attrs[:text] ||= "Default generated tag"
 
       Tag.new(attrs || {})
     end
