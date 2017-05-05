@@ -1,12 +1,10 @@
 import * as Constants from '../constants';
 import update from 'immutability-helper';
 
-export const getManageEstablishClaimInitialState = function(props = {}) {
-  return {
-    alert: null,
-    employeeCount: props.employeeCount
-  };
-};
+export const getManageEstablishClaimInitialState = (props = {}) => ({
+  alert: null,
+  employeeCount: props.employeeCount
+});
 
 export const manageEstablishClaim = function(state = getManageEstablishClaimInitialState(), action) {
   switch (action.type) {

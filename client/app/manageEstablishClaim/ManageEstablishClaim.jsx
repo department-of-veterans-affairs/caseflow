@@ -91,9 +91,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleAlertClear: () => {
-    dispatch({ type: Constants.CLEAR_ALERT });
-  }
+  handleAlertClear: () => dispatch({ type: Constants.CLEAR_ALERT })
 });
 
 ManageEstablishClaim.propTypes = {

@@ -4,7 +4,7 @@ import manageEstablishClaimReducer, { getManageEstablishClaimInitialState } from
 import ConfigUtil from '../../util/ConfigUtil';
 
 export const createManageEstablishClaimStore = (props) => {
-  let middleware = [];
+  const middleware = [];
 
   // Avoid all the log spam when running the tests
   if (!ConfigUtil.test()) {

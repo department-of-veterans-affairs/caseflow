@@ -6,49 +6,38 @@ import InlineForm from '../components/InlineForm';
 import ApiUtil from '../util/ApiUtil';
 import * as Constants from './constants/index';
 
-class EmployeeCount extends React.Component {
-  render() {
-    let {
-      employeeCount,
-      handleEmployeeCountSave,
-      handleEmployeeCountChange
-    } = this.props;
-
-    return <div>
-      <InlineForm>
-          <TextField
-            label="Enter the number of people working today"
-            name="employeeCount"
-            readOnly={false}
-            onChange={handleEmployeeCountChange}
-            value={employeeCount}
-            type="number"
-            {...employeeCount}
-          />
-          <Button
-            name="Update"
-            onClick={handleEmployeeCountSave(this.props)}
-            disabled={!employeeCount}
-          />
-      </InlineForm>
-    </div>;
-  }
-}
+const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeCountChange }) => {
+  return <div>
+    <InlineForm>
+        <TextField
+          label="Enter the number of people working today"
+          name="employeeCount"
+          readOnly={false}
+          onChange={handleEmployeeCountChange}
+          value={employeeCount}
+          type="number"
+          {...employeeCount}
+        />
+        <Button
+          name="Update"
+          onClick={handleEmployeeCountSave}
+          disabled={!employeeCount}
+        />
+    </InlineForm>
+  </div>;
+};
 
 EmployeeCount.propTypes = {
   employeeCount: PropTypes.number.isRequired,
   handleEmployeeCountChange: PropTypes.func.isRequired,
-  handleEmployeeCountSave: PropTypes.func.isRequired,
-  handleAlert: PropTypes.func.isRequired
+  handleEmployeeCountSave: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return { employeeCount: state.employeeCount };
-};
+const mapStateToProps = (state) => ({ employeeCount: state.employeeCount });
 
-const mapDispatchToProps = (dispatch) => ({
-  handleEmployeeCountSave: (props) => () => {
-    return ApiUtil.patch(`/dispatch/employee-count/${props.employeeCount}`).then(() => {
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleEmployeeCountSave: () => {
+    return ApiUtil.patch(`/dispatch/employee-count/${ownProps.employeeCount}`).then(() => {
       window.location.reload();
     }, () => {
       dispatch({
@@ -57,7 +46,7 @@ const mapDispatchToProps = (dispatch) => ({
           alert: {
             type: 'error',
             title: 'Error',
-            message: 'There was an error while updating the employee count. Please try again later'
+            message: 'There was an error while updating the employee count. Please try again later.'
           }
         }
       });
@@ -68,7 +57,7 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.CHANGE_EMPLOYEE_COUNT,
       payload: { employeeCount }
     });
-  },
+  }
 });
 
 export default connect(
