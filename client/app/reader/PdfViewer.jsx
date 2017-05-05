@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { getAnnotationByDocumentId } from './util/AnnotationUtil';
 
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
@@ -201,7 +200,6 @@ export class PdfViewer extends React.Component {
       <div>
         <div className="cf-pdf-page-container">
           <PdfUI
-            comments={this.props.annotations}
             doc={doc}
             file={documentPath(this.selectedDocId())}
             pdfWorker={this.props.pdfWorker}
@@ -257,7 +255,6 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  annotations: getAnnotationByDocumentId(state, ownProps.match.params.docId),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
@@ -278,7 +275,6 @@ export default connect(
 
 PdfViewer.propTypes = {
   annotationStorage: PropTypes.object,
-  annotations: PropTypes.arrayOf(PropTypes.object),
   doc: PropTypes.object,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { keyOfAnnotation } from '../reader/utils';
+import { getAnnotationByDocumentId } from '../reader/util/AnnotationUtil';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
@@ -375,7 +376,10 @@ export class Pdf extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => state.ui.pdf;
+const mapStateToProps = (state, ownProps) => ({
+  ...state.ui.pdf,
+  comments: getAnnotationByDocumentId(state, ownProps.documentId)
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({ placeAnnotation }, dispatch),

@@ -154,7 +154,6 @@ export class PdfUI extends React.Component {
       </div>
       <div>
         <Pdf
-          comments={this.props.comments}
           documentId={this.props.doc.id}
           file={this.props.file}
           pdfWorker={this.props.pdfWorker}
@@ -191,10 +190,6 @@ export default connect(
 )(PdfUI);
 
 PdfUI.propTypes = {
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.string,
-    uuid: PropTypes.number
-  })),
   doc: PropTypes.shape({
     filename: PropTypes.string,
     id: React.PropTypes.oneOfType([
