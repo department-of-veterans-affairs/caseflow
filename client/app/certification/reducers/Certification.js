@@ -45,8 +45,9 @@ export const certificationUpdateSuccess = (state) => {
   });
 };
 
-export const toggleCancellationModal = (state, action) => {
-  let showModal = !!state.showCancellationModal;
+export const toggleCancellationModal = (state) => {
+  let showModal = Boolean(state.showCancellationModal);
+
   return Object.assign({}, state, {
     showCancellationModal: !showModal
   });
