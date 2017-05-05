@@ -130,9 +130,9 @@ class Fakes::AppealRepository
   def self.fetch_documents_for(appeal)
     name = "ListDocuments"
     MetricsService.record("sent VBMS request #{name} for #{appeal.sanitized_vbms_id}",
-                  service: :vbms,
-                  name: name,
-                  id: appeal.sanitized_vbms_id) do
+                          service: :vbms,
+                          name: name,
+                          id: appeal.sanitized_vbms_id) do
       (document_records || {})[appeal.vbms_id] || @documents || []
     end
   end
@@ -140,9 +140,9 @@ class Fakes::AppealRepository
   def self.fetch_document_file(document)
     name = "FetchDocumentById"
     MetricsService.record("sent VBMS request #{name} for #{document.vbms_document_id}",
-                  service: :vbms,
-                  name: name,
-                  id: document.vbms_document_id) do
+                          service: :vbms,
+                          name: name,
+                          id: document.vbms_document_id) do
       path =
         case document.vbms_document_id
         when "1"

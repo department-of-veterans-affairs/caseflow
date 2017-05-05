@@ -15,7 +15,7 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_latency".to_sym)
 
-      metric.set({ app: app, name: name, id: id}, stopwatch.real)
+      metric.set({ app: app, name: name, id: id }, stopwatch.real)
 
     end
 
