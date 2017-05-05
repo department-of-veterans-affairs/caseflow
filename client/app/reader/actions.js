@@ -58,16 +58,47 @@ export const startEditAnnotation = (annotationId) => ({
   }
 });
 
-export const cancelEditAnnotation = () => ({ type: Constants.CANCEL_EDIT_ANNOTATION });
-
-export const requestEditAnnotation = (annotationId, docId, commentText) => ({
-  type: Constants.REQUEST_EDIT_ANNOTATION,
+export const openAnnotationDeleteModal = (annotationId) => ({
+  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
   payload: {
-    annotationId,
-    docId,
-    commentText
+    annotationId
   }
 });
+export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
+
+export const deleteAnnotation = (docId, annotationId) =>
+  (dispatch) => {
+    // I don't know why, but the request was not going through if
+    // we were not listening for the promise.
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
+      then(console.log, console.log);
+
+    dispatch({
+      type: Constants.REQUEST_DELETE_ANNOTATION,
+      payload: {
+        docId,
+        annotationId
+      }
+    });
+  };
+
+export const cancelEditAnnotation = () => ({ type: Constants.CANCEL_EDIT_ANNOTATION });
+
+export const requestEditAnnotation = (annotationId, docId, commentText) => (dispatch) => {
+  if (!commentText) {
+    dispatch(openAnnotationDeleteModal(annotationId));
+
+    return;
+  }
+  dispatch({
+    type: Constants.REQUEST_EDIT_ANNOTATION,
+    payload: {
+      annotationId,
+      docId,
+      commentText
+    }
+  });
+};
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
@@ -208,30 +239,6 @@ export const clearAllFilters = () => ({
 export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH
 });
-
-export const openAnnotationDeleteModal = (annotationId) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  }
-});
-export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
-
-export const deleteAnnotation = (docId, annotationId) =>
-  (dispatch) => {
-    // I don't know why, but the request was not going through if
-    // we were not listening for the promise.
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
-      then(console.log, console.log);
-
-    dispatch({
-      type: Constants.REQUEST_DELETE_ANNOTATION,
-      payload: {
-        docId,
-        annotationId
-      }
-    });
-  };
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {

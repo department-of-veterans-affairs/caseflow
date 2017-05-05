@@ -74,15 +74,14 @@ export class PdfSidebar extends React.Component {
     } = this.props;
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
-      if (comment.uuid === this.props.currentlyEditingAnnotationId) {
+      if (comment.uuid === this.props.currentlyEditingAnnotation.id) {
         return <EditComment
             id="editCommentBox"
             onCancelCommentEdit={this.props.cancelEditAnnotation}
             onSaveCommentEdit={_.partial(this.props.requestEditAnnotation, comment.uuid, doc.id)}
+            value={this.props.currentlyEditingAnnotation.text}
             key={keyOfAnnotation(comment)}
-          >
-            {comment.comment}
-          </EditComment>;
+          />;
       }
 
       return <div ref={(commentElement) => {
@@ -191,7 +190,10 @@ PdfSidebar.propTypes = {
     comment: React.PropTypes.string,
     uuid: React.PropTypes.number
   })),
-  currentlyEditingAnnotationId: React.PropTypes.number,
+  currentlyEditingAnnotation: React.PropTypes.shape({
+    id: React.PropTypes.number,
+    text: React.PropTypes.string
+  }),
   isWritingComment: PropTypes.bool,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func,
@@ -211,7 +213,7 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'currentlyEditingAnnotationId'),
+    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'currentlyEditingAnnotation'),
     comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,

@@ -94,7 +94,10 @@ export const initialState = {
   ui: {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
-    currentlyEditingAnnotationId: null,
+    currentlyEditingAnnotation: {
+      id: null,
+      editedText: null
+    },
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -512,13 +515,23 @@ export default (state = initialState, action = {}) => {
   case Constants.START_EDIT_ANNOTATION: 
     return update(state, {
       ui: {
-        currentlyEditingAnnotationId: { $set: action.payload.annotationId }
+        currentlyEditingAnnotation: { 
+          $set: {
+            id: action.payload.annotationId,
+            text: _(state.annotations).values().flatten().find({id: action.payload.annotationId}).comment
+          } 
+        }
       }
     });
   case Constants.CANCEL_EDIT_ANNOTATION: 
     return update(state, {
       ui: {
-        currentlyEditingAnnotationId: { $set: null }
+        currentlyEditingAnnotation: {
+          $set: {
+            id: null,
+            text: null
+          }
+        }
       }
     });
   case Constants.REQUEST_EDIT_ANNOTATION: 
@@ -527,7 +540,12 @@ export default (state = initialState, action = {}) => {
 
       return update(state, {
         ui: {
-          currentlyEditingAnnotationId: { $set: null }
+          currentlyEditingAnnotation: {
+            $set: {
+              id: null,
+              text: null
+            }
+          }
         },
         annotations: {
           [action.payload.docId]: {

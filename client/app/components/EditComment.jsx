@@ -4,13 +4,6 @@ import Button from '../components/Button';
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
 export default class EditComment extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: this.props.children
-    };
-  }
-
   onChange = (event) => {
     this.setState({
       value: event.target.value
@@ -34,16 +27,6 @@ export default class EditComment extends React.Component {
     this.resetForm();
   }
 
-  // If we receive a new 'children' prop, we use it as the text
-  // in the edit form.
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.children !== this.props.children) {
-      this.setState({
-        value: nextProps.children
-      });
-    }
-  }
-
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
@@ -58,7 +41,7 @@ export default class EditComment extends React.Component {
           aria-label="Edit Comment"
           id={this.props.id}
           onChange={this.onChange}
-          value={this.state.value}
+          value={this.props.value}
         />
         <div className="comment-save-button-container">
           <span className="cf-right-side">
@@ -84,7 +67,7 @@ EditComment.defaultProps = {
 };
 
 EditComment.propTypes = {
-  children: React.PropTypes.string,
+  value: React.PropTypes.string,
   id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func
