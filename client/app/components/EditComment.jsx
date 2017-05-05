@@ -4,29 +4,6 @@ import Button from '../components/Button';
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
 export default class EditComment extends React.Component {
-  onChange = (event) => {
-    this.setState({
-      value: event.target.value
-    });
-  }
-
-  resetForm = () => {
-    this.setState({
-      value: ''
-    });
-  }
-
-  cancelEdit = () => {
-    this.props.onCancelCommentEdit();
-    this.resetForm();
-  }
-
-  onSaveCommentEdit = () => {
-    this.props.onSaveCommentEdit(
-      this.state.value, this.props.uuid);
-    this.resetForm();
-  }
-
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
@@ -40,7 +17,7 @@ export default class EditComment extends React.Component {
           name="Edit Comment"
           aria-label="Edit Comment"
           id={this.props.id}
-          onChange={this.onChange}
+          onChange={(event) => this.props.onChange(event.target.value)}
           value={this.props.value}
         />
         <div className="comment-save-button-container">
@@ -48,12 +25,12 @@ export default class EditComment extends React.Component {
             <Button
               name="cancel"
               classNames={['cf-btn-link']}
-              onClick={this.cancelEdit}>
+              onClick={this.props.onCancelCommentEdit}>
               Cancel
             </Button>
             <Button
               name="save"
-              onClick={this.onSaveCommentEdit}>
+              onClick={this.props.onSaveCommentEdit}>
               Save
             </Button>
           </span>

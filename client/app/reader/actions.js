@@ -83,6 +83,12 @@ export const deleteAnnotation = (docId, annotationId) =>
   };
 
 export const cancelEditAnnotation = () => ({ type: Constants.CANCEL_EDIT_ANNOTATION });
+export const updateAnnotationContent = (content) => ({ 
+  type: Constants.UPDATE_ANNOTATION_CONTENT,
+  payload: {
+    content
+  }
+});
 
 export const requestEditAnnotation = (annotationId, docId, commentText) => (dispatch) => {
   if (!commentText) {

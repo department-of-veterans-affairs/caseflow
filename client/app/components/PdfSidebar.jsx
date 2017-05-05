@@ -9,7 +9,7 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, 
+import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/utils';
@@ -78,8 +78,9 @@ export class PdfSidebar extends React.Component {
         return <EditComment
             id="editCommentBox"
             onCancelCommentEdit={this.props.cancelEditAnnotation}
-            onSaveCommentEdit={_.partial(this.props.requestEditAnnotation, comment.uuid, doc.id)}
+            onChange={this.props.updateAnnotationContent}
             value={this.props.currentlyEditingAnnotation.text}
+            onSaveCommentEdit={_.partial(this.props.requestEditAnnotation, comment.uuid, doc.id)}
             key={keyOfAnnotation(comment)}
           />;
       }
@@ -229,6 +230,7 @@ const mapDispatchToProps = (dispatch) => ({
     createAnnotation,
     stopPlacingAnnotation,
     startEditAnnotation,
+    updateAnnotationContent,
     cancelEditAnnotation,
     requestEditAnnotation
   }, dispatch),

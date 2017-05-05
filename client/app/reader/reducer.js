@@ -94,6 +94,7 @@ export const initialState = {
   ui: {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
+    // TODO This needs to be changed. We want to support editing multiple annotations at once.
     currentlyEditingAnnotation: {
       id: null,
       editedText: null
@@ -534,6 +535,16 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UPDATE_ANNOTATION_CONTENT: 
+    return update(state, {
+      ui: {
+        currentlyEditingAnnotation: {
+          text: { 
+            $set: action.payload.content
+          }
+        }
+      }
+    })
   case Constants.REQUEST_EDIT_ANNOTATION: 
     return (() => {
       const prevAnnotationIndex = _.findIndex(state.annotations[action.payload.docId], { uuid: action.payload.annotationId });
