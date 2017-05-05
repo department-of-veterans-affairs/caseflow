@@ -109,7 +109,7 @@ export class PdfSidebar extends React.Component {
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
-    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." appSegment={false} />;
+    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
