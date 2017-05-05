@@ -158,28 +158,32 @@ class Fakes::AppealRepository
     end
   end
 
+  def self.fetch_document_file_from_drive
+    path =
+      case document.vbms_document_id.to_i
+      when 1
+        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+      when 2
+        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
+      when 3
+        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+      when 4
+        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+      else
+        file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
+        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
+        file
+      end
+    IO.binread(path)
+  end
+
   def self.fetch_document_file(document)
     name = "FetchDocumentById"
     MetricsService.record("sent VBMS request #{name} for #{document.vbms_document_id}",
                           service: :vbms,
                           name: name,
                           id: document.vbms_document_id) do
-      path =
-        case document.vbms_document_id.to_i
-        when 1
-          File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-        when 2
-          File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-        when 3
-          File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-        when 4
-          File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-        else
-          file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-          file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
-          file
-        end
-      IO.binread(path)
+      fetch_document_file_from_drive
     end
   end
 
