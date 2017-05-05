@@ -513,6 +513,12 @@ export default (state = initialState, action = {}) => {
         currentlyEditingAnnotationId: { $set: action.payload.annotationId }
       }
     });
+  case Constants.CANCEL_EDIT_ANNOTATION: 
+    return update(state, {
+      ui: {
+        currentlyEditingAnnotationId: { $set: null }
+      }
+    });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
