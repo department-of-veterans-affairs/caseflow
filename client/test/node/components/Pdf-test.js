@@ -64,7 +64,7 @@ describe('Pdf', () => {
         it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
           wrapper.instance().setupPdf('test.pdf');
           await pause(DOCUMENT_DEBOUNCE_TIME + 50);
-          console.log(onPageChange.args[0], onPageChange.args[1]);
+
           expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
         }));
       });
