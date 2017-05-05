@@ -51,12 +51,26 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const createAnnotation = (comment) => ({
-  type: Constants.CREATE_ANNOTATION,
-  payload: {
+export const createAnnotation = (annotationWithoutComment, comment) => (dispatch) => {
+  const annotation = {
+    ...annotationWithoutComment, 
     comment
-  }
-});
+  };
+
+  dispatch({
+    type: Constants.CREATE_ANNOTATION,
+    payload: {
+      annotation
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
+    then((response) => {
+      console.log(response);
+    });
+};
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 

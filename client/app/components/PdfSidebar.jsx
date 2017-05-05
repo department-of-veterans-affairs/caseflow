@@ -175,7 +175,7 @@ export class PdfSidebar extends React.Component {
               <EditComment
                 id="addComment"
                 onCancelCommentEdit={this.props.onCancelCommentAdd}
-                onSaveCommentEdit={this.props.createAnnotation} />}
+                onSaveCommentEdit={_.partial(this.props.createAnnotation, this.props.placedButUnsavedAnnotation)} />}
             {comments}
           </div>
         </div>

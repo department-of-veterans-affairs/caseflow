@@ -466,19 +466,14 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.CREATE_ANNOTATION:
     return (() => {
-      let newAnnotation = {
-        ...state.ui.placedButUnsavedAnnotation, 
-        ..._.pick(action.payload, 'comment')
-      };
-
       return update(state, {
         ui: {
           placedButUnsavedAnnotation: { $set: null }
         },
         annotations: {
-          [newAnnotation.documentId]: {
+          [action.payload.annotation.documentId]: {
             $apply: (prevAnnotations) => _(prevAnnotations).
-              concat(newAnnotation).
+              concat(action.payload.annotation).
               sortBy('page', 'y').
               compact().
               value()
