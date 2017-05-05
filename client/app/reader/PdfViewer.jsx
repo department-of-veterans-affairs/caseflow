@@ -7,7 +7,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation,
-  stopPlacingAnnotation, handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+  handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 
 // PdfViewer is a smart component that renders the entire
@@ -202,7 +202,6 @@ export class PdfViewer extends React.Component {
             removeTag={this.props.removeTag}
             doc={doc}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
-            onCancelCommentAdd={this.props.stopPlacingAnnotation}
             onSaveCommentEdit={this.onSaveCommentEdit}
             onCancelCommentEdit={this.onCancelCommentEdit}
             onEditComment={this.onEditComment}
@@ -239,8 +238,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     closeAnnotationDeleteModal,
-    deleteAnnotation,
-    stopPlacingAnnotation
+    deleteAnnotation
   }, dispatch),
 
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),

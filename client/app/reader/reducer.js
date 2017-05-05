@@ -477,8 +477,9 @@ export default (state = initialState, action = {}) => {
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
       ui: {
+        placedButUnsavedAnnotation: { $set: null },
         pdf: {
-          isPlacingAnnotation: { $set: false }
+          isPlacingAnnotation: { $set: false },
         }
       }
     });
@@ -523,7 +524,7 @@ export default (state = initialState, action = {}) => {
   case Constants.REQUEST_EDIT_ANNOTATION: 
     return (() => {
       const prevAnnotationIndex = _.findIndex(state.annotations[action.payload.docId], { uuid: action.payload.annotationId });
-      
+
       return update(state, {
         ui: {
           currentlyEditingAnnotationId: { $set: null }
