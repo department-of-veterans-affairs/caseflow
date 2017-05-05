@@ -33,8 +33,7 @@ class UnconnectedDocumentsCheck extends React.Component {
       documentsMatch,
       match,
       certificationId,
-      toggleCancellationModal,
-      showCancellationModal
+      toggleCancellationModal
     } = this.props;
 
     let reloadPage = () => {
@@ -82,7 +81,6 @@ class UnconnectedDocumentsCheck extends React.Component {
       </div>
 
       <Footer
-        showCancellationModal={showCancellationModal}
         certificationId={certificationId}
         buttonText={ documentsMatch ? 'Continue' : 'Refresh page' }
         nextPageUrl={ documentsMatch ?
@@ -104,8 +102,7 @@ const mapStateToProps = (state) => ({
   socDate: state.socDate,
   ssocDatesWithMatches: state.ssocDatesWithMatches,
   documentsMatch: state.documentsMatch,
-  certificationId: state.certificationId,
-  showCancellationModal: state.showCancellationModal
+  certificationId: state.certificationId
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -118,8 +115,8 @@ const mapDispatchToProps = (dispatch) => ({
     });
   },
 
-  toggleCancellationModal: (showCancellationModal) => {
-    dispatch(certificationActions.toggleCancellationModal(showCancellationModal));
+  toggleCancellationModal: () => {
+    dispatch(certificationActions.toggleCancellationModal());
   }
 });
 
@@ -142,8 +139,7 @@ DocumentsCheck.propTypes = {
   socDate: PropTypes.string,
   documentsMatch: PropTypes.bool,
   match: PropTypes.object.isRequired,
-  certificationId: PropTypes.number,
-  showCancellationModal: PropTypes.bool
+  certificationId: PropTypes.number
 };
 
 export default DocumentsCheck;

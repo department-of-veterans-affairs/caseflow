@@ -14,11 +14,11 @@ import * as certificationActions from './actions/Certification';
 export class Footer extends React.Component {
 
   handleModalOpen = () => {
-    this.props.toggleCancellationModal(true);
+    this.props.toggleCancellationModal();
   };
 
   handleModalClose = () => {
-    this.props.toggleCancellationModal(false);
+    this.props.toggleCancellationModal();
   };
 
 
@@ -63,8 +63,8 @@ export class Footer extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleCancellationModal: (showCancellationModal) => {
-    dispatch(certificationActions.toggleCancellationModal(showCancellationModal));
+  toggleCancellationModal: () => {
+    dispatch(certificationActions.toggleCancellationModal());
   }
 });
 

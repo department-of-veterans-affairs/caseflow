@@ -19,8 +19,5 @@ export const resetState = () => ({
 });
 
 export const toggleCancellationModal = (showCancellationModal) => ({
-  type: Constants.TOGGLE_CANCELLATION_MODAL,
-  payload: {
-    showCancellationModal
-  }
+  type: Constants.TOGGLE_CANCELLATION_MODAL
 });
