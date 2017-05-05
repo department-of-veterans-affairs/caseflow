@@ -69,6 +69,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
+  certificationId: state.certificationId,
   showCancellationModal: state.showCancellationModal
 });
 
