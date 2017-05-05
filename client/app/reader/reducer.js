@@ -509,7 +509,9 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.START_EDIT_ANNOTATION: 
     return update(state, {
-      currentlyEditingAnnotationId: { $set: action.payload.annotationId }
+      ui: {
+        currentlyEditingAnnotationId: { $set: action.payload.annotationId }
+      }
     });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {

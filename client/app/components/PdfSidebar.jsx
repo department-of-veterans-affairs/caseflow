@@ -74,7 +74,7 @@ export class PdfSidebar extends React.Component {
     } = this.props;
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
-      if (comment.uuid === this.props.editingComment) {
+      if (comment.uuid === this.props.currentlyEditingAnnotationId) {
         return <EditComment
             id="editCommentBox"
             onCancelCommentEdit={this.props.onCancelCommentEdit}
@@ -191,7 +191,7 @@ PdfSidebar.propTypes = {
     comment: React.PropTypes.string,
     uuid: React.PropTypes.number
   })),
-  editingComment: React.PropTypes.number,
+  currentlyEditingAnnotationId: React.PropTypes.number,
   isWritingComment: PropTypes.bool,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func,
@@ -212,7 +212,7 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ..._.pick(state.ui, 'placedButUnsavedAnnotation'),
+    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'currentlyEditingAnnotationId'),
     comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,

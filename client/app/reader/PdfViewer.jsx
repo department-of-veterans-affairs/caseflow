@@ -18,25 +18,8 @@ export class PdfViewer extends React.Component {
     super(props);
     this.state = {
       comments: [],
-      editingComment: null,
       onSaveCommentAdd: null
     };
-
-    this.props.annotationStorage.setOnCommentChange(this.onCommentChange);
-  }
-
-  onCommentChange = (documentId = this.selectedDocId()) => {
-    this.setState({
-      comments: [...this.props.annotationStorage.getAnnotationByDocumentId(documentId)]
-    });
-  }
-
-  onEditComment = (uuid) => {
-    if (!this.isUserActive()) {
-      this.setState({
-        editingComment: uuid
-      });
-    }
   }
 
   onSaveCommentEdit = (comment) => {
@@ -52,12 +35,6 @@ export class PdfViewer extends React.Component {
       );
     });
     this.onCancelCommentEdit();
-  }
-
-  onCancelCommentEdit = () => {
-    this.setState({
-      editingComment: null
-    });
   }
 
   onSaveCommentAdd = (annotation, pageNumber) => (content) => {
@@ -130,7 +107,6 @@ export class PdfViewer extends React.Component {
   }
 
   componentDidMount = () => {
-    this.onCommentChange();
     this.props.handleSelectCurrentPdf(this.selectedDocId());
 
     window.addEventListener('keydown', this.keyListener);
@@ -144,7 +120,6 @@ export class PdfViewer extends React.Component {
     const nextDocId = Number(nextProps.match.params.docId);
 
     if (nextDocId !== this.selectedDocId()) {
-      this.onCommentChange(nextDocId);
       this.props.handleSelectCurrentPdf(nextDocId);
     }
 
@@ -221,7 +196,6 @@ export class PdfViewer extends React.Component {
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
             doc={doc}
-            editingComment={this.state.editingComment}
             onSaveCommentAdd={this.state.onSaveCommentAdd}
             onCancelCommentAdd={this.props.stopPlacingAnnotation}
             onSaveCommentEdit={this.onSaveCommentEdit}
@@ -253,7 +227,7 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });
