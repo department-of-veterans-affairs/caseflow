@@ -51,10 +51,15 @@ const mapDispatchToProps = (dispatch) => ({
     return ApiUtil.patch(`/dispatch/employee-count/${props.employeeCount}`).then(() => {
       window.location.reload();
     }, () => {
-      props.handleAlert({
-        type: 'error',
-        title: 'Error',
-        message: 'There was an error while updating the employee count. Please try again later'
+      dispatch({
+        type: Constants.SET_ALERT,
+        payload: {
+          alert: {
+            type: 'error',
+            title: 'Error',
+            message: 'There was an error while updating the employee count. Please try again later'
+          }
+        }
       });
     });
   },
@@ -64,12 +69,6 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { employeeCount }
     });
   },
-  handleAlert: (alert) => {
-    dispatch({
-      type: Constants.SET_ALERT,
-      payload: { alert }
-    });
-  }
 });
 
 export default connect(
