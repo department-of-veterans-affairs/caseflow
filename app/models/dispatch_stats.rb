@@ -56,6 +56,18 @@ class DispatchStats < Caseflow::Stats
       EstablishClaim.where(completed_at: range).completed_success.for_partial_grant_or_remand.count
     end,
 
+    establish_claim_prepared: lambda do |range|
+      EstablishClaim.where(prepared_at: range).count
+    end,
+
+    establish_claim_prepared_full_grant: lambda do |range|
+      EstablishClaim.where(prepared_at: range).for_full_grant.count
+    end,
+
+    establish_claim_prepared_partial_grant_remand: lambda do |range|
+      EstablishClaim.where(prepared_at: range).for_partial_grant_or_remand.count
+    end,
+
     time_to_establish_claim: lambda do |range|
       DispatchStats.percentile(:time_to_complete, EstablishClaim.where(completed_at: range), 95)
     end,
