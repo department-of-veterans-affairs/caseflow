@@ -4,10 +4,10 @@ import _ from 'lodash';
 
 // TODO rename this to getAnnotation*s*
 export const getAnnotationByDocumentId = (state, docId) => {
-  const allAnnotations = _.get(state.annotations, docId, []);
+  let allAnnotations = _.get(state.annotations, docId, []);
 
   if (_.get(state.ui.pendingAnnotation, 'documentId') === docId) {
-    allAnnotations.push(state.ui.pendingAnnotation);
+    allAnnotations = allAnnotations.concat([state.ui.pendingAnnotation]);
   }
 
   return allAnnotations;
