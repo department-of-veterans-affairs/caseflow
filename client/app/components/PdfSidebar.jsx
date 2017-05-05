@@ -69,7 +69,7 @@ export class PdfSidebar extends React.Component {
 
     const {
       doc,
-      showTagErrorMsg,
+      showErrorMessage,
       tagOptions
     } = this.props;
 
@@ -111,6 +111,8 @@ export class PdfSidebar extends React.Component {
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
+    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
+
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
@@ -132,6 +134,7 @@ export class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
           </p>
+          {showErrorMessage.category && cannotSaveAlert}
           <DocCategoryPicker
             handleCategoryToggle={
               _.partial(this.props.handleCategoryToggle, this.props.doc.id)
@@ -140,10 +143,7 @@ export class PdfSidebar extends React.Component {
           <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
             Related Issues
           </div>
-          {/* This error alert needs to be formatted according to #1573 */}
-          {showTagErrorMsg &&
-            <Alert type="error" title={''}
-              message="Unable to save. Please try again." />}
+          {showErrorMessage.tag && cannotSaveAlert}
           <SearchableDropdown
             name="tags"
             label="Select or tag issue(s)"
@@ -171,6 +171,7 @@ export class PdfSidebar extends React.Component {
           ref={(commentListElement) => {
             this.commentListElement = commentListElement;
           }}>
+          {showErrorMessage.comment && cannotSaveAlert}
           <div className="cf-pdf-comment-list">
             {this.props.placedButUnsavedAnnotation &&
               <EditComment
@@ -198,6 +199,11 @@ PdfSidebar.propTypes = {
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   commentFlowState: PropTypes.string,
+  showErrorMessage: PropTypes.shape({
+    tag: PropTypes.bool,
+    category: PropTypes.bool,
+    comment: PropTypes.bool
+  }),
   scrollToSidebarComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
@@ -211,6 +217,7 @@ const mapStateToProps = (state, ownProps) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,
     tagOptions: state.tagOptions
   };
@@ -236,15 +243,14 @@ const mapDispatchToProps = (dispatch) => ({
     ApiUtil.patch(
       `/document/${docId}`,
       { data: { [categoryKey]: toggleState } }
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Saving document category failed', err);
-    });
+    ).catch(() =>
+      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
+    );
 
     dispatch({
       type: Constants.TOGGLE_DOCUMENT_CATEGORY,
       payload: {
-        categoryName,
+        categoryKey,
         toggleState,
         docId
       }

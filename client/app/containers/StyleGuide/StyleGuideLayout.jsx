@@ -18,8 +18,8 @@ let StyleGuideLayout = () => {
     </p>
 
     <StyleGuideComponentTitle
-        title="Action"
-        id="action"
+        title="Actions"
+        id="actions"
         link="StyleGuideAction.jsx"
         isSubsection={true}
     />
