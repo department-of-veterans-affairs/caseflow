@@ -68,7 +68,15 @@ export const createAnnotation = (annotationWithoutComment, comment) => (dispatch
 
   ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
     then((response) => {
-      console.log(response);
+      const responseObject = JSON.parse(response.text);
+
+      dispatch({
+        type: Constants.CREATE_ANNOTATION_SUCCESS,
+        payload: {
+          docId: annotation.documentId,
+          annotationId: responseObject.id
+        }
+      });
     });
 };
 

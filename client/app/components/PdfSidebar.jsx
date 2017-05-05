@@ -15,7 +15,7 @@ import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/util
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
-import { getAnnotationByDocumentId } from '../reader/util/AnnotationUtil';
+import { getAnnotationByDocumentId, sortAnnotations } from '../reader/util/AnnotationUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -72,7 +72,7 @@ export class PdfSidebar extends React.Component {
       tagOptions
     } = this.props;
 
-    comments = this.props.comments.map((comment, index) => {
+    comments = sortAnnotations(this.props.comments).map((comment, index) => {
       if (comment.uuid === this.props.editingComment) {
         return <EditComment
             id="editCommentBox"

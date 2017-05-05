@@ -465,22 +465,30 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.CREATE_ANNOTATION:
-    return (() => {
-      return update(state, {
-        ui: {
-          placedButUnsavedAnnotation: { $set: null }
-        },
-        annotations: {
-          [action.payload.annotation.documentId]: {
-            $apply: (prevAnnotations) => _(prevAnnotations).
-              concat(action.payload.annotation).
-              sortBy('page', 'y').
-              compact().
-              value()
-          }
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: { $set: null },
+        pendingAnnotation: { $set: action.payload.annotation }
+      }
+    });
+  case Constants.CREATE_ANNOTATION_SUCCESS:
+    return update(state, {
+      ui: {
+        pendingAnnotation: { $set: null },
+      },
+      annotations: {
+        [action.payload.docId]: {
+          $apply: (annotations) => _(annotations).
+            concat([{
+              ...state.ui.pendingAnnotation,
+              id: action.payload.annotationId,
+              uuid: action.payload.annotationId
+            }]).
+            compact().
+            value()
         }
-      });
-    })();
+      }
+    })
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
