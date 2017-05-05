@@ -122,6 +122,7 @@ export const initialState = {
     }
   },
   tagOptions: [],
+  // TODO change this structure to be a flat list by id, not by doc
   annotations: {},
   documents: {}
 };
@@ -519,6 +520,25 @@ export default (state = initialState, action = {}) => {
         currentlyEditingAnnotationId: { $set: null }
       }
     });
+  case Constants.REQUEST_EDIT_ANNOTATION: 
+    return (() => {
+      const prevAnnotationIndex = _.findIndex(state.annotations[action.payload.docId], { uuid: action.payload.annotationId });
+      
+      return update(state, {
+        ui: {
+          currentlyEditingAnnotationId: { $set: null }
+        },
+        annotations: {
+          [action.payload.docId]: {
+            [prevAnnotationIndex]: {
+              comment: {
+                $set: action.payload.commentText
+              }
+            }
+          }
+        }
+      });
+    })();
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {

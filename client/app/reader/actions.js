@@ -89,6 +89,15 @@ export const startEditAnnotation = (annotationId) => ({
 
 export const cancelEditAnnotation = () => ({ type: Constants.CANCEL_EDIT_ANNOTATION });
 
+export const requestEditAnnotation = (annotationId, docId, commentText) => ({
+  type: Constants.REQUEST_EDIT_ANNOTATION,
+  payload: {
+    annotationId,
+    docId,
+    commentText
+  }
+});
+
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
