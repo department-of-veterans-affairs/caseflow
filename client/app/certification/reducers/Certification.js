@@ -44,3 +44,9 @@ export const certificationUpdateSuccess = (state) => {
     loading: false
   });
 };
+
+export const toggleCancellationModal = (state, action) => {
+  return Object.assign({}, state, {
+    showCancellationModal: action.payload.showCancellationModal
+  });
+};
