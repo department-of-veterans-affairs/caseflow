@@ -257,7 +257,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  annotations: getAnnotationByDocumentId(state.annotations, ownProps.match.params.docId),
+  annotations: getAnnotationByDocumentId(state, ownProps.match.params.docId),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });

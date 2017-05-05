@@ -31,7 +31,7 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState.annotations)
+      searchString(searchQuery, nextState)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -117,7 +117,7 @@ export const initialState = {
     }
   },
   tagOptions: [],
-  annotations: [],
+  annotations: {},
   documents: {}
 };
 
@@ -472,23 +472,24 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.CREATE_ANNOTATION_SUCCESS:
+    // I'm pretty sure the problem is that we're mutating state somewhere else.
     return update(state, {
       ui: {
-        pendingAnnotation: { $set: null },
+        pendingAnnotation: { $set: null }
       },
       annotations: {
         [action.payload.docId]: {
           $apply: (annotations) => _(annotations).
-            concat([{
+            concat({
               ...state.ui.pendingAnnotation,
               id: action.payload.annotationId,
               uuid: action.payload.annotationId
-            }]).
+            }).
             compact().
             value()
         }
       }
-    })
+    });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {

@@ -6,8 +6,8 @@ const metadataContainsString = (searchQuery, doc) =>
   doc.type.toLowerCase().includes(searchQuery) ||
   doc.receivedAt.toLowerCase().includes(searchQuery);
 
-const commentContainsString = (searchQuery, annotations, doc) =>
-  getAnnotationByDocumentId(annotations, doc.id).reduce((acc, annotation) =>
+const commentContainsString = (searchQuery, state, doc) =>
+  getAnnotationByDocumentId(state, doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
 
@@ -23,11 +23,11 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, annotations) => (doc) =>
+export const searchString = (searchQuery, state) => (doc) =>
   !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
       metadataContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
-      commentContainsString(searchWord, annotations, doc) ||
+      commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });

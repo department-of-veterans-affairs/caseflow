@@ -53,7 +53,7 @@ export const onScrollToComment = (scrollToComment) => ({
 
 export const createAnnotation = (annotationWithoutComment, comment) => (dispatch) => {
   const annotation = {
-    ...annotationWithoutComment, 
+    ...annotationWithoutComment,
     comment
   };
 

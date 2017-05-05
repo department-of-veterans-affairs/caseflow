@@ -206,7 +206,7 @@ PdfSidebar.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.ui, 'placedButUnsavedAnnotation'),
-    comments: getAnnotationByDocumentId(state.annotations, ownProps.doc.id),
+    comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,

@@ -168,7 +168,7 @@ export class PdfListView extends React.Component {
       if (row && row.isComment) {
         return [{
           valueFunction: (doc) => {
-            const comments = getAnnotationByDocumentId(this.props.annotations, doc.id);
+            const comments = this.props.getAnnotationByDocumentId(doc.id);
             const commentNodes = comments.map((comment, commentIndex) => {
               return <Comment
                 key={comment.uuid}
@@ -306,7 +306,7 @@ export class PdfListView extends React.Component {
             Comments
           </div>,
           valueFunction: (doc) => {
-            const numberOfComments = getAnnotationByDocumentId(this.props.annotations, doc.id).length;
+            const numberOfComments = this.props.getAnnotationByDocumentId(doc.id).length;
             const icon = `fa fa-3 ${doc.listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
@@ -345,7 +345,7 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (getAnnotationByDocumentId(this.props.annotations, row.id).length &&
+      if (this.props.getAnnotationByDocumentId(row.id).length &&
         doc.listComments) {
         acc.push({
           ...row,
@@ -378,6 +378,7 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  getAnnotationByDocumentId: _.partial(getAnnotationByDocumentId, state),
   ..._.pick(state, 'tagOptions', 'annotations'),
   ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
 });
