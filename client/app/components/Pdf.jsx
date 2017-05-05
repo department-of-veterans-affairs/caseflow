@@ -237,10 +237,9 @@ export class Pdf extends React.Component {
           isRendered: []
         }, () => {
           resolve();
+          this.onPageChange(1);
         });
         this.props.setPdfReadyToShow(this.props.documentId);
-
-        this.onPageChange(1);
       });
     });
   }, DOCUMENT_DEBOUNCE_TIME, {
@@ -274,7 +273,7 @@ export class Pdf extends React.Component {
     this.currentPage = currentPage;
     if (this.props.onPageChange) {
       this.props.onPageChange(
-        currentPage - 1,
+        currentPage,
         this.state.numPages,
         this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
     }
