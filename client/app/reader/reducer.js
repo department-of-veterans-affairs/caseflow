@@ -88,6 +88,7 @@ export const initialState = {
   ui: {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
+    currentlyEditingAnnotationId: null,
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -489,6 +490,10 @@ export default (state = initialState, action = {}) => {
             value()
         }
       }
+    });
+  case Constants.START_EDIT_ANNOTATION: 
+    return update(state, {
+      currentlyEditingAnnotationId: { $set: action.payload.annotationId }
     });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
