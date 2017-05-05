@@ -80,6 +80,13 @@ export const createAnnotation = (annotationWithoutComment, comment) => (dispatch
     });
 };
 
+export const startEditAnnotation = (annotationId) => ({
+  type: Constants.START_EDIT_ANNOTATION,
+  payload: {
+    annotationId
+  }
+});
+
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
