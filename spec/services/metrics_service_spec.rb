@@ -13,7 +13,7 @@ describe MetricsService do
       expect(subject).to eq(yield_val)
     end
 
-    it "sends prometheus metrics" do
+    skip "sends prometheus metrics" do
       counter = PrometheusService.vbms_request_attempt_counter
       current_counter = counter.values[labels] || 0
 
