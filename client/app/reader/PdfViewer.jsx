@@ -61,17 +61,21 @@ export class PdfViewer extends React.Component {
   }
 
   onSaveCommentEdit = (comment) => {
-    this.props.annotationStorage.getAnnotation(
-      this.selectedDocId(),
-      this.state.editingComment
-    ).then((annotation) => {
-      annotation.comment = comment;
-      this.props.annotationStorage.editAnnotation(
+    if (comment) {
+      this.props.annotationStorage.getAnnotation(
         this.selectedDocId(),
-        annotation.uuid,
-        annotation
-      );
-    });
+        this.state.editingComment
+      ).then((annotation) => {
+        annotation.comment = comment;
+        this.props.annotationStorage.editAnnotation(
+          this.selectedDocId(),
+          annotation.uuid,
+          annotation
+        );
+      });
+    } else {
+      this.onDeleteComment(this.state.editingComment);
+    }
     this.onCancelCommentEdit();
   }
 
@@ -105,14 +109,16 @@ export class PdfViewer extends React.Component {
   }
 
   onSaveCommentAdd = (annotation, pageNumber) => (content) => {
-    annotation.comment = content;
-    this.props.annotationStorage.addAnnotation(
-      this.selectedDocId(),
-      pageNumber,
-      annotation
-    ).then((savedAnnotation) => {
-      this.props.handleSelectCommentIcon(savedAnnotation);
-    });
+    if (content) {
+      annotation.comment = content;
+      this.props.annotationStorage.addAnnotation(
+        this.selectedDocId(),
+        pageNumber,
+        annotation
+      ).then((savedAnnotation) => {
+        this.props.handleSelectCommentIcon(savedAnnotation);
+      });
+    }
     this.onCancelCommentAdd();
   }
 
@@ -272,7 +278,6 @@ export class PdfViewer extends React.Component {
           <PdfSidebar
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
-            showTagErrorMsg={this.props.showTagErrorMsg}
             doc={doc}
             editingComment={this.state.editingComment}
             onAddComment={this.onAddComment}
