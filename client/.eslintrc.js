@@ -193,7 +193,7 @@ module.exports = {
     "prefer-template": "warn",
     "quotes": ["warn", "single", {"avoidEscape": true}],
     "quote-props": ["warn", "as-needed"],
-    "radix": "error",
+    "radix": false,
     "rest-spread-spacing": "warn",
     "semi": "warn",
     "semi-spacing": "warn",
