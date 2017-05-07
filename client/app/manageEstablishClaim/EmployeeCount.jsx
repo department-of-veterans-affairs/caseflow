@@ -20,7 +20,7 @@ const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeC
         />
         <Button
           name="Update"
-          onClick={handleEmployeeCountSave}
+          onClick={handleEmployeeCountSave(employeeCount)}
           disabled={!employeeCount}
         />
     </InlineForm>
@@ -35,9 +35,9 @@ EmployeeCount.propTypes = {
 
 const mapStateToProps = (state) => ({ employeeCount: state.employeeCount });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleEmployeeCountSave: () => {
-    return ApiUtil.patch(`/dispatch/employee-count/${ownProps.employeeCount}`).then(() => {
+const mapDispatchToProps = (dispatch) => ({
+  handleEmployeeCountSave: (employeeCount) => () => {
+    return ApiUtil.patch(`/dispatch/employee-count/${employeeCount}`).then(() => {
       window.location.reload();
     }, () => {
       dispatch({
