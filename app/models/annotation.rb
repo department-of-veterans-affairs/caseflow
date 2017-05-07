@@ -1,6 +1,7 @@
 class Annotation < ActiveRecord::Base
   belongs_to :document
   belongs_to :user
+  validates :comment, presence: true
 
   def to_hash
     serializable_hash(

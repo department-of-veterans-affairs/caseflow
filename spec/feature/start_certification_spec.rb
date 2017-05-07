@@ -138,6 +138,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("Cannot find documents in VBMS")
       expect(page).to_not have_selector(:link_or_button, "Continue")
       expect(page).to have_selector(:link_or_button, "Refresh page")
+      expect(page).to have_selector(:link_or_button, "cancel this certification")
       click_button("Refresh page")
       expect(page).to have_content("Cannot find documents in VBMS")
     end
