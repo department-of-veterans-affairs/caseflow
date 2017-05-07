@@ -5,9 +5,6 @@ class EstablishClaimsController < TasksController
   before_action :set_application
 
   def index
-    @remaining_count_today = Task.to_complete.count
-    @completed_count_today = Task.completed_on(Time.zone.today).count
-
     render index_template
   end
 
@@ -69,7 +66,8 @@ class EstablishClaimsController < TasksController
 
   def update_employee_count
     team_quota.update!(user_count: params[:count])
-    render json: {}
+
+    render json: team_quota.user_quotas.map(&:to_hash)
   end
 
   def cancel

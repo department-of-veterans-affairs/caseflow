@@ -37,8 +37,11 @@ const mapStateToProps = (state) => ({ employeeCount: state.employeeCount });
 
 const mapDispatchToProps = (dispatch) => ({
   handleEmployeeCountSave: (employeeCount) => () => {
-    return ApiUtil.patch(`/dispatch/employee-count/${employeeCount}`).then(() => {
-      window.location.reload();
+    return ApiUtil.patch(`/dispatch/employee-count/${employeeCount}`).then((response) => {
+      dispatch({
+        type: Constants.SET_USER_QUOTAS_FROM_API,
+        payload: { userQuotas: response.body }
+      });
     }, () => {
       dispatch({
         type: Constants.SET_ALERT,
