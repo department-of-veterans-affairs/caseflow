@@ -81,10 +81,16 @@ export const deleteAnnotation = (docId, annotationId) =>
     });
   };
 
-export const cancelEditAnnotation = () => ({ type: Constants.CANCEL_EDIT_ANNOTATION });
-export const updateAnnotationContent = (content) => ({
+export const cancelEditAnnotation = (annotationId) => ({ 
+  type: Constants.CANCEL_EDIT_ANNOTATION,
+  payload: {
+    annotationId
+  }
+});
+export const updateAnnotationContent = (annotationId, content) => ({
   type: Constants.UPDATE_ANNOTATION_CONTENT,
   payload: {
+    annotationId,
     content
   }
 });
@@ -95,20 +101,12 @@ export const updateNewAnnotationContent = (content) => ({
   }
 });
 
-export const requestEditAnnotation = (annotationId, commentText) => (dispatch) => {
-  if (!commentText) {
-    dispatch(openAnnotationDeleteModal(annotationId));
-
-    return;
+export const requestEditAnnotation = (annotationId) => ({
+  type: Constants.REQUEST_EDIT_ANNOTATION,
+  payload: {
+    annotationId
   }
-  dispatch({
-    type: Constants.REQUEST_EDIT_ANNOTATION,
-    payload: {
-      annotationId,
-      commentText
-    }
-  });
-};
+});
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 

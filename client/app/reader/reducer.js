@@ -64,6 +64,15 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
+const openAnnotationDeleteModalFor = (state, annotationId) => 
+  update(state, {
+    ui: {
+      deleteAnnotationModalIsOpenFor: {
+        $set: annotationId
+      }
+    }
+  });
+
 const SHOW_EXPAND_ALL = false;
 
 const initialShowErrorMessageState = {
@@ -94,11 +103,6 @@ export const initialState = {
   ui: {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
-    // TODO This needs to be changed. We want to support editing multiple annotations at once.
-    currentlyEditingAnnotation: {
-      id: null,
-      editedText: null
-    },
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -126,6 +130,7 @@ export const initialState = {
     }
   },
   tagOptions: [],
+  editingAnnotations: {},
   annotations: {},
   documents: {}
 };
@@ -429,13 +434,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.OPEN_ANNOTATION_DELETE_MODAL:
-    return update(state, {
-      ui: {
-        deleteAnnotationModalIsOpenFor: {
-          $set: action.payload.annotationId
-        }
-      }
-    });
+    return openAnnotationDeleteModalFor(state, action.payload.annotationId);
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
     return update(state, {
       ui: {
@@ -510,31 +509,25 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.START_EDIT_ANNOTATION:
     return update(state, {
-      ui: {
-        currentlyEditingAnnotation: {
-          $set: {
-            id: action.payload.annotationId,
-            text: _(state.annotations).values().flatten().find({ id: action.payload.annotationId }).comment
-          }
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          $set: state.annotations[action.payload.annotationId]
         }
       }
     });
   case Constants.CANCEL_EDIT_ANNOTATION:
     return update(state, {
-      ui: {
-        currentlyEditingAnnotation: {
-          $set: {
-            id: null,
-            text: null
-          }
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          $set: undefined
         }
       }
     });
   case Constants.UPDATE_ANNOTATION_CONTENT:
     return update(state, {
-      ui: {
-        currentlyEditingAnnotation: {
-          text: {
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          comment: {
             $set: action.payload.content
           }
         }
@@ -552,20 +545,21 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return (() => {
+      const editedAnnotation = state.editingAnnotations[action.payload.annotationId];
+
+      if (!editedAnnotation.comment) {
+        return openAnnotationDeleteModalFor(state, editedAnnotation.id);
+      }
+
       return update(state, {
-        ui: {
-          currentlyEditingAnnotation: {
-            $set: {
-              id: null,
-              text: null
-            }
+        editingAnnotations: {
+          [action.payload.annotationId]: {
+            $set: undefined  
           }
         },
         annotations: {
           [action.payload.annotationId]: {
-            comment: {
-              $set: action.payload.commentText
-            }
+            $set: editedAnnotation
           }
         }
       });
