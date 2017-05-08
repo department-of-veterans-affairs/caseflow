@@ -94,6 +94,7 @@ class Task < ActiveRecord::Base
     rescue ActiveRecord::StaleObjectError
       # Recall method, try and get a different unassigned task
       retry if retry_count < 2
+      raise
     end
 
     def next_assignable
