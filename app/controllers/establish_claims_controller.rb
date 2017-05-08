@@ -40,9 +40,6 @@ class EstablishClaimsController < TasksController
 
     return not_found unless assigned_task
     render json: { next_task_id: assigned_task.id }
-  rescue ActiveRecord::StaleObjectError
-    # Recall assign action, try and get a different unassigned task
-    assign
   end
 
   def perform
