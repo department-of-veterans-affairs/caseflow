@@ -87,6 +87,15 @@ class SeedDB
     Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
   end
 
+  def create_tags
+    DocumentsTag.create(
+      tag_id: Generators::Tag.create(text: "Service Connected").id,
+      document_id: 1)
+    DocumentsTag.create(
+      tag_id: Generators::Tag.create(text: "Right Knee").id,
+      document_id: 2)
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -98,6 +107,7 @@ class SeedDB
     create_users(3)
     create_tasks(50)
     create_annotations
+    create_tags
   end
 end
 
