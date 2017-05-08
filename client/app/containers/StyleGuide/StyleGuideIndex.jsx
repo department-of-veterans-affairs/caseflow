@@ -7,7 +7,6 @@ import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
-import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
@@ -20,6 +19,7 @@ import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
+import StyleGuideFormFields from './StyleGuideFormFields';
 
 export default function StyleGuideIndex() {
 
@@ -73,8 +73,8 @@ export default function StyleGuideIndex() {
       name: 'Accordions'
     },
     {
-      anchor: '#forms_fields',
-      name: 'Forms Fields'
+      anchor: '#form_fields',
+      name: 'Form Fields'
     },
     {
       anchor: '#loading_buttons',
@@ -184,14 +184,7 @@ export default function StyleGuideIndex() {
           title="Accordions"
           id="accordions" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Forms Fields"
-          id="forms_fields" />
-        <StyleGuidePlaceholder
-          title="Text Input"
-          id="text_input"
-          isSubsection={true} />
-        <StyleGuideInlineForm />
+        <StyleGuideFormFields />
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
