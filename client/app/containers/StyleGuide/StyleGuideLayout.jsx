@@ -4,15 +4,22 @@ import StyleGuideAction from './StyleGuideAction';
 
 let StyleGuideLayout = () => {
 
-  return (
-  <div>
-    <div className="usa-width-one-whole">
+  return <div>
     <h2 id="layout">Layout</h2>
-  </div>
+
+    <h3 id="app-canvas">App Canvas</h3>
+
+    <p>
+      Almost all of the interaction in Caseflow takes place in an App Canvas.
+      The content starts off with a page title and minimal instructions for what the user
+      needs to do to complete their task on the page.
+      It then contains any interaction that well help this to accomplish their task including forms,
+      document previews, tables, error messages, and more.
+    </p>
 
     <StyleGuideComponentTitle
-        title="Action"
-        id="action"
+        title="Actions"
+        id="actions"
         link="StyleGuideAction.jsx"
         isSubsection={true}
     />
@@ -41,9 +48,7 @@ let StyleGuideLayout = () => {
       of the page without good reason.
     </p>
     <StyleGuideAction />
-  </div>
-
-  );
+  </div>;
 };
 
 export default StyleGuideLayout;

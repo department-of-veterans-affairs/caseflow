@@ -65,12 +65,10 @@ export class DecisionReviewer extends React.Component {
       event.preventDefault();
     }
 
-    this.props.selectCurrentPdf(docId);
     history.push(`/${vacolsId}/documents/${docId}`);
   }
 
   onShowList = (history, vacolsId) => () => {
-    this.props.unselectPdf();
     history.push(`/${vacolsId}/documents`);
   }
 
@@ -130,7 +128,6 @@ export class DecisionReviewer extends React.Component {
     return <PdfViewer
       addNewTag={this.props.addNewTag}
       removeTag={this.props.removeTag}
-      showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
       annotationStorage={this.annotationStorage}
       documents={this.documents()}
       allDocuments={_.values(this.props.storeDocuments)}
@@ -176,12 +173,6 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    ui: {
-      pdfSidebar: {
-        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
-      }
-    },
-    currentRenderedFile: state.ui.pdf.currentRenderedFile,
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
     storeDocuments: state.documents

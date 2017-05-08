@@ -392,6 +392,11 @@ RSpec.feature "Save Certification" do
 
         click_button("Continue")
         expect(page).to have_content "Congratulations"
+        form8 = Form8.find_by(vacols_id: appeal.vacols_id)
+        expect(form8.certifying_office).to eq "Office in DC"
+        expect(form8.certifying_username).to eq "User4567"
+        expect(form8.certifying_official_name).to eq "Tom Cruz"
+        expect(form8.certification_date.strftime("%m/%d/%Y")).to eq "02/01/2016"
 
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(find_field("Name and location of certifying office").value).to eq "Office in DC"

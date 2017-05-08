@@ -18,6 +18,15 @@ export const onReceiveDocs = (documents) => (
   }
 );
 
+export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
+  type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
+  payload: {
+    docId,
+    categoryKey,
+    categoryValueToRevertTo
+  }
+});
+
 export const toggleExpandAll = () => ({
   type: Constants.TOGGLE_EXPAND_ALL
 });
@@ -106,13 +115,6 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
     }
   });
 };
-
-export const unselectPdf = (docId) => ({
-  type: Constants.UNSELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,

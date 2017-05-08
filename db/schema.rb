@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170502213808) do
+ActiveRecord::Schema.define(version: 20170503153606) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
     t.integer "document_id", null: false
-    t.string  "comment"
+    t.string  "comment",     null: false
     t.integer "page"
     t.integer "x"
     t.integer "y"
@@ -230,6 +230,7 @@ ActiveRecord::Schema.define(version: 20170502213808) do
     t.string   "comment"
     t.string   "outgoing_reference_id"
     t.string   "aasm_state"
+    t.datetime "prepared_at"
   end
 
   create_table "team_quotas", force: :cascade do |t|

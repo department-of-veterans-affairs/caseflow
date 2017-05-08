@@ -9,7 +9,6 @@ import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import StyleGuideModal from './StyleGuide/StyleGuideModal';
 import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
-import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
 import Reader from '../reader/index.jsx';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
@@ -25,7 +24,6 @@ const Pages = {
   StyleGuideIndex,
   StyleGuideModal,
   StyleGuideTabs,
-  TasksManagerIndex,
   TestPage,
   UnpreparedTasksIndex
 };
@@ -75,12 +73,14 @@ export default class BaseContainer extends React.Component {
     let PageComponent = Pages[page];
 
     return <div>
-      {alert && <Alert
-        type={alert.type}
-        title={alert.title}
-        message={alert.message}
-        handleClear={this.handleAlertClear}
-      />}
+      {alert && <div className="cf-app-segment">
+          <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          handleClear={this.handleAlertClear}
+        />
+      </div>}
       <PageComponent
         {...rest}
         handleAlert={this.handleAlert}

@@ -35,6 +35,27 @@ class Fakes::AppealRepository
     end
   end
 
+  READER_REDACTED_DOCS = [
+    "VA 8 Certification of Appeal",
+    "Supplemental Statement of the Case",
+    "CAPRI",
+    "Notice of Disagreement",
+    "Rating Decision - Codesheet",
+    "Rating Decision - Narrative",
+    "Correspondence",
+    "VA 21-526EZ, Fully Developed Claim",
+    "STR - Medical",
+    "Military Personnel Record",
+    "Private Medical Treatment Record",
+    "Map-D Development Letter",
+    "Third Party Correspondence",
+    "VA 9 Appeal to Board of Appeals",
+    "Correspondence",
+    "VA 21-4142 Authorization to Disclose Information to VA",
+    "VA 21-4138 Statement in Support of Claim",
+    "VA Memo"
+  ].freeze
+
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
   RASIE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
 
@@ -133,17 +154,19 @@ class Fakes::AppealRepository
 
   def self.fetch_document_file(document)
     path =
-      case document.vbms_document_id
-      when "1"
+      case document.vbms_document_id.to_i
+      when 1
         File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-      when "2"
+      when 2
         File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-      when "3"
+      when 3
         File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-      when "4"
+      when 4
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       else
-        File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
+        file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
+        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
+        file
       end
     IO.binread(path)
   end
@@ -322,7 +345,19 @@ class Fakes::AppealRepository
     end
   end
 
+  def self.redacted_reader_documents
+    READER_REDACTED_DOCS.each_with_index.map do |doc_type, index|
+      Generators::Document.build(
+        vbms_document_id: (100 + index),
+        type: doc_type
+      )
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
+    FeatureToggle.enable!(:reader)
+
     Generators::Appeal.build(
       vacols_id: "reader_id1",
       vbms_id: "reader_id1",
@@ -342,6 +377,16 @@ class Fakes::AppealRepository
         veteran_last_name: "Smith"
       },
       documents: random_reader_documents(200)
+    )
+    Generators::Appeal.build(
+      vacols_id: "reader_id3",
+      vbms_id: "reader_id3",
+      vacols_record: {
+        template: :ready_to_certify,
+        veteran_first_name: "Joe",
+        veteran_last_name: "Smith"
+      },
+      documents: redacted_reader_documents
     )
   end
 end
