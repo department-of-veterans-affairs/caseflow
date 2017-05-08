@@ -30,20 +30,24 @@ describe('Reader reducer', () => {
         {
           type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
           payload: {
-            docId,
-            annotationId
+            annotation: {
+              id: annotationId,
+              documentId: docId,
+              comment: 'annotation text'
+            }
           }
         }
       ]);
 
       expect(state.ui.pendingAnnotation).to.equal(null);
       expect(state.annotations).to.deep.equal({
-        [docId]: [{
+        [annotationId]: {
           id: annotationId,
           uuid: annotationId,
           documentId: docId,
+          document_id: docId,
           comment: 'annotation text'
-        }]
+        }
       });
 
       const nextAnnotationId = 200;
@@ -60,27 +64,30 @@ describe('Reader reducer', () => {
         {
           type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
           payload: {
-            docId,
-            annotationId: nextAnnotationId
+            annotation: {
+              id: nextAnnotationId,
+              documentId: docId,
+              comment: 'next annotation text'
+            }
           }
         }
       ], state);
 
       expect(stateWithNextAnnotation.annotations).to.deep.equal({
-        [docId]: [
-          {
-            id: annotationId,
-            uuid: annotationId,
-            documentId: docId,
-            comment: 'annotation text'
-          },
-          {
-            id: nextAnnotationId,
-            uuid: nextAnnotationId,
-            documentId: docId,
-            comment: 'next annotation text'
-          }
-        ]
+        [annotationId]: {
+          id: annotationId,
+          uuid: annotationId,
+          documentId: docId,
+          document_id: docId,
+          comment: 'annotation text'
+        },
+        [nextAnnotationId]: {
+          id: nextAnnotationId,
+          uuid: nextAnnotationId,
+          documentId: docId,
+          document_id: docId,
+          comment: 'next annotation text'
+        }
       });
     });
   });

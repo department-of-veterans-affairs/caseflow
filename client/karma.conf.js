@@ -19,6 +19,10 @@ module.exports = function(config) {
       { pattern: karmaTestPattern }
     ],
 
+    mochaReporter: {
+      showDiff: true
+    },
+
     preprocessors: {
       [karmaTestPattern]: ['webpack', 'sourcemap']
     },
