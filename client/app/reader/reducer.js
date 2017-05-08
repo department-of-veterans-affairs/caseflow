@@ -483,7 +483,7 @@ export default (state = initialState, action = {}) => {
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pdf: {
-          isPlacingAnnotation: { $set: false },
+          isPlacingAnnotation: { $set: false }
         }
       }
     });
@@ -513,18 +513,18 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.START_EDIT_ANNOTATION: 
+  case Constants.START_EDIT_ANNOTATION:
     return update(state, {
       ui: {
-        currentlyEditingAnnotation: { 
+        currentlyEditingAnnotation: {
           $set: {
             id: action.payload.annotationId,
-            text: _(state.annotations).values().flatten().find({id: action.payload.annotationId}).comment
-          } 
+            text: _(state.annotations).values().flatten().find({ id: action.payload.annotationId }).comment
+          }
         }
       }
     });
-  case Constants.CANCEL_EDIT_ANNOTATION: 
+  case Constants.CANCEL_EDIT_ANNOTATION:
     return update(state, {
       ui: {
         currentlyEditingAnnotation: {
@@ -535,17 +535,17 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.UPDATE_ANNOTATION_CONTENT: 
+  case Constants.UPDATE_ANNOTATION_CONTENT:
     return update(state, {
       ui: {
         currentlyEditingAnnotation: {
-          text: { 
+          text: {
             $set: action.payload.content
           }
         }
       }
-    })
-  case Constants.REQUEST_EDIT_ANNOTATION: 
+    });
+  case Constants.REQUEST_EDIT_ANNOTATION:
     return (() => {
       const prevAnnotationIndex = _.findIndex(state.annotations[action.payload.docId], { uuid: action.payload.annotationId });
 
