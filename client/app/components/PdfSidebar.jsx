@@ -81,7 +81,7 @@ export class PdfSidebar extends React.Component {
             onCancelCommentEdit={() => this.props.cancelEditAnnotation(comment.uuid)}
             onChange={_.partial(this.props.updateAnnotationContent, comment.uuid)}
             value={comment.comment}
-            onSaveCommentEdit={() => this.props.requestEditAnnotation(comment.uuid)}
+            onSaveCommentEdit={() => this.props.requestEditAnnotation(comment)}
             key={keyOfAnnotation(comment)}
           />;
       }

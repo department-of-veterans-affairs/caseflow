@@ -116,12 +116,18 @@ export const updateNewAnnotationContent = (content) => ({
   }
 });
 
-export const requestEditAnnotation = (annotationId) => ({
-  type: Constants.REQUEST_EDIT_ANNOTATION,
-  payload: {
-    annotationId
-  }
-});
+export const requestEditAnnotation = (annotation) => (dispatch) => {
+  dispatch({
+    type: Constants.REQUEST_EDIT_ANNOTATION,
+    payload: {
+      annotationId: annotation.id
+    }
+  });
+  
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).then(_.noop);
+};
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 

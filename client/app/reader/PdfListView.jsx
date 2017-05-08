@@ -434,7 +434,7 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+  annotations: PropTypes.object.isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   handleToggleCommentOpened: PropTypes.func.isRequired,
