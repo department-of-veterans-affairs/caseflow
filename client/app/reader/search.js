@@ -1,6 +1,5 @@
 import * as Constants from './constants';
-import { categoryFieldNameOfCategoryName } from './utils';
-import { getAnnotationByDocumentId } from './util/AnnotationUtil';
+import { categoryFieldNameOfCategoryName, getAnnotationByDocumentId } from './utils';
 
 const metadataContainsString = (searchQuery, doc) =>
   doc.type.toLowerCase().includes(searchQuery) ||

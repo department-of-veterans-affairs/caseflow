@@ -65,7 +65,7 @@ export const openAnnotationDeleteModal = (annotationId) => ({
   }
 });
 export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
-export const selectAnnotation = (annotationId) => ({ 
+export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
   payload: {
     annotationId
@@ -87,7 +87,7 @@ export const deleteAnnotation = (docId, annotationId) =>
     });
   };
 
-export const cancelEditAnnotation = (annotationId) => ({ 
+export const cancelEditAnnotation = (annotationId) => ({
   type: Constants.CANCEL_EDIT_ANNOTATION,
   payload: {
     annotationId

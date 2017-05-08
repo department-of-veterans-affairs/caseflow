@@ -64,7 +64,7 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
-const openAnnotationDeleteModalFor = (state, annotationId) => 
+const openAnnotationDeleteModalFor = (state, annotationId) =>
   update(state, {
     ui: {
       deleteAnnotationModalIsOpenFor: {
@@ -566,7 +566,7 @@ export default (state = initialState, action = {}) => {
       return update(state, {
         editingAnnotations: {
           [action.payload.annotationId]: {
-            $set: undefined  
+            $set: undefined
           }
         },
         annotations: {

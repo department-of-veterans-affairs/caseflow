@@ -9,15 +9,15 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent, 
-  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation, 
+import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
+  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
   updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/utils';
+import { categoryFieldNameOfCategoryName, keyOfAnnotation, getAnnotationByDocumentId, sortAnnotations }
+  from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
-import { getAnnotationByDocumentId, sortAnnotations } from '../reader/util/AnnotationUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -89,7 +89,7 @@ export class PdfSidebar extends React.Component {
       const handleClick = () => {
         this.props.onJumpToComment(comment)();
         this.props.selectAnnotation(comment.id);
-      }
+      };
 
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;

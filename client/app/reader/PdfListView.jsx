@@ -13,7 +13,7 @@ import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import { getAnnotationByDocumentId } from './util/AnnotationUtil';
+import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';

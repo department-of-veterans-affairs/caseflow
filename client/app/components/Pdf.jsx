@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation } from '../reader/utils';
-import { getAnnotationByDocumentId } from '../reader/util/AnnotationUtil';
+import { keyOfAnnotation, getAnnotationByDocumentId } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
