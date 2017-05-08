@@ -9,8 +9,9 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
-  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation } from '../reader/actions';
+import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent, 
+  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation, 
+  updateNewAnnotationContent } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
@@ -176,8 +177,10 @@ export class PdfSidebar extends React.Component {
             {this.props.placedButUnsavedAnnotation &&
               <EditComment
                 id="addComment"
+                onChange={this.props.updateNewAnnotationContent}
+                value={this.props.placedButUnsavedAnnotation.comment}
                 onCancelCommentEdit={this.props.stopPlacingAnnotation}
-                onSaveCommentEdit={_.partial(this.props.createAnnotation, this.props.placedButUnsavedAnnotation)} />}
+                onSaveCommentEdit={() => this.props.createAnnotation(this.props.placedButUnsavedAnnotation)} />}
             {comments}
           </div>
         </div>
@@ -231,6 +234,7 @@ const mapDispatchToProps = (dispatch) => ({
     stopPlacingAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
+    updateNewAnnotationContent,
     cancelEditAnnotation,
     requestEditAnnotation
   }, dispatch),

@@ -76,7 +76,6 @@ export const deleteAnnotation = (docId, annotationId) =>
     dispatch({
       type: Constants.REQUEST_DELETE_ANNOTATION,
       payload: {
-        docId,
         annotationId
       }
     });
@@ -89,8 +88,14 @@ export const updateAnnotationContent = (content) => ({
     content
   }
 });
+export const updateNewAnnotationContent = (content) => ({
+  type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
+  payload: {
+    content
+  }
+});
 
-export const requestEditAnnotation = (annotationId, docId, commentText) => (dispatch) => {
+export const requestEditAnnotation = (annotationId, commentText) => (dispatch) => {
   if (!commentText) {
     dispatch(openAnnotationDeleteModal(annotationId));
 
@@ -100,7 +105,6 @@ export const requestEditAnnotation = (annotationId, docId, commentText) => (disp
     type: Constants.REQUEST_EDIT_ANNOTATION,
     payload: {
       annotationId,
-      docId,
       commentText
     }
   });
@@ -120,17 +124,12 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
 
 export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
-export const createAnnotation = (annotationWithoutComment, comment) => (dispatch) => {
-  if (!comment) {
+export const createAnnotation = (annotation) => (dispatch) => {
+  if (!annotation.comment) {
     dispatch(stopPlacingAnnotation());
 
     return;
   }
-
-  const annotation = {
-    ...annotationWithoutComment,
-    comment
-  };
 
   dispatch({
     type: Constants.CREATE_ANNOTATION,
@@ -148,8 +147,10 @@ export const createAnnotation = (annotationWithoutComment, comment) => (dispatch
       dispatch({
         type: Constants.CREATE_ANNOTATION_SUCCESS,
         payload: {
-          docId: annotation.documentId,
-          annotationId: responseObject.id
+          annotation: {
+            ...annotation,
+            ...responseObject
+          }
         }
       });
     });

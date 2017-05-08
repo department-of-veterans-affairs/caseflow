@@ -126,7 +126,6 @@ export const initialState = {
     }
   },
   tagOptions: [],
-  // TODO change this structure to be a flat list by id, not by doc
   annotations: {},
   documents: {}
 };
@@ -176,7 +175,10 @@ export default (state = initialState, action = {}) => {
       state,
       {
         annotations: {
-          $set: _.groupBy(action.payload.annotations, 'document_id')
+          $set: _(action.payload.annotations).
+            map((annotation) => ([annotation.id, annotation])).
+            fromPairs().
+            value()
         }
       }
     ));
@@ -450,9 +452,7 @@ export default (state = initialState, action = {}) => {
         }
       },
       annotations: {
-        [action.payload.docId]: {
-          $apply: (annotations) => _.reject(annotations, { id: action.payload.annotationId })
-        }
+        $apply: (annotations) => _.reject(annotations, { id: action.payload.annotationId })
       }
     });
   case Constants.PLACE_ANNOTATION:
@@ -495,21 +495,16 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.CREATE_ANNOTATION_SUCCESS:
-    // I'm pretty sure the problem is that we're mutating state somewhere else.
     return update(state, {
       ui: {
         pendingAnnotation: { $set: null }
       },
       annotations: {
-        [action.payload.docId]: {
-          $apply: (annotations) => _(annotations).
-            concat({
-              ...state.ui.pendingAnnotation,
-              id: action.payload.annotationId,
-              uuid: action.payload.annotationId
-            }).
-            compact().
-            value()
+        [action.payload.annotation.id]: {
+          $set: {
+            document_id: action.payload.annotation.documentId,
+            ...action.payload.annotation
+          }
         }
       }
     });
@@ -545,10 +540,18 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UPDATE_NEW_ANNOTATION_CONTENT:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: {
+          comment: {
+            $set: action.payload.content
+          }
+        }
+      }
+    });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return (() => {
-      const prevAnnotationIndex = _.findIndex(state.annotations[action.payload.docId], { uuid: action.payload.annotationId });
-
       return update(state, {
         ui: {
           currentlyEditingAnnotation: {
@@ -559,11 +562,9 @@ export default (state = initialState, action = {}) => {
           }
         },
         annotations: {
-          [action.payload.docId]: {
-            [prevAnnotationIndex]: {
-              comment: {
-                $set: action.payload.commentText
-              }
+          [action.payload.annotationId]: {
+            comment: {
+              $set: action.payload.commentText
             }
           }
         }
