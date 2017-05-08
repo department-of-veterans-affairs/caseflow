@@ -101,6 +101,7 @@ const getExpandAllState = (documents) => {
 export const initialState = {
   annotationStorage: null,
   ui: {
+    selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
@@ -575,6 +576,14 @@ export default (state = initialState, action = {}) => {
         }
       });
     })();
+  case Constants.SELECT_ANNOTATION:
+    return update(state, {
+      ui: {
+        selectedAnnotationId: {
+          $set: action.payload.annotationId
+        }
+      }
+    });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {

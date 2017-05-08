@@ -9,51 +9,12 @@ import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
+import { getAnnotationByDocumentId } from '../reader/util/AnnotationUtil';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      comments: [],
-      onSaveCommentAdd: null
-    };
-  }
-
-  onSaveCommentEdit = (comment) => {
-    if (comment) {
-      this.props.annotationStorage.getAnnotation(
-        this.selectedDocId(),
-        this.state.editingComment
-      ).then((annotation) => {
-        annotation.comment = comment;
-        this.props.annotationStorage.editAnnotation(
-          this.selectedDocId(),
-          annotation.uuid,
-          annotation
-        );
-      });
-    } else {
-      this.onDeleteComment(this.state.editingComment);
-    }
-    this.onCancelCommentEdit();
-  }
-
-  onSaveCommentAdd = (annotation, pageNumber) => (content) => {
-    if (content) {
-      annotation.comment = content;
-      this.props.annotationStorage.addAnnotation(
-        this.selectedDocId(),
-        pageNumber,
-        annotation
-      ).then((savedAnnotation) => {
-        this.props.handleSelectCommentIcon(savedAnnotation);
-      });
-    }
-  }
-
   onIconMoved = (uuid, coordinates, page) => {
     this.props.annotationStorage.getAnnotation(
       this.selectedDocId(),
@@ -72,8 +33,7 @@ export class PdfViewer extends React.Component {
 
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
-  isUserActive = () => this.state.editingComment !== null ||
-      this.props.commentFlowState
+  isUserActive = () => this.props.editingCommentsForCurrentDoc || this.props.commentFlowState
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
@@ -84,23 +44,6 @@ export class PdfViewer extends React.Component {
         this.props.showPdf(this.nextDocId())();
       }
     }
-  }
-
-  onCommentClick = (uuid) => {
-    let comments = [...this.state.comments];
-
-    comments = comments.map((comment) => {
-      let copy = { ...comment };
-
-      if (comment.uuid === uuid) {
-        copy.selected = true;
-      } else {
-        copy.selected = false;
-      }
-
-      return copy;
-    });
-    this.setState({ comments });
   }
 
   componentDidUpdate = () => {
@@ -193,7 +136,6 @@ export class PdfViewer extends React.Component {
             showDocumentsListNavigation={this.showDocumentsListNavigation()}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
-            onCommentClick={this.onCommentClick}
             onCommentScrolledTo={this.props.onCommentScrolledTo}
             onIconMoved={this.onIconMoved}
           />
@@ -201,10 +143,6 @@ export class PdfViewer extends React.Component {
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
             doc={doc}
-            onSaveCommentAdd={this.state.onSaveCommentAdd}
-            onSaveCommentEdit={this.onSaveCommentEdit}
-            onCancelCommentEdit={this.onCancelCommentEdit}
-            onEditComment={this.onEditComment}
             onJumpToComment={this.props.onJumpToComment}
           />
         </div>
@@ -231,7 +169,9 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
+  editingCommentsForCurrentDoc: 
+    _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
 });

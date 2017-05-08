@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent, 
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation, 
-  updateNewAnnotationContent } from '../reader/actions';
+  updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation } from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
@@ -86,17 +86,21 @@ export class PdfSidebar extends React.Component {
           />;
       }
 
+      const handleClick = () => {
+        this.props.onJumpToComment(comment);
+        this.props.selectAnnotation(comment.id);
+      }
+
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;
       }}
         key={keyOfAnnotation(comment)}>
         <Comment
           id={`comment${index}`}
-          selected={false}
           onEditComment={this.props.startEditAnnotation}
           uuid={comment.uuid}
-          selected={comment.selected}
-          onClick={this.props.onJumpToComment(comment)}
+          selected={comment.id === this.props.selectedAnnotationId}
+          onClick={handleClick}
           page={comment.page}>
             {comment.comment}
           </Comment>
@@ -190,6 +194,7 @@ export class PdfSidebar extends React.Component {
 
 PdfSidebar.propTypes = {
   doc: PropTypes.object,
+  selectedAnnotationId: React.PropTypes.number,
   comments: React.PropTypes.arrayOf(React.PropTypes.shape({
     comment: React.PropTypes.string,
     uuid: React.PropTypes.number
@@ -217,7 +222,7 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'currentlyEditingAnnotation'),
+    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     commentFlowState: state.ui.pdf.commentFlowState,
@@ -229,6 +234,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    selectAnnotation,
     startPlacingAnnotation,
     createAnnotation,
     stopPlacingAnnotation,
