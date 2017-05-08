@@ -123,6 +123,7 @@ class Form8PdfService
   # just for the sake of it.
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength
   def self.pdf_values_for(form8, field_locations)
     field_locations.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
@@ -151,8 +152,6 @@ class Form8PdfService
       pdf_values[location] = value
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def self.save_pdf_for!(form8)
     tmp_location = tmp_location_for(form8)
@@ -162,20 +161,19 @@ class Form8PdfService
 
     if FeatureToggle.enabled?(:form8_v2)
       pdf_forms.fill_form(
-          empty_pdf_location("VA8_v2.pdf"),
-          tmp_location,
-          pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V2),
-          flatten: true
+        empty_pdf_location("VA8_v2.pdf"),
+        tmp_location,
+        pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V2),
+        flatten: true
       )
     else
       pdf_forms.fill_form(
-          empty_pdf_location("VA8.pdf"),
-          tmp_location,
-          pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V1),
-          flatten: true
+        empty_pdf_location("VA8.pdf"),
+        tmp_location,
+        pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V1),
+        flatten: true
       )
     end
-
 
     File.delete(final_location) if File.exist?(final_location)
 
@@ -196,6 +194,9 @@ class Form8PdfService
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/MethodLength
 
   def self.output_location_for(form8)
     File.join(Rails.root, "tmp", "pdfs", form8.pdf_filename)
