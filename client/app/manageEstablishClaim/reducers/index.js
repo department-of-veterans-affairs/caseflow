@@ -1,15 +1,15 @@
 import * as Constants from '../constants';
 import update from 'immutability-helper';
 
-const parseUserQuotasFromApi = (userQuotasFromApi) => {
-  return userQuotasFromApi.map((userQuota, index) => ({
+const parseUserQuotasFromApi = (userQuotasFromApi) => (
+  userQuotasFromApi.map((userQuota, index) => ({
     userName: `${index + 1}. ${userQuota.user_name || 'Not logged in'}`,
     taskCount: userQuota.task_count,
     tasksCompletedCount: userQuota.tasks_completed_count,
     tasksLeftCount: userQuota.tasks_left_count,
     isAssigned: Boolean(userQuota.user_name)
-  }));
-};
+  }))
+);
 
 export const getManageEstablishClaimInitialState = (props = { userQuotas: [] }) => ({
   alert: null,
