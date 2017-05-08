@@ -7,10 +7,12 @@ import _ from 'lodash';
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
 import Certification from './certification/Certification';
+import ManageEstablishClaim from './manageEstablishClaim/index';
 
 const COMPONENTS = {
   BaseContainer,
-  Certification
+  Certification,
+  ManageEstablishClaim
 };
 
 // This removes HMR's stupid red error page, which "eats" the errors and
@@ -33,7 +35,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   if (module.hot) {
     module.hot.accept([
       './containers/BaseContainer',
-      './certification/Certification'
+      './certification/Certification',
+      './manageEstablishClaim/ManageEstablishClaim'
     ], () => renderApp(component));
   }
 };
