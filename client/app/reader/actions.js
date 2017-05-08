@@ -136,7 +136,7 @@ export const createAnnotation = (annotation) => (dispatch) => {
   }
 
   dispatch({
-    type: Constants.CREATE_ANNOTATION,
+    type: Constants.REQUEST_CREATE_ANNOTATION,
     payload: {
       annotation
     }
@@ -149,7 +149,7 @@ export const createAnnotation = (annotation) => (dispatch) => {
       const responseObject = JSON.parse(response.text);
 
       dispatch({
-        type: Constants.CREATE_ANNOTATION_SUCCESS,
+        type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
         payload: {
           annotation: {
             ...annotation,

@@ -494,14 +494,14 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.CREATE_ANNOTATION:
+  case Constants.REQUEST_CREATE_ANNOTATION:
     return update(state, {
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pendingAnnotation: { $set: action.payload.annotation }
       }
     });
-  case Constants.CREATE_ANNOTATION_SUCCESS:
+  case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
         pendingAnnotation: { $set: null }

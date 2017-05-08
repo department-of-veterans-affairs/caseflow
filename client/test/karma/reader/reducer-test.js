@@ -6,7 +6,7 @@ describe.only('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 
-  describe(Constants.CREATE_ANNOTATION_SUCCESS, () => {
+  describe(Constants.REQUEST_CREATE_ANNOTATION_SUCCESS, () => {
     it('updates annotations when the server save is successful', () => {
       const docId = 3;
       const annotationId = 100;
@@ -19,7 +19,7 @@ describe.only('Reader reducer', () => {
           }]
         },
         {
-          type: Constants.CREATE_ANNOTATION,
+          type: Constants.REQUEST_CREATE_ANNOTATION,
           payload: {
             annotation: {
               documentId: docId,
@@ -28,7 +28,7 @@ describe.only('Reader reducer', () => {
           }
         },
         {
-          type: Constants.CREATE_ANNOTATION_SUCCESS,
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
           payload: {
             docId,
             annotationId
@@ -49,7 +49,7 @@ describe.only('Reader reducer', () => {
       const nextAnnotationId = 200;
       const stateWithNextAnnotation = reduceActions([
         {
-          type: Constants.CREATE_ANNOTATION,
+          type: Constants.REQUEST_CREATE_ANNOTATION,
           payload: {
             annotation: {
               documentId: docId,
@@ -58,7 +58,7 @@ describe.only('Reader reducer', () => {
           }
         },
         {
-          type: Constants.CREATE_ANNOTATION_SUCCESS,
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
           payload: {
             docId,
             annotationId: nextAnnotationId
