@@ -87,6 +87,19 @@ export const deleteAnnotation = (docId, annotationId) =>
     });
   };
 
+export const requestMoveAnnotation = (annotation) => (dispatch) => {
+  dispatch({
+    type: Constants.REQUEST_MOVE_ANNOTATION,
+    payload: {
+      annotation
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).then(_.noop);
+};
+
 export const cancelEditAnnotation = (annotationId) => ({
   type: Constants.CANCEL_EDIT_ANNOTATION,
   payload: {

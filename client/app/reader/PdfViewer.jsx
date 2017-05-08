@@ -23,11 +23,11 @@ export class PdfViewer extends React.Component {
       annotation.x = coordinates.x;
       annotation.y = coordinates.y;
       annotation.page = page;
-      this.props.annotationStorage.editAnnotation(
-        this.selectedDocId(),
-        annotation.uuid,
-        annotation
-      );
+      // this.props.annotationStorage.editAnnotation(
+      //   this.selectedDocId(),
+      //   annotation.uuid,
+      //   annotation
+      // );
     });
   }
 

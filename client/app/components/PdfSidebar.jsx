@@ -199,16 +199,8 @@ PdfSidebar.propTypes = {
     comment: React.PropTypes.string,
     uuid: React.PropTypes.number
   })),
-  currentlyEditingAnnotation: React.PropTypes.shape({
-    id: React.PropTypes.number,
-    text: React.PropTypes.string
-  }),
-  isWritingComment: PropTypes.bool,
-  onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
-  commentFlowState: PropTypes.string,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
     category: PropTypes.bool,
@@ -225,7 +217,6 @@ const mapStateToProps = (state, ownProps) => {
     ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
-    commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,

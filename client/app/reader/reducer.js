@@ -99,7 +99,6 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
-  annotationStorage: null,
   ui: {
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
@@ -182,7 +181,11 @@ export default (state = initialState, action = {}) => {
       {
         annotations: {
           $set: _(action.payload.annotations).
-            map((annotation) => ([annotation.id, annotation])).
+            map((annotation) => ([annotation.id, {
+              documentId: annotation.document_id,
+              uuid: annotation.id,
+              ...annotation
+            }])).
             fromPairs().
             value()
         }
@@ -459,6 +462,14 @@ export default (state = initialState, action = {}) => {
       annotations: {
         [action.payload.annotationId]: {
           $set: undefined
+        }
+      }
+    });
+  case Constants.REQUEST_MOVE_ANNOTATION:
+    return update(state, {
+      annotations: {
+        [action.payload.annotation.id]: {
+          $set: action.payload.annotation
         }
       }
     });

@@ -5,7 +5,6 @@ import { Route, BrowserRouter } from 'react-router-dom';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -24,8 +23,6 @@ export class DecisionReviewer extends React.Component {
 
     this.props.onReceiveDocs(this.props.appealDocuments);
     this.props.onReceiveAnnotations(this.props.annotations);
-
-    this.annotationStorage = new AnnotationStorage(this.props.annotations);
   }
 
   componentWillReceiveProps(nextProps) {

@@ -7,7 +7,7 @@ import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
 
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
@@ -271,7 +271,12 @@ export class Pdf extends React.Component {
       y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
 
-    this.props.onIconMoved(data.uuid, coordinates, pageNumber);
+    const droppedAnnotation = {
+      ...this.props.allAnnotations[data.uuid],
+      ...coordinates
+    };
+
+    this.props.requestMoveAnnotation(droppedAnnotation);
   }
 
   onPageDragOver = (event) => {
@@ -373,11 +378,15 @@ export class Pdf extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
   ..._.pick(state.ui, 'selectedAnnotationId'),
-  comments: getAnnotationByDocumentId(state, ownProps.documentId)
+  comments: getAnnotationByDocumentId(state, ownProps.documentId),
+  allAnnotations: state.annotations
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({ placeAnnotation }, dispatch),
+  ...bindActionCreators({
+    placeAnnotation,
+    requestMoveAnnotation
+  }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
@@ -412,7 +421,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
-  commentFlowState: PropTypes.string,
   setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };
