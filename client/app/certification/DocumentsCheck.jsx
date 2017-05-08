@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
+import * as certificationActions from './actions/Certification';
 
 
 // TODO: refactor to use shared components where helpful
@@ -31,7 +32,7 @@ class UnconnectedDocumentsCheck extends React.Component {
       ssocDatesWithMatches,
       documentsMatch,
       match,
-      certificationId
+      toggleCancellationModal
     } = this.props;
 
     let reloadPage = () => {
@@ -56,7 +57,8 @@ class UnconnectedDocumentsCheck extends React.Component {
         <ul>The <strong>document date</strong> — the date in VBMS must match
         the date in VACOLS</ul>
         <p>Once you've made corrections, <a href="">refresh this page.</a></p>
-        <p>If you can't find the document, <a href="">cancel this certification.</a></p>
+        <p>If you can't find the document, <a href="#"
+          onClick={toggleCancellationModal}>cancel this certification.</a></p>
       </div>;
 
     /*
@@ -78,7 +80,6 @@ class UnconnectedDocumentsCheck extends React.Component {
       </div>
 
       <Footer
-        certificationId={certificationId}
         buttonText={ documentsMatch ? 'Continue' : 'Refresh page' }
         nextPageUrl={ documentsMatch ?
           `/certifications/${match.params.vacols_id}/confirm_case_details` :
@@ -98,8 +99,7 @@ const mapStateToProps = (state) => ({
   socMatch: state.socMatch,
   socDate: state.socDate,
   ssocDatesWithMatches: state.ssocDatesWithMatches,
-  documentsMatch: state.documentsMatch,
-  certificationId: state.certificationId
+  documentsMatch: state.documentsMatch
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -110,6 +110,10 @@ const mapDispatchToProps = (dispatch) => ({
         currentSection: Constants.progressBarSections.CHECK_DOCUMENTS
       }
     });
+  },
+
+  toggleCancellationModal: () => {
+    dispatch(certificationActions.toggleCancellationModal());
   }
 });
 
@@ -131,8 +135,7 @@ DocumentsCheck.propTypes = {
   socMatch: PropTypes.bool,
   socDate: PropTypes.string,
   documentsMatch: PropTypes.bool,
-  match: PropTypes.object.isRequired,
-  certificationId: PropTypes.number
+  match: PropTypes.object.isRequired
 };
 
 export default DocumentsCheck;

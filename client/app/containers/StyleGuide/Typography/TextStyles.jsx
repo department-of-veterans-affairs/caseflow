@@ -84,7 +84,7 @@ export default class TextStyles extends React.Component {
           <span>line-height: 1.5em/33px</span>
         </span>
       },
-      { textStyle: <p className="cf-body-copy">
+      { textStyle: <p>
             Body copy. A series of
             sentences together which
             make a paragraph.
@@ -96,11 +96,11 @@ export default class TextStyles extends React.Component {
           <span>line-height: 1.5em/26px</span>
         </span>
       },
-      { textStyle: <p className="cf-italic-body-copy">
+      { textStyle: <p><i>
             Italic body copy. A series of
             sentences together which
             make a paragraph.
-          </p>,
+          </i></p>,
         rules: <span>
           <span>font-family: ‘Source Sans Pro’</span>
           <span>font-style: Italic</span>
