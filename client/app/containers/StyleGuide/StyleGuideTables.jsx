@@ -41,6 +41,10 @@ export default function StyleGuideTables() {
     }
   ];
 
+  let rowClassNames = (rowObject) => {
+    return rowObject.likesSports ? 'cf-success' : '';
+  };
+
   let columnsWithAction = _.concat(columns, [
     {
       header: 'Poke',
@@ -74,7 +78,7 @@ export default function StyleGuideTables() {
       always be placed in the right most column of the table and
       should be right aligned with the edge of the table.
     </p>
-    <Table columns={columns} rowObjects={rowObjects} summary={summary} />
+    <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary} />
 
     <h3>Queues</h3>
     <p>
