@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import reducer from '../../../app/reader/reducer';
 import * as Constants from '../../../app/reader/constants';
 
-describe.only('Reader reducer', () => {
+describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 

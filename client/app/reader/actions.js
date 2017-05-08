@@ -74,10 +74,10 @@ export const selectAnnotation = (annotationId) => ({
 
 export const deleteAnnotation = (docId, annotationId) =>
   (dispatch) => {
-    // I don't know why, but the request was not going through if
-    // we were not listening for the promise.
     ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
-      then(console.log, console.log);
+      // I don't know why, but the request was not going through if
+      // we are not listening for the promise.
+      then(_.noop);
 
     dispatch({
       type: Constants.REQUEST_DELETE_ANNOTATION,
