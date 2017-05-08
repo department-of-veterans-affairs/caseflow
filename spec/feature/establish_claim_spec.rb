@@ -51,12 +51,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       fill_in "the number of people", with: "2"
       click_on "Update"
-      visit "/dispatch/establish-claim"
       expect(find_field("the number of people").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
-      expect(page).to have_content("Jane Smith 3 1 2")
+      expect(page).to have_content("1. Jane Smith 3 1 2")
+      expect(page).to have_content("2. Not logged in 2 0 2")
       expect(page).to have_content("Employee Total 5 1 4")
 
       # Two more users starting tasks should force the number of people to bump up to 3
@@ -75,9 +75,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("the number of people").value).to have_content("3")
 
       # Validate remanders are handled correctly
-      expect(page).to have_content("Jane Smith 3 1 2")
-      expect(page).to have_content("June Smith 2 1 1")
-      expect(page).to have_content("Jeffers Smith 2 1 1")
+      expect(page).to have_content("1. Jane Smith 3 1 2")
+      expect(page).to have_content("2. June Smith 2 1 1")
+      expect(page).to have_content("3. Jeffers Smith 2 1 1")
       expect(page).to have_content("Employee Total 7 3 4")
     end
 
