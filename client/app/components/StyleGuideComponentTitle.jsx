@@ -44,9 +44,9 @@ export default class StyleGuideComponentTitle extends React.Component {
         {isSubsection && <h3 id={id} className="cf-sg-subsection">{title}</h3>}
       </div>
 
-      <div className="cf-push-right">
+      {link && <div className="cf-push-right">
         <ViewSourceCodeLink link={link} />
-      </div>
+      </div>}
     </div>;
   }
 }
@@ -55,6 +55,6 @@ StyleGuideComponentTitle.props = {
   id: PropTypes.string.isRequired,
   isExternalLink: PropTypes.bool,
   isSubsection: PropTypes.bool,
-  link: PropTypes.string.isRequired,
+  link: PropTypes.string,
   title: PropTypes.string.isRequired
 };
