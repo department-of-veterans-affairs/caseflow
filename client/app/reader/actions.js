@@ -160,13 +160,19 @@ export const createAnnotation = (annotation) => (dispatch) => {
     });
 };
 
-
-export const handleSelectCommentIcon = (comment) => ({
-  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-  payload: {
-    scrollToSidebarComment: comment
-  }
-});
+export const handleSelectCommentIcon = (comment) => (dispatch) => {
+  // Normally, we would not want to fire two actions here.
+  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanup
+  // more generally, so I'm just going to leave it alone for now,
+  // and hack this in here.
+  dispatch(selectAnnotation(comment.id));
+  dispatch({
+    type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+    payload: {
+      scrollToSidebarComment: comment
+    }
+  });
+};
 
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,

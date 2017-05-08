@@ -223,11 +223,6 @@ export class Pdf extends React.Component {
     }
   }
 
-  onCommentClick = (comment) => () => {
-    this.props.onCommentClick(comment.id);
-    this.props.handleSelectCommentIcon(comment);
-  }
-
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
     this.setupPdf(this.props.file);
@@ -303,10 +298,10 @@ export class Pdf extends React.Component {
             y: comment.y * this.props.scale
           }}
           key={keyOfAnnotation(comment)}
-          selected={comment.selected}
+          selected={comment.id === this.props.selectedAnnotationId}
           uuid={comment.uuid}
           page={comment.page}
-          onClick={this.onCommentClick(comment)} />);
+          onClick={() => this.props.handleSelectCommentIcon(comment)} />);
 
       return acc;
     }, {});
@@ -378,6 +373,7 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
+  ..._.pick(state.ui, 'selectedAnnotationId'),
   comments: getAnnotationByDocumentId(state, ownProps.documentId)
 });
 
@@ -397,6 +393,7 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
+  selectedAnnotationId: React.PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -409,7 +406,6 @@ Pdf.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
-  onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number,
