@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) => ({
   handleEmployeeCountSave: (employeeCount) => () => {
     return ApiUtil.patch(`/dispatch/employee-count/${employeeCount}`).then((response) => {
       dispatch({
-        type: Constants.SET_USER_QUOTAS_FROM_API,
+        type: Constants.REQUEST_USER_QUOTAS_SUCCESS,
         payload: { userQuotas: response.body }
       });
     }, () => {

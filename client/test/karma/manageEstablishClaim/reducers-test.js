@@ -11,9 +11,9 @@ describe('getManageEstablishClaimInitialState', () => {
       userQuotas: [
         {
           user_name: null,
-          task_count: '5',
-          tasks_completed_count: '0',
-          tasks_left_count: '5'
+          task_count: 5,
+          tasks_completed_count: 0,
+          tasks_left_count: 5
         }
       ]
     });
@@ -65,24 +65,24 @@ describe('manageEstablishClaimReducer', () => {
     });
   });
 
-  context(Constants.SET_USER_QUOTAS_FROM_API, () => {
+  context(Constants.REQUEST_USER_QUOTAS_SUCCESS, () => {
     let state;
 
     beforeEach(() => {
       state = manageEstablishClaimReducer(initialState, {
-        type: Constants.SET_USER_QUOTAS_FROM_API,
+        type: Constants.REQUEST_USER_QUOTAS_SUCCESS,
         payload: { userQuotas: [
           {
             user_name: 'Draymond Green',
-            task_count: '7',
-            tasks_completed_count: '3',
-            tasks_left_count: '4'
+            task_count: 7,
+            tasks_completed_count: 3,
+            tasks_left_count: 4
           },
           {
             user_name: null,
-            task_count: '7',
-            tasks_completed_count: '0',
-            tasks_left_count: '7'
+            task_count: 7,
+            tasks_completed_count: 0,
+            tasks_left_count: 7
           }
         ] }
       });
