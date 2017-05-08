@@ -445,11 +445,11 @@ describe Task do
           before do
             allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
               Task.find(next_assignable_task.id)
-                  .update!(comment: "random comment to force lock_version to increment #{Time.now.to_s}")
+                  .update!(comment: "force lock_version to increment")
             end
           end
 
-          it "assigns the next task" do
+          it "retries and assigns the next task" do
             subject
             expect(next_assignable_task.reload).to have_attributes(
               aasm_state: "assigned",

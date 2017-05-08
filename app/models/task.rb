@@ -93,7 +93,7 @@ class Task < ActiveRecord::Base
       next_assignable.tap { |task| task && task.assign!(user) }
     rescue ActiveRecord::StaleObjectError
       # Recall method, try and get a different unassigned task
-      retry if retry_count < 2
+      retry if (retry_count += 1) < 2
       raise
     end
 
