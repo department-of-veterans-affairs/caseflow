@@ -9,7 +9,6 @@ import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import StyleGuideModal from './StyleGuide/StyleGuideModal';
 import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
-import TasksManagerIndex from './TasksManager/TasksManagerIndex';
 import TestPage from './TestPage';
 import Reader from '../reader/index.jsx';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
@@ -25,7 +24,6 @@ const Pages = {
   StyleGuideIndex,
   StyleGuideModal,
   StyleGuideTabs,
-  TasksManagerIndex,
   TestPage,
   UnpreparedTasksIndex
 };
