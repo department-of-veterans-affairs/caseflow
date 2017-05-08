@@ -16,7 +16,7 @@ class UserQuota < ActiveRecord::Base
   end
 
   def tasks_completed_count
-    @tasks_completed_count ||= task_klass.completed_on(date).completed_by(user).count
+    @tasks_completed_count ||= user ? task_klass.completed_on(date).completed_by(user).count : 0
   end
 
   def tasks_left_count

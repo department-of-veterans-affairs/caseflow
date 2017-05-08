@@ -26,6 +26,7 @@ export default class Table extends React.Component {
       rowObjects,
       summary,
       headerClassName = '',
+      rowClassNames = () => '',
       id
     } = this.props;
 
@@ -78,7 +79,7 @@ export default class Table extends React.Component {
     let Row = (props) => {
       let rowId = props.footer ? 'footer' : props.rowNumber;
 
-      return <tr id={`table-row-${rowId}`}>
+      return <tr id={`table-row-${rowId}`} className={!props.footer && rowClassNames(props.rowObject)}>
         {getColumns(props).map((column, columnNumber) =>
           <td
             key={columnNumber}
@@ -129,6 +130,7 @@ Table.propTypes = {
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rowClassNames: PropTypes.func,
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
