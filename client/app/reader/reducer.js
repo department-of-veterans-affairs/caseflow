@@ -450,8 +450,15 @@ export default (state = initialState, action = {}) => {
           $set: null
         }
       },
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          $set: undefined
+        }
+      },
       annotations: {
-        $apply: (annotations) => _.reject(annotations, { id: action.payload.annotationId })
+        [action.payload.annotationId]: {
+          $set: undefined
+        }
       }
     });
   case Constants.PLACE_ANNOTATION:
