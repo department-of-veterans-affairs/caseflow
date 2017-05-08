@@ -56,7 +56,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
       expect(page).to have_content("1. Jane Smith 3 1 2")
-      expect(page).to have_content("2. Not Logged In 2 0 2")
+      expect(page).to have_content("2. Not logged in 2 0 2")
       expect(page).to have_content("Employee Total 5 1 4")
 
       # Two more users starting tasks should force the number of people to bump up to 3
