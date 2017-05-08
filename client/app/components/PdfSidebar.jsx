@@ -87,7 +87,7 @@ export class PdfSidebar extends React.Component {
       }
 
       const handleClick = () => {
-        this.props.onJumpToComment(comment);
+        this.props.onJumpToComment(comment)();
         this.props.selectAnnotation(comment.id);
       }
 

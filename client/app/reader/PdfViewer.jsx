@@ -70,11 +70,6 @@ export class PdfViewer extends React.Component {
     if (nextDocId !== this.selectedDocId()) {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
-
-    if (nextProps.scrollToComment &&
-        nextProps.scrollToComment !== this.props.scrollToComment) {
-      this.onCommentClick(nextProps.scrollToComment.id);
-    }
   }
 
   selectedDocIndex = () => (
