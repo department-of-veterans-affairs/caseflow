@@ -1,4 +1,5 @@
 class Task < ActiveRecord::Base
+  include RetryHelper
   include AASM
 
   belongs_to :user
@@ -89,12 +90,9 @@ class Task < ActiveRecord::Base
     private
 
     def find_and_assign_next!(user)
-      retry_count ||= 0
-      next_assignable.tap { |task| task && task.assign!(user) }
-    rescue ActiveRecord::StaleObjectError
-      # Recall method, try and get a different unassigned task
-      retry if (retry_count += 1) < 2
-      raise
+      retry_when StandardError, limit: 3 do
+        next_assignable.tap { |task| task && task.assign!(user) }
+      end
     end
 
     def next_assignable
