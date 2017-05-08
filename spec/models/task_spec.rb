@@ -440,6 +440,23 @@ describe Task do
 
           expect(subject).to eq(next_assignable_task)
         end
+
+        context "when there is a race condition in assigning a task" do
+          before do
+            allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
+              Task.find(next_assignable_task.id)
+                  .update!(comment: "random comment to force lock_version to increment #{Time.now.to_s}")
+            end
+          end
+
+          it "assigns the next task" do
+            subject
+            expect(next_assignable_task.reload).to have_attributes(
+              aasm_state: "assigned",
+              user_id: user.id
+            )
+          end
+        end
       end
 
       context "when there are no assignable tasks" do

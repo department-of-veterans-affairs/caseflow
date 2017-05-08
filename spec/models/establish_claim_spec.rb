@@ -67,6 +67,13 @@ describe EstablishClaim do
 
       it { is_expected.to be_truthy }
     end
+
+    context "appeal decision type is nil" do
+      let(:vacols_record) { { template: :full_grant_decided, issues: [] } }
+
+      it { is_expected.to be_truthy }
+      end
+    end
   end
 
   context "#prepare_with_decision!" do

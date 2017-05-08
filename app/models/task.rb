@@ -89,7 +89,11 @@ class Task < ActiveRecord::Base
     private
 
     def find_and_assign_next!(user)
+      retry_count ||= 0
       next_assignable.tap { |task| task && task.assign!(user) }
+    rescue ActiveRecord::StaleObjectError
+      # Recall method, try and get a different unassigned task
+      retry if retry_count < 2
     end
 
     def next_assignable
@@ -188,6 +192,7 @@ class Task < ActiveRecord::Base
   # There are some additional criteria we need to know from our dependencies
   # whether a task is assignable by the current_user.
   def should_assign?
+    before_should_assign
     appeal.can_be_accessed_by_current_user? && !check_and_invalidate!
   end
 
@@ -196,6 +201,10 @@ class Task < ActiveRecord::Base
   end
 
   private
+
+  # No-op method used for testing purposes
+  def before_should_assign
+  end
 
   def recreate!
     self.class.create!(appeal_id: appeal_id, type: type)
