@@ -13,8 +13,7 @@ describe MetricsService do
       expect(subject).to eq(yield_val)
     end
 
-    # :nocov:
-    skip "sends prometheus metrics" do
+    it "sends prometheus metrics" do
       counter = PrometheusService.vbms_request_attempt_counter
       current_counter = counter.values[labels] || 0
 
@@ -30,7 +29,6 @@ describe MetricsService do
       # Ensure a value has been assigned
       expect(gauge.values[labels]).to be_truthy
     end
-    # :nocov:
 
     it "increments error counter on error" do
       counter = PrometheusService.vbms_request_error_counter

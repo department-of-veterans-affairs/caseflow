@@ -138,6 +138,7 @@ RSpec.configure do |config|
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    RequestStore.clear!
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
