@@ -116,7 +116,6 @@ export class PdfViewer extends React.Component {
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
             onCommentScrolledTo={this.props.onCommentScrolledTo}
-            onIconMoved={this.onIconMoved}
           />
           <PdfSidebar
             addNewTag={this.props.addNewTag}

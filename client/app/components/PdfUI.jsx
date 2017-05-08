@@ -161,9 +161,7 @@ export class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
-          onCommentClick={this.props.onCommentClick}
           onCommentScrolledTo={this.props.onCommentScrolledTo}
-          onIconMoved={this.props.onIconMoved}
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
@@ -203,9 +201,7 @@ PdfUI.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  onIconMoved: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,

@@ -224,8 +224,14 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
-        wrapper.find('Pdf').getNode().
-          onCommentClick(annotations[0])();
+        // TODO: The fact that this is here makes me think that they aren't able to click
+        // on the icons directly for whatever reason. Let's try this as an rspec test instead.
+        // wrapper.find('Pdf').getNode().
+        //   onCommentClick(annotations[0])();
+
+        console.log(wrapper.debug());
+
+        wrapper.find('.commentIcon-container').simulate('mouseUp');
 
         expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
           to.be.true;
