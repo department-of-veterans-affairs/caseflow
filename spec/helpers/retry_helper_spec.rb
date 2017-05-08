@@ -11,16 +11,14 @@ class TestClass
   def retry_method
     retry_when StandardError, limit: @limit do
       @call_count += 1
-      if @fail_on_counts.include?(@call_count)
-        fail "fun-error"
-      end
+      fail "fun-error" if @fail_on_counts.include?(@call_count)
     end
   end
 end
 
 RSpec.describe RetryHelper, type: :helper do
   describe "#retry_when" do
-    let (:fail_on_counts) { [] }
+    let(:fail_on_counts) { [] }
     let(:limit) { 1 }
     let(:obj) { TestClass.new(limit, fail_on_counts) }
     subject { obj.retry_method }
