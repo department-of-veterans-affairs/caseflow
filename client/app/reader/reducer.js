@@ -508,7 +508,11 @@ export default (state = initialState, action = {}) => {
       annotations: {
         [action.payload.annotation.id]: {
           $set: {
+            // These two duplicate fields exist on annotations throughout the app.
+            // I am not sure why this is, but we'll patch it here to make everything work.
             document_id: action.payload.annotation.documentId,
+            uuid: action.payload.annotation.id,
+
             ...action.payload.annotation
           }
         }
