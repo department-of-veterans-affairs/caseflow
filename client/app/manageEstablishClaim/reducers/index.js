@@ -3,7 +3,7 @@ import update from 'immutability-helper';
 
 const parseUserQuotasFromApi = (userQuotasFromApi) => {
   return userQuotasFromApi.map((userQuota, index) => ({
-    userName: `${index + 1}. ${userQuota.user_name || 'Not Logged In'}`,
+    userName: `${index + 1}. ${userQuota.user_name || 'Not logged in'}`,
     taskCount: parseInt(userQuota.task_count),
     tasksCompletedCount: parseInt(userQuota.tasks_completed_count),
     tasksLeftCount: parseInt(userQuota.tasks_left_count),
@@ -11,10 +11,10 @@ const parseUserQuotasFromApi = (userQuotasFromApi) => {
   }));
 };
 
-export const getManageEstablishClaimInitialState = (props = {}) => ({
+export const getManageEstablishClaimInitialState = (props = { userQuotas: [] }) => ({
   alert: null,
-  employeeCount: props.employeeCount,
-  userQuotas: parseUserQuotasFromApi(props.userQuotas || [])
+  employeeCount: props.userQuotas.length,
+  userQuotas: parseUserQuotasFromApi(props.userQuotas)
 });
 
 export const manageEstablishClaim = function(state = getManageEstablishClaimInitialState(), action) {
