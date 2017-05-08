@@ -17,14 +17,10 @@ export const onReceiveDocs = (documents) => (
   }
 );
 
-export const onReceiveAnnotations = (annotations) => (
-  (dispatch) => {
-    dispatch({
-      type: Constants.RECEIVE_ANNOTATIONS,
-      payload: { annotations }
-    });
-  }
-);
+export const onReceiveAnnotations = (annotations) => ({
+  type: Constants.RECEIVE_ANNOTATIONS,
+  payload: { annotations }
+});
 
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,

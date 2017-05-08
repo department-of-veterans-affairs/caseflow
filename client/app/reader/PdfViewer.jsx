@@ -17,7 +17,7 @@ import { getAnnotationByDocumentId } from '../reader/utils';
 export class PdfViewer extends React.Component {
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
-  isUserActive = () => this.props.editingCommentsForCurrentDoc || this.props.commentFlowState
+  isUserActive = () => this.props.editingCommentsForCurrentDoc
 
   keyListener = (event) => {
     if (!this.isUserActive()) {
@@ -152,7 +152,7 @@ const mapStateToProps = (state, ownProps) => ({
   editingCommentsForCurrentDoc:
     _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'commentFlowState', 'scrollToComment', 'hidePdfSidebar')
+  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

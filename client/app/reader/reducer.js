@@ -440,20 +440,9 @@ export default (state = initialState, action = {}) => {
   case Constants.OPEN_ANNOTATION_DELETE_MODAL:
     return openAnnotationDeleteModalFor(state, action.payload.annotationId);
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
-    return update(state, {
-      ui: {
-        deleteAnnotationModalIsOpenFor: {
-          $set: null
-        }
-      }
-    });
+    return openAnnotationDeleteModalFor(state, null);
   case Constants.REQUEST_DELETE_ANNOTATION:
-    return update(state, {
-      ui: {
-        deleteAnnotationModalIsOpenFor: {
-          $set: null
-        }
-      },
+    return update(openAnnotationDeleteModalFor(state, null), {
       editingAnnotations: {
         [action.payload.annotationId]: {
           $set: undefined
