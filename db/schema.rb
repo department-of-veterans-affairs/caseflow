@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170503153606) do
+ActiveRecord::Schema.define(version: 20170508215505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -253,10 +253,11 @@ ActiveRecord::Schema.define(version: 20170503153606) do
   add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string "station_id", null: false
-    t.string "css_id",     null: false
+    t.string "station_id",              null: false
+    t.string "css_id",                  null: false
     t.string "full_name"
     t.string "email"
+    t.string "roles",      default: [],              array: true
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
