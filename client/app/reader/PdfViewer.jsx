@@ -15,22 +15,6 @@ import { getAnnotationByDocumentId } from '../reader/utils';
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
-  onIconMoved = (uuid, coordinates, page) => {
-    this.props.annotationStorage.getAnnotation(
-      this.selectedDocId(),
-      uuid
-    ).then((annotation) => {
-      annotation.x = coordinates.x;
-      annotation.y = coordinates.y;
-      annotation.page = page;
-      // this.props.annotationStorage.editAnnotation(
-      //   this.selectedDocId(),
-      //   annotation.uuid,
-      //   annotation
-      // );
-    });
-  }
-
   // Returns true if the user is doing some action. i.e.
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.props.editingCommentsForCurrentDoc || this.props.commentFlowState
@@ -185,7 +169,6 @@ export default connect(
 )(PdfViewer);
 
 PdfViewer.propTypes = {
-  annotationStorage: PropTypes.object,
   doc: PropTypes.object,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({

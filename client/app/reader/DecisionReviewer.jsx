@@ -128,7 +128,6 @@ export class DecisionReviewer extends React.Component {
     return <PdfViewer
       addNewTag={this.props.addNewTag}
       removeTag={this.props.removeTag}
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       allDocuments={_.values(this.props.storeDocuments)}
       pdfWorker={this.props.pdfWorker}
