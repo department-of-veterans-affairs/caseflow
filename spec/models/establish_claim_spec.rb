@@ -72,7 +72,6 @@ describe EstablishClaim do
       let(:vacols_record) { { template: :full_grant_decided, issues: [] } }
 
       it { is_expected.to be_truthy }
-      end
     end
   end
 
