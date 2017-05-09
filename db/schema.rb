@@ -169,6 +169,8 @@ ActiveRecord::Schema.define(version: 20170509155046) do
     t.string   "contested_claims_procedures_applicable"
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
+    t.date     "nod_date"
+    t.date     "form9_date"
     t.string   "ssoc_required"
     t.text     "record_other_explanation"
     t.text     "remarks"
