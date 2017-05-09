@@ -69,11 +69,13 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
-    if (this.lastReadElement) {
-      const boundingBox = this.lastReadElement.getBoundingClientRect();
-      const halfWindowHeight = window.innerHeight / 2;
+    if (this.tbodyElem.querySelector('#read-indicator')) {
+      const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
+        takeWhile((childElem) => !childElem.querySelector('#read-indicator')).
+        sumBy((childElem) => childElem.getBoundingClientRect().height);
 
-      document.body.scrollTop = boundingBox.top - halfWindowHeight;
+      // This isn't working and I don't know why.
+      this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
     }
 
     this.setFilterIconPositions();
@@ -370,6 +372,7 @@ export class PdfListView extends React.Component {
               headerClassName="cf-document-list-header-row"
               bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
+              tbodyRef={(elem) => this.tbodyElem = elem}
             />
           </div>
         </div>

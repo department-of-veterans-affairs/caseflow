@@ -94,7 +94,7 @@ export default class Table extends React.Component {
     };
 
     let BodyRows = (props) => {
-      return <tbody className={this.props.bodyClassName}>
+      return <tbody className={this.props.bodyClassName} ref={this.props.tbodyRef}>
         {props.rowObjects.map((object, rowNumber) =>
           <Row
             rowObject={object}
@@ -126,6 +126,7 @@ export default class Table extends React.Component {
 }
 
 Table.propTypes = {
+  tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,
