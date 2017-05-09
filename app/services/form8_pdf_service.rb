@@ -11,7 +11,7 @@ class Form8PdfService
   FIELD_PAGES = Hash.new PDF_PAGE_1
   FIELD_PAGES[:remarks_continued] = PDF_PAGE_2
 
-  FIELD_LOCATIONS = {
+  FIELD_LOCATIONS_FORM8_V1 = {
     appellant_name: "TextField1[0]",
     appellant_relationship: "TextField1[1]",
     file_number: "TextField1[2]",
@@ -85,6 +85,31 @@ class Form8PdfService
     certification_date: "TextField1[22]"
   }.freeze
 
+  FIELD_LOCATIONS_FORM8_V2 = {
+    veteran_name: "TextField1[0]",
+    file_number: "TextField1[1]",
+    appellant_name: "TextField1[2]",
+    insurance_loan_number: "TextField1[3]",
+    nod_date: "Field32[0]",
+    soc_date: "Field32[1]",
+    form9_date: "Field32[2]",
+    representative: "TextField1[4]",
+    hearing_preference: {
+      "NO_HEARING_DESIRED" => "CheckBox21[0]",
+      "VIDEO" => "CheckBox21[1]",
+      "WASHINGTON_DC" => "CheckBox21[2]",
+      "TRAVEL_BOARD" => "CheckBox21[3]",
+      "NO_BOX_SELECTED" => "CheckBox21[4]"
+    },
+    remarks_initial: "TextField1[5]",
+    remarks_continued: "TextField1[14]",
+    certifying_office: "TextField1[6]",
+    certifying_username: "TextField1[7]",
+    certifying_official_name: "TextField1[8]",
+    certifying_official_title: "TextField1[9]",
+    certification_date: "TextField1[10]"
+  }.freeze
+
   NOTIFICATION_DATE_FIELDS = {
     service_connection_notification_date: :service_connection_for_initial,
     increased_rating_notification_date: :increased_rating_for_initial,
@@ -98,8 +123,9 @@ class Form8PdfService
   # just for the sake of it.
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
-  def self.pdf_values_for(form8)
-    FIELD_LOCATIONS.each_with_object({}) do |(attribute, location), pdf_values|
+  # rubocop:disable Metrics/MethodLength
+  def self.pdf_values_for(form8, field_locations)
+    field_locations.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
 
       if attribute == :certifying_official_title && value == "Other"
@@ -126,8 +152,6 @@ class Form8PdfService
       pdf_values[location] = value
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def self.save_pdf_for!(form8)
     tmp_location = tmp_location_for(form8)
@@ -135,12 +159,21 @@ class Form8PdfService
 
     File.delete(tmp_location) if File.exist?(tmp_location)
 
-    pdf_forms.fill_form(
-      empty_pdf_location,
-      tmp_location,
-      pdf_values_for(form8),
-      flatten: true
-    )
+    if FeatureToggle.enabled?(:form8_v2)
+      pdf_forms.fill_form(
+        empty_pdf_location("VA8_v2.pdf"),
+        tmp_location,
+        pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V2),
+        flatten: true
+      )
+    else
+      pdf_forms.fill_form(
+        empty_pdf_location("VA8.pdf"),
+        tmp_location,
+        pdf_values_for(form8, FIELD_LOCATIONS_FORM8_V1),
+        flatten: true
+      )
+    end
 
     File.delete(final_location) if File.exist?(final_location)
 
@@ -161,6 +194,9 @@ class Form8PdfService
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/MethodLength
 
   def self.output_location_for(form8)
     File.join(Rails.root, "tmp", "pdfs", form8.pdf_filename)
@@ -170,8 +206,8 @@ class Form8PdfService
     File.join(Rails.root, "tmp", "pdfs", form8.tmp_filename)
   end
 
-  def self.empty_pdf_location
-    File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+  def self.empty_pdf_location(file_name)
+    File.join(Rails.root, "lib", "pdfs", file_name)
   end
 
   def self.pdf_forms
