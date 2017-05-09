@@ -248,7 +248,7 @@ RSpec.feature "Reader" do
         expect(after_click_scroll - original_scroll).to be > 0
 
         # Make sure the comment icon and comment are shown as selected
-        expect(page).to have_css(".comment-container-selected")
+        expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
         id = "#{annotations[annotations.size - 2].id}-filter-1"
 

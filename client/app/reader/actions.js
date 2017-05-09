@@ -123,7 +123,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
       annotationId: annotation.id
     }
   });
-  
+
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).then(_.noop);
