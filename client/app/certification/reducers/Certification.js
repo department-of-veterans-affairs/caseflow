@@ -8,18 +8,6 @@ export const updateProgressBar = (state, action) => {
   });
 };
 
-export const onContinueClickFailed = (state, action) => {
-  return Object.assign({}, state, {
-    continueClicked: action.payload.continueClicked
-  });
-};
-
-export const onContinueClickSuccess = (state, action) => {
-  return Object.assign({}, state, {
-    continueClicked: action.payload.continueClicked
-  });
-};
-
 export const startUpdateCertification = (state) => {
   // setting the 'loading' attribute causes
   // a spinny spinner to appear over the continue

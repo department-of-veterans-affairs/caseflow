@@ -20,36 +20,6 @@ describe('.updateProgressBar', () => {
   });
 });
 
-describe('.onContinueClickFailed', () => {
-  it('should update continueClicked', () => {
-    let initialState = getBlankInitialState();
-    let action = {
-      type: Constants.ON_CONTINUE_CLICK_FAILED,
-      payload: {
-        continueClicked: true
-      }
-    };
-
-    expect(Certification.onContinueClickFailed(initialState, action).
-        continueClicked).to.eq(true);
-  });
-});
-
-describe('.onContinueClickSuccess', () => {
-  it('should update continueClicked', () => {
-    let initialState = getBlankInitialState();
-    let action = {
-      type: Constants.ON_CONTINUE_CLICK_SUCCESS,
-      payload: {
-        continueClicked: false
-      }
-    };
-
-    expect(Certification.onContinueClickSuccess(initialState, action).
-      continueClicked).to.eq(false);
-  });
-});
-
 describe('.startUpdateCertification', () => {
   it('should set loading to true', () => {
     let initialState = getBlankInitialState();

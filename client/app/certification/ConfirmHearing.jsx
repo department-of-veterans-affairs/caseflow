@@ -134,11 +134,11 @@ class UnconnectedConfirmHearing extends React.Component {
     const erroredFields = [];
 
     if (!hearingPreference && hearingDocumentIsInVbms) {
-      erroredFields.push('hearingDocumentIsInVbms');
+      erroredFields.push('hearingChangeQuestion_FOUND');
     }
 
     if (!hearingDocumentIsInVbms && !form9Type) {
-      erroredFields.push('hearingChangeQuestion');
+      erroredFields.push('hearingChangeQuestion_FOUND');
     }
 
     return erroredFields;
@@ -148,13 +148,10 @@ class UnconnectedConfirmHearing extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onContinueClickFailed();
+      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top);
 
       return;
     }
-
-    // Sets continueClicked to false for the next page.
-    this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
       hearingDocumentIsInVbms: this.props.hearingDocumentIsInVbms,
@@ -176,7 +173,6 @@ class UnconnectedConfirmHearing extends React.Component {
       loading,
       updateFailed,
       updateSucceeded,
-      continueClicked,
       match
     } = this.props;
 
@@ -210,10 +206,6 @@ class UnconnectedConfirmHearing extends React.Component {
       form9IsFormal;
     const shouldDisplayInformalForm9Question = shouldDisplayTypeOfForm9Question &&
       form9IsInformal;
-
-    // if the form input is not valid and the user has already tried to click continue,
-    // disable the continue button until the validation errors are fixed.
-    let disableContinue = (Boolean(this.getValidationErrors().length && continueClicked));
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -291,7 +283,7 @@ class UnconnectedConfirmHearing extends React.Component {
           }
         </div>
       <Footer
-        disableContinue={disableContinue}
+        disableContinue={false}
         loading={loading}
         onClickContinue={this.onClickContinue.bind(this)}
       />
@@ -327,10 +319,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
-  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
-
   onTypeOfForm9Change: (form9Type) => dispatch(actions.onTypeOfForm9Change(form9Type)),
 
   onHearingPreferenceChange: (hearingPreference) => dispatch(actions.onHearingPreferenceChange(hearingPreference)),
@@ -350,7 +338,6 @@ const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
   form9Date: state.form9Date,
-  continueClicked: state.continueClicked,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
@@ -375,8 +362,7 @@ ConfirmHearing.propTypes = {
   onTypeOfForm9Change: PropTypes.func,
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,
-  match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool
+  match: PropTypes.object.isRequired
 };
 
 export default ConfirmHearing;

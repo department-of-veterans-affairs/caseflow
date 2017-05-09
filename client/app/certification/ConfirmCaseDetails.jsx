@@ -82,18 +82,18 @@ export class ConfirmCaseDetails extends React.Component {
     // Unless the type of representative is "None",
     // we need a representative name.
     if (requiredValidator('Please enter a representative name.')(representativeName) && !this.representativeTypeIsNone()) {
-      erroredFields.push('representativeName');
+      erroredFields.push('Representative name');
     }
 
     // We always need a representative type.
     if (requiredValidator('Please enter a representative type.')(representativeType)) {
-      erroredFields.push('representativeType');
+      erroredFields.push('Representative type');
     }
 
     // If the representative type is "Other",
     // fill out the representative type.
     if (this.representativeTypeIsOther() && requiredValidator('Please enter the representative type.')(otherRepresentativeType)) {
-      erroredFields.push('otherRepresentativeType');
+      erroredFields.push('Specify other representative type');
     }
 
     return erroredFields;
@@ -104,13 +104,10 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onContinueClickFailed();
+      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top);
 
       return;
     }
-
-    // Sets continueClicked to false for the next page.
-    this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -131,7 +128,6 @@ export class ConfirmCaseDetails extends React.Component {
       loading,
       updateFailed,
       updateSucceeded,
-      continueClicked,
       match
     } = this.props;
 
@@ -147,14 +143,6 @@ export class ConfirmCaseDetails extends React.Component {
 
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
-
-    // if the form input is not valid and the user has already tried to click continue,
-    // disable the continue button until the validation errors are fixed.
-    let disableContinue = false;
-
-    if (this.getValidationErrors().length && continueClicked) {
-      disableContinue = true;
-    }
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -188,7 +176,7 @@ export class ConfirmCaseDetails extends React.Component {
         </div>
 
         <Footer
-          disableContinue={disableContinue}
+          disableContinue={false}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />
@@ -221,10 +209,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
-  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
-
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
   }
@@ -237,7 +221,6 @@ const mapStateToProps = (state) => ({
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
   loading: state.loading,
-  continueClicked: state.continueClicked
 });
 
 export default connect(

@@ -41,23 +41,23 @@ class UnconnectedSignAndCertify extends React.Component {
     const erroredFields = [];
 
     if (requiredValidator('Please enter a certifying office.')(this.props.certifyingOffice)) {
-      erroredFields.push('certifyingOffice');
+      erroredFields.push('Name and location of certifying office:');
     }
 
     if (requiredValidator('Please enter a certifying username.')(this.props.certifyingUsername)) {
-      erroredFields.push('certifyingUsername');
+      erroredFields.push('Organizational elements certifying appeal:');
     }
 
     if (requiredValidator('Please enter an official name.')(this.props.certifyingOfficialName)) {
-      erroredFields.push('certifyingOfficialName');
+      erroredFields.push('Name of certifying official:');
     }
 
     if (requiredValidator('Please enter an official title.')(this.props.certifyingOfficialTitle)) {
-      erroredFields.push('certifyingOfficialTitle');
+      erroredFields.push('Title of certifying official:');
     }
 
     if (dateValidator('Please enter a date.')(this.props.certificationDate)) {
-      erroredFields.push('certificationDate');
+      erroredFields.push('Date:');
     }
 
     return erroredFields;
@@ -68,12 +68,10 @@ class UnconnectedSignAndCertify extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onContinueClickFailed();
+      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top);
 
       return;
     }
-    // Sets continueClicked to false for the next page.
-    this.props.onContinueClickSuccess();
 
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
@@ -93,7 +91,6 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      continueClicked,
       loading,
       updateSucceeded,
       updateFailed,
@@ -108,14 +105,6 @@ class UnconnectedSignAndCertify extends React.Component {
     if (updateFailed) {
       // TODO: add real error handling and validated error states etc.
       return <div>500 500 error error</div>;
-    }
-
-    // if the form input is not valid and the user has already tried to click continue,
-    // disable the continue button until the validation errors are fixed.
-    let disableContinue = false;
-
-    if (this.getValidationErrors().length && continueClicked) {
-      disableContinue = true;
     }
 
     return <div>
@@ -152,7 +141,7 @@ class UnconnectedSignAndCertify extends React.Component {
         </div>
       </form>
     <Footer
-      disableContinue={disableContinue}
+      disableContinue={false}
       loading={loading}
       onClickContinue={this.onClickContinue.bind(this)}
     />
@@ -169,10 +158,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
   },
 
-  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
-
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
   }
@@ -184,7 +169,6 @@ const mapStateToProps = (state) => ({
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
-  continueClicked: state.continueClicked,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
@@ -202,8 +186,7 @@ SignAndCertify.propTypes = {
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
-  match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool
+  match: PropTypes.object.isRequired
 };
 
 export default SignAndCertify;
