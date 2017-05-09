@@ -55,7 +55,6 @@ module.exports = {
     "indent": ["warn", 2],
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
-    "react/jsx-no-bind": "warn",
     "jsx-quotes": "warn",
     "key-spacing": "warn",
     "keyword-spacing": "warn",
