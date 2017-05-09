@@ -1,6 +1,5 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import StyleGuideAction from './StyleGuideAction';
 import Button from '../../components/Button';
 import DropdownMenu from '../../components/DropdownMenu';
 
@@ -52,18 +51,18 @@ export default class StyleGuideFooter extends React.Component {
     <p>
      All of Caseflow Apps feature a minimal footer that contains the text
     “Built with ♡ by the Digital Service at the VA.” and a “Send Feedback” link.</p>
+
     <p>
+     Conveniently, if a developer hover’s over the word
+     “Built” they’ll see a tooltip showing the build date
+     of the app that they are viewing.</p>
 
-Conveniently, if a developer hover’s over the word
-    “Built” they’ll see a tooltip showing the build date
-    of the app that they are viewing.</p>
-
-     <div>
-        <nav className="cf-nav">
-          <a href="#" id="cf-logo-link">
-            <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-dispatch">
-            </span>Caseflow</h1>
-          </a>
+    <div>
+      <nav className="cf-nav">
+        <a href="#" id="cf-logo-link">
+          <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-dispatch">
+          </span>Caseflow</h1>
+        </a>
           <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
           <div className="cf-dropdown cf-nav-dropdown">
             <DropdownMenu
@@ -93,11 +92,11 @@ Conveniently, if a developer hover’s over the word
           name="Establish Next Claim"
           classNames={['usa-button-primary']}
         />
-        </div>
+      </div>
     </div>
 
-     <footer className="cf-txt-c cf-app-footer">
-      <div>
+    <footer className="cf-txt-c cf-app-footer">
+     <div>
         <div className="cf-push-left">
           Built with <abbr title="love">♡</abbr> by
           the <a href="https://www.usds.gov/">Digital Service at
@@ -112,6 +111,6 @@ Conveniently, if a developer hover’s over the word
         </div>
       </div>
     </footer>
-   </div>;
+  </div>;
   }
 }
