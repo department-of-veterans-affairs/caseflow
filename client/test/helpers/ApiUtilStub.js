@@ -14,7 +14,7 @@ export default {
       const promise = Promise.resolve();
 
       promise.end = _.noop;
-      
+
       return promise;
     };
 
