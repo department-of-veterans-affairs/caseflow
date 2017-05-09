@@ -560,6 +560,8 @@ export default (state = initialState, action = {}) => {
       const editedAnnotation = state.editingAnnotations[action.payload.annotationId];
 
       if (!editedAnnotation.comment) {
+        // If the user removed all text content in the annotation, ask them if they're
+        // intending to delete it.
         return openAnnotationDeleteModalFor(state, editedAnnotation.id);
       }
 

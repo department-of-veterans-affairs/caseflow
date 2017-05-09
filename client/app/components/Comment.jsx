@@ -12,16 +12,16 @@ export class Comment extends React.Component {
     this.props.onClick(this.props.uuid);
   }
 
-  onEditComment = () => {
-    this.props.onEditComment(this.props.uuid);
-  }
+  onEditComment = () => this.props.onEditComment(this.props.uuid)
+
+  onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid)
 
   getControlButtons = () => {
     return <div>
         <Button
           name="delete"
           classNames={['cf-btn-link comment-control-button']}
-          onClick={() => this.props.openAnnotationDeleteModal(this.props.uuid)}>
+          onClick={this.onClickDelete}>
           Delete
         </Button>
         <span className="comment-control-button-divider">
