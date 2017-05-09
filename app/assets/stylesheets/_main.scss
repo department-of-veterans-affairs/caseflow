@@ -354,15 +354,19 @@ select {
   cursor: pointer;
 }
 
-.cf-help-divider {
-  margin: 1rem 0;
-}
-
 .cf-gray {
   color: $color-gray;
 }
+<<<<<<< HEAD
 .cf-app-segment {
   &.cf-segment-margin {
      margin-bottom: 125px;
   }
 }
+=======
+
+// add to commons
+.cf-font-light {
+  font-weight: 300;
+}
+>>>>>>> master
