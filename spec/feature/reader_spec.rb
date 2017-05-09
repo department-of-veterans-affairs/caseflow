@@ -175,7 +175,7 @@ RSpec.feature "Reader" do
       expect(documents[0].reload.annotations.count).to eq(0)
 
       # Try to add an empty comment
-      add_comment_without_clicking_save("") 
+      add_comment_without_clicking_save("")
 
       expect(find("#button-save")["disabled"]).to eq("true")
 
