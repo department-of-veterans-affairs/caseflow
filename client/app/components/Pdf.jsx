@@ -273,12 +273,10 @@ export class Pdf extends React.Component {
 
   onPageChange = (currentPage) => {
     this.currentPage = currentPage;
-    if (this.props.onPageChange) {
-      this.props.onPageChange(
-        currentPage,
-        this.state.numPages,
-        this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
-    }
+    this.props.onPageChange(
+      currentPage,
+      this.state.numPages,
+      this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
   }
 
   componentDidMount = () => {
@@ -460,6 +458,7 @@ export default connect(
 
 
 Pdf.defaultProps = {
+  onPageChange: _.noop,
   scale: 1
 };
 
