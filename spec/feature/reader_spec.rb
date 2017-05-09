@@ -28,7 +28,7 @@ def get_size(element)
   }
 end
 
-def add_comment(text)
+def add_comment_without_clicking_save(text)
   # Add a comment
   click_on "button-AddComment"
   expect(page).to have_css(".cf-pdf-placing-comment")
@@ -38,6 +38,10 @@ def add_comment(text)
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
   fill_in "addComment", with: text
+end
+
+def add_comment(text)
+  add_comment_without_clicking_save(text)
   click_on "Save"
 end
 
@@ -171,10 +175,9 @@ RSpec.feature "Reader" do
       expect(documents[0].reload.annotations.count).to eq(0)
 
       # Try to add an empty comment
-      add_comment("")
+      add_comment_without_clicking_save("") 
 
-      # Should not show up
-      expect(page).to_not have_css(".comment-container")
+      expect(find("#button-save")["disabled"]).to eq("true")
 
       # Try to edit a comment to contain no text
       add_comment("A")
