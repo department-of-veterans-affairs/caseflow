@@ -14,6 +14,8 @@ export default class EstablishClaimComplete extends React.Component {
       buttonText,
       checklist,
       firstHeader,
+      handleAlert,
+      handleAlertClear,
       totalCasesCompleted,
       totalCasesToComplete,
       employeeCount,
@@ -67,6 +69,8 @@ export default class EstablishClaimComplete extends React.Component {
       buttonText={buttonText}
       casesAssigned={casesAssigned}
       totalCasesCompleted={totalCasesCompleted}
+      handleAlert={handleAlert}
+      handleAlertClear={handleAlertClear}
     />
     </div>;
   }
