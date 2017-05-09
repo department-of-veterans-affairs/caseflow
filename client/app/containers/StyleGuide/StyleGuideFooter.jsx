@@ -84,10 +84,9 @@ export default class StyleGuideFooter extends React.Component {
         />
       </div>
       <div className="cf-push-right">
-        <Button
-          name="Cancel"
-          classNames={['cf-btn-link', 'cf-adjacent-buttons']}
-        />
+        <span className="cf-button-associated-text-right">
+         30 cases assigned, 5 completed
+         </span>
         <Button
           name="Establish Next Claim"
           classNames={['usa-button-primary']}

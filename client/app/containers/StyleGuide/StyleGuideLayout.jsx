@@ -49,8 +49,9 @@ let StyleGuideLayout = () => {
       of the page without good reason.
     </p>
     <StyleGuideAction />
+     <br/>
     <StyleGuideFooter />
-
+    
   </div>;
 };
 
