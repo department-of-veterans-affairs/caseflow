@@ -199,10 +199,12 @@ pre {
 .cf-sg-section-source {
   overflow: auto;
   margin: 1.5rem auto;
+  line-height: 2.5em;
 
   h2,
   h3 {
     margin-bottom: 0;
+    display: inline-block;
   }
 }
 
