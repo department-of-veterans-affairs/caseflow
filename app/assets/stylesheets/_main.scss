@@ -357,16 +357,18 @@ select {
 .cf-gray {
   color: $color-gray;
 }
-<<<<<<< HEAD
-.cf-app-segment {
-  &.cf-segment-margin {
-     margin-bottom: 125px;
-  }
+
+// add to commons
+.cf-app-footer {
+   margin-top: 125px;
+
+   > div {
+     padding: 30px 0;
+     height: auto;
+   }
 }
-=======
 
 // add to commons
 .cf-font-light {
   font-weight: 300;
 }
->>>>>>> master

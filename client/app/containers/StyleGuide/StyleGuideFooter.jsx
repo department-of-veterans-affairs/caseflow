@@ -95,13 +95,12 @@ export default class StyleGuideFooter extends React.Component {
         </div>
     </div>
 
-     <footer className="cf-txt-c usa-grid cf-app-footer">
+     <footer className="cf-txt-c cf-app-footer">
       <div>
         <div className="cf-push-left">
-          <span>Built</span> with <abbr title="love">♡</abbr>by the
-          <a href="https://www.usds.gov/"> 
-           Digital Service at the
-           <abbr title="Department of Veterans Affairs">VA</abbr>
+          Built with <abbr title="love">♡</abbr> by 
+          the <a href="https://www.usds.gov/">Digital Service at
+          the <abbr title="Department of Veterans Affairs">VA</abbr>
           </a>
         </div>
         <div className="cf-push-right">
