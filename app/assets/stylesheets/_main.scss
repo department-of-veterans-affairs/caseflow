@@ -361,3 +361,8 @@ select {
 .cf-gray {
   color: $color-gray;
 }
+.cf-app-segment {
+  &.cf-segment-margin {
+     margin-bottom: 125px;
+  }
+}
