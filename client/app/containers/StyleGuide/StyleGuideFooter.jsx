@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import DropdownMenu from '../../components/DropdownMenu';
 
 export default class StyleGuideFooter extends React.Component {
-   constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       menu: false
@@ -41,7 +41,8 @@ export default class StyleGuideFooter extends React.Component {
     } = this.props;
 
     name = 'Dispatch';
-  return <div>
+
+    return <div>
       <StyleGuideComponentTitle
         title="Footer"
         id="footer"
@@ -52,8 +53,9 @@ export default class StyleGuideFooter extends React.Component {
      All of Caseflow Apps feature a minimal footer that contains the text
     “Built with ♡ by the Digital Service at the VA.” and a “Send Feedback” link.</p>
     <p>
-     Conveniently, if a developer hover’s over the word
-    “Built” they’ll see a tooltip showing the build date 
+
+Conveniently, if a developer hover’s over the word
+    “Built” they’ll see a tooltip showing the build date
     of the app that they are viewing.</p>
 
      <div>
@@ -97,13 +99,13 @@ export default class StyleGuideFooter extends React.Component {
      <footer className="cf-txt-c cf-app-footer">
       <div>
         <div className="cf-push-left">
-          Built with <abbr title="love">♡</abbr> by 
+          Built with <abbr title="love">♡</abbr> by
           the <a href="https://www.usds.gov/">Digital Service at
           the <abbr title="Department of Veterans Affairs">VA</abbr>
           </a>
         </div>
         <div className="cf-push-right">
-          <a target="_blank" 
+          <a target="_blank"
            href="#feedback">
            Send feedback
           </a>

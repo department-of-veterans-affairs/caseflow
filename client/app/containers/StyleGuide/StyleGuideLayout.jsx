@@ -51,7 +51,7 @@ let StyleGuideLayout = () => {
     <StyleGuideAction />
      <br/>
     <StyleGuideFooter />
-    
+
   </div>;
 };
 
