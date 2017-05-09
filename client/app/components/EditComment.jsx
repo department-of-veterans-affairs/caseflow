@@ -35,6 +35,7 @@ export default class EditComment extends React.Component {
               Cancel
             </Button>
             <Button
+              disabled={this.props.disableOnEmpty && !this.props.comment.comment}
               name="save"
               onClick={this.onSaveCommentEdit}>
               Save
@@ -51,6 +52,7 @@ EditComment.defaultProps = {
 
 EditComment.propTypes = {
   comment: React.PropTypes.object.isRequired,
+  disableOnEmpty: React.PropTypes.bool,
   id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func

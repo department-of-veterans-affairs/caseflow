@@ -141,12 +141,6 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
 export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
 export const createAnnotation = (annotation) => (dispatch) => {
-  if (!annotation.comment) {
-    dispatch(stopPlacingAnnotation());
-
-    return;
-  }
-
   dispatch({
     type: Constants.REQUEST_CREATE_ANNOTATION,
     payload: {
