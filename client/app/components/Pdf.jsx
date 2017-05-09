@@ -349,6 +349,7 @@ export class Pdf extends React.Component {
     event.preventDefault();
   }
 
+  // eslint-disable-next-line max-statements
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
@@ -392,7 +393,7 @@ export class Pdf extends React.Component {
 
       // Only pages that are the correct scale should be visible
       const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
-      const pageContentsVisibleClass = classNames({ 
+      const pageContentsVisibleClass = classNames({
         'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
       });
 
