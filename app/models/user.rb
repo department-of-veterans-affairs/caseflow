@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :ip_address, :admin_roles
-  attr_writer :regional_office, :roles
+  attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
 
@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   end
 
   def roles
-    (@roles || []).inject([]) do |result, role|
+    (read_attribute(:roles) || []).inject([]) do |result, role|
       result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
     end
   end
@@ -45,13 +45,11 @@ class User < ActiveRecord::Base
   end
 
   def can?(thing)
-    return false if roles.nil?
     return true if admin? && admin_roles.include?(thing)
     roles.include? thing
   end
 
   def admin?
-    return false if roles.nil?
     roles.include? "System Admin"
   end
 
