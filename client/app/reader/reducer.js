@@ -130,6 +130,13 @@ export const initialState = {
     }
   },
   tagOptions: [],
+
+  /**
+   * `editingAnnotations` is an object of annotations that are currently being edited.
+   * When a user starts editing an annotation, we copy it from `annotations` to `editingAnnotations`.
+   * To commit the edits, we copy from `editingAnnotations` back into `annotations`.
+   * To discard the edits, we delete from `editingAnnotations`.
+   */
   editingAnnotations: {},
   annotations: {},
   documents: {}
