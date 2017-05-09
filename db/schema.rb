@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170508215505) do
+ActiveRecord::Schema.define(version: 20170509155046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 20170508215505) do
     t.string   "agent_accredited"
     t.string   "form_646_of_record"
     t.string   "form_646_not_of_record_explanation"
+    t.string   "hearing_preference"
     t.string   "hearing_requested"
     t.string   "hearing_held"
     t.string   "hearing_transcript_on_file"
@@ -168,6 +169,8 @@ ActiveRecord::Schema.define(version: 20170508215505) do
     t.string   "contested_claims_procedures_applicable"
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
+    t.date     "nod_date"
+    t.date     "form9_date"
     t.string   "ssoc_required"
     t.text     "record_other_explanation"
     t.text     "remarks"
