@@ -70,14 +70,14 @@ export const selectAnnotation = (annotationId) => ({
 
 export const deleteAnnotation = (docId, annotationId) =>
   (dispatch) => {
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
-
     dispatch({
       type: Constants.REQUEST_DELETE_ANNOTATION,
       payload: {
         annotationId
       }
     });
+
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
   };
 
 export const requestMoveAnnotation = (annotation) => (dispatch) => {
