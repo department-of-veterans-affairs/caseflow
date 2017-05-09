@@ -102,7 +102,7 @@ export const cancelEditAnnotation = (annotationId) => ({
     annotationId
   }
 });
-export const updateAnnotationContent = (annotationId, content) => ({
+export const updateAnnotationContent = (content, annotationId) => ({
   type: Constants.UPDATE_ANNOTATION_CONTENT,
   payload: {
     annotationId,

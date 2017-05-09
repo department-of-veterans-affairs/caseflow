@@ -78,10 +78,11 @@ export class PdfSidebar extends React.Component {
       if (comment.editing) {
         return <EditComment
             id="editCommentBox"
-            onCancelCommentEdit={() => this.props.cancelEditAnnotation(comment.uuid)}
-            onChange={_.partial(this.props.updateAnnotationContent, comment.uuid)}
+            comment={comment}
+            onCancelCommentEdit={this.props.cancelEditAnnotation}
+            onChange={this.props.updateAnnotationContent}
             value={comment.comment}
-            onSaveCommentEdit={() => this.props.requestEditAnnotation(comment)}
+            onSaveCommentEdit={this.props.requestEditAnnotation}
             key={keyOfAnnotation(comment)}
           />;
       }
@@ -180,11 +181,11 @@ export class PdfSidebar extends React.Component {
           <div className="cf-pdf-comment-list">
             {this.props.placedButUnsavedAnnotation &&
               <EditComment
+                comment={this.props.placedButUnsavedAnnotation}
                 id="addComment"
                 onChange={this.props.updateNewAnnotationContent}
-                value={this.props.placedButUnsavedAnnotation.comment}
                 onCancelCommentEdit={this.props.stopPlacingAnnotation}
-                onSaveCommentEdit={() => this.props.createAnnotation(this.props.placedButUnsavedAnnotation)} />}
+                onSaveCommentEdit={this.props.createAnnotation} />}
             {comments}
           </div>
         </div>

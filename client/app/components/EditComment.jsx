@@ -10,7 +10,11 @@ export default class EditComment extends React.Component {
     commentBox.focus();
   }
 
-  onChange = (event) => this.props.onChange(event.target.value);
+  onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
+
+  onCancelCommentEdit = () => this.props.onCancelCommentEdit(this.props.comment.uuid)
+
+  onSaveCommentEdit = () => this.props.onSaveCommentEdit(this.props.comment)
 
   render() {
     return <div>
@@ -20,19 +24,19 @@ export default class EditComment extends React.Component {
           aria-label="Edit Comment"
           id={this.props.id}
           onChange={this.onChange}
-          value={this.props.value}
+          value={this.props.comment.comment}
         />
         <div className="comment-save-button-container">
           <span className="cf-right-side">
             <Button
               name="cancel"
               classNames={['cf-btn-link']}
-              onClick={this.props.onCancelCommentEdit}>
+              onClick={this.onCancelCommentEdit}>
               Cancel
             </Button>
             <Button
               name="save"
-              onClick={this.props.onSaveCommentEdit}>
+              onClick={this.onSaveCommentEdit}>
               Save
             </Button>
           </span>
@@ -46,7 +50,7 @@ EditComment.defaultProps = {
 };
 
 EditComment.propTypes = {
-  value: React.PropTypes.string,
+  comment: React.PropTypes.object.isRequired,
   id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func
