@@ -136,7 +136,7 @@
 
 .cf-button-associated-text-right {
   color: $color-gray;
-  margin-right: 10px;
+  margin-right: 30px;
   line-height: 35px;
 }
 
@@ -281,4 +281,13 @@ select {
 
 .cf-icon-button {
   cursor: pointer;
+}
+
+.cf-gray {
+  color: $color-gray;
+}
+
+// add to commons
+.cf-font-light {
+  font-weight: 300;
 }
