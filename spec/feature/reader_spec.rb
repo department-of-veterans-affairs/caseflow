@@ -14,6 +14,20 @@ def in_viewport(element)
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
 end
 
+def get_size(element)
+  size = page.driver.evaluate_script <<-EOS
+    function() {
+      var ele = document.getElementById('#{element}');
+      var rect = ele.getBoundingClientRect();
+      return [rect.width, rect.height];
+    }();
+  EOS
+  {
+    width: size[0],
+    height: size[1]
+  }
+end
+
 def add_comment(text)
   # Add a comment
   click_on "button-AddComment"
@@ -68,7 +82,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 3
+          vbms_document_id: 4
         )
       ]
     end
@@ -297,7 +311,58 @@ RSpec.feature "Reader" do
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
       scroll_to("scrollWindow", 500)
-      expect(page).to have_content("Banana. Banana who", wait: 3)
+      expect(page).to have_content("Banana. Banana who", wait: 4)
+    end
+
+    scenario "Zooming changes the size of pages" do
+      scroll_amount = 500
+      zoom_rate = 1.3
+
+      # The margin of error we accept due to float arithmatic rounding
+      size_margin_of_error = 5
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
+
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
+
+      old_height_1 = get_size("pageContainer1")[:height]
+      old_height_10 = get_size("pageContainer10")[:height]
+
+      scroll_to("scrollWindow", scroll_amount)
+
+      find("#button-zoomIn").click
+
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
+
+      # Rendered page is zoomed
+      ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
+      expect(ratio).to eq(zoom_rate)
+
+      # Non-rendered page is zoomed
+      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
+      expect(ratio).to eq(zoom_rate)
+
+      # We should scroll further down since we zoomed but not further than the zoom rate
+      # times how much we've scrolled.
+      expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
+
+      # Zoom out to find text on the last page
+      expect(page).to_not have_content("Office of the General Counsel (022D)")
+
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+
+      expect(page).to have_content("Office of the General Counsel (022D)")
+
+      find("#button-fit").click
+
+      # Fit to screen should make the height of the page the same as the height of the scroll window
+      height_difference = get_size("pageContainer1")[:height].round - get_size("scrollWindow")[:height].round
+      expect(height_difference.abs).to be < size_margin_of_error
     end
 
     scenario "Open single document view and open/close sidebar" do
