@@ -65,7 +65,7 @@ describe('Pdf', () => {
           wrapper.instance().setupPdf('test.pdf');
           await pause(DOCUMENT_DEBOUNCE_TIME + 50);
 
-          expect(onPageChange.calledWith(1, PdfJsStub.numPages)).to.be.true;
+          expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
         }));
       });
     });
@@ -81,14 +81,6 @@ describe('Pdf', () => {
         it('creates a new page', () => {
           expect(draw.callCount).to.equal(0);
           wrapper.setProps({ file: 'newFile' });
-          expect(draw.callCount).to.equal(1);
-        });
-      });
-
-      context('when scale is set', () => {
-        it('creates a new page', () => {
-          expect(draw.callCount).to.equal(0);
-          wrapper.setProps({ scale: 2 });
           expect(draw.callCount).to.equal(1);
         });
       });
