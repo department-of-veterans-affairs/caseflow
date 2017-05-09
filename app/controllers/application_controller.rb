@@ -159,7 +159,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_system_admin
-    verify_authorized_roles("System Admin")
+    redirect_to "/unauthorized" if !current_user.admin?
   end
 
   def on_vbms_error
