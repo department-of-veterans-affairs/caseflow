@@ -8,18 +8,17 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
 
-// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss
-// we need it defined here to be able to expand/contract margin between pages
+// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
+// We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
 const RENDER_WITHIN_SCROLL = 1000;
-// This is the default page width
+// This is the default page width.
 const PAGE_WIDTH = 1;
 // This comes from _pdf_viewer.css and is the default height
-// of the pages in the PDF, we need it defined here to be
+// of the pages in the PDF. We need it defined here to be
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
-
 
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
