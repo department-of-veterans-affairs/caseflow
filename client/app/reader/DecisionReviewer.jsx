@@ -26,11 +26,11 @@ export class DecisionReviewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.appealDocuments !== nextProps.appealDocuments) {
+    if (!_.isEqual(this.props.appealDocuments, nextProps.appealDocuments)) {
       this.props.onReceiveDocs(nextProps.appealDocuments);
     }
 
-    if (this.props.annotations !== nextProps.annotations) {
+    if (!_.isEqual(this.props.annotations, nextProps.annotations)) {
       this.props.onReceiveAnnotations(nextProps.annotations);
     }
   }
