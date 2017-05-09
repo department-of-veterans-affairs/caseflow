@@ -78,7 +78,6 @@ i {
   width: 17px;
   height: 17px;
   margin-right: 0.25em;
-  margin-left: -0.4em;
 }
 
 .cf-active {
@@ -210,5 +209,72 @@ pre {
 .cf-sg-tables-section {
   table:last-child {
     margin-bottom: 6rem;
+  }
+}
+
+.cf-sg-typography-text-styles {
+  position: relative;
+  border: 0;
+  margin-top: 3rem;
+
+  caption {
+    position: absolute;
+    left: -99999px;
+  }
+
+  thead {
+    position: absolute;
+    left: -99999px;
+  }
+
+  tbody {
+    tr {
+      border: 0;
+
+      td {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        vertical-align: top;
+        width: 50%;
+
+        &:first-child {
+          > * {
+            position: relative;
+            top: -.25em;
+          }
+        }
+
+        &:last-child {
+          width: 70%;
+          color: $color-gray;
+          font: 60% Monaco;
+          padding-bottom: 48px;
+          padding-left: 10%;
+        }
+
+        p {
+          margin: 0;
+          padding: 0;
+        }
+
+        span {
+          display: block;
+          white-space: nowrap;
+        }
+      }
+
+      &:last-child {
+        td {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.cf-sg-font-family-examples {
+  p {
+    font-size: 24px;
   }
 }
