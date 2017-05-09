@@ -14,14 +14,21 @@ export default class EstablishClaimComplete extends React.Component {
       buttonText,
       checklist,
       firstHeader,
-      secondHeader,
       totalCasesCompleted,
       totalCasesToComplete,
-      employeeCount
+      employeeCount,
+      veteranName
     } = this.props;
 
-    let casesAssigned, employeeCountInt,
-      hasQuotaReached, quotaReachedMessage, totalCases;
+    let availableTasksMessage, casesAssigned, employeeCountInt,
+      hasQuotaReached, quotaReachedMessage, secondHeader, totalCases;
+
+    availableTasksMessage = availableTasks ? 'You can now establish the next claim or return to your Work History.' :
+                            'You can now close Caseflow or return to your Work History.';
+
+    secondHeader = <span>{veteranName}'s claim has been processed. <br />
+      {availableTasksMessage}
+    </span>;
 
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
@@ -72,7 +79,7 @@ EstablishClaimComplete.propTypes = {
   checklist: PropTypes.array,
   employeeCount: PropTypes.string,
   firstHeader: PropTypes.string,
-  secondHeader: PropTypes.string,
   totalCasesAssigned: PropTypes.number,
-  totalCasesCompleted: PropTypes.number
+  totalCasesCompleted: PropTypes.number,
+  veteranName: PropTypes.string
 };
