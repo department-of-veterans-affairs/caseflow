@@ -61,7 +61,8 @@ class Reader::DocumentsController < ApplicationController
   end
 
   def verify_access
-    verify_feature_enabled(:reader) &&
-      verify_authorized_roles("Reader")
+    verify_feature_enabled(:reader)
+    # TODO(jd): Readd this once all pilot users have the "Reader" function
+    # && verify_authorized_roles("Reader")
   end
 end
