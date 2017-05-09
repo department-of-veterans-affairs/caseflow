@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   end
 
   def roles
-    (read_attribute(:roles) || []).inject([]) do |result, role|
+    (self[:roles] || []).inject([]) do |result, role|
       result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
     end
   end
