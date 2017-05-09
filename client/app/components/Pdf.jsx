@@ -219,8 +219,8 @@ export class Pdf extends React.Component {
       // the top of the next page is within a thousand pixels of
       // the current view we render it. If the bottom of the page
       // above is within a thousand pixels of the current view
-      // we also redner it.
-      // TODO: Make this more robust and avoid magic numbers.
+      // we also render it.
+      // TODO: Make this more robust.
       if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
           boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
         this.renderPage(index, this.props.file);
