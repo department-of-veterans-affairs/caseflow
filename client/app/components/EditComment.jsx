@@ -10,6 +10,8 @@ export default class EditComment extends React.Component {
     commentBox.focus();
   }
 
+  onChange = (event) => this.props.onChange(event.target.value);
+
   render() {
     return <div>
         <textarea
@@ -17,7 +19,7 @@ export default class EditComment extends React.Component {
           name="Edit Comment"
           aria-label="Edit Comment"
           id={this.props.id}
-          onChange={(event) => this.props.onChange(event.target.value)}
+          onChange={this.onChange}
           value={this.props.value}
         />
         <div className="comment-save-button-container">

@@ -347,15 +347,13 @@ export class Pdf extends React.Component {
       }
       acc[comment.page].push(
         <CommentIcon
+          comment={comment}
           position={{
             x: comment.x * this.props.scale,
             y: comment.y * this.props.scale
           }}
           key={keyOfAnnotation(comment)}
-          selected={comment.id === this.props.selectedAnnotationId}
-          uuid={comment.uuid}
-          page={comment.page}
-          onClick={() => this.props.handleSelectCommentIcon(comment)} />);
+          onClick={this.props.handleSelectCommentIcon} />);
 
       return acc;
     }, {});
@@ -443,7 +441,6 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
-  ..._.pick(state.ui, 'selectedAnnotationId'),
   comments: getAnnotationByDocumentId(state, ownProps.documentId),
   allAnnotations: state.annotations
 });
