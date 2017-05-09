@@ -106,7 +106,6 @@ describe Form8PdfService do
       Form8PdfService.pdf_values_for(form8, form_fields)
     end
 
-
     it "switches to form8_v2 correctly" do
       expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[0]" => "Joe Patriot",
                                           "form1[0].#subform[0].#area[0].TextField1[1]" => "1234QWERTY",
