@@ -181,12 +181,12 @@ export default (state = initialState, action = {}) => {
       {
         annotations: {
           $set: _(action.payload.annotations).
-            map((annotation) => ([annotation.id, {
+            map((annotation) => ({
               documentId: annotation.document_id,
               uuid: annotation.id,
               ...annotation
-            }])).
-            fromPairs().
+            })).
+            keyBy('id').
             value()
         }
       }
