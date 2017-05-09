@@ -70,10 +70,7 @@ export const selectAnnotation = (annotationId) => ({
 
 export const deleteAnnotation = (docId, annotationId) =>
   (dispatch) => {
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
-      // I don't know why, but the request was not going through if
-      // we are not listening for the promise.
-      then(_.noop);
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
 
     dispatch({
       type: Constants.REQUEST_DELETE_ANNOTATION,
@@ -93,7 +90,7 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).then(_.noop);
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
 };
 
 export const cancelEditAnnotation = (annotationId) => ({
@@ -126,7 +123,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).then(_.noop);
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
 };
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
