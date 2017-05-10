@@ -1,4 +1,4 @@
-source ENV['GEM_SERVER_URL'] || 'http://rubygems.org'
+source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "1eb160a7feebe7df1c39c27fbd8b136954b4d4f0"
 
