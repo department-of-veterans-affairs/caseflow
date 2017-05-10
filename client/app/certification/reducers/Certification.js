@@ -8,6 +8,12 @@ export const updateProgressBar = (state, action) => {
   });
 };
 
+export const changeErroredFields = (state, action) => {
+  return Object.assign({}, state, {
+    erroredFields: action.payload.erroredFields
+  });
+};
+
 export const startUpdateCertification = (state) => {
   // setting the 'loading' attribute causes
   // a spinny spinner to appear over the continue

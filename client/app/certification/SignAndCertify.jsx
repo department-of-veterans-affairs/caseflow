@@ -64,14 +64,16 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   onClickContinue() {
-
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top);
+      this.props.changeErroredFields(erroredFields);
+      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
 
       return;
     }
+
+    this.props.changeErroredFields(null);
 
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
@@ -91,6 +93,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
+      erroredFields,
       loading,
       updateSucceeded,
       updateFailed,
@@ -136,6 +139,7 @@ class UnconnectedSignAndCertify extends React.Component {
           <DateSelector
             name="Date:"
             value={certificationDate}
+            errorMessage={(erroredFields ? "Please enter a date." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
@@ -154,6 +158,10 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
+  changeErroredFields: (erroredFields) => {
+    dispatch(certificationActions.changeErroredFields(erroredFields))
+  },
+
   onSignAndCertifyFormChange: (fieldName, value) => {
     dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
   },
@@ -169,6 +177,7 @@ const mapStateToProps = (state) => ({
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
+  erroredFields: state.erroredFields,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
@@ -186,6 +195,7 @@ SignAndCertify.propTypes = {
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
+  erroredFields: PropTypes.array,
   match: PropTypes.object.isRequired
 };
 

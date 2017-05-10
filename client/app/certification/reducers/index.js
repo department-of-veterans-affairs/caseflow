@@ -85,10 +85,8 @@ export const certificationReducers = function(state = initialState, action = {})
       loading: false,
       showCancellationModal: false
     });
-  case Constants.ON_CONTINUE_CLICK_FAILED:
-    return CertificationReducers.onContinueClickFailed(state, action);
-  case Constants.ON_CONTINUE_CLICK_SUCCESS:
-    return CertificationReducers.onContinueClickSuccess(state, action);
+  case Constants.CHANGE_ERRORED_FIELDS:
+    return CertificationReducers.changeErroredFields(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return CertificationReducers.startUpdateCertification(state);
   case Constants.CERTIFICATION_UPDATE_FAILURE:

@@ -104,7 +104,7 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top);
+      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
 
       return;
     }
