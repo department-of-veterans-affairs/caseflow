@@ -19,10 +19,6 @@ let StyleGuideFormFields = () => {
         isSubsection={true} />
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
-      <StyleGuidePlaceholder
-        title="Character Limit"
-        id="character_limit"
-        isSubsection={true} />
       <StyleGuideInlineForm />
   </div>
 
