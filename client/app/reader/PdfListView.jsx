@@ -81,6 +81,8 @@ export class PdfListView extends React.Component {
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
+  getTbodyRef = (elem) => this.tbodyElem = elem;
+
   componentDidUpdate() {
     this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
     this.setFilterIconPositions();
@@ -200,10 +202,7 @@ export class PdfListView extends React.Component {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
                 id="read-indicator"
-                aria-label="Most recently read document indicator"
-                ref={(element) => {
-                  this.lastReadElement = element;
-                }}>
+                aria-label="Most recently read document indicator">
                   {rightTriangle()}
                 </span>;
             }
@@ -365,7 +364,7 @@ export class PdfListView extends React.Component {
               headerClassName="cf-document-list-header-row"
               bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
-              tbodyRef={(elem) => this.tbodyElem = elem}
+              tbodyRef={this.getTbodyRef}
             />
           </div>
         </div>
