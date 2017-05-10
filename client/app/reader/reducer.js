@@ -2,8 +2,12 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
-import update from 'immutability-helper';
+import { newContext } from 'immutability-helper';
 import { searchString } from './search';
+
+const update = newContext();
+
+update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -451,14 +455,10 @@ export default (state = initialState, action = {}) => {
   case Constants.REQUEST_DELETE_ANNOTATION:
     return update(openAnnotationDeleteModalFor(state, null), {
       editingAnnotations: {
-        [action.payload.annotationId]: {
-          $set: undefined
-        }
+        $unset: action.payload.annotationId
       },
       annotations: {
-        [action.payload.annotationId]: {
-          $set: undefined
-        }
+        $unset: action.payload.annotationId
       }
     });
   case Constants.REQUEST_MOVE_ANNOTATION:
@@ -537,9 +537,7 @@ export default (state = initialState, action = {}) => {
   case Constants.CANCEL_EDIT_ANNOTATION:
     return update(state, {
       editingAnnotations: {
-        [action.payload.annotationId]: {
-          $set: undefined
-        }
+        $unset: action.payload.annotationId
       }
     });
   case Constants.UPDATE_ANNOTATION_CONTENT:
@@ -574,9 +572,7 @@ export default (state = initialState, action = {}) => {
 
       return update(state, {
         editingAnnotations: {
-          [action.payload.annotationId]: {
-            $set: undefined
-          }
+          $unset: action.payload.annotationId
         },
         annotations: {
           [action.payload.annotationId]: {
