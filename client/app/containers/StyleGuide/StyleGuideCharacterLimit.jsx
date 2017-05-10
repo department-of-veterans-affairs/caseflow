@@ -29,7 +29,7 @@ export default class StyleGuideCharacterLimit extends React.Component {
         the text box does not allow for more characters to be inserted.
       </p>
       <TextareaField
-        name="Enter your text here"
+        name="Enter your text here (with character limit)"
         value={this.state.value}
         onChange={(value) => {
           this.setState({ value });
