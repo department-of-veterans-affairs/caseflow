@@ -34,12 +34,12 @@ export default class StyleGuideFooter extends React.Component {
     ];
   }
 
-  
 
   render() {
     let {
       name
     } = this.props;
+
     name = 'Dispatch';
 
     return <div>
