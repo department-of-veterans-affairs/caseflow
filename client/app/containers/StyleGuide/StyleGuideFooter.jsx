@@ -100,7 +100,7 @@ export default class StyleGuideFooter extends React.Component {
     <footer className="cf-txt-c cf-app-footer">
      <div>
         <div className="cf-push-left">
-           <span title="Build date shows up here">Built </span> with <abbr title="love">♡</abbr> by
+           <span title="Recent build date goes here">Built </span> with <abbr title="love">♡</abbr> by
           the <a href="https://www.usds.gov/">Digital Service at
           the <abbr title="Department of Veterans Affairs">VA</abbr>
           </a>
