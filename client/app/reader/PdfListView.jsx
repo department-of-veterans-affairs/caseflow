@@ -70,15 +70,6 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
-    if (this.tbodyElem.querySelector('#read-indicator')) {
-      const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
-        takeWhile((childElem) => !childElem.querySelector('#read-indicator')).
-        sumBy((childElem) => childElem.getBoundingClientRect().height);
-
-      // This isn't working and I don't know why.
-      this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
-    }
-
     this.setFilterIconPositions();
     window.addEventListener('resize', this.setFilterIconPositions);
   }
@@ -88,6 +79,13 @@ export class PdfListView extends React.Component {
   }
 
   componentDidUpdate() {
+    if (this.tbodyElem.querySelector('#read-indicator')) {
+      const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
+        takeWhile((childElem) => !childElem.querySelector('#read-indicator')).
+        sumBy((childElem) => childElem.getBoundingClientRect().height);
+
+      this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
+    }
     this.setFilterIconPositions();
   }
 
