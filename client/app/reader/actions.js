@@ -49,6 +49,13 @@ export const setDocListScrollPosition = (scrollTop) => ({
   }
 });
 
+export const changeSortState = (sortBy) => ({
+  type: Constants.SET_SORT,
+  payload: {
+    sortBy
+  }
+});
+
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
   payload: { scrollToComment }
