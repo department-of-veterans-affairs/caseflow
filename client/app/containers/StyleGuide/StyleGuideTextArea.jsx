@@ -8,14 +8,14 @@ export default class StyleGuideTextArea extends React.Component {
     super(props);
 
     this.state = {
-      value: ''
+      value: ""
     };
   }
 
   render = () => {
     return <div>
       <StyleGuideComponentTitle
-        title="Text area"
+        title="Text Area"
         id="text_area"
         link="StyleGuideTextArea.jsx"
       />
