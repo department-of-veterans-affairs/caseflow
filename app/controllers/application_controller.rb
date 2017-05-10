@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def feature_enabled?(feature)
-    FeatureToggle.enabled?(feature, current_user)
+    FeatureToggle.enabled?(feature, user: current_user)
   end
   helper_method :feature_enabled?
 
