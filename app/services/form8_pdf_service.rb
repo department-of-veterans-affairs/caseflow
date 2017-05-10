@@ -159,7 +159,7 @@ class Form8PdfService
 
     File.delete(tmp_location) if File.exist?(tmp_location)
 
-    if FeatureToggle.enabled?(:form8_v2)
+    if FeatureToggle.enabled?(:form8_v2, user: RequestStore[:current_user])
       pdf_forms.fill_form(
         empty_pdf_location("VA8_v2.pdf"),
         tmp_location,
