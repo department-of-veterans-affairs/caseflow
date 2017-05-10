@@ -19,7 +19,7 @@ describe Tag do
     it "can't add the same tag twice to a document" do
       num_of_tags = document.tags.size
       document.tags << tag1
-      document.tags << tag1
+      expect { document.tags << tag1 }.to raise_error(ActiveRecord::RecordNotUnique)
       expect(document.tags.size).to eq(num_of_tags + 1)
       document.tags << tag2
       expect(document.tags.size).to eq(num_of_tags + 2)
