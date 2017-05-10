@@ -56,9 +56,7 @@ class User < ActiveRecord::Base
     # role, most of which are unknown to us. We'll let those users
     # keep their privileges in lower environments, but let's
     # restrict prod system admin access to just the CSFLOW user.
-    if Rails.deploy_env?(:prod)
-      return false if current_user.username != "CSFLOW"
-    end
+    return false if Rails.deploy_env?(:prod) && username != "CSFLOW"
     roles.include? "System Admin"
   end
 
