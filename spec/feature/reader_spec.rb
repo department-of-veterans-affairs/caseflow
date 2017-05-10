@@ -515,7 +515,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Open a document and return to list", :focus => true do
+    scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")
@@ -526,7 +526,6 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      # sleep(inspection_timeout=500)
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
