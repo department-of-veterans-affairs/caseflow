@@ -82,7 +82,7 @@ const SHOW_EXPAND_ALL = false;
 const initialShowErrorMessageState = {
   tag: false,
   category: false,
-  comment: false
+  annotation: false
 };
 
 /**
@@ -104,6 +104,7 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   ui: {
+    pendingAnnotations: {},
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
@@ -505,13 +506,19 @@ export default (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         placedButUnsavedAnnotation: { $set: null },
-        pendingAnnotation: { $set: action.payload.annotation }
+        pendingAnnotations: { 
+          [action.payload.annotation.id]: { 
+            $set: action.payload.annotation
+          }
+        }
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
-        pendingAnnotation: { $set: null }
+        pendingAnnotations: { 
+          $unset: action.payload.annotationTemporaryId
+        }
       },
       annotations: {
         [action.payload.annotation.id]: {
@@ -525,6 +532,15 @@ export default (state = initialState, action = {}) => {
           }
         }
       }
+    });
+  case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
+    return update(state, {
+      ui: { 
+        pdfSidebar: { showErrorMessage: { annotation: { $set: true } } } },
+        // pendingAnnotations is not actually being removed.
+        pendingAnnotations: { 
+          $unset: action.payload.annotationTemporaryId
+        }
     });
   case Constants.START_EDIT_ANNOTATION:
     return update(state, {

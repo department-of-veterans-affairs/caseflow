@@ -3,7 +3,7 @@ import _ from 'lodash';
 export const categoryFieldNameOfCategoryName =
     (categoryName) => `category_${categoryName}`;
 
-export const keyOfAnnotation = ({ x, y, page, documentId }) => [x, y, page, documentId].join('-');
+export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 
 export const getAnnotationByDocumentId = (state, docId) =>
   _(state.editingAnnotations).
@@ -12,7 +12,7 @@ export const getAnnotationByDocumentId = (state, docId) =>
     editing: true,
     ...annotation
   })).
-  concat(_.values(state.annotations), state.ui.pendingAnnotation).
+  concat(_.values(state.annotations), _.values(state.ui.pendingAnnotations)).
   uniqBy('id').
   filter({ documentId: docId }).
   value();

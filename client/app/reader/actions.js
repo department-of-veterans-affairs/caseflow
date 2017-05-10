@@ -1,6 +1,7 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
+import uuid from 'uuid';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -141,10 +142,15 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
 export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
 export const createAnnotation = (annotation) => (dispatch) => {
+  const temporaryId = uuid.v4();
+
   dispatch({
     type: Constants.REQUEST_CREATE_ANNOTATION,
     payload: {
-      annotation
+      annotation: {
+        ...annotation,
+        id: temporaryId
+      }
     }
   });
 
@@ -160,10 +166,17 @@ export const createAnnotation = (annotation) => (dispatch) => {
           annotation: {
             ...annotation,
             ...responseObject
-          }
+          },
+          annotationTemporaryId: temporaryId
         }
       });
-    });
+    }).
+    catch(() => dispatch({
+      type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+      payload: {
+        annotationTemporaryId: temporaryId
+      }
+    }));
 };
 
 export const handleSelectCommentIcon = (comment) => (dispatch) => {

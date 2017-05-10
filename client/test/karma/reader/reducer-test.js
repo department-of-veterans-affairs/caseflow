@@ -39,7 +39,7 @@ describe('Reader reducer', () => {
         }
       ]);
 
-      expect(state.ui.pendingAnnotation).to.equal(null);
+      expect(state.ui.pendingAnnotations).to.deep.equal({});
       expect(state.annotations).to.deep.equal({
         [annotationId]: {
           id: annotationId,
