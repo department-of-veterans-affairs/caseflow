@@ -3,54 +3,48 @@ import EmployeeCount from './EmployeeCount';
 import Table from '../components/Table';
 import Alert from '../components/Alert';
 import * as Constants from './constants/index';
+import { getQuotaTotals } from './selectors';
 import { connect } from 'react-redux';
 
 class ManageEstablishClaim extends React.Component {
   getUserColumns = () => {
-    let {
-      completedCountToday,
-      toCompleteCount,
-      userQuotas
-    } = this.props;
-
-    // We return an empty row if there are no users in the table. Otherwise
-    // we use the footer to display the totals.
-    let noUsers = userQuotas.length === 0;
+    let quotaTotals = this.props.quotaTotals;
 
     return [
       {
         header: 'Employee Name',
-        valueName: 'user_name',
-        footer: noUsers ? '' : <b>Employee Total</b>
+        valueName: 'userName',
+        footer: <b>Employee Total</b>
       },
       {
         header: 'Cases Assigned',
-        valueName: 'task_count',
-        footer: noUsers ?
-          '0' :
-          <b>{toCompleteCount + completedCountToday}</b>
+        valueName: 'taskCount',
+        footer: <b>{quotaTotals.taskCount}</b>
       },
       {
         header: 'Cases Completed',
-        valueName: 'tasks_completed_count',
-        footer: noUsers ? '0' : <b>{completedCountToday}</b>
+        valueName: 'tasksCompletedCount',
+        footer: <b>{quotaTotals.tasksCompletedCount}</b>
       },
       {
         header: 'Cases Remaining',
-        valueName: 'tasks_left_count',
-        footer: toCompleteCount
+        valueName: 'tasksLeftCount',
+        footer: <b>{quotaTotals.tasksLeftCount}</b>
       }
     ];
   }
 
   render() {
     let {
-      completedCountToday,
-      toCompleteCount,
       userQuotas,
+      quotaTotals,
       alert,
       handleAlertClear
     } = this.props;
+
+    const rowClassNames = (userQuota) => {
+      return userQuota.isAssigned ? '' : 'cf-gray';
+    };
 
     return <div>
       {alert && <Alert
@@ -63,8 +57,7 @@ class ManageEstablishClaim extends React.Component {
       <div className="cf-app-segment cf-app-segment--alt">
         <h1>ARC Work Assignments
           <span className="cf-associated-header">
-            {completedCountToday} out
-            of {(toCompleteCount + completedCountToday)} cases completed today
+            {quotaTotals.tasksCompletedCount} out of {quotaTotals.taskCount} cases completed today
           </span>
         </h1>
 
@@ -79,6 +72,7 @@ class ManageEstablishClaim extends React.Component {
         <Table
           columns={this.getUserColumns()}
           rowObjects={userQuotas}
+          rowClassNames={rowClassNames}
           summary="Appeals worked by user"
         />
       </div>
@@ -87,7 +81,11 @@ class ManageEstablishClaim extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { alert: state.alert };
+  return {
+    userQuotas: state.userQuotas,
+    quotaTotals: getQuotaTotals(state),
+    alert: state.alert
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -96,9 +94,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 ManageEstablishClaim.propTypes = {
   userQuotas: PropTypes.arrayOf(PropTypes.object).isRequired,
-  completedCountToday: PropTypes.number.isRequired,
-  employeeCount: PropTypes.number.isRequired,
-  toCompleteCount: PropTypes.number.isRequired,
+  quotaTotals: PropTypes.object.isRequired,
   alert: PropTypes.object,
   handleAlertClear: PropTypes.func.isRequired
 };
