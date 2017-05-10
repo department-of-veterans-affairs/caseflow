@@ -1,16 +1,14 @@
 import React from 'react';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideInlineForm from './StyleGuideInlineForm';
+import StyleGuideTextInput from './StyleGuideTextInput';
 
 let StyleGuideFormFields = () => {
 
   return (
     <div>
       <h2 id="form_fields">Form Fields</h2>
-      <StyleGuidePlaceholder
-        title="Text Input"
-        id="text_input"
-        isSubsection={true} />
+      <StyleGuideTextInput/>
       <StyleGuidePlaceholder
         title="Text Input Error"
         id="text_input_error"
