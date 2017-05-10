@@ -1,5 +1,5 @@
 class Reader::DocumentsController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, :verify_reader_feature_enabled
 
   def show
     # If we have sufficient metadata to show a single document,
@@ -60,8 +60,11 @@ class Reader::DocumentsController < ApplicationController
     reader_appeal_documents_path(appeal_id: appeal_id)
   end
 
+  def verify_reader_feature_enabled
+    verify_feature_enabled(:reader)
+  end
+
   def verify_access
-    verify_feature_enabled(:reader) &&
-      verify_authorized_roles("Reader")
+    verify_authorized_roles("Reader")
   end
 end

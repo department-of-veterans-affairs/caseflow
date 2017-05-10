@@ -2,7 +2,6 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 
-
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
@@ -17,6 +16,11 @@ export const onReceiveDocs = (documents) => (
     });
   }
 );
+
+export const onReceiveAnnotations = (annotations) => ({
+  type: Constants.RECEIVE_ANNOTATIONS,
+  payload: { annotations }
+});
 
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
@@ -43,33 +47,138 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const handlePlaceComment = () => ({
-  type: Constants.SET_COMMENT_FLOW_STATE,
+export const startEditAnnotation = (annotationId) => ({
+  type: Constants.START_EDIT_ANNOTATION,
   payload: {
-    state: Constants.PLACING_COMMENT_STATE
+    annotationId
   }
 });
 
-export const handleWriteComment = () => ({
-  type: Constants.SET_COMMENT_FLOW_STATE,
+export const openAnnotationDeleteModal = (annotationId) => ({
+  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
   payload: {
-    state: Constants.WRITING_COMMENT_STATE
+    annotationId
+  }
+});
+export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
+export const selectAnnotation = (annotationId) => ({
+  type: Constants.SELECT_ANNOTATION,
+  payload: {
+    annotationId
   }
 });
 
-export const handleClearCommentState = () => ({
-  type: Constants.SET_COMMENT_FLOW_STATE,
+export const deleteAnnotation = (docId, annotationId) =>
+  (dispatch) => {
+    dispatch({
+      type: Constants.REQUEST_DELETE_ANNOTATION,
+      payload: {
+        annotationId
+      }
+    });
+
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
+  };
+
+export const requestMoveAnnotation = (annotation) => (dispatch) => {
+  dispatch({
+    type: Constants.REQUEST_MOVE_ANNOTATION,
+    payload: {
+      annotation
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
+};
+
+export const cancelEditAnnotation = (annotationId) => ({
+  type: Constants.CANCEL_EDIT_ANNOTATION,
   payload: {
-    state: null
+    annotationId
+  }
+});
+export const updateAnnotationContent = (content, annotationId) => ({
+  type: Constants.UPDATE_ANNOTATION_CONTENT,
+  payload: {
+    annotationId,
+    content
+  }
+});
+export const updateNewAnnotationContent = (content) => ({
+  type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
+  payload: {
+    content
   }
 });
 
-export const handleSelectCommentIcon = (comment) => ({
-  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+export const requestEditAnnotation = (annotation) => (dispatch) => {
+  dispatch({
+    type: Constants.REQUEST_EDIT_ANNOTATION,
+    payload: {
+      annotationId: annotation.id
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
+};
+
+export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
+
+export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
+  type: Constants.PLACE_ANNOTATION,
   payload: {
-    scrollToSidebarComment: comment
+    page: pageNumber,
+    x: coordinates.xPosition,
+    y: coordinates.yPosition,
+    documentId
   }
 });
+
+export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
+
+export const createAnnotation = (annotation) => (dispatch) => {
+  dispatch({
+    type: Constants.REQUEST_CREATE_ANNOTATION,
+    payload: {
+      annotation
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
+    then((response) => {
+      const responseObject = JSON.parse(response.text);
+
+      dispatch({
+        type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+        payload: {
+          annotation: {
+            ...annotation,
+            ...responseObject
+          }
+        }
+      });
+    });
+};
+
+export const handleSelectCommentIcon = (comment) => (dispatch) => {
+  // Normally, we would not want to fire two actions here.
+  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanup
+  // more generally, so I'm just going to leave it alone for now,
+  // and hack this in here.
+  dispatch(selectAnnotation(comment.id));
+  dispatch({
+    type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+    payload: {
+      scrollToSidebarComment: comment
+    }
+  });
+};
 
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,
@@ -148,13 +257,6 @@ export const setPdfReadyToShow = (docId) => ({
 
 export const clearAllFilters = () => ({
   type: Constants.CLEAR_ALL_FILTERS
-});
-
-export const setAnnotationStorage = (annotationStorage) => ({
-  type: Constants.SET_ANNOTATION_STORAGE,
-  payload: {
-    annotationStorage
-  }
 });
 
 export const clearSearch = () => ({
