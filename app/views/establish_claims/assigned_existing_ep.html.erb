@@ -1,12 +1,13 @@
 <% content_for :page_title do task.appeal.task_header end %>
+
 <%= react_component('BaseContainer', props: {
     availableTasks: tasks.any_assignable_to?(current_user),
     buttonText: start_text,
     checklist: ['Reviewed decision', 'Assigned existing EP to claim'],
-    firstHeader: 'Congratulations!',
+    firstHeader: 'Success!',
     page: 'EstablishClaimComplete',
     totalCasesCompleted: user_quota.tasks_completed_count,
     employeeCount: team_quota.user_count,
     totalCasesToComplete: to_complete_count,
-    secondHeader: task.appeal.veteran_full_name + "'s claim (" + task.appeal.sanitized_vbms_id + ') has been assigned an EP.'
+    veteranName: task.appeal.veteran_full_name
 }) %>

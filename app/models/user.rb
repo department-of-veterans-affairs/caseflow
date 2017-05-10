@@ -52,6 +52,11 @@ class User < ActiveRecord::Base
 
   def admin?
     return false if roles.nil?
+    # In prod, as of 05/08/2017, we had 133 users with the System Admin
+    # role, most of which are unknown to us. We'll let those users
+    # keep their privileges in lower environments, but let's
+    # restrict prod system admin access to just the CSFLOW user.
+    return false if Rails.deploy_env?(:prod) && username != "CSFLOW"
     roles.include? "System Admin"
   end
 

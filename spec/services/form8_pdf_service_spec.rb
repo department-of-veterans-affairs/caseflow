@@ -38,9 +38,10 @@ describe Form8PdfService do
     )
   end
 
-  context ".pdf_values_for" do
+  context ".pdf_values_for_form8_v1" do
+    let(:form_fields) { Form8PdfService::FIELD_LOCATIONS_FORM8_V1 }
     let(:pdf_form8_values) do
-      Form8PdfService.pdf_values_for(form8)
+      Form8PdfService.pdf_values_for(form8, form_fields)
     end
     it "goes through the fields" do
     end
@@ -96,6 +97,19 @@ describe Form8PdfService do
       expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[22]"]).to be_nil
       expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[26]"]).to be_nil
       expect(pdf_form8_values["form1[0].#subform[0].#area[0].TextField1[16]"]).to be_nil
+    end
+  end
+
+  context ".pdf_values_for_form8_v2" do
+    let(:form_fields) { Form8PdfService::FIELD_LOCATIONS_FORM8_V2 }
+    let(:pdf_form8_values) do
+      Form8PdfService.pdf_values_for(form8, form_fields)
+    end
+
+    it "switches to form8_v2 correctly" do
+      expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[0]" => "Joe Patriot",
+                                          "form1[0].#subform[0].#area[0].TextField1[1]" => "1234QWERTY",
+                                          "form1[0].#subform[0].#area[0].TextField1[2]" => "Brad Pitt")
     end
   end
 

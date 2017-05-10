@@ -1,14 +1,16 @@
 import React, { PropTypes } from 'react';
 import { commentIcon } from './RenderFunctions';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
-export default class CommentIcon extends React.Component {
+export class CommentIcon extends React.Component {
   onClick = () => {
-    this.props.onClick(this.props.uuid);
+    this.props.onClick(this.props.comment);
   }
 
   onDragStart = (event) => {
     let data = {
-      uuid: this.props.uuid,
+      uuid: this.props.comment.uuid,
       iconCoordinates: {
         x: event.pageX - event.target.getBoundingClientRect().left,
         y: event.pageY - event.target.getBoundingClientRect().top
@@ -21,6 +23,8 @@ export default class CommentIcon extends React.Component {
   }
 
   render = () => {
+    const selected = this.props.comment.id === this.props.selectedAnnotationId;
+
     return <div
       style={{
         left: this.props.position.x,
@@ -30,21 +34,22 @@ export default class CommentIcon extends React.Component {
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>
-        {commentIcon(this.props.selected, this.props.uuid)}
+        {commentIcon(selected, this.props.comment.uuid)}
       </div>;
   }
 }
 
-// CommentIcon.defaultProps = {
-// };
-
 CommentIcon.propTypes = {
-  selected: PropTypes.bool,
-  onClick: PropTypes.func,
+  comment: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
   position: PropTypes.shape({
     x: PropTypes.number,
     y: PropTypes.number
-  }),
-  uuid: PropTypes.number,
-  page: PropTypes.number
+  })
 };
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'selectedAnnotationId')
+});
+
+export default connect(mapStateToProps)(CommentIcon);
