@@ -364,6 +364,7 @@ export class PdfListView extends React.Component {
               headerClassName="cf-document-list-header-row"
               bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
+              tbodyId="documents-table-body"
               tbodyRef={this.getTbodyRef}
             />
           </div>
