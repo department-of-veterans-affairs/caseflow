@@ -1,7 +1,17 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
+import TextField from '../../components/TextField';
 
 export default class StyleGuideTextInput extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: ''
+    };
+  }
+
   render() {
     return <div>
       <StyleGuideComponentTitle
@@ -24,6 +34,13 @@ export default class StyleGuideTextInput extends React.Component {
       <li>Text Input Error (red highlight) indicates that the user has made an
         error when entering their text</li>
     </ul>
-    </div>
+    <TextField
+      name="Enter some text here"
+      value={this.state.value}
+      required={false}
+      onChange={(value) => {
+        this.setState({ value });
+      }}/>
+    </div>;
   }
 }
