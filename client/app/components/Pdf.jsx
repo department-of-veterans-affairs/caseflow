@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { bindActionCreators } from 'redux';
+import { keyOfAnnotation, getAnnotationByDocumentId } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
-import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -174,22 +175,6 @@ export class Pdf extends React.Component {
     });
   }
 
-  onPageClick = (pageNumber) => (event) => {
-    if (this.props.onPageClick) {
-      let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
-      let xPosition = (event.pageX - container.left) / this.props.scale;
-      let yPosition = (event.pageY - container.top) / this.props.scale;
-
-      this.props.onPageClick(
-        pageNumber,
-        {
-          xPosition,
-          yPosition
-        }
-      );
-    }
-  }
-
   scrollEvent = () => {
     // Now that the user is scrolling we reset the scroll location
     // so that we do not keep scrolling the user back.
@@ -266,11 +251,6 @@ export class Pdf extends React.Component {
     }
   }
 
-  onCommentClick = (comment) => () => {
-    this.props.onCommentClick(comment.id);
-    this.props.handleSelectCommentIcon(comment);
-  }
-
   onPageChange = (currentPage) => {
     this.currentPage = currentPage;
     this.props.onPageChange(
@@ -339,7 +319,12 @@ export class Pdf extends React.Component {
       y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
 
-    this.props.onIconMoved(data.uuid, coordinates, pageNumber);
+    const droppedAnnotation = {
+      ...this.props.allAnnotations[data.uuid],
+      ...coordinates
+    };
+
+    this.props.requestMoveAnnotation(droppedAnnotation);
   }
 
   onPageDragOver = (event) => {
@@ -362,15 +347,13 @@ export class Pdf extends React.Component {
       }
       acc[comment.page].push(
         <CommentIcon
+          comment={comment}
           position={{
             x: comment.x * this.props.scale,
             y: comment.y * this.props.scale
           }}
-          key={comment.uuid}
-          selected={comment.selected}
-          uuid={comment.uuid}
-          page={comment.page}
-          onClick={this.onCommentClick(comment)} />);
+          key={keyOfAnnotation(comment)}
+          onClick={this.props.handleSelectCommentIcon} />);
 
       return acc;
     }, {});
@@ -379,14 +362,27 @@ export class Pdf extends React.Component {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
-      'cf-pdf-placing-comment': (this.props.commentFlowState ===
-        Constants.PLACING_COMMENT_STATE)
+      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
     this.pageContainers = [];
 
-
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
+      const onPageClick = (event) => {
+        if (!this.props.isPlacingAnnotation) {
+          return;
+        }
+
+        let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
+        let xPosition = (event.pageX - container.left) / this.props.scale;
+        let yPosition = (event.pageY - container.top) / this.props.scale;
+
+        this.props.placeAnnotation(pageNumber, {
+          xPosition,
+          yPosition
+        }, this.props.documentId);
+      };
+
       const relativeScale = this.props.scale / _.get(this.state.isRendered[pageNumber - 1], 'scale', 1);
       const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
       const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
@@ -407,7 +403,7 @@ export class Pdf extends React.Component {
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
-        onClick={this.onPageClick(pageNumber)}
+        onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
         ref={(pageContainer) => {
           this.pageContainers[pageNumber - 1] = pageContainer;
@@ -443,15 +439,17 @@ export class Pdf extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
-    commentFlowState: state.ui.pdf.commentFlowState,
-    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  ...state.ui.pdf,
+  comments: getAnnotationByDocumentId(state, ownProps.documentId),
+  allAnnotations: state.annotations
+});
 
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    placeAnnotation,
+    requestMoveAnnotation
+  }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
@@ -467,6 +465,7 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
+  selectedAnnotationId: React.PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -478,9 +477,7 @@ Pdf.propTypes = {
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
-  onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
-  onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number,
@@ -488,7 +485,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
-  commentFlowState: PropTypes.string,
   setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };

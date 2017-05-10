@@ -15,6 +15,6 @@ class FunctionsController < ApplicationController
   private
 
   def verify_access
-    verify_authorized_roles("System Admin")
+    verify_system_admin
   end
 end
