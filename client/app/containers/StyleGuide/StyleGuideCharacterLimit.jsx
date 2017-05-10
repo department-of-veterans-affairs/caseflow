@@ -18,6 +18,7 @@ export default class StyleGuideCharacterLimit extends React.Component {
         title="Character Limit"
         id="character_limit"
         link="StyleGuideCharacterLimit.jsx"
+        isSubsection={true}
       />
       <p>
         Character limits alert users of the maximum possible text input and is used
