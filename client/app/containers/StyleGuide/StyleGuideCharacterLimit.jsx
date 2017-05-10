@@ -34,7 +34,6 @@ export default class StyleGuideCharacterLimit extends React.Component {
         onChange={(value) => {
           this.setState({ value });
         }}
-        characterLimit={true}
         maxlength={2000}
         />
     </div>;
