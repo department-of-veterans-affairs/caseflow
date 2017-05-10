@@ -293,6 +293,10 @@ select {
 }
 
 // add to commons
-textarea {
+.cf-form-textarea {
   margin-bottom: 40px;
+
+  p {
+    margin-top: 0;
+  }
 }
