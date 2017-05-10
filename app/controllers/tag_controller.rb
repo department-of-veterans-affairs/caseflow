@@ -7,14 +7,21 @@ class TagController < ApplicationController
 
     # finding the document and adding tags
     document = Document.find(document_id)
+    errors = []
 
     tags_request = tag_params[:tags]
     tags_request.each do |tag|
       new_tag = Tag.find_or_create_by(tag)
-      document.tags << new_tag
+      begin
+        document.tags << new_tag
+      rescue ActiveRecord::RecordNotUnique
+        errors.push(new_tag.text => "This tag already exists for the document.")
+      end
     end
 
-    render({ json: document.tags }, status: :created)
+    response_json = { tags: document.tags }
+    errors.any? && response_json[:errors] = errors
+    render({ json: response_json }, status: :created)
   end
 
   def destroy

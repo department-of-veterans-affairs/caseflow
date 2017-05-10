@@ -2,7 +2,7 @@ class Document < ActiveRecord::Base
   has_many :annotations
   has_many :document_views
   has_many :documents_tags
-  has_many :tags, -> { distinct }, through: :documents_tags
+  has_many :tags, through: :documents_tags
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
