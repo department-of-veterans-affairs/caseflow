@@ -12,7 +12,7 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { scrollDocList } from './actions';
+import { setDocListScrollPosition } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
@@ -77,7 +77,7 @@ export class PdfListView extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.scrollDocList(this.tbodyElem.scrollTop);
+    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
@@ -382,7 +382,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    scrollDocList
+    setDocListScrollPosition
   }, dispatch),
   changeSortState(sortBy) {
     dispatch({

@@ -598,7 +598,7 @@ export default (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SCROLL_DOC_LIST:
+  case Constants.SET_DOC_LIST_SCROLL_POSITION:
     return update(state, {
       ui: {
         pdfList: {
