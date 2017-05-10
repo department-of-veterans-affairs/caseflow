@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 
 const UnconnectedSuccess = ({
-  veteranName,
-  vbmsId
+  veteranName
 }) => {
   const checklist = [
     'Verified documents were in eFolder',
@@ -24,8 +23,7 @@ const UnconnectedSuccess = ({
 };
 
 const mapStateToProps = (state) => ({
-  veteranName: state.veteranName,
-  vbmsId: state.vbmsId
+  veteranName: state.veteranName
 });
 
 const Success = connect(
