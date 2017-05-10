@@ -4,51 +4,17 @@ import Button from '../components/Button';
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
 export default class EditComment extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: this.props.children
-    };
-  }
-
-  onChange = (event) => {
-    this.setState({
-      value: event.target.value
-    });
-  }
-
-  resetForm = () => {
-    this.setState({
-      value: ''
-    });
-  }
-
-  cancelEdit = () => {
-    this.props.onCancelCommentEdit();
-    this.resetForm();
-  }
-
-  onSaveCommentEdit = () => {
-    this.props.onSaveCommentEdit(
-      this.state.value, this.props.uuid);
-    this.resetForm();
-  }
-
-  // If we receive a new 'children' prop, we use it as the text
-  // in the edit form.
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.children !== this.props.children) {
-      this.setState({
-        value: nextProps.children
-      });
-    }
-  }
-
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
     commentBox.focus();
   }
+
+  onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
+
+  onCancelCommentEdit = () => this.props.onCancelCommentEdit(this.props.comment.uuid)
+
+  onSaveCommentEdit = () => this.props.onSaveCommentEdit(this.props.comment)
 
   render() {
     return <div>
@@ -58,17 +24,18 @@ export default class EditComment extends React.Component {
           aria-label="Edit Comment"
           id={this.props.id}
           onChange={this.onChange}
-          value={this.state.value}
+          value={this.props.comment.comment}
         />
         <div className="comment-save-button-container">
           <span className="cf-right-side">
             <Button
               name="cancel"
               classNames={['cf-btn-link']}
-              onClick={this.cancelEdit}>
+              onClick={this.onCancelCommentEdit}>
               Cancel
             </Button>
             <Button
+              disabled={this.props.disableOnEmpty && !this.props.comment.comment}
               name="save"
               onClick={this.onSaveCommentEdit}>
               Save
@@ -84,7 +51,8 @@ EditComment.defaultProps = {
 };
 
 EditComment.propTypes = {
-  children: React.PropTypes.string,
+  comment: React.PropTypes.object.isRequired,
+  disableOnEmpty: React.PropTypes.bool,
   id: React.PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func

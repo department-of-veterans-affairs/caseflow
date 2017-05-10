@@ -9,16 +9,16 @@ const UnconnectedSuccess = ({
   const checklist = [
     'Verified documents were in eFolder',
     'Completed and uploaded Form 8',
-    'Representative and hearing fields were updated in VACOLS'];
-  const message = `${veteranName}'s case ${vbmsId} has been certified.`;
+    'Representative and hearing fields updated in VACOLS'];
+  const message = `${veteranName}'s case ${vbmsId} has been certified.
+  You can now close this window and open another
+  appeal in VACOLS.`;
 
 
   return <StatusMessage
-    title="Congratulations!"
+    title="Success!"
     leadMessageList={[message]}
     checklist={checklist}
-    messageText="Way to go! You can now close this window and open another
-    appeal in VACOLS."
     type="success"
     />;
 };
