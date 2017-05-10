@@ -42,6 +42,13 @@ export const setSearch = (searchQuery) => ({
   }
 });
 
+export const scrollDocList = (scrollTop) => ({
+  type: Constants.SCROLL_DOC_LIST,
+  payload: {
+    scrollTop
+  }
+});
+
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
   payload: { scrollToComment }

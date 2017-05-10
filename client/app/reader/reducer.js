@@ -1,13 +1,8 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName } from './utils';
-import { newContext } from 'immutability-helper';
+import { categoryFieldNameOfCategoryName, update } from './utils';
 import { searchString } from './search';
-
-const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -127,6 +122,7 @@ export const initialState = {
       showErrorMessage: initialShowErrorMessageState
     },
     pdfList: {
+      scrollTop: null,
       lastReadDocId: null,
       dropdowns: {
         category: false
@@ -596,8 +592,15 @@ export default (state = initialState, action = {}) => {
           scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
         }
       }
-    }
-    );
+    });
+  case Constants.SCROLL_DOC_LIST:
+    return update(state, {
+      ui: {
+        pdfList: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
       ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
