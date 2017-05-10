@@ -85,6 +85,15 @@ class UnconnectedSignAndCertify extends React.Component {
     });
   }
 
+  isFieldErrored(fieldName, erroredFields) {
+    if (erroredFields) {
+      if (erroredFields.includes(fieldName)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   render() {
     let {
       onSignAndCertifyFormChange,
@@ -118,28 +127,32 @@ class UnconnectedSignAndCertify extends React.Component {
           <TextField
             name="Name and location of certifying office:"
             value={certifyingOffice}
+            errorMessage={(this.isFieldErrored("Name and location of certifying office:", erroredFields) ? "Please enter a certifying office." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
             name="Organizational elements certifying appeal:"
             value={certifyingUsername}
+            errorMessage={(this.isFieldErrored("Organizational elements certifying appeal:", erroredFields) ? "Please enter an organizational element." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
             name="Name of certifying official:"
             value={certifyingOfficialName}
+            errorMessage={(this.isFieldErrored("Name of certifying official:", erroredFields) ? "Please enter a name of certifying official." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
+            errorMessage={(this.isFieldErrored("Title of certifying official:", erroredFields) ? "Please enter a title of certifying official." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
             name="Date:"
             value={certificationDate}
-            errorMessage={(erroredFields ? "Please enter a date." : null)}
+            errorMessage={(this.isFieldErrored("Date:", erroredFields) ? "Please enter a date." : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
