@@ -345,7 +345,7 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (_.size(this.props.annotationsPerDocument[row.id]) && doc.listComments) {
+      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -379,8 +379,11 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  annotationsPerDocument: _.mapValues(ownProps.documents, (doc) => getAnnotationByDocumentId(state, doc.id)),
-  ..._.pick(state, 'tagOptions', 'annotations'),
+  annotationsPerDocument: _(ownProps.documents).
+    keyBy('id').
+    mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
+    value(),
+  ..._.pick(state, 'tagOptions'),
   ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
 });
 
@@ -438,7 +441,6 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  annotations: PropTypes.object.isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   handleToggleCommentOpened: PropTypes.func.isRequired,
