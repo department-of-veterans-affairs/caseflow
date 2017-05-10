@@ -219,18 +219,6 @@ describe('DecisionReviewer', () => {
           to.be.true;
       }));
 
-      it('highlighted by clicking on the icon', asyncTest(async() => {
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[1].type).
-          simulate('mouseUp');
-
-        wrapper.find('Pdf').getNode().
-          onCommentClick(annotations[0])();
-
-        expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
-          to.be.true;
-      }));
-
       it('comment has page number', asyncTest(async() => {
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[1].type).
