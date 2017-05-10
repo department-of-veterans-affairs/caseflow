@@ -441,7 +441,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           page.find("#button-Assign-to-Claim1").click
 
-          expect(page).to have_content("Congratulations!")
+          expect(page).to have_content("Success!")
 
           task.reload
           expect(task.outgoing_reference_id).to eq("1")

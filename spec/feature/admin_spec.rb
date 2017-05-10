@@ -3,8 +3,11 @@ require "rails_helper"
 RSpec.feature "Admin" do
   let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
 
-  let!(:appeal_missing_decision) { Generators::Appeal.create(documents: []) }
-  let!(:appeal_with_existing_task) { Generators::Appeal.create }
+  let!(:appeal_missing_decision) do
+    Generators::Appeal.create(vacols_record: :full_grant_decided,
+                              documents: [])
+  end
+  let!(:appeal_with_existing_task) { Generators::Appeal.create(vacols_record: :full_grant_decided) }
   let!(:existing_task) { EstablishClaim.create(appeal: appeal_with_existing_task, aasm_state: :unassigned) }
 
   let!(:appeal) do

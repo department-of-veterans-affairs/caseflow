@@ -46,6 +46,9 @@ class CertificationsController < ApplicationController
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,
+      hearing_preference: certification.hearing_preference,
+      # This field is necessary when on v2 certification but v1 form8
+      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
       certifying_office: certification.certifying_office,
       certifying_username:  certification.certifying_username,
       certifying_official_name: certification.certifying_official_name,
