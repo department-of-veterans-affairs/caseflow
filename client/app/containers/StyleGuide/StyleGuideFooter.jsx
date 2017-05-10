@@ -34,11 +34,14 @@ export default class StyleGuideFooter extends React.Component {
     ];
   }
 
+  
+
   render() {
     let {
-      name
+      name,
+      date
     } = this.props;
-
+    date = new Date
     name = 'Dispatch';
 
     return <div>
@@ -56,6 +59,7 @@ export default class StyleGuideFooter extends React.Component {
      Conveniently, if a developer hover’s over the word
      “Built” they’ll see a tooltip showing the build date
      of the app that they are viewing.</p>
+     <span>{date.toLocaleTimeString()}</span>
 
     <div>
       <nav className="cf-nav">
@@ -68,7 +72,7 @@ export default class StyleGuideFooter extends React.Component {
             <DropdownMenu
               options={this.options()}
               onClick={this.handleMenuClick}
-              onBlur={this.handleMenuClick}
+              onBlur={this.handleMenuCliJck}
               label="KAVI HARSHAWAT"
               menu={this.state.menu}
               />
@@ -98,14 +102,13 @@ export default class StyleGuideFooter extends React.Component {
     <footer className="cf-txt-c cf-app-footer">
      <div>
         <div className="cf-push-left">
-          Built with <abbr title="love">♡</abbr> by
+           <span title="Date shows here">Built </span> with <abbr title="love">♡</abbr> by
           the <a href="https://www.usds.gov/">Digital Service at
           the <abbr title="Department of Veterans Affairs">VA</abbr>
           </a>
         </div>
         <div className="cf-push-right">
-          <a target="_blank"
-           href="#feedback">
+          <a href="#">
            Send feedback
           </a>
         </div>
