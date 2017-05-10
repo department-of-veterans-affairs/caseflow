@@ -127,6 +127,7 @@ export const initialState = {
       showErrorMessage: initialShowErrorMessageState
     },
     pdfList: {
+      scrollTop: null,
       lastReadDocId: null,
       dropdowns: {
         category: false
@@ -596,8 +597,15 @@ export default (state = initialState, action = {}) => {
           scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
         }
       }
-    }
-    );
+    });
+  case Constants.SET_DOC_LIST_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdfList: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
       ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
