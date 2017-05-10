@@ -1,8 +1,13 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName, update } from './utils';
+import { categoryFieldNameOfCategoryName } from './utils';
+import { newContext } from 'immutability-helper';
 import { searchString } from './search';
+
+const update = newContext();
+
+update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;

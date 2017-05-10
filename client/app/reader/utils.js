@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { newContext } from 'immutability-helper';
 
 export const categoryFieldNameOfCategoryName =
     (categoryName) => `category_${categoryName}`;
@@ -23,7 +22,3 @@ export const sortAnnotations = (annotations) =>
     sortBy('page', 'y').
     compact().
     value();
-
-export const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
