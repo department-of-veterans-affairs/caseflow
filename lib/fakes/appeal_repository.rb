@@ -187,6 +187,10 @@ class Fakes::AppealRepository
     (issue_records || {})[vacols_id] || []
   end
 
+  def self.hearings(judge_vacols_id)
+    (hearing_records || {})[judge_vacols_id] || []
+  end
+
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
@@ -196,6 +200,7 @@ class Fakes::AppealRepository
     seed_certification_data!
     seed_establish_claim_data!
     seed_reader_data!
+    seed_hearings_prep_data!
   end
 
   def self.certification_documents
@@ -216,6 +221,16 @@ class Fakes::AppealRepository
     establish_claim_documents + [
       Generators::Document.build(type: "BVA Decision", received_at: 8.days.ago)
     ]
+  end
+
+  def self.seed_hearings_prep_data!
+    7.times.each do |i|
+      type = VACOLS::CaseHearing::HEARING_TYPES[i % 3]
+      Generators::Hearing.build(
+        type: type,
+        date: Time.now - i.days
+      )
+    end
   end
 
   def self.seed_establish_claim_data!

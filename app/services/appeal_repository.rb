@@ -112,6 +112,10 @@ class AppealRepository
     end
   end
 
+  def self.hearings(judge_user)
+    VACOLS::CaseHearing
+  end
+
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
                                     service: :vacols,
