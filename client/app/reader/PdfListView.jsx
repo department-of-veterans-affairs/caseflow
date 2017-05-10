@@ -72,6 +72,7 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
+    this.hasSetScrollPosition = false;
     this.setFilterIconPositions();
     window.addEventListener('resize', this.setFilterIconPositions);
   }
@@ -84,7 +85,10 @@ export class PdfListView extends React.Component {
   getTbodyRef = (elem) => this.tbodyElem = elem;
 
   componentDidUpdate() {
-    this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+    if (!this.hasSetScrollPosition) {
+      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+      this.hasSetScrollPosition = true;
+    }
     this.setFilterIconPositions();
   }
 
