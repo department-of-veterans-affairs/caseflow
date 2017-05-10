@@ -291,3 +291,12 @@ select {
 .cf-font-light {
   font-weight: 300;
 }
+
+// add to commons
+.cf-form-textarea {
+  margin-bottom: 40px;
+
+  p {
+    margin-top: 0;
+  }
+}
