@@ -35,7 +35,7 @@ export default class StyleGuideTextInput extends React.Component {
         error when entering their text</li>
     </ul>
     <TextField
-      name="Enter some text here"
+      name="Text Input Label"
       value={this.state.value}
       required={false}
       onChange={(value) => {
