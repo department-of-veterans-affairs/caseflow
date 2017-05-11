@@ -67,6 +67,12 @@ describe('Reader utils', () => {
             comment: 'original 3',
             documentId
           },
+          270: {
+            id: 270,
+            comment: 'should be deleted',
+            documentId,
+            pendingDeletion: true
+          },
           300: {
             id: 300,
             comment: 'different doc',
