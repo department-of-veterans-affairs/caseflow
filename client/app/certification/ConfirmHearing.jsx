@@ -248,6 +248,9 @@ class UnconnectedConfirmHearing extends React.Component {
           <div>
             {hearingCheckText}
           </div>
+
+          <div className="cf-help-divider"></div>
+
           {/*
             TODO: would we be better served by
             making our connected components smaller?
