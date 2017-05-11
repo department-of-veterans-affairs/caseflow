@@ -455,14 +455,51 @@ export default (state = initialState, action = {}) => {
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
     return openAnnotationDeleteModalFor(state, null);
   case Constants.REQUEST_DELETE_ANNOTATION:
-    return update(openAnnotationDeleteModalFor(state, null), {
+    return update(
+      hideErrorMessage(openAnnotationDeleteModalFor(state, null), 'annotation'), 
+      {
+        editingAnnotations: {
+          [action.payload.annotationId]: {
+            $apply: (annotation) => annotation && {
+              ...annotation, 
+              pendingDeletion: true
+            }
+          }
+        },
+        annotations: {
+          [action.payload.annotationId]: {
+            $merge: {
+              pendingDeletion: true
+            }
+          }
+        }
+      }
+    );
+  case Constants.REQUEST_DELETE_ANNOTATION_FAILURE:
+    return update(showErrorMessage(state, 'annotation'), {
       editingAnnotations: {
-        $unset: action.payload.annotationId
+        [action.payload.annotationId]: {
+          $unset: 'pendingDeletion'
+        },
       },
       annotations: {
-        $unset: action.payload.annotationId
+        [action.payload.annotationId]: {
+          $unset: 'pendingDeletion'
+        }
       }
     });
+  case Constants.REQUEST_DELETE_ANNOTATION_SUCCESS:
+    return update(
+      state,
+      {
+        editingAnnotations: {
+          $unset: action.payload.annotationId
+        },
+        annotations: {
+          $unset: action.payload.annotationId
+        }  
+      }
+    )
   case Constants.REQUEST_MOVE_ANNOTATION:
     return update(state, {
       annotations: {
@@ -605,7 +642,7 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
     return moveModel(
-      update(showErrorMessage(state, 'annotation')),
+      showErrorMessage(state, 'annotation'),
       ['ui', 'pendingEditingAnnotations'],
       ['editingAnnotations'],
       action.payload.annotationId

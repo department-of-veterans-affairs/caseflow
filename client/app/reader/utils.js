@@ -3,7 +3,7 @@ import { newContext } from 'immutability-helper';
 
 export const update = newContext();
 
-update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
+update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
@@ -23,6 +23,7 @@ export const getAnnotationByDocumentId = (state, docId) =>
     _.values(state.ui.pendingEditingAnnotations)
   ).
   uniqBy('id').
+  reject('pendingDeletion').
   filter({ documentId: docId }).
   value();
 

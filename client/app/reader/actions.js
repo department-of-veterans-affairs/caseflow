@@ -92,7 +92,19 @@ export const deleteAnnotation = (docId, annotationId) =>
       }
     });
 
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
+      then(() => dispatch({
+        type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
+        payload: {
+          annotationId
+        }
+      })).
+      catch(() => dispatch({
+        type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
+        payload: {
+          annotationId
+        }
+      }));
   };
 
 export const requestMoveAnnotation = (annotation) => (dispatch) => {
