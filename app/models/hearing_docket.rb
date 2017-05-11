@@ -28,7 +28,7 @@ class HearingDocket
       Appeal.repository
             .hearings(user.vacols_id)
             .group_by { |h| h.date.to_i }
-            .map do |date, hearings|
+            .map do |_date, hearings|
         new(
           date: hearings.first.date.to_s(:json_date),
           type: hearings.first.type,
