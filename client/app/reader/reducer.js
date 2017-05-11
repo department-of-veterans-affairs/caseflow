@@ -105,6 +105,7 @@ const getExpandAllState = (documents) => {
 export const initialState = {
   ui: {
     pendingAnnotations: {},
+    pendingEditingAnnotations: {},
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
@@ -506,6 +507,11 @@ export default (state = initialState, action = {}) => {
   case Constants.REQUEST_CREATE_ANNOTATION:
     return update(state, {
       ui: {
+        pdfSidebar: {
+          showErrorMessage: {
+            annotation: { $set: false }
+          }
+        },
         placedButUnsavedAnnotation: { $set: null },
         pendingAnnotations: {
           [action.payload.annotation.id]: {
@@ -517,11 +523,6 @@ export default (state = initialState, action = {}) => {
   case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
-        pdfSidebar: {
-          showErrorMessage: {
-            annotation: { $set: false }
-          }
-        },
         pendingAnnotations: {
           $unset: action.payload.annotationTemporaryId
         }
@@ -600,13 +601,52 @@ export default (state = initialState, action = {}) => {
         editingAnnotations: {
           $unset: action.payload.annotationId
         },
-        annotations: {
-          [action.payload.annotationId]: {
-            $set: editedAnnotation
+        // We actually need a "pending edited annotations"
+        ui: {
+          pendingEditingAnnotations: {
+            [action.payload.annotationId]: {
+              $set: editedAnnotation
+            }
           }
         }
       });
     })();
+  case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
+    return update(state, {
+      ui: {
+        pdfSidebar: {
+          showErrorMessage: {
+            annotation: { $set: false }
+          }
+        },
+        pendingEditingAnnotations: {
+          $unset: action.payload.annotationId
+        }
+      },
+      annotations: {
+        [action.payload.annotationId]: {
+          $set: state.ui.pendingEditingAnnotations[action.payload.annotationId]
+        }
+      }
+    });
+  case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
+    return update(state, {
+      ui: {
+        pdfSidebar: {
+          showErrorMessage: {
+            annotation: { $set: true }
+          }
+        },
+        pendingEditingAnnotations: {
+          $unset: action.payload.annotationId
+        }
+      },
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          $set: state.ui.pendingEditingAnnotations[action.payload.annotationId]
+        }
+      }
+    });
   case Constants.SELECT_ANNOTATION:
     return update(state, {
       ui: {

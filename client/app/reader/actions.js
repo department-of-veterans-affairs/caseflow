@@ -138,7 +138,21 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).
+    then(
+      () => dispatch({
+        type: Constants.REQUEST_EDIT_ANNOTATION_SUCCESS,
+        payload: {
+          annotationId: annotation.id
+        }
+      })).
+    catch(
+      () => dispatch({
+        type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
+        payload: {
+          annotationId: annotation.id
+        }
+    }));
 };
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });

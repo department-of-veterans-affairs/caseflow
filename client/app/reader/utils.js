@@ -12,7 +12,11 @@ export const getAnnotationByDocumentId = (state, docId) =>
     editing: true,
     ...annotation
   })).
-  concat(_.values(state.annotations), _.values(state.ui.pendingAnnotations)).
+  concat(
+    _.values(state.annotations), 
+    _.values(state.ui.pendingAnnotations), 
+    _.values(state.ui.pendingEditingAnnotations)
+  ).
   uniqBy('id').
   filter({ documentId: docId }).
   value();
