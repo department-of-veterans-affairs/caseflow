@@ -164,7 +164,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
         payload: {
           annotationId: annotation.id
         }
-    }));
+      }));
 };
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });

@@ -49,14 +49,14 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) => 
+const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
   update(
     state,
     { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
   );
 
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false)
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true)
+const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
+const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
 
 const updateLastReadDoc = (state, docId) =>
   update(
@@ -456,12 +456,12 @@ export default (state = initialState, action = {}) => {
     return openAnnotationDeleteModalFor(state, null);
   case Constants.REQUEST_DELETE_ANNOTATION:
     return update(
-      hideErrorMessage(openAnnotationDeleteModalFor(state, null), 'annotation'), 
+      hideErrorMessage(openAnnotationDeleteModalFor(state, null), 'annotation'),
       {
         editingAnnotations: {
           [action.payload.annotationId]: {
             $apply: (annotation) => annotation && {
-              ...annotation, 
+              ...annotation,
               pendingDeletion: true
             }
           }
@@ -480,7 +480,7 @@ export default (state = initialState, action = {}) => {
       editingAnnotations: {
         [action.payload.annotationId]: {
           $unset: 'pendingDeletion'
-        },
+        }
       },
       annotations: {
         [action.payload.annotationId]: {
@@ -497,9 +497,9 @@ export default (state = initialState, action = {}) => {
         },
         annotations: {
           $unset: action.payload.annotationId
-        }  
+        }
       }
-    )
+    );
   case Constants.REQUEST_MOVE_ANNOTATION:
     return update(state, {
       annotations: {
@@ -575,7 +575,7 @@ export default (state = initialState, action = {}) => {
     return update(showErrorMessage(state, 'annotation'), {
       ui: {
         // This will cause a race condition if the user has created multiple annotations.
-        // Whichever annotation failed most recently is the one that'll be in the 
+        // Whichever annotation failed most recently is the one that'll be in the
         // "new annotation" text box. For now, I think that's ok.
         placedButUnsavedAnnotation: {
           $set: state.ui.pendingAnnotations[action.payload.annotationTemporaryId]

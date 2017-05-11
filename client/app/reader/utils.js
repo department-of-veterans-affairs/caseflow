@@ -18,8 +18,8 @@ export const getAnnotationByDocumentId = (state, docId) =>
     ...annotation
   })).
   concat(
-    _.values(state.annotations), 
-    _.values(state.ui.pendingAnnotations), 
+    _.values(state.annotations),
+    _.values(state.ui.pendingAnnotations),
     _.values(state.ui.pendingEditingAnnotations)
   ).
   uniqBy('id').
@@ -27,16 +27,24 @@ export const getAnnotationByDocumentId = (state, docId) =>
   filter({ documentId: docId }).
   value();
 
-const immutabilityHelperSpecOfPath = (objPath, spec, specVal) =>
-  objPath.length ? 
-    ({[objPath[0]]: immutabilityHelperSpecOfPath(objPath.slice(1), spec, specVal)}) :
-    ({[spec]: specVal})
+const immutabilityHelperSpecOfPath = (objPath, spec, specVal) => {
+  // eslint-disable-next-line no-shadow
+  const immutabilityHelperSpecOfPathRec = (objPath) => {
+    if (!objPath.length) {
+      return { [spec]: specVal };
+    }
 
-export const moveModel = (state, srcPath, destPath, id) => 
+    return { [objPath[0]]: immutabilityHelperSpecOfPath(objPath.slice(1), spec, specVal) };
+  };
+
+  immutabilityHelperSpecOfPathRec(objPath);
+};
+
+export const moveModel = (state, srcPath, destPath, id) =>
   update(
-    state, 
+    state,
     {
-      ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),    
+      ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),
       ...immutabilityHelperSpecOfPath([...destPath, id], '$set', _.get(state, [...srcPath, id]))
     }
   );
