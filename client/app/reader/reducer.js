@@ -516,7 +516,7 @@ export default (state = initialState, action = {}) => {
       ['ui', 'pendingEditingAnnotations'],
       ['annotations'],
       action.payload.annotationId
-    )
+    );
   case Constants.REQUEST_MOVE_ANNOTATION_FAILURE:
     return update(showErrorMessage(state, 'annotation'), {
       ui: {
@@ -524,7 +524,7 @@ export default (state = initialState, action = {}) => {
           $unset: action.payload.annotationId
         }
       }
-    })
+    });
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {

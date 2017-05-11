@@ -79,7 +79,7 @@ describe('Reader utils', () => {
               id: 250,
               comment: 'pending edit',
               documentId
-            },
+            }
           },
           pendingAnnotations: {
             'temp-guid': {
