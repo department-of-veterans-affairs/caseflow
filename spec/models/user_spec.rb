@@ -34,6 +34,13 @@ describe User do
       it { is_expected.to eq(["System Admin", "Certify Appeal"]) }
     end
 
+    context "when persisted to database" do
+      before { user.update(roles: ["System Admin"]) }
+      it "can read from saved attributes" do
+        expect(user.read_attribute(:roles)).to eq(["System Admin"])
+      end
+    end
+
     context "when has a role alias" do
       before { user.roles = ["Manage Claims Establishme"] }
       it "is expected to return the aliases as well" do

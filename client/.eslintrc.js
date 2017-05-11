@@ -76,7 +76,7 @@ module.exports = {
       }
     ],
     "max-nested-callbacks": "warn",
-    "max-params": "warn",
+    "max-params": ["warn", { "max": 5 }],
     "max-statements": [
       "warn",
       {
@@ -146,7 +146,6 @@ module.exports = {
     "no-restricted-modules": "error",
     "no-restricted-properties": "error",
     "no-restricted-syntax": "error",
-    "no-return-assign": "error",
     "no-return-await": "error",
     "no-script-url": "error",
     "no-self-compare": "error",

@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :ip_address, :admin_roles
-  attr_writer :regional_office, :roles
+  attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
 
@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   end
 
   def roles
-    (@roles || []).inject([]) do |result, role|
+    (self[:roles] || []).inject([]) do |result, role|
       result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
     end
   end
@@ -45,13 +45,11 @@ class User < ActiveRecord::Base
   end
 
   def can?(thing)
-    return false if roles.nil?
     return true if admin? && admin_roles.include?(thing)
     roles.include? thing
   end
 
   def admin?
-    return false if roles.nil?
     # In prod, as of 05/08/2017, we had 133 users with the System Admin
     # role, most of which are unknown to us. We'll let those users
     # keep their privileges in lower environments, but let's
@@ -84,8 +82,14 @@ class User < ActiveRecord::Base
 
   def toggle_admin_roles(role:, enable: true)
     return if role == "System Admin"
+    # TODO: remove once we launch certification v2
+    # or once we move it out of the feature list.
     if role == "CertificationV2"
-      enable ? FeatureToggle.enable!(:certification_v2) : FeatureToggle.disable!(:certification_v2)
+      if enable
+        FeatureToggle.enable!(:certification_v2, users: [username])
+      else
+        FeatureToggle.disable!(:certification_v2, users: [username])
+      end
     end
     enable ? admin_roles << role : admin_roles.delete(role)
   end
