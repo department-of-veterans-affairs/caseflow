@@ -7,7 +7,7 @@ describe('Reader reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 
   describe(Constants.REQUEST_CREATE_ANNOTATION_FAILURE, () => {
-    const getPostFailureState = () => {
+    const getContext = () => {
       const annotationTemporaryId = 'some-guid';
       const annotation = {
         comment: 'text',
@@ -33,15 +33,15 @@ describe('Reader reducer', () => {
       };
     };
 
-    it('shows an error message when creating the request fails', () => {
-      const { state, annotation } = getPostFailureState();
+    it('shows an error message when creating the annotation fails', () => {
+      const { state, annotation } = getContext();
 
       expect(state.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
       expect(state.ui.placedButUnsavedAnnotation).to.deep.equal(annotation);
     });
 
     it('hides the error message when a second request is started', () => {
-      const { state } = getPostFailureState();
+      const { state } = getContext();
 
       const nextState = reduceActions([
         {
@@ -56,6 +56,66 @@ describe('Reader reducer', () => {
       ], state);
 
       expect(nextState.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+    });
+  });
+
+  describe(Constants.REQUEST_DELETE_ANNOTATION_FAILURE, () => {
+    const getContext = () => {
+      const annotationActualId = 800;
+      const annotationTemporaryId = 'some-guid';
+      const annotation = {
+        comment: 'text',
+        id: annotationTemporaryId
+      };
+      const stateAfterDeleteRequest = reduceActions([
+        {
+          type: Constants.REQUEST_CREATE_ANNOTATION,
+          payload: {
+            annotation
+          }
+        },
+        {
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+          payload: {
+            annotation: {
+              id: annotationActualId
+            },
+            annotationTemporaryId
+          }
+        },
+        {
+          type: Constants.REQUEST_DELETE_ANNOTATION,
+          payload: {
+            annotationId: annotationActualId
+          }
+        }]);
+
+      return {
+        stateAfterDeleteRequest,
+        stateAfterDeleteFailure: reduceActions([
+          {
+            type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
+            payload: {
+              annotationId: annotationActualId
+            }
+          }
+        ], stateAfterDeleteRequest),
+        annotationId: annotationActualId
+      };
+    };
+
+    it('marks an annotation as pending deletion', () => {
+      const { stateAfterDeleteRequest, annotationId } = getContext();
+      
+      expect(stateAfterDeleteRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterDeleteRequest.annotations[annotationId].pendingDeletion).to.equal(true);
+    });
+
+    it('shows an error message when the request fails', () => {
+      const { stateAfterDeleteFailure, annotationId } = getContext();
+
+      expect(stateAfterDeleteFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterDeleteFailure.annotations[annotationId].pendingDeletion).to.equal(undefined);
     });
   });
 

@@ -159,7 +159,6 @@ module.exports = {
     "no-throw-literal": "error",
     "no-trailing-spaces": "warn",
     "no-undef-init": "error",
-    "no-undefined": "error",
     "no-underscore-dangle": "error",
     "no-unmodified-loop-condition": "error",
     "no-unneeded-ternary": "warn",

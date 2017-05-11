@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
-const karmaTestPattern = 'test/karma/**/*-test.js';
+const karmaTestPattern = 'test/karma/**/reader/*-test.js';
 
 module.exports = function(config) {
   config.set({
