@@ -196,6 +196,80 @@ describe('Reader reducer', () => {
     });
   });
 
+  describe(Constants.REQUEST_MOVE_ANNOTATION_FAILURE, () => {
+    const getContext = () => {
+      const annotationId = 8236;
+      const annotation = {
+        id: annotationId,
+        x: 34,
+        y: 67,
+        documentId: 5
+      };
+      const movedAnnotation = {
+        ...annotation,
+        x: 500,
+        y: 600
+      };
+      const stateAfterMoveRequest = reduceActions([
+        {
+          type: Constants.RECEIVE_ANNOTATIONS,
+          payload: {
+            annotations: [annotation]
+          }
+        },
+        {
+          type: Constants.REQUEST_MOVE_ANNOTATION,
+          payload: {
+            annotation: movedAnnotation
+          }
+        }]);
+
+      return {
+        stateAfterMoveRequest,
+        stateAfterMoveFailure: reduceActions([
+          {
+            type: Constants.REQUEST_MOVE_ANNOTATION_FAILURE,
+            payload: {
+              annotationId
+            }
+          }
+        ], stateAfterMoveRequest),
+        stateAfterMoveSuccess: reduceActions([
+          {
+            type: Constants.REQUEST_MOVE_ANNOTATION_SUCCESS,
+            payload: {
+              annotationId
+            }
+          }
+        ], stateAfterMoveRequest),
+        annotation,
+        movedAnnotation
+      };
+    };
+
+    it('handles moving an annotation', () => {
+      const { stateAfterMoveRequest, annotation, movedAnnotation } = getContext();
+
+      expect(stateAfterMoveRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterMoveRequest.ui.pendingEditingAnnotations[annotation.id]).to.deep.equal(movedAnnotation);
+    });
+
+    it('shows an error message when the request fails', () => {
+      const { stateAfterMoveFailure, annotation } = getContext();
+
+      expect(stateAfterMoveFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterMoveFailure.ui.pendingEditingAnnotations[annotation.id]).to.equal(undefined);
+    });
+
+    it('updates the annotation when the request succeeds', () => {
+      const { stateAfterMoveSuccess, annotation, movedAnnotation } = getContext();
+
+      expect(stateAfterMoveSuccess.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterMoveSuccess.ui.pendingEditingAnnotations[annotation.id]).to.equal(undefined);
+      expect(stateAfterMoveSuccess.annotations[annotation.id]).to.deep.equal(movedAnnotation);
+    });
+  });
+
   describe(Constants.REQUEST_CREATE_ANNOTATION_SUCCESS, () => {
     it('updates annotations when the server save is successful', () => {
       const docId = 3;
