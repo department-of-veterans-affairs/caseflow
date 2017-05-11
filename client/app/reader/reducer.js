@@ -1,13 +1,8 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName } from './utils';
-import { newContext } from 'immutability-helper';
+import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString } from './search';
-
-const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -54,6 +49,15 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
+const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
+  update(
+    state,
+    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+  );
+
+const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
+const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+
 const updateLastReadDoc = (state, docId) =>
   update(
     state,
@@ -82,7 +86,7 @@ const SHOW_EXPAND_ALL = false;
 const initialShowErrorMessageState = {
   tag: false,
   category: false,
-  comment: false
+  annotation: false
 };
 
 /**
@@ -104,6 +108,8 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   ui: {
+    pendingAnnotations: {},
+    pendingEditingAnnotations: {},
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
@@ -255,9 +261,8 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
-      state,
+      hideErrorMessage(state, 'category'),
       {
-        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -269,9 +274,8 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
     return update(
-      state,
+      showErrorMessage(state, 'category'),
       {
-        ui: { pdfSidebar: { showErrorMessage: { category: { $set: true } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -304,8 +308,7 @@ export default (state = initialState, action = {}) => {
       );
     })();
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
+    return update(hideErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -315,8 +318,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
+    return update(showErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -439,8 +441,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
+    return update(hideErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -454,19 +455,73 @@ export default (state = initialState, action = {}) => {
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
     return openAnnotationDeleteModalFor(state, null);
   case Constants.REQUEST_DELETE_ANNOTATION:
-    return update(openAnnotationDeleteModalFor(state, null), {
+    return update(
+      hideErrorMessage(openAnnotationDeleteModalFor(state, null), 'annotation'),
+      {
+        editingAnnotations: {
+          [action.payload.annotationId]: {
+            $apply: (annotation) => annotation && {
+              ...annotation,
+              pendingDeletion: true
+            }
+          }
+        },
+        annotations: {
+          [action.payload.annotationId]: {
+            $merge: {
+              pendingDeletion: true
+            }
+          }
+        }
+      }
+    );
+  case Constants.REQUEST_DELETE_ANNOTATION_FAILURE:
+    return update(showErrorMessage(state, 'annotation'), {
       editingAnnotations: {
-        $unset: action.payload.annotationId
+        [action.payload.annotationId]: {
+          $unset: 'pendingDeletion'
+        }
       },
       annotations: {
-        $unset: action.payload.annotationId
+        [action.payload.annotationId]: {
+          $unset: 'pendingDeletion'
+        }
       }
     });
+  case Constants.REQUEST_DELETE_ANNOTATION_SUCCESS:
+    return update(
+      state,
+      {
+        editingAnnotations: {
+          $unset: action.payload.annotationId
+        },
+        annotations: {
+          $unset: action.payload.annotationId
+        }
+      }
+    );
   case Constants.REQUEST_MOVE_ANNOTATION:
-    return update(state, {
-      annotations: {
-        [action.payload.annotation.id]: {
-          $set: action.payload.annotation
+    return update(hideErrorMessage(state, 'annotation'), {
+      ui: {
+        pendingEditingAnnotations: {
+          [action.payload.annotation.id]: {
+            $set: action.payload.annotation
+          }
+        }
+      }
+    });
+  case Constants.REQUEST_MOVE_ANNOTATION_SUCCESS:
+    return moveModel(
+      state,
+      ['ui', 'pendingEditingAnnotations'],
+      ['annotations'],
+      action.payload.annotationId
+    );
+  case Constants.REQUEST_MOVE_ANNOTATION_FAILURE:
+    return update(showErrorMessage(state, 'annotation'), {
+      ui: {
+        pendingEditingAnnotations: {
+          $unset: action.payload.annotationId
         }
       }
     });
@@ -503,16 +558,22 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION:
-    return update(state, {
+    return update(hideErrorMessage(state, 'annotation'), {
       ui: {
         placedButUnsavedAnnotation: { $set: null },
-        pendingAnnotation: { $set: action.payload.annotation }
+        pendingAnnotations: {
+          [action.payload.annotation.id]: {
+            $set: action.payload.annotation
+          }
+        }
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
-        pendingAnnotation: { $set: null }
+        pendingAnnotations: {
+          $unset: action.payload.annotationTemporaryId
+        }
       },
       annotations: {
         [action.payload.annotation.id]: {
@@ -524,6 +585,20 @@ export default (state = initialState, action = {}) => {
 
             ...action.payload.annotation
           }
+        }
+      }
+    });
+  case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
+    return update(showErrorMessage(state, 'annotation'), {
+      ui: {
+        // This will cause a race condition if the user has created multiple annotations.
+        // Whichever annotation failed most recently is the one that'll be in the
+        // "new annotation" text box. For now, I think that's ok.
+        placedButUnsavedAnnotation: {
+          $set: state.ui.pendingAnnotations[action.payload.annotationTemporaryId]
+        },
+        pendingAnnotations: {
+          $unset: action.payload.annotationTemporaryId
         }
       }
     });
@@ -562,26 +637,26 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_EDIT_ANNOTATION:
-    return (() => {
-      const editedAnnotation = state.editingAnnotations[action.payload.annotationId];
-
-      if (!editedAnnotation.comment) {
-        // If the user removed all text content in the annotation, ask them if they're
-        // intending to delete it.
-        return openAnnotationDeleteModalFor(state, editedAnnotation.id);
-      }
-
-      return update(state, {
-        editingAnnotations: {
-          $unset: action.payload.annotationId
-        },
-        annotations: {
-          [action.payload.annotationId]: {
-            $set: editedAnnotation
-          }
-        }
-      });
-    })();
+    return moveModel(
+      hideErrorMessage(state, 'annotation'),
+      ['editingAnnotations'],
+      ['ui', 'pendingEditingAnnotations'],
+      action.payload.annotationId
+    );
+  case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
+    return moveModel(
+      hideErrorMessage(state, 'annotation'),
+      ['ui', 'pendingEditingAnnotations'],
+      ['annotations'],
+      action.payload.annotationId
+    );
+  case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
+    return moveModel(
+      showErrorMessage(state, 'annotation'),
+      ['ui', 'pendingEditingAnnotations'],
+      ['editingAnnotations'],
+      action.payload.annotationId
+    );
   case Constants.SELECT_ANNOTATION:
     return update(state, {
       ui: {
@@ -607,8 +682,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
+    return update(showErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
