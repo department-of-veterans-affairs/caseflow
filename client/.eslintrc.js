@@ -76,7 +76,7 @@ module.exports = {
       }
     ],
     "max-nested-callbacks": "warn",
-    "max-params": ["warn", { "max": 8 }],
+    "max-params": "warn",
     "max-statements": [
       "warn",
       {
@@ -159,11 +159,11 @@ module.exports = {
     "no-throw-literal": "error",
     "no-trailing-spaces": "warn",
     "no-undef-init": "error",
+    "no-undefined": "error",
     "no-underscore-dangle": "error",
     "no-unmodified-loop-condition": "error",
     "no-unneeded-ternary": "warn",
     "no-unused-expressions": "warn",
-    "no-unused-vars": "warn",
     "no-use-before-define": "error",
     "no-useless-call": "error",
     "no-useless-computed-key": "error",
