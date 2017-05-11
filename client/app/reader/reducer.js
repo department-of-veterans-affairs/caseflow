@@ -501,13 +501,30 @@ export default (state = initialState, action = {}) => {
       }
     );
   case Constants.REQUEST_MOVE_ANNOTATION:
-    return update(state, {
-      annotations: {
-        [action.payload.annotation.id]: {
-          $set: action.payload.annotation
+    return update(hideErrorMessage(state, 'annotation'), {
+      ui: {
+        pendingEditingAnnotations: {
+          [action.payload.annotation.id]: {
+            $set: action.payload.annotation
+          }
         }
       }
     });
+  case Constants.REQUEST_MOVE_ANNOTATION_SUCCESS:
+    return moveModel(
+      state,
+      ['ui', 'pendingEditingAnnotations'],
+      ['annotations'],
+      action.payload.annotationId
+    )
+  case Constants.REQUEST_MOVE_ANNOTATION_FAILURE:
+    return update(showErrorMessage(state, 'annotation'), {
+      ui: {
+        pendingEditingAnnotations: {
+          $unset: action.payload.annotationId
+        }
+      }
+    })
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {
