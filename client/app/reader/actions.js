@@ -235,7 +235,7 @@ export const createAnnotation = (annotation) => (dispatch) => {
             annotationTemporaryId: temporaryId
           }
         });
-      }, 
+      },
       () => dispatch({
         type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
         payload: {
