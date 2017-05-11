@@ -177,7 +177,7 @@ export class PdfSidebar extends React.Component {
           ref={(commentListElement) => {
             this.commentListElement = commentListElement;
           }}>
-          {showErrorMessage.comment && cannotSaveAlert}
+          {showErrorMessage.annotation && cannotSaveAlert}
           <div className="cf-pdf-comment-list">
             {this.props.placedButUnsavedAnnotation &&
               <EditComment

@@ -507,8 +507,8 @@ export default (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         placedButUnsavedAnnotation: { $set: null },
-        pendingAnnotations: { 
-          [action.payload.annotation.id]: { 
+        pendingAnnotations: {
+          [action.payload.annotation.id]: {
             $set: action.payload.annotation
           }
         }
@@ -517,7 +517,12 @@ export default (state = initialState, action = {}) => {
   case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
-        pendingAnnotations: { 
+        pdfSidebar: {
+          showErrorMessage: {
+            annotation: { $set: false }
+          }
+        },
+        pendingAnnotations: {
           $unset: action.payload.annotationTemporaryId
         }
       },
@@ -536,12 +541,16 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
     return update(state, {
-      ui: { 
-        pdfSidebar: { showErrorMessage: { annotation: { $set: true } } } },
-        // pendingAnnotations is not actually being removed.
-        pendingAnnotations: { 
+      ui: {
+        pdfSidebar: {
+          showErrorMessage: {
+            annotation: { $set: true }
+          }
+        },
+        pendingAnnotations: {
           $unset: action.payload.annotationTemporaryId
         }
+      }
     });
   case Constants.START_EDIT_ANNOTATION:
     return update(state, {

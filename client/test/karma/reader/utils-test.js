@@ -23,7 +23,7 @@ describe('Reader utils', () => {
             id: 100,
             comment: 'original',
             documentId
-          }, 
+          },
           200: {
             id: 200,
             comment: 'original 2',
@@ -63,7 +63,7 @@ describe('Reader utils', () => {
           comment: 'pending annotation',
           documentId
         }
-      ])
+      ]);
     });
-  })
+  });
 });
