@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, clearSearch, toggleExpandAll } from '../../reader/actions';
 import _ from 'lodash';
 
+const DEBOUNCE_TIME_IN_MS = 150;
+
 export class DocumentListHeader extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +14,7 @@ export class DocumentListHeader extends Component {
       value: props.value
     };
     // debounce the passed in dispatch method
-    this.changed = _.debounce(this.props.setSearch, 150);
+    this.changed = _.debounce(this.props.setSearch, DEBOUNCE_TIME_IN_MS);
   }
 
   componentWillReceiveProps(nextProps) {
