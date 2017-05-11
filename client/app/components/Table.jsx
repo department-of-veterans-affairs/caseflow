@@ -83,7 +83,7 @@ const Row = (props) => {
 };
 
 const BodyRows = (props) => {
-  return <tbody className={props.bodyClassName}>
+  return <tbody className={props.bodyClassName} ref={props.ref} id={props.id}>
     {props.rowObjects.map((object, rowNumber) =>
       <Row
         rowObject={object}
@@ -112,6 +112,8 @@ export default class Table extends React.Component {
       headerClassName = '',
       bodyClassName = '',
       rowClassNames = () => '',
+      tbodyId,
+      tbodyRef,
       id
     } = this.props;
 
@@ -122,6 +124,8 @@ export default class Table extends React.Component {
 
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
         <BodyRows
+          id={tbodyId}
+          ref={tbodyRef}
           columns={columns}
           rowObjects={rowObjects}
           bodyClassName={bodyClassName}
@@ -132,6 +136,8 @@ export default class Table extends React.Component {
 }
 
 Table.propTypes = {
+  tbodyId: PropTypes.string,
+  tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,
