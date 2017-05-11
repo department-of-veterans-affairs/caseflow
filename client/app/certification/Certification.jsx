@@ -30,10 +30,12 @@ const configureStore = (data) => {
 
   let middleware = [];
 
-  if (!ConfigUtil.test() && !ConfigUtil.production()) {
+  if (!ConfigUtil.test()) {
     middleware.push(logger);
   }
 
+  // This is to be used with the Redux Devtools Chrome extension
+  // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
