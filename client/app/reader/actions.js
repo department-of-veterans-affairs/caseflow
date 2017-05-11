@@ -35,11 +35,7 @@ export const setSearch = (searchQuery) => (
         searchQuery
       }
     });
-
-    // adding a slight delay for performing search
-    _.debounce(() => {
-      dispatch(performSearch());
-    }, 150)();
+    dispatch(performSearch());
   }
 );
 
