@@ -49,6 +49,15 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
+const setErrorMessageState = (state, errorMessageKey, errorMessageVal) => 
+  update(
+    state,
+    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+  );
+
+const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false)
+const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true)
+
 const updateLastReadDoc = (state, docId) =>
   update(
     state,
@@ -252,9 +261,8 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
-      state,
+      hideErrorMessage(state, 'category'),
       {
-        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -266,9 +274,8 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
     return update(
-      state,
+      showErrorMessage(state, 'category'),
       {
-        ui: { pdfSidebar: { showErrorMessage: { category: { $set: true } } } },
         documents: {
           [action.payload.docId]: {
             [action.payload.categoryKey]: {
@@ -301,8 +308,7 @@ export default (state = initialState, action = {}) => {
       );
     })();
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
+    return update(hideErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -312,8 +318,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
+    return update(showErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -436,8 +441,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
+    return update(hideErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -500,13 +504,8 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION:
-    return update(state, {
+    return update(hideErrorMessage(state, 'annotation'), {
       ui: {
-        pdfSidebar: {
-          showErrorMessage: {
-            annotation: { $set: false }
-          }
-        },
         placedButUnsavedAnnotation: { $set: null },
         pendingAnnotations: {
           [action.payload.annotation.id]: {
@@ -536,13 +535,11 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
-    return update(state, {
+    return update(showErrorMessage(state, 'annotation'), {
       ui: {
-        pdfSidebar: {
-          showErrorMessage: {
-            annotation: { $set: true }
-          }
-        },
+        // This will cause a race condition if the user has created multiple annotations.
+        // Whichever annotation failed most recently is the one that'll be in the 
+        // "new annotation" text box. For now, I think that's ok.
         placedButUnsavedAnnotation: {
           $set: state.ui.pendingAnnotations[action.payload.annotationTemporaryId]
         },
@@ -601,30 +598,14 @@ export default (state = initialState, action = {}) => {
     })();
   case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
     return moveModel(
-      update(state, {
-        ui: {
-          pdfSidebar: {
-            showErrorMessage: {
-              annotation: { $set: false }
-            }
-          }
-        }
-      }),
+      update(hideErrorMessage(state, 'annotation')),
       ['ui', 'pendingEditingAnnotations'],
       ['annotations'],
       action.payload.annotationId
     );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
     return moveModel(
-      update(state, {
-        ui: {
-          pdfSidebar: {
-            showErrorMessage: {
-              annotation: { $set: true }
-            }
-          },
-        }
-      }),
+      update(showErrorMessage(state, 'annotation')),
       ['ui', 'pendingEditingAnnotations'],
       ['editingAnnotations'],
       action.payload.annotationId
@@ -654,8 +635,7 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
-    return update(state, {
-      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
+    return update(showErrorMessage(state, 'tag'), {
       documents: {
         [action.payload.docId]: {
           tags: {
