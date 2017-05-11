@@ -18,6 +18,10 @@ class TeamQuota < ActiveRecord::Base
     calculate_task_count_for(assigned_quotas.unlocked.index(user_quota))
   end
 
+  def tasks_to_assign
+    tasks.count - locked_task_count
+  end
+
   def task_klass
     task_type.is_a?(String) ? task_type.constantize : task_type
   end
@@ -52,10 +56,6 @@ class TeamQuota < ActiveRecord::Base
 
   def unlocked_user_count
     user_count - assigned_quotas.locked.count
-  end
-
-  def tasks_to_assign
-    tasks.count - locked_task_count
   end
 
   def locked_task_count

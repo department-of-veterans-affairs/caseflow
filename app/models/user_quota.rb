@@ -31,7 +31,21 @@ class UserQuota < ActiveRecord::Base
     !!locked_task_count
   end
 
+  def locked_task_count=(new_locked_task_count)
+    self[:locked_task_count] = adjust_locked_task_count(new_locked_task_count)
+  end
+
   private
+
+  def adjust_locked_task_count(new_locked_task_count)
+    return unless new_locked_task_count
+
+    [0, [max_locked_task_count, new_locked_task_count.to_i].min].max
+  end
+
+  def max_locked_task_count
+    team_quota.tasks_to_assign + (locked_task_count || 0)
+  end
 
   # Allow team quota to adjust values based on the new user quota
   def update_team_quota
