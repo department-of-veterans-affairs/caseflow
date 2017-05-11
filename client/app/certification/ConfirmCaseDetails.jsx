@@ -34,7 +34,7 @@ const representativeTypeOptions = [
 ];
 
 const REP_NAME_ID = 'Representative name';
-const REP_TYPE_ID = 'Representative type';
+const REP_TYPE_ID = 'Representative-type_ATTORNEY';
 const OTHER_REP_TYPE_ID = 'Specify other representative type';
 const REP_NAME_ERROR = 'Please enter the representative name.';
 const REP_TYPE_ERROR = 'Please enter the representative type.';
@@ -86,15 +86,15 @@ export class ConfirmCaseDetails extends React.Component {
 
     const erroredFields = [];
 
+    // We always need a representative type.
+    if (ValidatorsUtil.requiredValidator(representativeType)) {
+      erroredFields.push(REP_TYPE_ID);
+    }
+
     // Unless the type of representative is "None",
     // we need a representative name.
     if (ValidatorsUtil.requiredValidator(representativeName) && !this.representativeTypeIsNone()) {
       erroredFields.push(REP_NAME_ID);
-    }
-
-    // We always need a representative type.
-    if (ValidatorsUtil.requiredValidator(representativeType)) {
-      erroredFields.push(REP_TYPE_ID);
     }
 
     // If the representative type is "Other",
@@ -168,7 +168,7 @@ export class ConfirmCaseDetails extends React.Component {
           </div>
 
           <RadioField
-            name={REP_TYPE_ID}
+            name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
             onChange={changeRepresentativeType}

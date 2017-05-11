@@ -448,7 +448,7 @@ RSpec.feature "Save Certification" do
         expect(page).to have_content "Please enter the certifying office."
         expect(page).to have_content "Please enter the organizational element."
         expect(page).to have_content "Please enter the name of the Certifying Official (usually your name)."
-        expect(page).to have_content "Please enter the title of the Certifying Official (e.g. Decision Review Officer)."
+        expect(page).to have_content "Please enter the title of the Certifying Official."
         expect(page).to have_content "Please enter today's date."
       end
     end

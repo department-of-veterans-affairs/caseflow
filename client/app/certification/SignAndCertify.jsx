@@ -30,13 +30,12 @@ const certifyingOfficialTitleOptions = [{
 const CERTIFYING_OFFICE_ID = 'Name and location of certifying office:';
 const CERTIFYING_USERNAME_ID = 'Organizational elements certifying appeal:';
 const CERTIFYING_OFFICIAL_NAME_ID = 'Name of certifying official:';
-const CERTIFYING_OFFICIAL_TITLE_ID = 'Title of certifying official:';
+const CERTIFYING_OFFICIAL_TITLE_ID = 'Title-of-certifying-official-_DECISION_REVIEW_OFFICER';
 const CERTIFICATION_DATE_ID = 'Date:';
 const CERTIFYING_OFFICE_ERROR = 'Please enter the certifying office.';
 const CERTIFYING_USERNAME_ERROR = 'Please enter the organizational element.';
 const CERTIFYING_OFFICIAL_NAME_ERROR = 'Please enter the name of the Certifying Official (usually your name).';
-const CERTIFYING_OFFICIAL_TITLE_ERROR = 'Please enter the title of the Certifying Official ' +
-    '(e.g. Decision Review Officer).';
+const CERTIFYING_OFFICIAL_TITLE_ERROR = 'Please enter the title of the Certifying Official.';
 const CERTIFICATION_DATE_ERROR = "Please enter today's date.";
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -148,7 +147,7 @@ class UnconnectedSignAndCertify extends React.Component {
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
-            name={CERTIFYING_OFFICIAL_TITLE_ID}
+            name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored(CERTIFYING_OFFICIAL_TITLE_ID) ? CERTIFYING_OFFICIAL_TITLE_ERROR : null)}
