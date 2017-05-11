@@ -28,6 +28,7 @@ describe TeamQuota do
     subject { team_quota.task_count_for(quota) }
 
     let(:tasks_completed_today) { [FakeTask.new] * 7 }
+    let(:user_count) { 2 }
     let!(:first_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
     let!(:second_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
 
@@ -39,6 +40,17 @@ describe TeamQuota do
     context "when assigned task needs no remainder" do
       let(:quota) { second_quota }
       it { is_expected.to eq(3) }
+    end
+
+    context "when there are locked quotas" do
+      before { first_quota.update!(locked_task_count: 5) }
+
+      let!(:third_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
+      let(:user_count) { 3 }
+
+      let(:quota) { second_quota }
+
+      it { is_expected.to eq(1) }
     end
 
     context "when user_quota isn't part of the team_quota" do

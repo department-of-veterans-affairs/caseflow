@@ -28,6 +28,8 @@ Rails.application.routes.draw do
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
+    resources :user_quotas, path: "/user-quotas", only: :update
+
     resources :establish_claims,
               path: "/establish-claim",
               task_type: :EstablishClaim,

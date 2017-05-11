@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import EmployeeCount from './EmployeeCount';
 import Table from '../components/Table';
 import Alert from '../components/Alert';
+import AssignedTasks from './AssignedTasks';
+import UserQuotaControls from './UserQuotaControls';
 import * as Constants from './constants/index';
 import { getQuotaTotals } from './selectors';
 import { connect } from 'react-redux';
@@ -17,19 +19,25 @@ class ManageEstablishClaim extends React.Component {
         footer: <b>Employee Total</b>
       },
       {
-        header: 'Cases Assigned',
-        valueName: 'taskCount',
-        footer: <b>{quotaTotals.taskCount}</b>
-      },
-      {
         header: 'Cases Completed',
         valueName: 'tasksCompletedCount',
-        footer: <b>{quotaTotals.tasksCompletedCount}</b>
+        footer: <b>{quotaTotals.tasksCompletedCount}</b>,
+        align: 'center'
       },
       {
         header: 'Cases Remaining',
         valueName: 'tasksLeftCount',
-        footer: <b>{quotaTotals.tasksLeftCount}</b>
+        footer: <b>{quotaTotals.tasksLeftCount}</b>,
+        align: 'center'
+      },
+      {
+        header: 'Cases Assigned',
+        valueFunction: (userQuota) => (<AssignedTasks userQuota={userQuota} />),
+        footer: <b>{quotaTotals.taskCount}</b>,
+        align: 'center'
+      },
+      {
+        valueFunction: (userQuota) => (<UserQuotaControls userQuota={userQuota} />)
       }
     ];
   }

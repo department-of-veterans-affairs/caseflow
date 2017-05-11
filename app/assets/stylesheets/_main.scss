@@ -218,6 +218,14 @@ select {
   @include animation(spin 6s linear infinite);
 }
 
+.cf-lock-icon {
+  vertical-align: middle;
+}
+
+.cf-btn-link.cf-no-padding {
+  padding: 0;
+}
+
 .cf-react-loading-indicator {
   background-color: $color-white;
   border-radius: 5px;
@@ -299,4 +307,9 @@ select {
   p {
     margin-top: 0;
   }
+}
+
+input[type=number] {
+  width: 60px;
+  height: 35px;
 }
