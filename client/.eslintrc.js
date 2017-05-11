@@ -76,7 +76,7 @@ module.exports = {
       }
     ],
     "max-nested-callbacks": "warn",
-    "max-params": "warn",
+    "max-params": ["warn", { "max": 5 }],
     "max-statements": [
       "warn",
       {

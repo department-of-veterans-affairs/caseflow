@@ -1,6 +1,7 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
+import uuid from 'uuid';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -91,7 +92,21 @@ export const deleteAnnotation = (docId, annotationId) =>
       }
     });
 
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).end();
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
+      then(
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
+          payload: {
+            annotationId
+          }
+        }),
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
+          payload: {
+            annotationId
+          }
+        })
+      );
   };
 
 export const requestMoveAnnotation = (annotation) => (dispatch) => {
@@ -104,7 +119,21 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).
+    then(
+      () => dispatch({
+        type: Constants.REQUEST_MOVE_ANNOTATION_SUCCESS,
+        payload: {
+          annotationId: annotation.id
+        }
+      }),
+      () => dispatch({
+        type: Constants.REQUEST_MOVE_ANNOTATION_FAILURE,
+        payload: {
+          annotationId: annotation.id
+        }
+      })
+    );
 };
 
 export const cancelEditAnnotation = (annotationId) => ({
@@ -128,6 +157,14 @@ export const updateNewAnnotationContent = (content) => ({
 });
 
 export const requestEditAnnotation = (annotation) => (dispatch) => {
+  // If the user removed all text content in the annotation, ask them if they're
+  // intending to delete it.
+  if (!annotation.comment) {
+    dispatch(openAnnotationDeleteModal(annotation.id));
+
+    return;
+  }
+
   dispatch({
     type: Constants.REQUEST_EDIT_ANNOTATION,
     payload: {
@@ -137,7 +174,21 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).end();
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).
+    then(
+      () => dispatch({
+        type: Constants.REQUEST_EDIT_ANNOTATION_SUCCESS,
+        payload: {
+          annotationId: annotation.id
+        }
+      }),
+      () => dispatch({
+        type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
+        payload: {
+          annotationId: annotation.id
+        }
+      })
+    );
 };
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
@@ -155,29 +206,43 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
 export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
 export const createAnnotation = (annotation) => (dispatch) => {
+  const temporaryId = uuid.v4();
+
   dispatch({
     type: Constants.REQUEST_CREATE_ANNOTATION,
     payload: {
-      annotation
+      annotation: {
+        ...annotation,
+        id: temporaryId
+      }
     }
   });
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
-    then((response) => {
-      const responseObject = JSON.parse(response.text);
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
 
-      dispatch({
-        type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
-        payload: {
-          annotation: {
-            ...annotation,
-            ...responseObject
+        dispatch({
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+          payload: {
+            annotation: {
+              ...annotation,
+              ...responseObject
+            },
+            annotationTemporaryId: temporaryId
           }
+        });
+      },
+      () => dispatch({
+        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+        payload: {
+          annotationTemporaryId: temporaryId
         }
-      });
-    });
+      })
+    );
 };
 
 export const handleSelectCommentIcon = (comment) => (dispatch) => {
@@ -314,7 +379,7 @@ export const addNewTag = (doc, tags) => (
       });
       ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }).
         then((data) => {
-          dispatch(newTagRequestSuccess(doc.id, data.body));
+          dispatch(newTagRequestSuccess(doc.id, data.body.tags));
         }, () => {
           dispatch(newTagRequestFailed(doc.id, newTags));
         });
