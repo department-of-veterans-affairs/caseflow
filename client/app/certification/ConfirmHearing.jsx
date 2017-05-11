@@ -97,6 +97,19 @@ const informalForm9HearingAnswers = [{
   value: Constants.hearingPreferences.TRAVEL_BOARD
 }];
 
+const HEARING_CHANGE_ID = 'hearingChangeQuestion_FOUND';
+const HEARING_CHANGE_ERROR = 'Please select yes or no.';
+const HEARING_CHANGE_FOUND_ID = 'What-did-the-appellant-request-in-the-document-you-found-_HEARING_CANCELLED';
+const HEARING_CHANGE_FOUND_ERROR = "Please select the appelant's request";
+const FORM9_TYPE_ID = 'Caseflow-found-the-document-below-labeled-as-a-Form-9-from-the-appellant-s-eFolder-' +
+    'What-type-of-substantive-appeal-is-it-_INFORMAL_FORM9';
+const FORM9_TYPE_ERROR = 'Please select Form 9 or a statement.';
+const INFORMAL_HEARING_PREFERENCE_ID = 'What-optional-board-hearing-preference-if-any-did-the-appellant-request-' +
+    '_NO_HEARING_DESIRED';
+const FORMAL_HEARING_PREFERENCE_ID = 'Which-box-did-the-appellant-select-for-the-Optional-Board-Hearing-question-' +
+    'above-Depending-on-the-Form-9-this-may-be-Question-8-or-Question-10-_NO_HEARING_DESIRED';
+const HEARING_PREFERENCE_ERROR = 'Please select a hearing preference.';
+
 /*
 * Check the Veteran's hearing request in VBMS and update it in VACOLS.
 *
@@ -124,6 +137,7 @@ class UnconnectedConfirmHearing extends React.Component {
     this.props.resetState();
   }
 
+  /* eslint-disable max-statements */
   getValidationErrors() {
     let {
       hearingDocumentIsInVbms,
@@ -133,25 +147,41 @@ class UnconnectedConfirmHearing extends React.Component {
 
     const erroredFields = [];
 
-    if (!hearingPreference && hearingDocumentIsInVbms) {
-      erroredFields.push('hearingChangeQuestion_FOUND');
+    if (!hearingDocumentIsInVbms) {
+      erroredFields.push(HEARING_CHANGE_ID);
     }
 
-    if (!hearingDocumentIsInVbms && !form9Type) {
-      erroredFields.push('hearingChangeQuestion_FOUND');
+    if (!hearingPreference && hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND) {
+      erroredFields.push(HEARING_CHANGE_FOUND_ID);
+    }
+
+    if (hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND && !form9Type) {
+      erroredFields.push(FORM9_TYPE_ID);
+    }
+
+    if (form9Type === Constants.form9Types.FORMAL_FORM9 && !hearingPreference) {
+      erroredFields.push(FORMAL_HEARING_PREFERENCE_ID);
+    }
+
+    if (form9Type === Constants.form9Types.INFORMAL_FORM9 && !hearingPreference) {
+      erroredFields.push(INFORMAL_HEARING_PREFERENCE_ID);
     }
 
     return erroredFields;
   }
+  /* eslint-enable max-statements */
 
   onClickContinue() {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
+      this.props.changeErroredFields(erroredFields);
       window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
 
       return;
     }
+
+    this.props.changeErroredFields(null);
 
     this.props.certificationUpdateStart({
       hearingDocumentIsInVbms: this.props.hearingDocumentIsInVbms,
@@ -159,6 +189,10 @@ class UnconnectedConfirmHearing extends React.Component {
       hearingPreference: this.props.hearingPreference,
       vacolsId: this.props.match.params.vacols_id
     });
+  }
+
+  isFieldErrored(fieldName) {
+    return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
   }
 
   /* eslint-disable max-statements */
@@ -230,24 +264,31 @@ class UnconnectedConfirmHearing extends React.Component {
             required={true}
             options={hearingChangeAnswers}
             value={hearingDocumentIsInVbms}
+            errorMessage={this.isFieldErrored(HEARING_CHANGE_ID) ? HEARING_CHANGE_ERROR : null}
             onChange={onHearingDocumentChange}/>
 
           {
             shouldDisplayHearingChangeFound &&
-            <RadioField name={hearingChangeFoundQuestion}
+            <RadioField
+              name={hearingChangeFoundQuestion}
               required={true}
+              errorMessage={this.isFieldErrored(HEARING_CHANGE_FOUND_ID) ? HEARING_CHANGE_FOUND_ERROR : null}
               options={hearingChangeFoundAnswers}
               value={hearingPreference}
-              onChange={onHearingPreferenceChange}/>
+              onChange={onHearingPreferenceChange}
+            />
           }
 
           {
             shouldDisplayTypeOfForm9Question &&
-            <RadioField name={typeOfForm9Question}
+            <RadioField
+              name={typeOfForm9Question}
               required={true}
               options={typeOfForm9Answers}
               value={form9Type}
-              onChange={onTypeOfForm9Change}/>
+              errorMessage={this.isFieldErrored(FORM9_TYPE_ID) ? FORM9_TYPE_ERROR : null}
+              onChange={onTypeOfForm9Change}
+            />
           }
 
           {
@@ -270,6 +311,7 @@ class UnconnectedConfirmHearing extends React.Component {
               options={formalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
+              errorMessage={this.isFieldErrored(FORMAL_HEARING_PREFERENCE_ID) ? HEARING_PREFERENCE_ERROR : null}
               onChange={onHearingPreferenceChange}/>
           }
 
@@ -279,6 +321,7 @@ class UnconnectedConfirmHearing extends React.Component {
               options={informalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
+              errorMessage={this.isFieldErrored(INFORMAL_HEARING_PREFERENCE_ID) ? HEARING_PREFERENCE_ERROR : null}
               onChange={onHearingPreferenceChange}/>
           }
         </div>
@@ -319,6 +362,10 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
+  changeErroredFields: (erroredFields) => {
+    dispatch(certificationActions.changeErroredFields(erroredFields));
+  },
+
   onTypeOfForm9Change: (form9Type) => dispatch(actions.onTypeOfForm9Change(form9Type)),
 
   onHearingPreferenceChange: (hearingPreference) => dispatch(actions.onHearingPreferenceChange(hearingPreference)),
@@ -340,6 +387,7 @@ const mapStateToProps = (state) => ({
   form9Date: state.form9Date,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
+  erroredFields: state.erroredFields,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
 });
@@ -357,6 +405,7 @@ const ConfirmHearing = connect(
 ConfirmHearing.propTypes = {
   hearingDocumentIsInVbms: PropTypes.string,
   onHearingDocumentChange: PropTypes.func,
+  erroredFields: PropTypes.array,
   form9Type: PropTypes.string,
   form9Date: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,

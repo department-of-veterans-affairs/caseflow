@@ -422,6 +422,26 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_content "Please enter the other representative type."
       end
+      scenario "on the confirm hearing page" do
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        click_button("Continue")
+        expect(page).to have_content "Please select yes or no."
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "Yes").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select the appelant's request"
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "No").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select Form 9 or a statement."
+        within_fieldset("Caseflow found the document below, labeled as a Form 9") do
+          find("label", text: "Statement in lieu of Form 9").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select a hearing preference."
+      end
       scenario "on the save and certify page" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         click_button("Continue")
