@@ -28,6 +28,10 @@ export default class StyleGuideFooter extends React.Component {
         link: '#footer'
       },
       {
+        title: 'Switch User',
+        link: '#footer'
+      },
+      {
         title: 'Sign out',
         link: '#footer'
       }
