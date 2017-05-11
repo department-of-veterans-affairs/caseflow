@@ -259,6 +259,7 @@ ActiveRecord::Schema.define(version: 20170511155922) do
     t.string "css_id",     null: false
     t.string "full_name"
     t.string "email"
+    t.string "roles",                   array: true
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
