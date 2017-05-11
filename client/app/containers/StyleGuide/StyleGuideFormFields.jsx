@@ -2,6 +2,7 @@ import React from 'react';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuideTextArea from './StyleGuideTextArea';
+import StyleGuideCharacterLimit from './StyleGuideCharacterLimit';
 
 let StyleGuideFormFields = () => {
 
@@ -17,10 +18,7 @@ let StyleGuideFormFields = () => {
         id="text_input_error"
         isSubsection={true} />
       <StyleGuideTextArea />
-      <StyleGuidePlaceholder
-        title="Character Limit"
-        id="character_limit"
-        isSubsection={true} />
+      <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
   </div>
 
