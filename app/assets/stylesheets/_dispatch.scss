@@ -36,6 +36,12 @@
   vertical-align: top;
 }
 
+.cf-btn-link {
+  &.cf-adjacent-buttons {
+    margin-right: 30px;
+  }
+}
+
 .inline-value {
   display: inline-block;
   width: 55%;

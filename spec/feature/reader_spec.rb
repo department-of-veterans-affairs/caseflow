@@ -8,6 +8,15 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def scroll_to_bottom(element)
+  page.driver.evaluate_script <<-EOS
+    function() {
+      var elem = document.getElementById('#{element}');
+      elem.scrollTop = elem.scrollHeight;
+    }();
+  EOS
+end
+
 # This utility function returns true if an element is currently visible on the page
 def in_viewport(element)
   page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
@@ -509,15 +518,16 @@ RSpec.feature "Reader" do
     scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # Click on the document at the top
-      click_on documents.last.type
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.first.type
 
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      # Make sure the document is scrolled
       expect(in_viewport("read-indicator")).to be true
+      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
   end
 
