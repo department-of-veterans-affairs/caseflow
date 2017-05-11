@@ -90,7 +90,7 @@ class Task < ActiveRecord::Base
     private
 
     def find_and_assign_next!(user)
-      retry_when StandardError, limit: 3 do
+      retry_when ActiveRecord::StaleObjectError, limit: 3 do
         next_assignable.tap { |task| task && task.assign!(user) }
       end
     end
