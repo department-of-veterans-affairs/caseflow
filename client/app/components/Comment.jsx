@@ -19,7 +19,7 @@ export class Comment extends React.Component {
   getControlButtons = () => {
     return <div>
         <Button
-          name="delete"
+          name="delete-comment-{this.props.uuid}"
           classNames={['cf-btn-link comment-control-button']}
           onClick={this.onClickDelete}>
           Delete
@@ -28,7 +28,7 @@ export class Comment extends React.Component {
           |
         </span>
         <Button
-          name="edit"
+          name="edit-comment-{this.props.uuid}"
           classNames={['cf-btn-link comment-control-button']}
           onClick={this.onEditComment}>
           Edit

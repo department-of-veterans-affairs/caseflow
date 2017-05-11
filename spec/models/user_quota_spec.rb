@@ -38,10 +38,10 @@ describe UserQuota do
 
     context "when locked task count" do
       before do
-        user_quota.locked_task_count = 30
+        user_quota.locked_task_count = 0
       end
 
-      it { is_expected.to eq(30) }
+      it { is_expected.to eq(0) }
     end
   end
 
