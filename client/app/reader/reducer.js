@@ -638,7 +638,7 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return moveModel(
-      state,
+      hideErrorMessage(state, 'annotation'),
       ['editingAnnotations'],
       ['ui', 'pendingEditingAnnotations'],
       action.payload.annotationId
