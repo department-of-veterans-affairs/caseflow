@@ -35,16 +35,12 @@ export const toggleExpandAll = () => ({
   type: Constants.TOGGLE_EXPAND_ALL
 });
 
-export const setSearch = (searchQuery) => (
-  (dispatch) => {
-    dispatch({
-      type: Constants.SET_SEARCH,
-      payload: {
-        searchQuery
-      }
-    });
+export const setSearch = (searchQuery) => ({
+  type: Constants.SET_SEARCH,
+  payload: {
+    searchQuery
   }
-);
+});
 
 export const setDocListScrollPosition = (scrollTop) => ({
   type: Constants.SET_DOC_LIST_SCROLL_POSITION,
