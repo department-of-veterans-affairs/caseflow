@@ -166,6 +166,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
           annotationId: annotation.id
         }
       })).
+
     /**
      * One annoying thing to be aware of: superagent's funky brand of promises apparently do not support
      * passing multiple arguments to .then(). Traditionally, you could do .then(onSuccess, onErr). However,

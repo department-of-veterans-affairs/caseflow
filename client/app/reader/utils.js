@@ -40,7 +40,7 @@ const immutabilityHelperSpecOfPath = (objPath, spec, specVal) => {
   return immutabilityHelperSpecOfPathRec(objPath);
 };
 
-export const moveModel = (state, srcPath, destPath, id) => 
+export const moveModel = (state, srcPath, destPath, id) =>
   update(
     state,
     {

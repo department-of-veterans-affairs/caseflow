@@ -621,9 +621,9 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return moveModel(
-      state, 
-      ['editingAnnotations'], 
-      ['ui', 'pendingEditingAnnotations'], 
+      state,
+      ['editingAnnotations'],
+      ['ui', 'pendingEditingAnnotations'],
       action.payload.annotationId
     );
   case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
