@@ -5,7 +5,7 @@ import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
-import { FULL_GRANT } from '../../establishClaim/constants';
+import { FULL_GRANT, INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR } from '../../establishClaim/constants';
 import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
@@ -46,10 +46,10 @@ export const END_PRODUCT_INFO = {
 
 const CREATE_EP_ERRORS = {
   duplicate_ep: {
-    header: 'At this time, we are unable to assign or create a new EP for this claim.',
-    body: 'An EP with that modifier was previously created for this claim. ' +
-          'Try a different modifier or select Cancel at the bottom of the ' +
-          'page to release this claim and proceed to process it outside of Caseflow.'
+    header: 'Unable to assign or create a new EP for this claim',
+    body: 'Please try to create this EP again. If you are still unable ' +
+          'to proceed, select Cancel at the bottom of the page to ' +
+          'release this claim, and process it outside of Caseflow.'
   },
   task_already_completed: {
     header: 'This task was already completed.',
@@ -186,6 +186,17 @@ export default class EstablishClaim extends BaseForm {
       }, (error) => {
         let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
                           CREATE_EP_ERRORS.default;
+
+        let nextModifier = this.validModifiers()[1];
+
+        if (error.response.body.error_code === 'duplicate_ep' && nextModifier) {
+          this.store.dispatch({
+            type: INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR,
+            payload: {
+              value: nextModifier
+            }
+          });
+        }
 
         this.setState({
           loading: false
@@ -582,7 +593,6 @@ export default class EstablishClaim extends BaseForm {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
-            validModifiers={this.validModifiers()}
           />
         }
         { this.isNotePage() &&
