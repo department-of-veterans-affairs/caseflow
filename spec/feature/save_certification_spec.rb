@@ -391,7 +391,7 @@ RSpec.feature "Save Certification" do
         fill_in "Date:", with: "02/01/2016"
 
         click_button("Continue")
-        expect(page).to have_content "Congratulations"
+        expect(page).to have_content "Success"
         form8 = Form8.find_by(vacols_id: appeal.vacols_id)
         expect(form8.certifying_office).to eq "Office in DC"
         expect(form8.certifying_username).to eq "User4567"

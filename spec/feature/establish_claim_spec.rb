@@ -277,10 +277,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{task.id}"
       click_on "Route claim"
+
+      expect(find_field("endProductModifier")[:value]).to eq("170")
+
       click_on "Create End Product"
 
       expect(page).to_not have_content("Success!")
-      expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+      expect(page).to have_content("Unable to assign or create a new EP for this claim")
+      expect(find_field("endProductModifier")[:value]).to eq("171")
 
       # Missing SSN error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)

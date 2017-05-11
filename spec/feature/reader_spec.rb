@@ -8,6 +8,15 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def scroll_to_bottom(element)
+  page.driver.evaluate_script <<-EOS
+    function() {
+      var elem = document.getElementById('#{element}');
+      elem.scrollTop = elem.scrollHeight;
+    }();
+  EOS
+end
+
 # This utility function returns true if an element is currently visible on the page
 def in_viewport(element)
   page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
@@ -28,7 +37,7 @@ def get_size(element)
   }
 end
 
-def add_comment(text)
+def add_comment_without_clicking_save(text)
   # Add a comment
   click_on "button-AddComment"
   expect(page).to have_css(".cf-pdf-placing-comment")
@@ -38,6 +47,10 @@ def add_comment(text)
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
   fill_in "addComment", with: text
+end
+
+def add_comment(text)
+  add_comment_without_clicking_save(text)
   click_on "Save"
 end
 
@@ -171,10 +184,9 @@ RSpec.feature "Reader" do
       expect(documents[0].reload.annotations.count).to eq(0)
 
       # Try to add an empty comment
-      add_comment("")
+      add_comment_without_clicking_save("")
 
-      # Should not show up
-      expect(page).to_not have_css(".comment-container")
+      expect(find("#button-save")["disabled"]).to eq("true")
 
       # Try to edit a comment to contain no text
       add_comment("A")
@@ -262,7 +274,7 @@ RSpec.feature "Reader" do
         expect(after_click_scroll - original_scroll).to be > 0
 
         # Make sure the comment icon and comment are shown as selected
-        expect(page).to have_css(".comment-container-selected")
+        expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
         id = "#{annotations[annotations.size - 2].id}-filter-1"
 
@@ -506,15 +518,16 @@ RSpec.feature "Reader" do
     scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # Click on the document at the top
-      click_on documents.last.type
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.first.type
 
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      # Make sure the document is scrolled
       expect(in_viewport("read-indicator")).to be true
+      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
   end
 

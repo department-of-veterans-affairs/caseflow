@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def feature_enabled?(feature)
-    FeatureToggle.enabled?(feature, current_user)
+    FeatureToggle.enabled?(feature, user: current_user)
   end
   helper_method :feature_enabled?
 
@@ -159,7 +159,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_system_admin
-    verify_authorized_roles("System Admin")
+    redirect_to "/unauthorized" unless current_user.admin?
   end
 
   def on_vbms_error

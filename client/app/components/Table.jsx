@@ -93,8 +93,8 @@ export default class Table extends React.Component {
       </tr>;
     };
 
-    let BodyRows = (props) => {
-      return <tbody className={this.props.bodyClassName}>
+    let BodyRows = (props) =>
+      <tbody className={this.props.bodyClassName} ref={this.props.tbodyRef} id={this.props.tbodyId}>
         {props.rowObjects.map((object, rowNumber) =>
           <Row
             rowObject={object}
@@ -103,7 +103,6 @@ export default class Table extends React.Component {
             key={rowNumber} />
         )}
       </tbody>;
-    };
 
     let FooterRow = (props) => {
       let hasFooters = _.some(props.columns, (column) => column.footer);
@@ -126,6 +125,8 @@ export default class Table extends React.Component {
 }
 
 Table.propTypes = {
+  tbodyId: PropTypes.string,
+  tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,
