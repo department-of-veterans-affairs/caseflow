@@ -6,6 +6,59 @@ describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 
+  describe(Constants.REQUEST_CREATE_ANNOTATION_FAILURE, () => {
+    const getPostFailureState = () => {
+      const annotationTemporaryId = 'some-guid';
+      const annotation = {
+        comment: 'text',
+        id: annotationTemporaryId
+      };
+
+      return {
+        state: reduceActions([
+          {
+            type: Constants.REQUEST_CREATE_ANNOTATION,
+            payload: {
+              annotation
+            }
+          },
+          {
+            type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+            payload: {
+              annotationTemporaryId
+            }
+          }
+        ]),
+        annotation
+      };
+    }
+
+    it('shows an error message when creating the request fails', () => {
+      const {state, annotation} = getPostFailureState();
+
+      expect(state.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(state.ui.placedButUnsavedAnnotation).to.deep.equal(annotation);
+    });
+
+    it('hides the error message when a second request is started', () => {
+      const {state} = getPostFailureState();
+
+      const nextState = reduceActions([
+        {
+          type: Constants.REQUEST_CREATE_ANNOTATION,
+          payload: {
+            annotation: {
+              comment: 'a second annotation',
+              id: 'some-other-guid'
+            }
+          }
+        }
+      ], state)
+
+      expect(nextState.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+    });
+  });
+
   describe(Constants.REQUEST_CREATE_ANNOTATION_SUCCESS, () => {
     it('updates annotations when the server save is successful', () => {
       const docId = 3;
