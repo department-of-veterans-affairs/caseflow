@@ -1,7 +1,12 @@
 import _ from 'lodash';
+import { newContext } from 'immutability-helper';
+
+export const update = newContext();
+
+update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 export const categoryFieldNameOfCategoryName =
-    (categoryName) => `category_${categoryName}`;
+  (categoryName) => `category_${categoryName}`;
 
 export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 
@@ -20,6 +25,20 @@ export const getAnnotationByDocumentId = (state, docId) =>
   uniqBy('id').
   filter({ documentId: docId }).
   value();
+
+const immutabilityHelperSpecOfPath = (objPath, spec, specVal) =>
+  objPath.length ? 
+    ({[objPath[0]]: immutabilityHelperSpecOfPath(objPath.slice(1), spec, specVal)}) :
+    ({[spec]: specVal})
+
+export const moveModel = (state, srcPath, destPath, id) => 
+  update(
+    state, 
+    {
+      ...immutabilityHelperSpecOfPath(srcPath, '$unset', id),    
+      ...immutabilityHelperSpecOfPath([...destPath, id], '$set', _.get(state, [...srcPath, id]))
+    }
+  );
 
 export const sortAnnotations = (annotations) =>
   _(annotations).

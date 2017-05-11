@@ -1,13 +1,8 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName } from './utils';
-import { newContext } from 'immutability-helper';
+import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString } from './search';
-
-const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -597,56 +592,40 @@ export default (state = initialState, action = {}) => {
         return openAnnotationDeleteModalFor(state, editedAnnotation.id);
       }
 
-      return update(state, {
-        editingAnnotations: {
-          $unset: action.payload.annotationId
-        },
-        // We actually need a "pending edited annotations"
+      return moveModel(
+        state, ['editingAnnotations'], ['ui', 'pendingEditingAnnotations'], action.payload.annotationId
+      );
+    })();
+  case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
+    return moveModel(
+      update(state, {
         ui: {
-          pendingEditingAnnotations: {
-            [action.payload.annotationId]: {
-              $set: editedAnnotation
+          pdfSidebar: {
+            showErrorMessage: {
+              annotation: { $set: false }
             }
           }
         }
-      });
-    })();
-  case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
-    return update(state, {
-      ui: {
-        pdfSidebar: {
-          showErrorMessage: {
-            annotation: { $set: false }
-          }
-        },
-        pendingEditingAnnotations: {
-          $unset: action.payload.annotationId
-        }
-      },
-      annotations: {
-        [action.payload.annotationId]: {
-          $set: state.ui.pendingEditingAnnotations[action.payload.annotationId]
-        }
-      }
-    });
+      }),
+      ['ui', 'pendingEditingAnnotations'],
+      ['annotations'],
+      action.payload.annotationId
+    );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
-    return update(state, {
-      ui: {
-        pdfSidebar: {
-          showErrorMessage: {
-            annotation: { $set: true }
-          }
-        },
-        pendingEditingAnnotations: {
-          $unset: action.payload.annotationId
+    return moveModel(
+      update(state, {
+        ui: {
+          pdfSidebar: {
+            showErrorMessage: {
+              annotation: { $set: true }
+            }
+          },
         }
-      },
-      editingAnnotations: {
-        [action.payload.annotationId]: {
-          $set: state.ui.pendingEditingAnnotations[action.payload.annotationId]
-        }
-      }
-    });
+      }),
+      ['ui', 'pendingEditingAnnotations'],
+      ['editingAnnotations'],
+      action.payload.annotationId
+    );
   case Constants.SELECT_ANNOTATION:
     return update(state, {
       ui: {
