@@ -1,7 +1,38 @@
 import { expect } from 'chai';
-import { getAnnotationByDocumentId } from '../../../app/reader/utils';
+import { getAnnotationByDocumentId, moveModel } from '../../../app/reader/utils';
 
 describe('Reader utils', () => {
+  describe('moveModel', () => {
+    const state = {
+      ui: {
+        editingAnnotations: {}
+      },
+      annotations: {
+        123: {
+          comment: 'text'
+        }
+      }
+    };
+
+    const newState = moveModel(
+      state, 
+      ['annotations'],
+      ['ui', 'editingAnnotations'],
+      123
+    );
+
+    expect(newState).to.deep.equal({
+      ui: {
+        editingAnnotations: {
+          123: {
+            comment: 'text'
+          }
+        }
+      },
+      annotations: {}
+    })
+  });
+
   describe('getAnnotationByDocumentId', () => {
     it('gets annotations', () => {
       const documentId = 700;
