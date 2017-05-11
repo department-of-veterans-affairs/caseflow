@@ -379,7 +379,7 @@ export const addNewTag = (doc, tags) => (
       });
       ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }).
         then((data) => {
-          dispatch(newTagRequestSuccess(doc.id, data.body));
+          dispatch(newTagRequestSuccess(doc.id, data.body.tags));
         }, () => {
           dispatch(newTagRequestFailed(doc.id, newTags));
         });
