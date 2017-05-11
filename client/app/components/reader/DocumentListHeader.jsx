@@ -11,7 +11,7 @@ export class DocumentListHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value
+      value: ''
     };
     // debounce the passed in dispatch method
     this.changed = _.debounce(this.props.setSearch, DEBOUNCE_TIME_IN_MS);
@@ -44,7 +44,7 @@ export class DocumentListHeader extends Component {
       <div className="usa-grid-full document-list-header">
         <div className="usa-width-one-third">
           <SearchBar
-            id="searchBar"
+            id="searchBar"                                                                                               
             onChange={this.handleChange}
             onClearSearch={this.props.clearSearch}
             value={this.state.value}
