@@ -7,5 +7,4 @@ class VACOLS::CaseHearing < VACOLS::Record
     T: :travel,
     C: :central_office
   }.freeze
-
 end

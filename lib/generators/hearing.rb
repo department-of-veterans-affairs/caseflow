@@ -5,7 +5,7 @@ class Generators::Hearing
     def default_attrs
       {
         type: :video,
-        date: Time.now - 5.days,
+        date: Time.zone.now - 5.days,
         regional_office_key: "RO13"
       }
     end

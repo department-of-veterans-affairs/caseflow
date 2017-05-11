@@ -228,7 +228,7 @@ class Fakes::AppealRepository
       type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
       Generators::Hearing.build(
         type: type,
-        date: Time.now - (i % 9).days - rand(3).days,
+        date: Time.zone.now - (i % 9).days - rand(3).days,
         vacols_user_id: "LROTH"
       )
     end

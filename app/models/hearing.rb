@@ -14,7 +14,7 @@ class Hearing
   def attributes
     {
       date: date,
-      type: type,
+      type: type
     }
   end
 end

@@ -24,8 +24,10 @@ class HearingDocket
 
   class << self
     def all_for_judge(user)
-      hearings = Appeal.repository.hearings(user.vacols_id)
-      hearings.group_by { |h| h.date.to_i }.map do |date, hearings|
+      Appeal.repository
+            .hearings(user.vacols_id)
+            .group_by { |h| h.date.to_i }
+            .map do |date, hearings|
         new(
           date: date,
           type: hearings.first.type,

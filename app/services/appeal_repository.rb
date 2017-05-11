@@ -112,7 +112,7 @@ class AppealRepository
     end
   end
 
-  def self.hearings(judge_user)
+  def self.hearings(_judge_user)
   end
 
   def self.remands_ready_for_claims_establishment

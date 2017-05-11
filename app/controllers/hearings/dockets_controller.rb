@@ -8,7 +8,6 @@ class Hearings::DocketsController < ApplicationController
   end
   helper_method :current_user_dockets
 
-
   # TODO(jd): Remove this when we have a unique hearings logo
   def logo_class
     "cf-logo-image-default"
@@ -26,4 +25,3 @@ class Hearings::DocketsController < ApplicationController
     verify_authorized_roles("Hearings")
   end
 end
-
