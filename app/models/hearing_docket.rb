@@ -1,3 +1,4 @@
+# A HearingDocket is a grouping of hearings by a date, type and regional_office_key
 class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
@@ -23,7 +24,7 @@ class HearingDocket
   end
 
   class << self
-    def all_for_judge(user)
+    def for_judge(user)
       Appeal.repository
             .hearings(user.vacols_id)
             .group_by { |h| h.date.to_i }
