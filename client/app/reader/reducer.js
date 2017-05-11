@@ -620,22 +620,15 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_EDIT_ANNOTATION:
-    return (() => {
-      const editedAnnotation = state.editingAnnotations[action.payload.annotationId];
-
-      if (!editedAnnotation.comment) {
-        // If the user removed all text content in the annotation, ask them if they're
-        // intending to delete it.
-        return openAnnotationDeleteModalFor(state, editedAnnotation.id);
-      }
-
-      return moveModel(
-        state, ['editingAnnotations'], ['ui', 'pendingEditingAnnotations'], action.payload.annotationId
-      );
-    })();
+    return moveModel(
+      state, 
+      ['editingAnnotations'], 
+      ['ui', 'pendingEditingAnnotations'], 
+      action.payload.annotationId
+    );
   case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
     return moveModel(
-      update(hideErrorMessage(state, 'annotation')),
+      hideErrorMessage(state, 'annotation'),
       ['ui', 'pendingEditingAnnotations'],
       ['annotations'],
       action.payload.annotationId

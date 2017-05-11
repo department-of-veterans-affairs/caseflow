@@ -14,7 +14,6 @@ class AnnotationController < ApplicationController
   end
 
   def update
-    fak
     Annotation.find(params[:id]).update!(annotation_params)
     render json: {}
   end

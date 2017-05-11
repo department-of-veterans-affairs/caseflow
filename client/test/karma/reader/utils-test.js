@@ -15,7 +15,7 @@ describe('Reader utils', () => {
     };
 
     const newState = moveModel(
-      state, 
+      state,
       ['annotations'],
       ['ui', 'editingAnnotations'],
       123
@@ -30,7 +30,7 @@ describe('Reader utils', () => {
         }
       },
       annotations: {}
-    })
+    });
   });
 
   describe('getAnnotationByDocumentId', () => {

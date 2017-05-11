@@ -141,6 +141,14 @@ export const updateNewAnnotationContent = (content) => ({
 });
 
 export const requestEditAnnotation = (annotation) => (dispatch) => {
+  // If the user removed all text content in the annotation, ask them if they're
+  // intending to delete it.
+  if (!annotation.comment) {
+    dispatch(openAnnotationDeleteModal(annotation.id));
+
+    return;
+  }
+
   dispatch({
     type: Constants.REQUEST_EDIT_ANNOTATION,
     payload: {
@@ -158,6 +166,14 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
           annotationId: annotation.id
         }
       })).
+    /**
+     * One annoying thing to be aware of: superagent's funky brand of promises apparently do not support
+     * passing multiple arguments to .then(). Traditionally, you could do .then(onSuccess, onErr). However,
+     * we have to do .then(onSuccess).catch(onErr), which means that the catch function will be called for
+     * both server errors __and__ errors thrown by the onSuccess function. If the onSuccess function throws
+     * an error, the REQUEST_EDIT_ANNOTATION_FAILURE action will be dispatched, and the UI will update
+     * as if the backend failed, when it actually did not. This will be confusing to debug when it happens.
+     */
     catch(
       () => dispatch({
         type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
