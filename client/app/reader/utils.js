@@ -18,9 +18,9 @@ export const getAnnotationByDocumentId = (state, docId) =>
     ...annotation
   })).
   concat(
+    _.values(state.ui.pendingEditingAnnotations),
     _.values(state.annotations),
     _.values(state.ui.pendingAnnotations),
-    _.values(state.ui.pendingEditingAnnotations)
   ).
   uniqBy('id').
   reject('pendingDeletion').

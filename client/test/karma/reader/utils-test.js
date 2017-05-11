@@ -3,33 +3,35 @@ import { getAnnotationByDocumentId, moveModel } from '../../../app/reader/utils'
 
 describe('Reader utils', () => {
   describe('moveModel', () => {
-    const state = {
-      ui: {
-        editingAnnotations: {}
-      },
-      annotations: {
-        123: {
-          comment: 'text'
-        }
-      }
-    };
-
-    const newState = moveModel(
-      state,
-      ['annotations'],
-      ['ui', 'editingAnnotations'],
-      123
-    );
-
-    expect(newState).to.deep.equal({
-      ui: {
-        editingAnnotations: {
+    it('moves a model in the state', () => {
+      const state = {
+        ui: {
+          editingAnnotations: {}
+        },
+        annotations: {
           123: {
             comment: 'text'
           }
         }
-      },
-      annotations: {}
+      };
+
+      const newState = moveModel(
+        state,
+        ['annotations'],
+        ['ui', 'editingAnnotations'],
+        123
+      );
+
+      expect(newState).to.deep.equal({
+        ui: {
+          editingAnnotations: {
+            123: {
+              comment: 'text'
+            }
+          }
+        },
+        annotations: {}
+      });
     });
   });
 
@@ -60,6 +62,11 @@ describe('Reader utils', () => {
             comment: 'original 2',
             documentId
           },
+          250: {
+            id: 250,
+            comment: 'original 3',
+            documentId
+          },
           300: {
             id: 300,
             comment: 'different doc',
@@ -67,6 +74,13 @@ describe('Reader utils', () => {
           }
         },
         ui: {
+          pendingEditingAnnotations: {
+            250: {
+              id: 250,
+              comment: 'pending edit',
+              documentId
+            },
+          },
           pendingAnnotations: {
             'temp-guid': {
               id: 'temp-guid',
@@ -83,6 +97,11 @@ describe('Reader utils', () => {
           comment: 'edited',
           documentId,
           editing: true
+        },
+        {
+          id: 250,
+          comment: 'pending edit',
+          documentId
         },
         {
           id: 200,
