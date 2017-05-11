@@ -21,7 +21,7 @@ class TagController < ApplicationController
 
     response_json = { tags: document.tags }
     errors.any? && response_json[:errors] = errors
-    render({ json: response_json }, status: :created)
+    render({ json: response_json }, status: :ok)
   end
 
   def destroy
