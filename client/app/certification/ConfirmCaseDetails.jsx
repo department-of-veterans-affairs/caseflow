@@ -164,6 +164,8 @@ export class ConfirmCaseDetails extends React.Component {
               representative and make changes if necessary.`}
           </div>
 
+          <div className="cf-help-divider"></div>
+
           <RadioField name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
