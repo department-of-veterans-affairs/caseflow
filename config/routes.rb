@@ -58,6 +58,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :hearings do
+    resources :dockets, only: [:index]
+  end
+
   patch "certifications" => "certifications#create"
 
   namespace :admin do
