@@ -4,6 +4,7 @@ class AnnotationController < ApplicationController
   ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
 
   def create
+    FAK
     annotation = Annotation.create!(annotation_params.merge(user_id: current_user.id))
     render json: { id: annotation.id }
   end

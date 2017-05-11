@@ -93,18 +93,20 @@ export const deleteAnnotation = (docId, annotationId) =>
     });
 
     ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
-      then(() => dispatch({
-        type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
-        payload: {
-          annotationId
-        }
-      })).
-      catch(() => dispatch({
-        type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
-        payload: {
-          annotationId
-        }
-      }));
+      then(
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
+          payload: {
+            annotationId
+          }
+        }),
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
+          payload: {
+            annotationId
+          }
+        })
+      );
   };
 
 export const requestMoveAnnotation = (annotation) => (dispatch) => {
@@ -124,9 +126,7 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
         payload: {
           annotationId: annotation.id
         }
-      })
-    ).
-    catch(
+      }),
       () => dispatch({
         type: Constants.REQUEST_MOVE_ANNOTATION_FAILURE,
         payload: {
@@ -181,23 +181,14 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
         payload: {
           annotationId: annotation.id
         }
-      })).
-
-    /**
-     * One annoying thing to be aware of: superagent's funky brand of promises apparently do not support
-     * passing multiple arguments to .then(). Traditionally, you could do .then(onSuccess, onErr). However,
-     * we have to do .then(onSuccess).catch(onErr), which means that the catch function will be called for
-     * both server errors __and__ errors thrown by the onSuccess function. If the onSuccess function throws
-     * an error, the REQUEST_EDIT_ANNOTATION_FAILURE action will be dispatched, and the UI will update
-     * as if the backend failed, when it actually did not. This will be confusing to debug when it happens.
-     */
-    catch(
+      }),
       () => dispatch({
         type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
         payload: {
           annotationId: annotation.id
         }
-      }));
+      })
+    );
 };
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
@@ -230,26 +221,28 @@ export const createAnnotation = (annotation) => (dispatch) => {
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
-    then((response) => {
-      const responseObject = JSON.parse(response.text);
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
 
-      dispatch({
-        type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+        dispatch({
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+          payload: {
+            annotation: {
+              ...annotation,
+              ...responseObject
+            },
+            annotationTemporaryId: temporaryId
+          }
+        });
+      }, 
+      () => dispatch({
+        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
         payload: {
-          annotation: {
-            ...annotation,
-            ...responseObject
-          },
           annotationTemporaryId: temporaryId
         }
-      });
-    }).
-    catch(() => dispatch({
-      type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
-      payload: {
-        annotationTemporaryId: temporaryId
-      }
-    }));
+      })
+    );
 };
 
 export const handleSelectCommentIcon = (comment) => (dispatch) => {
