@@ -76,7 +76,7 @@ export class DocumentListHeader extends Component {
       </div>}
     </div>;
   }
-};
+}
 
 DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
