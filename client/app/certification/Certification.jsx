@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
-import thunk from 'redux-thunk';
 
 import ConfigUtil from '../util/ConfigUtil';
 import Header from './Header';
@@ -29,7 +28,7 @@ const EntryPointRedirect = connect(
 
 const configureStore = (data) => {
 
-  let middleware = [thunk];
+  let middleware = [];
 
   if (!ConfigUtil.test() && !ConfigUtil.production()) {
     middleware.push(logger);
