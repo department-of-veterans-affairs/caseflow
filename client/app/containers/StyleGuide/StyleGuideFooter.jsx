@@ -79,7 +79,7 @@ export default class StyleGuideFooter extends React.Component {
     </div>
 
     <div className="cf-app-segment cf-app-segment--alt"></div>
-    <div className="cf-app-segment cf-segment-margin" id="establish-claim-buttons">
+    <div className="cf-app-segment" id="establish-claim-buttons">
       <div className="cf-push-left">
         <Button
           name="View Work History"
