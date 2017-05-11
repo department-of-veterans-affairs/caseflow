@@ -31,17 +31,17 @@ describe('Reader reducer', () => {
         ]),
         annotation
       };
-    }
+    };
 
     it('shows an error message when creating the request fails', () => {
-      const {state, annotation} = getPostFailureState();
+      const { state, annotation } = getPostFailureState();
 
       expect(state.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
       expect(state.ui.placedButUnsavedAnnotation).to.deep.equal(annotation);
     });
 
     it('hides the error message when a second request is started', () => {
-      const {state} = getPostFailureState();
+      const { state } = getPostFailureState();
 
       const nextState = reduceActions([
         {
@@ -53,7 +53,7 @@ describe('Reader reducer', () => {
             }
           }
         }
-      ], state)
+      ], state);
 
       expect(nextState.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
     });
