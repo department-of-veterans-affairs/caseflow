@@ -30,7 +30,7 @@ class HearingDocket
             .group_by { |h| h.date.to_i }
             .map do |date, hearings|
         new(
-          date: date,
+          date: hearings.first.date.to_s(:json_date),
           type: hearings.first.type,
           regional_office_key: hearings.first.regional_office_key,
           hearings: hearings
