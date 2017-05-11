@@ -543,6 +543,9 @@ export default (state = initialState, action = {}) => {
             annotation: { $set: true }
           }
         },
+        placedButUnsavedAnnotation: {
+          $set: state.ui.pendingAnnotations[action.payload.annotationTemporaryId]
+        },
         pendingAnnotations: {
           $unset: action.payload.annotationTemporaryId
         }
