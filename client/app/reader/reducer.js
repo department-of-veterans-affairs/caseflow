@@ -160,7 +160,7 @@ export default (state = initialState, action = {}) => {
       }
     ));
   case Constants.SET_SEARCH:
-    return update(state, {
+    return updateFilteredDocIds(update(state, {
       ui: {
         docFilterCriteria: {
           searchQuery: {
@@ -168,9 +168,7 @@ export default (state = initialState, action = {}) => {
           }
         }
       }
-    });
-  case Constants.PERFORM_SEARCH:
-    return updateFilteredDocIds(state);
+    }));
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {

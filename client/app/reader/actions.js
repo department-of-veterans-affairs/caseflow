@@ -22,11 +22,6 @@ export const toggleExpandAll = () => ({
   type: Constants.TOGGLE_EXPAND_ALL
 });
 
-
-export const performSearch = () => ({
-  type: Constants.PERFORM_SEARCH
-});
-
 export const setSearch = (searchQuery) => (
   (dispatch) => {
     dispatch({
@@ -35,7 +30,6 @@ export const setSearch = (searchQuery) => (
         searchQuery
       }
     });
-    dispatch(performSearch());
   }
 );
 
