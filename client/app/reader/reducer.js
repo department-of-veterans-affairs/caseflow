@@ -2,8 +2,12 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
-import update from 'immutability-helper';
+import { newContext } from 'immutability-helper';
 import { searchString } from './search';
+
+const update = newContext();
+
+update.extend('$unset', (keyToUnset, obj) => _.omit(obj, keyToUnset));
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -31,7 +35,7 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState.annotationStorage)
+      searchString(searchQuery, nextState)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -64,7 +68,22 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
+const openAnnotationDeleteModalFor = (state, annotationId) =>
+  update(state, {
+    ui: {
+      deleteAnnotationModalIsOpenFor: {
+        $set: annotationId
+      }
+    }
+  });
+
 const SHOW_EXPAND_ALL = false;
+
+const initialShowErrorMessageState = {
+  tag: false,
+  category: false,
+  comment: false
+};
 
 /**
  * This function takes all the documents and check the status of the
@@ -84,8 +103,10 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
-  annotationStorage: null,
   ui: {
+    selectedAnnotationId: null,
+    deleteAnnotationModalIsOpenFor: null,
+    placedButUnsavedAnnotation: null,
     filteredDocIds: null,
     expandAll: false,
     docFilterCriteria: {
@@ -98,16 +119,15 @@ export const initialState = {
       searchQuery: ''
     },
     pdf: {
-      currentRenderedFile: null,
       pdfsReadyToShow: {},
+      isPlacingAnnotation: false,
       hidePdfSidebar: false
     },
     pdfSidebar: {
-      showTagErrorMsg: false,
-      commentFlowState: null,
-      hidePdfSidebar: false
+      showErrorMessage: initialShowErrorMessageState
     },
     pdfList: {
+      scrollTop: null,
       lastReadDocId: null,
       dropdowns: {
         category: false
@@ -115,11 +135,19 @@ export const initialState = {
     }
   },
   tagOptions: [],
+
+  /**
+   * `editingAnnotations` is an object of annotations that are currently being edited.
+   * When a user starts editing an annotation, we copy it from `annotations` to `editingAnnotations`.
+   * To commit the edits, we copy from `editingAnnotations` back into `annotations`.
+   * To discard the edits, we delete from `editingAnnotations`.
+   */
+  editingAnnotations: {},
+  annotations: {},
   documents: {}
 };
 
 export default (state = initialState, action = {}) => {
-  let categoryKey;
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -159,6 +187,22 @@ export default (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_ANNOTATIONS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        annotations: {
+          $set: _(action.payload.annotations).
+            map((annotation) => ({
+              documentId: annotation.document_id,
+              uuid: annotation.id,
+              ...annotation
+            })).
+            keyBy('id').
+            value()
+        }
+      }
+    ));
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -187,12 +231,7 @@ export default (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showTagErrorMsg: { $set: false } },
-        pdf: {
-          currentRenderedFile: {
-            $set: action.payload.docId
-          }
-        }
+        pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
       },
       documents: {
         [action.payload.docId]: {
@@ -202,16 +241,6 @@ export default (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.UNSELECT_CURRENT_VIEWER_PDF:
-    return update(updateFilteredDocIds(state), {
-      ui: {
-        pdf: {
-          currentRenderedFile: {
-            $set: null
-          }
-        }
-      }
-    });
   case Constants.SET_PDF_READY_TO_SHOW:
     return update(state, {
       ui: {
@@ -225,15 +254,28 @@ export default (state = initialState, action = {}) => {
       }
     });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    categoryKey = categoryFieldNameOfCategoryName(action.payload.categoryName);
-
     return update(
       state,
       {
+        ui: { pdfSidebar: { showErrorMessage: { category: { $set: false } } } },
         documents: {
           [action.payload.docId]: {
-            [categoryKey]: {
+            [action.payload.categoryKey]: {
               $set: action.payload.toggleState
+            }
+          }
+        }
+      }
+    );
+  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
+    return update(
+      state,
+      {
+        ui: { pdfSidebar: { showErrorMessage: { category: { $set: true } } } },
+        documents: {
+          [action.payload.docId]: {
+            [action.payload.categoryKey]: {
+              $set: action.payload.categoryValueToRevertTo
             }
           }
         }
@@ -263,7 +305,7 @@ export default (state = initialState, action = {}) => {
     })();
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -274,7 +316,7 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -295,7 +337,39 @@ export default (state = initialState, action = {}) => {
         documents: {
           [action.payload.docId]: {
             tags: {
-              $set: action.payload.createdTags
+
+              /**
+               * We can't just `$set: action.payload.createdTags` here, because that may wipe out additional tags
+               * that have been created on the client since this new tag was created. Consider the following sequence
+               * of events:
+               *
+               *  1) REQUEST_NEW_TAG_CREATION (newTag = 'first')
+               *  2) REQUEST_NEW_TAG_CREATION (newTag = 'second')
+               *  3) REQUEST_NEW_TAG_CREATION_SUCCESS (newTag = 'first')
+               *
+               * At this point, the doc tags are [{text: 'first'}, {text: 'second'}].
+               * Action (3) gives us [{text: 'first}]. If we just do a `$set`, we'll end up with:
+               *
+               *  [{text: 'first'}]
+               *
+               * and we've erroneously erased {text: 'second'}. To fix this, we'll do a merge instead. If we have tags
+               * that have not yet been saved on the server, but we see those tags in action.payload.createdTags, we'll
+               * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
+               * we'll leave it be.
+               */
+              $apply: (docTags) => _.map(docTags, (docTag) => {
+                if (docTag.id) {
+                  return docTag;
+                }
+
+                const createdTag = _.find(action.payload.createdTags, _.pick(docTag, 'text'));
+
+                if (createdTag) {
+                  return createdTag;
+                }
+
+                return docTag;
+              })
             }
           }
         }
@@ -366,12 +440,153 @@ export default (state = initialState, action = {}) => {
     });
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: false } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: false } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
             $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
           }
+        }
+      }
+    });
+  case Constants.OPEN_ANNOTATION_DELETE_MODAL:
+    return openAnnotationDeleteModalFor(state, action.payload.annotationId);
+  case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
+    return openAnnotationDeleteModalFor(state, null);
+  case Constants.REQUEST_DELETE_ANNOTATION:
+    return update(openAnnotationDeleteModalFor(state, null), {
+      editingAnnotations: {
+        $unset: action.payload.annotationId
+      },
+      annotations: {
+        $unset: action.payload.annotationId
+      }
+    });
+  case Constants.REQUEST_MOVE_ANNOTATION:
+    return update(state, {
+      annotations: {
+        [action.payload.annotation.id]: {
+          $set: action.payload.annotation
+        }
+      }
+    });
+  case Constants.PLACE_ANNOTATION:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: {
+          $set: {
+            ...action.payload,
+            class: 'Annotation',
+            type: 'point'
+          }
+        },
+        pdf: {
+          isPlacingAnnotation: { $set: false }
+        }
+      }
+    });
+  case Constants.START_PLACING_ANNOTATION:
+    return update(state, {
+      ui: {
+        pdf: {
+          isPlacingAnnotation: { $set: true }
+        }
+      }
+    });
+  case Constants.STOP_PLACING_ANNOTATION:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: { $set: null },
+        pdf: {
+          isPlacingAnnotation: { $set: false }
+        }
+      }
+    });
+  case Constants.REQUEST_CREATE_ANNOTATION:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: { $set: null },
+        pendingAnnotation: { $set: action.payload.annotation }
+      }
+    });
+  case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
+    return update(state, {
+      ui: {
+        pendingAnnotation: { $set: null }
+      },
+      annotations: {
+        [action.payload.annotation.id]: {
+          $set: {
+            // These two duplicate fields exist on annotations throughout the app.
+            // I am not sure why this is, but we'll patch it here to make everything work.
+            document_id: action.payload.annotation.documentId,
+            uuid: action.payload.annotation.id,
+
+            ...action.payload.annotation
+          }
+        }
+      }
+    });
+  case Constants.START_EDIT_ANNOTATION:
+    return update(state, {
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          $set: state.annotations[action.payload.annotationId]
+        }
+      }
+    });
+  case Constants.CANCEL_EDIT_ANNOTATION:
+    return update(state, {
+      editingAnnotations: {
+        $unset: action.payload.annotationId
+      }
+    });
+  case Constants.UPDATE_ANNOTATION_CONTENT:
+    return update(state, {
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          comment: {
+            $set: action.payload.content
+          }
+        }
+      }
+    });
+  case Constants.UPDATE_NEW_ANNOTATION_CONTENT:
+    return update(state, {
+      ui: {
+        placedButUnsavedAnnotation: {
+          comment: {
+            $set: action.payload.content
+          }
+        }
+      }
+    });
+  case Constants.REQUEST_EDIT_ANNOTATION:
+    return (() => {
+      const editedAnnotation = state.editingAnnotations[action.payload.annotationId];
+
+      if (!editedAnnotation.comment) {
+        // If the user removed all text content in the annotation, ask them if they're
+        // intending to delete it.
+        return openAnnotationDeleteModalFor(state, editedAnnotation.id);
+      }
+
+      return update(state, {
+        editingAnnotations: {
+          $unset: action.payload.annotationId
+        },
+        annotations: {
+          [action.payload.annotationId]: {
+            $set: editedAnnotation
+          }
+        }
+      });
+    })();
+  case Constants.SELECT_ANNOTATION:
+    return update(state, {
+      ui: {
+        selectedAnnotationId: {
+          $set: action.payload.annotationId
         }
       }
     });
@@ -382,11 +597,18 @@ export default (state = initialState, action = {}) => {
           scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
         }
       }
-    }
-    );
+    });
+  case Constants.SET_DOC_LIST_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdfList: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(state, {
-      ui: { pdfSidebar: { showTagErrorMsg: { $set: true } } },
+      ui: { pdfSidebar: { showErrorMessage: { tag: { $set: true } } } },
       documents: {
         [action.payload.docId]: {
           tags: {
@@ -450,26 +672,6 @@ export default (state = initialState, action = {}) => {
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
-  case Constants.SET_COMMENT_FLOW_STATE:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            commentFlowState: { $set: action.payload.state }
-          }
-        }
-      }
-    );
-  case Constants.SET_ANNOTATION_STORAGE:
-    return update(
-      state,
-      {
-        annotationStorage: {
-          $set: action.payload.annotationStorage
-        }
-      }
-    );
   case Constants.CLEAR_ALL_SEARCH:
     return updateFilteredDocIds(update(
       state,

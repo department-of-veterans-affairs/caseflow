@@ -148,9 +148,35 @@ describe Task do
     end
   end
 
+  context "#prepare!" do
+    subject { task.prepare! }
+
+    context "when unprepared" do
+      let(:aasm_state) { :unprepared }
+
+      it "prepared_at should be nil" do
+        expect(task.prepared_at).to be_nil
+      end
+
+      it "sets prepared_at" do
+        task.prepare!
+        expect(task.reload.prepared_at).to eq(Time.zone.now)
+      end
+    end
+
+    context "when already prepared" do
+      let(:aasm_state) { :unassigned }
+
+      it "raises InvalidTransition" do
+        expect { subject }.to raise_error(AASM::InvalidTransition)
+      end
+    end
+  end
+
   context "#complete!" do
     subject { task.complete!(params) }
     let(:params) { { status: :routed_to_ro, outgoing_reference_id: "123WOO" } }
+    let(:assigned_user) { user }
 
     context "when in a non-completable state" do
       let(:aasm_state) { :unassigned }
@@ -180,7 +206,7 @@ describe Task do
     context "when reviewed" do
       let(:aasm_state) { :reviewed }
 
-      it "completes the task without outgoing_reference_id" do
+      it "completes the task without outgoing_reference_id and creates a quota" do
         subject
 
         expect(task.reload).to have_attributes(
@@ -188,6 +214,8 @@ describe Task do
           completion_status: "routed_to_ro",
           outgoing_reference_id: nil
         )
+
+        expect(FakeTask.todays_quota.assigned_quotas.find_by(user: user)).to_not be_nil
       end
     end
 
@@ -205,6 +233,7 @@ describe Task do
 
   context "#expire!" do
     subject { task.expire! }
+    let(:assigned_user) { user }
     let(:aasm_state) { :started }
 
     it "sets status to completed and completion_status to expired" do
@@ -236,6 +265,7 @@ describe Task do
     subject { task.cancel!("feedbackz") }
 
     let(:aasm_state) { :started }
+    let(:assigned_user) { user }
 
     it "sets task to cancelled and saves feedback" do
       is_expected.to be_truthy
@@ -409,6 +439,23 @@ describe Task do
           )
 
           expect(subject).to eq(next_assignable_task)
+        end
+
+        context "when there is a race condition in assigning a task" do
+          before do
+            allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
+              Task.find(next_assignable_task.id)
+                  .update!(comment: "force lock_version to increment")
+            end
+          end
+
+          it "retries and assigns the next task" do
+            subject
+            expect(next_assignable_task.reload).to have_attributes(
+              aasm_state: "assigned",
+              user_id: user.id
+            )
+          end
         end
       end
 

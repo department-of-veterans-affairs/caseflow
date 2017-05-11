@@ -7,7 +7,6 @@ import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
-import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
@@ -17,6 +16,10 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
+import StyleGuideLayout from './StyleGuideLayout';
+import StyleGuideDashboard from './StyleGuideDashboard';
+import StyleGuideTypography from './StyleGuideTypography';
+import StyleGuideFormFields from './StyleGuideFormFields';
 
 export default function StyleGuideIndex() {
 
@@ -70,8 +73,8 @@ export default function StyleGuideIndex() {
       name: 'Accordions'
     },
     {
-      anchor: '#forms_fields',
-      name: 'Forms Fields'
+      anchor: '#form_fields',
+      name: 'Form Fields'
     },
     {
       anchor: '#loading_buttons',
@@ -121,7 +124,7 @@ export default function StyleGuideIndex() {
           ))
         }
       </StickyNav>
-      <div className="cf-push-right cf-sg-content">
+      <div className="cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
         <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.
@@ -138,9 +141,8 @@ export default function StyleGuideIndex() {
           Download UI Kit</a>
         </p>
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Typography"
-          id="typography" />
+        <StyleGuideTypography />
+        <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Headings and Body"
           id="headings_and_body"
@@ -182,14 +184,7 @@ export default function StyleGuideIndex() {
           title="Accordions"
           id="accordions" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Forms Fields"
-          id="forms_fields" />
-        <StyleGuidePlaceholder
-          title="Text Input"
-          id="text_input"
-          isSubsection={true} />
-        <StyleGuideInlineForm />
+        <StyleGuideFormFields />
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
@@ -197,9 +192,8 @@ export default function StyleGuideIndex() {
           title="Alerts"
           id="alerts" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Layout"
-          id="layout" />
+        <StyleGuideLayout />
+        <div className="cf-help-divider"></div>
         <StyleGuideNavigationBar />
         <StyleGuideUserDropdownMenu />
         <div className="cf-help-divider"></div>
@@ -209,9 +203,7 @@ export default function StyleGuideIndex() {
           title="Branding"
           id="branding" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Dashboard"
-          id="dashboard" />
+        <StyleGuideDashboard />
         <div className="cf-help-divider"></div>
         <StyleGuideModal />
         <div className="cf-help-divider"></div>

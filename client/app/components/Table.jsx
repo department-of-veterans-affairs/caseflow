@@ -26,6 +26,7 @@ export default class Table extends React.Component {
       rowObjects,
       summary,
       headerClassName = '',
+      rowClassNames = () => '',
       id
     } = this.props;
 
@@ -78,7 +79,7 @@ export default class Table extends React.Component {
     let Row = (props) => {
       let rowId = props.footer ? 'footer' : props.rowNumber;
 
-      return <tr id={`table-row-${rowId}`}>
+      return <tr id={`table-row-${rowId}`} className={!props.footer && rowClassNames(props.rowObject)}>
         {getColumns(props).map((column, columnNumber) =>
           <td
             key={columnNumber}
@@ -92,8 +93,8 @@ export default class Table extends React.Component {
       </tr>;
     };
 
-    let BodyRows = (props) => {
-      return <tbody className={this.props.bodyClassName}>
+    let BodyRows = (props) =>
+      <tbody className={this.props.bodyClassName} ref={this.props.tbodyRef} id={this.props.tbodyId}>
         {props.rowObjects.map((object, rowNumber) =>
           <Row
             rowObject={object}
@@ -102,7 +103,6 @@ export default class Table extends React.Component {
             key={rowNumber} />
         )}
       </tbody>;
-    };
 
     let FooterRow = (props) => {
       let hasFooters = _.some(props.columns, (column) => column.footer);
@@ -125,10 +125,13 @@ export default class Table extends React.Component {
 }
 
 Table.propTypes = {
+  tbodyId: PropTypes.string,
+  tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rowClassNames: PropTypes.func,
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
   className: PropTypes.string,

@@ -97,11 +97,6 @@
   display: none;
 }
 
-.cf-adjacent-buttons {
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
 * + .cf-form-dropdown {
   margin-top: 1.6rem;
   margin-bottom: 1.6rem;
@@ -136,7 +131,7 @@
 
 .cf-button-associated-text-right {
   color: $color-gray;
-  margin-right: 10px;
+  margin-right: 30px;
   line-height: 35px;
 }
 
@@ -166,23 +161,6 @@
     margin-right: 1.8rem;
   }
 }
-
-// add to commons
-.cf-success-checklist {
-  position: relative;
-  max-width: 400px;
-  margin: 50px 0 65px 25%;
-  list-style-type: none;
-
-  li {
-    background: url('icons/icon-check.svg') no-repeat left top transparent;
-    background-size: 22px 17px;
-    background-position-y: 7px;
-    padding-left: 38px;
-    padding-top: 3px;
-  }
-}
-
 
 .cf-msg-screen-deck {
   margin-bottom: 4rem !important;
@@ -290,62 +268,40 @@ select {
   }
 }
 
-// caseflow-commons
-.cf-form-checkboxes-inline {
-  .checkbox {
-    float: left;
-    padding-right: rem(30px);
-    margin-bottom: .5em;
-  }
-}
-
-// caseflow-commons
-[class*='cf-form-checkbox'] {
-  legend {
-    margin-bottom: .75em;
-  }
-}
-
-// caseflow-commons - replace exising rule with this one:
-.usa-input-error [type="radio"] {
-  + label::before {
-    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
-  }
-}
-
-// caseflow-commons
-.cf-secondary-disabled {
-  opacity: .25;
-}
-
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
   line-height: 1;
 }
 
-// Make a button look like a link
-// caseflow commons
-.cf-btn-link {
-  &:hover,
-  &.button-hover {
-    background-color: $color-white;
-    color: $color-primary-darker;
-    text-decoration: underline;
-  }
-
-  &:active,
-  &.button-active {
-    background-color: $color-white;
-    color: $color-primary-darkest;
-    text-decoration: underline;
-  }
-
-  &.usa-button-disabled {
-    color: $color-gray-light;
-  }
-}
-
 .cf-icon-button {
   cursor: pointer;
+}
+
+.cf-gray {
+  color: $color-gray;
+}
+
+// add to commons
+.cf-app-footer {
+  margin-top: 125px;
+
+  > div {
+    padding: 30px 0;
+    height: auto;
+   }
+}
+
+// add to commons
+.cf-font-light {
+  font-weight: 300;
+}
+
+// add to commons
+.cf-form-textarea {
+  margin-bottom: 40px;
+
+  p {
+    margin-top: 0;
+  }
 }

@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170427201655) do
-  
+ActiveRecord::Schema.define(version: 20170509175505) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
     t.integer "document_id", null: false
-    t.string  "comment"
+    t.string  "comment",     null: false
     t.integer "page"
     t.integer "x"
     t.integer "y"
@@ -94,6 +94,11 @@ ActiveRecord::Schema.define(version: 20170427201655) do
     t.string   "form9_type"
     t.string   "vacols_hearing_preference"
     t.string   "hearing_preference"
+    t.string   "certifying_office"
+    t.string   "certifying_username"
+    t.string   "certifying_official_name"
+    t.string   "certifying_official_title"
+    t.string   "certification_date"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
@@ -201,6 +206,9 @@ ActiveRecord::Schema.define(version: 20170427201655) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "certifying_official_title_specify_other"
+    t.string   "hearing_preference"
+    t.date     "nod_date"
+    t.date     "form9_date"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
@@ -225,6 +233,7 @@ ActiveRecord::Schema.define(version: 20170427201655) do
     t.string   "comment"
     t.string   "outgoing_reference_id"
     t.string   "aasm_state"
+    t.datetime "prepared_at"
   end
 
   create_table "team_quotas", force: :cascade do |t|
@@ -251,6 +260,7 @@ ActiveRecord::Schema.define(version: 20170427201655) do
     t.string "css_id",     null: false
     t.string "full_name"
     t.string "email"
+    t.string "roles",                   array: true
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree

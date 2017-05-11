@@ -82,7 +82,8 @@ export const certificationReducers = function(state = initialState, action = {})
       // reset some parts of state so we don't skip pages or end up in loops
       updateFailed: null,
       updateSucceeded: null,
-      loading: false
+      loading: false,
+      showCancellationModal: false
     });
   case Constants.ON_CONTINUE_CLICK_FAILED:
     return CertificationReducers.onContinueClickFailed(state, action);
@@ -94,6 +95,9 @@ export const certificationReducers = function(state = initialState, action = {})
     return CertificationReducers.certificationUpdateFailure(state);
   case Constants.CERTIFICATION_UPDATE_SUCCESS:
     return CertificationReducers.certificationUpdateSuccess(state);
+  case Constants.TOGGLE_CANCELLATION_MODAL:
+    return CertificationReducers.
+      toggleCancellationModal(state, action);
 
   default:
     return state;
@@ -134,8 +138,11 @@ export const mapDataToInitialState = function(state) {
     hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
     hearingPreference: state.hearing_preference,
     form9Type: state.form9_type,
-    certifyingOffice: state.form8.certifying_office,
-    certifyingUsername: state.form8.certifying_username,
-    certificationDate: state.form8.certification_date
+    // Pull these values from form8??
+    certifyingOffice: state.certifying_office,
+    certifyingUsername: state.certifying_username,
+    certificationDate: state.certification_date,
+    certifyingOfficialName: state.certifying_official_name,
+    certifyingOfficialTitle: state.certifying_official_title
   };
 };

@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import CancelCertificationModal from './CancelCertificationModal';
+import { connect } from 'react-redux';
+import * as certificationActions from './actions/Certification';
 
 /*
  * Caseflow Certification Footer.
@@ -9,32 +11,29 @@ import CancelCertificationModal from './CancelCertificationModal';
  * Handles the display of the cancel certiifcation modal.
  *
  */
-export default class Footer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modal: false
-    };
-  }
+export class Footer extends React.Component {
 
   handleModalOpen = () => {
-    this.setState({ modal: true });
+    this.props.toggleCancellationModal();
   };
 
   handleModalClose = () => {
-    this.setState({ modal: false });
+    this.props.toggleCancellationModal();
   };
 
+
   render() {
-    let cancelModalDisplay = this.state.modal;
     let {
       loading,
       disableContinue,
       hideContinue,
       onClickContinue,
+      buttonText,
       nextPageUrl,
-      certificationId
+      certificationId,
+      showCancellationModal
     } = this.props;
+
 
     return <div className="cf-app-segment">
       <Button
@@ -49,11 +48,11 @@ export default class Footer extends React.Component {
           onClick={onClickContinue}
           loading={loading}
           disabled={disableContinue}>
-          Continue
+          { buttonText ? buttonText : 'Continue' }
         </Button>
       </Link>
       }
-      {cancelModalDisplay && <CancelCertificationModal
+      {showCancellationModal && <CancelCertificationModal
         title="Cancel Certification"
         certificationId={certificationId}
         closeHandler={this.handleModalClose}>
@@ -62,3 +61,20 @@ export default class Footer extends React.Component {
     </div>;
   }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  toggleCancellationModal: () => {
+    dispatch(certificationActions.toggleCancellationModal());
+  }
+});
+
+const mapStateToProps = (state) => ({
+  certificationId: state.certificationId,
+  showCancellationModal: state.showCancellationModal
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Footer);
+

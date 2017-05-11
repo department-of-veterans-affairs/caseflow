@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def feature_enabled?(feature)
-    FeatureToggle.enabled?(feature, current_user)
+    FeatureToggle.enabled?(feature, user: current_user)
   end
   helper_method :feature_enabled?
 
@@ -134,6 +134,14 @@ class ApplicationController < ActionController::Base
     redirect_to login_path
   end
 
+  def verify_feature_enabled(feature)
+    return true if FeatureToggle.enabled?(feature, user: current_user)
+    Rails.logger.info("User id #{current_user.id} attempted to access #{feature} "\
+                      " feature but it was not enabled for them #{request.original_url}")
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
+  end
+
   def verify_authorized_roles(*roles)
     return true if current_user && roles.all? { |r| current_user.can?(r) }
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
@@ -151,7 +159,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_system_admin
-    verify_authorized_roles("System Admin")
+    redirect_to "/unauthorized" unless current_user.admin?
   end
 
   def on_vbms_error

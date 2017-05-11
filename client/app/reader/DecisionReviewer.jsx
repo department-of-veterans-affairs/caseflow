@@ -5,7 +5,6 @@ import { Route, BrowserRouter } from 'react-router-dom';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -23,14 +22,16 @@ export class DecisionReviewer extends React.Component {
     };
 
     this.props.onReceiveDocs(this.props.appealDocuments);
-
-    this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    this.props.setAnnotationStorage(this.annotationStorage);
+    this.props.onReceiveAnnotations(this.props.annotations);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.appealDocuments !== nextProps.appealDocuments) {
+    if (!_.isEqual(this.props.appealDocuments, nextProps.appealDocuments)) {
       this.props.onReceiveDocs(nextProps.appealDocuments);
+    }
+
+    if (!_.isEqual(this.props.annotations, nextProps.annotations)) {
+      this.props.onReceiveAnnotations(nextProps.annotations);
     }
   }
 
@@ -65,12 +66,10 @@ export class DecisionReviewer extends React.Component {
       event.preventDefault();
     }
 
-    this.props.selectCurrentPdf(docId);
     history.push(`/${vacolsId}/documents/${docId}`);
   }
 
   onShowList = (history, vacolsId) => () => {
-    this.props.unselectPdf();
     history.push(`/${vacolsId}/documents`);
   }
 
@@ -112,7 +111,6 @@ export class DecisionReviewer extends React.Component {
     const vacolsId = routerProps.match.params.vacolsId;
 
     return <PdfListView
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       showPdf={this.showPdf(routerProps.history, vacolsId)}
       sortBy={this.state.sortBy}
@@ -130,8 +128,6 @@ export class DecisionReviewer extends React.Component {
     return <PdfViewer
       addNewTag={this.props.addNewTag}
       removeTag={this.props.removeTag}
-      showTagErrorMsg={this.props.ui.pdfSidebar.showTagErrorMsg}
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       allDocuments={_.values(this.props.storeDocuments)}
       pdfWorker={this.props.pdfWorker}
@@ -166,7 +162,6 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  setAnnotationStorage: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
 
   // These two properties are exclusively for testing purposes
@@ -176,12 +171,6 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    ui: {
-      pdfSidebar: {
-        showTagErrorMsg: state.ui.pdfSidebar.showTagErrorMsg
-      }
-    },
-    currentRenderedFile: state.ui.pdf.currentRenderedFile,
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
     storeDocuments: state.documents

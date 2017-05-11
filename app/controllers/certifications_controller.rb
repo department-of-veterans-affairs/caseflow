@@ -8,7 +8,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if FeatureToggle.enabled?(:certification_v2)
+    if feature_enabled?(:certification_v2)
       render "v2", layout: "application"
       return
     end
@@ -20,15 +20,43 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def update_v2
+  def update_v2_params
     permitted = params
                 .require("update")
                 .permit("representative_name",
                         "representative_type",
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
-                        "hearing_preference")
+                        "hearing_preference",
+                        "certifying_office",
+                        "certifying_username",
+                        "certifying_official_name",
+                        "certifying_official_title",
+                        "certification_date")
     certification.update!(permitted)
+  end
+
+  def update_v2
+    update_v2_params
+    render json: {}
+  end
+
+  def certify_v2
+    update_v2_params
+    form8.update_from_string_params(
+      representative_type: certification.representative_type,
+      representative_name: certification.representative_name,
+      hearing_preference: certification.hearing_preference,
+      # This field is necessary when on v2 certification but v1 form8
+      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
+      certifying_office: certification.certifying_office,
+      certifying_username:  certification.certifying_username,
+      certifying_official_name: certification.certifying_official_name,
+      certifying_official_title: certification.certifying_official_title,
+      certification_date: certification.certification_date
+    )
+    form8.save_pdf!
+    @certification.complete!(current_user.id)
     render json: {}
   end
 

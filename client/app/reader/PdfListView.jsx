@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
-import { formatDate } from '../util/DateUtil';
+import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
@@ -11,8 +12,10 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
+import { setDocListScrollPosition, changeSortState } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -69,22 +72,23 @@ export class PdfListView extends React.Component {
   }
 
   componentDidMount() {
-    if (this.lastReadElement) {
-      const boundingBox = this.lastReadElement.getBoundingClientRect();
-      const halfWindowHeight = window.innerHeight / 2;
-
-      document.body.scrollTop = boundingBox.top - halfWindowHeight;
-    }
-
+    this.hasSetScrollPosition = false;
     this.setFilterIconPositions();
     window.addEventListener('resize', this.setFilterIconPositions);
   }
 
   componentWillUnmount() {
+    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
+  getTbodyRef = (elem) => this.tbodyElem = elem;
+
   componentDidUpdate() {
+    if (!this.hasSetScrollPosition) {
+      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+      this.hasSetScrollPosition = true;
+    }
     this.setFilterIconPositions();
   }
 
@@ -167,8 +171,7 @@ export class PdfListView extends React.Component {
       if (row && row.isComment) {
         return [{
           valueFunction: (doc) => {
-            const comments = this.props.annotationStorage.
-              getAnnotationByDocumentId(doc.id);
+            const comments = this.props.annotationsPerDocument[doc.id];
             const commentNodes = comments.map((comment, commentIndex) => {
               return <Comment
                 key={comment.uuid}
@@ -203,10 +206,7 @@ export class PdfListView extends React.Component {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
                 id="read-indicator"
-                aria-label="Most recently read document indicator"
-                ref={(element) => {
-                  this.lastReadElement = element;
-                }}>
+                aria-label="Most recently read document indicator">
                   {rightTriangle()}
                 </span>;
             }
@@ -251,7 +251,7 @@ export class PdfListView extends React.Component {
           </div>,
           valueFunction: (doc) =>
             <span className="document-list-receipt-date">
-              {formatDate(doc.receivedAt)}
+              {formatDateStr(doc.receivedAt)}
             </span>
         },
         {
@@ -306,8 +306,7 @@ export class PdfListView extends React.Component {
             Comments
           </div>,
           valueFunction: (doc) => {
-            const numberOfComments = this.props.annotationStorage.
-              getAnnotationByDocumentId(doc.id).length;
+            const numberOfComments = _.size(this.props.annotationsPerDocument[doc.id]);
             const icon = `fa fa-3 ${doc.listComments ?
               'fa-angle-up' : 'fa-angle-down'}`;
             const name = `expand ${numberOfComments} comments`;
@@ -346,8 +345,7 @@ export class PdfListView extends React.Component {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
-      if (this.props.annotationStorage.getAnnotationByDocumentId(row.id).length &&
-        doc.listComments) {
+      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
         acc.push({
           ...row,
           isComment: true
@@ -370,6 +368,8 @@ export class PdfListView extends React.Component {
               headerClassName="cf-document-list-header-row"
               bodyClassName="cf-document-list-body"
               rowsPerRowObject={2}
+              tbodyId="documents-table-body"
+              tbodyRef={this.getTbodyRef}
             />
           </div>
         </div>
@@ -378,21 +378,21 @@ export class PdfListView extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state, ['tagOptions']),
-  ..._.pick(state.ui, ['pdfList']),
-  ..._.pick(state.ui, ['docFilterCriteria'])
+const mapStateToProps = (state, ownProps) => ({
+  annotationsPerDocument: _(ownProps.documents).
+    keyBy('id').
+    mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
+    value(),
+  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  changeSortState(sortBy) {
-    dispatch({
-      type: Constants.SET_SORT,
-      payload: {
-        sortBy
-      }
-    });
-  },
+  ...bindActionCreators({
+    setDocListScrollPosition,
+    changeSortState
+  }, dispatch),
+
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
