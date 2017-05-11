@@ -113,7 +113,6 @@ class AppealRepository
   end
 
   def self.hearings(judge_user)
-    VACOLS::CaseHearing
   end
 
   def self.remands_ready_for_claims_establishment
