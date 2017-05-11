@@ -122,6 +122,7 @@ class UnconnectedSignAndCertify extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Sign and Certify</h2>
           <p>Fill in information about yourself below to sign this certification.</p>
+          <div className="cf-help-divider"></div>
           <TextField
             name="Name and location of certifying office:"
             value={certifyingOffice}
