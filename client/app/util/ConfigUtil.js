@@ -4,5 +4,8 @@ export default {
   environment: process.env.NODE_ENV,
   test() {
     return this.environment === 'test';
+  },
+  production() {
+    return this.environment === 'production';
   }
 };
