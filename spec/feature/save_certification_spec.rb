@@ -409,5 +409,28 @@ RSpec.feature "Save Certification" do
         expect(find_field("Date").value).to eq "02/01/2016"
       end
     end
+
+    context "Confirm validation works" do
+      scenario "on the confirm case details page" do
+        visit "certifications/#{appeal.vacols_id}/confirm_case_details"
+        click_button("Continue")
+        expect(page).to have_content "Please enter the representative type."
+        expect(page).to have_content "Please enter the representative name."
+        within_fieldset("Representative type") do
+          find("label", text: "Other").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please enter the other representative type."
+      end
+      scenario "on the save and certify page" do
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        click_button("Continue")
+        expect(page).to have_content "Please enter the certifying office."
+        expect(page).to have_content "Please enter the organizational element."
+        expect(page).to have_content "Please enter the name of the Certifying Official (usually your name)."
+        expect(page).to have_content "Please enter the title of the Certifying Official (e.g. Decision Review Officer)."
+        expect(page).to have_content "Please enter today's date."
+      end
+    end
   end
 end

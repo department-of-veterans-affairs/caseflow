@@ -29,6 +29,21 @@ describe('.startUpdateCertification', () => {
   });
 });
 
+describe('.changeErroredFields', () => {
+  it('should set errored fields', () => {
+    let initialState = getBlankInitialState();
+    let action = {
+      type: Constants.CHANGE_ERRORED_FIELDS,
+      payload: {
+        erroredFields: ['otherRepresentativeType']
+      }
+    };
+
+    expect(Certification.changeErroredFields(initialState, action).
+      erroredFields).to.eql(['otherRepresentativeType']);
+  });
+});
+
 describe('.certificationUpdateFailure', () => {
   it('should set loading to false', () => {
     let initialState = getBlankInitialState();

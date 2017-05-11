@@ -8,8 +8,7 @@ import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
-import requiredValidator from '../util/validators/RequiredValidator';
-import dateValidator from '../util/validators/DateValidator';
+import ValidatorsUtil from '../util/ValidatorsUtil';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -28,6 +27,18 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.OTHER
 }];
 
+const CERTIFYING_OFFICE_ID = 'Name and location of certifying office:';
+const CERTIFYING_USERNAME_ID = 'Organizational elements certifying appeal:';
+const CERTIFYING_OFFICIAL_NAME_ID = 'Name of certifying official:';
+const CERTIFYING_OFFICIAL_TITLE_ID = 'Title of certifying official:';
+const CERTIFICATION_DATE_ID = 'Date:';
+const CERTIFYING_OFFICE_ERROR = 'Please enter the certifying office.';
+const CERTIFYING_USERNAME_ERROR = 'Please enter the organizational element.';
+const CERTIFYING_OFFICIAL_NAME_ERROR = 'Please enter the name of the Certifying Official (usually your name).';
+const CERTIFYING_OFFICIAL_TITLE_ERROR = 'Please enter the title of the Certifying Official ' +
+    '(e.g. Decision Review Officer).';
+const CERTIFICATION_DATE_ERROR = "Please enter today's date.";
+
 class UnconnectedSignAndCertify extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
@@ -40,24 +51,24 @@ class UnconnectedSignAndCertify extends React.Component {
 
     const erroredFields = [];
 
-    if (requiredValidator('Please enter a certifying office.')(this.props.certifyingOffice)) {
-      erroredFields.push('Name and location of certifying office:');
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOffice)) {
+      erroredFields.push(CERTIFYING_OFFICE_ID);
     }
 
-    if (requiredValidator('Please enter a certifying username.')(this.props.certifyingUsername)) {
-      erroredFields.push('Organizational elements certifying appeal:');
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingUsername)) {
+      erroredFields.push(CERTIFYING_USERNAME_ID);
     }
 
-    if (requiredValidator('Please enter an official name.')(this.props.certifyingOfficialName)) {
-      erroredFields.push('Name of certifying official:');
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialName)) {
+      erroredFields.push(CERTIFYING_OFFICIAL_NAME_ID);
     }
 
-    if (requiredValidator('Please enter an official title.')(this.props.certifyingOfficialTitle)) {
-      erroredFields.push('Title of certifying official:');
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitle)) {
+      erroredFields.push(CERTIFYING_OFFICIAL_TITLE_ID);
     }
 
-    if (dateValidator('Please enter a date.')(this.props.certificationDate)) {
-      erroredFields.push('Date:');
+    if (ValidatorsUtil.dateValidator(this.props.certificationDate)) {
+      erroredFields.push(CERTIFICATION_DATE_ID);
     }
 
     return erroredFields;
@@ -85,14 +96,9 @@ class UnconnectedSignAndCertify extends React.Component {
     });
   }
 
-  isFieldErrored(fieldName, erroredFields) {
-    if (erroredFields) {
-      if (erroredFields.includes(fieldName)) {
-        return true;
-      }
-    }
-    return false;
-  };
+  isFieldErrored(fieldName) {
+    return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
+  }
 
   render() {
     let {
@@ -102,7 +108,6 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      erroredFields,
       loading,
       updateSucceeded,
       updateFailed,
@@ -125,34 +130,34 @@ class UnconnectedSignAndCertify extends React.Component {
           <h2>Sign and Certify</h2>
           <p>Fill in information about yourself below to sign this certification.</p>
           <TextField
-            name="Name and location of certifying office:"
+            name={CERTIFYING_OFFICE_ID}
             value={certifyingOffice}
-            errorMessage={(this.isFieldErrored("Name and location of certifying office:", erroredFields) ? "Please enter a certifying office." : null)}
+            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICE_ID) ? CERTIFYING_OFFICE_ERROR : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
-            name="Organizational elements certifying appeal:"
+            name={CERTIFYING_USERNAME_ID}
             value={certifyingUsername}
-            errorMessage={(this.isFieldErrored("Organizational elements certifying appeal:", erroredFields) ? "Please enter an organizational element." : null)}
+            errorMessage={(this.isFieldErrored(CERTIFYING_USERNAME_ID) ? CERTIFYING_USERNAME_ERROR : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
-            name="Name of certifying official:"
+            name={CERTIFYING_OFFICIAL_NAME_ID}
             value={certifyingOfficialName}
-            errorMessage={(this.isFieldErrored("Name of certifying official:", erroredFields) ? "Please enter a name of certifying official." : null)}
+            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICIAL_NAME_ID) ? CERTIFYING_OFFICIAL_NAME_ERROR : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
-            name="Title of certifying official:"
+            name={CERTIFYING_OFFICIAL_TITLE_ID}
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
-            errorMessage={(this.isFieldErrored("Title of certifying official:", erroredFields) ? "Please enter a title of certifying official." : null)}
+            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICIAL_TITLE_ID) ? CERTIFYING_OFFICIAL_TITLE_ERROR : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
-            name="Date:"
+            name={CERTIFICATION_DATE_ID}
             value={certificationDate}
-            errorMessage={(this.isFieldErrored("Date:", erroredFields) ? "Please enter a date." : null)}
+            errorMessage={(this.isFieldErrored(CERTIFICATION_DATE_ID) ? CERTIFICATION_DATE_ERROR : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
@@ -172,7 +177,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   changeErroredFields: (erroredFields) => {
-    dispatch(certificationActions.changeErroredFields(erroredFields))
+    dispatch(certificationActions.changeErroredFields(erroredFields));
   },
 
   onSignAndCertifyFormChange: (fieldName, value) => {
