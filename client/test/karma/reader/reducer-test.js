@@ -119,6 +119,83 @@ describe('Reader reducer', () => {
     });
   });
 
+  describe(Constants.REQUEST_EDIT_ANNOTATION_FAILURE, () => {
+    const getContext = () => {
+      const annotationId = 886;
+      const newContent = 'new content';
+      const documentId = 14;
+      const stateAfterEditRequest = reduceActions([
+        {
+          type: Constants.RECEIVE_ANNOTATIONS,
+          payload: {
+            annotations: [{
+              id: annotationId,
+              comment: 'original content',
+              documentId
+            }]
+          }
+        },
+        {
+          type: Constants.START_EDIT_ANNOTATION,
+          payload: {
+            annotationId
+          }
+        },
+        {
+          type: Constants.UPDATE_ANNOTATION_CONTENT,
+          payload: {
+            annotationId,
+            content: newContent
+          }
+        },
+        {
+          type: Constants.REQUEST_EDIT_ANNOTATION,
+          payload: {
+            annotationId
+          }
+        }]);
+
+      return {
+        stateAfterEditRequest,
+        stateAfterEditFailure: reduceActions([
+          {
+            type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
+            payload: {
+              annotationId
+            }
+          }
+        ], stateAfterEditRequest),
+        annotationId,
+        newContent,
+        documentId
+      };
+    };
+
+    it('handles editing an annotation', () => {
+      const { stateAfterEditRequest, annotationId, newContent, documentId } = getContext();
+
+      expect(stateAfterEditRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterEditRequest.ui.pendingEditingAnnotations[annotationId]).to.deep.equal({
+        id: annotationId,
+        uuid: annotationId,
+        comment: newContent,
+        documentId
+      });
+    });
+
+    it('shows an error message when the request fails', () => {
+      const { stateAfterEditFailure, annotationId, newContent, documentId } = getContext();
+
+      expect(stateAfterEditFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterEditFailure.editingAnnotations[annotationId]).to.deep.equal({
+        id: annotationId,
+        uuid: annotationId,
+        comment: newContent,
+        documentId
+      });
+    });
+  });
+
   describe(Constants.REQUEST_CREATE_ANNOTATION_SUCCESS, () => {
     it('updates annotations when the server save is successful', () => {
       const docId = 3;
