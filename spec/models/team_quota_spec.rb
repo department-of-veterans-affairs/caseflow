@@ -62,6 +62,25 @@ describe TeamQuota do
     end
   end
 
+  context "#tasks_to_assign" do
+    before { team_quota.save! }
+
+    subject { team_quota.tasks_to_assign }
+    let(:tasks_completed_today) { [FakeTask.new] * 9 }
+
+    context "is the number of tasks" do
+      it { is_expected.to eq(9) }
+    end
+
+    context "subtracts the number of locked assigned cases" do
+      let!(:quota) do
+        team_quota.assigned_quotas.create(user: Generators::User.create, locked_task_count: 7)
+      end
+
+      it { is_expected.to eq(2) }
+    end
+  end
+
   context "#user_quotas" do
     before { team_quota.save! }
 

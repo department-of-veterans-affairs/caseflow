@@ -39,6 +39,7 @@ class UserQuota < ActiveRecord::Base
 
   def adjust_locked_task_count(new_locked_task_count)
     return unless new_locked_task_count
+    return new_locked_task_count unless team_quota
 
     [0, [max_locked_task_count, new_locked_task_count.to_i].min].max
   end

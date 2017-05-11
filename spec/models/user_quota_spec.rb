@@ -70,6 +70,37 @@ describe UserQuota do
     end
   end
 
+  context "#locked_task_count=" do
+    subject do
+      user_quota.locked_task_count = new_locked_task_count
+      user_quota.locked_task_count
+    end
+
+    let(:new_locked_task_count) { 4 }
+
+    before do
+      allow(FakeTask).to receive(:completed_on).with(Time.zone.today).and_return([FakeTask.new] * 4)
+      user_quota.save!
+    end
+
+    it { is_expected.to eq(4) }
+
+    context "when setting a negative number" do
+      let(:new_locked_task_count) { -1 }
+      it { is_expected.to eq(0) }
+    end
+
+    context "when setting to a number higher than the teams assignable tasks" do
+      let(:new_locked_task_count) { 5 }
+      it { is_expected.to eq(4) }
+    end
+
+    context "when setting to nil" do
+      let(:new_locked_task_count) { nil }
+      it { is_expected.to eq(nil) }
+    end
+  end
+
   context "#tasks_completed_count" do
     subject { user_quota.tasks_completed_count }
 
