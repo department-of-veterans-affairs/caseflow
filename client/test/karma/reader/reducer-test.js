@@ -106,7 +106,7 @@ describe('Reader reducer', () => {
 
     it('marks an annotation as pending deletion', () => {
       const { stateAfterDeleteRequest, annotationId } = getContext();
-      
+
       expect(stateAfterDeleteRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
       expect(stateAfterDeleteRequest.annotations[annotationId].pendingDeletion).to.equal(true);
     });
