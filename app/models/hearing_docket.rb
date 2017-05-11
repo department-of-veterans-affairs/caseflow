@@ -1,12 +1,38 @@
 class HearingDocket
   include ActiveModel::Model
+  include ActiveModel::Serializers::JSON
 
-  attr_accessor :date, :type, :regional_office, :scheduled
+  attr_accessor :date, :type, :regional_office_key, :hearings
+
+  def to_hash
+    serializable_hash(
+      include: [:hearings],
+      methods: [:regional_office]
+    )
+  end
+
+  def attributes
+    {
+      date: date,
+      type: type
+    }
+  end
+
+  def regional_office
+    VACOLS::RegionalOffice::CITIES[regional_office_key]
+  end
 
   class << self
-    def all_for_judge(vlj_id)
-      hearings = Appeal.repository.hearings(vlj_id)
-      hearings.group_by(&:date)
+    def all_for_judge(user)
+      hearings = Appeal.repository.hearings(user.vacols_id)
+      hearings.group_by { |h| h.date.to_i }.map do |date, hearings|
+        new(
+          date: date,
+          type: hearings.first.type,
+          regional_office_key: hearings.first.regional_office_key,
+          hearings: hearings
+        )
+      end
     end
   end
 end

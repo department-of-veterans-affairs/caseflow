@@ -20,7 +20,7 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_accessor :document_records, :issue_records
+    attr_accessor :document_records, :issue_records, :hearing_records
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
@@ -187,8 +187,8 @@ class Fakes::AppealRepository
     (issue_records || {})[vacols_id] || []
   end
 
-  def self.hearings(judge_vacols_id)
-    (hearing_records || {})[judge_vacols_id] || []
+  def self.hearings(vacols_user_id)
+    (hearing_records || []).select { |h| h.vacols_user_id == vacols_user_id }
   end
 
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
@@ -224,11 +224,12 @@ class Fakes::AppealRepository
   end
 
   def self.seed_hearings_prep_data!
-    7.times.each do |i|
-      type = VACOLS::CaseHearing::HEARING_TYPES[i % 3]
+    50.times.each do |i|
+      type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
       Generators::Hearing.build(
         type: type,
-        date: Time.now - i.days
+        date: Time.now - (i % 9).days - rand(3).days,
+        vacols_user_id: "LROTH"
       )
     end
   end
