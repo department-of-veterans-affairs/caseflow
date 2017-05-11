@@ -217,6 +217,7 @@ select {
   vertical-align: middle;
 }
 
+// Candidate for commons
 .cf-btn-link.cf-no-padding {
   padding: 0;
 }
@@ -314,6 +315,8 @@ select {
   }
 }
 
+// candidate for commons
+// Re-assess if we need a number field of a different size
 input[type=number] {
   width: 60px;
   height: 35px;
