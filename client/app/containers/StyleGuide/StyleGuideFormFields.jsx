@@ -4,6 +4,7 @@ import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuideTextInputError from './StyleGuideTextInputError';
 import StyleGuideTextArea from './StyleGuideTextArea';
+import StyleGuideCharacterLimit from './StyleGuideCharacterLimit';
 
 let StyleGuideFormFields = () => {
 
@@ -13,10 +14,7 @@ let StyleGuideFormFields = () => {
       <StyleGuideTextInput/>
       <StyleGuideTextInputError/>
       <StyleGuideTextArea />
-      <StyleGuidePlaceholder
-        title="Character Limit"
-        id="character_limit"
-        isSubsection={true} />
+      <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
   </div>
 
