@@ -100,6 +100,16 @@ RSpec.feature "Reader" do
       ]
     end
 
+    scenario "Arrow keys to navigate through documents", :focus => true do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      add_comment("comment text")
+      click_on "Edit"
+      find("#editCommentBox-1").send_keys(:arrow_left)
+      expect(find(".cf-document-type").text).to eq("Form 9")
+      find("#editCommentBox-1").send_keys(:arrow_right)
+      expect(find(".cf-document-type").text).to eq("Form 9")
+    end
+
     scenario "PdfListView Dropdown" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -162,7 +172,7 @@ RSpec.feature "Reader" do
 
       # Edit the comment
       click_on "Edit"
-      fill_in "editCommentBox", with: "FooBar"
+      fill_in "editCommentBox-1", with: "FooBar"
       click_on "Save"
 
       # Expect edited comment to be visible on opage
@@ -192,7 +202,7 @@ RSpec.feature "Reader" do
       add_comment("A")
 
       click_on "Edit"
-      find("#editCommentBox").send_keys(:backspace)
+      find("#editCommentBox-2").send_keys(:backspace)
       click_on "Save"
 
       # Delete modal should appear
