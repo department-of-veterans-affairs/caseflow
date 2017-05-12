@@ -28,7 +28,7 @@ const EntryPointRedirect = connect(
 
 const configureStore = (data) => {
 
-  let middleware = [];
+  const middleware = [];
 
   if (!ConfigUtil.test()) {
     middleware.push(logger);
