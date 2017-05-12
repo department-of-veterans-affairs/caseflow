@@ -102,7 +102,15 @@ RSpec.feature "Reader" do
 
     scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
-        expect(find(".cf-document-type").text).to eq(doc_type)
+        # Normally, we would to do something like:
+        #     expect(str_1).to eq(str_2)
+        # as opposed to
+        #   expect(str_1 == str_2).to be true
+        # because the former gives much better error output when the assertion fails.
+        # However, has_content? will auto-wait for the content to fill in,
+        # which gives React time to update the page. If we just do `find().text`, 
+        # it will not do that waiting, and if React is too slow, the test will fail.
+        expect(find(".cf-document-type").has_content?(doc_type)).to be true
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
