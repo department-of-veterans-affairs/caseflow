@@ -33,7 +33,11 @@ export class PdfSidebar extends React.Component {
   }
 
   keyListener = (event) => {
-    const userIsEditingComment = _.some(this.annotationEditElements, (elem) => document.activeElement === elem);
+    const userIsEditingComment = _(this.annotationEditElements).
+      // I would prefer to use a ref for the tags input box as well,
+      // but react-select does not appear to support that.
+      concat(document.getElementById('tags')).
+      some((elem) => document.activeElement === elem);
 
     if (userIsEditingComment) {
       return;
