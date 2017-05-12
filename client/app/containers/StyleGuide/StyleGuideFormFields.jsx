@@ -1,5 +1,4 @@
 import React from 'react';
-import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideInlineForm from './StyleGuideInlineForm';
 import StyleGuideTextInput from './StyleGuideTextInput';
 import StyleGuideTextInputError from './StyleGuideTextInputError';
