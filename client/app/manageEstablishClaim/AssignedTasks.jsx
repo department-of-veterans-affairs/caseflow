@@ -25,7 +25,7 @@ const AssignedTasks = ({
 };
 
 AssignedTasks.propTypes = {
-  userQuota: PropTypes.object,
+  userQuota: PropTypes.object.isRequired,
   handleEditTaskCount: PropTypes.func.isRequired
 };
 

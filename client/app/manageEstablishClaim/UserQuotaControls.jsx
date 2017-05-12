@@ -50,7 +50,7 @@ const UserQuotaControls = ({
 };
 
 UserQuotaControls.propTypes = {
-  userQuota: PropTypes.object,
+  userQuota: PropTypes.object.isRequired,
   handleBeginEditTaskCount: PropTypes.func.isRequired,
   handleSaveTaskCount: PropTypes.func.isRequired,
   handleUnlockTaskCount: PropTypes.func.isRequired
@@ -79,10 +79,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSaveTaskCount: () => {
     return ApiUtil.patch(`/dispatch/user-quotas/${ownProps.userQuota.id}`,
       { data: { locked_task_count: ownProps.userQuota.newTaskCount } }
-    ).then((response) => {
+    ).then(({ body }) => {
       dispatch({
         type: Constants.REQUEST_USER_QUOTAS_SUCCESS,
-        payload: { userQuotas: response.body }
+        payload: { userQuotas: body }
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);
@@ -92,10 +92,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUnlockTaskCount: () => {
     return ApiUtil.patch(`/dispatch/user-quotas/${ownProps.userQuota.id}`,
       { data: { locked_task_count: null } }
-    ).then((response) => {
+    ).then(({ body }) => {
       dispatch({
         type: Constants.REQUEST_USER_QUOTAS_SUCCESS,
-        payload: { userQuotas: response.body }
+        payload: { userQuotas: body }
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);

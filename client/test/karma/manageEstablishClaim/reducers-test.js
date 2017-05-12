@@ -83,7 +83,7 @@ describe('manageEstablishClaimReducer', () => {
     });
 
     it('updates value', () => {
-      expect(state.alert).to.eql(null);
+      expect(state.alert).to.eq(null);
     });
   });
 
@@ -114,7 +114,7 @@ describe('manageEstablishClaimReducer', () => {
     });
 
     it('updates quotas and employeeCount', () => {
-      expect(state.userQuotas[0]).to.eql({
+      expect(state.userQuotas[0]).to.deep.equal({
         id: 'DRAY',
         index: 0,
         userName: '1. Draymond Green',
@@ -126,7 +126,7 @@ describe('manageEstablishClaimReducer', () => {
         isLocked: true
       });
 
-      expect(state.userQuotas[1]).to.eql({
+      expect(state.userQuotas[1]).to.deep.equal({
         id: null,
         index: 1,
         userName: '2. Not logged in',
@@ -138,7 +138,7 @@ describe('manageEstablishClaimReducer', () => {
         isLocked: false
       });
 
-      expect(state.employeeCount).to.eql(2);
+      expect(state.employeeCount).to.equal(2);
     });
   });
 
@@ -153,12 +153,12 @@ describe('manageEstablishClaimReducer', () => {
     });
 
     it('sets taskCountEdit on userQuota', () => {
-      expect(state.userQuotas[0].isEditingTaskCount).to.eql(false);
+      expect(state.userQuotas[0].isEditingTaskCount).to.equal(false);
       expect(state.userQuotas[0].newTaskCount).to.not.exist;
-      expect(state.userQuotas[1].isEditingTaskCount).to.eql(false);
+      expect(state.userQuotas[1].isEditingTaskCount).to.equal(false);
       expect(state.userQuotas[1].newTaskCount).to.not.exist;
-      expect(state.userQuotas[2].isEditingTaskCount).to.eql(true);
-      expect(state.userQuotas[2].newTaskCount).to.eql(7);
+      expect(state.userQuotas[2].isEditingTaskCount).to.equal(true);
+      expect(state.userQuotas[2].newTaskCount).to.equal(7);
     });
   });
 
@@ -175,7 +175,7 @@ describe('manageEstablishClaimReducer', () => {
 
     it('sets taskCountEdit on userQuota', () => {
       expect(state.userQuotas[0].newTaskCount).to.not.exist;
-      expect(state.userQuotas[1].newTaskCount).to.eql(40);
+      expect(state.userQuotas[1].newTaskCount).to.equal(40);
       expect(state.userQuotas[2].newTaskCount).to.not.exist;
     });
 

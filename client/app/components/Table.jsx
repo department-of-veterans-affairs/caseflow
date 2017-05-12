@@ -25,9 +25,7 @@ const alignmentClasses = {
   right: 'cf-txt-r'
 };
 
-const cellClasses = (column) => {
-  return classnames([alignmentClasses[column.align], column.cellClass]);
-};
+const cellClasses = ({ align, cellClass }) => classnames([alignmentClasses[align], cellClass]);
 
 const getColumns = (props) => {
   return _.isFunction(props.columns) ?
@@ -82,14 +80,14 @@ const Row = (props) => {
   </tr>;
 };
 
-const BodyRows = (props) => {
-  return <tbody className={props.bodyClassName} ref={props.ref} id={props.id}>
-    {props.rowObjects.map((object, rowNumber) =>
+const BodyRows = ({ rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id }) => {
+  return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
+    {rowObjects.map((object, rowNumber) =>
       <Row
         rowObject={object}
-        columns={props.columns}
+        columns={columns}
         rowNumber={rowNumber}
-        rowClassNames={props.rowClassNames}
+        rowClassNames={rowClassNames}
         key={rowNumber} />
     )}
   </tbody>;
@@ -125,7 +123,7 @@ export default class Table extends React.Component {
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
         <BodyRows
           id={tbodyId}
-          ref={tbodyRef}
+          tbodyRef={tbodyRef}
           columns={columns}
           rowObjects={rowObjects}
           bodyClassName={bodyClassName}

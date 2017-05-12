@@ -31,6 +31,9 @@ class UserQuota < ActiveRecord::Base
     !!locked_task_count
   end
 
+  # User quotas can either be
+  # locked, which means the quota was manually set to the value in `locked_task_count`, or
+  # unlocked, which means the quota is automatically distributed by the parent team quota
   def locked_task_count=(new_locked_task_count)
     self[:locked_task_count] = adjust_locked_task_count(new_locked_task_count)
   end
@@ -41,7 +44,10 @@ class UserQuota < ActiveRecord::Base
     return unless new_locked_task_count
     return new_locked_task_count unless team_quota
 
-    [0, [max_locked_task_count, new_locked_task_count.to_i].min].max
+    # Guard from going above the maximum assignable tasks
+    result = [max_locked_task_count, new_locked_task_count.to_i].min
+
+    [0, result].max
   end
 
   def max_locked_task_count

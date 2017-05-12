@@ -54,7 +54,7 @@ export default class TextField extends React.Component {
         title={title}
       />
 
-      {validationError &&
+      {(validationError !== false) &&
         <div className="cf-validation">
           <span>{validationError}</span>
         </div>
@@ -87,5 +87,8 @@ TextField.propTypes = {
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.oneOfType(
+    PropTypes.string,
+    PropTypes.number,
+  )
 };

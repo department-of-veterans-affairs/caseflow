@@ -321,9 +321,10 @@ select {
 
 // candidate for commons
 // Re-assess if we need a number field of a different size
-input[type=number] {
+[type=number] {
   width: 60px;
   height: 35px;
+}
 
 // add to commons
 .cf-form-textinput {
