@@ -119,9 +119,9 @@ RSpec.feature "Reader" do
       # The following lines work locally but not on Travis.
       # I spent two hours pushing changes and waiting 10
       # minutes to see if various changes would fix it.
-      # 
+      #
       # Please forgive me.
-      if !ENV["TRAVIS"]
+      unless ENV["TRAVIS"]
         find("body").send_keys(:arrow_right)
         expect_doc_type_to_be "NOD"
 
