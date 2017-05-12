@@ -51,12 +51,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       fill_in "the number of people", with: "2"
       click_on "Update"
-      visit "/dispatch/establish-claim"
       expect(find_field("the number of people").value).to have_content("2")
 
       # This looks for the row in the table for the User 'Jane Smith' who has
       # two tasks assigned to her, has completed one, and has one remaining.
-      expect(page).to have_content("Jane Smith 3 1 2")
+      expect(page).to have_content("1. Jane Smith 3 1 2")
+      expect(page).to have_content("2. Not logged in 2 0 2")
       expect(page).to have_content("Employee Total 5 1 4")
 
       # Two more users starting tasks should force the number of people to bump up to 3
@@ -75,9 +75,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("the number of people").value).to have_content("3")
 
       # Validate remanders are handled correctly
-      expect(page).to have_content("Jane Smith 3 1 2")
-      expect(page).to have_content("June Smith 2 1 1")
-      expect(page).to have_content("Jeffers Smith 2 1 1")
+      expect(page).to have_content("1. Jane Smith 3 1 2")
+      expect(page).to have_content("2. June Smith 2 1 1")
+      expect(page).to have_content("3. Jeffers Smith 2 1 1")
       expect(page).to have_content("Employee Total 7 3 4")
     end
 
@@ -277,10 +277,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{task.id}"
       click_on "Route claim"
+
+      expect(find_field("endProductModifier")[:value]).to eq("170")
+
       click_on "Create End Product"
 
       expect(page).to_not have_content("Success!")
-      expect(page).to have_content("An EP with that modifier was previously created for this claim.")
+      expect(page).to have_content("Unable to assign or create a new EP for this claim")
+      expect(find_field("endProductModifier")[:value]).to eq("171")
 
       # Missing SSN error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
@@ -441,7 +445,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           page.find("#button-Assign-to-Claim1").click
 
-          expect(page).to have_content("Congratulations!")
+          expect(page).to have_content("Success!")
 
           task.reload
           expect(task.outgoing_reference_id).to eq("1")

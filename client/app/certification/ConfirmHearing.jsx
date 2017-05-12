@@ -177,7 +177,6 @@ class UnconnectedConfirmHearing extends React.Component {
       updateFailed,
       updateSucceeded,
       continueClicked,
-      certificationId,
       match
     } = this.props;
 
@@ -223,6 +222,9 @@ class UnconnectedConfirmHearing extends React.Component {
           <div>
             {hearingCheckText}
           </div>
+
+          <div className="cf-help-divider"></div>
+
           {/*
             TODO: would we be better served by
             making our connected components smaller?
@@ -295,7 +297,6 @@ class UnconnectedConfirmHearing extends React.Component {
         disableContinue={disableContinue}
         loading={loading}
         onClickContinue={this.onClickContinue.bind(this)}
-        certificationId={certificationId}
       />
     </div>;
   }
@@ -353,7 +354,6 @@ const mapStateToProps = (state) => ({
   form9Type: state.form9Type,
   form9Date: state.form9Date,
   continueClicked: state.continueClicked,
-  certificationId: state.certificationId,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
@@ -379,8 +379,7 @@ ConfirmHearing.propTypes = {
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,
   match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool,
-  certificationId: PropTypes.number
+  continueClicked: PropTypes.bool
 };
 
 export default ConfirmHearing;

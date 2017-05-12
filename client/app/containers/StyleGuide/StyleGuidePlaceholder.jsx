@@ -16,7 +16,7 @@ export default class StyleGuidePlaceholder extends React.Component {
         <h2 id={id}>{title}</h2>
       </div>}
       <div>
-        <p>This component is not ready yet. Stay tuned! :) </p>
+        <p>This component is in progress. Stay tuned! :) </p>
       </div>
     </div>;
   }

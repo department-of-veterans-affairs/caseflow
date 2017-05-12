@@ -219,18 +219,6 @@ describe('DecisionReviewer', () => {
           to.be.true;
       }));
 
-      it('highlighted by clicking on the icon', asyncTest(async() => {
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[1].type).
-          simulate('mouseUp');
-
-        wrapper.find('Pdf').getNode().
-          onCommentClick(annotations[0])();
-
-        expect(wrapper.find('#comment0').hasClass('comment-container-selected')).
-          to.be.true;
-      }));
-
       it('comment has page number', asyncTest(async() => {
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[1].type).
@@ -284,21 +272,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#expand-2-comments-button').simulate('click');
         expect(wrapper.text()).to.include('Test Comment');
       });
-
-      it('can jump to comment', asyncTest(async() => {
-        wrapper.find('#expand-2-comments-button').simulate('click');
-        wrapper.find('#button-jumpToComment').simulate('click');
-
-        let scrolledTo = sinon.spy(wrapper.find('DecisionReviewer').
-          getNode(), 'onCommentScrolledTo');
-
-        // verify the page is on the pdf view
-        expect(wrapper.text()).to.include('Back to all documents');
-        await pause();
-
-        // Make sure post scroll callback is called
-        expect(scrolledTo.called).to.be.true;
-      }));
 
       it('page number is displayed', asyncTest(async() => {
         wrapper.find('#expand-2-comments-button').simulate('click');

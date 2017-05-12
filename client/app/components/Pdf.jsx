@@ -1,12 +1,25 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { bindActionCreators } from 'redux';
+import { keyOfAnnotation, getAnnotationByDocumentId } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
-import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
+
+// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
+// We need it defined here to be able to expand/contract margin between pages
+// as we zoom.
+const PAGE_MARGIN_BOTTOM = 25;
+const RENDER_WITHIN_SCROLL = 1000;
+// This is the default page width.
+const PAGE_WIDTH = 1;
+// This comes from _pdf_viewer.css and is the default height
+// of the pages in the PDF. We need it defined here to be
+// able to expand/contract the height of the pages as we zoom.
+const PAGE_HEIGHT = 1056;
 
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
@@ -33,6 +46,12 @@ export class Pdf extends React.Component {
       isRendered: []
     };
 
+    this.scrollLocation = {
+      page: null,
+      locationOnPage: 0
+    };
+
+    this.currentPage = 0;
     this.isRendering = [];
   }
 
@@ -55,11 +74,13 @@ export class Pdf extends React.Component {
   // likey remain complicated.
   renderPage = (index) => {
     if (this.isRendering[index] ||
-      this.state.isRendered[index] === this.state.pdfDocument) {
+      (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
+      _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
       return Promise.resolve();
     }
 
     let pdfDocument = this.state.pdfDocument;
+    let { scale } = this.props;
 
     // Mark that we are rendering this page.
     this.isRendering[index] = true;
@@ -130,7 +151,11 @@ export class Pdf extends React.Component {
         // should render this page again with the new file.
         if (pdfDocument === this.state.pdfDocument) {
           // If it is the same, then we mark this page as rendered
-          this.setIsRendered(index, pdfDocument);
+          this.setIsRendered(index, {
+            pdfDocument,
+            scale,
+            ..._.pick(viewport, ['width', 'height'])
+          });
           resolve();
         } else {
           // If it is not, then we try to render it again.
@@ -150,23 +175,18 @@ export class Pdf extends React.Component {
     });
   }
 
-  onPageClick = (pageNumber) => (event) => {
-    if (this.props.onPageClick) {
-      let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
-      let xPosition = (event.pageX - container.left) / this.props.scale;
-      let yPosition = (event.pageY - container.top) / this.props.scale;
+  scrollEvent = () => {
+    // Now that the user is scrolling we reset the scroll location
+    // so that we do not keep scrolling the user back.
+    this.scrollLocation = {
+      page: null,
+      locationOnPage: 0
+    };
 
-      this.props.onPageClick(
-        pageNumber,
-        {
-          xPosition,
-          yPosition
-        }
-      );
-    }
+    this.renderInViewPages();
   }
 
-  scrollEvent = () => {
+  renderInViewPages = () => {
     let page = document.getElementsByClassName('page');
 
     Array.prototype.forEach.call(page, (ele, index) => {
@@ -174,20 +194,20 @@ export class Pdf extends React.Component {
 
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (this.props.onPageChange &&
-          boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-        this.props.onPageChange(index + 1, this.state.numPages);
+
+        this.onPageChange(index + 1);
       }
 
       // This renders each page as it comes into view. i.e. when
       // the top of the next page is within a thousand pixels of
       // the current view we render it. If the bottom of the page
       // above is within a thousand pixels of the current view
-      // we also redner it.
-      // TODO: Make this more robust and avoid magic numbers.
-      if (boundingRect.bottom > -1000 &&
-          boundingRect.top < this.scrollWindow.clientHeight + 1000) {
+      // we also render it.
+      // TODO: Make this more robust.
+      if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
+          boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
         this.renderPage(index, this.props.file);
       }
     });
@@ -195,7 +215,7 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = _.debounce((file, scrollLocation = 0) => {
+  setupPdf = _.debounce((file) => {
     return new Promise((resolve) => {
       PDFJS.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -204,15 +224,9 @@ export class Pdf extends React.Component {
           isRendered: []
         }, () => {
           resolve();
+          this.onPageChange(1);
         });
         this.props.setPdfReadyToShow(this.props.documentId);
-
-        if (this.props.onPageChange) {
-          this.props.onPageChange(1, pdfDocument.pdfInfo.numPages);
-        }
-
-        // Scroll to the correct location on the page
-        this.scrollWindow.scrollTop = scrollLocation;
       });
     });
   }, DOCUMENT_DEBOUNCE_TIME, {
@@ -237,14 +251,22 @@ export class Pdf extends React.Component {
     }
   }
 
-  onCommentClick = (comment) => () => {
-    this.props.onCommentClick(comment.id);
-    this.props.handleSelectCommentIcon(comment);
+  onPageChange = (currentPage) => {
+    this.currentPage = currentPage;
+    this.props.onPageChange(
+      currentPage,
+      this.state.numPages,
+      this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
   }
 
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
+    window.addEventListener('resize', this.renderInViewPages);
     this.setupPdf(this.props.file);
+  }
+
+  comopnentWillUnmount = () => {
+    window.removeEventListener('resize', this.renderInViewPages);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -256,19 +278,20 @@ export class Pdf extends React.Component {
       this.scrollWindow.scrollTop = 0;
       this.setupPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
-      // The only way to scale the PDF is to re-render it,
-      // so we call setupPdf again.
-      this.setupPdf(nextProps.file);
+      // Set the scroll location based on the current page and where you
+      // are on that page scaled by the zoom factor.
+      const zoomFactor = nextProps.scale / this.props.scale;
+
+      this.scrollLocation = {
+        page: this.currentPage,
+        locationOnPage: (this.scrollWindow.scrollTop - this.pageContainers[this.currentPage - 1].offsetTop) * zoomFactor
+      };
     }
     /* eslint-enable no-negated-condition */
   }
 
   componentDidUpdate = () => {
-    for (let index = 0; index < Math.min(5, this.state.numPages); index++) {
-      if (!this.state.isRendered[index] && this.pageContainers[index]) {
-        this.renderPage(index, this.props.file);
-      }
-    }
+    this.renderInViewPages();
 
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
@@ -276,6 +299,11 @@ export class Pdf extends React.Component {
         this.onJumpToComment(this.props.scrollToComment);
         this.props.onCommentScrolledTo();
       }
+    }
+
+    if (this.scrollLocation.page) {
+      this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
+        this.pageContainers[this.scrollLocation.page - 1].offsetTop;
     }
   }
 
@@ -291,7 +319,12 @@ export class Pdf extends React.Component {
       y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
 
-    this.props.onIconMoved(data.uuid, coordinates, pageNumber);
+    const droppedAnnotation = {
+      ...this.props.allAnnotations[data.uuid],
+      ...coordinates
+    };
+
+    this.props.requestMoveAnnotation(droppedAnnotation);
   }
 
   onPageDragOver = (event) => {
@@ -301,10 +334,12 @@ export class Pdf extends React.Component {
     event.preventDefault();
   }
 
+  // eslint-disable-next-line max-statements
   render() {
     let commentIcons = this.props.comments.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (this.state.isRendered[comment.page - 1] !== this.state.pdfDocument) {
+      if (_.get(this.state.isRendered[comment.page - 1], 'pdfDocument') !==
+        this.state.pdfDocument) {
         return acc;
       }
       if (!acc[comment.page]) {
@@ -312,15 +347,13 @@ export class Pdf extends React.Component {
       }
       acc[comment.page].push(
         <CommentIcon
+          comment={comment}
           position={{
             x: comment.x * this.props.scale,
             y: comment.y * this.props.scale
           }}
-          key={comment.uuid}
-          selected={comment.selected}
-          uuid={comment.uuid}
-          page={comment.page}
-          onClick={this.onCommentClick(comment)} />);
+          key={keyOfAnnotation(comment)}
+          onClick={this.props.handleSelectCommentIcon} />);
 
       return acc;
     }, {});
@@ -329,33 +362,63 @@ export class Pdf extends React.Component {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
-      'cf-pdf-placing-comment': (this.props.commentFlowState ===
-        Constants.PLACING_COMMENT_STATE)
+      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
     this.pageContainers = [];
 
-
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
+      const onPageClick = (event) => {
+        if (!this.props.isPlacingAnnotation) {
+          return;
+        }
+
+        let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
+        let xPosition = (event.pageX - container.left) / this.props.scale;
+        let yPosition = (event.pageY - container.top) / this.props.scale;
+
+        this.props.placeAnnotation(pageNumber, {
+          xPosition,
+          yPosition
+        }, this.props.documentId);
+      };
+
+      const relativeScale = this.props.scale / _.get(this.state.isRendered[pageNumber - 1], 'scale', 1);
+      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
+      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
+
+      // Only pages that are the correct scale should be visible
+      const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
+      const pageContentsVisibleClass = classNames({
+        'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
+      });
+
       pages.push(<div
         className={pageClassNames}
+        style={ {
+          marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
+          width: `${relativeScale * currentWidth}px`,
+          height: `${relativeScale * currentHeight}px`
+        } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
-        onClick={this.onPageClick(pageNumber)}
+        onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
         ref={(pageContainer) => {
           this.pageContainers[pageNumber - 1] = pageContainer;
         }}>
-          <canvas
-            id={`canvas${pageNumber}`}
-            className="canvasWrapper" />
-          <div className="cf-pdf-annotationLayer">
-            {commentIcons[pageNumber]}
+          <div className={pageContentsVisibleClass}>
+            <canvas
+              id={`canvas${pageNumber}`}
+              className="canvasWrapper" />
+            <div className="cf-pdf-annotationLayer">
+              {commentIcons[pageNumber]}
+            </div>
+            <div
+              id={`textLayer${pageNumber}`}
+              className="textLayer"/>
           </div>
-          <div
-            id={`textLayer${pageNumber}`}
-            className="textLayer"/>
         </div>);
     }
     this.scrollWindow = null;
@@ -376,15 +439,17 @@ export class Pdf extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ..._.pick(state.ui.pdf, 'pdfsReadyToShow'),
-    commentFlowState: state.ui.pdf.commentFlowState,
-    scrollToComment: _.get(state, 'ui.pdf.scrollToComment')
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  ...state.ui.pdf,
+  comments: getAnnotationByDocumentId(state, ownProps.documentId),
+  allAnnotations: state.annotations
+});
 
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    placeAnnotation,
+    requestMoveAnnotation
+  }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
 });
@@ -395,10 +460,12 @@ export default connect(
 
 
 Pdf.defaultProps = {
+  onPageChange: _.noop,
   scale: 1
 };
 
 Pdf.propTypes = {
+  selectedAnnotationId: React.PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -410,9 +477,7 @@ Pdf.propTypes = {
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
-  onPageClick: PropTypes.func,
   onPageChange: PropTypes.func,
-  onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
     id: React.PropTypes.number,
@@ -420,7 +485,6 @@ Pdf.propTypes = {
     y: React.PropTypes.number
   }),
   onIconMoved: PropTypes.func,
-  commentFlowState: PropTypes.string,
   setPdfReadyToShow: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func
 };

@@ -3,8 +3,7 @@ import Button from '../../components/Button';
 
 let StyleGuideAction = () => {
   return <div>
-    <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
-    </div>
+   <div className="cf-app-segment cf-app-segment--alt"></div>
     <div className="cf-app-segment" id="establish-claim-buttons">
       <div className="cf-push-left">
         <Button
@@ -18,7 +17,7 @@ let StyleGuideAction = () => {
           classNames={['cf-btn-link', 'cf-adjacent-buttons']}
         />
         <Button
-          name="Submit end product"
+          name="Submit End Product"
           classNames={['usa-button-primary']}
         />
       </div>

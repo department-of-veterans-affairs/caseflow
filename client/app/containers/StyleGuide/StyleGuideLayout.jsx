@@ -1,6 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import StyleGuideAction from './StyleGuideAction';
+import StyleGuideFooter from './StyleGuideFooter';
 
 let StyleGuideLayout = () => {
 
@@ -18,8 +19,8 @@ let StyleGuideLayout = () => {
     </p>
 
     <StyleGuideComponentTitle
-        title="Action"
-        id="action"
+        title="Actions"
+        id="actions"
         link="StyleGuideAction.jsx"
         isSubsection={true}
     />
@@ -48,6 +49,9 @@ let StyleGuideLayout = () => {
       of the page without good reason.
     </p>
     <StyleGuideAction />
+     <br/>
+    <StyleGuideFooter />
+
   </div>;
 };
 

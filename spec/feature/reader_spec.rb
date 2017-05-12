@@ -8,10 +8,50 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def scroll_to_bottom(element)
+  page.driver.evaluate_script <<-EOS
+    function() {
+      var elem = document.getElementById('#{element}');
+      elem.scrollTop = elem.scrollHeight;
+    }();
+  EOS
+end
+
 # This utility function returns true if an element is currently visible on the page
 def in_viewport(element)
   page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
   " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+end
+
+def get_size(element)
+  size = page.driver.evaluate_script <<-EOS
+    function() {
+      var ele = document.getElementById('#{element}');
+      var rect = ele.getBoundingClientRect();
+      return [rect.width, rect.height];
+    }();
+  EOS
+  {
+    width: size[0],
+    height: size[1]
+  }
+end
+
+def add_comment_without_clicking_save(text)
+  # Add a comment
+  click_on "button-AddComment"
+  expect(page).to have_css(".cf-pdf-placing-comment")
+
+  # pageContainer1 is the id pdfJS gives to the div holding the first page.
+  find("#pageContainer1").click
+
+  expect(page).to_not have_css(".cf-pdf-placing-comment")
+  fill_in "addComment", with: text
+end
+
+def add_comment(text)
+  add_comment_without_clicking_save(text)
+  click_on "Save"
 end
 
 RSpec.feature "Reader" do
@@ -55,7 +95,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 3
+          vbms_document_id: 4
         )
       ]
     end
@@ -110,16 +150,7 @@ RSpec.feature "Reader" do
       # Ensure PDF content loads (using :all because the text is hidden)
       expect(page).to have_content(:all, "Important Decision Document!!!")
 
-      # Add a comment
-      click_on "button-AddComment"
-      expect(page).to have_css(".cf-pdf-placing-comment")
-
-      # pageContainer1 is the id pdfJS gives to the div holding the first page.
-      find("#pageContainer1").click
-
-      expect(page).to_not have_css(".cf-pdf-placing-comment")
-      fill_in "addComment", with: "Foo"
-      click_on "Save"
+      add_comment("Foo")
 
       # Expect comment to be visible on page
       expect(page).to have_content("Foo")
@@ -151,6 +182,24 @@ RSpec.feature "Reader" do
 
       # Expect the comment to be removed from the database
       expect(documents[0].reload.annotations.count).to eq(0)
+
+      # Try to add an empty comment
+      add_comment_without_clicking_save("")
+
+      expect(find("#button-save")["disabled"]).to eq("true")
+
+      # Try to edit a comment to contain no text
+      add_comment("A")
+
+      click_on "Edit"
+      find("#editCommentBox").send_keys(:backspace)
+      click_on "Save"
+
+      # Delete modal should appear
+      click_on "Confirm delete"
+
+      # Comment should be removed
+      expect(page).to_not have_css(".comment-container")
     end
 
     context "When there is an existing annotation" do
@@ -225,7 +274,7 @@ RSpec.feature "Reader" do
         expect(after_click_scroll - original_scroll).to be > 0
 
         # Make sure the comment icon and comment are shown as selected
-        expect(page).to have_css(".comment-container-selected")
+        expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
         id = "#{annotations[annotations.size - 2].id}-filter-1"
 
@@ -274,7 +323,58 @@ RSpec.feature "Reader" do
       # we should be able to find text from the second page.
       expect(page).to_not have_content("Banana. Banana who")
       scroll_to("scrollWindow", 500)
-      expect(page).to have_content("Banana. Banana who", wait: 3)
+      expect(page).to have_content("Banana. Banana who", wait: 4)
+    end
+
+    scenario "Zooming changes the size of pages" do
+      scroll_amount = 500
+      zoom_rate = 1.3
+
+      # The margin of error we accept due to float arithmatic rounding
+      size_margin_of_error = 5
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
+
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
+
+      old_height_1 = get_size("pageContainer1")[:height]
+      old_height_10 = get_size("pageContainer10")[:height]
+
+      scroll_to("scrollWindow", scroll_amount)
+
+      find("#button-zoomIn").click
+
+      # Wait for the page to load
+      expect(page).to have_content("IN THE APPEAL")
+
+      # Rendered page is zoomed
+      ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
+      expect(ratio).to eq(zoom_rate)
+
+      # Non-rendered page is zoomed
+      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
+      expect(ratio).to eq(zoom_rate)
+
+      # We should scroll further down since we zoomed but not further than the zoom rate
+      # times how much we've scrolled.
+      expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
+
+      # Zoom out to find text on the last page
+      expect(page).to_not have_content("Office of the General Counsel (022D)")
+
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+      find("#button-zoomOut").click
+
+      expect(page).to have_content("Office of the General Counsel (022D)")
+
+      find("#button-fit").click
+
+      # Fit to screen should make the height of the page the same as the height of the scroll window
+      height_difference = get_size("pageContainer1")[:height].round - get_size("scrollWindow")[:height].round
+      expect(height_difference.abs).to be < size_margin_of_error
     end
 
     scenario "Open single document view and open/close sidebar" do
@@ -343,8 +443,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
 
-      input_element = find(".Select-input > input")
-      input_element.click.native.send_keys(TAG1)
+      fill_in "tags", with: TAG1
 
       # making sure there is a dropdown showing up when text is entered
       expect(page).to have_css(".Select-menu-outer")
@@ -357,9 +456,10 @@ RSpec.feature "Reader" do
       input_element.click
       expect(page).to_not have_content(suggested_option)
 
-      # submit entering two tags
-      input_element.click.native.send_keys(TAG1, :enter)
-      input_element.click.native.send_keys(TAG2, :enter)
+      # submit entering the tag
+      fill_in "tags", with: (TAG1 + "\n")
+
+      fill_in "tags", with: (TAG2 + "\n")
 
       # expecting the multi-selct to have the two new fields
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
@@ -368,15 +468,13 @@ RSpec.feature "Reader" do
       # adding new tags to 2nd document
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[1].type
-      find(".Select-control").click
-      input_element = find(".Select-input > input")
-      input_element.click.native.send_keys(DOC2_TAG1, :enter)
+
+      fill_in "tags", with: (DOC2_TAG1 + "\n")
 
       expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 3)
 
       # getting remove buttons of all tags
-      cancel_icons = page.all(".Select-value-icon", count: 3)
+      cancel_icons = page.all(".Select-value-icon", count: 1)
 
       # rubocop:disable all
       # delete all tags
@@ -394,7 +492,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 2)
     end
 
     scenario "Search and Filter" do
@@ -428,15 +526,16 @@ RSpec.feature "Reader" do
     scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      # Click on the document at the top
-      click_on documents.last.type
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.first.type
 
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      # Make sure the document is scrolled
       expect(in_viewport("read-indicator")).to be true
+      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
   end
 

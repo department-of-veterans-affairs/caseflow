@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 
 export default class Alert extends React.Component {
   componentDidMount() {
@@ -29,7 +30,11 @@ export default class Alert extends React.Component {
 
     let typeClass = `usa-alert-${type}`;
 
-    return <div className={`cf-app-segment usa-alert ${typeClass}`} {...this.getRole()}>
+    const className = classnames('usa-alert', typeClass, {
+      'no-title': !title
+    });
+
+    return <div className={className} {...this.getRole()}>
       <div className="usa-alert-body">
         <h3 className="usa-alert-heading">{title}</h3>
         <p className="usa-alert-text">{message}</p>
@@ -44,6 +49,6 @@ Alert.defaultProps = {
 
 Alert.propTypes = {
   message: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info'])
 };

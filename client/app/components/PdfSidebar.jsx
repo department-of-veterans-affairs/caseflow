@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -8,8 +9,12 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
+import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
+  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
+  updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import { categoryFieldNameOfCategoryName, keyOfAnnotation, getAnnotationByDocumentId, sortAnnotations }
+  from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
@@ -65,34 +70,38 @@ export class PdfSidebar extends React.Component {
 
     const {
       doc,
-      showTagErrorMsg,
+      showErrorMessage,
       tagOptions
     } = this.props;
 
-    comments = this.props.comments.map((comment, index) => {
-      if (comment.uuid === this.props.editingComment) {
+    comments = sortAnnotations(this.props.comments).map((comment, index) => {
+      if (comment.editing) {
         return <EditComment
             id="editCommentBox"
-            onCancelCommentEdit={this.props.onCancelCommentEdit}
-            onSaveCommentEdit={this.props.onSaveCommentEdit}
-            key={comment.id}
-          >
-            {comment.comment}
-          </EditComment>;
+            comment={comment}
+            onCancelCommentEdit={this.props.cancelEditAnnotation}
+            onChange={this.props.updateAnnotationContent}
+            value={comment.comment}
+            onSaveCommentEdit={this.props.requestEditAnnotation}
+            key={keyOfAnnotation(comment)}
+          />;
       }
+
+      const handleClick = () => {
+        this.props.onJumpToComment(comment)();
+        this.props.selectAnnotation(comment.id);
+      };
 
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;
       }}
-        key={comment.id}>
+        key={keyOfAnnotation(comment)}>
         <Comment
           id={`comment${index}`}
-          selected={false}
-          onDeleteComment={this.props.onDeleteComment}
-          onEditComment={this.props.onEditComment}
+          onEditComment={this.props.startEditAnnotation}
           uuid={comment.uuid}
-          selected={comment.selected}
-          onClick={this.props.onJumpToComment(comment)}
+          selected={comment.id === this.props.selectedAnnotationId}
+          onClick={handleClick}
           page={comment.page}>
             {comment.comment}
           </Comment>
@@ -107,6 +116,8 @@ export class PdfSidebar extends React.Component {
       (val, key) =>
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
+
+    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -129,6 +140,7 @@ export class PdfSidebar extends React.Component {
           <p className="cf-pdf-meta-title">
             <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
           </p>
+          {showErrorMessage.category && cannotSaveAlert}
           <DocCategoryPicker
             handleCategoryToggle={
               _.partial(this.props.handleCategoryToggle, this.props.doc.id)
@@ -137,10 +149,7 @@ export class PdfSidebar extends React.Component {
           <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
             Related Issues
           </div>
-          {/* This error alert needs to be formatted according to #1573 */}
-          {showTagErrorMsg &&
-            <Alert type="error" title={''}
-              message="Unable to save. Please try again." />}
+          {showErrorMessage.tag && cannotSaveAlert}
           <SearchableDropdown
             name="tags"
             label="Select or tag issue(s)"
@@ -157,7 +166,7 @@ export class PdfSidebar extends React.Component {
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
-                onClick={this.props.onAddComment}>
+                onClick={this.props.startPlacingAnnotation}>
                 <span>{ plusIcon() } &nbsp; Add a comment</span>
               </Button>
             </span>
@@ -168,12 +177,16 @@ export class PdfSidebar extends React.Component {
           ref={(commentListElement) => {
             this.commentListElement = commentListElement;
           }}>
+          {showErrorMessage.annotation && cannotSaveAlert}
           <div className="cf-pdf-comment-list">
-            {this.props.commentFlowState === Constants.WRITING_COMMENT_STATE &&
+            {this.props.placedButUnsavedAnnotation &&
               <EditComment
+                comment={this.props.placedButUnsavedAnnotation}
                 id="addComment"
-                onCancelCommentEdit={this.props.onCancelCommentAdd}
-                onSaveCommentEdit={this.props.onSaveCommentAdd} />}
+                disableOnEmpty={true}
+                onChange={this.props.updateNewAnnotationContent}
+                onCancelCommentEdit={this.props.stopPlacingAnnotation}
+                onSaveCommentEdit={this.props.createAnnotation} />}
             {comments}
           </div>
         </div>
@@ -182,38 +195,49 @@ export class PdfSidebar extends React.Component {
 }
 
 PdfSidebar.propTypes = {
-  onAddComment: PropTypes.func,
   doc: PropTypes.object,
+  selectedAnnotationId: React.PropTypes.number,
   comments: React.PropTypes.arrayOf(React.PropTypes.shape({
     comment: React.PropTypes.string,
     uuid: React.PropTypes.number
   })),
-  editingComment: React.PropTypes.number,
-  isWritingComment: PropTypes.bool,
-  onSaveCommentAdd: PropTypes.func,
-  onSaveCommentEdit: PropTypes.func,
-  onCancelCommentEdit: PropTypes.func,
-  onCancelCommentAdd: PropTypes.func,
-  onDeleteComment: PropTypes.func,
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
-  commentFlowState: PropTypes.string,
+  showErrorMessage: PropTypes.shape({
+    tag: PropTypes.bool,
+    category: PropTypes.bool,
+    comment: PropTypes.bool
+  }),
   scrollToSidebarComment: PropTypes.shape({
     id: React.PropTypes.number
   }),
   hidePdfSidebar: PropTypes.bool
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
+    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
+    comments: getAnnotationByDocumentId(state, ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
-    commentFlowState: state.ui.pdf.commentFlowState,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
+    showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,
     tagOptions: state.tagOptions
   };
 };
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    selectAnnotation,
+    startPlacingAnnotation,
+    createAnnotation,
+    stopPlacingAnnotation,
+    startEditAnnotation,
+    updateAnnotationContent,
+    updateNewAnnotationContent,
+    cancelEditAnnotation,
+    requestEditAnnotation
+  }, dispatch),
+
   handleFinishScrollToSidebarComment() {
     dispatch({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
@@ -228,15 +252,14 @@ const mapDispatchToProps = (dispatch) => ({
     ApiUtil.patch(
       `/document/${docId}`,
       { data: { [categoryKey]: toggleState } }
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Saving document category failed', err);
-    });
+    ).catch(() =>
+      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
+    );
 
     dispatch({
       type: Constants.TOGGLE_DOCUMENT_CATEGORY,
       payload: {
-        categoryName,
+        categoryKey,
         toggleState,
         docId
       }
