@@ -124,7 +124,10 @@ RSpec.feature "Reader" do
 
       click_on "Cancel"
 
+
+      sleep(inspection_timeout=10)
       find("body").send_keys(:arrow_left)
+      sleep(inspection_timeout=10)
       expect_doc_type_to_be "BVA Decision"
 
       find("body").send_keys(:arrow_right)
