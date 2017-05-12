@@ -268,6 +268,10 @@ select {
   }
 }
 
+.usa-alert.no-title {
+  background-position: 1rem 1.5rem;
+}
+
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
@@ -304,4 +308,9 @@ select {
   p {
     margin-top: 0;
   }
+}
+
+// add to commons
+.cf-form-textinput {
+  margin-bottom: 40px;
 }
