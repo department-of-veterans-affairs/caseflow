@@ -16,7 +16,8 @@ export default class TextField extends React.Component {
       value,
       validationError,
       invisible,
-      placeholder
+      placeholder,
+      title
     } = this.props;
 
     let textInputClass = className.concat(
@@ -35,9 +36,11 @@ export default class TextField extends React.Component {
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
     return <div className={textInputClass.join(' ')}>
-      <label className="question-label" htmlFor={name}>
-        {label || name} {required && <span className="cf-required">Required</span>}
-      </label>
+      {(label !== false) &&
+        <label className="question-label" htmlFor={name}>
+          {label || name} {required && <span className="cf-required">Required</span>}
+        </label>
+      }
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <input
         className={className}
@@ -48,10 +51,14 @@ export default class TextField extends React.Component {
         value={value}
         readOnly={readOnly}
         placeholder={placeholder}
+        title={title}
       />
-      <div className="cf-validation">
-        <span>{validationError}</span>
-      </div>
+
+      {(validationError !== false) &&
+        <div className="cf-validation">
+          <span>{validationError}</span>
+        </div>
+      }
     </div>;
   }
 }
@@ -80,5 +87,8 @@ TextField.propTypes = {
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.oneOfType(
+    PropTypes.string,
+    PropTypes.number,
+  )
 };
