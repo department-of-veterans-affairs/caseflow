@@ -42,6 +42,15 @@ class StyleGuideSearchableDropdown extends Component {
           link="StyleGuideSearchableDropdown.jsx"
           isSubsection={true}
         />
+        <h3>Dropdown</h3>
+        <SearchableDropdown
+          label="Dropdown"
+          name="no-search-select-countries"
+          options={options}
+          onChange={this.onChange}
+          required={true}
+          searchable={false}
+        />
         <h3>Single Select Searchable Dropdown</h3>
         <SearchableDropdown
           label="Searchable dropdown"
