@@ -29,7 +29,33 @@ export class PdfSidebar extends React.Component {
     super(props);
 
     this.commentElements = {};
+    this.annotationEditElements = {};
   }
+
+  keyListener = (event) => {
+    const userIsEditingComment = _.some(this.annotationEditElements, (elem) => document.activeElement === elem);
+
+    if (userIsEditingComment) {
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      this.props.showPdf(this.props.prevDocId)();
+    }
+    if (event.key === 'ArrowRight') {
+      this.props.showPdf(this.props.nextDocId)();
+    }
+  }
+
+  componentDidMount = () => {
+    window.addEventListener('keydown', this.keyListener);
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.keyListener);
+  }
+
+  setAnnotationEditBoxRef = (ref, uuid) => this.annotationEditElements[uuid] = ref
 
   componentDidUpdate = () => {
     if (this.props.scrollToSidebarComment) {
@@ -79,6 +105,7 @@ export class PdfSidebar extends React.Component {
         return <EditComment
             id="editCommentBox"
             comment={comment}
+            setRef={this.setAnnotationEditBoxRef}
             onCancelCommentEdit={this.props.cancelEditAnnotation}
             onChange={this.props.updateAnnotationContent}
             value={comment.comment}
@@ -182,6 +209,7 @@ export class PdfSidebar extends React.Component {
             {this.props.placedButUnsavedAnnotation &&
               <EditComment
                 comment={this.props.placedButUnsavedAnnotation}
+                setRef={this.setAnnotationEditBoxRef}
                 id="addComment"
                 disableOnEmpty={true}
                 onChange={this.props.updateNewAnnotationContent}
@@ -202,6 +230,7 @@ PdfSidebar.propTypes = {
     uuid: React.PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
+  showPdf: PropTypes.func.isRequired,
   handleTogglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,

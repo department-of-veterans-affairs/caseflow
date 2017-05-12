@@ -19,17 +19,6 @@ export class PdfViewer extends React.Component {
   // editing a note, adding a note, or placing a comment.
   isUserActive = () => this.props.editingCommentsForCurrentDoc
 
-  keyListener = (event) => {
-    if (!this.isUserActive()) {
-      if (event.key === 'ArrowLeft' && this.previousDocId()) {
-        this.props.showPdf(this.previousDocId())();
-      }
-      if (event.key === 'ArrowRight' && this.nextDocId()) {
-        this.props.showPdf(this.nextDocId())();
-      }
-    }
-  }
-
   componentDidUpdate = () => {
     if (this.props.placedButUnsavedAnnotation) {
       let commentBox = document.getElementById('addComment');
@@ -40,12 +29,6 @@ export class PdfViewer extends React.Component {
 
   componentDidMount = () => {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
-
-    window.addEventListener('keydown', this.keyListener);
-  }
-
-  componentWillUnmount = () => {
-    window.removeEventListener('keydown', this.keyListener);
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -66,22 +49,8 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
-  previousDocId = () => {
-    const previousDocExists = this.selectedDocIndex() > 0;
-
-    if (previousDocExists) {
-      return this.props.documents[this.selectedDocIndex() - 1].id;
-    }
-  }
-
-  nextDocId = () => {
-    const selectedDocIndex = this.selectedDocIndex();
-    const nextDocExists = selectedDocIndex + 1 < _.size(this.props.documents);
-
-    if (nextDocExists) {
-      return this.props.documents[selectedDocIndex + 1].id;
-    }
-  }
+  prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
+  nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
 
   showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
 
@@ -109,7 +78,7 @@ export class PdfViewer extends React.Component {
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.previousDocId()}
+            prevDocId={this.prevDocId()}
             nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
             showDocumentsListNavigation={this.showDocumentsListNavigation()}
@@ -120,7 +89,10 @@ export class PdfViewer extends React.Component {
           <PdfSidebar
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
+            showPdf={this.props.showPdf}
             doc={doc}
+            nextDocId={this.nextDocId()}
+            prevDocId={this.prevDocId()}
             onJumpToComment={this.props.onJumpToComment}
           />
         </div>
