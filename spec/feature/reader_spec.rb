@@ -116,10 +116,10 @@ RSpec.feature "Reader" do
 
       click_on "Cancel"
 
-      find("body").send_keys(:arrow_right)
+      find("#button-next").send_keys(:arrow_right)
       expect_doc_type_to_be "NOD"
 
-      find("body").send_keys(:arrow_left)
+      find("#button-next").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
 
       add_comment_without_clicking_save "unsaved comment text"
