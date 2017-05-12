@@ -68,7 +68,7 @@ class Reader::DocumentsController < ApplicationController
     verify_authorized_roles("Reader")
   end
 
-   def set_application
+  def set_application
     RequestStore.store[:application] = "reader"
   end
 end
