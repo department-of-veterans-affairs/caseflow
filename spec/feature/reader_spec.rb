@@ -102,7 +102,7 @@ RSpec.feature "Reader" do
 
     scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
-        find(".cf-document-type").should have_content(doc_type)
+        expect(find(".cf-document-type")).to have_text(doc_type)
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
