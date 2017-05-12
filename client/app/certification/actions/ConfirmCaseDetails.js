@@ -37,6 +37,10 @@ export const certificationUpdateSuccess = () => ({
   type: Constants.CERTIFICATION_UPDATE_SUCCESS
 });
 
+export const toggleHeader = () => ({
+  type: Constants.TOGGLE_HEADER
+});
+
 export const certificationUpdateStart = (params, dispatch) => {
   // On the backend, we only have one column for "representativeType",
   // and we don't store "Other" in that column.
@@ -58,7 +62,11 @@ export const certificationUpdateStart = (params, dispatch) => {
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
+      console.log("LOL");
+      console.log(err.status);
+      console.log(JSON.parse(err.response.text).errors[0]);
       dispatch(certificationUpdateFailure(err));
+      dispatch(toggleHeader());
     });
 
   return {

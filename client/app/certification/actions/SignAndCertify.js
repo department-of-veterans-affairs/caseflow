@@ -42,6 +42,9 @@ export const certificationUpdateStart = (params, dispatch) => {
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
+      console.log("LOL");
+      console.log(err);
+      console.log("LOL");
       dispatch(certificationUpdateFailure(err));
     });
 

@@ -21,6 +21,9 @@ class CertificationsController < ApplicationController
   end
 
   def update_v2_params
+    # raise ActiveRecord::RecordNotFound
+    # raise VBMS::HTTPError
+    raise VBMS::ClientError
     permitted = params
                 .require("update")
                 .permit("representative_name",
@@ -42,6 +45,8 @@ class CertificationsController < ApplicationController
   end
 
   def certify_v2
+    # raise VBMS::ClientError
+    # fail "No Form 8 found for appeal being certified"
     update_v2_params
     form8.update_from_string_params(
       representative_type: certification.representative_type,

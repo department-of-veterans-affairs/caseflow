@@ -212,6 +212,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
+  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
+
   resetState: () => dispatch(certificationActions.resetState()),
 
   changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),

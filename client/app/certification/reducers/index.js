@@ -30,7 +30,8 @@ const initialState = {
   socMatch: null,
   representativeType: null,
   representativeName: null,
-  otherRepresentativeType: null
+  otherRepresentativeType: null,
+  showHeader: true
 };
 
 export const certificationReducers = function(state = initialState, action = {}) {
@@ -83,8 +84,11 @@ export const certificationReducers = function(state = initialState, action = {})
       updateFailed: null,
       updateSucceeded: null,
       loading: false,
-      showCancellationModal: false
+      showCancellationModal: false,
+      showHeader: true
     });
+  case Constants.TOGGLE_HEADER:
+    return CertificationReducers.toggleHeader(state);
   case Constants.ON_CONTINUE_CLICK_FAILED:
     return CertificationReducers.onContinueClickFailed(state, action);
   case Constants.ON_CONTINUE_CLICK_SUCCESS:

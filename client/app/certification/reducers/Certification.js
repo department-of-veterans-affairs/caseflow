@@ -1,3 +1,12 @@
+export const toggleHeader = (state) => {
+  let show = Boolean(state.showHeader);
+  console.log("HHH");
+  console.log(show);
+  return Object.assign({}, state, {
+    showHeader: !show
+  });
+};
+
 export const updateProgressBar = (state, action) => {
   return Object.assign({}, state, {
     currentSection: action.payload.currentSection,
