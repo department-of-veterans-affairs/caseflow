@@ -101,13 +101,31 @@ RSpec.feature "Reader" do
     end
 
     scenario "Arrow keys to navigate through documents", :focus => true do
+      def expect_doc_type_to_be(doc_type)
+        expect(find(".cf-document-type").text).to eq(doc_type)
+      end
+
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       add_comment("comment text")
       click_on "Edit"
       find("#editCommentBox-1").send_keys(:arrow_left)
-      expect(find(".cf-document-type").text).to eq("Form 9")
+      expect_doc_type_to_be "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
-      expect(find(".cf-document-type").text).to eq("Form 9")
+      expect_doc_type_to_be "Form 9"
+
+      click_on "Cancel"
+      
+      find("body").send_keys(:arrow_left)
+      expect_doc_type_to_be "BVA Decision"
+
+      find("body").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
+
+      fill_in "tags", with: "tag content"
+      find("#tags").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      find("#tags").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
     end
 
     scenario "PdfListView Dropdown" do
