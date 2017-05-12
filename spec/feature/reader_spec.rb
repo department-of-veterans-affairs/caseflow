@@ -100,7 +100,7 @@ RSpec.feature "Reader" do
       ]
     end
 
-    scenario "Arrow keys to navigate through documents", :focus => true do
+    scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type").text).to eq(doc_type)
       end
