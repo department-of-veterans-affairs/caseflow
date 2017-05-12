@@ -11,7 +11,10 @@ export default class StyleGuideModal extends React.Component {
     super(props);
     window.jqueryOn = false;
 
-    this.state = { modal: false };
+    this.state = {
+      modal: false,
+      value: ''
+    };
   }
 
   handleModalOpen = () => {
@@ -63,7 +66,10 @@ export default class StyleGuideModal extends React.Component {
         <TextareaField
           label="This is a text box for the modal."
           name="Text Box"
-          onChange={this.handleModalOpen}
+          onChange={(value) => {
+            this.setState({ value });
+          }}
+          value={this.state.value}
         />
       </Modal>
     }

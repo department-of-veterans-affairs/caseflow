@@ -82,8 +82,14 @@ class User < ActiveRecord::Base
 
   def toggle_admin_roles(role:, enable: true)
     return if role == "System Admin"
+    # TODO: remove once we launch certification v2
+    # or once we move it out of the feature list.
     if role == "CertificationV2"
-      enable ? FeatureToggle.enable!(:certification_v2) : FeatureToggle.disable!(:certification_v2)
+      if enable
+        FeatureToggle.enable!(:certification_v2, users: [username])
+      else
+        FeatureToggle.disable!(:certification_v2, users: [username])
+      end
     end
     enable ? admin_roles << role : admin_roles.delete(role)
   end

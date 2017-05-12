@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import logger from 'redux-logger';
 
+import ConfigUtil from '../util/ConfigUtil';
 import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
@@ -25,8 +27,24 @@ const EntryPointRedirect = connect(
 )(UnconnectedEntryPointRedirect);
 
 const configureStore = (data) => {
+
+  const middleware = [];
+
+  if (!ConfigUtil.test()) {
+    middleware.push(logger);
+  }
+
+  // This is to be used with the Redux Devtools Chrome extension
+  // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
+  // eslint-disable-next-line no-underscore-dangle
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
   const initialData = mapDataToInitialState(data);
-  const store = createStore(certificationReducers, initialData);
+  const store = createStore(
+    certificationReducers,
+    initialData,
+    composeEnhancers(applyMiddleware(...middleware))
+  );
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
