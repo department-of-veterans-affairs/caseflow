@@ -448,14 +448,6 @@ RSpec.feature "Reader" do
       # making sure there is a dropdown showing up when text is entered
       expect(page).to have_css(".Select-menu-outer")
 
-      # making sure the input value is cleared
-      # after the dropdown is deselected
-      suggested_option = "Create a tag for \"#{TAG1}\""
-      expect(page).to have_content(suggested_option)
-      find("body").click
-      input_element.click
-      expect(page).to_not have_content(suggested_option)
-
       # submit entering the tag
       fill_in "tags", with: (TAG1 + "\n")
 
