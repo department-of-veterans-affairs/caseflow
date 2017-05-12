@@ -115,7 +115,7 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
 
       click_on "Cancel"
-      
+
       find("body").send_keys(:arrow_left)
       expect_doc_type_to_be "BVA Decision"
 
