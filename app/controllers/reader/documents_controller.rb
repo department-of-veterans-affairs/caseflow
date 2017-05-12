@@ -1,5 +1,5 @@
 class Reader::DocumentsController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled
+  before_action :verify_access, :verify_reader_feature_enabled, :set_application
 
   def show
     # If we have sufficient metadata to show a single document,
@@ -66,5 +66,9 @@ class Reader::DocumentsController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Reader")
+  end
+
+   def set_application
+    RequestStore.store[:application] = "reader"
   end
 end
