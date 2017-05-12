@@ -161,7 +161,10 @@ describe TeamQuota do
     end
 
     context "when there are the more assigned_quotas as user count" do
-      before { team_quota.save! }
+      before do
+        team_quota.save!
+        user_quota.save! # Add an assigned_quota to bring the count to 1
+      end
       let(:user_count) { 0 }
 
       it "returns no unassigned quotas" do

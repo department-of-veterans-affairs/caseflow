@@ -58,6 +58,8 @@ class TeamQuota < ActiveRecord::Base
     user_count - assigned_quotas.locked.count
   end
 
+  # Sum up the total of manually assigned tasks, or "locked" tasks. These will be taken
+  # out of the auto assignment pool.
   def locked_task_count
     assigned_quotas.locked.map(&:locked_task_count).inject(0, &:+)
   end
