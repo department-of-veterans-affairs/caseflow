@@ -187,7 +187,7 @@ class UnconnectedConfirmHearing extends React.Component {
 
     if (updateFailed) {
       // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+      return <div>500 error error</div>;
     }
 
 
