@@ -147,12 +147,18 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  editingCommentsForCurrentDoc:
-    _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
-  ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
-});
+const mapStateToProps = (state, ownProps) => {
+  const docId = Number(ownProps.match.params.docId);
+  const editingCommentsForCurrentDoc = 
+    _.some(getAnnotationByDocumentId(state, docId), 'editing') || 
+      state.ui.placedButUnsavedAnnotation.documentId === docId;
+
+  return {
+    editingCommentsForCurrentDoc,
+    ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
+    ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
+  };
+};
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     closeAnnotationDeleteModal,
