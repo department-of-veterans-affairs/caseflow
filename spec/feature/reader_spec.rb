@@ -100,7 +100,7 @@ RSpec.feature "Reader" do
       ]
     end
 
-    scenario "Arrow keys to navigate through documents" do
+    scenario "Arrow keys to navigate through documents", :focus => true do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
       end
@@ -116,10 +116,13 @@ RSpec.feature "Reader" do
 
       click_on "Cancel"
 
-      find("#button-next").send_keys(:arrow_right)
+      print page.body
+      find("body").send_keys(:arrow_right)
+
+      print page.body
       expect_doc_type_to_be "NOD"
 
-      find("#button-next").send_keys(:arrow_left)
+      find("body").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
 
       add_comment_without_clicking_save "unsaved comment text"
