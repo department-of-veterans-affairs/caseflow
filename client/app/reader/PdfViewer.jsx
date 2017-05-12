@@ -15,9 +15,23 @@ import { getAnnotationByDocumentId } from '../reader/utils';
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
-  // Returns true if the user is doing some action. i.e.
-  // editing a note, adding a note, or placing a comment.
-  isUserActive = () => this.props.editingCommentsForCurrentDoc
+  keyListener = (event) => {
+    const userIsEditingComment = _.some(
+      document.querySelectorAll('input,textarea'),
+      (elem) => document.activeElement === elem
+    );
+
+    if (userIsEditingComment) {
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      this.props.showPdf(this.prevDocId())();
+    }
+    if (event.key === 'ArrowRight') {
+      this.props.showPdf(this.nextDocId())();
+    }
+  }
 
   componentDidUpdate = () => {
     if (this.props.placedButUnsavedAnnotation) {
@@ -27,8 +41,13 @@ export class PdfViewer extends React.Component {
     }
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
+    window.addEventListener('keydown', this.keyListener);
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.keyListener);
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -89,10 +108,7 @@ export class PdfViewer extends React.Component {
           <PdfSidebar
             addNewTag={this.props.addNewTag}
             removeTag={this.props.removeTag}
-            showPdf={this.props.showPdf}
             doc={doc}
-            nextDocId={this.nextDocId()}
-            prevDocId={this.prevDocId()}
             onJumpToComment={this.props.onJumpToComment}
           />
         </div>

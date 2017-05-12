@@ -16,15 +16,12 @@ export default class EditComment extends React.Component {
 
   onSaveCommentEdit = () => this.props.onSaveCommentEdit(this.props.comment)
 
-  setRef = (ref) => this.props.setRef(ref, this.props.comment.uuid)
-
   render() {
     return <div>
         <textarea
           className="comment-container comment-textarea"
           name="Edit Comment"
           aria-label="Edit Comment"
-          ref={this.setRef}
           id={this.props.id}
           onChange={this.onChange}
           value={this.props.comment.comment}
