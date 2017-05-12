@@ -100,6 +100,15 @@ RSpec.feature "Reader" do
       ]
     end
 
+    
+    scenario "user visits help page" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Reader Help")
+    end
+
+
     scenario "PdfListView Dropdown" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
