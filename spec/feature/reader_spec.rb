@@ -106,6 +106,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+
       add_comment("comment text")
       click_on "Edit"
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -119,6 +120,12 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "BVA Decision"
 
       find("body").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
+
+      add_comment_without_clicking_save "unsaved comment text"
+      find("#addComment").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      find("#addComment").send_keys(:arrow_right)
       expect_doc_type_to_be "Form 9"
 
       fill_in "tags", with: "tag content"
