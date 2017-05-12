@@ -36,6 +36,7 @@ export class PdfSidebar extends React.Component {
     const userIsEditingComment = _(this.annotationEditElements).
       // I would prefer to use a ref for the tags input box as well,
       // but react-select does not appear to support that.
+      values().
       concat(document.getElementById('tags')).
       some((elem) => document.activeElement === elem);
 
