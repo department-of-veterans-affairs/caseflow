@@ -28,6 +28,7 @@ describe TeamQuota do
     subject { team_quota.task_count_for(quota) }
 
     let(:tasks_completed_today) { [FakeTask.new] * 7 }
+    let(:user_count) { 2 }
     let!(:first_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
     let!(:second_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
 
@@ -41,12 +42,42 @@ describe TeamQuota do
       it { is_expected.to eq(3) }
     end
 
+    context "when there are locked quotas" do
+      before { first_quota.update!(locked_task_count: 5) }
+
+      let!(:third_quota) { team_quota.assigned_quotas.create(user: Generators::User.create) }
+      let(:user_count) { 3 }
+
+      let(:quota) { second_quota }
+
+      it { is_expected.to eq(1) }
+    end
+
     context "when user_quota isn't part of the team_quota" do
       let(:quota) { UserQuota.new(team_quota_id: 123) }
 
       it "raises TeamQuota::MismatchedTeamQuota" do
         expect { subject }.to raise_error(TeamQuota::MismatchedTeamQuota)
       end
+    end
+  end
+
+  context "#tasks_to_assign" do
+    before { team_quota.save! }
+
+    subject { team_quota.tasks_to_assign }
+    let(:tasks_completed_today) { [FakeTask.new] * 9 }
+
+    context "is the number of tasks" do
+      it { is_expected.to eq(9) }
+    end
+
+    context "subtracts the number of locked assigned cases" do
+      let!(:quota) do
+        team_quota.assigned_quotas.create(user: Generators::User.create, locked_task_count: 7)
+      end
+
+      it { is_expected.to eq(2) }
     end
   end
 
@@ -130,7 +161,10 @@ describe TeamQuota do
     end
 
     context "when there are the more assigned_quotas as user count" do
-      before { user_quota.save! }
+      before do
+        team_quota.save!
+        user_quota.save! # Add an assigned_quota to bring the count to 1
+      end
       let(:user_count) { 0 }
 
       it "returns no unassigned quotas" do

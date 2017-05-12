@@ -6,7 +6,7 @@ class TeamQuota < ActiveRecord::Base
   before_save :adjust_user_count
 
   # Only assigned quotas are saved
-  has_many :assigned_quotas, class_name: "UserQuota"
+  has_many :assigned_quotas, -> { order(:created_at) }, class_name: "UserQuota"
 
   def user_quotas
     assigned_quotas + unassigned_quotas
@@ -15,7 +15,11 @@ class TeamQuota < ActiveRecord::Base
   def task_count_for(user_quota)
     fail MismatchedTeamQuota if user_quota.team_quota_id != id
 
-    calculate_task_count_for(assigned_quotas.index(user_quota))
+    calculate_task_count_for(assigned_quotas.unlocked.index(user_quota))
+  end
+
+  def tasks_to_assign
+    tasks.count - locked_task_count
   end
 
   def task_klass
@@ -39,15 +43,25 @@ class TeamQuota < ActiveRecord::Base
   end
 
   def unassigned_quotas_index_range
-    (assigned_quotas.count..(user_count - 1))
+    (assigned_quotas.unlocked.count..(unlocked_user_count - 1))
   end
 
   def task_count_per_user
-    tasks.count / user_count
+    tasks_to_assign / unlocked_user_count
   end
 
   def remainder_task_count
-    tasks.count % user_count
+    tasks_to_assign % unlocked_user_count
+  end
+
+  def unlocked_user_count
+    user_count - assigned_quotas.locked.count
+  end
+
+  # Sum up the total of manually assigned tasks, or "locked" tasks. These will be taken
+  # out of the auto assignment pool.
+  def locked_task_count
+    assigned_quotas.locked.map(&:locked_task_count).inject(0, &:+)
   end
 
   def tasks
