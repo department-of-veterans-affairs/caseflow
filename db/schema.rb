@@ -246,10 +246,11 @@ ActiveRecord::Schema.define(version: 20170511211242) do
   add_index "team_quotas", ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true, using: :btree
 
   create_table "user_quotas", force: :cascade do |t|
-    t.integer  "team_quota_id", null: false
-    t.integer  "user_id",       null: false
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "team_quota_id",     null: false
+    t.integer  "user_id",           null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.integer  "locked_task_count"
   end
 
   add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
