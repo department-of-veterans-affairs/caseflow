@@ -134,11 +134,11 @@ class ApplicationController < ActionController::Base
     session["return_to"] = request.original_url
     redirect_to login_path
   end
-  
-  def page_title(title)   
-   "&nbsp &#124 &nbsp".html_safe + title 
-  end  
-    helper_method :page_title
+
+  def page_title(title)
+    "&nbsp &#124 &nbsp".html_safe + title
+  end
+  helper_method :page_title
 
   def verify_feature_enabled(feature)
     return true if FeatureToggle.enabled?(feature, user: current_user)
