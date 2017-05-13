@@ -188,7 +188,7 @@ describe('DecisionReviewer', () => {
           to.be.equal(firstComment.comment);
 
         // Add new text to the edit textbox
-        wrapper.find('#editCommentBox').simulate('change',
+        wrapper.find('#editCommentBox-1').simulate('change',
           { target: { value: secondComment.comment } });
 
         // Save the edit
