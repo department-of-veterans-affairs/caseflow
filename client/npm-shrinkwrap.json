@@ -3029,6 +3029,11 @@
       "from": "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz",
       "resolved": "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz"
     },
+    "present": {
+      "version": "1.0.0",
+      "from": "present@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/present/-/present-1.0.0.tgz"
+    },
     "preserve": {
       "version": "0.2.0",
       "from": "preserve@>=0.2.0 <0.3.0",
@@ -3260,6 +3265,11 @@
       "version": "3.0.1",
       "from": "redux-logger@>=3.0.0 <4.0.0",
       "resolved": "https://registry.npmjs.org/redux-logger/-/redux-logger-3.0.1.tgz"
+    },
+    "redux-perf-middleware": {
+      "version": "1.2.2",
+      "from": "redux-perf-middleware@latest",
+      "resolved": "https://registry.npmjs.org/redux-perf-middleware/-/redux-perf-middleware-1.2.2.tgz"
     },
     "redux-thunk": {
       "version": "2.2.0",
