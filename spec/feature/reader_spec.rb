@@ -580,7 +580,7 @@ RSpec.feature "Reader" do
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
-    scenario "Open a document and return to list" do
+    scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")
