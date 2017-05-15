@@ -5,6 +5,7 @@ import { Route, BrowserRouter } from 'react-router-dom';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
+import LoadingList from './LoadingList';
 import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -21,7 +22,6 @@ export class DecisionReviewer extends React.Component {
       isCommentLabelSelected: false
     };
 
-    this.props.onReceiveDocs(this.props.appealDocuments);
     this.props.onReceiveAnnotations(this.props.annotations);
   }
 
@@ -77,25 +77,6 @@ export class DecisionReviewer extends React.Component {
     history.push(`/${vacolsId}/documents`);
   }
 
-  componentDidMount = () => {
-    let downloadDocuments = (documentUrls, index) => {
-      if (index >= documentUrls.length) {
-        return;
-      }
-
-      ApiUtil.get(documentUrls[index], { cache: true }).
-        then(() => {
-          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
-        });
-    };
-
-    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-      downloadDocuments(this.props.appealDocuments.map((doc) => {
-        return this.documentUrl(doc);
-      }), i);
-    }
-  }
-
   onJumpToComment = (history, vacolsId) => (comment) => () => {
     this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
@@ -144,25 +125,37 @@ export class DecisionReviewer extends React.Component {
     />;
   }
 
+  loadingList = (routerProps) => {
+    const vacolsId = routerProps.match.params.vacolsId;
+    return <LoadingList vacolsId={vacolsId}/>;
+  }
+
   render() {
     const Router = this.props.router || BrowserRouter;
+    const content = () => {
+      if (this.props.appealDocuments) {
+        return <div className="section--document-list">
+          <Route exact path="/:vacolsId/documents"
+            component={this.routedPdfListView}
+          />
+          <Route path="/:vacolsId/documents/:docId"
+            component={this.routedPdfViewer}
+          />
+        </div>;
+      } else {
+        return <Route path="/:vacolsId/" component={this.loadingList} />;
+      }
+    }
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div className="section--document-list">
-        <Route exact path="/:vacolsId/documents"
-          component={this.routedPdfListView}
-        />
-        <Route path="/:vacolsId/documents/:docId"
-          component={this.routedPdfViewer}
-        />
-    </div>
-   </Router>;
+        { content }
+      </Router>;
   }
 }
 
 DecisionReviewer.propTypes = {
   annotations: PropTypes.arrayOf(PropTypes.object),
-  appealDocuments: PropTypes.arrayOf(PropTypes.object).isRequired,
+  appealDocuments: PropTypes.arrayOf(PropTypes.object),
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,

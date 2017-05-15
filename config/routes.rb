@@ -56,7 +56,9 @@ Rails.application.routes.draw do
 
   namespace :reader do
     resources :appeal, only: [] do
-      resources :documents, only: [:show, :index]
+      resources :documents, only: [:show, :index] do
+        get :metadata, on: :member
+      end
     end
   end
 

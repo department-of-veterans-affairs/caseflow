@@ -8,6 +8,10 @@ class Reader::DocumentsController < ApplicationController
     return render(:index) unless metadata?
   end
 
+  def metadata
+    render json: { appealDocuments: documents }
+  end
+
   private
 
   def appeal
