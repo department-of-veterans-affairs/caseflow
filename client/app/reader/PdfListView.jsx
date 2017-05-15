@@ -82,11 +82,28 @@ export class PdfListView extends React.Component {
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
-  getTbodyRef = (elem) => this.tbodyElem = elem;
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getTbodyRef = (elem) => this.tbodyElem = elem
 
   componentDidUpdate() {
     if (!this.hasSetScrollPosition) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+      if (this.lastReadIndicatorElem) {
+        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+        const lastReadIndicatorIsInView = tbodyBoundingRect.top <= lastReadBoundingRect.top &&
+          lastReadBoundingRect.bottom >= tbodyBoundingRect.bottom;
+
+        if (lastReadIndicatorIsInView) {
+          const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
+          takeWhile((childElem) => !childElem.querySelector('#read-indicator')).
+          sumBy((childElem) => childElem.getBoundingClientRect().height);
+  
+          this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
+        }
+      }
+
       this.hasSetScrollPosition = true;
     }
     this.setFilterIconPositions();
@@ -206,6 +223,7 @@ export class PdfListView extends React.Component {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
                 id="read-indicator"
+                ref={this.getLastReadIndicatorRef}
                 aria-label="Most recently read document indicator">
                   {rightTriangle()}
                 </span>;
