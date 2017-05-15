@@ -82,7 +82,7 @@ export class EstablishClaimNote extends BaseForm {
       noteFor.push('Add VBMS Note');
     }
 
-    return `Route Claim: ${noteFor.join(', ')}`;
+    return ` ${noteFor.join(', ')}`;
   }
 
   vacolsNoteText() {
@@ -169,7 +169,7 @@ export class EstablishClaimNote extends BaseForm {
   render() {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h2>{this.headerText()}</h2>
+          <h1>Route Claim</h1><h2>{this.headerText()}</h2>
 
           {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
