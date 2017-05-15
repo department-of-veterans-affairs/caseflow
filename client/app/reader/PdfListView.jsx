@@ -22,34 +22,38 @@ import {
 
 const NUMBER_OF_COLUMNS = 6;
 
-const FilterIcon = ({
-  handleActivate, label, getRef, selected, idPrefix
-}) => {
-  const handleKeyDown = (event) => {
-    if (event.key === ' ' || event.key === 'Enter') {
-      handleActivate(event);
-      event.preventDefault();
+class FilterIcon extends React.PureComponent {
+  render() {
+    const {
+      handleActivate, label, getRef, selected, idPrefix
+    } = this.props;
+
+    const handleKeyDown = (event) => {
+      if (event.key === ' ' || event.key === 'Enter') {
+        handleActivate(event);
+        event.preventDefault();
+      }
+    };
+
+    const className = 'table-icon';
+
+    const props = {
+      role: 'button',
+      getRef,
+      'aria-label': label,
+      className,
+      tabIndex: '0',
+      onKeyDown: handleKeyDown,
+      onClick: handleActivate
+    };
+
+    if (selected) {
+      return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
     }
-  };
 
-  const className = 'table-icon';
-
-  const props = {
-    role: 'button',
-    getRef,
-    'aria-label': label,
-    className,
-    tabIndex: '0',
-    onKeyDown: handleKeyDown,
-    onClick: handleActivate
-  };
-
-  if (selected) {
-    return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
+    return <UnselectedFilterIcon {...props} />;
   }
-
-  return <UnselectedFilterIcon {...props} />;
-};
+}
 
 FilterIcon.propTypes = {
   label: PropTypes.string.isRequired,
@@ -144,6 +148,10 @@ export class PdfListView extends React.Component {
   }
 
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
+
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
 
   // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
@@ -161,12 +169,6 @@ export class PdfListView extends React.Component {
 
       return content;
     };
-
-    const toggleCategoryDropdownFilterVisiblity = () =>
-      this.props.toggleDropdownFilterVisiblity('category');
-
-    const toggleTagDropdownFilterVisiblity = () =>
-      this.props.toggleDropdownFilterVisiblity('tag');
 
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
@@ -243,14 +245,14 @@ export class PdfListView extends React.Component {
             idPrefix="category"
             getRef={this.getCategoryFilterIconRef}
             selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
-            handleActivate={toggleCategoryDropdownFilterVisiblity} />
+            handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
 
           {isCategoryDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.category}
               clearFilters={clearFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
-              handleClose={toggleCategoryDropdownFilterVisiblity}>
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}>
               <DocCategoryPicker
                 categoryToggleStates={this.props.docFilterCriteria.category}
                 handleCategoryToggle={this.props.setCategoryFilter} />
@@ -292,18 +294,16 @@ export class PdfListView extends React.Component {
           Issue Tags <FilterIcon
             label="Filter by tag"
             idPrefix="tag"
-            getRef={(tagFilterIcon) => {
-              this.tagFilterIcon = tagFilterIcon;
-            }}
+            getRef={this.getTagFilterIconRef}
             selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
-            handleActivate={toggleTagDropdownFilterVisiblity}
+            handleActivate={this.toggleTagDropdownFilterVisiblity}
           />
           {isTagDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
               clearFilters={clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
-              handleClose={toggleTagDropdownFilterVisiblity}>
+              handleClose={this.toggleTagDropdownFilterVisiblity}>
               <DocTagPicker
                 tags={this.props.tagOptions}
                 tagToggleStates={this.props.docFilterCriteria.tag}
