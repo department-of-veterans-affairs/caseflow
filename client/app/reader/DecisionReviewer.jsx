@@ -81,14 +81,14 @@ export class DecisionReviewer extends React.Component {
   }
 
   handleStartPerfMeasurement = (event) => {
-    if (event.key !== 'p') {
+    if (!(event.altKey && event.code === 'KeyP')) {
       return;
     }
+    /* eslint-disable no-console */
 
     // eslint-disable-next-line no-negated-condition
     if (!this.isMeasuringPerf) {
       Perf.start();
-      // eslint-disable-next-line no-console
       console.log('Started React perf measurements');
       this.isMeasuringPerf = true;
     } else {
@@ -97,11 +97,12 @@ export class DecisionReviewer extends React.Component {
 
       const measurements = Perf.getLastMeasurements();
 
-      // eslint-disable-next-line no-console
-      console.log('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
+      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
       Perf.printInclusive(measurements);
       Perf.printWasted(measurements);
+      console.groupEnd();
     }
+    /* eslint-enable no-console */
   }
 
   componentDidMount = () => {
