@@ -27,16 +27,13 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.OTHER
 }];
 
-const CERTIFYING_OFFICE_ID = 'Name and location of certifying office:';
-const CERTIFYING_USERNAME_ID = 'Organizational elements certifying appeal:';
-const CERTIFYING_OFFICIAL_NAME_ID = 'Name of certifying official:';
-const CERTIFYING_OFFICIAL_TITLE_ID = 'Title-of-certifying-official-_DECISION_REVIEW_OFFICER';
-const CERTIFICATION_DATE_ID = 'Date:';
-const CERTIFYING_OFFICE_ERROR = 'Please enter the certifying office.';
-const CERTIFYING_USERNAME_ERROR = 'Please enter the organizational element.';
-const CERTIFYING_OFFICIAL_NAME_ERROR = 'Please enter the name of the Certifying Official (usually your name).';
-const CERTIFYING_OFFICIAL_TITLE_ERROR = 'Please enter the title of the Certifying Official.';
-const CERTIFICATION_DATE_ERROR = "Please enter today's date.";
+const ERROR_MESSAGES = {
+  certifyingOffice: 'Please enter the certifying office.',
+  certifyingUsername: 'Please enter the organizational element.',
+  certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
+  certifyingOfficialTitle: 'Please enter the title of the certifying official.',
+  certificationDate: "Please enter today's date."
+};
 
 class UnconnectedSignAndCertify extends React.Component {
   // TODO: updating state in ComponentWillMount is
@@ -51,23 +48,23 @@ class UnconnectedSignAndCertify extends React.Component {
     const erroredFields = [];
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOffice)) {
-      erroredFields.push(CERTIFYING_OFFICE_ID);
+      erroredFields.push('certifyingOffice');
     }
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingUsername)) {
-      erroredFields.push(CERTIFYING_USERNAME_ID);
+      erroredFields.push('certifyingUsername');
     }
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialName)) {
-      erroredFields.push(CERTIFYING_OFFICIAL_NAME_ID);
+      erroredFields.push('certifyingOfficialName');
     }
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitle)) {
-      erroredFields.push(CERTIFYING_OFFICIAL_TITLE_ID);
+      erroredFields.push('certifyingOfficialTitle');
     }
 
     if (ValidatorsUtil.dateValidator(this.props.certificationDate)) {
-      erroredFields.push(CERTIFICATION_DATE_ID);
+      erroredFields.push('certificationDate');
     }
 
     return erroredFields;
@@ -77,13 +74,13 @@ class UnconnectedSignAndCertify extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.changeErroredFields(erroredFields);
-      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
+      this.props.showValidationErrors(erroredFields);
+      ValidatorsUtil.scrollToAndFocusFirstError();
 
       return;
     }
 
-    this.props.changeErroredFields(null);
+    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
@@ -130,40 +127,39 @@ class UnconnectedSignAndCertify extends React.Component {
           <p>Fill in information about yourself below to sign this certification.</p>
           <div className="cf-help-divider"></div>
           <TextField
-            name={CERTIFYING_OFFICE_ID}
+            name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICE_ID) ? CERTIFYING_OFFICE_ERROR : null)}
+            errorMessage={(this.isFieldErrored('certifyingOffice') && ERROR_MESSAGES.certifyingOffice)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
-            name={CERTIFYING_USERNAME_ID}
+            name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            errorMessage={(this.isFieldErrored(CERTIFYING_USERNAME_ID) ? CERTIFYING_USERNAME_ERROR : null)}
+            errorMessage={(this.isFieldErrored('certifyingUsername') && ERROR_MESSAGES.certifyingUsername)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
-            name={CERTIFYING_OFFICIAL_NAME_ID}
+            name={'Name of certifying official:'}
             value={certifyingOfficialName}
-            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICIAL_NAME_ID) ? CERTIFYING_OFFICIAL_NAME_ERROR : null)}
+            errorMessage={(this.isFieldErrored('certifyingOfficialName') && ERROR_MESSAGES.certifyingOfficialName)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
-            errorMessage={(this.isFieldErrored(CERTIFYING_OFFICIAL_TITLE_ID) ? CERTIFYING_OFFICIAL_TITLE_ERROR : null)}
+            errorMessage={(this.isFieldErrored('certifyingOfficialTitle') && ERROR_MESSAGES.certifyingOfficialTitle)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
-            name={CERTIFICATION_DATE_ID}
+            name={'Date:'}
             value={certificationDate}
-            errorMessage={(this.isFieldErrored(CERTIFICATION_DATE_ID) ? CERTIFICATION_DATE_ERROR : null)}
+            errorMessage={(this.isFieldErrored('certificationDate') && ERROR_MESSAGES.certificationDate)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
       </form>
     <Footer
-      disableContinue={false}
       loading={loading}
       onClickContinue={this.onClickContinue.bind(this)}
     />
@@ -176,8 +172,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  changeErroredFields: (erroredFields) => {
-    dispatch(certificationActions.changeErroredFields(erroredFields));
+  showValidationErrors: (erroredFields) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields));
   },
 
   onSignAndCertifyFormChange: (fieldName, value) => {

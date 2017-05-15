@@ -8,7 +8,7 @@ export const updateProgressBar = (state, action) => {
   });
 };
 
-export const changeErroredFields = (state, action) => {
+export const showValidationErrors = (state, action) => {
   return Object.assign({}, state, {
     erroredFields: action.payload.erroredFields
   });

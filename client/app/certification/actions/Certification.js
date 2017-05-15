@@ -1,7 +1,7 @@
 import * as Constants from '../constants/constants';
 
-export const changeErroredFields = (erroredFields) => ({
-  type: Constants.CHANGE_ERRORED_FIELDS,
+export const showValidationErrors = (erroredFields) => ({
+  type: Constants.SHOW_VALIDATION_ERRORS,
   payload: {
     erroredFields
   }

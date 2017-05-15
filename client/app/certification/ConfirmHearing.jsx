@@ -5,7 +5,7 @@ import * as certificationActions from './actions/Certification';
 import * as actions from './actions/ConfirmHearing';
 import { Redirect } from 'react-router-dom';
 
-
+import ValidatorsUtil from '../util/ValidatorsUtil';
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
@@ -97,18 +97,11 @@ const informalForm9HearingAnswers = [{
   value: Constants.hearingPreferences.TRAVEL_BOARD
 }];
 
-const HEARING_CHANGE_ID = 'hearingChangeQuestion_FOUND';
-const HEARING_CHANGE_ERROR = 'Please select yes or no.';
-const HEARING_CHANGE_FOUND_ID = 'What-did-the-appellant-request-in-the-document-you-found-_HEARING_CANCELLED';
-const HEARING_CHANGE_FOUND_ERROR = "Please select the appelant's request";
-const FORM9_TYPE_ID = 'Caseflow-found-the-document-below-labeled-as-a-Form-9-from-the-appellant-s-eFolder-' +
-    'What-type-of-substantive-appeal-is-it-_INFORMAL_FORM9';
-const FORM9_TYPE_ERROR = 'Please select Form 9 or a statement.';
-const INFORMAL_HEARING_PREFERENCE_ID = 'What-optional-board-hearing-preference-if-any-did-the-appellant-request-' +
-    '_NO_HEARING_DESIRED';
-const FORMAL_HEARING_PREFERENCE_ID = 'Which-box-did-the-appellant-select-for-the-Optional-Board-Hearing-question-' +
-    'above-Depending-on-the-Form-9-this-may-be-Question-8-or-Question-10-_NO_HEARING_DESIRED';
-const HEARING_PREFERENCE_ERROR = 'Please select a hearing preference.';
+const ERROR_MESSAGES = {
+  hearingDocumentIsInVbms: 'Please select yes or no.',
+  hearingPreference: 'Please select a hearing preference.',
+  form9Type: 'Please select Form 9 or a statement.'
+};
 
 /*
 * Check the Veteran's hearing request in VBMS and update it in VACOLS.
@@ -148,23 +141,23 @@ class UnconnectedConfirmHearing extends React.Component {
     const erroredFields = [];
 
     if (!hearingDocumentIsInVbms) {
-      erroredFields.push(HEARING_CHANGE_ID);
+      erroredFields.push('hearingDocumentIsInVbms');
     }
 
     if (!hearingPreference && hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND) {
-      erroredFields.push(HEARING_CHANGE_FOUND_ID);
+      erroredFields.push('hearingPreference');
     }
 
     if (hearingDocumentIsInVbms === Constants.vbmsHearingDocument.NOT_FOUND && !form9Type) {
-      erroredFields.push(FORM9_TYPE_ID);
+      erroredFields.push('form9Type');
     }
 
     if (form9Type === Constants.form9Types.FORMAL_FORM9 && !hearingPreference) {
-      erroredFields.push(FORMAL_HEARING_PREFERENCE_ID);
+      erroredFields.push('hearingPreference');
     }
 
     if (form9Type === Constants.form9Types.INFORMAL_FORM9 && !hearingPreference) {
-      erroredFields.push(INFORMAL_HEARING_PREFERENCE_ID);
+      erroredFields.push('hearingPreference');
     }
 
     return erroredFields;
@@ -175,13 +168,13 @@ class UnconnectedConfirmHearing extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.changeErroredFields(erroredFields);
-      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
+      this.props.showValidationErrors(erroredFields);
+      ValidatorsUtil.scrollToAndFocusFirstError();
 
       return;
     }
 
-    this.props.changeErroredFields(null);
+    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       hearingDocumentIsInVbms: this.props.hearingDocumentIsInVbms,
@@ -267,7 +260,7 @@ class UnconnectedConfirmHearing extends React.Component {
             required={true}
             options={hearingChangeAnswers}
             value={hearingDocumentIsInVbms}
-            errorMessage={this.isFieldErrored(HEARING_CHANGE_ID) ? HEARING_CHANGE_ERROR : null}
+            errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') && ERROR_MESSAGES.hearingDocumentIsInVbms}
             onChange={onHearingDocumentChange}/>
 
           {
@@ -275,7 +268,7 @@ class UnconnectedConfirmHearing extends React.Component {
             <RadioField
               name={hearingChangeFoundQuestion}
               required={true}
-              errorMessage={this.isFieldErrored(HEARING_CHANGE_FOUND_ID) ? HEARING_CHANGE_FOUND_ERROR : null}
+              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
               options={hearingChangeFoundAnswers}
               value={hearingPreference}
               onChange={onHearingPreferenceChange}
@@ -289,7 +282,7 @@ class UnconnectedConfirmHearing extends React.Component {
               required={true}
               options={typeOfForm9Answers}
               value={form9Type}
-              errorMessage={this.isFieldErrored(FORM9_TYPE_ID) ? FORM9_TYPE_ERROR : null}
+              errorMessage={this.isFieldErrored('form9Type') && ERROR_MESSAGES.form9Type}
               onChange={onTypeOfForm9Change}
             />
           }
@@ -314,7 +307,7 @@ class UnconnectedConfirmHearing extends React.Component {
               options={formalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
-              errorMessage={this.isFieldErrored(FORMAL_HEARING_PREFERENCE_ID) ? HEARING_PREFERENCE_ERROR : null}
+              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
               onChange={onHearingPreferenceChange}/>
           }
 
@@ -324,12 +317,11 @@ class UnconnectedConfirmHearing extends React.Component {
               options={informalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
-              errorMessage={this.isFieldErrored(INFORMAL_HEARING_PREFERENCE_ID) ? HEARING_PREFERENCE_ERROR : null}
+              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
               onChange={onHearingPreferenceChange}/>
           }
         </div>
       <Footer
-        disableContinue={false}
         loading={loading}
         onClickContinue={this.onClickContinue.bind(this)}
       />
@@ -365,8 +357,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
-  changeErroredFields: (erroredFields) => {
-    dispatch(certificationActions.changeErroredFields(erroredFields));
+  showValidationErrors: (erroredFields) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields));
   },
 
   onTypeOfForm9Change: (form9Type) => dispatch(actions.onTypeOfForm9Change(form9Type)),

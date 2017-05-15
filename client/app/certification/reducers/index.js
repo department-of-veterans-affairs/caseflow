@@ -85,8 +85,8 @@ export const certificationReducers = function(state = initialState, action = {})
       loading: false,
       showCancellationModal: false
     });
-  case Constants.CHANGE_ERRORED_FIELDS:
-    return CertificationReducers.changeErroredFields(state, action);
+  case Constants.SHOW_VALIDATION_ERRORS:
+    return CertificationReducers.showValidationErrors(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return CertificationReducers.startUpdateCertification(state);
   case Constants.CERTIFICATION_UPDATE_FAILURE:

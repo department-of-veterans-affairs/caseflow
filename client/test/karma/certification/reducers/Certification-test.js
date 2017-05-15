@@ -29,17 +29,17 @@ describe('.startUpdateCertification', () => {
   });
 });
 
-describe('.changeErroredFields', () => {
-  it('should set errored fields', () => {
+describe('.showValidationErrors', () => {
+  it('should show the validation errors', () => {
     let initialState = getBlankInitialState();
     let action = {
-      type: Constants.CHANGE_ERRORED_FIELDS,
+      type: Constants.SHOW_VALIDATION_ERRORS,
       payload: {
         erroredFields: ['otherRepresentativeType']
       }
     };
 
-    expect(Certification.changeErroredFields(initialState, action).
+    expect(Certification.showValidationErrors(initialState, action).
       erroredFields).to.eql(['otherRepresentativeType']);
   });
 });

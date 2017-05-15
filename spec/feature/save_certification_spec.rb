@@ -430,7 +430,7 @@ RSpec.feature "Save Certification" do
           find("label", text: "Yes").click
         end
         click_button("Continue")
-        expect(page).to have_content "Please select the appelant's request"
+        expect(page).to have_content "Please select a hearing preference."
         within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
           find("label", text: "No").click
         end
@@ -447,8 +447,8 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_content "Please enter the certifying office."
         expect(page).to have_content "Please enter the organizational element."
-        expect(page).to have_content "Please enter the name of the Certifying Official (usually your name)."
-        expect(page).to have_content "Please enter the title of the Certifying Official."
+        expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
+        expect(page).to have_content "Please enter the title of the certifying official."
         expect(page).to have_content "Please enter today's date."
       end
     end

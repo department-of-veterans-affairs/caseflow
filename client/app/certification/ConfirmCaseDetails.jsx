@@ -33,12 +33,11 @@ const representativeTypeOptions = [
   }
 ];
 
-const REP_NAME_ID = 'Representative name';
-const REP_TYPE_ID = 'Representative-type_ATTORNEY';
-const OTHER_REP_TYPE_ID = 'Specify other representative type';
-const REP_NAME_ERROR = 'Please enter the representative name.';
-const REP_TYPE_ERROR = 'Please enter the representative type.';
-const OTHER_REP_TYPE_ERROR = 'Please enter the other representative type.';
+const ERROR_MESSAGES = {
+  representativeType: 'Please enter the representative type.',
+  representativeName: 'Please enter the representative name.',
+  otherRepresentativeType: 'Please enter the other representative type.'
+};
 
 /*
  * Confirm Case Details
@@ -88,19 +87,19 @@ export class ConfirmCaseDetails extends React.Component {
 
     // We always need a representative type.
     if (ValidatorsUtil.requiredValidator(representativeType)) {
-      erroredFields.push(REP_TYPE_ID);
+      erroredFields.push('representativeType');
     }
 
     // Unless the type of representative is "None",
     // we need a representative name.
     if (ValidatorsUtil.requiredValidator(representativeName) && !this.representativeTypeIsNone()) {
-      erroredFields.push(REP_NAME_ID);
+      erroredFields.push('representativeName');
     }
 
     // If the representative type is "Other",
     // fill out the representative type.
     if (this.representativeTypeIsOther() && ValidatorsUtil.requiredValidator(otherRepresentativeType)) {
-      erroredFields.push(OTHER_REP_TYPE_ID);
+      erroredFields.push('otherRepresentativeType');
     }
 
     return erroredFields;
@@ -111,13 +110,13 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.changeErroredFields(erroredFields);
-      window.scrollBy(0, document.getElementById(erroredFields[0]).getBoundingClientRect().top - 30);
+      this.props.showValidationErrors(erroredFields);
+      ValidatorsUtil.scrollToAndFocusFirstError();
 
       return;
     }
 
-    this.props.changeErroredFields(null);
+    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -174,33 +173,32 @@ export class ConfirmCaseDetails extends React.Component {
             options={representativeTypeOptions}
             value={representativeType}
             onChange={changeRepresentativeType}
-            errorMessage={(this.isFieldErrored(REP_TYPE_ID) ? REP_TYPE_ERROR : null)}
+            errorMessage={this.isFieldErrored('representativeType') && ERROR_MESSAGES.representativeType}
             required={true}
           />
 
           {
             shouldShowOtherTypeField &&
             <TextField
-              name={OTHER_REP_TYPE_ID}
+              name={'Specify other representative type'}
               value={otherRepresentativeType}
               onChange={changeOtherRepresentativeType}
-              errorMessage={(this.isFieldErrored(OTHER_REP_TYPE_ID) ? OTHER_REP_TYPE_ERROR : null)}
+              errorMessage={this.isFieldErrored('otherRepresentativeType') && ERROR_MESSAGES.otherRepresentativeType}
               required={true}
             />
           }
 
           <TextField
-            name={REP_NAME_ID}
+            name={'Representative name'}
             value={representativeName}
             onChange={changeRepresentativeName}
-            errorMessage={(this.isFieldErrored(REP_NAME_ID) ? REP_NAME_ERROR : null)}
+            errorMessage={this.isFieldErrored('representativeName') && ERROR_MESSAGES.representativeName}
             required={true}
           />
 
         </div>
 
         <Footer
-          disableContinue={false}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />
@@ -224,8 +222,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  changeErroredFields: (erroredFields) => {
-    dispatch(certificationActions.changeErroredFields(erroredFields));
+  showValidationErrors: (erroredFields) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields));
   },
 
   resetState: () => dispatch(certificationActions.resetState()),
