@@ -112,7 +112,7 @@ class FooterRow extends React.PureComponent {
 }
 
 export default class Table extends React.PureComponent {
-  defaultRowClassNames = _.constant('')
+  defaultRowClassNames = () => ''
 
   render() {
     let {
