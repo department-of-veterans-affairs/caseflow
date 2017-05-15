@@ -161,8 +161,11 @@ const timeReducer = (fn) => (state, action) => {
 
   const end = window.performance.now();
 
-  // eslint-disable-next-line no-console
-  console.log(`Action ${action.type} reducer time: ${(end - start).toFixed(2)}ms`);
+  if (start !== 'RUNNING_IN_NODE') {
+    // eslint-disable-next-line no-console
+    console.log(`Action ${action.type} reducer time: ${(end - start).toFixed(2)}ms`);
+  }
+
 
   return returnValue;
 };
