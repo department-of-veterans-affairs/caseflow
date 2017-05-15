@@ -114,7 +114,7 @@ class SearchableDropdown extends Component {
         placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder }
         clearable={false}
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
-        searchable={_.isNil(searchable) ? true : searchable}
+        searchable={searchable}
         disabled={readOnly}
         multi={multi}
         {...addCreatableOptions}
