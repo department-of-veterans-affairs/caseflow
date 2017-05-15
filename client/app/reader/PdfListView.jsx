@@ -12,7 +12,7 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState } from './actions';
+import { setDocListScrollPosition, changeSortState, setTagFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
@@ -408,6 +408,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
+    setTagFilter,
     changeSortState
   }, dispatch),
 
@@ -424,15 +425,6 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SET_CATEGORY_FILTER,
       payload: {
         categoryName,
-        checked
-      }
-    });
-  },
-  setTagFilter(text, checked) {
-    dispatch({
-      type: Constants.SET_TAG_FILTER,
-      payload: {
-        text,
         checked
       }
     });

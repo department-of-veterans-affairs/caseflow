@@ -334,6 +334,14 @@ export const setPdfReadyToShow = (docId) => ({
   }
 });
 
+export const setTagFilter = (text, checked) => ({
+  type: Constants.SET_TAG_FILTER,
+  payload: {
+    text,
+    checked
+  }
+});
+
 export const clearAllFilters = () => ({
   type: Constants.CLEAR_ALL_FILTERS
 });
