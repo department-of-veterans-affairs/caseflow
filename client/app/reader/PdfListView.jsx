@@ -12,7 +12,7 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState } from './actions';
+import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
@@ -82,11 +82,29 @@ export class PdfListView extends React.Component {
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
-  getTbodyRef = (elem) => this.tbodyElem = elem;
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getTbodyRef = (elem) => this.tbodyElem = elem
 
   componentDidUpdate() {
     if (!this.hasSetScrollPosition) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+      if (this.lastReadIndicatorElem) {
+        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+        const lastReadIndicatorIsInView = tbodyBoundingRect.top <= lastReadBoundingRect.top &&
+          lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
+
+        if (!lastReadIndicatorIsInView) {
+          const rowWithLastRead = _.find(
+            this.tbodyElem.children,
+            (tr) => tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+          );
+
+          this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
+        }
+      }
+
       this.hasSetScrollPosition = true;
     }
     this.setFilterIconPositions();
@@ -206,6 +224,7 @@ export class PdfListView extends React.Component {
             if (doc.id === this.props.pdfList.lastReadDocId) {
               return <span
                 id="read-indicator"
+                ref={this.getLastReadIndicatorRef}
                 aria-label="Most recently read document indicator">
                   {rightTriangle()}
                 </span>;
@@ -390,32 +409,15 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
+    setTagFilter,
+    setCategoryFilter,
     changeSortState
   }, dispatch),
-
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
         filterName
-      }
-    });
-  },
-  setCategoryFilter(categoryName, checked) {
-    dispatch({
-      type: Constants.SET_CATEGORY_FILTER,
-      payload: {
-        categoryName,
-        checked
-      }
-    });
-  },
-  setTagFilter(text, checked) {
-    dispatch({
-      type: Constants.SET_TAG_FILTER,
-      payload: {
-        text,
-        checked
       }
     });
   },
