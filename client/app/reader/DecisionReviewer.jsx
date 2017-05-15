@@ -80,6 +80,7 @@ export class DecisionReviewer extends React.Component {
     history.push(`/${vacolsId}/documents`);
   }
 
+  // eslint-disable-next-line max-statements
   handleStartPerfMeasurement = (event) => {
     if (!(event.altKey && event.code === 'KeyP')) {
       return;
