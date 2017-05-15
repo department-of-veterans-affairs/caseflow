@@ -38,7 +38,7 @@ class StyleGuideSearchableDropdown extends Component {
       <div>
         <StyleGuideComponentTitle
           title="Dropdown Menus"
-          id="searchable_dropdown"
+          id="dropdowns"
           link="StyleGuideSearchableDropdown.jsx"
         />
         <h3>Dropdown</h3>

@@ -45,7 +45,7 @@ export default function StyleGuideIndex() {
       name: 'Search'
     },
     {
-      anchor: '#dropdown',
+      anchor: '#dropdowns',
       name: 'Dropdown Menus'
     },
     {
