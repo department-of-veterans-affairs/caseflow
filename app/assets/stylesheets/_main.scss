@@ -213,6 +213,15 @@ select {
   @include animation(spin 6s linear infinite);
 }
 
+.cf-lock-icon {
+  vertical-align: middle;
+}
+
+// Candidate for commons
+.cf-btn-link.cf-no-padding {
+  padding: 0;
+}
+
 .cf-react-loading-indicator {
   background-color: $color-white;
   border-radius: 5px;
@@ -268,6 +277,10 @@ select {
   }
 }
 
+.usa-alert.no-title {
+  background-position: 1rem 1.5rem;
+}
+
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
@@ -304,4 +317,16 @@ select {
   p {
     margin-top: 0;
   }
+}
+
+// candidate for commons
+// Re-assess if we need a number field of a different size
+[type=number] {
+  width: 60px;
+  height: 35px;
+}
+
+// add to commons
+.cf-form-textinput {
+  margin-bottom: 40px;
 }

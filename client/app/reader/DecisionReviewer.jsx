@@ -40,6 +40,10 @@ export class DecisionReviewer extends React.Component {
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
+    if (!this.props.storeDocuments[docId]) {
+      return;
+    }
+
     if (event) {
       // If the user is trying to open the link in a new tab/window
       // then follow the link. Otherwise if they just clicked the link
