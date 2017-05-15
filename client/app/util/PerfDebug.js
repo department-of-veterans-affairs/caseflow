@@ -3,7 +3,7 @@ import deepDiff from 'deep-diff';
 
 /* eslint-disable no-console */
 
-// eslint-disable-next-line func-style
+// eslint-disable-next-line func-style,max-statements
 function componentDidUpdate(prevProps, prevState) {
   const propsDiff = deepDiff(prevProps, this.props);
   const displayName = this.constructor.name || this.displayName || this.name || 'Component';
