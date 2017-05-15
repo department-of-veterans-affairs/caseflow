@@ -9,7 +9,7 @@ export default class StyleGuideColors extends React.Component {
     Base: '#212121',
     'Gray-dark': '#323a45',
     Gray: '#5b616b',
-    'Gray-light': '#a3b0b5',
+    'Gray-light': '#aeb0b5',
     'Gray-lighter': '#d6d7d9',
     Primary: '#0071bc',
     White: '#ffffff',
