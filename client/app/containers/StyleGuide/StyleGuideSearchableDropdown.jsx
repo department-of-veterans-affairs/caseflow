@@ -37,10 +37,9 @@ class StyleGuideSearchableDropdown extends Component {
     return (
       <div>
         <StyleGuideComponentTitle
-          title="Searchable Dropdowns"
+          title="Dropdown Menus"
           id="searchable_dropdown"
           link="StyleGuideSearchableDropdown.jsx"
-          isSubsection={true}
         />
         <h3>Dropdown</h3>
         <SearchableDropdown
@@ -51,6 +50,10 @@ class StyleGuideSearchableDropdown extends Component {
           required={true}
           searchable={false}
         />
+        <p>The searchable dropdowns provide more context to users' choices.
+          This is helpful in cases where there is a large dropdown menu with many options.
+          This dual behavior dropdown component make the dropdown easier to use and
+          options more readily available for the user.</p>
         <h3>Single Select Searchable Dropdown</h3>
         <SearchableDropdown
           label="Searchable dropdown"
@@ -71,10 +74,6 @@ class StyleGuideSearchableDropdown extends Component {
           creatable={true}
           creatableOptions={creatableOptions}
         />
-        <p>The searchable dropdowns provide more context to users' choices.
-          This is helpful in cases where there is a large dropdown menu with many options.
-          This dual behavior dropdown component make the dropdown easier to use and
-          options more readily available for the user.</p>
       </div>
     );
   }
