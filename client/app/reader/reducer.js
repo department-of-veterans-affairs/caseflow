@@ -136,6 +136,7 @@ export const initialState = {
       scrollTop: null,
       lastReadDocId: null,
       dropdowns: {
+        tag: false,
         category: false
       }
     }
