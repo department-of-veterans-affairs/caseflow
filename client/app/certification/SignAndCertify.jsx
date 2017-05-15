@@ -75,7 +75,6 @@ class UnconnectedSignAndCertify extends React.Component {
 
     if (erroredFields.length) {
       this.props.showValidationErrors(erroredFields);
-      ValidatorsUtil.scrollToAndFocusFirstError();
 
       return;
     }
@@ -94,6 +93,10 @@ class UnconnectedSignAndCertify extends React.Component {
 
   isFieldErrored(fieldName) {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
+  }
+
+  componentDidUpdate () {
+    this.props.erroredFields && ValidatorsUtil.scrollToAndFocusFirstError()
   }
 
   render() {
