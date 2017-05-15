@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
+import { PerfDebugPureComponent } from '../util/PerfDebug';
 
 /**
  * This component can be used to easily build tables.
@@ -83,7 +84,7 @@ class Row extends React.PureComponent {
   }
 }
 
-class BodyRows extends React.PureComponent {
+class BodyRows extends PerfDebugPureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
 
@@ -109,6 +110,8 @@ const FooterRow = (props) => {
 };
 
 export default class Table extends React.Component {
+  defaultRowClassNames = _.constant('')
+
   render() {
     let {
       columns,
@@ -116,7 +119,7 @@ export default class Table extends React.Component {
       summary,
       headerClassName = '',
       bodyClassName = '',
-      rowClassNames = () => '',
+      rowClassNames = this.defaultRowClassNames,
       tbodyId,
       tbodyRef,
       id
