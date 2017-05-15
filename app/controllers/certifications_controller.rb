@@ -8,8 +8,7 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    # if feature_enabled?(:certification_v2)
-    if true
+    if feature_enabled?(:certification_v2)
       render "v2", layout: "application"
       return
     end
