@@ -47,6 +47,7 @@
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
     "react": "^15.5.4",
+    "react-addons-perf": "^15.4.2",
     "react-copy-to-clipboard": "^4.3.0",
     "react-dom": "^15.5.4",
     "react-hot-loader": "^3.0.0-beta.6",
