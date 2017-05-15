@@ -12,7 +12,7 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState, setTagFilter } from './actions';
+import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
@@ -96,11 +96,12 @@ export class PdfListView extends React.Component {
           lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
 
         if (!lastReadIndicatorIsInView) {
-          const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
-            takeWhile((childElem) => !childElem.querySelector(`#${this.lastReadIndicatorElem.id}`)).
-            sumBy((childElem) => childElem.getBoundingClientRect().height);
+          const rowWithLastRead = _.find(
+            this.tbodyElem.children,
+            (tr) => tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+          );
 
-          this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
+          this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
         }
       }
 
@@ -409,23 +410,14 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
     setTagFilter,
+    setCategoryFilter,
     changeSortState
   }, dispatch),
-
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
         filterName
-      }
-    });
-  },
-  setCategoryFilter(categoryName, checked) {
-    dispatch({
-      type: Constants.SET_CATEGORY_FILTER,
-      payload: {
-        categoryName,
-        checked
       }
     });
   },
