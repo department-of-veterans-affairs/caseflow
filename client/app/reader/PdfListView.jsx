@@ -225,7 +225,7 @@ export class PdfListView extends React.Component {
       {
         cellClass: 'last-read-column',
         valueFunction: (doc) => {
-          if (doc.id === this.props.pdfList.lastReadDocId) {
+          if (doc.isLastRead) {
             return <span
               id="read-indicator"
               ref={this.getLastReadIndicatorRef}
@@ -360,7 +360,12 @@ export class PdfListView extends React.Component {
     }
 
     let rowObjects = this.props.documents.reduce((acc, row) => {
-      acc.push(row);
+      const docIsLastRead = row.id === this.props.pdfList.lastReadDocId;
+
+      acc.push({
+        ...row,
+        isLastRead: docIsLastRead
+      });
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
 
       if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
