@@ -109,7 +109,7 @@ const FooterRow = (props) => {
   </tfoot>;
 };
 
-export default class Table extends React.Component {
+export default class Table extends React.PureComponent {
   defaultRowClassNames = _.constant('')
 
   render() {
