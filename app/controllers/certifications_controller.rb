@@ -8,7 +8,8 @@ class CertificationsController < ApplicationController
     status = certification.start!
     @form8 = certification.form8
 
-    if feature_enabled?(:certification_v2)
+    # if feature_enabled?(:certification_v2)
+    if true
       render "v2", layout: "application"
       return
     end
@@ -20,10 +21,7 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def update_v2_params
-    # raise ActiveRecord::RecordNotFound
-    # raise VBMS::HTTPError
-    raise VBMS::ClientError
+  def update_certification_from_v2_form #update_v2_params
     permitted = params
                 .require("update")
                 .permit("representative_name",
@@ -40,14 +38,13 @@ class CertificationsController < ApplicationController
   end
 
   def update_v2
-    update_v2_params
+    update_certification_from_v2_form
     render json: {}
   end
 
   def certify_v2
-    # raise VBMS::ClientError
     # fail "No Form 8 found for appeal being certified"
-    update_v2_params
+    update_certification_from_v2_form
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,

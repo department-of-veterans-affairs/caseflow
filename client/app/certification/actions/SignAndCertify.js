@@ -1,5 +1,7 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
+import * as CertificationAction from './Certification';
+
 
 export const updateProgressBar = () => ({
   type: Constants.UPDATE_PROGRESS_BAR,
@@ -42,10 +44,10 @@ export const certificationUpdateStart = (params, dispatch) => {
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
-      console.log("LOL");
-      console.log(err);
-      console.log("LOL");
       dispatch(certificationUpdateFailure(err));
+      dispatch(CertificationAction.toggleHeader());
+      dispatch(CertificationAction.updateErrorNotice(JSON.parse(err.response.text).errors[0]));
+
     });
 
   return {

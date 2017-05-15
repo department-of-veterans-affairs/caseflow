@@ -1,7 +1,6 @@
 export const toggleHeader = (state) => {
   let show = Boolean(state.showHeader);
-  console.log("HHH");
-  console.log(show);
+
   return Object.assign({}, state, {
     showHeader: !show
   });
@@ -14,6 +13,12 @@ export const updateProgressBar = (state, action) => {
     updateFailed: null,
     updateSucceeded: null,
     loading: false
+  });
+};
+
+export const updateErrorNotice = (state, action) => {
+  return Object.assign({}, state, {
+    error: action.payload.error
   });
 };
 

@@ -18,6 +18,7 @@ class UnconnectedDocumentsCheck extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+    this.props.toggleHeader();
   }
 
   render() {
@@ -114,6 +115,10 @@ const mapDispatchToProps = (dispatch) => ({
 
   toggleCancellationModal: () => {
     dispatch(certificationActions.toggleCancellationModal());
+  },
+
+  toggleHeader: () => {
+    dispatch(certificationActions.toggleHeader());
   }
 });
 

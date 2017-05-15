@@ -314,6 +314,14 @@ RSpec.feature "Save Certification" do
   context "As an authorized user for Certification v2" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
+    let(:vbms_error) do
+      VBMS::ClientError.new("<faultstring>Claim not certified.</faultstring>")
+    end
+
+    let(:generic_error) do
+      StandardError.new("<faultstring>Claim not certified.</faultstring>")
+    end
+
     before(:all) do
       FeatureToggle.enable!(:certification_v2)
     end
@@ -407,6 +415,34 @@ RSpec.feature "Save Certification" do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
         expect(find_field("Date").value).to eq "02/01/2016"
+      end
+
+      scenario "Error cerifying appeal" do
+        allow(Appeal.repository).to receive(:upload_document_to_vbms).and_raise(vbms_error)
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        fill_in "Name and location of certifying office", with: "Office in DC"
+        fill_in "Organizational elements certifying appeal", with: "User4567"
+        fill_in "Name of certifying official", with: "Tom Cruz"
+        within_fieldset("Title of certifying official") do
+          find("label", text: "Veterans Service Representative").click
+        end
+        fill_in "Date:", with: "02/01/2016"
+        click_button("Continue")
+        expect(page).to have_content "VBMS Failure"
+        expect(page).to_not have_content "Check Documents"
+
+        allow(Appeal.repository).to receive(:certify).and_raise(generic_error)
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        fill_in "Name and location of certifying office", with: "Office in DC"
+        fill_in "Organizational elements certifying appeal", with: "User4567"
+        fill_in "Name of certifying official", with: "Tom Cruz"
+        within_fieldset("Title of certifying official") do
+          find("label", text: "Veterans Service Representative").click
+        end
+        fill_in "Date:", with: "02/01/2016"
+        click_button("Continue")
+        expect(page).to have_content "Something went wrong."
+        expect(page).to_not have_content "Check Documents"
       end
     end
   end

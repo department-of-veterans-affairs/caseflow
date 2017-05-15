@@ -8,6 +8,7 @@ import { Redirect } from 'react-router-dom';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
 import Footer from './Footer';
+import ErrorNotice from './ErrorNotice';
 
 const representativeTypeOptions = [
   {
@@ -53,6 +54,12 @@ export class ConfirmCaseDetails extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+
+    // when we hit refresh after error page is shown,
+    // we would like to switch back and show header
+    if (!this.props.showHeader) {
+      this.props.toggleHeader();
+    }
   }
 
   componentWillUnmount() {
@@ -140,8 +147,7 @@ export class ConfirmCaseDetails extends React.Component {
     }
 
     if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+      return <ErrorNotice/>;
     }
 
     const shouldShowOtherTypeField =
@@ -240,7 +246,8 @@ const mapStateToProps = (state) => ({
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
   loading: state.loading,
-  continueClicked: state.continueClicked
+  continueClicked: state.continueClicked,
+  showHeader: state.showHeader
 });
 
 export default connect(

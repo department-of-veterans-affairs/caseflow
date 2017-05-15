@@ -39,12 +39,18 @@ class UnconnectedCertificationProgressBar extends React.Component {
   }
 
   render() {
-    return <ProgressBar sections={this.deriveSections()}/>;
+
+    let showProgressBar = this.props.showHeader;
+
+    return <div>
+      { showProgressBar && <ProgressBar sections={this.deriveSections()}/> }
+      </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  currentSection: state.currentSection
+  currentSection: state.currentSection,
+  showHeader: state.showHeader
 });
 
 const CertificationProgressBar = connect(
