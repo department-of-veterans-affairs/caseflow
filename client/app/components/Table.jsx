@@ -84,7 +84,7 @@ class Row extends React.PureComponent {
   }
 }
 
-class BodyRows extends PerfDebugPureComponent {
+class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
 
@@ -101,13 +101,16 @@ class BodyRows extends PerfDebugPureComponent {
   }
 }
 
-const FooterRow = (props) => {
-  let hasFooters = _.some(props.columns, (column) => column.footer);
+class FooterRow extends React.PureComponent {
+  render() {
+    const props = this.props;
+    const hasFooters = _.some(props.columns, 'footer');
 
-  return <tfoot>
-    {hasFooters && <Row columns={props.columns} footer={true}/>}
-  </tfoot>;
-};
+    return <tfoot>
+      {hasFooters && <Row columns={props.columns} footer={true}/>}
+    </tfoot>;
+  }
+}
 
 export default class Table extends React.PureComponent {
   defaultRowClassNames = _.constant('')
