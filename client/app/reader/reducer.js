@@ -156,9 +156,7 @@ export const initialState = {
 
 const timeReducer = (fn) => (state, action) => {
   const start = window.performance.now();
-
   const returnValue = fn(state, action);
-
   const end = window.performance.now();
 
   if (start !== 'RUNNING_IN_NODE') {
