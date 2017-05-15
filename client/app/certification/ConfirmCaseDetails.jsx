@@ -33,7 +33,7 @@ const representativeTypeOptions = [
   }
 ];
 
-const ERROR_MESSAGES = {
+const ERRORS = {
   representativeType: 'Please enter the representative type.',
   representativeName: 'Please enter the representative name.',
   otherRepresentativeType: 'Please enter the other representative type.'
@@ -130,7 +130,9 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   componentDidUpdate () {
-    this.props.erroredFields && ValidatorsUtil.scrollToAndFocusFirstError()
+    if (this.props.erroredFields) {
+      ValidatorsUtil.scrollToAndFocusFirstError();
+    }
   }
 
   render() {
@@ -176,7 +178,7 @@ export class ConfirmCaseDetails extends React.Component {
             options={representativeTypeOptions}
             value={representativeType}
             onChange={changeRepresentativeType}
-            errorMessage={this.isFieldErrored('representativeType') && ERROR_MESSAGES.representativeType}
+            errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
             required={true}
           />
 
@@ -186,7 +188,7 @@ export class ConfirmCaseDetails extends React.Component {
               name={'Specify other representative type'}
               value={otherRepresentativeType}
               onChange={changeOtherRepresentativeType}
-              errorMessage={this.isFieldErrored('otherRepresentativeType') && ERROR_MESSAGES.otherRepresentativeType}
+              errorMessage={this.isFieldErrored('otherRepresentativeType') ? ERRORS.otherRepresentativeType : null}
               required={true}
             />
           }
@@ -195,7 +197,7 @@ export class ConfirmCaseDetails extends React.Component {
             name={'Representative name'}
             value={representativeName}
             onChange={changeRepresentativeName}
-            errorMessage={this.isFieldErrored('representativeName') && ERROR_MESSAGES.representativeName}
+            errorMessage={this.isFieldErrored('representativeName') ? ERRORS.representativeName : null}
             required={true}
           />
 

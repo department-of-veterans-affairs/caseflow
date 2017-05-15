@@ -97,7 +97,7 @@ const informalForm9HearingAnswers = [{
   value: Constants.hearingPreferences.TRAVEL_BOARD
 }];
 
-const ERROR_MESSAGES = {
+const ERRORS = {
   hearingDocumentIsInVbms: 'Please select yes or no.',
   hearingPreference: 'Please select a hearing preference.',
   form9Type: 'Please select Form 9 or a statement.'
@@ -188,7 +188,9 @@ class UnconnectedConfirmHearing extends React.Component {
   }
 
   componentDidUpdate () {
-    this.props.erroredFields && ValidatorsUtil.scrollToAndFocusFirstError()
+    if (this.props.erroredFields) {
+      ValidatorsUtil.scrollToAndFocusFirstError();
+    }
   }
 
   /* eslint-disable max-statements */
@@ -263,7 +265,7 @@ class UnconnectedConfirmHearing extends React.Component {
             required={true}
             options={hearingChangeAnswers}
             value={hearingDocumentIsInVbms}
-            errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') && ERROR_MESSAGES.hearingDocumentIsInVbms}
+            errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') ? ERRORS.hearingDocumentIsInVbms : null}
             onChange={onHearingDocumentChange}/>
 
           {
@@ -271,7 +273,7 @@ class UnconnectedConfirmHearing extends React.Component {
             <RadioField
               name={hearingChangeFoundQuestion}
               required={true}
-              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
+              errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               options={hearingChangeFoundAnswers}
               value={hearingPreference}
               onChange={onHearingPreferenceChange}
@@ -285,7 +287,7 @@ class UnconnectedConfirmHearing extends React.Component {
               required={true}
               options={typeOfForm9Answers}
               value={form9Type}
-              errorMessage={this.isFieldErrored('form9Type') && ERROR_MESSAGES.form9Type}
+              errorMessage={this.isFieldErrored('form9Type') ? ERRORS.form9Type : null}
               onChange={onTypeOfForm9Change}
             />
           }
@@ -310,7 +312,7 @@ class UnconnectedConfirmHearing extends React.Component {
               options={formalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
-              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
+              errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
           }
 
@@ -320,7 +322,7 @@ class UnconnectedConfirmHearing extends React.Component {
               options={informalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
-              errorMessage={this.isFieldErrored('hearingPreference') && ERROR_MESSAGES.hearingPreference}
+              errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
           }
         </div>

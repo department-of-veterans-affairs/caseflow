@@ -27,7 +27,7 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.OTHER
 }];
 
-const ERROR_MESSAGES = {
+const ERRORS = {
   certifyingOffice: 'Please enter the certifying office.',
   certifyingUsername: 'Please enter the organizational element.',
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
@@ -96,7 +96,9 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   componentDidUpdate () {
-    this.props.erroredFields && ValidatorsUtil.scrollToAndFocusFirstError()
+    if (this.props.erroredFields) {
+      ValidatorsUtil.scrollToAndFocusFirstError();
+    }
   }
 
   render() {
@@ -132,32 +134,32 @@ class UnconnectedSignAndCertify extends React.Component {
           <TextField
             name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            errorMessage={(this.isFieldErrored('certifyingOffice') && ERROR_MESSAGES.certifyingOffice)}
+            errorMessage={(this.isFieldErrored('certifyingOffice') ? ERRORS.certifyingOffice : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
             name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            errorMessage={(this.isFieldErrored('certifyingUsername') && ERROR_MESSAGES.certifyingUsername)}
+            errorMessage={(this.isFieldErrored('certifyingUsername') ? ERRORS.certifyingUsername : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
-            errorMessage={(this.isFieldErrored('certifyingOfficialName') && ERROR_MESSAGES.certifyingOfficialName)}
+            errorMessage={(this.isFieldErrored('certifyingOfficialName') ? ERRORS.certifyingOfficialName : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
-            errorMessage={(this.isFieldErrored('certifyingOfficialTitle') && ERROR_MESSAGES.certifyingOfficialTitle)}
+            errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
             name={'Date:'}
             value={certificationDate}
-            errorMessage={(this.isFieldErrored('certificationDate') && ERROR_MESSAGES.certificationDate)}
+            errorMessage={(this.isFieldErrored('certificationDate') ? ERRORS.certificationDate : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
