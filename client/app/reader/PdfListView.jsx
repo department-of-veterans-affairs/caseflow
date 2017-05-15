@@ -143,6 +143,8 @@ export class PdfListView extends React.Component {
     this.props.handleToggleCommentOpened(id);
   }
 
+  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+
   // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
     const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-up' : 'fa-caret-down';
@@ -239,9 +241,7 @@ export class PdfListView extends React.Component {
           Categories <FilterIcon
             label="Filter by category"
             idPrefix="category"
-            getRef={(categoryFilterIcon) => {
-              this.categoryFilterIcon = categoryFilterIcon;
-            }}
+            getRef={this.getCategoryFilterIconRef}
             selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
             handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
