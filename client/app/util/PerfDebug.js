@@ -21,7 +21,14 @@ function componentDidUpdate(prevProps, prevState) {
   }
 
   if (!(propsDiff || stateDiff)) {
-    console.log('Props and state are deeply equal');
+    const logEqualityType = (name, lhs, rhs) => {
+      const equalityType = lhs === rhs ? 'shallowly' : 'deeply';
+
+      console.log(`Previous and current ${name} is ${equalityType} equal`);
+    };
+
+    logEqualityType('props', prevProps, this.props);
+    logEqualityType('state', prevState, this.state);
   }
 
   console.groupEnd();
