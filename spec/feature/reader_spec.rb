@@ -584,7 +584,6 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")
-      original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
       (num_documents - 1).times { find("#button-next").click }
