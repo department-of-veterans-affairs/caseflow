@@ -64,6 +64,26 @@ FilterIcon.propTypes = {
   className: PropTypes.string
 };
 
+class LastReadIndicator extends React.PureComponent {
+  render() {
+    if (!this.props.shouldShow) {
+      return null;
+    }
+
+    return <span
+      id="read-indicator"
+      ref={this.props.getRef}
+      aria-label="Most recently read document indicator">
+        {rightTriangle()}
+      </span>;
+  }
+}
+
+const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
+  shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
+});
+const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+
 export class PdfListView extends React.Component {
   constructor() {
     super();
@@ -224,16 +244,7 @@ export class PdfListView extends React.Component {
     return [
       {
         cellClass: 'last-read-column',
-        valueFunction: (doc) => {
-          if (doc.id === this.props.pdfList.lastReadDocId) {
-            return <span
-              id="read-indicator"
-              ref={this.getLastReadIndicatorRef}
-              aria-label="Most recently read document indicator">
-                {rightTriangle()}
-              </span>;
-          }
-        }
+        valueFunction: (doc) => <ConnectedLastReadIndicator docId={doc.id} getRef={this.getLastReadIndicatorRef} />
       },
       {
         cellClass: 'categories-column',
