@@ -551,6 +551,7 @@ RSpec.feature "Reader" do
   end
 
   context "Large number of documents" do
+    # This assumes that num_documents is enough to force the viewport to scroll.
     let(:num_documents) { 20 }
     let(:documents) do
       (1..num_documents).to_a.reduce([]) do |acc, number|
@@ -586,7 +587,7 @@ RSpec.feature "Reader" do
       original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
-      10.times { find("#button-next").click }
+      (num_documents - 1).times { find("#button-next").click }
 
       click_on "Back to all documents"
 
