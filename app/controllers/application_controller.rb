@@ -78,7 +78,8 @@ class ApplicationController < ActionController::Base
   def help_url
     {
       "certification" => certification_help_path,
-      "dispatch-arc" => dispatch_help_path
+      "dispatch-arc" => dispatch_help_path,
+      "reader" => reader_help_path
     }[application] || help_path
   end
   helper_method :help_url
@@ -133,6 +134,11 @@ class ApplicationController < ActionController::Base
     session["return_to"] = request.original_url
     redirect_to login_path
   end
+
+  def page_title(title)
+    "&nbsp &#124 &nbsp".html_safe + title
+  end
+  helper_method :page_title
 
   def verify_feature_enabled(feature)
     return true if FeatureToggle.enabled?(feature, user: current_user)

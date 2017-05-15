@@ -100,6 +100,13 @@ RSpec.feature "Reader" do
       ]
     end
 
+    scenario "user visits help page" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Reader Help")
+    end
+
     scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
