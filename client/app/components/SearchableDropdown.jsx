@@ -19,6 +19,20 @@ class SearchableDropdown extends Component {
     this.setState({ value: nextProps.value || null });
   };
 
+  resetSelectInputValue = () => {
+    // If ref input exists, clear its value. This resets the input value of
+    // select for every render.
+    // This is for resetting the suggestion of creating
+    // a new option when blurred.
+    if (this.selectElem) {
+      this.selectElem.inputValue = '';
+    }
+  }
+
+  componentDidUpdate() {
+    this.resetSelectInputValue();
+  }
+
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
@@ -94,7 +108,7 @@ class SearchableDropdown extends Component {
 
     // TODO We will get the "tag already exists" message even when the input is invalid,
     // because if the selector filters the options to be [], it will show the "no results found"
-    // message. We can get around this by unsetting `noResultsText`.
+    // message. We can get around this by un-setting `noResultsText`.
 
     if (_.isEmpty(options)) {
       addCreatableOptions.noResultsText = '';
@@ -106,6 +120,7 @@ class SearchableDropdown extends Component {
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
+        ref={(ref) => (this.selectElem = ref)}
         inputProps={{ id: name }}
         options={options}
         onChange={this.onChange}
@@ -115,6 +130,7 @@ class SearchableDropdown extends Component {
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
         disabled={readOnly}
         multi={multi}
+        onBlur={this.resetSelectInputValue}
         {...addCreatableOptions}
       />
     </div>;
