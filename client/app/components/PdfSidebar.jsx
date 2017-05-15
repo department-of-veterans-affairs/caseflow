@@ -77,7 +77,7 @@ export class PdfSidebar extends React.Component {
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
       if (comment.editing) {
         return <EditComment
-            id="editCommentBox"
+            id={`editCommentBox-${keyOfAnnotation(comment)}`}
             comment={comment}
             onCancelCommentEdit={this.props.cancelEditAnnotation}
             onChange={this.props.updateAnnotationContent}
@@ -133,7 +133,7 @@ export class PdfSidebar extends React.Component {
         <div className="cf-document-info-wrapper">
           <p className="cf-pdf-meta-title cf-pdf-cutoff">
             <b>Document Type: </b>
-            <span title={this.props.doc.type}>
+            <span title={this.props.doc.type} className="cf-document-type">
               {this.props.doc.type}
             </span>
           </p>

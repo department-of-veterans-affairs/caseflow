@@ -181,14 +181,14 @@ describe('DecisionReviewer', () => {
         await pause();
 
         // Click on the edit button
-        wrapper.find('#button-edit').simulate('click');
+        wrapper.find('#button-edit-comment-1').simulate('click');
 
         // Verify that the text in the textbox is the existing comment
         expect(wrapper.find('textarea').props().value).
           to.be.equal(firstComment.comment);
 
         // Add new text to the edit textbox
-        wrapper.find('#editCommentBox').simulate('change',
+        wrapper.find('#editCommentBox-1').simulate('change',
           { target: { value: secondComment.comment } });
 
         // Save the edit
@@ -201,13 +201,13 @@ describe('DecisionReviewer', () => {
           sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
-        wrapper.find('#button-delete').simulate('click');
+        wrapper.find('#button-delete-comment-1').simulate('click');
 
         // Click on the cancel delete in the modal
         wrapper.find('#Delete-Comment-button-id-0').simulate('click');
 
         // Re-open delete modal
-        wrapper.find('#button-delete').simulate('click');
+        wrapper.find('#button-delete-comment-1').simulate('click');
 
         // Click on the confirm delete in the modal
         wrapper.find('#Delete-Comment-button-id-1').simulate('click');

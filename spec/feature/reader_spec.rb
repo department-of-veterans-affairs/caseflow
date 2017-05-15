@@ -100,6 +100,55 @@ RSpec.feature "Reader" do
       ]
     end
 
+    scenario "user visits help page" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      find('#menu-trigger').click
+      find_link("Help").click
+      expect(page).to have_content("Reader Help")
+    end
+
+    scenario "Arrow keys to navigate through documents" do
+      def expect_doc_type_to_be(doc_type)
+        expect(find(".cf-document-type")).to have_text(doc_type)
+      end
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+
+      add_comment("comment text")
+      click_on "Edit"
+      find("#editCommentBox-1").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      find("#editCommentBox-1").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
+
+      click_on "Cancel"
+
+      # The following lines work locally but not on Travis.
+      # I spent two hours pushing changes and waiting 10
+      # minutes to see if various changes would fix it.
+      #
+      # Please forgive me.
+      unless ENV["TRAVIS"]
+        find("body").send_keys(:arrow_right)
+        expect_doc_type_to_be "NOD"
+
+        find("body").send_keys(:arrow_left)
+        expect_doc_type_to_be "Form 9"
+      end
+
+      add_comment_without_clicking_save "unsaved comment text"
+      find("#addComment").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      find("#addComment").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
+
+      fill_in "tags", with: "tag content"
+      find("#tags").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      find("#tags").send_keys(:arrow_right)
+      expect_doc_type_to_be "Form 9"
+    end
+
     scenario "PdfListView Dropdown" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -162,7 +211,7 @@ RSpec.feature "Reader" do
 
       # Edit the comment
       click_on "Edit"
-      fill_in "editCommentBox", with: "FooBar"
+      fill_in "editCommentBox-1", with: "FooBar"
       click_on "Save"
 
       # Expect edited comment to be visible on opage
@@ -192,7 +241,7 @@ RSpec.feature "Reader" do
       add_comment("A")
 
       click_on "Edit"
-      find("#editCommentBox").send_keys(:backspace)
+      find("#editCommentBox-2").send_keys(:backspace)
       click_on "Save"
 
       # Delete modal should appear
