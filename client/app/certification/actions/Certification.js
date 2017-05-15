@@ -25,3 +25,10 @@ export const toggleCancellationModal = () => ({
 export const toggleHeader = () => ({
   type: Constants.TOGGLE_HEADER
 });
+
+export const updateErrorNotice = (error) => ({
+  type: Constants.UPDATE_ERROR_NOTICE,
+  payload: {
+    error
+  }
+});

@@ -8,6 +8,8 @@ import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
+import ErrorNotice from './ErrorNotice';
+
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -32,6 +34,10 @@ class UnconnectedSignAndCertify extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+
+    if (!this.props.showHeader) {
+      this.props.toggleHeader();
+    }
   }
 
   getValidationErrors() {
@@ -105,8 +111,7 @@ class UnconnectedSignAndCertify extends React.Component {
     }
 
     if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+      return <ErrorNotice/>;
     }
 
     // if the form input is not valid and the user has already tried to click continue,
@@ -165,6 +170,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
+  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
+
   onSignAndCertifyFormChange: (fieldName, value) => {
     dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
   },
@@ -187,7 +194,8 @@ const mapStateToProps = (state) => ({
   continueClicked: state.continueClicked,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed
+  updateFailed: state.updateFailed,
+  showHeader: state.showHeader
 });
 
 const SignAndCertify = connect(

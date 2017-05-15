@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
+import ErrorNotice from './ErrorNotice';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -118,6 +119,10 @@ class UnconnectedConfirmHearing extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+
+    if (!this.props.showHeader) {
+      this.props.toggleHeader();
+    }
   }
 
   componentWillUnmount() {
@@ -186,10 +191,8 @@ class UnconnectedConfirmHearing extends React.Component {
     }
 
     if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 error error</div>;
+      return <ErrorNotice/>;
     }
-
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
     cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
@@ -324,6 +327,8 @@ class UnconnectedConfirmHearing extends React.Component {
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => dispatch(actions.updateProgressBar()),
 
+  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
+
   resetState: () => dispatch(certificationActions.resetState()),
 
   onHearingDocumentChange: (hearingDocumentIsInVbms) => {
@@ -357,7 +362,8 @@ const mapStateToProps = (state) => ({
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed
+  updateFailed: state.updateFailed,
+  showHeader: state.showHeader
 });
 
 /*
