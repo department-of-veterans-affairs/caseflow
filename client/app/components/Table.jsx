@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
+import PerfDebugPureComponent from '../util/PerfDebugPureComponent';
 
 /**
  * This component can be used to easily build tables.
@@ -101,7 +102,7 @@ const FooterRow = (props) => {
   </tfoot>;
 };
 
-export default class Table extends React.Component {
+export default class Table extends PerfDebugPureComponent {
   render() {
     let {
       columns,
