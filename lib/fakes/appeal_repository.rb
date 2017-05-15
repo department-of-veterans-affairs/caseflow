@@ -392,7 +392,7 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      documents: random_reader_documents(200)
+      documents: random_reader_documents(1000)
     )
     Generators::Appeal.build(
       vacols_id: "reader_id3",
