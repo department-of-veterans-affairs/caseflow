@@ -578,6 +578,22 @@ RSpec.feature "Reader" do
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
+
+    scenario "Open a document and return to list", :focus => true do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.last.type
+
+      10.times { find("#button-next").click }
+
+      click_on "Back to all documents"
+
+      expect(page).to have_content("#{num_documents} Documents")
+
+      expect(in_viewport("read-indicator")).to be true
+    end
   end
 
   context "When user is not whitelisted" do
