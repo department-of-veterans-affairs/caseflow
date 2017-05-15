@@ -73,3 +73,6 @@ export const documentCategories = {
     svg: docCategoryIcon('#5BD998')
   }
 };
+
+// colors
+export const READER_COLOR = '#417505';

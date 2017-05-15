@@ -9,7 +9,10 @@ class Reader::DocumentsController < ApplicationController
   end
 
   def metadata
-    render json: { appealDocuments: documents }
+    render json: {
+      appealDocuments: documents,
+      annotations: appeal.saved_documents.map(&:annotations).flatten.map(&:to_hash)
+    }
   end
 
   private
@@ -35,7 +38,6 @@ class Reader::DocumentsController < ApplicationController
       end
     end
   end
-  helper_method :documents
 
   def metadata?
     params[:received_at] && params[:type] && params[:filename]

@@ -10,8 +10,6 @@ import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
-const PARALLEL_DOCUMENT_REQUESTS = 3;
-
 export const documentPath = (id) => `/document/${id}/pdf`;
 
 export class DecisionReviewer extends React.Component {
@@ -21,22 +19,12 @@ export class DecisionReviewer extends React.Component {
     this.state = {
       isCommentLabelSelected: false
     };
-
-    this.props.onReceiveAnnotations(this.props.annotations);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(this.props.appealDocuments, nextProps.appealDocuments)) {
-      this.props.onReceiveDocs(nextProps.appealDocuments);
-    }
-
     if (!_.isEqual(this.props.annotations, nextProps.annotations)) {
       this.props.onReceiveAnnotations(nextProps.annotations);
     }
-  }
-
-  documentUrl = (doc) => {
-    return `/document/${doc.id}/pdf`;
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
@@ -132,20 +120,16 @@ export class DecisionReviewer extends React.Component {
 
   render() {
     const Router = this.props.router || BrowserRouter;
-    const content = () => {
-      if (this.props.appealDocuments) {
-        return <div className="section--document-list">
+    const content = Object.keys(this.props.storeDocuments).length > 0 ?
+        <div className="section--document-list">
           <Route exact path="/:vacolsId/documents"
             component={this.routedPdfListView}
           />
           <Route path="/:vacolsId/documents/:docId"
             component={this.routedPdfViewer}
           />
-        </div>;
-      } else {
-        return <Route path="/:vacolsId/" component={this.loadingList} />;
-      }
-    }
+        </div> :
+        <Route path="/:vacolsId/" component={this.loadingList} />;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
         { content }
