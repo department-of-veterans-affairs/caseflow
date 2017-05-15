@@ -45,7 +45,7 @@ export default function StyleGuideIndex() {
       name: 'Search'
     },
     {
-      anchor: '#dropdown',
+      anchor: '#dropdowns',
       name: 'Dropdown Menus'
     },
     {
@@ -163,9 +163,6 @@ export default function StyleGuideIndex() {
           title="Search"
           id="search" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Dropdown Menus"
-          id="dropdown" />
         <StyleGuideSearchableDropdown />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
