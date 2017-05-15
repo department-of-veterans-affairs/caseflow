@@ -93,13 +93,13 @@ export class PdfListView extends React.Component {
         const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
         const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
         const lastReadIndicatorIsInView = tbodyBoundingRect.top <= lastReadBoundingRect.top &&
-          lastReadBoundingRect.bottom >= tbodyBoundingRect.bottom;
+          lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
 
-        if (lastReadIndicatorIsInView) {
+        if (!lastReadIndicatorIsInView) {
           const heightOfRowsBeforeLastRead = _(this.tbodyElem.children).
-          takeWhile((childElem) => !childElem.querySelector('#read-indicator')).
-          sumBy((childElem) => childElem.getBoundingClientRect().height);
-  
+            takeWhile((childElem) => !childElem.querySelector(`#${this.lastReadIndicatorElem.id}`)).
+            sumBy((childElem) => childElem.getBoundingClientRect().height);
+
           this.tbodyElem.scrollTop = heightOfRowsBeforeLastRead;
         }
       }
