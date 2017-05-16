@@ -15,16 +15,14 @@ export class DocumentCategoryIcons extends PerfDebugPureComponent {
 
     return <ul className="cf-document-category-icons" aria-label="document categories">
       {
-        _.map(categories, (category) => {
-          const Svg = category.svg;
-
-          return <li
+        _.map(categories, (category) =>
+          <li
             className="cf-no-styling-list"
             key={category.renderOrder}
             aria-label={category.humanName}>
-            <Svg />
-          </li>;
-        })
+            {category.svg}
+          </li>
+        )
       }
     </ul>;
   }
