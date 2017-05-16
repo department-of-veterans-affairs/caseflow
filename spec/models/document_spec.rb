@@ -87,11 +87,13 @@ describe Document do
   end
 
   context "#fill_in" do
-    let(:from_vbms_document) { Generators::Document.build(
-      type: "Form 9",
-      alt_types: "Alt Form 9",
-      received_at: Time.now.utc,
-      filename: "test") }
+    let(:from_vbms_document) do
+      Generators::Document.build(
+        type: "Form 9",
+        alt_types: "Alt Form 9",
+        received_at: Time.now.utc,
+        filename: "test")
+    end
     let(:persisted_document) { from_vbms_document.fill_in(Generators::Document.build) }
 
     it "fills the persisted document with data from the vbms document" do
