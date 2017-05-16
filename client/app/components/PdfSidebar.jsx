@@ -151,6 +151,7 @@ export class PdfSidebar extends React.Component {
           </div>
           {showErrorMessage.tag && cannotSaveAlert}
           <SearchableDropdown
+            key={doc.id}
             name="tags"
             label="Select or tag issue(s)"
             multi={true}

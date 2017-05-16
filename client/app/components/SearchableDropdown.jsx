@@ -72,7 +72,8 @@ class SearchableDropdown extends Component {
       required,
       readOnly,
       creatable,
-      creatableOptions
+      creatableOptions,
+      searchable
     } = this.props;
 
     const SelectComponent = creatable ? Select.Creatable : Select;
@@ -128,9 +129,10 @@ class SearchableDropdown extends Component {
         placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder }
         clearable={false}
         noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+        searchable={searchable}
         disabled={readOnly}
         multi={multi}
-        onBlur={this.resetSelectInputValue}
+        onBlurResetsInput={false}
         {...addCreatableOptions}
       />
     </div>;

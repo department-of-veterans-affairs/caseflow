@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
+import Perf from 'react-addons-perf';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
@@ -19,6 +20,8 @@ export class DecisionReviewer extends React.Component {
     this.state = {
       isCommentLabelSelected: false
     };
+
+    this.isMeasuringPerf = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -63,6 +66,41 @@ export class DecisionReviewer extends React.Component {
 
   onShowList = (history, vacolsId) => () => {
     history.push(`/${vacolsId}/documents`);
+  }
+
+
+  // eslint-disable-next-line max-statements
+  handleStartPerfMeasurement = (event) => {
+    if (!(event.altKey && event.code === 'KeyP')) {
+      return;
+    }
+    /* eslint-disable no-console */
+
+    // eslint-disable-next-line no-negated-condition
+    if (!this.isMeasuringPerf) {
+      Perf.start();
+      console.log('Started React perf measurements');
+      this.isMeasuringPerf = true;
+    } else {
+      Perf.stop();
+      this.isMeasuringPerf = false;
+
+      const measurements = Perf.getLastMeasurements();
+
+      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
+      Perf.printInclusive(measurements);
+      Perf.printWasted(measurements);
+      console.groupEnd();
+    }
+    /* eslint-enable no-console */
+  }
+
+  componentDidMount = () => {
+    window.addEventListener('keydown', this.handleStartPerfMeasurement);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
