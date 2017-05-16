@@ -182,7 +182,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   toggleHeader: () => dispatch(certificationActions.toggleHeader()),
-  
+
   showValidationErrors: (erroredFields) => {
     dispatch(certificationActions.showValidationErrors(erroredFields));
   },

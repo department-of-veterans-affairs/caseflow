@@ -261,7 +261,6 @@ const mapStateToProps = (state) => ({
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
-  loading: state.loading,
   continueClicked: state.continueClicked,
   showHeader: state.showHeader,
   erroredFields: state.erroredFields,
