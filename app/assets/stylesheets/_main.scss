@@ -320,10 +320,15 @@ select {
 }
 
 // candidate for commons
-// Re-assess if we need a number field of a different size
-[type=number] {
-  width: 60px;
-  height: 35px;
+.cf-inline-field {
+  &.cf-form-textinput {
+    margin-bottom: 0px;
+  }
+
+  &[type="number"] {
+    width: 60px;
+    height: 35px;
+  }
 }
 
 // add to commons
