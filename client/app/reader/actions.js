@@ -334,6 +334,22 @@ export const setPdfReadyToShow = (docId) => ({
   }
 });
 
+export const setTagFilter = (text, checked) => ({
+  type: Constants.SET_TAG_FILTER,
+  payload: {
+    text,
+    checked
+  }
+});
+
+export const setCategoryFilter = (categoryName, checked) => ({
+  type: Constants.SET_CATEGORY_FILTER,
+  payload: {
+    categoryName,
+    checked
+  }
+});
+
 export const clearAllFilters = () => ({
   type: Constants.CLEAR_ALL_FILTERS
 });

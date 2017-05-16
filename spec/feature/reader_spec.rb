@@ -551,6 +551,7 @@ RSpec.feature "Reader" do
   end
 
   context "Large number of documents" do
+    # This assumes that num_documents is enough to force the viewport to scroll.
     let(:num_documents) { 20 }
     let(:documents) do
       (1..num_documents).to_a.reduce([]) do |acc, number|
@@ -577,6 +578,21 @@ RSpec.feature "Reader" do
 
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
+    end
+
+    scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      scroll_to_bottom("documents-table-body")
+      click_on documents.last.type
+
+      (num_documents - 1).times { find("#button-next").click }
+
+      click_on "Back to all documents"
+
+      expect(page).to have_content("#{num_documents} Documents")
+
+      expect(in_viewport("read-indicator")).to be true
     end
   end
 

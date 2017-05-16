@@ -136,6 +136,7 @@ export const initialState = {
       scrollTop: null,
       lastReadDocId: null,
       dropdowns: {
+        tag: false,
         category: false
       }
     }
@@ -153,7 +154,21 @@ export const initialState = {
   documents: {}
 };
 
-export default (state = initialState, action = {}) => {
+const timeReducer = (fn) => (state, action) => {
+  const start = window.performance.now();
+  const returnValue = fn(state, action);
+  const end = window.performance.now();
+
+  if (start !== 'RUNNING_IN_NODE') {
+    // eslint-disable-next-line no-console
+    console.log(`Action ${action.type} reducer time: ${(end - start).toFixed(2)}ms`);
+  }
+
+
+  return returnValue;
+};
+
+export const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -763,4 +778,7 @@ export default (state = initialState, action = {}) => {
     return state;
   }
 };
+
+export default timeReducer(reducer);
+
 /* eslint-enable max-lines */
