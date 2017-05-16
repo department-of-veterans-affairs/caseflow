@@ -9,7 +9,7 @@ import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
 import ErrorNotice from './ErrorNotice';
-
+import ValidatorsUtil from '../util/ValidatorsUtil';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -28,6 +28,14 @@ const certifyingOfficialTitleOptions = [{
   value: Constants.certifyingOfficialTitles.OTHER
 }];
 
+const ERRORS = {
+  certifyingOffice: 'Please enter the certifying office.',
+  certifyingUsername: 'Please enter the organizational element.',
+  certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
+  certifyingOfficialTitle: 'Please enter the title of the certifying official.',
+  certificationDate: "Please enter today's date."
+};
+
 class UnconnectedSignAndCertify extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
@@ -44,24 +52,23 @@ class UnconnectedSignAndCertify extends React.Component {
 
     const erroredFields = [];
 
-    if (!this.props.certifyingOffice) {
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOffice)) {
       erroredFields.push('certifyingOffice');
     }
 
-    if (!this.props.certifyingUsername) {
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingUsername)) {
       erroredFields.push('certifyingUsername');
     }
 
-    if (!this.props.certifyingOfficialName) {
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialName)) {
       erroredFields.push('certifyingOfficialName');
     }
 
-    if (!this.props.certifyingOfficialTitle) {
+    if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitle)) {
       erroredFields.push('certifyingOfficialTitle');
     }
 
-    // TODO: we should validate that it's a datetype
-    if (!this.props.certificationDate) {
+    if (ValidatorsUtil.dateValidator(this.props.certificationDate)) {
       erroredFields.push('certificationDate');
     }
 
@@ -69,16 +76,15 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   onClickContinue() {
-
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onContinueClickFailed();
+      this.props.showValidationErrors(erroredFields);
 
       return;
     }
-    // Sets continueClicked to false for the next page.
-    this.props.onContinueClickSuccess();
+
+    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
@@ -90,6 +96,16 @@ class UnconnectedSignAndCertify extends React.Component {
     });
   }
 
+  isFieldErrored(fieldName) {
+    return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
+  }
+
+  componentDidUpdate () {
+    if (this.props.erroredFields) {
+      ValidatorsUtil.scrollToAndFocusFirstError();
+    }
+  }
+
   render() {
     let {
       onSignAndCertifyFormChange,
@@ -98,7 +114,6 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingOfficialName,
       certifyingOfficialTitle,
       certificationDate,
-      continueClicked,
       loading,
       updateSucceeded,
       updateFailed,
@@ -114,14 +129,6 @@ class UnconnectedSignAndCertify extends React.Component {
       return <ErrorNotice/>;
     }
 
-    // if the form input is not valid and the user has already tried to click continue,
-    // disable the continue button until the validation errors are fixed.
-    let disableContinue = false;
-
-    if (this.getValidationErrors().length && continueClicked) {
-      disableContinue = true;
-    }
-
     return <div>
       <form>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -129,35 +136,39 @@ class UnconnectedSignAndCertify extends React.Component {
           <p>Fill in information about yourself below to sign this certification.</p>
           <div className="cf-help-divider"></div>
           <TextField
-            name="Name and location of certifying office:"
+            name={'Name and location of certifying office:'}
             value={certifyingOffice}
+            errorMessage={(this.isFieldErrored('certifyingOffice') ? ERRORS.certifyingOffice : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
           <TextField
-            name="Organizational elements certifying appeal:"
+            name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
+            errorMessage={(this.isFieldErrored('certifyingUsername') ? ERRORS.certifyingUsername : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
           <TextField
-            name="Name of certifying official:"
+            name={'Name of certifying official:'}
             value={certifyingOfficialName}
+            errorMessage={(this.isFieldErrored('certifyingOfficialName') ? ERRORS.certifyingOfficialName : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
+            errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
-            name="Date:"
+            name={'Date:'}
             value={certificationDate}
+            errorMessage={(this.isFieldErrored('certificationDate') ? ERRORS.certificationDate : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
         </div>
       </form>
     <Footer
-      disableContinue={disableContinue}
       loading={loading}
       onClickContinue={this.onClickContinue.bind(this)}
     />
@@ -171,14 +182,14 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   toggleHeader: () => dispatch(certificationActions.toggleHeader()),
+  
+  showValidationErrors: (erroredFields) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields));
+  },
 
   onSignAndCertifyFormChange: (fieldName, value) => {
     dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
   },
-
-  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
@@ -191,7 +202,7 @@ const mapStateToProps = (state) => ({
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
-  continueClicked: state.continueClicked,
+  erroredFields: state.erroredFields,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed,
@@ -210,8 +221,8 @@ SignAndCertify.propTypes = {
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
-  match: PropTypes.object.isRequired,
-  continueClicked: PropTypes.bool
+  erroredFields: PropTypes.array,
+  match: PropTypes.object.isRequired
 };
 
 export default SignAndCertify;

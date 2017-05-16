@@ -89,12 +89,11 @@ export const certificationReducers = function(state = initialState, action = {})
       showCancellationModal: false,
       showHeader: true
     });
+
   case Constants.TOGGLE_HEADER:
     return CertificationReducers.toggleHeader(state);
-  case Constants.ON_CONTINUE_CLICK_FAILED:
-    return CertificationReducers.onContinueClickFailed(state, action);
-  case Constants.ON_CONTINUE_CLICK_SUCCESS:
-    return CertificationReducers.onContinueClickSuccess(state, action);
+  case Constants.SHOW_VALIDATION_ERRORS:
+    return CertificationReducers.showValidationErrors(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return CertificationReducers.startUpdateCertification(state);
   case Constants.CERTIFICATION_UPDATE_FAILURE:

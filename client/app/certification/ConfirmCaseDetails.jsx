@@ -5,6 +5,7 @@ import * as actions from './actions/ConfirmCaseDetails';
 import * as certificationActions from './actions/Certification';
 import { Redirect } from 'react-router-dom';
 
+import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
 import Footer from './Footer';
@@ -32,6 +33,13 @@ const representativeTypeOptions = [
     value: Constants.representativeTypes.OTHER
   }
 ];
+
+// TODO: We should give each question a constant name.
+const ERRORS = {
+  representativeType: 'Please enter the representative type.',
+  representativeName: 'Please enter the representative name.',
+  otherRepresentativeType: 'Please enter the other representative type.'
+};
 
 /*
  * Confirm Case Details
@@ -85,20 +93,20 @@ export class ConfirmCaseDetails extends React.Component {
 
     const erroredFields = [];
 
-    // Unless the type of representative is "None",
-    // we need a representative name.
-    if (!representativeName && !this.representativeTypeIsNone()) {
-      erroredFields.push('representativeName');
+    // We always need a representative type.
+    if (ValidatorsUtil.requiredValidator(representativeType)) {
+      erroredFields.push('representativeType');
     }
 
-    // We always need a representative type.
-    if (!representativeType) {
-      erroredFields.push('representativeType');
+    // Unless the type of representative is "None",
+    // we need a representative name.
+    if (ValidatorsUtil.requiredValidator(representativeName) && !this.representativeTypeIsNone()) {
+      erroredFields.push('representativeName');
     }
 
     // If the representative type is "Other",
     // fill out the representative type.
-    if (this.representativeTypeIsOther() && !otherRepresentativeType) {
+    if (this.representativeTypeIsOther() && ValidatorsUtil.requiredValidator(otherRepresentativeType)) {
       erroredFields.push('otherRepresentativeType');
     }
 
@@ -110,13 +118,12 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.onContinueClickFailed();
+      this.props.showValidationErrors(erroredFields);
 
       return;
     }
 
-    // Sets continueClicked to false for the next page.
-    this.props.onContinueClickSuccess();
+    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -124,6 +131,16 @@ export class ConfirmCaseDetails extends React.Component {
       representativeName: this.props.representativeName,
       vacolsId: this.props.match.params.vacols_id
     });
+  }
+
+  isFieldErrored(fieldName) {
+    return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
+  }
+
+  componentDidUpdate () {
+    if (this.props.erroredFields) {
+      ValidatorsUtil.scrollToAndFocusFirstError();
+    }
   }
 
   render() {
@@ -137,7 +154,6 @@ export class ConfirmCaseDetails extends React.Component {
       loading,
       updateFailed,
       updateSucceeded,
-      continueClicked,
       match
     } = this.props;
 
@@ -153,14 +169,6 @@ export class ConfirmCaseDetails extends React.Component {
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
 
-    // if the form input is not valid and the user has already tried to click continue,
-    // disable the continue button until the validation errors are fixed.
-    let disableContinue = false;
-
-    if (this.getValidationErrors().length && continueClicked) {
-      disableContinue = true;
-    }
-
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Confirm Case Details</h2>
@@ -172,30 +180,37 @@ export class ConfirmCaseDetails extends React.Component {
 
           <div className="cf-help-divider"></div>
 
-          <RadioField name="Representative type"
+          <RadioField
+            name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
             onChange={changeRepresentativeType}
-            required={true}/>
+            errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
+            required={true}
+          />
 
           {
             shouldShowOtherTypeField &&
             <TextField
-              name="Specify other representative type"
+              name={'Specify other representative type'}
               value={otherRepresentativeType}
               onChange={changeOtherRepresentativeType}
-              required={true}/>
+              errorMessage={this.isFieldErrored('otherRepresentativeType') ? ERRORS.otherRepresentativeType : null}
+              required={true}
+            />
           }
 
-          <TextField name="Representative name"
+          <TextField
+            name={'Representative name'}
             value={representativeName}
             onChange={changeRepresentativeName}
-            required={true}/>
+            errorMessage={this.isFieldErrored('representativeName') ? ERRORS.representativeName : null}
+            required={true}
+          />
 
         </div>
 
         <Footer
-          disableContinue={disableContinue}
           loading={loading}
           onClickContinue={this.onClickContinue.bind(this)}
         />
@@ -210,6 +225,7 @@ ConfirmCaseDetails.propTypes = {
   changeRepresentativeName: PropTypes.func,
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
+  erroredFields: PropTypes.array,
   match: PropTypes.object.isRequired
 };
 
@@ -220,6 +236,10 @@ const mapDispatchToProps = (dispatch) => ({
 
   toggleHeader: () => dispatch(certificationActions.toggleHeader()),
 
+  showValidationErrors: (erroredFields) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields));
+  },
+
   resetState: () => dispatch(certificationActions.resetState()),
 
   changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),
@@ -229,10 +249,6 @@ const mapDispatchToProps = (dispatch) => ({
   changeOtherRepresentativeType: (other) => {
     dispatch(actions.changeOtherRepresentativeType(other));
   },
-
-  onContinueClickFailed: () => dispatch(certificationActions.onContinueClickFailed()),
-
-  onContinueClickSuccess: () => dispatch(certificationActions.onContinueClickSuccess()),
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
@@ -247,7 +263,9 @@ const mapStateToProps = (state) => ({
   otherRepresentativeType: state.otherRepresentativeType,
   loading: state.loading,
   continueClicked: state.continueClicked,
-  showHeader: state.showHeader
+  showHeader: state.showHeader,
+  erroredFields: state.erroredFields,
+  loading: state.loading
 });
 
 export default connect(
