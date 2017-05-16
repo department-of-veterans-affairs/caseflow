@@ -322,7 +322,7 @@ select {
 // candidate for commons
 .cf-inline-field {
   &.cf-form-textinput {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   &[type="number"] {
