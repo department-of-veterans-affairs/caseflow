@@ -42,7 +42,6 @@ class CertificationsController < ApplicationController
   end
 
   def certify_v2
-    # fail "No Form 8 found for appeal being certified"
     update_certification_from_v2_form
     form8.update_from_string_params(
       representative_type: certification.representative_type,
