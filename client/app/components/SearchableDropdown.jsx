@@ -117,6 +117,7 @@ class SearchableDropdown extends Component {
         searchable={searchable}
         disabled={readOnly}
         multi={multi}
+        onBlurResetsInput={false}
         {...addCreatableOptions}
       />
     </div>;
