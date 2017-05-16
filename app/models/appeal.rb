@@ -70,7 +70,12 @@ class Appeal < ActiveRecord::Base
   # in the database
   attr_writer :saved_documents
   def saved_documents
-    @saved_documents ||= fetch_documents!(save: true)
+    @saved_documents if @saved_documents
+    stopwatch = Benchmark.measure do
+      @saved_documents = fetch_documents!(save: true)
+    end
+    puts "getting documents takes #{stopwatch}"
+    @saved_documents
   end
 
   def veteran
@@ -208,7 +213,23 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!(save:)
-    save ? fetched_documents.map(&:load_or_save!) : fetched_documents
+    save ? find_or_create_documents! : fetched_documents
+  end
+
+  def find_or_create_documents!
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids).includes(:annotations, :tags).reduce({}) do |accumulator, document|
+      accumulator[document.vbms_document_id] = document
+      accumulator
+    end
+    fetched_documents.map do |document|
+      if existing_documents.key?(document.vbms_document_id)
+        document.fill_in(existing_documents[document.vbms_document_id])
+      else
+        document.save!
+        document
+      end
+    end
   end
 
   def partial_grant?

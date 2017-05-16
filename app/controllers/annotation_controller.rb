@@ -18,10 +18,6 @@ class AnnotationController < ApplicationController
     render json: {}
   end
 
-  def index
-    render json: {Annotation.where(document_id: params[:document_id])}
-  end
-
   def annotation_params
     params.require(:annotation).permit(:page, :x, :y, :comment).merge(
       document_id: params[:document_id]

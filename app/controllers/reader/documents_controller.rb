@@ -11,7 +11,7 @@ class Reader::DocumentsController < ApplicationController
   def metadata
     render json: {
       appealDocuments: documents,
-      annotations: appeal.saved_documents.map(&:annotations).flatten.map(&:to_hash)
+      annotations: annotations
     }
   end
 
@@ -21,6 +21,12 @@ class Reader::DocumentsController < ApplicationController
     Appeal.find_or_create_by_vacols_id(appeal_id)
   end
   helper_method :appeal
+
+  def annotations
+    (Annotation.transaction do
+      appeal.saved_documents.map(&:annotations)
+    end).flatten.map(&:to_hash)
+  end
 
   def documents
     document_ids = appeal.saved_documents.map(&:id)

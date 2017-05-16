@@ -101,8 +101,6 @@ class Document < ActiveRecord::Base
     save! && self
   end
 
-  private
-
   def fill_in(persisted_document)
     persisted_document.assign_attributes(
       type: type,
