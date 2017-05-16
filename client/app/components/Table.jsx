@@ -120,7 +120,7 @@ export default class Table extends React.PureComponent {
   getTbodyElem = () => this.tbodyElem
 
   renderBody = (renderedItems, ref) => {
-    const { bodyClassName, id, summary, columns, headerClassName } = this.props;
+    const { bodyClassName, id, tbodyId, summary, columns, headerClassName } = this.props;
 
     // Poor.
     this.reactListItemsRef = ref;
@@ -130,7 +130,7 @@ export default class Table extends React.PureComponent {
               className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
-        <tbody className={bodyClassName} ref={this.receiveTbodyRef} id={id}>
+        <tbody className={bodyClassName} ref={this.receiveTbodyRef} id={tbodyId}>
           {renderedItems}
         </tbody>
         <FooterRow columns={columns} />
