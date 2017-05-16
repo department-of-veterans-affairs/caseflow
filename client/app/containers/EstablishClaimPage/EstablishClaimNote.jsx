@@ -76,13 +76,13 @@ export class EstablishClaimNote extends BaseForm {
     let noteFor = [];
 
     if (this.props.displayVacolsNote) {
-      noteFor.push('Confirm VACOLS Update');
+      noteFor.push('Confirm VACOLS Update ') ;
     }
     if (this.props.displayVbmsNote) {
       noteFor.push('Add VBMS Note');
     }
-
-    return ` ${noteFor.join(', ')}`;
+      console.log(noteFor.join('\r\n'));
+    return  ` ${noteFor.join('\r\n') }`;
   }
 
   vacolsNoteText() {

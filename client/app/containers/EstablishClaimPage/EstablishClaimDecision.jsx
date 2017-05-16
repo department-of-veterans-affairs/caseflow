@@ -133,7 +133,7 @@ export class EstablishClaimDecision extends React.Component {
     return (
       <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Review Decision</h2>
+          <h1>Review Decision</h1>
           Review the final decision from VBMS below to determine the next step.
           {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
