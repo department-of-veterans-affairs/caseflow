@@ -27,7 +27,7 @@ export class DocumentCategoryIcons extends React.PureComponent {
   }
 }
 
-const mapPropsToState = (state, ownProps) => ({
+const mapStateToProps = (state, ownProps) => ({
   categories: _(Constants.documentCategories).
     filter(
       (category, categoryName) => state.documents[ownProps.docId][categoryFieldNameOfCategoryName(categoryName)]
@@ -36,7 +36,7 @@ const mapPropsToState = (state, ownProps) => ({
     value()
 });
 
-const ConnectedDocumentCategoryIcons = connect(mapPropsToState)(DocumentCategoryIcons);
+const ConnectedDocumentCategoryIcons = connect(mapStateToProps)(DocumentCategoryIcons);
 
 ConnectedDocumentCategoryIcons.propTypes = {
   docId: PropTypes.number.isRequired
