@@ -63,45 +63,57 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-const Row = (props) => {
-  let rowId = props.footer ? 'footer' : props.rowNumber;
+class Row extends React.PureComponent {
+  render() {
+    const props = this.props;
+    const rowId = props.footer ? 'footer' : props.rowNumber;
 
-  return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
-    {getColumns(props).map((column, columnNumber) =>
-      <td
-        key={columnNumber}
-        className={cellClasses(column)}
-        colSpan={getCellSpan(props.rowObject, column)}>
-        {props.footer ?
-          column.footer :
-          getCellValue(props.rowObject, props.rowNumber, column)}
-      </td>
-    )}
-  </tr>;
-};
+    return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
+      {getColumns(props).map((column, columnNumber) =>
+        <td
+          key={columnNumber}
+          className={cellClasses(column)}
+          colSpan={getCellSpan(props.rowObject, column)}>
+          {props.footer ?
+            column.footer :
+            getCellValue(props.rowObject, props.rowNumber, column)}
+        </td>
+      )}
+    </tr>;
+  }
+}
 
-const BodyRows = ({ rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id }) => {
-  return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
-    {rowObjects.map((object, rowNumber) =>
-      <Row
-        rowObject={object}
-        columns={columns}
-        rowNumber={rowNumber}
-        rowClassNames={rowClassNames}
-        key={rowNumber} />
-    )}
-  </tbody>;
-};
+class BodyRows extends React.PureComponent {
+  render() {
+    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
 
-const FooterRow = (props) => {
-  let hasFooters = _.some(props.columns, (column) => column.footer);
+    return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
+      {rowObjects.map((object, rowNumber) =>
+        <Row
+          rowObject={object}
+          columns={columns}
+          rowNumber={rowNumber}
+          rowClassNames={rowClassNames}
+          key={rowNumber} />
+      )}
+    </tbody>;
+  }
+}
 
-  return <tfoot>
-    {hasFooters && <Row columns={props.columns} footer={true}/>}
-  </tfoot>;
-};
+class FooterRow extends React.PureComponent {
+  render() {
+    const props = this.props;
+    const hasFooters = _.some(props.columns, 'footer');
 
-export default class Table extends React.Component {
+    return <tfoot>
+      {hasFooters && <Row columns={props.columns} footer={true}/>}
+    </tfoot>;
+  }
+}
+
+export default class Table extends React.PureComponent {
+  defaultRowClassNames = () => ''
+
   render() {
     let {
       columns,
@@ -109,7 +121,7 @@ export default class Table extends React.Component {
       summary,
       headerClassName = '',
       bodyClassName = '',
-      rowClassNames = () => '',
+      rowClassNames = this.defaultRowClassNames,
       tbodyId,
       tbodyRef,
       id
