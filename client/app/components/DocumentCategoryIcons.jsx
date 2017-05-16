@@ -3,9 +3,8 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
-import { PerfDebugPureComponent } from '../util/PerfDebug';
 
-export class DocumentCategoryIcons extends PerfDebugPureComponent {
+export class DocumentCategoryIcons extends React.PureComponent {
   render() {
     const { categories } = this.props;
 
