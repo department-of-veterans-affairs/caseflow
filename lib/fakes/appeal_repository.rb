@@ -351,14 +351,14 @@ class Fakes::AppealRepository
   end
 
   def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
-    seededRandom = Random.new(seed)
+    seeded_random = Random.new(seed)
     (0..num_documents).to_a.reduce([]) do |acc, number|
       acc << Generators::Document.build(
         vbms_document_id: number,
-        type: Caseflow::DocumentTypes::TYPES.values[seededRandom.rand(Caseflow::DocumentTypes::TYPES.length)],
-        category_procedural: seededRandom.rand(10) == 1,
-        category_medical: seededRandom.rand(10) == 1,
-        category_other: seededRandom.rand(10) == 1)
+        type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
+        category_procedural: seeded_random.rand(10) == 1,
+        category_medical: seeded_random.rand(10) == 1,
+        category_other: seeded_random.rand(10) == 1)
     end
   end
 
