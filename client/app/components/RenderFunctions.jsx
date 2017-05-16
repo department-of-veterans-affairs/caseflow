@@ -266,11 +266,11 @@ export const closeIcon = () => {
 </svg>;
 };
 
-export const lockIcon = (isLocked) =>
+export const lockIcon = () =>
   <svg width="18px" height="20px" viewBox="0 0 18 20" version="1.1"
       xmlns="http://www.w3.org/2000/svg" className="cf-lock-icon">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-          <g fillRule="nonzero" fill={ isLocked ? '#323A45' : '#AEB0B5' }>
+          <g fillRule="nonzero" fill="#323A45">
               <g id="padlock" transform="translate(2.000000, 1.000000)">
                   <path d="M13.6372727,8.06531592 C13.4111091,7.83991791 13.1366667,7.72730348
                     12.8135212,7.72730348 L12.4261455,7.72730348 L12.4261455,5.40900249

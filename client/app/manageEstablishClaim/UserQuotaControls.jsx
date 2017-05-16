@@ -16,14 +16,16 @@ const UserQuotaControls = ({
   }
 
   return <span>
-    <Button
-      name={`unlock-quota-${userQuota.id}`}
-      classNames={['cf-btn-link cf-no-padding']}
-      onClick={handleUnlockTaskCount}
-      ariaLabel="Unlock"
-    >
-      { lockIcon(userQuota.isLocked) }
-    </Button>
+    {!userQuota.isEditingTaskCount && userQuota.isLocked &&
+      <Button
+        name={`unlock-quota-${userQuota.id}`}
+        classNames={['cf-btn-link cf-no-padding']}
+        onClick={handleUnlockTaskCount}
+        ariaLabel="Unlock"
+      >
+        { lockIcon() }
+      </Button>
+    }
 
     &nbsp;&nbsp;
 
