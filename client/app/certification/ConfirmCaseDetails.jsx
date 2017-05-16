@@ -33,6 +33,7 @@ const representativeTypeOptions = [
   }
 ];
 
+// TODO: We should give each question a constant name.
 const ERRORS = {
   representativeType: 'Please enter the representative type.',
   representativeName: 'Please enter the representative name.',

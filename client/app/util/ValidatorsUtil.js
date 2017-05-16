@@ -1,3 +1,8 @@
+/*
+This is a duplicate of logic found in the validators folder and in
+BaseForm.jsx. As we move more towards using Redux, these validators
+better fit our expected patterns.
+ */
 const ValidatorsUtil = {
 
   requiredValidator(value) {
