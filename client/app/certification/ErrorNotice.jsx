@@ -31,8 +31,8 @@ const UnconnectedErrorNotice = ({
                         </div>
                       </main>;
 
-  switch (error) {
-  case 'vbms_error':
+  switch (true) {
+  case error.includes('vbms_error'):
     message = vbmsMessage;
     break;
   default:
