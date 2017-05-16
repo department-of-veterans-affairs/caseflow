@@ -7,40 +7,42 @@ import { PerfDebugPureComponent } from '../util/PerfDebug';
 
 export class DocumentCategoryIcons extends PerfDebugPureComponent {
   render() {
-    const { doc } = this.props;
+    const { categories } = this.props;
 
-    if (!doc) {
+    if (!_.size(categories)) {
       return null;
     }
 
     return <ul className="cf-document-category-icons" aria-label="document categories">
       {
-        _(Constants.documentCategories).
-          filter(
-            (category, categoryName) => doc[categoryFieldNameOfCategoryName(categoryName)]
-          ).
-          sortBy('renderOrder').
-          map((category) => {
-            const Svg = category.svg;
+        _.map(categories, (category) => {
+          const Svg = category.svg;
 
-            return <li
-              className="cf-no-styling-list"
-              key={category.renderOrder}
-              aria-label={category.humanName}>
-              <Svg />
-            </li>;
-          }).
-          value()
+          return <li
+            className="cf-no-styling-list"
+            key={category.renderOrder}
+            aria-label={category.humanName}>
+            <Svg />
+          </li>;
+        })
       }
     </ul>;
   }
 }
 
-DocumentCategoryIcons.propTypes = {
-  documents: PropTypes.object,
+const mapPropsToState = (state, ownProps) => ({
+  categories: _(Constants.documentCategories).
+    filter(
+      (category, categoryName) => state.documents[ownProps.docId][categoryFieldNameOfCategoryName(categoryName)]
+    ).
+    sortBy('renderOrder').
+    value()
+});
+
+const ConnectedDocumentCategoryIcons = connect(mapPropsToState)(DocumentCategoryIcons);
+
+ConnectedDocumentCategoryIcons.propTypes = {
   docId: PropTypes.number.isRequired
 };
 
-const mapPropsToState = (state, ownProps) => ({doc: state.documents[ownProps.docId]});
-
-export default connect(mapPropsToState)(DocumentCategoryIcons);
+export default ConnectedDocumentCategoryIcons;
