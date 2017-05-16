@@ -84,55 +84,12 @@ class Row extends React.PureComponent {
   }
 }
 
-class BodyRows extends React.PureComponent {
-  renderRow = (index, key) => {
-    const { columns, rowClassNames, rowObjects } = this.props;
-
-    return <Row 
-      rowObject={rowObjects[index]}
-      columns={columns}
-      rowNumber={index}
-      rowClassNames={rowClassNames}
-      key={key} />;
-  }
-
-  getTbodyRef = (ref) => {
-    if (this.props.tbodyRef) {
-      this.props.tbodyRef(ref);
-    }
-    this.reactListItemsRef(ref);
-  }
-
-  renderBody = (renderedItems, ref) => {
-    const { bodyClassName, id } = this.props;
-
-    // Poor.
-    this.reactListItemsRef = ref;
-
-    return <tbody className={bodyClassName} ref={this.getTbodyRef} id={id}>
-      {renderedItems}
-    </tbody>;
-  }
-
-  render() {
-    const { rowObjects } = this.props;
-
-    return <ReactList
-      itemRenderer={this.renderRow}
-      itemsRenderer={this.renderBody}
-      length={_.size(rowObjects)}
-      type="variable"
-    />;
-  }
-}
-
 class FooterRow extends React.PureComponent {
   render() {
-    const props = this.props;
-    const hasFooters = _.some(props.columns, 'footer');
+    const hasFooters = _.some(this.props.columns, 'footer');
 
     return <tfoot>
-      {hasFooters && <Row columns={props.columns} footer={true}/>}
+      {hasFooters && <Row columns={this.props.columns} footer={true}/>}
     </tfoot>;
   }
 }
@@ -140,34 +97,56 @@ class FooterRow extends React.PureComponent {
 export default class Table extends React.PureComponent {
   defaultRowClassNames = () => ''
 
-  render() {
-    let {
-      columns,
-      rowObjects,
-      summary,
-      headerClassName = '',
-      bodyClassName = '',
-      rowClassNames = this.defaultRowClassNames,
-      tbodyId,
-      tbodyRef,
-      id
-    } = this.props;
+  renderRow = (index, key) => {
+    const { columns, rowClassNames = this.defaultRowClassNames, rowObjects } = this.props;
+
+    return <Row
+      rowObject={rowObjects[index]}
+      columns={columns}
+      rowNumber={index}
+      rowClassNames={rowClassNames}
+      key={key} />;
+  }
+
+  receiveTbodyRef = (ref) => {
+    this.tbodyElem = ref;
+
+    if (this.props.tbodyRef) {
+      this.props.tbodyRef(ref);
+    }
+    this.reactListItemsRef(ref);
+  }
+
+  getTbodyElem = () => this.tbodyElem
+
+  renderBody = (renderedItems, ref) => {
+    const { bodyClassName, id, summary, columns, headerClassName } = this.props;
+
+    // Poor.
+    this.reactListItemsRef = ref;
 
     return <table
               id={id}
               className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
-
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
-        <BodyRows
-          id={tbodyId}
-          tbodyRef={tbodyRef}
-          columns={columns}
-          rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
-          rowClassNames={rowClassNames} />
+        <tbody className={bodyClassName} ref={this.receiveTbodyRef} id={id}>
+          {renderedItems}
+        </tbody>
         <FooterRow columns={columns} />
     </table>;
+  }
+
+  render() {
+    const { rowObjects } = this.props;
+    
+    return <ReactList
+      scrollParentGetter={this.getTbodyElem}
+      itemRenderer={this.renderRow}
+      itemsRenderer={this.renderBody}
+      length={_.size(rowObjects)}
+      type="simple"
+    />;
   }
 }
 
