@@ -60,7 +60,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
-      dispatch(CertificationAction.updateErrorNotice(JSON.parse(err.response.text).errors[0]));
+      dispatch(CertificationAction.updateErrorNotice(err.response.text));
       dispatch(CertificationAction.toggleHeader());
       dispatch(certificationUpdateFailure(err));
     });
