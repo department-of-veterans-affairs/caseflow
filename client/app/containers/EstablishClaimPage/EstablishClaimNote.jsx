@@ -81,8 +81,7 @@ export class EstablishClaimNote extends BaseForm {
     if (this.props.displayVbmsNote) {
       noteFor.push('Add VBMS Note');
     }
-      console.log(noteFor.join('\r\n'));
-    return  ` ${noteFor.join('\r\n') }`;
+    return  ` ${noteFor.join() }`;
   }
 
   vacolsNoteText() {
@@ -183,6 +182,7 @@ export class EstablishClaimNote extends BaseForm {
               </div>
             </div>
           </div>}
+
           <ol>
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
