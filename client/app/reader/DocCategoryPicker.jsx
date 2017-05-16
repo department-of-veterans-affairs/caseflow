@@ -6,9 +6,8 @@ import Checkbox from '../components/Checkbox';
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, categoryToggleStates } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
-  const Svg = category.svg;
   const label = <div className="cf-category-selector">
-      <Svg />
+      {category.svg}
       <span className="cf-category-name">{category.humanName}</span>
     </div>;
 
@@ -21,7 +20,7 @@ const CategorySelector = (props) => {
 CategorySelector.propTypes = {
   category: PropTypes.shape({
     humanName: PropTypes.string.isRequired,
-    svg: PropTypes.func.isRequired
+    svg: PropTypes.element.isRequired
   }).isRequired,
   categoryToggleStates: PropTypes.object,
   categoryName: PropTypes.string.isRequired
