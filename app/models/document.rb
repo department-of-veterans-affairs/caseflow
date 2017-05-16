@@ -95,12 +95,6 @@ class Document < ActiveRecord::Base
     )
   end
 
-  def load_or_save!
-    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
-    return fill_in(existing_document) if existing_document
-    save! && self
-  end
-
   def fill_in(persisted_document)
     persisted_document.assign_attributes(
       type: type,

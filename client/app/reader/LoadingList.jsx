@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveDocs, onReceiveAnnotations } from './actions';
@@ -61,7 +61,7 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     onReceiveDocs,
     onReceiveAnnotations
-  }, dispatch),
+  }, dispatch)
 });
 
 export default connect(null, mapDispatchToProps)(LoadingList);

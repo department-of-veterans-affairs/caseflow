@@ -7,7 +7,6 @@ import Perf from 'react-addons-perf';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import LoadingList from './LoadingList';
-import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -22,12 +21,6 @@ export class DecisionReviewer extends React.Component {
     };
 
     this.isMeasuringPerf = false;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(this.props.annotations, nextProps.annotations)) {
-      this.props.onReceiveAnnotations(nextProps.annotations);
-    }
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
@@ -67,7 +60,6 @@ export class DecisionReviewer extends React.Component {
   onShowList = (history, vacolsId) => () => {
     history.push(`/${vacolsId}/documents`);
   }
-
 
   // eslint-disable-next-line max-statements
   handleStartPerfMeasurement = (event) => {
@@ -153,6 +145,8 @@ export class DecisionReviewer extends React.Component {
 
   loadingList = (routerProps) => {
     const vacolsId = routerProps.match.params.vacolsId;
+
+
     return <LoadingList vacolsId={vacolsId}/>;
   }
 
@@ -176,8 +170,6 @@ export class DecisionReviewer extends React.Component {
 }
 
 DecisionReviewer.propTypes = {
-  annotations: PropTypes.arrayOf(PropTypes.object),
-  appealDocuments: PropTypes.arrayOf(PropTypes.object),
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,

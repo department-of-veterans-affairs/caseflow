@@ -213,9 +213,9 @@ class Appeal < ActiveRecord::Base
 
   def find_or_create_documents!
     ids = fetched_documents.map(&:vbms_document_id)
-    existing_documents = Document.where(vbms_document_id: ids).includes(:annotations, :tags).reduce({}) do |accumulator, document|
+    existing_documents = Document.where(vbms_document_id: ids)
+                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
-      accumulator
     end
     fetched_documents.map do |document|
       if existing_documents.key?(document.vbms_document_id)
