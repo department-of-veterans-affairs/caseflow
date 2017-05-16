@@ -9,10 +9,12 @@ class Reader::DocumentsController < ApplicationController
   end
 
   def metadata
-    render json: {
-      appealDocuments: documents,
-      annotations: annotations
-    }
+    MetricsService.record "Metadata call" do
+      render json: {
+        appealDocuments: documents,
+        annotations: annotations
+      }
+    end
   end
 
   private
@@ -23,9 +25,7 @@ class Reader::DocumentsController < ApplicationController
   helper_method :appeal
 
   def annotations
-    (Annotation.transaction do
-      appeal.saved_documents.map(&:annotations)
-    end).flatten.map(&:to_hash)
+    appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
   end
 
   def documents

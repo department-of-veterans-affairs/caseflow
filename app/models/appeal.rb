@@ -70,12 +70,7 @@ class Appeal < ActiveRecord::Base
   # in the database
   attr_writer :saved_documents
   def saved_documents
-    @saved_documents if @saved_documents
-    stopwatch = Benchmark.measure do
-      @saved_documents = fetch_documents!(save: true)
-    end
-    puts "getting documents takes #{stopwatch}"
-    @saved_documents
+    @saved_documents ||= fetch_documents!(save: true)
   end
 
   def veteran
