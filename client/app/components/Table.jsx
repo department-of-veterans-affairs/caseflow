@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
+import ReactList from 'react-list';
 
 /**
  * This component can be used to easily build tables.
@@ -84,19 +85,44 @@ class Row extends React.PureComponent {
 }
 
 class BodyRows extends React.PureComponent {
-  render() {
-    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
+  renderRow = (index, key) => {
+    const { columns, rowClassNames, rowObjects } = this.props;
 
-    return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
-      {rowObjects.map((object, rowNumber) =>
-        <Row
-          rowObject={object}
-          columns={columns}
-          rowNumber={rowNumber}
-          rowClassNames={rowClassNames}
-          key={rowNumber} />
-      )}
+    return <Row 
+      rowObject={rowObjects[index]}
+      columns={columns}
+      rowNumber={index}
+      rowClassNames={rowClassNames}
+      key={key} />;
+  }
+
+  getTbodyRef = (ref) => {
+    if (this.props.tbodyRef) {
+      this.props.tbodyRef(ref);
+    }
+    this.reactListItemsRef(ref);
+  }
+
+  renderBody = (renderedItems, ref) => {
+    const { bodyClassName, id } = this.props;
+
+    // Poor.
+    this.reactListItemsRef = ref;
+
+    return <tbody className={bodyClassName} ref={this.getTbodyRef} id={id}>
+      {renderedItems}
     </tbody>;
+  }
+
+  render() {
+    const { rowObjects } = this.props;
+
+    return <ReactList
+      itemRenderer={this.renderRow}
+      itemsRenderer={this.renderBody}
+      length={_.size(rowObjects)}
+      type="variable"
+    />;
   }
 }
 
