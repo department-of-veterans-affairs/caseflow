@@ -54,7 +54,6 @@ def add_comment(text)
   click_on "Save"
 end
 
-
 RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
@@ -107,7 +106,6 @@ RSpec.feature "Reader" do
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
-
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
