@@ -111,12 +111,10 @@ export class ConfirmCaseDetails extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.showValidationErrors(erroredFields);
+      this.props.showValidationErrors(erroredFields, true);
 
       return;
     }
-
-    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
@@ -131,7 +129,8 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
+      this.props.showValidationErrors(this.props.erroredFields, false);
       ValidatorsUtil.scrollToAndFocusFirstError();
     }
   }
@@ -220,6 +219,7 @@ ConfirmCaseDetails.propTypes = {
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired
 };
 
@@ -228,8 +228,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   resetState: () => dispatch(certificationActions.resetState()),
@@ -254,6 +254,7 @@ const mapStateToProps = (state) => ({
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   loading: state.loading
 });
 

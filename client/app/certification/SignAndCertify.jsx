@@ -74,12 +74,10 @@ class UnconnectedSignAndCertify extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.showValidationErrors(erroredFields);
+      this.props.showValidationErrors(erroredFields, true);
 
       return;
     }
-
-    this.props.showValidationErrors(null);
 
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
@@ -96,7 +94,8 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
+      this.props.showValidationErrors(this.props.erroredFields, false);
       ValidatorsUtil.scrollToAndFocusFirstError();
     }
   }
@@ -177,8 +176,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   onSignAndCertifyFormChange: (fieldName, value) => {
@@ -197,6 +196,7 @@ const mapStateToProps = (state) => ({
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
@@ -215,6 +215,7 @@ SignAndCertify.propTypes = {
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired
 };
 
