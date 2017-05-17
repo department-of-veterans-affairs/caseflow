@@ -567,7 +567,7 @@ RSpec.feature "Reader" do
     end
   end
 
-  context "Large number of documents", focus: true do
+  context "Large number of documents" do
     # This assumes that num_documents is enough to force the viewport to scroll.
     let(:num_documents) { 20 }
     let(:documents) do
