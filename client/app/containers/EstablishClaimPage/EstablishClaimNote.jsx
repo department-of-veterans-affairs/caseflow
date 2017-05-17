@@ -72,14 +72,14 @@ export class EstablishClaimNote extends BaseForm {
     }, []);
   }
 
-  headerText() {
+  headerVacols() {
     if (this.props.displayVacolsNote) {
      return 'Confirm VACOLS Update';
     }
     
   }
   
-  headerText2() {
+  headerVbms() {
      if (this.props.displayVbmsNote) {
     return  'Add VBMS Note';
     }
@@ -170,7 +170,7 @@ export class EstablishClaimNote extends BaseForm {
   render() {
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Route Claim</h1><h2>{this.headerText()}</h2>
+          <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
 
           {this.props.showNotePageAlert && <div className="usa-alert usa-alert-warning">
             <div className="usa-alert-body">
@@ -187,12 +187,12 @@ export class EstablishClaimNote extends BaseForm {
 
           <ol className="cf-bold-ordered-list">
             {this.props.displayVacolsNote &&
-            <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
+            <li className={this.props.displayVbmsNote}>
               {this.vacolsSection()}
             </li>}
           </ol>
-
-          <h2>{this.headerText2()}</h2>
+          {(this.props.displayVacolsNote && this.props.displayVbmsNote)&&<div className="cf-bottom-border"></div>}
+          <h2>{this.headerVbms()}</h2>
           <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
             {this.props.displayVbmsNote &&
             <li>{this.vbmsSection()}</li>}
