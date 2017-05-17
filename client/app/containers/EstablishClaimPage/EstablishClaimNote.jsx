@@ -73,15 +73,17 @@ export class EstablishClaimNote extends BaseForm {
   }
 
   headerText() {
-    let noteFor = [];
-
     if (this.props.displayVacolsNote) {
-      noteFor.push('Confirm VACOLS Update ') ;
+     return 'Confirm VACOLS Update';
     }
-    if (this.props.displayVbmsNote) {
-      noteFor.push('Add VBMS Note');
+    
+  }
+  
+  headerText2() {
+     if (this.props.displayVbmsNote) {
+    return  'Add VBMS Note';
     }
-    return  ` ${noteFor.join() }`;
+
   }
 
   vacolsNoteText() {
@@ -100,7 +102,7 @@ export class EstablishClaimNote extends BaseForm {
       <p>To ensure this claim is routed correctly, Caseflow will make the following
       updates to VACOLS:</p>
 
-      <ol className="cf-bold-ordered-list">
+      <ol>
         <li type="A">
           <div>
             <span className="inline-label">Change location to: </span>
@@ -183,11 +185,15 @@ export class EstablishClaimNote extends BaseForm {
             </div>
           </div>}
 
-          <ol>
+          <ol className="cf-bold-ordered-list">
             {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote ? 'cf-bottom-border' : ''}>
               {this.vacolsSection()}
             </li>}
+          </ol>
+
+          <h2>{this.headerText2()}</h2>
+          <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
             {this.props.displayVbmsNote &&
             <li>{this.vbmsSection()}</li>}
           </ol>
