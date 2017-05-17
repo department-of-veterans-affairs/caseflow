@@ -119,12 +119,12 @@ const DocumentsCheck = connect(
 
 DocumentsCheck.propTypes = {
   certificationStatus: PropTypes.string,
-  nod: PropTypes.object.isRequired,
-  soc: PropTypes.object.isRequired,
-  form9: PropTypes.object.isRequired,
-  ssocs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  nod: PropTypes.object,
+  soc: PropTypes.object,
+  form9: PropTypes.object,
+  ssocs: PropTypes.arrayOf(PropTypes.object),
   documentsMatch: PropTypes.bool,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object
 };
 
 export default DocumentsCheck;
