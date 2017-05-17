@@ -43,8 +43,7 @@ export class Pdf extends React.Component {
     this.state = {
       numPages: null,
       pdfDocument: null,
-      isRendered: [],
-      pdfLoaded: false
+      isRendered: []
     };
 
     this.scrollLocation = {

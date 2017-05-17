@@ -44,8 +44,7 @@ export class PdfUI extends React.Component {
     this.state = {
       scale: 1,
       currentPage: 1,
-      numPages: null,
-      pdfLoaded: false
+      numPages: null
     };
   }
   componentDidUpdate(prevProps) {
