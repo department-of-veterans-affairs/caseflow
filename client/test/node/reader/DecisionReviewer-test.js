@@ -288,7 +288,7 @@ describe('DecisionReviewer', () => {
       }));
     });
 
-    context.only('when expanded comments', () => {
+    context('when expanded comments', () => {
       it('can view comments', () => {
         expect(wrapper.text()).to.not.include('Test Comment');
         wrapper.find('#expand-2-comments-button').simulate('click');
