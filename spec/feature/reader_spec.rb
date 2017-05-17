@@ -54,6 +54,7 @@ def add_comment(text)
   click_on "Save"
 end
 
+
 RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
@@ -105,6 +106,17 @@ RSpec.feature "Reader" do
       find('#menu-trigger').click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
+    end
+
+
+    scenario "Clicking outside pdf or next pdf removes annotation mode" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      add_comment_without_clicking_save("text")
+      page.find("body").click
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
+      add_comment_without_clicking_save("text")
+      find("#button-next").click
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
     scenario "Arrow keys to navigate through documents" do

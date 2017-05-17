@@ -38,7 +38,7 @@ export class PdfUI extends React.Component {
     };
   }
   componentDidUpdate(prevProps) {
-    // when a document changes, don't place annotations
+    // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id && this.props.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
     }
