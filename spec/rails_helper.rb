@@ -135,6 +135,10 @@ RSpec.configure do |config|
     User.unauthenticate!
   end
 
+  config.before(:each) do
+    RequestStore.clear!
+  end
+
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
