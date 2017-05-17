@@ -567,7 +567,7 @@ RSpec.feature "Reader" do
     end
   end
 
-  context "Large number of documents" do
+  context "Large number of documents", focus: true do
     # This assumes that num_documents is enough to force the viewport to scroll.
     let(:num_documents) { 20 }
     let(:documents) do
@@ -592,7 +592,6 @@ RSpec.feature "Reader" do
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
-
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
@@ -621,28 +620,6 @@ RSpec.feature "Reader" do
     scenario "it redirects to unauthorized" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Unauthorized")
-    end
-  end
-
-  context "Very large number of documents" do
-    # This assumes that num_documents is enough to force the viewport to scroll.
-    let(:num_documents) { 500 }
-    let(:documents) do
-      (1..num_documents).to_a.reduce([]) do |acc, number|
-        acc << Generators::Document.create(
-          filename: number.to_s,
-          type: "BVA Decision #{number}",
-          received_at: number.days.ago,
-          vbms_document_id: number,
-          category_procedural: true
-        )
-      end
-    end
-
-    scenario "Loading spinner is displayed while loding" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      expect(page).to have_content("Loading document list")
     end
   end
 end

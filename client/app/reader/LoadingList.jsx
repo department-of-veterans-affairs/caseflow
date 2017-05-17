@@ -48,7 +48,9 @@ export class LoadingList extends React.Component {
   render = () => {
     return <div className="usa-grid">
         <div className="cf-app">
-          <div className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
+          <div
+            id="loading-symbol"
+            className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
             {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
             <p>Loading document list in Reader now...</p>
           </div>

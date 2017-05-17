@@ -25,6 +25,14 @@ const INITIAL_ENTRIES = [
   `/reader_id1/documents/${documents[0].id}`
 ];
 
+const setupDocuments = () => {
+  // We simulate receiving the documents from the endpoint, and dispatch the
+  // required actions to skip past the loading screen and avoid stubing out
+  // the API call to the metadata endpoint.
+  store.dispatch(onReceiveDocs(documents));
+  store.dispatch(onReceiveAnnotations(annotations));
+}
+
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
@@ -36,12 +44,6 @@ describe('DecisionReviewer', () => {
     ApiUtilStub.beforeEach();
 
     const store = createStore(readerReducer, applyMiddleware(thunk));
-
-    // We simulate receiving the documents from the endpoint, and dispatch the
-    // required actions to skip past the loading screen and avoid stubing out
-    // the API call to the metadata endpoint.
-    store.dispatch(onReceiveDocs(documents));
-    store.dispatch(onReceiveAnnotations(annotations));
 
     wrapper = mount(
       <Provider store={store}>
@@ -63,7 +65,17 @@ describe('DecisionReviewer', () => {
     PdfJsStub.afterEach();
   });
 
+  context('Loading Spinner', () => {
+    it('renders', () => {
+      expect(wrapper.text()).to.include('Loading document list');
+    });
+  });
+
   context('PDF View', () => {
+    beforeEach(() => {
+      setupDocuments();
+    });
+
     context('renders', () => {
       it('the PDF list view', () => {
         expect(wrapper.find('PdfListView')).to.have.length(1);
@@ -235,6 +247,10 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF list view', () => {
+    beforeEach(() => {
+      setupDocuments();
+    });
+
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link

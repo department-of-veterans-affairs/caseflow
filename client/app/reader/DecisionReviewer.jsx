@@ -101,23 +101,6 @@ export class DecisionReviewer extends React.Component {
   componentDidMount = () => {
     window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
-
-    let downloadDocuments = (documentUrls, index) => {
-      if (index >= documentUrls.length) {
-        return;
-      }
-
-      ApiUtil.get(documentUrls[index], { cache: true }).
-        then(() => {
-          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
-        });
-    };
-
-    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-      downloadDocuments(this.props.appealDocuments.map((doc) => {
-        return this.documentUrl(doc);
-      }), i);
-    }
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
