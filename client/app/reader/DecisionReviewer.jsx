@@ -138,7 +138,7 @@ export class DecisionReviewer extends React.Component {
       }), i);
     }
   }
-  
+
   onJumpToComment = (history, vacolsId) => (comment) => () => {
     this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
