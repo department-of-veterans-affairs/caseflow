@@ -37,11 +37,11 @@ export class LoadingList extends React.Component {
           });
       };
 
-      // for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-      //   downloadDocuments(documents.map((doc) => {
-      //     return this.documentUrl(doc);
-      //   }), i);
-      // }
+      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+        downloadDocuments(documents.map((doc) => {
+          return this.documentUrl(doc);
+        }), i);
+      }
     });
   }
 
