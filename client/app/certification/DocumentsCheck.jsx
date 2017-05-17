@@ -114,7 +114,7 @@ const mapDispatchToProps = (dispatch) => ({
 
   toggleCancellationModal: () => {
     dispatch(certificationActions.toggleCancellationModal());
-  },
+  }
 });
 
 /*

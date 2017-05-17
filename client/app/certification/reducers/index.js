@@ -78,8 +78,6 @@ export const certificationReducers = function(state = initialState, action = {})
   // TODO: rename this to something else, it's more like a Page Load action now.
   case Constants.UPDATE_PROGRESS_BAR:
     return CertificationReducers.updateProgressBar(state, action);
-  case Constants.UPDATE_ERROR_NOTICE:
-    return CertificationReducers.updateErrorNotice(state, action);
   case Constants.RESET_STATE:
     return Object.assign({}, state, {
       // reset some parts of state so we don't skip pages or end up in loops

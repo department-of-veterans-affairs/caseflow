@@ -63,7 +63,7 @@ describe('.changeOtherRepresentativeType', () => {
 describe('.handleServerError', () => {
   it('should create an action to mark an update failure', () => {
     const expectedAction = {
-      type: Constants.CERTIFICATION_UPDATE_FAILURE
+      type: Constants.HANDLE_SERVER_ERROR
     };
 
     expect(Actions.handleServerError()).to.eql(expectedAction);

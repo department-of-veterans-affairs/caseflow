@@ -14,10 +14,3 @@ export const resetState = () => ({
 export const toggleCancellationModal = () => ({
   type: Constants.TOGGLE_CANCELLATION_MODAL
 });
-
-export const updateErrorNotice = (error) => ({
-  type: Constants.UPDATE_ERROR_NOTICE,
-  payload: {
-    error
-  }
-});
