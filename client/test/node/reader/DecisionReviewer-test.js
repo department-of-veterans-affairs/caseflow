@@ -25,25 +25,26 @@ const INITIAL_ENTRIES = [
   `/reader_id1/documents/${documents[0].id}`
 ];
 
-const setupDocuments = () => {
-  // We simulate receiving the documents from the endpoint, and dispatch the
-  // required actions to skip past the loading screen and avoid stubing out
-  // the API call to the metadata endpoint.
-  store.dispatch(onReceiveDocs(documents));
-  store.dispatch(onReceiveAnnotations(annotations));
-}
-
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
   let wrapper;
+  let setupDocuments;
 
   beforeEach(() => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
     const store = createStore(readerReducer, applyMiddleware(thunk));
+
+    setupDocuments = () => {
+      // We simulate receiving the documents from the endpoint, and dispatch the
+      // required actions to skip past the loading screen and avoid stubing out
+      // the API call to the metadata endpoint.
+      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveAnnotations(annotations));
+    };
 
     wrapper = mount(
       <Provider store={store}>
@@ -287,7 +288,7 @@ describe('DecisionReviewer', () => {
       }));
     });
 
-    context('when expanded comments', () => {
+    context.only('when expanded comments', () => {
       it('can view comments', () => {
         expect(wrapper.text()).to.not.include('Test Comment');
         wrapper.find('#expand-2-comments-button').simulate('click');
