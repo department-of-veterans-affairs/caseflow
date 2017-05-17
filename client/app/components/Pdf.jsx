@@ -41,9 +41,10 @@ export class Pdf extends React.Component {
     // filename of the rendered PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
-      numPages: 0,
+      numPages: null,
       pdfDocument: null,
-      isRendered: []
+      isRendered: [],
+      pdfLoaded: false
     };
 
     this.scrollLocation = {
@@ -183,10 +184,10 @@ export class Pdf extends React.Component {
       locationOnPage: 0
     };
 
-    this.renderInViewPages();
+    this.renderInViewPages(true);
   }
 
-  renderInViewPages = () => {
+  renderInViewPages = (isScrolling = false) => {
     let page = document.getElementsByClassName('page');
 
     Array.prototype.forEach.call(page, (ele, index) => {
@@ -194,9 +195,8 @@ export class Pdf extends React.Component {
 
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
-          boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-
+      if (isScrolling && (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+          boundingRect.bottom > this.scrollWindow.clientHeight / 2)) {
         this.onPageChange(index + 1);
       }
 
