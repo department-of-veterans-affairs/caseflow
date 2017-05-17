@@ -157,7 +157,7 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (serverError) {
       return <Redirect
-        to={`/certifications/error`}/>;
+        to={'/certifications/error'}/>;
     }
 
     const shouldShowOtherTypeField =

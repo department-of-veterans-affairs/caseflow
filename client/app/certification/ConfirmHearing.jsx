@@ -215,7 +215,7 @@ class UnconnectedConfirmHearing extends React.Component {
 
     if (serverError) {
       return <Redirect
-        to={`/certifications/error`}/>;
+        to={'/certifications/error'}/>;
     }
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing

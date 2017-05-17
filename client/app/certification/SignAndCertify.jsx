@@ -122,7 +122,7 @@ class UnconnectedSignAndCertify extends React.Component {
 
     if (serverError) {
       return <Redirect
-        to={`/certifications/error`}/>;
+        to={'/certifications/error'}/>;
     }
 
     return <div>
