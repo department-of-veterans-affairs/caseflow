@@ -16,6 +16,7 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
+import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
 // This is the route history preset in react router
 // prior to tests running
@@ -36,11 +37,15 @@ describe('DecisionReviewer', () => {
 
     const store = createStore(readerReducer, applyMiddleware(thunk));
 
+    // We simulate receiving the documents from the endpoint, and dispatch the
+    // required actions to skip past the loading screen and avoid stubing out
+    // the API call to the metadata endpoint.
+    store.dispatch(onReceiveDocs(documents));
+    store.dispatch(onReceiveAnnotations(annotations));
+
     wrapper = mount(
       <Provider store={store}>
         <DecisionReviewer
-          appealDocuments={documents}
-          annotations={annotations}
           pdfWorker="worker"
           url="url"
           router={MemoryRouter}
