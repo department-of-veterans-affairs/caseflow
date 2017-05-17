@@ -4,7 +4,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { selectCurrentPdf } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import classNames from 'classnames';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
@@ -37,7 +37,12 @@ export class PdfUI extends React.Component {
       numPages: 1
     };
   }
-
+  componentDidUpdate(prevProps) {
+    // when a document changes, don't place annotations
+    if (prevProps.doc.id !== this.props.doc.id && this.props.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    }
+  }
   zoom = (delta) => () => {
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
@@ -171,6 +176,9 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => state.ui.pdf;
 const mapDispatchToProps = (dispatch) => ({
+  stopPlacingAnnotation: () => {
+    dispatch(stopPlacingAnnotation());
+  },
   selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   handleTogglePdfSidebar() {
     dispatch({

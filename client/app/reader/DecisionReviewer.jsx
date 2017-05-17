@@ -106,8 +106,20 @@ export class DecisionReviewer extends React.Component {
     /* eslint-enable no-console */
   }
 
+  renderInViewPages = () => {
+    if (this.props.pdf.isPlacingAnnotation && !this.props.pdf.clickedInPdfPageContainer) {
+      this.props.stopPlacingAnnotation();
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.renderInViewPages);
+    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
+  }
+
   componentDidMount = () => {
     window.addEventListener('keydown', this.handleStartPerfMeasurement);
+    window.addEventListener('click', this.renderInViewPages);
 
     let downloadDocuments = (documentUrls, index) => {
       if (index >= documentUrls.length) {
@@ -126,11 +138,7 @@ export class DecisionReviewer extends React.Component {
       }), i);
     }
   }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
-  }
-
+  
   onJumpToComment = (history, vacolsId) => (comment) => () => {
     this.showPdf(history, vacolsId)(comment.documentId)();
     this.props.onScrollToComment(comment);
@@ -212,7 +220,8 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
-    storeDocuments: state.documents
+    storeDocuments: state.documents,
+    pdf: state.ui.pdf
   };
 };
 
