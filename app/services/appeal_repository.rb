@@ -112,7 +112,10 @@ class AppealRepository
     end
   end
 
-  def self.hearings(_judge_user)
+  def self.hearings(vacols_user_id)
+    VACOLS::CaseHearing.for_judge(vacols_user_id).map do |hearing|
+      Hearing.load_from_vacols(hearing, vacols_user_id)
+    end
   end
 
   def self.remands_ready_for_claims_establishment
