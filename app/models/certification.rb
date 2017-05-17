@@ -44,17 +44,11 @@ class Certification < ActiveRecord::Base
       methods: :certification_status,
       include: [
         :form8,
-        appeal: { methods:
-       [:nod_match?,
-        :serialized_nod_date,
-        :soc_match?,
-        :serialized_soc_date,
-        :form9_match?,
-        :serialized_form9_date,
-        :ssoc_dates_with_matches,
-        :documents_match?,
-        :veteran_name,
-        :vbms_id] }]
+        appeal: {
+          include: [:nod, :soc, :form9, :ssocs],
+          methods: [:documents_match?, :veteran_name, :vbms_id]
+        }
+      ]
     )
   end
 
@@ -128,7 +122,7 @@ class Certification < ActiveRecord::Base
   end
 
   def calculate_form9_matching_at
-    appeal.form9_match? ? (form9_matching_at || now) : nil
+    appeal.form9.try(:matching?) ? (form9_matching_at || now) : nil
   end
 
   def calculate_already_certified
@@ -140,19 +134,19 @@ class Certification < ActiveRecord::Base
   end
 
   def calculate_nod_matching_at
-    appeal.nod_match? ? (nod_matching_at || now) : nil
+    appeal.nod.try(:matching?) ? (nod_matching_at || now) : nil
   end
 
   def calculate_soc_matching_at
-    appeal.soc_match? ? (soc_matching_at || now) : nil
+    appeal.soc.try(:matching?) ? (soc_matching_at || now) : nil
   end
 
   def calculcate_ssocs_matching_at
-    (calculate_ssocs_required && appeal.ssoc_all_match?) ? (ssocs_matching_at || now) : nil
+    (calculate_ssocs_required && appeal.ssocs.all?(&:matching?)) ? (ssocs_matching_at || now) : nil
   end
 
   def calculate_ssocs_required
-    !appeal.ssoc_dates.empty?
+    appeal.ssocs.any?
   end
 
   class << self
