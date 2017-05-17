@@ -19,113 +19,135 @@ import _ from 'lodash';
  *
  * see StyleGuideTables.jsx for usage example.
 */
-export default class Table extends React.Component {
+const alignmentClasses = {
+  center: 'cf-txt-c',
+  left: 'cf-txt-l',
+  right: 'cf-txt-r'
+};
+
+const cellClasses = ({ align, cellClass }) => classnames([alignmentClasses[align], cellClass]);
+
+const getColumns = (props) => {
+  return _.isFunction(props.columns) ?
+    props.columns(props.rowObject) : props.columns;
+};
+
+const HeaderRow = (props) => {
+  return <thead className={props.headerClassName}>
+    <tr>
+      {getColumns(props).map((column, columnNumber) =>
+        <th scope="col" key={columnNumber} className={cellClasses(column)}>
+          {column.header || ''}
+        </th>
+      )}
+    </tr>
+  </thead>;
+};
+
+const getCellValue = (rowObject, rowNumber, column) => {
+  if (column.valueFunction) {
+    return column.valueFunction(rowObject, rowNumber);
+  }
+  if (column.valueName) {
+    return rowObject[column.valueName];
+  }
+
+  return '';
+};
+
+const getCellSpan = (rowObject, column) => {
+  if (column.span) {
+    return column.span(rowObject);
+  }
+
+  return 1;
+};
+
+class Row extends React.PureComponent {
+  render() {
+    const props = this.props;
+    const rowId = props.footer ? 'footer' : props.rowNumber;
+
+    return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
+      {getColumns(props).map((column, columnNumber) =>
+        <td
+          key={columnNumber}
+          className={cellClasses(column)}
+          colSpan={getCellSpan(props.rowObject, column)}>
+          {props.footer ?
+            column.footer :
+            getCellValue(props.rowObject, props.rowNumber, column)}
+        </td>
+      )}
+    </tr>;
+  }
+}
+
+class BodyRows extends React.PureComponent {
+  render() {
+    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
+
+    return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
+      {rowObjects.map((object, rowNumber) =>
+        <Row
+          rowObject={object}
+          columns={columns}
+          rowNumber={rowNumber}
+          rowClassNames={rowClassNames}
+          key={rowNumber} />
+      )}
+    </tbody>;
+  }
+}
+
+class FooterRow extends React.PureComponent {
+  render() {
+    const props = this.props;
+    const hasFooters = _.some(props.columns, 'footer');
+
+    return <tfoot>
+      {hasFooters && <Row columns={props.columns} footer={true}/>}
+    </tfoot>;
+  }
+}
+
+export default class Table extends React.PureComponent {
+  defaultRowClassNames = () => ''
+
   render() {
     let {
       columns,
       rowObjects,
       summary,
       headerClassName = '',
-      rowClassNames = () => '',
+      bodyClassName = '',
+      rowClassNames = this.defaultRowClassNames,
+      tbodyId,
+      tbodyRef,
       id
     } = this.props;
-
-    let alignmentClasses = {
-      center: 'cf-txt-c',
-      left: 'cf-txt-l',
-      right: 'cf-txt-r'
-    };
-
-    let cellClasses = (column) => {
-      return classnames([alignmentClasses[column.align], column.cellClass]);
-    };
-
-    let getColumns = (props) => {
-      return _.isFunction(props.columns) ?
-        props.columns(props.rowObject) : props.columns;
-    };
-
-    let HeaderRow = (props) => {
-      return <thead className={headerClassName}>
-        <tr>
-          {getColumns(props).map((column, columnNumber) =>
-            <th scope="col" key={columnNumber} className={cellClasses(column)}>
-              {column.header || ''}
-            </th>
-          )}
-        </tr>
-      </thead>;
-    };
-
-    let getCellValue = (rowObject, rowNumber, column) => {
-      if (column.valueFunction) {
-        return column.valueFunction(rowObject, rowNumber);
-      }
-      if (column.valueName) {
-        return rowObject[column.valueName];
-      }
-
-      return '';
-    };
-
-    let getCellSpan = (rowObject, column) => {
-      if (column.span) {
-        return column.span(rowObject);
-      }
-
-      return 1;
-    };
-
-    let Row = (props) => {
-      let rowId = props.footer ? 'footer' : props.rowNumber;
-
-      return <tr id={`table-row-${rowId}`} className={!props.footer && rowClassNames(props.rowObject)}>
-        {getColumns(props).map((column, columnNumber) =>
-          <td
-            key={columnNumber}
-            className={cellClasses(column)}
-            colSpan={getCellSpan(props.rowObject, column)}>
-            {props.footer ?
-              column.footer :
-              getCellValue(props.rowObject, props.rowNumber, column)}
-          </td>
-        )}
-      </tr>;
-    };
-
-    let BodyRows = (props) => {
-      return <tbody className={this.props.bodyClassName}>
-        {props.rowObjects.map((object, rowNumber) =>
-          <Row
-            rowObject={object}
-            columns={props.columns}
-            rowNumber={rowNumber}
-            key={rowNumber} />
-        )}
-      </tbody>;
-    };
-
-    let FooterRow = (props) => {
-      let hasFooters = _.some(props.columns, (column) => column.footer);
-
-      return <tfoot>
-        {hasFooters && <Row columns={props.columns} footer={true}/>}
-      </tfoot>;
-    };
 
     return <table
               id={id}
               className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
 
-        <HeaderRow columns={columns} />
-        <BodyRows columns={columns} rowObjects={rowObjects} />
+        <HeaderRow columns={columns} headerClassName={headerClassName}/>
+        <BodyRows
+          id={tbodyId}
+          tbodyRef={tbodyRef}
+          columns={columns}
+          rowObjects={rowObjects}
+          bodyClassName={bodyClassName}
+          rowClassNames={rowClassNames} />
         <FooterRow columns={columns} />
     </table>;
   }
 }
 
 Table.propTypes = {
+  tbodyId: PropTypes.string,
+  tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.object),
     PropTypes.func]).isRequired,

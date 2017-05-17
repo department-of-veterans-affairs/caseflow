@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def feature_enabled?(feature)
-    FeatureToggle.enabled?(feature, current_user)
+    FeatureToggle.enabled?(feature, user: current_user)
   end
   helper_method :feature_enabled?
 
@@ -78,7 +78,8 @@ class ApplicationController < ActionController::Base
   def help_url
     {
       "certification" => certification_help_path,
-      "dispatch-arc" => dispatch_help_path
+      "dispatch-arc" => dispatch_help_path,
+      "reader" => reader_help_path
     }[application] || help_path
   end
   helper_method :help_url
@@ -134,6 +135,11 @@ class ApplicationController < ActionController::Base
     redirect_to login_path
   end
 
+  def page_title(title)
+    "&nbsp &#124 &nbsp".html_safe + title
+  end
+  helper_method :page_title
+
   def verify_feature_enabled(feature)
     return true if FeatureToggle.enabled?(feature, user: current_user)
     Rails.logger.info("User id #{current_user.id} attempted to access #{feature} "\
@@ -159,7 +165,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_system_admin
-    verify_authorized_roles("System Admin")
+    redirect_to "/unauthorized" unless current_user.admin?
   end
 
   def on_vbms_error

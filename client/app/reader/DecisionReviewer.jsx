@@ -2,10 +2,10 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
+import Perf from 'react-addons-perf';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import AnnotationStorage from '../util/AnnotationStorage';
 import ApiUtil from '../util/ApiUtil';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -22,15 +22,19 @@ export class DecisionReviewer extends React.Component {
       isCommentLabelSelected: false
     };
 
-    this.props.onReceiveDocs(this.props.appealDocuments);
+    this.isMeasuringPerf = false;
 
-    this.annotationStorage = new AnnotationStorage(this.props.annotations);
-    this.props.setAnnotationStorage(this.annotationStorage);
+    this.props.onReceiveDocs(this.props.appealDocuments);
+    this.props.onReceiveAnnotations(this.props.annotations);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.appealDocuments !== nextProps.appealDocuments) {
+    if (!_.isEqual(this.props.appealDocuments, nextProps.appealDocuments)) {
       this.props.onReceiveDocs(nextProps.appealDocuments);
+    }
+
+    if (!_.isEqual(this.props.annotations, nextProps.annotations)) {
+      this.props.onReceiveAnnotations(nextProps.annotations);
     }
   }
 
@@ -39,6 +43,10 @@ export class DecisionReviewer extends React.Component {
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
+    if (!this.props.storeDocuments[docId]) {
+      return;
+    }
+
     if (event) {
       // If the user is trying to open the link in a new tab/window
       // then follow the link. Otherwise if they just clicked the link
@@ -72,7 +80,47 @@ export class DecisionReviewer extends React.Component {
     history.push(`/${vacolsId}/documents`);
   }
 
+  // eslint-disable-next-line max-statements
+  handleStartPerfMeasurement = (event) => {
+    if (!(event.altKey && event.code === 'KeyP')) {
+      return;
+    }
+    /* eslint-disable no-console */
+
+    // eslint-disable-next-line no-negated-condition
+    if (!this.isMeasuringPerf) {
+      Perf.start();
+      console.log('Started React perf measurements');
+      this.isMeasuringPerf = true;
+    } else {
+      Perf.stop();
+      this.isMeasuringPerf = false;
+
+      const measurements = Perf.getLastMeasurements();
+
+      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
+      Perf.printInclusive(measurements);
+      Perf.printWasted(measurements);
+      console.groupEnd();
+    }
+    /* eslint-enable no-console */
+  }
+
+  clearPlacingAnnotationState = () => {
+    if (this.props.pdf.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('click', this.clearPlacingAnnotationState);
+    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
+  }
+
   componentDidMount = () => {
+    window.addEventListener('keydown', this.handleStartPerfMeasurement);
+    window.addEventListener('click', this.clearPlacingAnnotationState);
+
     let downloadDocuments = (documentUrls, index) => {
       if (index >= documentUrls.length) {
         return;
@@ -110,7 +158,6 @@ export class DecisionReviewer extends React.Component {
     const vacolsId = routerProps.match.params.vacolsId;
 
     return <PdfListView
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       showPdf={this.showPdf(routerProps.history, vacolsId)}
       sortBy={this.state.sortBy}
@@ -128,7 +175,6 @@ export class DecisionReviewer extends React.Component {
     return <PdfViewer
       addNewTag={this.props.addNewTag}
       removeTag={this.props.removeTag}
-      annotationStorage={this.annotationStorage}
       documents={this.documents()}
       allDocuments={_.values(this.props.storeDocuments)}
       pdfWorker={this.props.pdfWorker}
@@ -163,7 +209,6 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  setAnnotationStorage: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
 
   // These two properties are exclusively for testing purposes
@@ -175,7 +220,8 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
-    storeDocuments: state.documents
+    storeDocuments: state.documents,
+    pdf: state.ui.pdf
   };
 };
 
