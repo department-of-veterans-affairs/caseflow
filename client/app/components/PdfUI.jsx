@@ -7,16 +7,6 @@ import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import classNames from 'classnames';
 
-const getPdfFooter = (props, state) => {
-  if (props.pdfsReadyToShow[props.doc.id] && state.numPages) {
-    return <div className="cf-pdf-buttons-center">
-      Page {state.currentPage} of {state.numPages}
-    </div>;
-  }
-
-  return '';
-};
-
 export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
@@ -57,6 +47,16 @@ export class PdfUI extends React.Component {
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
+  }
+
+  getPdfFooter = (props, state) => {
+    if (props.pdfsReadyToShow[props.doc.id] && state.numPages) {
+      return <div className="cf-pdf-buttons-center">
+        Page {state.currentPage} of {state.numPages}
+      </div>;
+    }
+
+    return '';
   }
 
   fitToScreen = () => {
@@ -176,7 +176,7 @@ export class PdfUI extends React.Component {
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
-        { getPdfFooter(this.props, this.state) }
+        { this.getPdfFooter(this.props, this.state) }
       </div>
     </div>;
   }
