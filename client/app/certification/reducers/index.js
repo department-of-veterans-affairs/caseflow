@@ -31,7 +31,7 @@ const initialState = {
   representativeType: null,
   representativeName: null,
   otherRepresentativeType: null,
-  showHeader: true
+  serverError: false
 };
 
 export const certificationReducers = function(state = initialState, action = {}) {
@@ -83,21 +83,17 @@ export const certificationReducers = function(state = initialState, action = {})
   case Constants.RESET_STATE:
     return Object.assign({}, state, {
       // reset some parts of state so we don't skip pages or end up in loops
-      updateFailed: null,
       updateSucceeded: null,
       loading: false,
-      showCancellationModal: false,
-      showHeader: true
+      showCancellationModal: false
     });
 
-  case Constants.TOGGLE_HEADER:
-    return CertificationReducers.toggleHeader(state);
   case Constants.SHOW_VALIDATION_ERRORS:
     return CertificationReducers.showValidationErrors(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return CertificationReducers.startUpdateCertification(state);
-  case Constants.CERTIFICATION_UPDATE_FAILURE:
-    return CertificationReducers.certificationUpdateFailure(state);
+  case Constants.HANDLE_SERVER_ERROR:
+    return CertificationReducers.handleServerError(state);
   case Constants.CERTIFICATION_UPDATE_SUCCESS:
     return CertificationReducers.certificationUpdateSuccess(state);
   case Constants.TOGGLE_CANCELLATION_MODAL:

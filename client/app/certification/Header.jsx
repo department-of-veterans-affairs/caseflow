@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 const UnconnectedHeader = ({
   veteranName,
   vbmsId,
-  showHeader
+  serverError
 }) => {
   return <div>
-    { showHeader && <div id="certifications-header" className="cf-app-segment">
+    { !serverError && <div id="certifications-header" className="cf-app-segment">
       <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
         {veteranName} &nbsp;
 
@@ -37,7 +37,7 @@ const UnconnectedHeader = ({
 const mapStateToProps = (state) => ({
   veteranName: state.veteranName,
   vbmsId: state.vbmsId,
-  showHeader: state.showHeader
+  serverError: state.serverError
 });
 
 const Header = connect(

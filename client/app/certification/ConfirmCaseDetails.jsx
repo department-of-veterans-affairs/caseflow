@@ -9,7 +9,6 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
 import Footer from './Footer';
-import ErrorNotice from './ErrorNotice';
 
 const representativeTypeOptions = [
   {
@@ -62,12 +61,6 @@ export class ConfirmCaseDetails extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
-
-    // when we hit refresh after error page is shown,
-    // we would like to switch back and show header
-    if (!this.props.showHeader) {
-      this.props.toggleHeader();
-    }
   }
 
   componentWillUnmount() {
@@ -152,7 +145,7 @@ export class ConfirmCaseDetails extends React.Component {
       otherRepresentativeType,
       changeOtherRepresentativeType,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -162,8 +155,9 @@ export class ConfirmCaseDetails extends React.Component {
         to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
     }
 
-    if (updateFailed) {
-      return <ErrorNotice/>;
+    if (serverError) {
+      return <Redirect
+        to={`/certifications/error`}/>;
     }
 
     const shouldShowOtherTypeField =
@@ -234,8 +228,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
-
   showValidationErrors: (erroredFields) => {
     dispatch(certificationActions.showValidationErrors(erroredFields));
   },
@@ -257,12 +249,11 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed,
+  serverError: state.serverError,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
   continueClicked: state.continueClicked,
-  showHeader: state.showHeader,
   erroredFields: state.erroredFields,
   loading: state.loading
 });

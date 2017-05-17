@@ -9,7 +9,6 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
-import ErrorNotice from './ErrorNotice';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -125,10 +124,6 @@ class UnconnectedConfirmHearing extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
-
-    if (!this.props.showHeader) {
-      this.props.toggleHeader();
-    }
   }
 
   componentWillUnmount() {
@@ -208,7 +203,7 @@ class UnconnectedConfirmHearing extends React.Component {
       hearingPreference,
       onHearingPreferenceChange,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -218,8 +213,9 @@ class UnconnectedConfirmHearing extends React.Component {
         to={`/certifications/${match.params.vacols_id}/sign_and_certify`}/>;
     }
 
-    if (updateFailed) {
-      return <ErrorNotice/>;
+    if (serverError) {
+      return <Redirect
+        to={`/certifications/error`}/>;
     }
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
@@ -359,8 +355,6 @@ class UnconnectedConfirmHearing extends React.Component {
 const mapDispatchToProps = (dispatch) => ({
   updateProgressBar: () => dispatch(actions.updateProgressBar()),
 
-  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
-
   resetState: () => dispatch(certificationActions.resetState()),
 
   onHearingDocumentChange: (hearingDocumentIsInVbms) => {
@@ -394,8 +388,7 @@ const mapStateToProps = (state) => ({
   loading: state.loading,
   erroredFields: state.erroredFields,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed,
-  showHeader: state.showHeader
+  serverError: state.serverError
 });
 
 /*

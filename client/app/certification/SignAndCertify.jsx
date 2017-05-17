@@ -8,7 +8,6 @@ import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
-import ErrorNotice from './ErrorNotice';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 
 const certifyingOfficialTitleOptions = [{
@@ -42,10 +41,6 @@ class UnconnectedSignAndCertify extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
-
-    if (!this.props.showHeader) {
-      this.props.toggleHeader();
-    }
   }
 
   getValidationErrors() {
@@ -116,7 +111,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certificationDate,
       loading,
       updateSucceeded,
-      updateFailed,
+      serverError,
       match
     } = this.props;
 
@@ -125,8 +120,9 @@ class UnconnectedSignAndCertify extends React.Component {
         to={`/certifications/${match.params.vacols_id}/success`}/>;
     }
 
-    if (updateFailed) {
-      return <ErrorNotice/>;
+    if (serverError) {
+      return <Redirect
+        to={`/certifications/error`}/>;
     }
 
     return <div>
@@ -181,8 +177,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  toggleHeader: () => dispatch(certificationActions.toggleHeader()),
-
   showValidationErrors: (erroredFields) => {
     dispatch(certificationActions.showValidationErrors(erroredFields));
   },
@@ -205,8 +199,7 @@ const mapStateToProps = (state) => ({
   erroredFields: state.erroredFields,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed,
-  showHeader: state.showHeader
+  serverError: state.serverError
 });
 
 const SignAndCertify = connect(

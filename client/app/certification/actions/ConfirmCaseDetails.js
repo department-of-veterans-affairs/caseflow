@@ -31,8 +31,8 @@ export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   }
 });
 
-export const certificationUpdateFailure = () => ({
-  type: Constants.CERTIFICATION_UPDATE_FAILURE
+export const handleServerError = () => ({
+  type: Constants.HANDLE_SERVER_ERROR
 });
 
 export const certificationUpdateSuccess = () => ({
@@ -60,9 +60,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     then(() => {
       dispatch(certificationUpdateSuccess());
     }, (err) => {
-      dispatch(CertificationAction.updateErrorNotice(err.response.text));
-      dispatch(CertificationAction.toggleHeader());
-      dispatch(certificationUpdateFailure(err));
+      dispatch(handleServerError(err));
     });
 
   return {

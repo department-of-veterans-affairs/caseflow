@@ -60,13 +60,13 @@ describe('.changeOtherRepresentativeType', () => {
   });
 });
 
-describe('.certificationUpdateFailure', () => {
+describe('.handleServerError', () => {
   it('should create an action to mark an update failure', () => {
     const expectedAction = {
       type: Constants.CERTIFICATION_UPDATE_FAILURE
     };
 
-    expect(Actions.certificationUpdateFailure()).to.eql(expectedAction);
+    expect(Actions.handleServerError()).to.eql(expectedAction);
   });
 });
 

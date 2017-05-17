@@ -1,16 +1,8 @@
-export const toggleHeader = (state) => {
-  let show = Boolean(state.showHeader);
-
-  return Object.assign({}, state, {
-    showHeader: !show
-  });
-};
-
 export const updateProgressBar = (state, action) => {
   return Object.assign({}, state, {
     currentSection: action.payload.currentSection,
     // reset some parts of state so we don't skip pages or end up in loops
-    updateFailed: null,
+    serverError: null,
     updateSucceeded: null,
     loading: false
   });
@@ -39,9 +31,9 @@ export const startUpdateCertification = (state) => {
   });
 };
 
-export const certificationUpdateFailure = (state) => {
+export const handleServerError = (state) => {
   return Object.assign({}, state, {
-    updateFailed: true,
+    serverError: true,
     loading: false
   });
 };

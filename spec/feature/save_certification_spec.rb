@@ -428,7 +428,7 @@ RSpec.feature "Save Certification" do
         end
         fill_in "Date:", with: "02/01/2016"
         click_button("Continue")
-        expect(page).to have_content "VBMS Failure"
+        expect(page).to have_content "Something went wrong"
         expect(page).to_not have_content "Check Documents"
 
         allow(Appeal.repository).to receive(:certify).and_raise(generic_error)
@@ -441,7 +441,7 @@ RSpec.feature "Save Certification" do
         end
         fill_in "Date:", with: "02/01/2016"
         click_button("Continue")
-        expect(page).to have_content "Something went wrong."
+        expect(page).to have_content "Something went wrong"
         expect(page).to_not have_content "Check Documents"
       end
     end
