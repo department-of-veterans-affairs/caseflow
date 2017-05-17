@@ -3,12 +3,12 @@ class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :date, :type, :regional_office_key, :hearings
+  attr_accessor :date, :type, :venue, :hearings
 
   def to_hash
     serializable_hash(
       include: [:hearings],
-      methods: [:regional_office]
+      methods: [:venue]
     )
   end
 
@@ -19,10 +19,6 @@ class HearingDocket
     }
   end
 
-  def regional_office
-    VACOLS::RegionalOffice::CITIES[regional_office_key]
-  end
-
   class << self
     def for_judge(user)
       Appeal.repository
@@ -30,9 +26,9 @@ class HearingDocket
             .group_by { |h| h.date.to_i }
             .map do |_date, hearings|
         new(
-          date: hearings.first.date.to_s(:json_date),
+          date: hearings.first.date,
           type: hearings.first.type,
-          regional_office_key: hearings.first.regional_office_key,
+          venue: hearings.first.venue,
           hearings: hearings
         )
       end
