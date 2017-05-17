@@ -87,12 +87,37 @@ export class DecisionReviewer extends React.Component {
     /* eslint-enable no-console */
   }
 
-  componentDidMount = () => {
-    window.addEventListener('keydown', this.handleStartPerfMeasurement);
+  clearPlacingAnnotationState = () => {
+    if (this.props.pdf.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    }
   }
 
   componentWillUnmount() {
+    window.removeEventListener('click', this.clearPlacingAnnotationState);
     window.removeEventListener('keydown', this.handleStartPerfMeasurement);
+  }
+
+  componentDidMount = () => {
+    window.addEventListener('keydown', this.handleStartPerfMeasurement);
+    window.addEventListener('click', this.clearPlacingAnnotationState);
+
+    let downloadDocuments = (documentUrls, index) => {
+      if (index >= documentUrls.length) {
+        return;
+      }
+
+      ApiUtil.get(documentUrls[index], { cache: true }).
+        then(() => {
+          downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
+        });
+    };
+
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+      downloadDocuments(this.props.appealDocuments.map((doc) => {
+        return this.documentUrl(doc);
+      }), i);
+    }
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
@@ -184,7 +209,8 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.ui.pdfList.filters,
     filteredDocIds: state.ui.filteredDocIds,
-    storeDocuments: state.documents
+    storeDocuments: state.documents,
+    pdf: state.ui.pdf
   };
 };
 

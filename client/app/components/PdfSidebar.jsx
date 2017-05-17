@@ -65,6 +65,10 @@ export class PdfSidebar extends React.Component {
     }
   }
 
+  handleAddClick = (event) => {
+    this.props.startPlacingAnnotation();
+    event.stopPropagation();
+  }
   render() {
     let comments = [];
 
@@ -167,7 +171,7 @@ export class PdfSidebar extends React.Component {
             <span className="cf-right-side cf-add-comment-button">
               <Button
                 name="AddComment"
-                onClick={this.props.startPlacingAnnotation}>
+                onClick={this.handleAddClick}>
                 <span>{ plusIcon() } &nbsp; Add a comment</span>
               </Button>
             </span>
