@@ -1,6 +1,5 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import * as CertificationAction from './Certification';
 
 
 export const updateProgressBar = () => ({
