@@ -50,10 +50,10 @@ class MismatchReport < Report
   def self.mismatched_docs(appeal)
     mismatched = []
 
-    mismatched << "NOD" unless appeal.nod_match?
-    mismatched << "SOC" unless appeal.soc_match?
-    mismatched << "Form 9" unless appeal.form9_match?
-    mismatched << "SSOC" unless appeal.ssoc_all_match?
+    mismatched << "NOD" unless appeal.nod.matching?
+    mismatched << "SOC" unless appeal.soc.matching?
+    mismatched << "Form 9" unless appeal.form9.matching?
+    mismatched << "SSOC" unless appeal.ssocs.map(&:matching?)
 
     mismatched.join(", ")
   end
@@ -67,7 +67,7 @@ class MismatchReport < Report
   ].freeze
 
   def self.nod_date_alternatives(appeal)
-    return "" if appeal.nod_match?
+    return "" if appeal.nod.matching?
 
     # Do we have an NOD from within 3 days of what VACOLS shows?
     appeal.documents_with_type("NOD")
@@ -77,7 +77,7 @@ class MismatchReport < Report
   end
 
   def self.form9_date_alternatives(appeal)
-    return "" if appeal.form9_match?
+    return "" if appeal.form9.matching?
 
     # Do we have a Form 9 from within 3 days of what VACOLS shows?
     appeal.documents_with_type("Form 9")
@@ -87,7 +87,7 @@ class MismatchReport < Report
   end
 
   def self.soc_date_alternatives(appeal)
-    return "" if appeal.soc_match?
+    return "" if appeal.soc.matching?
 
     # Do we have a SOC from within 3 days of what VACOLS shows?
     appeal.documents_with_type("SOC")
@@ -97,7 +97,7 @@ class MismatchReport < Report
   end
 
   def self.ssoc_date_alternatives(appeal)
-    return "" if appeal.ssoc_all_match?
+    return "" if appeal.ssocs.all?(&:matching?)
 
     # Do we have a SSOC from within 3 days of what VACOLS shows?
     appeal.documents_with_type("SSOC")
@@ -112,7 +112,7 @@ class MismatchReport < Report
   end
 
   def self.nod_label_alternatives(appeal)
-    return "" if appeal.nod_match?
+    return "" if appeal.nod.matching?
 
     # Do we have a document on the NOD date marked as something else?
     appeal.documents
@@ -126,7 +126,7 @@ class MismatchReport < Report
   end
 
   def self.form9_label_alternatives(appeal)
-    return "" if appeal.form9_match?
+    return "" if appeal.form9.matching?
 
     # Do we have a document on the Form 9 date marked as something else?
     appeal.documents
