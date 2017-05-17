@@ -106,20 +106,20 @@ export class DecisionReviewer extends React.Component {
     /* eslint-enable no-console */
   }
 
-  renderInViewPages = () => {
-    if (this.props.pdf.isPlacingAnnotation && !this.props.pdf.clickedInPdfPageContainer) {
+  evaluateAnnotationMode = () => {
+    if (this.props.pdf.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
     }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.renderInViewPages);
+    window.removeEventListener('click', this.evaluateAnnotationMode);
     window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   componentDidMount = () => {
     window.addEventListener('keydown', this.handleStartPerfMeasurement);
-    window.addEventListener('click', this.renderInViewPages);
+    window.addEventListener('click', this.evaluateAnnotationMode);
 
     let downloadDocuments = (documentUrls, index) => {
       if (index >= documentUrls.length) {
