@@ -234,6 +234,19 @@ export class Pdf extends React.Component {
     trailing: true
   });
 
+  prerenderPdf = (file) => {
+    PDFJS.getDocument(file).then((pdfDocument) => {
+      this.setState({
+        numPages: pdfDocument.pdfInfo.numPages,
+        pdfDocument,
+        isRendered: []
+      }, () => {
+        resolve();
+      });
+      this.props.setPdfReadyToShow(this.props.documentId);
+    });
+  }
+
   onJumpToComment = (comment) => {
     if (comment) {
       const pageNumber = comment.page;
@@ -486,5 +499,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
+  preRenderFiles: PropTypes.arrayOf(PropTypes.string),
   handleSelectCommentIcon: PropTypes.func
 };
