@@ -114,7 +114,7 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
   }
 };
 
-const parseDocumentFromApi = (doc, index) => ({
+const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
   vbmsDate: doc.serialized_receipt_date,
@@ -129,7 +129,7 @@ export const mapDataToInitialState = (state) => ({
   nod: parseDocumentFromApi(state.appeal.nod),
   soc: parseDocumentFromApi(state.appeal.soc),
   form9: parseDocumentFromApi(state.appeal.form9),
-  ssocs: state.appeal.ssocs.map((ssoc, i) => parseDocumentFromApi(ssoc, i + 1)),
+  ssocs: (state.appeal.ssocs || []).map((ssoc, i) => parseDocumentFromApi(ssoc, i + 1)),
   documentsMatch: state.appeal['documents_match?'],
   certificationId: state.id,
   vbmsId: state.appeal.vbms_id,
