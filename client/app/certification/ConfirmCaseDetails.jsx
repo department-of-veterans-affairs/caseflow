@@ -130,8 +130,8 @@ export class ConfirmCaseDetails extends React.Component {
 
   componentDidUpdate () {
     if (this.props.scrollToError && this.props.erroredFields) {
-      this.props.showValidationErrors(this.props.erroredFields, false);
       ValidatorsUtil.scrollToAndFocusFirstError();
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
