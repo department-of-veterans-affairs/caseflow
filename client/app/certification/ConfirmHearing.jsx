@@ -168,7 +168,7 @@ class UnconnectedConfirmHearing extends React.Component {
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
-      this.props.showValidationErrors(erroredFields, true);
+      this.props.showValidationErrors(erroredFields);
 
       return;
     }
@@ -188,6 +188,8 @@ class UnconnectedConfirmHearing extends React.Component {
   componentDidUpdate () {
     if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
       this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
@@ -361,7 +363,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
-  showValidationErrors: (erroredFields, scrollToError) => {
+  showValidationErrors: (erroredFields, scrollToError = true) => {
     dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
