@@ -27,15 +27,14 @@
       </thead>
 
       <tbody>
-        <%= render partial: 'document_match', locals: { name: "NOD", match: appeal.nod_match?, date: appeal.nod_date } %>
-        <%= render partial: 'document_match', locals: { name: "SOC", match: appeal.soc_match?, date: appeal.soc_date } %>
+        <%= render partial: 'document_match', locals: { name: "NOD", document: appeal.nod } %>
+        <%= render partial: 'document_match', locals: { name: "SOC", document: appeal.soc } %>
 
-        <% appeal.ssoc_dates.each_index do |i| %>
-          <%= render partial: 'document_match',
-                     locals: { name: "SSOC #{i+1}", match: appeal.ssoc_match?(appeal.ssoc_dates[i]), date: appeal.ssoc_dates[i] } %>
+        <% appeal.ssocs.each_with_index do |ssoc, i| %>
+          <%= render partial: 'document_match', locals: { name: "SSOC #{i+1}", document: ssoc } %>
         <% end %>
 
-        <%= render partial: 'document_match', locals: { name: "Form 9", match: appeal.form9_match?, date: appeal.form9_date } %>
+        <%= render partial: 'document_match', locals: { name: "Form 9", document: appeal.form9 } %>
       </tbody>
     </table>
   </div>

@@ -1,7 +1,8 @@
 From now, if you want to add a label, you need to run it by the team, so everyone agrees what it means and we can add it to this list:
 
-##Labels Definitions
+## Labels Definitions
 - **discussion** An issue used for the team to discuss solutions and ideas related to a high level problem. The team can discuss on the issue for some amount of time, and possibly come together in person to determine the outcome.
+- **obsolete** - A story that is no longer needed. It was not developed.
 - **bug-high-priority** - A bug that has been found with code in production. Data loss, data corruption or system unavailable  
 - **bug-medium-priority** - A bug that has been found with code in production. Important functionality is unavailable but there is a workaround
 - **bug-low-priority** - A bug that has been found with code or design in production. Cosemtic issues with minor effects on functionality.

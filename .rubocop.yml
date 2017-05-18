@@ -44,3 +44,6 @@ Metrics/AbcSize:
 
 Style/DoubleNegation:
   Enabled: false
+
+Performance/RedundantBlockCall:
+  Enabled: false
