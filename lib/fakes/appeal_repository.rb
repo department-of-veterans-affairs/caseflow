@@ -208,7 +208,9 @@ class Fakes::AppealRepository
     [
       Generators::Document.build(type: "NOD", category_procedural: true),
       Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9", category_medical: true)
+      Generators::Document.build(type: "Form 9", category_medical: true),
+      Generators::Document.build(type: "SSOC"),
+      Generators::Document.build(type: "SSOC", received_at: 10.days.ago)
     ]
   end
 
@@ -249,7 +251,7 @@ class Fakes::AppealRepository
   end
 
   def self.seed_appeal_ready_to_certify!
-    nod, soc, form9 = certification_documents
+    nod, soc, form9, ssoc1, ssoc2 = certification_documents
 
     Generators::Appeal.build(
       vacols_id: "123C",
@@ -257,10 +259,11 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
-        soc_date: soc.received_at,
-        form9_date: form9.received_at
+        soc_date: soc.received_at + 2.days,
+        form9_date: form9.received_at,
+        ssoc_dates: [ssoc1.received_at, ssoc2.received_at]
       },
-      documents: [nod, soc, form9]
+      documents: [nod, soc, form9, ssoc1, ssoc2]
     )
   end
 
