@@ -383,7 +383,7 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
-  form9Date: state.form9Date,
+  form9Date: state.form9.vacolsDate,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   erroredFields: state.erroredFields,

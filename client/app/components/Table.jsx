@@ -124,6 +124,7 @@ export default class Table extends React.PureComponent {
       rowClassNames = this.defaultRowClassNames,
       tbodyId,
       tbodyRef,
+      caption,
       id
     } = this.props;
 
@@ -131,6 +132,8 @@ export default class Table extends React.PureComponent {
               id={id}
               className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
+
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
         <BodyRows
@@ -156,5 +159,6 @@ Table.propTypes = {
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
+  caption: PropTypes.string,
   id: PropTypes.string
 };

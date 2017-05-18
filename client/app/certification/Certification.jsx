@@ -41,6 +41,7 @@ const configureStore = (data) => {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   const initialData = mapDataToInitialState(data);
+
   const store = createStore(
     certificationReducers,
     initialData,
