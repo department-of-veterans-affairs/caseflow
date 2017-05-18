@@ -81,7 +81,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("Employee Total 3 4 7")
     end
 
-    scenario "Edit individual user quotas", :focus => true do
+    scenario "Edit individual user quotas" do
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
 
       %w(Janet June Jeffers).each do |name|
