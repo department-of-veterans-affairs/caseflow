@@ -38,7 +38,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       .joins(:staff)
       .where("staff.stafkey = #{id}")
       .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
-             relative_vacols_date(7.years).to_formatted_s(:oracle_date))
+             relative_vacols_date(7.days).to_formatted_s(:oracle_date))
       .where(NOT_MASTER_RECORD)
   end
 end
