@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
-import {PerfDebugPureComponent} from '../util/PerfDebug';
+
 /**
  * This component can be used to easily build tables.
  * The required props are:
@@ -63,7 +63,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-class Row extends PerfDebugPureComponent {
+class Row extends React.PureComponent {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowNumber;
@@ -86,7 +86,6 @@ class Row extends PerfDebugPureComponent {
 class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
-    const keyGetter = getKeyForRow || _.identity;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
       {rowObjects.map((object, rowNumber) =>
@@ -94,7 +93,7 @@ class BodyRows extends React.PureComponent {
           rowObject={object}
           columns={columns}
           rowClassNames={rowClassNames}
-          key={keyGetter(rowNumber, object)} />
+          key={getKeyForRow(rowNumber, object)} />
       )}
     </tbody>;
   }
@@ -123,11 +122,21 @@ export default class Table extends React.PureComponent {
       bodyClassName = '',
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
+      slowReRendersAreOk,
       tbodyId,
       tbodyRef,
       caption,
       id
     } = this.props;
+
+    let keyGetter = getKeyForRow;
+
+    if (!getKeyForRow) {
+      keyGetter = _.identity;
+      if (!slowReRendersAreOk) {
+        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed.');
+      }
+    }
 
     return <table
               id={id}
@@ -141,7 +150,7 @@ export default class Table extends React.PureComponent {
           id={tbodyId}
           tbodyRef={tbodyRef}
           columns={columns}
-          getKeyForRow={getKeyForRow}
+          getKeyForRow={keyGetter}
           rowObjects={rowObjects}
           bodyClassName={bodyClassName}
           rowClassNames={rowClassNames} />
@@ -158,6 +167,8 @@ Table.propTypes = {
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
+  keyGetter: PropTypes.func,
+  slowReRendersAreOk: PropTypes.bool,
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
