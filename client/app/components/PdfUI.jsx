@@ -162,6 +162,7 @@ export class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
+          prefetchFiles={this.props.prefetchFiles}
           onCommentScrolledTo={this.props.onCommentScrolledTo}
         />
       </div>
@@ -211,5 +212,6 @@ PdfUI.propTypes = {
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
   showDocumentsListNavigation: PropTypes.bool.isRequired,
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool
 };
