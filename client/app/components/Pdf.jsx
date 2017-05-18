@@ -21,6 +21,8 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
+const NUM_PAGES_TO_PRERENDER = 2;
+
 export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -54,6 +56,7 @@ export class Pdf extends React.Component {
     this.currentPage = 0;
     this.isRendering = [];
     this.prefetchedPdfs = {};
+    this.fakeCanvas = [];
   }
 
   setIsRendered = (index, value) => {
@@ -102,7 +105,7 @@ export class Pdf extends React.Component {
       }
       const t0 = performance.now();
       pdfDocument.getPage(pageNumber).then((pdfPage) => {
-        console.log(`getting page ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
+        //console.log(`getting page ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
         let viewport = pdfPage.getViewport(this.props.scale);
@@ -123,7 +126,7 @@ export class Pdf extends React.Component {
           viewport
         }).
         then(() => {
-          console.log(`canvas render page ${index} of file ${this.props.file} took ${performance.now() - t1} ms`);
+          //console.log(`canvas render page ${index} of file ${this.props.file} took ${performance.now() - t1} ms`);
           return Promise.resolve({
             pdfPage,
             viewport
@@ -215,7 +218,7 @@ export class Pdf extends React.Component {
         let t0 = performance.now();
         this.renderPage(index, this.props.file).then((actually) => {
           if (actually) {
-            console.log(`rendering ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
+            //console.log(`rendering ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
           }
         });
       }
@@ -226,7 +229,7 @@ export class Pdf extends React.Component {
   // and when it receives it, starts to render it.
   setupPdf = _.debounce((file) => {
     return new Promise((resolve) => {
-      console.log('setuppdf', this.prefetchedPdfs[file]);
+      //console.log('setuppdf', this.prefetchedPdfs[file]);
       this.getDocument(file).then((pdfDocument) => {
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
@@ -247,7 +250,7 @@ export class Pdf extends React.Component {
   getDocument = (file) => {
     return new Promise((resolve, reject) => {
       if (this.prefetchedPdfs[file]) {
-        console.log('prefetched!!!', file, this.prefetchedPdfs[file].pdfDocument);
+        //console.log('prefetched!!!', file, this.prefetchedPdfs[file].pdfDocument);
         resolve(this.prefetchedPdfs[file].pdfDocument)
       } else {
         PDFJS.getDocument(file).then((pdfDocument) => {
@@ -255,7 +258,7 @@ export class Pdf extends React.Component {
             pdfDocument,
             rendered: false
           };
-          console.log('slow fetch', file, this.prefetchedPdfs[file]);
+          //console.log('slow fetch', file, this.prefetchedPdfs[file]);
           resolve(pdfDocument);
         });  
       }
@@ -323,23 +326,26 @@ export class Pdf extends React.Component {
 
 //    setTimeout(() => {
       this.props.prefetchFiles.forEach((file, index) => {
-        if (_.get(this.fakeCanvas, index, false) && !_.get(this.prefetchedPdfs, [index, 'rendered'], true)) {
-          console.log('file', file);
+        console.log('fakeCanvas', this.fakeCanvas);
+        console.log('prefetchedPdfs', index, this.prefetchedPdfs[file]);
+        if (_.get(this.fakeCanvas, [index, 0], false)) {//} && !_.get(this.prefetchedPdfs, [file, 'rendered'], true)) {
+          console.log('inside rendering');
           // let fakeTextLayer = this.fakeTextLayer;
           this.getDocument(file).then((pdfDocument) => {
-            pdfDocument.getPage(1).then((pdfPage) => {
-              const viewport = pdfPage.getViewport(this.props.scale);
-              //this.setElementDimensions(fakeTextLayer, viewport);
-              return pdfPage.render({
-                canvasContext: this.fakeCanvas[index].getContext('2d', { alpha: false }),
-                viewport
-              }).
-              then(() => {
-                return Promise.resolve({
-                  pdfPage,
-                  viewport
+            _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
+              if (pageIndex < pdfDocument.pdfInfo.numPages) {
+                pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
+                  const viewport = pdfPage.getViewport(this.props.scale);
+                  //this.setElementDimensions(fakeTextLayer, viewport);
+                  return pdfPage.render({
+                    canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
+                    viewport
+                  }).
+                  then(() => {
+                    this.prefetchedPdfs[file].rendered = true;
+                  });
                 });
-              });;
+              }
             });
           });
         }
@@ -475,14 +481,21 @@ export class Pdf extends React.Component {
           </div>
         </div>);
     }
+//style={{visibility: 'hidden'}}
+    const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
+      this.fakeCanvas[index] = [];
 
-    const prerenderCanvas = this.props.prefetchFiles.map((_unused, index) => {
-      <canvas
-        style={{visibility: 'hidden'}}
-        ref={(ele) => {
-          this.fakeCanvas[index] = ele;
-        }}/>
-    })
+      const canvases = _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
+        <canvas
+          ref={(ele) => {
+            this.fakeCanvas[index][pageIndex] = ele;
+          }}/>
+      );
+
+      return <div>
+        {canvases}
+      </div>;
+    });
 
     this.scrollWindow = null;
 
@@ -498,7 +511,7 @@ export class Pdf extends React.Component {
           className={'cf-pdf-page pdfViewer singlePageView'}>
           {pages}
         </div>
-        {prerenderCanvas}
+        {prerenderCanvases}
       </div>;
   }
 }
