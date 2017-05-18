@@ -145,7 +145,7 @@ describe Document do
     end
   end
 
-  context "#fill_in" do
+  context "#merge_into" do
     let(:from_vbms_document) do
       Generators::Document.build(
         type: "Form 9",
@@ -153,7 +153,7 @@ describe Document do
         received_at: Time.now.utc,
         filename: "test")
     end
-    let(:persisted_document) { from_vbms_document.fill_in(Generators::Document.build) }
+    let(:persisted_document) { from_vbms_document.merge_into(Generators::Document.build) }
 
     it "fills the persisted document with data from the vbms document" do
       expect(from_vbms_document.type).to eq(persisted_document.type)
