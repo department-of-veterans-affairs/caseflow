@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
-
+import {PerfDebugPureComponent} from '../util/PerfDebug';
 /**
  * This component can be used to easily build tables.
  * The required props are:
@@ -63,7 +63,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-class Row extends React.PureComponent {
+class Row extends PerfDebugPureComponent {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowNumber;
@@ -85,16 +85,16 @@ class Row extends React.PureComponent {
 
 class BodyRows extends React.PureComponent {
   render() {
-    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
+    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
+    const keyGetter = getKeyForRow || _.identity;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
       {rowObjects.map((object, rowNumber) =>
         <Row
           rowObject={object}
           columns={columns}
-          rowNumber={rowNumber}
           rowClassNames={rowClassNames}
-          key={rowNumber} />
+          key={keyGetter(rowNumber, object)} />
       )}
     </tbody>;
   }
@@ -122,6 +122,7 @@ export default class Table extends React.PureComponent {
       headerClassName = '',
       bodyClassName = '',
       rowClassNames = this.defaultRowClassNames,
+      getKeyForRow,
       tbodyId,
       tbodyRef,
       caption,
@@ -140,6 +141,7 @@ export default class Table extends React.PureComponent {
           id={tbodyId}
           tbodyRef={tbodyRef}
           columns={columns}
+          getKeyForRow={getKeyForRow}
           rowObjects={rowObjects}
           bodyClassName={bodyClassName}
           rowClassNames={rowClassNames} />
