@@ -191,9 +191,6 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideLayout />
         <div className="cf-help-divider"></div>
-        <StyleGuideNavigationBar />
-        <StyleGuideUserDropdownMenu />
-        <div className="cf-help-divider"></div>
         <StyleGuideMessages />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
