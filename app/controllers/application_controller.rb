@@ -79,7 +79,8 @@ class ApplicationController < ActionController::Base
     {
       "certification" => certification_help_path,
       "dispatch-arc" => dispatch_help_path,
-      "reader" => reader_help_path
+      "reader" => reader_help_path,
+      "hearings" => hearings_help_path
     }[application] || help_path
   end
   helper_method :help_url

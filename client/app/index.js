@@ -8,11 +8,13 @@ import _ from 'lodash';
 import BaseContainer from './containers/BaseContainer';
 import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
+import Hearings from './hearings/Hearings';
 
 const COMPONENTS = {
   BaseContainer,
   Certification,
-  ManageEstablishClaim
+  ManageEstablishClaim,
+  Hearings
 };
 
 // This removes HMR's stupid red error page, which "eats" the errors and
