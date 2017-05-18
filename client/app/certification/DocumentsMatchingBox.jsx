@@ -4,9 +4,9 @@ import React from 'react';
 const DocumentsMatchingBox = () => {
   return <div className="usa-alert cf-app-segment usa-alert-success">
     <div className="usa-alert-body">
-      <h3 className="usa-alert-heading">All documents detected! </h3>
+      <h3 className="usa-alert-heading">Matching documents found in VBMS for all VACOLS documents.</h3>
       <p className="usa-alert-text">
-        The Form 9, NOD, SOC, and SSOCs (if applicable) were found in the eFolder.
+        A VBMS document date is considered matching if it's within 4 days before the VACOLS date.
       </p>
     </div>
   </div>;
