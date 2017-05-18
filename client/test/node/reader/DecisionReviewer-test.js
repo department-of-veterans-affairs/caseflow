@@ -30,7 +30,7 @@ const INITIAL_ENTRIES = [
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
   let wrapper;
-  let setupDocuments;
+  let setUpDocuments;
 
   beforeEach(() => {
     PdfJsStub.beforeEach();
@@ -38,7 +38,7 @@ describe('DecisionReviewer', () => {
 
     const store = createStore(readerReducer, applyMiddleware(thunk));
 
-    setupDocuments = () => {
+    setUpDocuments = () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
       // the API call to the metadata endpoint.
@@ -73,9 +73,7 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF View', () => {
-    beforeEach(() => {
-      setupDocuments();
-    });
+    beforeEach(setUpDocuments);
 
     context('renders', () => {
       it('the PDF list view', () => {
@@ -248,9 +246,7 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF list view', () => {
-    beforeEach(() => {
-      setupDocuments();
-    });
+    beforeEach(setUpDocuments);
 
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {

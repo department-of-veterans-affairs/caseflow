@@ -50,15 +50,13 @@ Rails.application.routes.draw do
   resources :document, only: [:update] do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
-    resources :annotation, only: [:create, :destroy, :update, :index]
+    resources :annotation, only: [:create, :destroy, :update]
     resources :tag, only: [:create, :destroy]
   end
 
   namespace :reader do
     resources :appeal, only: [] do
-      resources :documents, only: [:show, :index] do
-        get :metadata, on: :collection
-      end
+      resources :documents, only: [:show, :index]
     end
   end
 

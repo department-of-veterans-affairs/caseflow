@@ -6,7 +6,7 @@ import Perf from 'react-addons-perf';
 
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import LoadingList from './LoadingList';
+import LoadingScreen from './LoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -119,48 +119,46 @@ export class DecisionReviewer extends React.Component {
   }
 
   routedPdfListView = (routerProps) => {
-    const vacolsId = routerProps.match.params.vacolsId;
+    const { vacolsId } = routerProps.match.params;
 
-    return <PdfListView
-      documents={this.documents()}
-      showPdf={this.showPdf(routerProps.history, vacolsId)}
-      sortBy={this.state.sortBy}
-      selectedLabels={this.state.selectedLabels}
-      isCommentLabelSelected={this.state.isCommentLabelSelected}
-      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
-      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
-      {...routerProps}
-    />;
+    return <LoadingScreen vacolsId={vacolsId}>
+      <PdfListView
+        documents={this.documents()}
+        showPdf={this.showPdf(routerProps.history, vacolsId)}
+        sortBy={this.state.sortBy}
+        selectedLabels={this.state.selectedLabels}
+        isCommentLabelSelected={this.state.isCommentLabelSelected}
+        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
+        {...routerProps}
+      />
+    </LoadingScreen>;
   }
 
   routedPdfViewer = (routerProps) => {
-    const vacolsId = routerProps.match.params.vacolsId;
+    const { vacolsId } = routerProps.match.params;
 
-    return <PdfViewer
-      addNewTag={this.props.addNewTag}
-      removeTag={this.props.removeTag}
-      documents={this.documents()}
-      allDocuments={_.values(this.props.storeDocuments)}
-      pdfWorker={this.props.pdfWorker}
-      onShowList={this.onShowList(routerProps.history, vacolsId)}
-      showPdf={this.showPdf(routerProps.history, vacolsId)}
-      onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
-      onCommentScrolledTo={this.onCommentScrolledTo}
-      documentPathBase={`/reader/appeal/${vacolsId}/documents`}
-      {...routerProps}
-    />;
-  }
-
-  loadingList = (routerProps) => {
-    const vacolsId = routerProps.match.params.vacolsId;
-
-
-    return <LoadingList vacolsId={vacolsId}/>;
+    return <LoadingScreen vacolsId={vacolsId}>
+      <PdfViewer
+        addNewTag={this.props.addNewTag}
+        removeTag={this.props.removeTag}
+        documents={this.documents()}
+        allDocuments={_.values(this.props.storeDocuments)}
+        pdfWorker={this.props.pdfWorker}
+        onShowList={this.onShowList(routerProps.history, vacolsId)}
+        showPdf={this.showPdf(routerProps.history, vacolsId)}
+        onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
+        onCommentScrolledTo={this.onCommentScrolledTo}
+        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        {...routerProps}
+      />
+    </LoadingScreen>;
   }
 
   render() {
     const Router = this.props.router || BrowserRouter;
-    const content = Object.keys(this.props.storeDocuments).length > 0 ?
+
+    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
         <div className="section--document-list">
           <Route exact path="/:vacolsId/documents"
             component={this.routedPdfListView}
@@ -168,11 +166,7 @@ export class DecisionReviewer extends React.Component {
           <Route path="/:vacolsId/documents/:docId"
             component={this.routedPdfViewer}
           />
-        </div> :
-        <Route path="/:vacolsId/" component={this.loadingList} />;
-
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-        { content }
+        </div>
       </Router>;
   }
 }

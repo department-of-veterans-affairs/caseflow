@@ -8,62 +8,64 @@ import * as Constants from './constants';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
-export class LoadingList extends React.Component {
-  documentUrl = (doc) => {
-    return `/document/${doc.id}/pdf`;
-  }
+const documentUrl = ({ id }) => `/document/${id}/pdf`;
 
-  annotationUrl = (doc) => {
-    return `/document/${doc.id}/annotations`;
-  }
+export class LoadingScreen extends React.Component {
 
   componentDidMount = () => {
-    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents/metadata`).then((response) => {
+    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
       const returnedObject = JSON.parse(response.text);
       const documents = returnedObject.appealDocuments;
-      const annotations = returnedObject.annotations;
+      const { annotations } = returnedObject;
 
       this.props.onReceiveDocs(documents);
       this.props.onReceiveAnnotations(annotations);
 
-      let downloadDocuments = (documentUrls, index) => {
+      const downloadDocuments = (documentUrls, index) => {
         if (index >= documentUrls.length) {
           return;
         }
 
-        ApiUtil.get(documentUrls[index], { cache: true }).
-          then(() => {
-            downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS);
-          });
+        ApiUtil.get(documentUrls[index], { cache: true }).then(
+          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
+        );
       };
 
       for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(documents.map((doc) => {
-          return this.documentUrl(doc);
-        }), i);
+        downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
       }
     });
   }
 
   render = () => {
+    if (_.size(this.props.documents)) {
+      return this.props.children;
+    }
+
     return <div className="usa-grid">
         <div className="cf-app">
           <div
             id="loading-symbol"
             className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
             {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
-            <p>Loading document list in Reader now...</p>
+            <p>Loading document list in Reader...</p>
           </div>
         </div>
       </div>;
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
+const mapStateToProps = (state) => {
+  return {
+    documents: state.documents
+  };
+};
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
     onReceiveDocs,
     onReceiveAnnotations
   }, dispatch)
-});
+);
 
-export default connect(null, mapDispatchToProps)(LoadingList);
+export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen);

@@ -87,8 +87,8 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
 
 class CommentIndicator extends React.PureComponent {
-  toggleComments = (id) => () => {
-    this.props.handleToggleCommentOpened(id);
+  toggleComments = () => {
+    this.props.handleToggleCommentOpened(this.props.doc.id);
   }
 
   render() {
@@ -106,7 +106,7 @@ class CommentIndicator extends React.PureComponent {
             ariaLabel={name}
             name={name}
             id={`expand-${this.props.doc.id}-comments-button`}
-            onClick={this.toggleComments(this.props.doc.id)}>{numberOfComments}
+            onClick={this.toggleComments}>{numberOfComments}
             <i className={`document-list-comments-indicator-icon ${icon}`}/>
           </Button>
         </span>
@@ -468,5 +468,3 @@ PdfListView.propTypes = {
     lastReadDocId: PropTypes.number
   })
 };
-
-/* eslint-enable max-lines */

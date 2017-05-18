@@ -1,20 +1,25 @@
 class Reader::DocumentsController < ApplicationController
   before_action :verify_access, :verify_reader_feature_enabled, :set_application
 
+  def index
+    respond_to do |format|
+      format.html { return render(:index) }
+      format.json do
+        MetricsService.record "Get appeal #{appeal_id} document data" do
+          render json: {
+            appealDocuments: documents,
+            annotations: annotations
+          }
+        end
+      end
+    end
+  end
+
   def show
     # If we have sufficient metadata to show a single document,
     # then we'll render the show. Otherwise we want to render index
     # which will grab the metadata for all documents
     return render(:index) unless metadata?
-  end
-
-  def metadata
-    MetricsService.record "Metadata call" do
-      render json: {
-        appealDocuments: documents,
-        annotations: annotations
-      }
-    end
   end
 
   private
