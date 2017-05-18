@@ -41,10 +41,4 @@ class VACOLS::CaseHearing < VACOLS::Record
              relative_vacols_date(7.years).to_formatted_s(:oracle_date))
       .where(NOT_MASTER_RECORD)
   end
-
-  # This codes around an existing bug in VACOLS where
-  # the HEARING_VENUE function will return "SO11" rather than "RO11"
-  def self.normalize_vacols_hearing_venue_key(hearing_venue)
-    hearing_venue.tr("SO", "RO") if hearing_venue
-  end
 end
