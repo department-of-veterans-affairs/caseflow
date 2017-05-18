@@ -44,9 +44,9 @@ const HeaderRow = (props) => {
   </thead>;
 };
 
-const getCellValue = (rowObject, rowNumber, column) => {
+const getCellValue = (rowObject, rowId, column) => {
   if (column.valueFunction) {
-    return column.valueFunction(rowObject, rowNumber);
+    return column.valueFunction(rowObject, rowId);
   }
   if (column.valueName) {
     return rowObject[column.valueName];
@@ -66,7 +66,7 @@ const getCellSpan = (rowObject, column) => {
 class Row extends React.PureComponent {
   render() {
     const props = this.props;
-    const rowId = props.footer ? 'footer' : props.rowNumber;
+    const rowId = props.footer ? 'footer' : props.rowId;
 
     return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
       {getColumns(props).map((column, columnNumber) =>
@@ -76,7 +76,7 @@ class Row extends React.PureComponent {
           colSpan={getCellSpan(props.rowObject, column)}>
           {props.footer ?
             column.footer :
-            getCellValue(props.rowObject, props.rowNumber, column)}
+            getCellValue(props.rowObject, props.rowId, column)}
         </td>
       )}
     </tr>;
@@ -88,12 +88,16 @@ class BodyRows extends React.PureComponent {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
-      {rowObjects.map((object, rowNumber) =>
-        <Row
+      {rowObjects.map((object, rowNumber) => {
+        const key = getKeyForRow(rowNumber, object);
+
+        return <Row
           rowObject={object}
           columns={columns}
           rowClassNames={rowClassNames}
-          key={getKeyForRow(rowNumber, object)} />
+          key={key}
+          rowId={key} />;
+      }
       )}
     </tbody>;
   }
