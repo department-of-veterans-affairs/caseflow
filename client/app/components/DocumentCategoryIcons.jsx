@@ -3,11 +3,8 @@ import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
-import { createSelector } from 'reselect';
 
 export class DocumentCategoryIcons extends React.PureComponent {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
-
   render() {
     const { categories } = this.props;
 
@@ -30,20 +27,13 @@ export class DocumentCategoryIcons extends React.PureComponent {
   }
 }
 
-const getDocument = (state, props) => state.documents[props.docId];
-
-const getCategories = createSelector(
-  [getDocument],
-  (document) => _(Constants.documentCategories).
+const mapStateToProps = (state, ownProps) => ({
+  categories: _(Constants.documentCategories).
     filter(
-      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+      (category, categoryName) => state.documents[ownProps.docId][categoryFieldNameOfCategoryName(categoryName)]
     ).
     sortBy('renderOrder').
     value()
-);
-
-const mapStateToProps = (state, ownProps) => ({
-  categories: getCategories(state, ownProps)
 });
 
 const ConnectedDocumentCategoryIcons = connect(mapStateToProps)(DocumentCategoryIcons);
