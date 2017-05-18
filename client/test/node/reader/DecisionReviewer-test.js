@@ -41,7 +41,7 @@ describe('DecisionReviewer', () => {
     setUpDocuments = () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
-      // the API call to the metadata endpoint.
+      // the API call to the index endpoint.
       store.dispatch(onReceiveDocs(documents));
       store.dispatch(onReceiveAnnotations(annotations));
     };
@@ -73,7 +73,7 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF View', () => {
-    beforeEach(setUpDocuments);
+    beforeEach(() => setUpDocuments());
 
     context('renders', () => {
       it('the PDF list view', () => {
@@ -246,7 +246,7 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF list view', () => {
-    beforeEach(setUpDocuments);
+    beforeEach(() => setUpDocuments());
 
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {

@@ -5,6 +5,7 @@ import { onReceiveDocs, onReceiveAnnotations } from './actions';
 import { connect } from 'react-redux';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import * as Constants from './constants';
+import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
 
