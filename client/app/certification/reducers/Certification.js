@@ -8,15 +8,9 @@ export const updateProgressBar = (state, action) => {
   });
 };
 
-export const onContinueClickFailed = (state, action) => {
+export const showValidationErrors = (state, action) => {
   return Object.assign({}, state, {
-    continueClicked: action.payload.continueClicked
-  });
-};
-
-export const onContinueClickSuccess = (state, action) => {
-  return Object.assign({}, state, {
-    continueClicked: action.payload.continueClicked
+    erroredFields: action.payload.erroredFields
   });
 };
 
@@ -42,5 +36,13 @@ export const certificationUpdateSuccess = (state) => {
   return Object.assign({}, state, {
     updateSucceeded: true,
     loading: false
+  });
+};
+
+export const toggleCancellationModal = (state) => {
+  let showModal = Boolean(state.showCancellationModal);
+
+  return Object.assign({}, state, {
+    showCancellationModal: !showModal
   });
 };

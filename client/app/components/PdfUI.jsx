@@ -4,7 +4,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { selectCurrentPdf } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import classNames from 'classnames';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
@@ -37,28 +37,29 @@ export class PdfUI extends React.Component {
       numPages: 1
     };
   }
-
+  componentDidUpdate(prevProps) {
+    // when a document changes, remove annotation state
+    if (prevProps.doc.id !== this.props.doc.id && this.props.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    }
+  }
   zoom = (delta) => () => {
-    // TODO: Fix scrolling when zooming
-    // let zoomFactor = (this.state.scale + delta) / this.state.scale;
-
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
-    // this.draw(this.props.file,
-    //   document.getElementById('scrollWindow').scrollTop * zoomFactor);
   }
 
   fitToScreen = () => {
     this.setState({
-      scale: 1
+      scale: this.state.fitToScreenZoom
     });
   }
 
-  onPageChange = (currentPage, numPages) => {
+  onPageChange = (currentPage, numPages, fitToScreenZoom) => {
     this.setState({
       currentPage,
-      numPages
+      numPages,
+      fitToScreenZoom
     });
   }
 
@@ -154,7 +155,6 @@ export class PdfUI extends React.Component {
       </div>
       <div>
         <Pdf
-          comments={this.props.comments}
           documentId={this.props.doc.id}
           file={this.props.file}
           pdfWorker={this.props.pdfWorker}
@@ -162,9 +162,7 @@ export class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
-          onCommentClick={this.props.onCommentClick}
           onCommentScrolledTo={this.props.onCommentScrolledTo}
-          onIconMoved={this.props.onIconMoved}
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
@@ -178,6 +176,9 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => state.ui.pdf;
 const mapDispatchToProps = (dispatch) => ({
+  stopPlacingAnnotation: () => {
+    dispatch(stopPlacingAnnotation());
+  },
   selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   handleTogglePdfSidebar() {
     dispatch({
@@ -191,10 +192,6 @@ export default connect(
 )(PdfUI);
 
 PdfUI.propTypes = {
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    content: PropTypes.string,
-    uuid: PropTypes.number
-  })),
   doc: PropTypes.shape({
     filename: PropTypes.string,
     id: React.PropTypes.oneOfType([
@@ -208,9 +205,7 @@ PdfUI.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  onCommentClick: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
-  onIconMoved: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,

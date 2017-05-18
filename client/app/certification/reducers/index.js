@@ -82,18 +82,20 @@ export const certificationReducers = function(state = initialState, action = {})
       // reset some parts of state so we don't skip pages or end up in loops
       updateFailed: null,
       updateSucceeded: null,
-      loading: false
+      loading: false,
+      showCancellationModal: false
     });
-  case Constants.ON_CONTINUE_CLICK_FAILED:
-    return CertificationReducers.onContinueClickFailed(state, action);
-  case Constants.ON_CONTINUE_CLICK_SUCCESS:
-    return CertificationReducers.onContinueClickSuccess(state, action);
+  case Constants.SHOW_VALIDATION_ERRORS:
+    return CertificationReducers.showValidationErrors(state, action);
   case Constants.CERTIFICATION_UPDATE_REQUEST:
     return CertificationReducers.startUpdateCertification(state);
   case Constants.CERTIFICATION_UPDATE_FAILURE:
     return CertificationReducers.certificationUpdateFailure(state);
   case Constants.CERTIFICATION_UPDATE_SUCCESS:
     return CertificationReducers.certificationUpdateSuccess(state);
+  case Constants.TOGGLE_CANCELLATION_MODAL:
+    return CertificationReducers.
+      toggleCancellationModal(state, action);
 
   default:
     return state;
@@ -112,33 +114,35 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
   }
 };
 
-export const mapDataToInitialState = function(state) {
-  return {
-    // TODO alex: fix bug where other representative type won't
-    // come down from the server, dagnabbit.
-    representativeType: state.representative_type,
-    representativeName: state.representative_name,
-    form9Match: state.appeal['form9_match?'],
-    form9Date: state.appeal.serialized_form9_date,
-    nodMatch: state.appeal['nod_match?'],
-    nodDate: state.appeal.serialized_nod_date,
-    socMatch: state.appeal['soc_match?'],
-    socDate: state.appeal.serialized_soc_date,
-    ssocDatesWithMatches: state.appeal.ssoc_dates_with_matches,
-    documentsMatch: state.appeal['documents_match?'],
-    certificationId: state.id,
-    vbmsId: state.appeal.vbms_id,
-    veteranName: state.appeal.veteran_name,
-    certificationStatus: state.certification_status,
-    vacolsId: state.vacols_id,
-    hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
-    hearingPreference: state.hearing_preference,
-    form9Type: state.form9_type,
-    // Pull these values from form8??
-    certifyingOffice: state.certifying_office,
-    certifyingUsername: state.certifying_username,
-    certificationDate: state.certification_date,
-    certifyingOfficialName: state.certifying_official_name,
-    certifyingOfficialTitle: state.certifying_official_title
-  };
-};
+const parseDocumentFromApi = (doc = {}, index) => ({
+  name: index ? `${doc.type} ${index}` : doc.type,
+  vacolsDate: doc.serialized_vacols_date,
+  vbmsDate: doc.serialized_receipt_date,
+  isMatching: doc['matching?']
+});
+
+export const mapDataToInitialState = (state) => ({
+  // TODO alex: fix bug where other representative type won't
+  // come down from the server, dagnabbit.
+  representativeType: state.representative_type,
+  representativeName: state.representative_name,
+  nod: parseDocumentFromApi(state.appeal.nod),
+  soc: parseDocumentFromApi(state.appeal.soc),
+  form9: parseDocumentFromApi(state.appeal.form9),
+  ssocs: (state.appeal.ssocs || []).map((ssoc, i) => parseDocumentFromApi(ssoc, i + 1)),
+  documentsMatch: state.appeal['documents_match?'],
+  certificationId: state.id,
+  vbmsId: state.appeal.vbms_id,
+  veteranName: state.appeal.veteran_name,
+  certificationStatus: state.certification_status,
+  vacolsId: state.vacols_id,
+  hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
+  hearingPreference: state.hearing_preference,
+  form9Type: state.form9_type,
+  // Pull these values from form8??
+  certifyingOffice: state.certifying_office,
+  certifyingUsername: state.certifying_username,
+  certificationDate: state.certification_date,
+  certifyingOfficialName: state.certifying_official_name,
+  certifyingOfficialTitle: state.certifying_official_title
+});

@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170502222054) do
+ActiveRecord::Schema.define(version: 20170511211242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
     t.integer "document_id", null: false
-    t.string  "comment"
+    t.string  "comment",     null: false
     t.integer "page"
     t.integer "x"
     t.integer "y"
@@ -136,8 +136,7 @@ ActiveRecord::Schema.define(version: 20170502222054) do
     t.integer "tag_id",      null: false
   end
 
-  add_index "documents_tags", ["document_id"], name: "index_documents_tags_on_document_id", using: :btree
-  add_index "documents_tags", ["tag_id"], name: "index_documents_tags_on_tag_id", using: :btree
+  add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true, using: :btree
 
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
@@ -206,6 +205,9 @@ ActiveRecord::Schema.define(version: 20170502222054) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "certifying_official_title_specify_other"
+    t.string   "hearing_preference"
+    t.date     "nod_date"
+    t.date     "form9_date"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
@@ -244,10 +246,11 @@ ActiveRecord::Schema.define(version: 20170502222054) do
   add_index "team_quotas", ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true, using: :btree
 
   create_table "user_quotas", force: :cascade do |t|
-    t.integer  "team_quota_id", null: false
-    t.integer  "user_id",       null: false
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "team_quota_id",     null: false
+    t.integer  "user_id",           null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.integer  "locked_task_count"
   end
 
   add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
@@ -257,6 +260,8 @@ ActiveRecord::Schema.define(version: 20170502222054) do
     t.string "css_id",     null: false
     t.string "full_name"
     t.string "email"
+    t.string "roles",                   array: true
+    t.string "vacols_id"
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree

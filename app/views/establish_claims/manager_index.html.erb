@@ -1,7 +1,1 @@
-<%= react_component("BaseContainer", props: {
-  page: "TasksManagerIndex",
-  toCompleteCount: to_complete_count,
-  completedCountToday: @completed_count_today,
-  employeeCount: team_quota.user_count,
-  userQuotas: team_quota.assigned_quotas.map(&:to_hash),
-}) %>
+<%= react_component("ManageEstablishClaim", props: { userQuotas: team_quota.user_quotas.map(&:to_hash) }) %>

@@ -4,40 +4,42 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 
-export const DocumentCategoryIcons = ({ documents, docId }) => {
-  const doc = _.get(documents, docId);
+export class DocumentCategoryIcons extends React.PureComponent {
+  render() {
+    const { categories } = this.props;
 
-  if (!doc) {
-    return null;
-  }
+    if (!_.size(categories)) {
+      return null;
+    }
 
-  return <ul className="cf-document-category-icons" aria-label="document categories">
-    {
-      _(Constants.documentCategories).
-        filter(
-          (category, categoryName) => doc[categoryFieldNameOfCategoryName(categoryName)]
-        ).
-        sortBy('renderOrder').
-        map((category) => {
-          const Svg = category.svg;
-
-          return <li
+    return <ul className="cf-document-category-icons" aria-label="document categories">
+      {
+        _.map(categories, (category) =>
+          <li
             className="cf-no-styling-list"
             key={category.renderOrder}
             aria-label={category.humanName}>
-            <Svg />
-          </li>;
-        }).
-        value()
-    }
-  </ul>;
-};
+            {category.svg}
+          </li>
+        )
+      }
+    </ul>;
+  }
+}
 
-DocumentCategoryIcons.propTypes = {
-  documents: PropTypes.object,
+const mapStateToProps = (state, ownProps) => ({
+  categories: _(Constants.documentCategories).
+    filter(
+      (category, categoryName) => state.documents[ownProps.docId][categoryFieldNameOfCategoryName(categoryName)]
+    ).
+    sortBy('renderOrder').
+    value()
+});
+
+const ConnectedDocumentCategoryIcons = connect(mapStateToProps)(DocumentCategoryIcons);
+
+ConnectedDocumentCategoryIcons.propTypes = {
   docId: PropTypes.number.isRequired
 };
 
-const mapPropsToState = (state) => _.pick(state, 'documents');
-
-export default connect(mapPropsToState)(DocumentCategoryIcons);
+export default ConnectedDocumentCategoryIcons;

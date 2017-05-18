@@ -143,7 +143,10 @@ class EstablishClaim < Task
   end
 
   def should_invalidate?
-    !appeal.vacols_record_exists? || !appeal.decision_date || appeal.status == "Active"
+    !appeal.vacols_record_exists? ||
+      !appeal.decision_date ||
+      !appeal.decision_type ||
+      appeal.status == "Active"
   end
 
   private

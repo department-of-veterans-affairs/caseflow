@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Footer from './Footer';
 import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
+import * as certificationActions from './actions/Certification';
 
 
 // TODO: refactor to use shared components where helpful
@@ -20,18 +21,15 @@ class UnconnectedDocumentsCheck extends React.Component {
   }
 
   render() {
-
-    let { certificationStatus,
-      form9Match,
-      form9Date,
-      nodMatch,
-      nodDate,
-      socMatch,
-      socDate,
-      ssocDatesWithMatches,
+    let {
+      certificationStatus,
+      nod,
+      soc,
+      form9,
+      ssocs,
       documentsMatch,
       match,
-      certificationId
+      toggleCancellationModal
     } = this.props;
 
     let reloadPage = () => {
@@ -41,10 +39,10 @@ class UnconnectedDocumentsCheck extends React.Component {
     if (certificationStatus === 'data_missing') {
       return <NotReady/>;
     }
+
     if (certificationStatus === 'already_certified') {
       return <AlreadyCertified/>;
     }
-
 
     const missingInformation =
       <div>
@@ -56,7 +54,8 @@ class UnconnectedDocumentsCheck extends React.Component {
         <ul>The <strong>document date</strong> — the date in VBMS must match
         the date in VACOLS</ul>
         <p>Once you've made corrections, <a href="">refresh this page.</a></p>
-        <p>If you can't find the document, <a href="">cancel this certification.</a></p>
+        <p>If you can't find the document, <a href="#"
+          onClick={toggleCancellationModal}>cancel this certification.</a></p>
       </div>;
 
     /*
@@ -65,20 +64,15 @@ class UnconnectedDocumentsCheck extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
+
         { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
-        <DocumentsCheckTable form9Match={form9Match}
-          form9Date={form9Date}
-          nodMatch={nodMatch}
-          nodDate={nodDate}
-          socMatch={socMatch}
-          socDate={socDate}
-          ssocDatesWithMatches={ssocDatesWithMatches}
-          documentsMatch={documentsMatch}/>
+
+        <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs}/>
+
         { !documentsMatch && missingInformation }
       </div>
 
       <Footer
-        certificationId={certificationId}
         buttonText={ documentsMatch ? 'Continue' : 'Refresh page' }
         nextPageUrl={ documentsMatch ?
           `/certifications/${match.params.vacols_id}/confirm_case_details` :
@@ -91,15 +85,11 @@ class UnconnectedDocumentsCheck extends React.Component {
 
 const mapStateToProps = (state) => ({
   certificationStatus: state.certificationStatus,
-  form9Match: state.form9Match,
-  form9Date: state.form9Date,
-  nodMatch: state.nodMatch,
-  nodDate: state.nodDate,
-  socMatch: state.socMatch,
-  socDate: state.socDate,
-  ssocDatesWithMatches: state.ssocDatesWithMatches,
-  documentsMatch: state.documentsMatch,
-  certificationId: state.certificationId
+  form9: state.form9,
+  nod: state.nod,
+  soc: state.soc,
+  ssocs: state.ssocs,
+  documentsMatch: state.documentsMatch
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -110,6 +100,10 @@ const mapDispatchToProps = (dispatch) => ({
         currentSection: Constants.progressBarSections.CHECK_DOCUMENTS
       }
     });
+  },
+
+  toggleCancellationModal: () => {
+    dispatch(certificationActions.toggleCancellationModal());
   }
 });
 
@@ -125,14 +119,12 @@ const DocumentsCheck = connect(
 
 DocumentsCheck.propTypes = {
   certificationStatus: PropTypes.string,
-  form9Date: PropTypes.string,
-  nodMatch: PropTypes.bool,
-  nodDate: PropTypes.string,
-  socMatch: PropTypes.bool,
-  socDate: PropTypes.string,
+  nod: PropTypes.object,
+  soc: PropTypes.object,
+  form9: PropTypes.object,
+  ssocs: PropTypes.arrayOf(PropTypes.object),
   documentsMatch: PropTypes.bool,
-  match: PropTypes.object.isRequired,
-  certificationId: PropTypes.number
+  match: PropTypes.object
 };
 
 export default DocumentsCheck;

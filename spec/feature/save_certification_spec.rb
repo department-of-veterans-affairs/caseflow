@@ -391,7 +391,7 @@ RSpec.feature "Save Certification" do
         fill_in "Date:", with: "02/01/2016"
 
         click_button("Continue")
-        expect(page).to have_content "Congratulations"
+        expect(page).to have_content "Success"
         form8 = Form8.find_by(vacols_id: appeal.vacols_id)
         expect(form8.certifying_office).to eq "Office in DC"
         expect(form8.certifying_username).to eq "User4567"
@@ -407,6 +407,49 @@ RSpec.feature "Save Certification" do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
         expect(find_field("Date").value).to eq "02/01/2016"
+      end
+    end
+
+    context "Confirm validation works" do
+      scenario "on the confirm case details page" do
+        visit "certifications/#{appeal.vacols_id}/confirm_case_details"
+        click_button("Continue")
+        expect(page).to have_content "Please enter the representative type."
+        expect(page).to have_content "Please enter the representative name."
+        within_fieldset("Representative type") do
+          find("label", text: "Other").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please enter the other representative type."
+      end
+      scenario "on the confirm hearing page" do
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        click_button("Continue")
+        expect(page).to have_content "Please select yes or no."
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "Yes").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select a hearing preference."
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "No").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select Form 9 or a statement."
+        within_fieldset("Caseflow found the document below, labeled as a Form 9") do
+          find("label", text: "Statement in lieu of Form 9").click
+        end
+        click_button("Continue")
+        expect(page).to have_content "Please select a hearing preference."
+      end
+      scenario "on the save and certify page" do
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        click_button("Continue")
+        expect(page).to have_content "Please enter the certifying office."
+        expect(page).to have_content "Please enter the organizational element."
+        expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
+        expect(page).to have_content "Please enter the title of the certifying official."
+        expect(page).to have_content "Please enter today's date."
       end
     end
   end

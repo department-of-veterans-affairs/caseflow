@@ -3,28 +3,16 @@ import { expect } from 'chai';
 import * as Actions from '../../../../app/certification/actions/Certification';
 import * as Constants from '../../../../app/certification/constants/constants';
 
-describe('.onContinueClickFailed', () => {
-  it('should create an action to set continueClicked to true', () => {
+describe('.showValidationErrors', () => {
+  it('should create an action to set the errors', () => {
+    const erroredFields = ['otherRepresentativeType'];
     const expectedAction = {
-      type: Constants.ON_CONTINUE_CLICK_FAILED,
+      type: Constants.SHOW_VALIDATION_ERRORS,
       payload: {
-        continueClicked: true
+        erroredFields
       }
     };
 
-    expect(Actions.onContinueClickFailed()).to.eql(expectedAction);
-  });
-});
-
-describe('.onContinueClickSuccess', () => {
-  it('should create an action to set continueClicked to false', () => {
-    const expectedAction = {
-      type: Constants.ON_CONTINUE_CLICK_SUCCESS,
-      payload: {
-        continueClicked: false
-      }
-    };
-
-    expect(Actions.onContinueClickSuccess()).to.eql(expectedAction);
+    expect(Actions.showValidationErrors(erroredFields)).to.eql(expectedAction);
   });
 });

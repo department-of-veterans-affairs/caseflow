@@ -27,7 +27,7 @@ RSpec.feature "Start Certification" do
       appellant_last_name: "Crockett",
       appellant_relationship: "Daughter",
       nod_date: nod.received_at,
-      soc_date: soc.received_at,
+      soc_date: soc.received_at + 4.days,
       form9_date: form9.received_at
     }
   end
@@ -92,7 +92,8 @@ RSpec.feature "Start Certification" do
     scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
-      expect(page).to have_content("All documents detected!")
+      expect(page).to have_content("Matching documents found in VBMS for all VACOLS documents")
+      expect(page).to have_content("SOC 09/10/1987 09/06/1987")
 
       click_button("Continue")
       expect(page).to have_content("Review data from BGS about the appellant's representative")
@@ -138,6 +139,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("Cannot find documents in VBMS")
       expect(page).to_not have_selector(:link_or_button, "Continue")
       expect(page).to have_selector(:link_or_button, "Refresh page")
+      expect(page).to have_selector(:link_or_button, "cancel this certification")
       click_button("Refresh page")
       expect(page).to have_content("Cannot find documents in VBMS")
     end

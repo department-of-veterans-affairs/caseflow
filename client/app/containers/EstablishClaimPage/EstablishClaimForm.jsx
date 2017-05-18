@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import DropDown from '../../components/DropDown';
 import Checkbox from '../../components/Checkbox';
 import DateSelector from '../../components/DateSelector';
 
@@ -36,15 +35,15 @@ export class EstablishClaimForm extends React.Component {
       handleToggleCancelTaskModal,
       handleFieldChange,
       handleBackToDecisionReview,
-      backToDecisionReviewText,
-      validModifiers
+      backToDecisionReviewText
     } = this.props;
 
 
     return <div>
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Route Claim: Create End Product</h1>
+          <h1>Route Claim</h1>
+           <h2>Create End Product</h2>
           <TextField
            label="Benefit Type"
            name="BenefitType"
@@ -63,12 +62,10 @@ export class EstablishClaimForm extends React.Component {
            readOnly={true}
            value={claimLabelValue}
           />
-          <DropDown
+          <TextField
            label="Modifier"
            name="endProductModifier"
-           options={validModifiers}
-           onChange={handleFieldChange('endProductModifier')}
-           readOnly={validModifiers.length === 1}
+           readOnly={true}
            value={establishClaimForm.endProductModifier}
           />
           <DateSelector
@@ -134,8 +131,7 @@ EstablishClaimForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   stationKey: PropTypes.string.isRequired,
   regionalOfficeKey: PropTypes.string.isRequired,
-  regionalOfficeCities: PropTypes.object.isRequired,
-  validModifiers: PropTypes.arrayOf(PropTypes.string).isRequired
+  regionalOfficeCities: PropTypes.object.isRequired
 };
 
 /*
