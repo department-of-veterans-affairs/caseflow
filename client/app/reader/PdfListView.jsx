@@ -361,7 +361,9 @@ export class PdfListView extends React.Component {
     ];
   }
 
-  getKeyForRow = (index, document) => document.id
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
+  }
 
   render() {
     let commentSelectorClassNames = ['cf-pdf-button'];
