@@ -59,7 +59,7 @@ export class EstablishClaimEmail extends BaseForm {
       { this.props.regionalOfficeEmail &&
         <div>
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Route Claim</h1> 
+          <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
           <div>
             <div className="usa-alert usa-alert-info">

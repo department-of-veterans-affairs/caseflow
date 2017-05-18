@@ -74,14 +74,14 @@ export class EstablishClaimNote extends BaseForm {
 
   headerVacols() {
     if (this.props.displayVacolsNote) {
-     return 'Confirm VACOLS Update';
+      return 'Confirm VACOLS Update';
     }
-    
+
   }
-  
+
   headerVbms() {
-     if (this.props.displayVbmsNote) {
-    return  'Add VBMS Note';
+    if (this.props.displayVbmsNote) {
+      return 'Add VBMS Note';
     }
 
   }
@@ -191,7 +191,7 @@ export class EstablishClaimNote extends BaseForm {
               {this.vacolsSection()}
             </li>}
           </ol>
-          {(this.props.displayVacolsNote && this.props.displayVbmsNote)&&<div className="cf-bottom-border"></div>}
+          {(this.props.displayVacolsNote && this.props.displayVbmsNote) && <div className="cf-bottom-border"></div>}
           <h2>{this.headerVbms()}</h2>
           <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
             {this.props.displayVbmsNote &&
