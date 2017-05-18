@@ -21,6 +21,9 @@ export class DecisionReviewer extends React.Component {
     };
 
     this.isMeasuringPerf = false;
+
+    this.routedPdfListView.displayName = 'RoutedPdfListView';
+    this.routedPdfViewer.displayName = 'RoutedPdfViewer';
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {

@@ -11,7 +11,7 @@ const PARALLEL_DOCUMENT_REQUESTS = 3;
 
 const documentUrl = ({ id }) => `/document/${id}/pdf`;
 
-export class LoadingScreen extends React.PureComponent {
+export class LoadingScreen extends React.Component {
 
   componentDidMount = () => {
     ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
@@ -38,8 +38,14 @@ export class LoadingScreen extends React.PureComponent {
     });
   }
 
+  shouldComponentUpdate(nextProps) {
+    return _.isEqual(_.omit(nextProps, 'children'), _.omit(this.props, 'children'));
+  }
+
   render() {
-    if (_.size(this.props.documents)) {
+    console.log('rendering spinner', this.props.documentsLoaded, this.props);
+    if (this.props.documentsLoaded) {
+      console.log('inside here');
       return this.props.children;
     }
 
@@ -56,7 +62,9 @@ export class LoadingScreen extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state, 'documents');
+const mapStateToProps = (state) => ({
+  documentsLoaded: _.size(state.documents)
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
