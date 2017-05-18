@@ -79,8 +79,6 @@ class UnconnectedSignAndCertify extends React.Component {
       return;
     }
 
-    this.props.showValidationErrors(null);
-
     this.props.certificationUpdateStart({
       certifyingOffice: this.props.certifyingOffice,
       certifyingUsername: this.props.certifyingUsername,
@@ -96,8 +94,11 @@ class UnconnectedSignAndCertify extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
@@ -177,8 +178,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError = true) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   onSignAndCertifyFormChange: (fieldName, value) => {
@@ -197,6 +198,7 @@ const mapStateToProps = (state) => ({
   certifyingOfficialTitle: state.certifyingOfficialTitle,
   certificationDate: state.certificationDate,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
@@ -215,6 +217,7 @@ SignAndCertify.propTypes = {
   certifyingOfficialTitle: PropTypes.string,
   certificationDate: PropTypes.string,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired
 };
 

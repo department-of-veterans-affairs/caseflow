@@ -173,8 +173,6 @@ class UnconnectedConfirmHearing extends React.Component {
       return;
     }
 
-    this.props.showValidationErrors(null);
-
     this.props.certificationUpdateStart({
       hearingDocumentIsInVbms: this.props.hearingDocumentIsInVbms,
       form9Type: this.props.form9Type,
@@ -188,8 +186,11 @@ class UnconnectedConfirmHearing extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
@@ -362,8 +363,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError = true) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   onTypeOfForm9Change: (form9Type) => dispatch(actions.onTypeOfForm9Change(form9Type)),
@@ -388,6 +389,7 @@ const mapStateToProps = (state) => ({
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
   updateFailed: state.updateFailed
 });
@@ -406,6 +408,7 @@ ConfirmHearing.propTypes = {
   hearingDocumentIsInVbms: PropTypes.string,
   onHearingDocumentChange: PropTypes.func,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   form9Type: PropTypes.string,
   form9Date: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,
