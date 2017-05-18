@@ -55,7 +55,7 @@ describe('.handleServerError', () => {
     let initialState = getBlankInitialState();
 
     expect(Certification.handleServerError(initialState).
-      updateFailed).to.eq(true);
+      serverError).to.eq(true);
   });
 });
 
