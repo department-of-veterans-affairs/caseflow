@@ -183,22 +183,19 @@ export class Pdf extends React.Component {
       locationOnPage: 0
     };
 
-    this.renderInViewPages(true);
-  }
-
-  renderInViewPages = (isScrolling = false) => {
-    let page = document.getElementsByClassName('page');
-
-    Array.prototype.forEach.call(page, (ele, index) => {
-      let boundingRect = ele.getBoundingClientRect();
-
+    this.actionOnPages((boundingRect, index) => {
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (isScrolling && (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
-          boundingRect.bottom > this.scrollWindow.clientHeight / 2)) {
+      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+          boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
         this.onPageChange(index + 1);
       }
+    });
+    this.renderInViewPages();
+  }
 
+  renderInViewPages = () => {
+    this.actionOnPages((boundingRect, index) => {
       // This renders each page as it comes into view. i.e. when
       // the top of the next page is within a thousand pixels of
       // the current view we render it. If the bottom of the page
@@ -209,6 +206,16 @@ export class Pdf extends React.Component {
           boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
         this.renderPage(index, this.props.file);
       }
+    });
+  }
+
+  actionOnPages = (func) => {
+    let page = document.getElementsByClassName('page');
+
+    Array.prototype.forEach.call(page, (ele, index) => {
+      const boundingRect = ele.getBoundingClientRect();
+
+      func(boundingRect, index);
     });
   }
 

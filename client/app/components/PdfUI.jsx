@@ -49,10 +49,10 @@ export class PdfUI extends React.Component {
     });
   }
 
-  getPdfFooter = (props, state) => {
-    if (props.pdfsReadyToShow[props.doc.id] && state.numPages) {
+  getPdfFooter = () => {
+    if (this.props.pdfsReadyToShow && this.props.pdfsReadyToShow[this.props.doc.id] && this.state.numPages) {
       return <div className="cf-pdf-buttons-center">
-        Page {state.currentPage} of {state.numPages}
+        Page {this.state.currentPage} of {this.state.numPages}
       </div>;
     }
 
