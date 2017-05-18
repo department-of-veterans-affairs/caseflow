@@ -4,7 +4,7 @@ import Table from '../components/Table';
 import moment from 'moment';
 import _ from 'lodash';
 
-export default class UnconnectedDockets extends React.Component {
+export class Dockets extends React.Component {
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -77,10 +77,10 @@ const mapDispatchToProps = () => ({
   // TODO: pass dispatch into method and use it
 });
 
-const Dockets = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedDockets);
+)(Dockets);
 
 Dockets.propTypes = {
   dockets: PropTypes.arrayOf(PropTypes.object)

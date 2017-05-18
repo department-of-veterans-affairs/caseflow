@@ -46,7 +46,7 @@ const Hearings = ({ hearings }) => {
       <BrowserRouter>
         <div>
         <Route path="/hearings/dockets"
-          component={() => (<Dockets dockets={hearings.dockets} />)} />
+          component={Dockets} />
       </div>
       </BrowserRouter>
     </div>

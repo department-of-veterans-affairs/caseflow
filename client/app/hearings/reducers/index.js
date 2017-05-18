@@ -6,20 +6,13 @@
 * that would live at client/app/actions/**.js.
 */
 
-// TODO: is this meant to be something like a schema?
-// it's too similar to the object in "mapDataToInitialState".
-const initialState = {};
-
-export const hearingsReducers = function(state = initialState, action = {}) {
-  // for now there are specific actions so to keep lint happy...
-  action.nothing = null;
-
+export const mapDataToInitialState = function(state = {}) {
   return state;
 };
-export default hearingsReducers;
 
-export const mapDataToInitialState = function(state) {
-  return {
-    dockets: state.dockets
-  };
+export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+  switch (action.type) {
+  default: return state;
+  }
 };
+export default hearingsReducers;
