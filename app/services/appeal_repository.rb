@@ -112,8 +112,8 @@ class AppealRepository
     end
   end
 
-  def self.hearings(vacols_user_id)
-    VACOLS::CaseHearing.for_judge(vacols_user_id).map do |hearing|
+  def self.upcoming_hearings_for_judge(vacols_user_id)
+    VACOLS::CaseHearing.upcoming_for_judge(vacols_user_id).map do |hearing|
       Hearing.load_from_vacols(hearing, vacols_user_id)
     end
   end

@@ -11,7 +11,19 @@ class VACOLS::CaseHearing < VACOLS::Record
     C: :central_office
   }.freeze
 
-  def self.for_judge(vacols_user_id)
+  NOT_MASTER_RECORD = %(
+    vdkey is NOT NULL
+  ).freeze
+
+  WITHOUT_DISPOSITION_OR_AFTER_DATE = %{
+    hearing_date >= to_date(?, 'YYYY-MM-DD HH24:MI')
+    -- Hearing is after a provided date (a recent hearing)
+
+    OR hearing_disp IS NULL
+    -- an older hearing still awaiting a disposition
+  }.freeze
+
+  def self.upcoming_for_judge(vacols_user_id)
     id = connection.quote(vacols_user_id)
 
     select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
@@ -21,8 +33,18 @@ class VACOLS::CaseHearing < VACOLS::Record
            :hearing_type,
            :notes1,
            :folder_nr,
+           :vdkey,
            :sattyid)
-    .joins(:staff)
-    .where("stafkey = #{id}")
+      .joins(:staff)
+      .where("staff.stafkey = #{id}")
+      .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
+             relative_vacols_date(7.years).to_formatted_s(:oracle_date))
+      .where(NOT_MASTER_RECORD)
+  end
+
+  # This codes around an existing bug in VACOLS where
+  # the HEARING_VENUE function will return "SO11" rather than "RO11"
+  def self.normalize_vacols_hearing_venue_key(hearing_venue)
+    hearing_venue.tr("SO", "RO") if hearing_venue
   end
 end

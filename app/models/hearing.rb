@@ -2,7 +2,7 @@ class Hearing < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :user
 
-  attr_accessor :date, :type, :hearing_venue_key, :vacols_record
+  attr_accessor :date, :type, :venue_key, :vacols_record
 
   def attributes
     {
@@ -10,12 +10,6 @@ class Hearing < ActiveRecord::Base
       type: type,
       venue: venue
     }
-  end
-
-  # If venue exists via the vdkey, we use that, otherwise
-  # fall back to the appeal's regional_office_key
-  def venue_key
-    hearing_venue_key || appeal.regional_office_key
   end
 
   def venue
@@ -26,18 +20,12 @@ class Hearing < ActiveRecord::Base
     find_or_create_by(vacols_id: vacols_hearing.hearing_pkseq).tap do |hearing|
       hearing.attributes = {
         vacols_record: vacols_hearing,
-        hearing_venue_key: normalize_vacols_hearing_venue_key(vacols_hearing.hearing_venue),
+        venue_key: VACOLS::CaseHearing.normalize_vacols_hearing_venue_key(vacols_hearing.hearing_venue),
         date: AppealRepository.normalize_vacols_date(vacols_hearing.hearing_date),
         appeal: Appeal.find_or_create_by(vacols_id: vacols_hearing.folder_nr),
         user: User.find_by_vacols_id(vacols_user_id),
         type: VACOLS::CaseHearing::HEARING_TYPES[vacols_hearing.hearing_type.to_sym]
       }
     end
-  end
-
-  private
-
-  def self.normalize_vacols_hearing_venue_key(hearing_venue)
-    hearing_venue.tr("SO", "RO") if hearing_venue
   end
 end

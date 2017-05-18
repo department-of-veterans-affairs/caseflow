@@ -6,13 +6,14 @@ class Generators::Hearing
       {
         type: :video,
         date: Time.zone.now - 5.days,
-        regional_office_key: "RO13"
+        venue_key: "RO13",
+        vacols_id: generate_external_id
       }
     end
 
     def build(attrs = {})
-      attrs[:vacols_case_id] ||= attrs[:appeal].try(:vacols_id) || Generators::Appeal.create.vacols_id
-      attrs[:vacols_user_id] ||= attrs[:user].try(:vacols_id) || Generators::User.create.vacols_id
+      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::Appeal.create.id
+      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
       Fakes::AppealRepository.hearing_records ||= []

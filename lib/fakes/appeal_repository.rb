@@ -187,8 +187,9 @@ class Fakes::AppealRepository
     (issue_records || {})[vacols_id] || []
   end
 
-  def self.hearings(vacols_user_id)
-    (hearing_records || []).select { |h| h.vacols_user_id == vacols_user_id }
+  def self.upcoming_hearings_for_judge(vacols_user_id)
+    user = User.find_by_vacols_id(vacols_user_id)
+    (hearing_records || []).select { |h| h.user_id == user.id }
   end
 
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
@@ -224,12 +225,13 @@ class Fakes::AppealRepository
   end
 
   def self.seed_hearings_prep_data!
+    user = User.find_by_vacols_id("LROTH")
     50.times.each do |i|
       type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
       Generators::Hearing.build(
         type: type,
         date: Time.zone.now - (i % 9).days - rand(3).days,
-        vacols_user_id: "LROTH"
+        user: user
       )
     end
   end
