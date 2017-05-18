@@ -39,7 +39,7 @@ export default function StyleGuideLayout (){
     <StyleGuideUserDropdownMenu />
     <br/>
     <StyleGuideAction />
-     <br/>
+    <br/>
     <StyleGuideFooter />
 
   </div>;
