@@ -3,7 +3,7 @@ class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :date, :type, :venue, :hearings
+  attr_accessor :date, :type, :venue, :hearings, :user
 
   def to_hash
     serializable_hash(
@@ -29,7 +29,8 @@ class HearingDocket
           date: hearings.first.date,
           type: hearings.first.type,
           venue: hearings.first.venue,
-          hearings: hearings
+          hearings: hearings,
+          user: user
         )
       end
     end
