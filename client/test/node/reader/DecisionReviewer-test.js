@@ -16,6 +16,7 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
+import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
 // This is the route history preset in react router
 // prior to tests running
@@ -29,6 +30,7 @@ const INITIAL_ENTRIES = [
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
   let wrapper;
+  let setUpDocuments;
 
   beforeEach(() => {
     PdfJsStub.beforeEach();
@@ -36,11 +38,17 @@ describe('DecisionReviewer', () => {
 
     const store = createStore(readerReducer, applyMiddleware(thunk));
 
+    setUpDocuments = () => {
+      // We simulate receiving the documents from the endpoint, and dispatch the
+      // required actions to skip past the loading screen and avoid stubing out
+      // the API call to the index endpoint.
+      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveAnnotations(annotations));
+    };
+
     wrapper = mount(
       <Provider store={store}>
         <DecisionReviewer
-          appealDocuments={documents}
-          annotations={annotations}
           pdfWorker="worker"
           url="url"
           router={MemoryRouter}
@@ -58,7 +66,15 @@ describe('DecisionReviewer', () => {
     PdfJsStub.afterEach();
   });
 
+  context('Loading Spinner', () => {
+    it('renders', () => {
+      expect(wrapper.text()).to.include('Loading document list');
+    });
+  });
+
   context('PDF View', () => {
+    beforeEach(() => setUpDocuments());
+
     context('renders', () => {
       it('the PDF list view', () => {
         expect(wrapper.find('PdfListView')).to.have.length(1);
@@ -230,6 +246,8 @@ describe('DecisionReviewer', () => {
   });
 
   context('PDF list view', () => {
+    beforeEach(() => setUpDocuments());
+
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link

@@ -86,6 +86,52 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
 
+class CommentIndicator extends React.PureComponent {
+  toggleComments = () => {
+    this.props.handleToggleCommentOpened(this.props.doc.id);
+  }
+
+  render() {
+    const numberOfComments = _.size(this.props.numberAnnotations);
+    const icon = `fa fa-3 ${this.props.doc.listComments ?
+      'fa-angle-up' : 'fa-angle-down'}`;
+    const name = `expand ${numberOfComments} comments`;
+
+    return <span className="document-list-comments-indicator">
+      {numberOfComments > 0 &&
+        <span>
+          <Button
+            classNames={['cf-btn-link']}
+            href="#"
+            ariaLabel={name}
+            name={name}
+            id={`expand-${this.props.doc.id}-comments-button`}
+            onClick={this.toggleComments}>{numberOfComments}
+            <i className={`document-list-comments-indicator-icon ${icon}`}/>
+          </Button>
+        </span>
+      }
+    </span>;
+  }
+}
+
+const commentIndicatorMapStateToProps = (state, ownProps) => ({
+  numberAnnotations: getAnnotationByDocumentId(state, ownProps.doc.id)
+});
+const commentIndicatorMapDispatchToProps = (dispatch) => ({
+  handleToggleCommentOpened(docId) {
+    dispatch({
+      type: Constants.TOGGLE_COMMENT_LIST,
+      payload: {
+        docId
+      }
+    });
+  }
+});
+const ConnectedCommentIndicator = connect(
+  commentIndicatorMapStateToProps,
+  commentIndicatorMapDispatchToProps)(CommentIndicator);
+
 export class PdfListView extends React.Component {
   constructor() {
     super();
@@ -163,10 +209,6 @@ export class PdfListView extends React.Component {
         })
       });
     }
-  }
-
-  toggleComments = (id) => () => {
-    this.props.handleToggleCommentOpened(id);
   }
 
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
@@ -337,28 +379,7 @@ export class PdfListView extends React.Component {
           className="document-list-header-comments">
           Comments
         </div>,
-        valueFunction: (doc) => {
-          const numberOfComments = _.size(this.props.annotationsPerDocument[doc.id]);
-          const icon = `fa fa-3 ${doc.listComments ?
-            'fa-angle-up' : 'fa-angle-down'}`;
-          const name = `expand ${numberOfComments} comments`;
-
-          return <span className="document-list-comments-indicator">
-            {numberOfComments > 0 &&
-              <span>
-                <Button
-                  classNames={['cf-btn-link']}
-                  href="#"
-                  ariaLabel={name}
-                  name={name}
-                  id={`expand-${doc.id}-comments-button`}
-                  onClick={this.toggleComments(doc.id)}>{numberOfComments}
-                  <i className={`document-list-comments-indicator-icon ${icon}`}/>
-                </Button>
-              </span>
-            }
-          </span>;
-        }
+        valueFunction: (doc) => <ConnectedCommentIndicator doc={doc} />
       }
     ];
   }
@@ -437,14 +458,6 @@ const mapDispatchToProps = (dispatch) => ({
         filterName
       }
     });
-  },
-  handleToggleCommentOpened(docId) {
-    dispatch({
-      type: Constants.TOGGLE_COMMENT_LIST,
-      payload: {
-        docId
-      }
-    });
   }
 });
 
@@ -456,7 +469,6 @@ PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
-  handleToggleCommentOpened: PropTypes.func.isRequired,
   pdfList: PropTypes.shape({
     lastReadDocId: PropTypes.number
   })
