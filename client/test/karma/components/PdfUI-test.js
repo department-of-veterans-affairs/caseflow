@@ -40,7 +40,7 @@ describe('PdfUI', () => {
           text()).to.eq(doc.type);
       });
 
-      it('renders the page number', () => {
+      it('does not render the page number when pdf has not been rendered', () => {
         expect(wrapper.text()).to.not.include('Page 1 of 1');
       });
 
