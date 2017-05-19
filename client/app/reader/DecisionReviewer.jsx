@@ -9,11 +9,10 @@ import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
-import { PerfDebugPureComponent } from '../util/PerfDebug';
 
 export const documentPath = (id) => `/document/${id}/pdf`;
 
-export class DecisionReviewer extends PerfDebugPureComponent {
+export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
     super(props);
 
