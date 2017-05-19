@@ -155,12 +155,8 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <LoadingScreen vacolsId={vacolsId}>
       <div className="section--document-list">
-        <Route exact path="/:vacolsId/documents"
-          component={this.routedPdfListView}
-        />
-        <Route path="/:vacolsId/documents/:docId"
-          component={this.routedPdfViewer}
-        />
+        <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
+        <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
       </div>
     </LoadingScreen>;
   }
