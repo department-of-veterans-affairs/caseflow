@@ -146,7 +146,7 @@ export class ConfirmCaseDetails extends React.Component {
       otherRepresentativeType,
       changeOtherRepresentativeType,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -156,9 +156,9 @@ export class ConfirmCaseDetails extends React.Component {
         to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
     }
 
-    if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+    if (serverError) {
+      return <Redirect
+        to={'/certifications/error'}/>;
     }
 
     const shouldShowOtherTypeField =
@@ -251,10 +251,11 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed,
+  serverError: state.serverError,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
+  continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   loading: state.loading

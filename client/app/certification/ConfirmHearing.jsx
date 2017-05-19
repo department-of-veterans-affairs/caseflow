@@ -204,7 +204,7 @@ class UnconnectedConfirmHearing extends React.Component {
       hearingPreference,
       onHearingPreferenceChange,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -214,11 +214,10 @@ class UnconnectedConfirmHearing extends React.Component {
         to={`/certifications/${match.params.vacols_id}/sign_and_certify`}/>;
     }
 
-    if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+    if (serverError) {
+      return <Redirect
+        to={'/certifications/error'}/>;
     }
-
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
     cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
@@ -391,7 +390,7 @@ const mapStateToProps = (state) => ({
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed
+  serverError: state.serverError
 });
 
 /*
