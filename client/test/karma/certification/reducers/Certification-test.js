@@ -56,18 +56,18 @@ describe('.showValidationErrors', () => {
   });
 });
 
-describe('.certificationUpdateFailure', () => {
+describe('.handleServerError', () => {
   it('should set loading to false', () => {
     let initialState = getBlankInitialState();
 
-    expect(Certification.certificationUpdateFailure(initialState).
+    expect(Certification.handleServerError(initialState).
       loading).to.eq(false);
   });
   it('should set updateFailed to true', () => {
     let initialState = getBlankInitialState();
 
-    expect(Certification.certificationUpdateFailure(initialState).
-      updateFailed).to.eq(true);
+    expect(Certification.handleServerError(initialState).
+      serverError).to.eq(true);
   });
 });
 
