@@ -23,7 +23,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     -- an older hearing still awaiting a disposition
   }.freeze
 
-  def self.upcoming_for_judge(vacols_user_id)
+  def self.upcoming_for_judge(vacols_user_id, date_diff: 7.days)
     id = connection.quote(vacols_user_id)
 
     select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
@@ -38,7 +38,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       .joins(:staff)
       .where("staff.stafkey = #{id}")
       .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
-             relative_vacols_date(7.days).to_formatted_s(:oracle_date))
+             relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
       .where(NOT_MASTER_RECORD)
   end
 end
