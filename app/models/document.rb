@@ -27,10 +27,9 @@ class Document < ActiveRecord::Base
   }.freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
-
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename, :vacols_date
+  attr_accessor :type, :alt_types, :received_at, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -129,17 +128,10 @@ class Document < ActiveRecord::Base
     serializable_hash
   end
 
-  def load_or_save!
-    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
-    return merge_into(existing_document) if existing_document
-    save! && self
-  end
-
   def merge_into(document)
     document.assign_attributes(
       type: type,
       alt_types: alt_types,
-      vbms_doc_type: vbms_doc_type,
       received_at: received_at,
       filename: filename
     )
