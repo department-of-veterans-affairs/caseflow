@@ -9,7 +9,7 @@ import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
-import {PerfDebugPureComponent} from '../util/PerfDebug';
+import { PerfDebugPureComponent } from '../util/PerfDebug';
 
 export const documentPath = (id) => `/document/${id}/pdf`;
 

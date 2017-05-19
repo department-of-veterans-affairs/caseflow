@@ -438,6 +438,7 @@ export class PdfListView extends React.Component {
 
 const mapStateToProps = (state) => {
   const documents = getFilteredDocuments(state);
+
   return {
     documents,
     annotationsPerDocument: _(documents).
