@@ -138,7 +138,8 @@ export default class Table extends React.PureComponent {
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed.');
+        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+          'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
 
