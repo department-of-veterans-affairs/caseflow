@@ -17,7 +17,7 @@ import _ from 'lodash';
 import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import { getAnnotationByDocumentId, categoriesOfDocument } from './utils';
+import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -316,7 +316,7 @@ export class PdfListView extends React.Component {
           }
 
         </div>,
-        valueFunction: (doc) => <DocumentCategoryIcons categories={categoriesOfDocument(doc)} />
+        valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
       },
       {
         cellClass: 'receipt-date-column',

@@ -1,11 +1,15 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
+import { categoriesOfDocument } from '../reader/utils';
 
 export default class DocumentCategoryIcons extends React.PureComponent {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
+  shouldComponentUpdate = (nextProps) => !_.isEqual(
+    categoriesOfDocument(this.props.doc),
+    categoriesOfDocument(nextProps.doc)
+  )
 
   render() {
-    const { categories } = this.props;
+    const categories = categoriesOfDocument(this.props.doc);
 
     if (!_.size(categories)) {
       return null;
@@ -27,5 +31,5 @@ export default class DocumentCategoryIcons extends React.PureComponent {
 }
 
 DocumentCategoryIcons.propTypes = {
-  categories: PropTypes.array.isRequired
+  doc: PropTypes.object.isRequired
 };
