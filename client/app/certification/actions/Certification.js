@@ -1,9 +1,10 @@
 import * as Constants from '../constants/constants';
 
-export const showValidationErrors = (erroredFields) => ({
+export const showValidationErrors = (erroredFields, scrollToError) => ({
   type: Constants.SHOW_VALIDATION_ERRORS,
   payload: {
-    erroredFields
+    erroredFields,
+    scrollToError
   }
 });
 

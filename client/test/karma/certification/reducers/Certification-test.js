@@ -30,7 +30,7 @@ describe('.startUpdateCertification', () => {
 });
 
 describe('.showValidationErrors', () => {
-  it('should show the validation errors', () => {
+  it('should update the errored fields', () => {
     let initialState = getBlankInitialState();
     let action = {
       type: Constants.SHOW_VALIDATION_ERRORS,
@@ -41,6 +41,18 @@ describe('.showValidationErrors', () => {
 
     expect(Certification.showValidationErrors(initialState, action).
       erroredFields).to.eql(['otherRepresentativeType']);
+  });
+  it('should update the scroll to error', () => {
+    let initialState = getBlankInitialState();
+    let action = {
+      type: Constants.SHOW_VALIDATION_ERRORS,
+      payload: {
+        scrollToError: true
+      }
+    };
+
+    expect(Certification.showValidationErrors(initialState, action).
+      scrollToError).to.eql(true);
   });
 });
 

@@ -116,8 +116,6 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
-    this.props.showValidationErrors(null);
-
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
       otherRepresentativeType: this.props.otherRepresentativeType,
@@ -131,8 +129,11 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
@@ -220,6 +221,7 @@ ConfirmCaseDetails.propTypes = {
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired
 };
 
@@ -228,8 +230,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError = true) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   resetState: () => dispatch(certificationActions.resetState()),
@@ -255,6 +257,7 @@ const mapStateToProps = (state) => ({
   otherRepresentativeType: state.otherRepresentativeType,
   continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   loading: state.loading
 });
 
