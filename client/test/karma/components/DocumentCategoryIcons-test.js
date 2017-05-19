@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { DocumentCategoryIcons } from '../../../app/components/DocumentCategoryIcons';
+import DocumentCategoryIcons from '../../../app/components/DocumentCategoryIcons';
 import * as Constants from '../../../app/reader/constants';
 import _ from 'lodash';
 
