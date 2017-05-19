@@ -334,7 +334,7 @@ export class PdfListView extends React.Component {
           className="document-list-header-comments">
           Comments
         </div>,
-        valueFunction: (doc) => <CommentIndicator doc={doc} />
+        valueFunction: (doc) => <CommentIndicator annotationCount={_.size(this.props.annotationsPerDocument[doc.id])} expanded={doc.listComments} />
       }
     ];
   }

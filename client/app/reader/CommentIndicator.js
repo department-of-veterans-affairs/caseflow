@@ -1,8 +1,8 @@
 import React from 'react';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
-import { getAnnotationByDocumentId } from './utils';
 import * as Constants from './constants';
+import _ from 'lodash';
 
 class CommentIndicator extends React.PureComponent {
   toggleComments = () => {
@@ -10,13 +10,13 @@ class CommentIndicator extends React.PureComponent {
   }
 
   render() {
-    const numberOfComments = _.size(this.props.numberAnnotations);
-    const icon = `fa fa-3 ${this.props.doc.listComments ?
+    const {annotationCount} = this.props;
+    const icon = `fa fa-3 ${this.props.expanded ?
       'fa-angle-up' : 'fa-angle-down'}`;
-    const name = `expand ${numberOfComments} comments`;
+    const name = `expand ${annotationCount} comments`;
 
     return <span className="document-list-comments-indicator">
-      {numberOfComments > 0 &&
+      {annotationCount > 0 &&
         <span>
           <Button
             classNames={['cf-btn-link']}
@@ -24,7 +24,7 @@ class CommentIndicator extends React.PureComponent {
             ariaLabel={name}
             name={name}
             id={`expand-${this.props.doc.id}-comments-button`}
-            onClick={this.toggleComments}>{numberOfComments}
+            onClick={this.toggleComments}>{annotationCount}
             <i className={`document-list-comments-indicator-icon ${icon}`}/>
           </Button>
         </span>
@@ -33,10 +33,7 @@ class CommentIndicator extends React.PureComponent {
   }
 }
 
-const commentIndicatorMapStateToProps = (state, ownProps) => ({
-  numberAnnotations: getAnnotationByDocumentId(state, ownProps.doc.id)
-});
-const commentIndicatorMapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   handleToggleCommentOpened(docId) {
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
@@ -48,6 +45,6 @@ const commentIndicatorMapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(
-  commentIndicatorMapStateToProps,
-  commentIndicatorMapDispatchToProps
+  null,
+  mapDispatchToProps
 )(CommentIndicator);
