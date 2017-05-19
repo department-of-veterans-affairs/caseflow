@@ -11,6 +11,7 @@ import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
+import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
@@ -333,7 +334,7 @@ export class PdfListView extends React.Component {
           className="document-list-header-comments">
           Comments
         </div>,
-        valueFunction: (doc) => <ConnectedCommentIndicator doc={doc} />
+        valueFunction: (doc) => <CommentIndicator doc={doc} />
       }
     ];
   }
