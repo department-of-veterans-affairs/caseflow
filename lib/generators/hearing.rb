@@ -16,8 +16,8 @@ class Generators::Hearing
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
-      Fakes::AppealRepository.hearing_records ||= []
-      Fakes::AppealRepository.hearing_records.push(hearing)
+      Fakes::HearingRepository.hearing_records ||= []
+      Fakes::HearingRepository.hearing_records.push(hearing)
 
       hearing
     end

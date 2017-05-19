@@ -20,7 +20,7 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_accessor :document_records, :issue_records, :hearing_records
+    attr_accessor :document_records, :issue_records
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for

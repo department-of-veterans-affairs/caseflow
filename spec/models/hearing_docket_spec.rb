@@ -38,11 +38,14 @@ describe HearingDocket do
     let(:user) { Generators::User.create }
     let(:hearing) { Generators::Hearing.create(user: user) }
     subject { HearingDocket.upcoming_for_judge(user) }
+    before do
+      hearing # ensure hearing is created
+    end
 
     it "returns an array of hearing dockets" do
       expect(subject.class).to eq(Array)
-      binding.pry
       expect(subject.first.class).to eq(HearingDocket)
+      expect(subject.first.hearings.first).to eq(hearing)
     end
   end
 end
