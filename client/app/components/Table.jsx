@@ -44,9 +44,9 @@ const HeaderRow = (props) => {
   </thead>;
 };
 
-const getCellValue = (rowObject, rowNumber, column) => {
+const getCellValue = (rowObject, rowId, column) => {
   if (column.valueFunction) {
-    return column.valueFunction(rowObject, rowNumber);
+    return column.valueFunction(rowObject, rowId);
   }
   if (column.valueName) {
     return rowObject[column.valueName];
@@ -66,7 +66,7 @@ const getCellSpan = (rowObject, column) => {
 class Row extends React.PureComponent {
   render() {
     const props = this.props;
-    const rowId = props.footer ? 'footer' : props.rowNumber;
+    const rowId = props.footer ? 'footer' : props.rowId;
 
     return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
       {getColumns(props).map((column, columnNumber) =>
@@ -76,7 +76,7 @@ class Row extends React.PureComponent {
           colSpan={getCellSpan(props.rowObject, column)}>
           {props.footer ?
             column.footer :
-            getCellValue(props.rowObject, props.rowNumber, column)}
+            getCellValue(props.rowObject, props.rowId, column)}
         </td>
       )}
     </tr>;
@@ -85,16 +85,19 @@ class Row extends React.PureComponent {
 
 class BodyRows extends React.PureComponent {
   render() {
-    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id } = this.props;
+    const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
-      {rowObjects.map((object, rowNumber) =>
-        <Row
+      {rowObjects.map((object, rowNumber) => {
+        const key = getKeyForRow(rowNumber, object);
+
+        return <Row
           rowObject={object}
           columns={columns}
-          rowNumber={rowNumber}
           rowClassNames={rowClassNames}
-          key={rowNumber} />
+          key={key}
+          rowId={key} />;
+      }
       )}
     </tbody>;
   }
@@ -122,21 +125,37 @@ export default class Table extends React.PureComponent {
       headerClassName = '',
       bodyClassName = '',
       rowClassNames = this.defaultRowClassNames,
+      getKeyForRow,
+      slowReRendersAreOk,
       tbodyId,
       tbodyRef,
+      caption,
       id
     } = this.props;
+
+    let keyGetter = getKeyForRow;
+
+    if (!getKeyForRow) {
+      keyGetter = _.identity;
+      if (!slowReRendersAreOk) {
+        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+          'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
+      }
+    }
 
     return <table
               id={id}
               className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
               summary={summary} >
 
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
+
         <HeaderRow columns={columns} headerClassName={headerClassName}/>
         <BodyRows
           id={tbodyId}
           tbodyRef={tbodyRef}
           columns={columns}
+          getKeyForRow={keyGetter}
           rowObjects={rowObjects}
           bodyClassName={bodyClassName}
           rowClassNames={rowClassNames} />
@@ -153,8 +172,11 @@ Table.propTypes = {
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
+  keyGetter: PropTypes.func,
+  slowReRendersAreOk: PropTypes.bool,
   summary: PropTypes.string.isRequired,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
+  caption: PropTypes.string,
   id: PropTypes.string
 };

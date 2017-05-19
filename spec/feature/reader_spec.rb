@@ -371,7 +371,14 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Scrolling renders pages" do
+    # This test is not really testing what we want. In fact it only works because
+    # of a race condition. Currently all pages are being loaded regardless of scroll
+    # position, because of a bug introduced with zooming. Therefore this only works
+    # if the line checking that "Banana. Banana who" doesn't exist runs before the
+    # given page renders. The scrolling is irrelevant. It's also unclear this is how
+    # we should be rendering pages. So for now, let's skip this test to avoid
+    # non-deterministic failures.
+    skip "Scrolling renders pages" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].type
@@ -585,7 +592,6 @@ RSpec.feature "Reader" do
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
-
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end

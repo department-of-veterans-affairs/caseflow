@@ -30,7 +30,7 @@ describe('.startUpdateCertification', () => {
 });
 
 describe('.showValidationErrors', () => {
-  it('should show the validation errors', () => {
+  it('should update the errored fields', () => {
     let initialState = getBlankInitialState();
     let action = {
       type: Constants.SHOW_VALIDATION_ERRORS,
@@ -42,20 +42,32 @@ describe('.showValidationErrors', () => {
     expect(Certification.showValidationErrors(initialState, action).
       erroredFields).to.eql(['otherRepresentativeType']);
   });
+  it('should update the scroll to error', () => {
+    let initialState = getBlankInitialState();
+    let action = {
+      type: Constants.SHOW_VALIDATION_ERRORS,
+      payload: {
+        scrollToError: true
+      }
+    };
+
+    expect(Certification.showValidationErrors(initialState, action).
+      scrollToError).to.eql(true);
+  });
 });
 
-describe('.certificationUpdateFailure', () => {
+describe('.handleServerError', () => {
   it('should set loading to false', () => {
     let initialState = getBlankInitialState();
 
-    expect(Certification.certificationUpdateFailure(initialState).
+    expect(Certification.handleServerError(initialState).
       loading).to.eq(false);
   });
   it('should set updateFailed to true', () => {
     let initialState = getBlankInitialState();
 
-    expect(Certification.certificationUpdateFailure(initialState).
-      updateFailed).to.eq(true);
+    expect(Certification.handleServerError(initialState).
+      serverError).to.eq(true);
   });
 });
 
