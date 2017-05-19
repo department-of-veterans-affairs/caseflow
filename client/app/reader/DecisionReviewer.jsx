@@ -24,6 +24,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
+    this.rootRoute.displayName = 'RootRoute';
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
@@ -147,7 +148,7 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  testProps = (props) => {
+  rootRoute = (props) => {
     const { vacolsId } = props.match.params;
 
     return <LoadingScreen vacolsId={vacolsId}>
@@ -166,7 +167,7 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <Route path="/:vacolsId/documents" render={this.testProps} />
+      <Route path="/:vacolsId/documents" render={this.rootRoute} />
     </Router>;
   }
 }
