@@ -3,10 +3,9 @@ class Fakes::HearingRepository
     attr_accessor :hearing_records
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id, date_diff:)
-    date_diff # just to get rid of a lint error :(
+  def self.upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days.ago)
     user = User.find_by_vacols_id(vacols_user_id)
-    (hearing_records || []).select { |h| h.user_id == user.id }
+    (hearing_records || []).select { |h| h.user_id == user.id && date_diff }
   end
 
   def self.seed!
