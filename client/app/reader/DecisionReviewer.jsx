@@ -149,7 +149,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   testProps = (props) => {
     const { vacolsId } = props.match.params;
-    
+
     return <LoadingScreen vacolsId={vacolsId}>
       <div className="section--document-list">
         <Route exact path="/:vacolsId/documents"
