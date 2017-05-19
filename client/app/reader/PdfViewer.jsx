@@ -10,6 +10,7 @@ import { closeAnnotationDeleteModal, deleteAnnotation,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { getAnnotationByDocumentId } from '../reader/utils';
+import { getFilteredDocuments } from './selectors';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -136,6 +137,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  documents: getFilteredDocuments(state),
   editingCommentsForCurrentDoc:
     _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
