@@ -74,3 +74,6 @@ export const documentCategories = {
     svg: <CategoryIcon color="#5BD998" />
   }
 };
+
+// colors
+export const READER_COLOR = '#417505';
