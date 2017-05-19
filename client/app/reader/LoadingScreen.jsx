@@ -43,9 +43,7 @@ export class LoadingScreen extends React.Component {
   }
 
   render() {
-    console.log('rendering spinner', this.props.documentsLoaded, this.props);
     if (this.props.documentsLoaded) {
-      console.log('inside here');
       return this.props.children;
     }
 
