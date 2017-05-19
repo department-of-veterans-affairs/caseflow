@@ -263,7 +263,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-backToDocuments').simulate('click');
         // Make sure that the 1st row has the last
         // read indicator in the first column.
-        expect(wrapper.find('#table-row-1').childAt(0).
+        expect(wrapper.find('#table-row-2').childAt(0).
           children()).to.have.length(1);
       }));
 
@@ -279,7 +279,7 @@ describe('DecisionReviewer', () => {
 
         // Make sure that the 0th row has the last
         // read indicator in the first column.
-        expect(wrapper.find('#table-row-0').childAt(0).
+        expect(wrapper.find('#table-row-1').childAt(0).
           children()).to.have.length(1);
       }));
     });

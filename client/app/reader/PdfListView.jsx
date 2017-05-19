@@ -384,6 +384,10 @@ export class PdfListView extends React.Component {
     ];
   }
 
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
+  }
+
   render() {
     let commentSelectorClassNames = ['cf-pdf-button'];
 
@@ -422,6 +426,7 @@ export class PdfListView extends React.Component {
               rowsPerRowObject={2}
               tbodyId="documents-table-body"
               tbodyRef={this.getTbodyRef}
+              getKeyForRow={this.getKeyForRow}
             />
           </div>
         </div>
