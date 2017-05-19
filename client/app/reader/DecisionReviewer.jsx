@@ -118,8 +118,7 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfListView = (routerProps) => {
     const { vacolsId } = routerProps.match.params;
 
-    return <LoadingScreen vacolsId={vacolsId}>
-      <PdfListView
+    return <PdfListView
         showPdf={this.showPdf(routerProps.history, vacolsId)}
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
@@ -127,15 +126,13 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/reader/appeal/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(routerProps.history, vacolsId)}
         {...routerProps}
-      />
-    </LoadingScreen>;
+      />;
   }
 
   routedPdfViewer = (routerProps) => {
     const { vacolsId } = routerProps.match.params;
 
-    return <LoadingScreen vacolsId={vacolsId}>
-      <PdfViewer
+    return <PdfViewer
         addNewTag={this.props.addNewTag}
         removeTag={this.props.removeTag}
         allDocuments={_.values(this.props.storeDocuments)}
@@ -147,6 +144,21 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/reader/appeal/${vacolsId}/documents`}
         {...routerProps}
       />
+    ;
+  }
+
+  testProps = (props) => {
+    const { vacolsId } = props.match.params;
+    
+    return <LoadingScreen vacolsId={vacolsId}>
+      <div className="section--document-list">
+        <Route exact path="/:vacolsId/documents"
+          component={this.routedPdfListView}
+        />
+        <Route path="/:vacolsId/documents/:docId"
+          component={this.routedPdfViewer}
+        />
+      </div>
     </LoadingScreen>;
   }
 
@@ -154,15 +166,8 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-        <div className="section--document-list">
-          <Route exact path="/:vacolsId/documents"
-            component={this.routedPdfListView}
-          />
-          <Route path="/:vacolsId/documents/:docId"
-            component={this.routedPdfViewer}
-          />
-        </div>
-      </Router>;
+      <Route path="/:vacolsId/documents" render={this.testProps} />
+    </Router>;
   }
 }
 
