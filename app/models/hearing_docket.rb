@@ -21,8 +21,8 @@ class HearingDocket
 
   class << self
     def upcoming_for_judge(user)
-      Appeal.repository
-            .upcoming_hearings_for_judge(user.vacols_id)
+      Hearing.repository
+            .upcoming_hearings_for_judge(user.vacols_id,  date_diff: 7.years)
             .group_by { |h| h.date.to_i }
             .map do |_date, hearings|
         new(

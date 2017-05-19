@@ -18,7 +18,6 @@ class Hearing < ActiveRecord::Base
 
   def self.venues
     VACOLS::RegionalOffice::CITIES.merge(VACOLS::RegionalOffice::SATELLITE_OFFICES)
-
   end
 
   def self.load_from_vacols(vacols_hearing, vacols_user_id)
@@ -32,5 +31,9 @@ class Hearing < ActiveRecord::Base
         type: VACOLS::CaseHearing::HEARING_TYPES[vacols_hearing.hearing_type.to_sym]
       }
     end
+  end
+
+  def self.repository
+    @repository ||= HearingRepository
   end
 end

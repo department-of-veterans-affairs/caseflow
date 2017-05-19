@@ -112,12 +112,6 @@ class AppealRepository
     end
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days)
-    VACOLS::CaseHearing.upcoming_for_judge(vacols_user_id, date_diff).map do |hearing|
-      Hearing.load_from_vacols(hearing, vacols_user_id)
-    end
-  end
-
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
                                     service: :vacols,

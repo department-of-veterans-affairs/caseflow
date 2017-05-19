@@ -187,11 +187,6 @@ class Fakes::AppealRepository
     (issue_records || {})[vacols_id] || []
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id)
-    user = User.find_by_vacols_id(vacols_user_id)
-    (hearing_records || []).select { |h| h.user_id == user.id }
-  end
-
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
@@ -201,7 +196,6 @@ class Fakes::AppealRepository
     seed_certification_data!
     seed_establish_claim_data!
     seed_reader_data!
-    seed_hearings_prep_data!
   end
 
   def self.certification_documents
@@ -224,18 +218,6 @@ class Fakes::AppealRepository
     establish_claim_documents + [
       Generators::Document.build(type: "BVA Decision", received_at: 8.days.ago)
     ]
-  end
-
-  def self.seed_hearings_prep_data!
-    user = User.find_by_vacols_id("LROTH")
-    50.times.each do |i|
-      type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
-      Generators::Hearing.build(
-        type: type,
-        date: Time.zone.now - (i % 9).days - rand(3).days,
-        user: user
-      )
-    end
   end
 
   def self.seed_establish_claim_data!
