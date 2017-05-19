@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { newContext } from 'immutability-helper';
+import * as Constants from '../reader/constants';
 
 export const update = newContext();
 
@@ -7,6 +8,13 @@ update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
+
+export const categoriesOfDocument = (document) => _(Constants.documentCategories).
+    filter(
+      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+    ).
+    sortBy('renderOrder').
+    value();
 
 export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 
