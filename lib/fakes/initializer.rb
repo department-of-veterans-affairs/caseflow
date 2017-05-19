@@ -2,6 +2,7 @@ class Fakes::Initializer
   def self.load!
     User.authentication_service = Fakes::AuthenticationService
     Appeal.repository = Fakes::AppealRepository
+    Hearing.repository = Fakes::HearingRepository
   end
 
   def self.development!
@@ -21,5 +22,6 @@ class Fakes::Initializer
     }
 
     Fakes::AppealRepository.seed!
+    Fakes::HearingRepository.seed!
   end
 end
