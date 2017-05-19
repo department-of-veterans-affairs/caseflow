@@ -38,10 +38,6 @@ export class LoadingScreen extends React.Component {
     });
   }
 
-  shouldComponentUpdate(nextProps) {
-    return _.isEqual(_.omit(nextProps, 'children'), _.omit(this.props, 'children'));
-  }
-
   render() {
     if (this.props.documentsLoaded) {
       return this.props.children;
