@@ -13,8 +13,12 @@ class Hearing < ActiveRecord::Base
   end
 
   def venue
-    VACOLS::RegionalOffice::CITIES[venue_key] ||
-      VACOLS::RegionalOffice::SATELLITE_OFFICES[venue_key]
+    self.class.venues[venue_key]
+  end
+
+  def self.venues
+    VACOLS::RegionalOffice::CITIES.merge(VACOLS::RegionalOffice::SATELLITE_OFFICES)
+
   end
 
   def self.load_from_vacols(vacols_hearing, vacols_user_id)
