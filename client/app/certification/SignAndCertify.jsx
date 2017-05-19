@@ -112,7 +112,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certificationDate,
       loading,
       updateSucceeded,
-      updateFailed,
+      serverError,
       match
     } = this.props;
 
@@ -121,9 +121,9 @@ class UnconnectedSignAndCertify extends React.Component {
         to={`/certifications/${match.params.vacols_id}/success`}/>;
     }
 
-    if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+    if (serverError) {
+      return <Redirect
+        to={'/certifications/error'}/>;
     }
 
     return <div>
@@ -201,7 +201,7 @@ const mapStateToProps = (state) => ({
   scrollToError: state.scrollToError,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed
+  serverError: state.serverError
 });
 
 const SignAndCertify = connect(
