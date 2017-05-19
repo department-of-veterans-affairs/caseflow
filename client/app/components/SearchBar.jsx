@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
+import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -26,7 +27,7 @@ export default class SearchBar extends React.Component {
         type="search"
         name="search"
         value={value}/>
-      {onClearSearch &&
+      {onClearSearch && _.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
           name="clear search"

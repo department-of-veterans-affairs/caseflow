@@ -173,8 +173,6 @@ class UnconnectedConfirmHearing extends React.Component {
       return;
     }
 
-    this.props.showValidationErrors(null);
-
     this.props.certificationUpdateStart({
       hearingDocumentIsInVbms: this.props.hearingDocumentIsInVbms,
       form9Type: this.props.form9Type,
@@ -188,8 +186,11 @@ class UnconnectedConfirmHearing extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
@@ -203,7 +204,7 @@ class UnconnectedConfirmHearing extends React.Component {
       hearingPreference,
       onHearingPreferenceChange,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -213,11 +214,10 @@ class UnconnectedConfirmHearing extends React.Component {
         to={`/certifications/${match.params.vacols_id}/sign_and_certify`}/>;
     }
 
-    if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+    if (serverError) {
+      return <Redirect
+        to={'/certifications/error'}/>;
     }
-
 
     const hearingCheckText = <span>Check the appellant's eFolder for a hearing
     cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
@@ -362,8 +362,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.onHearingDocumentChange(hearingDocumentIsInVbms));
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError = true) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   onTypeOfForm9Change: (form9Type) => dispatch(actions.onTypeOfForm9Change(form9Type)),
@@ -388,8 +388,9 @@ const mapStateToProps = (state) => ({
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed
+  serverError: state.serverError
 });
 
 /*
@@ -406,6 +407,7 @@ ConfirmHearing.propTypes = {
   hearingDocumentIsInVbms: PropTypes.string,
   onHearingDocumentChange: PropTypes.func,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   form9Type: PropTypes.string,
   form9Date: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,
