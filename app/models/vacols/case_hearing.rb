@@ -23,6 +23,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     -- an older hearing still awaiting a disposition
   }.freeze
 
+  # :nocov:
   def self.upcoming_for_judge(vacols_user_id, date_diff: 7.days)
     id = connection.quote(vacols_user_id)
 
@@ -41,4 +42,5 @@ class VACOLS::CaseHearing < VACOLS::Record
              relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
       .where(NOT_MASTER_RECORD)
   end
+  # :nocov:
 end
