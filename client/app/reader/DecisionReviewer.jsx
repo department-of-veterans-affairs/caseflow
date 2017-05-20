@@ -151,8 +151,6 @@ export class DecisionReviewer extends React.PureComponent {
   rootRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    // Do we want to use component or render prop for Route?
-
     return <LoadingScreen vacolsId={vacolsId}>
       <div className="section--document-list">
         <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
