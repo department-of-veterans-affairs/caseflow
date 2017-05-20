@@ -118,8 +118,6 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
 
 export const mapDataToInitialState = function(state) {
   return {
-    // TODO alex: fix bug where other representative type won't
-    // come down from the server, dagnabbit.
     representativeType: state.representative_type,
     representativeName: state.representative_name,
     form9Match: state.appeal['form9_match?'],
@@ -138,7 +136,6 @@ export const mapDataToInitialState = function(state) {
     hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
     hearingPreference: state.hearing_preference,
     form9Type: state.form9_type,
-    // Pull these values from form8??
     certifyingOffice: state.certifying_office,
     certifyingUsername: state.certifying_username,
     certificationDate: state.certification_date,

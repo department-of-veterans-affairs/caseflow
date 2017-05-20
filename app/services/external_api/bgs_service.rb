@@ -33,6 +33,19 @@ class ExternalApi::BGSService
       end
   end
 
+  def fetch_poa_by_file_number(file_number)
+    @poas[file_number] ||=
+      MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
+                            service: :bgs,
+                            name: "org.find_poas_by_file_number") do
+        client.veteran.find_by_file_number(file_number)
+      end
+  end
+
+  # TODO(add this service)
+  # def fetch_address_by_participant_id(participant_id)
+  # end
+
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee

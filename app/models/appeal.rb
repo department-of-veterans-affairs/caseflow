@@ -77,6 +77,11 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
+  def power_of_attorney
+    # @poa ||= PowerOfAttorney.new(appeal: appeal).load_bgs_record!
+    # # power_of_attorney.vacols_representative lazy loads vacols data
+  end
+
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
