@@ -9,6 +9,7 @@ html,
 body {
   margin: 0;
   height: 100%;
+  color: $color-gray-dark;
 }
 
 .cf-alt--content {
@@ -27,11 +28,34 @@ body {
         clear: both;
       }
     }
+
+    .cf-nav {
+      padding: 0;
+      border: 0;
+    }
+
+    [class*="cf-logo-image-"] {
+      width: auto;
+      height: auto;
+      background-repeat: no-repeat;
+      background-position: center left;
+    }
   }
 }
 
 .cf-alt--content-inside {
   padding-bottom: 12.353em;
+
+  .cf-logo {
+    margin: 0;
+    display: inline-block;
+    line-height: 3em;
+    padding-left: 48px;
+
+    a {
+      color: $color-gray-dark;
+    }
+  }
 
   main {
     margin-top: 1.765em;
@@ -106,7 +130,7 @@ body {
   }
 }
 
-.cf-alt--app-cert {
+.cf-alt--app-certification {
   .cf-alt--app-width {
     @include app-width('cert');
   }

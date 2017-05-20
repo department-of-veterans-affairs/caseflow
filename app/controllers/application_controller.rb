@@ -74,6 +74,7 @@ class ApplicationController < ActionController::Base
   def application
     RequestStore.store[:application].to_s.downcase
   end
+  helper_method :application
 
   def help_url
     {

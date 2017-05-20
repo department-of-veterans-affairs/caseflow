@@ -75,25 +75,24 @@
   <%= favicon_link_tag %>
 
 </head>
-<body class="cf-alt--app-hearings">
+<body class="cf-alt--app-<%= application %>">
   <div class="cf-alt--content">
     <div class="cf-alt--content-inside">
       <header class="cf-alt--app-header">
         <div class="cf-alt--app-width">
           <div class="cf-push-left">
             <div class="cf-push-left">
-              <h1 class="cf-logo">
-                <a href="<%= logo_path %>" id="cf-logo-link">
-                  <%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>
-                </a>Caseflow
+              <h1 class="cf-logo <%= logo_class %>">
+                <a href="<%= logo_path %>">
+                  Caseflow <span class="cf-logo-name"><%= logo_name %></span>
+                </a>
               </h1>
-              <span class="cf-logo-name"><%= logo_name %></span>
               <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
             </div>
           </div>
           <div class="cf-push-right">
             <% unless current_user.nil? %>
-              <div class="cf-dropdown">
+              <div class="cf-nav cf-dropdown">
                 <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
                   <%= current_user.display_name %>
                 </a>

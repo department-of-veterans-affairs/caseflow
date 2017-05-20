@@ -8,7 +8,7 @@ import _ from 'lodash';
 import BaseContainer from './containers/BaseContainer';
 import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
-import Hearings from './hearings/Hearings';
+import Hearings from './hearings/index';
 
 const COMPONENTS = {
   BaseContainer,
