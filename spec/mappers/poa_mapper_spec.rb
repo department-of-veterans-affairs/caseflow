@@ -1,6 +1,4 @@
 describe PoaMapper do
-
-
   describe "Maps VACOLS POA to POA" do
     context "#get_short_name" do
       it "returns short name" do

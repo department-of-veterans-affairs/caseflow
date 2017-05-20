@@ -1,5 +1,4 @@
 class PoaMapper
-
   def vacols_representatives
     VACOLS::Case.REPRESENTATIVES
   end
