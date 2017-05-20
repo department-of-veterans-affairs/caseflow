@@ -460,6 +460,12 @@ RSpec.feature "Reader" do
 
       def get_aria_labels(elems)
         elems.map do |elem|
+          # I don't know why this is necessary, but it seems to trigger capybara to wait for the elements
+          # to have content in the correct way. Without this, we'll sometimes see an empty list of elements,
+          # but when we insert a quick sleep or inspect the browser, we see the full list. That means that
+          # capybara is not waiting properly.
+          elem["outerHTML"]
+
           elem["aria-label"]
         end
       end
