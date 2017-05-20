@@ -15,6 +15,10 @@ div {
     top: 0;
     overflow-y: scroll;
     height: 75%;
+
+    &.cf-sg-nav-scrolling-bottom {
+      height: 50%;
+    }
   }
 
   &[class$="-not-scrolling"] {
