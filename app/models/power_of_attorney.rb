@@ -1,23 +1,37 @@
-# The appellant's legal representation for the appeal.
-
+# A model that centralizes all information
+# about the appellant's legal representation.
+#
+# Power of attorney (also referred to as "representative")
+# is tied to the appeal in VACOLS, but it's tied to the veteran
+# in BGS - so the two are ofen out of sync.
+# This class exposes information from both systems
+# and lets the user modify VACOLS with BGS information
+# (but not the other way around).
+#
+# TODO: fetch POA address information from BGS
+# TODO: fetch POA address information from VACOLS
+# TODO: include the REP table in the VACOLS query and
+# fetch representative name information from VACOLS
+# TODO: we query VACOLS when the vacols methods are
+# called, even if we've also queried VACOLS outside of this
+# model but in the same request. is this something we should optimize?
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
 
-  vacols_attr_accessor vacols_representative_type
-  vacols_attr_accessor vacols_representative_name
+  vacols_attr_accessor  :vacols_representative_type,
+                        :vacols_representative_name
 
-  attr_accessor bgs_representative_name,
-                bgs_representative_type,
-                vacols_id,
-                case_record,
-                file_number
+  attr_accessor :bgs_representative_name,
+                :bgs_representative_type,
+                :vacols_id,
+                :case_record,
+                :file_number
 
-  def fetch_bgs_info!(file_number)
+  def load_bgs_record!(file_number)
     result = self.class.bgs.fetch_poa_by_file_number(file_number)
-    # TODO: also fetch the address
-    @bgs_representative_name = result[:representative_name]
-    @bgs_representative_type = result[:representative_type]
+    instance_variable_set(:bgs_representative_name, result[:representative_name])
+    instance_variable_set(:bgs_representative_type, result[:representative_type])
   end
 
   def representative_matches_across_systems?
@@ -40,7 +54,7 @@ class PowerOfAttorney
     attr_writer :repository
 
     def repository
-      @repository ||= PoaRepository
+      @repository ||= PowerOfAttorneyRepository
     end
 
     def self.bgs

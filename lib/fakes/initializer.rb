@@ -2,6 +2,7 @@ class Fakes::Initializer
   def self.load!
     User.authentication_service = Fakes::AuthenticationService
     Appeal.repository = Fakes::AppealRepository
+    PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
   end
 
   def self.development!

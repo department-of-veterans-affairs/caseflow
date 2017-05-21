@@ -26,6 +26,9 @@ class Certification < ActiveRecord::Base
     certification_status
   end
 
+  def fetch_power_of_attorney
+  end
+
   def create_or_update_form8
     # if we haven't yet started the form8
     # or if we last updated it earlier than 48 hours ago,

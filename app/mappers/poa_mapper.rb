@@ -28,8 +28,10 @@ class PoaMapper
         representative_type: "Service Organization"
       }
     else
-      # Otherwise we have to look up the specific name of the rep in another table
-      # TODO: actually do that.
+      # Otherwise we have to look up the specific name of the rep
+      # in the REP table.
+      # TODO: modify poa repository to look it up and pass that
+      # info into this method.
       {
         representative_name: "Stub POA Name",
         representative_type: "Stub POA Type"
