@@ -1,4 +1,4 @@
-class PoaRepository
+class PowerOfAttorneyRepository
   # :nocov:
   #
   # returns either the data or false

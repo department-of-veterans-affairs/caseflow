@@ -1,4 +1,5 @@
 class PoaMapper
+  # VACOLS methods
   def vacols_representatives
     VACOLS::Case.REPRESENTATIVES
   end
@@ -34,5 +35,23 @@ class PoaMapper
         representative_type: "Stub POA Type"
       }
     end
+  end
+
+  # BGS Methods
+  # todo: fill out this hash
+  BGS_REP_TYPE_TO_REP_TYPE = {
+    "POA Attorney": "Attorney",
+    "POA Agent": "Agent",
+    "POA Local/Regional Organization": "Service Organization",
+    "POA State Organization": "Service Organization"
+  }.freeze
+
+  def get_poa_from_bgs_poa(bgs_poa)
+    # TODO: what do we do if we encounter a rep type we don't know?
+    bgs_type = bgs_poa[:power_of_attorney][:org_type_nm]
+    {
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
+      representative_name: bgs_poa[:nm]
+    }
   end
 end

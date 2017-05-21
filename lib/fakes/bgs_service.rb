@@ -185,7 +185,7 @@ class Fakes::BGSService
   end
 
   def fetch_poa_by_file_number(_file_number)
-    default_poa_by_file_number
+    PoaMapper.get_poa_from_bgs_poa(default_poa_by_file_number)
   end
 
   def fetch_address_by_participant_id

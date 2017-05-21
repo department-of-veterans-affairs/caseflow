@@ -4,38 +4,20 @@ class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
 
-  # fill this object out by hitting the findPOAs endpoint in BGS.
-  BGS_TYPE_TO_VACOLS_VALUE = {
-    "POA Attorney": "Attorney",
-    "POA Agent": "Agent",
-    "POA Local/Regional Organization": "Other Service Organization",
-    "POA State Organization": "Other Service Organization"
-  }.freeze
-
   vacols_attr_accessor vacols_representative_type
-  # join on another
+  vacols_attr_accessor vacols_representative_name
 
-  attr_accessor bgs_representative_name
-  attr_accessor bgs_representative_type
-
-  def self.bgs
-    BGSService.new
-  end
-
-  def self.reposistory
-    POA
-  end
-
-  def join_tables
-    # return representative
-  end
+  attr_accessor bgs_representative_name,
+                bgs_representative_type,
+                vacols_id,
+                case_record,
+                file_number
 
   def fetch_bgs_info!(file_number)
-    # result = self.class.bgs.fetch_poa_by_file_number(file_number)
-    # bgs_representative_name = result[:power_of_attorney][:nm]
-    # bgs_representative_type = result[:power_of_attorney][:org_type_nm]
-
-    # also fetch the address
+    result = self.class.bgs.fetch_poa_by_file_number(file_number)
+    # TODO: also fetch the address
+    @bgs_representative_name = result[:representative_name]
+    @bgs_representative_type = result[:representative_type]
   end
 
   def representative_matches_across_systems?
@@ -51,7 +33,7 @@ class PowerOfAttorney
   end
 
   def overwrite_vacols_with_bgs_value
-    #
+    # case_record.bfso
   end
 
   class << self
@@ -59,6 +41,10 @@ class PowerOfAttorney
 
     def repository
       @repository ||= PoaRepository
+    end
+
+    def self.bgs
+      BGSService.new
     end
   end
 end
