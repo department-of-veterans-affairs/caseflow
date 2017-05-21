@@ -19,14 +19,21 @@ class Certification < ActiveRecord::Base
       ssocs_required:      calculate_ssocs_required,
       ssocs_matching_at:   calculcate_ssocs_matching_at,
       form8_started_at:    (certification_status == :started) ? now : nil,
-      vacols_hearing_preference: appeal.hearing_request_type,
-      vacols_representative_name: appeal.representative
+      vacols_hearing_preference: appeal.hearing_request_type
     )
 
     certification_status
   end
 
-  def fetch_power_of_attorney
+  def fetch_power_of_attorney!
+    poa = appeal.power_of_attorney
+
+    update_attributes!(
+      bgs_represenative_type: poa.bgs_represenative_type,
+      bgs_represenative_name: poa.bgs_represenative_name,
+      vacols_representative_type: poa.vacols_represenatative_type,
+      vacols_representative_name: poa.vacols_representative_name
+    )
   end
 
   def create_or_update_form8
