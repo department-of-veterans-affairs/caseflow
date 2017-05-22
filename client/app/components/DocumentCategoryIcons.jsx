@@ -10,7 +10,7 @@ const categoriesOfDocument = (document) => _(Constants.documentCategories).
     sortBy('renderOrder').
     value();
 
-export default class DocumentCategoryIcons extends React.PureComponent {
+export default class DocumentCategoryIcons extends React.Component {
   shouldComponentUpdate = (nextProps) => !_.isEqual(
     categoriesOfDocument(this.props.doc),
     categoriesOfDocument(nextProps.doc)
