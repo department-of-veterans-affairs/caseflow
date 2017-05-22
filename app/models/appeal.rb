@@ -185,7 +185,23 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_documents!(save:)
-    save ? fetched_documents.map(&:load_or_save!) : fetched_documents
+    save ? find_or_create_documents! : fetched_documents
+  end
+
+  def find_or_create_documents!
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
+                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.vbms_document_id] = document
+    end
+    fetched_documents.map do |document|
+      if existing_documents.key?(document.vbms_document_id)
+        document.merge_into(existing_documents[document.vbms_document_id])
+      else
+        document.save!
+        document
+      end
+    end
   end
 
   def partial_grant?
