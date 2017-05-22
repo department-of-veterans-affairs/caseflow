@@ -22,6 +22,7 @@ import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
+import { getFilteredDocuments } from './selectors';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -436,14 +437,19 @@ export class PdfListView extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  annotationsPerDocument: _(ownProps.documents).
-    keyBy('id').
-    mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
-    value(),
-  ..._.pick(state, 'tagOptions'),
-  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
-});
+const mapStateToProps = (state) => {
+  const documents = getFilteredDocuments(state);
+
+  return {
+    documents,
+    annotationsPerDocument: _(documents).
+      keyBy('id').
+      mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
+      value(),
+    ..._.pick(state, 'tagOptions'),
+    ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
