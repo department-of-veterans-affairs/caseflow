@@ -21,7 +21,7 @@ export const makeGetAnnotationsByDocumentId = createSelector(
   [getEditingAnnotations, getPendingEditingAnnotations, getAnnotations, getPendingAnnotations],
   (editingAnnotations, pendingEditingAnnotations, annotations, pendingAnnotations) =>
     _.memoize(
-      (docId) => // what do we do with docId?
+      (docId) =>
         _(editingAnnotations).
         values().
         map((annotation) => ({
@@ -41,7 +41,7 @@ export const makeGetAnnotationsByDocumentId = createSelector(
 );
 
 export const getAnnotationsPerDocument = createSelector(
-  [getFilteredDocuments, makeGetAnnotationsByDocumentId], 
+  [getFilteredDocuments, makeGetAnnotationsByDocumentId],
   (documents, getAnnotationsByDocumentId) =>
     _(documents).
       keyBy('id').
