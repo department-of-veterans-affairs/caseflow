@@ -386,8 +386,26 @@ RSpec.feature "Save Certification" do
         end
       end
 
-      scenario "For the sign and certify page" do
-        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+      scenario "Complete certification" do
+        visit "certifications/new/#{appeal.vacols_id}"
+        click_button("Continue")
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_case_details")
+        within_fieldset("Representative type") do
+          find("label", text: "Agent").click
+        end
+        fill_in "Representative name", with: "First Last"
+        click_button("Continue")
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
+
+        # path 1 - select 'yes' first question
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "Yes").click
+        end
+
+        within_fieldset("What did the appellant request in the document you found?") do
+          find("label", text: "They cancelled their hearing request").click
+        end
+        click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
 
         fill_in "Name and location of certifying office", with: "Office in DC"
@@ -400,6 +418,33 @@ RSpec.feature "Save Certification" do
 
         click_button("Continue")
         expect(page).to have_content "Success"
+
+        # path 2 - select 'no' first question and select informal form 9
+        visit "certifications/#{appeal.vacols_id}/confirm_hearing"
+        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+          find("label", text: "No").click
+        end
+        within_fieldset("Caseflow found the document below, labeled as a Form 9") do
+          find("label", text: "Statement in lieu of Form 9").click
+        end
+        within_fieldset("What optional board hearing preference, if any, did the appellant request?") do
+          find("label", text: "Wants a board hearing in Washington, DC.").click
+        end
+
+        click_button("Continue")
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
+
+        fill_in "Name and location of certifying office", with: "Office in DC"
+        fill_in "Organizational elements certifying appeal", with: "User4567"
+        fill_in "Name of certifying official", with: "Tom Cruz"
+        within_fieldset("Title of certifying official") do
+          find("label", text: "Veterans Service Representative").click
+        end
+        fill_in "Date:", with: "02/01/2016"
+
+        click_button("Continue")
+        expect(page).to have_content "Success"
+
         form8 = Form8.find_by(vacols_id: appeal.vacols_id)
         expect(form8.certifying_office).to eq "Office in DC"
         expect(form8.certifying_username).to eq "User4567"
@@ -415,6 +460,24 @@ RSpec.feature "Save Certification" do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
         expect(find_field("Date").value).to eq "02/01/2016"
+      end
+
+      scenario "Trying to skip steps" do
+        visit "certifications/#{appeal.vacols_id}/sign_and_certify"
+        sleep(10)
+        expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
+        fill_in "Name and location of certifying office", with: "Office in DC"
+        fill_in "Organizational elements certifying appeal", with: "User4567"
+        fill_in "Name of certifying official", with: "Tom Cruz"
+        within_fieldset("Title of certifying official") do
+          find("label", text: "Veterans Service Representative").click
+        end
+        fill_in "Date:", with: "02/01/2016"
+        sleep(1)
+        click_button("Continue")
+        sleep(1)
+        expect(page).to have_content "Something went wrong"
+
       end
 
       scenario "Error cerifying appeal" do

@@ -43,6 +43,7 @@ class CertificationsController < ApplicationController
 
   def certify_v2
     update_certification_from_v2_form
+    validate_data_presence_v2
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,
@@ -97,6 +98,11 @@ class CertificationsController < ApplicationController
   end
 
   private
+
+  # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
+  def validate_data_presence_v2
+    raise StandardError unless (certification.representative_type && certification.representative_name && certification.hearing_preference && ((certification.form9_type && !certification.hearing_change_doc_found_in_vbms) || certification.hearing_change_doc_found_in_vbms))
+  end
 
   def certification_cancellation
     @certification_cancellation ||= CertificationCancellation.new(certification_id: certification.id)
