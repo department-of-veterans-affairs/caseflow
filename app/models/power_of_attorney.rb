@@ -36,18 +36,6 @@ class PowerOfAttorney
     self
   end
 
-  def representative_matches_across_systems?
-    # translate VACOLS and BGS values for representative name / type into a common format
-    # and determine if they match.
-    #
-    # case_record.bfso
-  end
-
-  def address_matches_across_systems?
-    # translate VACOLS and BGS values for address into a common format
-    # and determine if they match.
-  end
-
   def overwrite_vacols_with_bgs_value
     # case_record.bfso
   end
