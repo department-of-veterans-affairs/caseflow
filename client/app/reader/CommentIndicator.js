@@ -4,31 +4,25 @@ import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
 import classnames from 'classnames';
-
-const getRenderArgs = (props) =>
-  ({
-    annotationCount: _.size(props.annotationsPerDocument[props.doc.id]),
-    expanded: props.doc.listComments,
-    docId: props.doc.id
-  });
+import { makeGetAnnotationsByDocumentId } from './selectors';
 
 class CommentIndicator extends React.PureComponent {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(getRenderArgs(this.props), getRenderArgs(nextProps))
+  shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
   toggleComments = () => {
-    this.props.handleToggleCommentOpened(this.props.doc.id);
+    this.props.handleToggleCommentOpened(this.props.docId);
   }
 
   render() {
-    const { annotationCount, expanded, docId } = getRenderArgs(this.props);
+    const { annotationsCount, expanded, docId } = this.props;
     const iconClassNames = classnames('fa fa-3 document-list-comments-indicator-icon', {
       'fa-angle-up': expanded,
       'fa-angle-down': !expanded
     });
-    const name = `expand ${annotationCount} comments`;
+    const name = `expand ${annotationsCount} comments`;
 
     return <span className="document-list-comments-indicator">
-      {annotationCount > 0 &&
+      {annotationsCount > 0 &&
         <span>
           <Button
             classNames={['cf-btn-link']}
@@ -37,7 +31,7 @@ class CommentIndicator extends React.PureComponent {
             name={name}
             id={`expand-${docId}-comments-button`}
             onClick={this.toggleComments}>
-            {annotationCount}
+            {annotationsCount}
             <i className={iconClassNames}/>
           </Button>
         </span>
@@ -45,6 +39,16 @@ class CommentIndicator extends React.PureComponent {
     </span>;
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  const doc = state.documents[ownProps.docId];
+
+  return {
+    docId: doc.id,
+    expanded: doc.listComments,
+    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state)(ownProps.docId))
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   handleToggleCommentOpened(docId) {
@@ -58,6 +62,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(CommentIndicator);

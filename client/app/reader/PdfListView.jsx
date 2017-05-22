@@ -17,11 +17,10 @@ import _ from 'lodash';
 import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
-import { getFilteredDocuments } from './selectors';
+import { getFilteredDocuments, getAnnotationsPerDocument } from './selectors';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -334,8 +333,7 @@ export class PdfListView extends React.Component {
           className="document-list-header-comments">
           Comments
         </div>,
-        valueFunction: (doc) =>
-          <CommentIndicator doc={doc} annotationsPerDocument={this.props.annotationsPerDocument} />
+        valueFunction: (doc) => <CommentIndicator docId={doc.id} />
       }
     ];
   }
@@ -391,15 +389,11 @@ export class PdfListView extends React.Component {
   }
 }
 
+// TODO clean up syntax
 const mapStateToProps = (state) => {
-  const documents = getFilteredDocuments(state);
-
   return {
-    documents,
-    annotationsPerDocument: _(documents).
-      keyBy('id').
-      mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
-      value(),
+    documents: getFilteredDocuments(state),
+    annotationsPerDocument: getAnnotationsPerDocument(state),
     ..._.pick(state, 'tagOptions'),
     ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
   };
