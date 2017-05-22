@@ -118,6 +118,10 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
 
 export const mapDataToInitialState = function(state) {
   return {
+    bgsRepresentativeType: state.bgs_representative_type,
+    bgsRepresentativeName: state.bgs_representative_name,
+    vacolsRepresentativeType: state.vacols_representative_type,
+    vacolsRepresentativeName: state.vacols_representative_name,
     representativeType: state.representative_type,
     representativeName: state.representative_name,
     form9Match: state.appeal['form9_match?'],

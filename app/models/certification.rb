@@ -29,9 +29,9 @@ class Certification < ActiveRecord::Base
     poa = appeal.power_of_attorney
 
     update_attributes!(
-      bgs_represenative_type: poa.bgs_represenative_type,
-      bgs_represenative_name: poa.bgs_represenative_name,
-      vacols_representative_type: poa.vacols_represenatative_type,
+      bgs_representative_type: poa.bgs_representative_type,
+      bgs_representative_name: poa.bgs_representative_name,
+      vacols_representative_type: poa.vacols_representative_type,
       vacols_representative_name: poa.vacols_representative_name
     )
   end
