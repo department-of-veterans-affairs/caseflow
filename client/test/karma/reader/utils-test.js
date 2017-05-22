@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getAnnotationByDocumentId, moveModel } from '../../../app/reader/utils';
+import { moveModel } from '../../../app/reader/utils';
 
 describe('Reader utils', () => {
   describe('moveModel', () => {
