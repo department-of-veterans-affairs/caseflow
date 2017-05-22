@@ -376,7 +376,8 @@ describe('DecisionReviewer', () => {
           { target: { value: annotations[0].comment } });
 
         let textArray = wrapper.find('tr').map((node) => node.text());
-
+        
+        console.log(textArray);
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
 
