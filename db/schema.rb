@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170522214928) do
+ActiveRecord::Schema.define(version: 20170517141505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,6 +136,8 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.integer "tag_id",      null: false
   end
 
+  add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true, using: :btree
+
   create_table "form8s", force: :cascade do |t|
     t.integer  "certification_id"
     t.string   "vacols_id"
@@ -158,7 +160,6 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.string   "agent_accredited"
     t.string   "form_646_of_record"
     t.string   "form_646_not_of_record_explanation"
-    t.string   "hearing_preference"
     t.string   "hearing_requested"
     t.string   "hearing_held"
     t.string   "hearing_transcript_on_file"
@@ -166,8 +167,6 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.string   "contested_claims_procedures_applicable"
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
-    t.date     "nod_date"
-    t.date     "form9_date"
     t.string   "ssoc_required"
     t.text     "record_other_explanation"
     t.text     "remarks"
@@ -206,6 +205,9 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "certifying_official_title_specify_other"
+    t.string   "hearing_preference"
+    t.date     "nod_date"
+    t.date     "form9_date"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
@@ -221,8 +223,6 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
-
-  add_index "tags", ["text"], name: "index_tags_on_text", unique: true, using: :btree
 
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",             null: false
