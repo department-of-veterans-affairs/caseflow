@@ -25,7 +25,6 @@ class PowerOfAttorney
   attr_accessor :bgs_representative_name,
                 :bgs_representative_type,
                 :vacols_id,
-                :case_record,
                 :file_number
 
   def load_bgs_record!

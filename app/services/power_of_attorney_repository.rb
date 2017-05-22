@@ -6,7 +6,7 @@ class PowerOfAttorneyRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{poa.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      # TODO: include the rep table of folder
+      # TODO: include the rep table instead of the folder
       VACOLS::Case.includes(:folder).find(poa.vacols_id)
     end
 
