@@ -3,6 +3,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString } from './search';
+import { timeFunction } from '../util/PerfDebug';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -152,20 +153,6 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {}
-};
-
-const timeReducer = (fn) => (state, action) => {
-  const start = window.performance.now();
-  const returnValue = fn(state, action);
-  const end = window.performance.now();
-
-  if (start !== 'RUNNING_IN_NODE') {
-    // eslint-disable-next-line no-console
-    console.log(`Action ${action.type} reducer time: ${(end - start).toFixed(2)}ms`);
-  }
-
-
-  return returnValue;
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -779,6 +766,7 @@ export const reducer = (state = initialState, action = {}) => {
   }
 };
 
-export default timeReducer(reducer);
-
-/* eslint-enable max-lines */
+export default timeFunction(
+  reducer, 
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);
