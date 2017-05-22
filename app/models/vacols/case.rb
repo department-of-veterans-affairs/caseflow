@@ -63,12 +63,14 @@ class VACOLS::Case < VACOLS::Record
     "F" => { full_name: "Military Order of the Purple Heart", short: "MOPH" },
     "G" => { full_name: "Paralyzed Veterans of America", short: "PVA" },
     "H" => { full_name: "Veterans of Foreign Wars", short: "VFW" },
-    "I" => { full_name: "State Service Organization(s)", short: "State Svc Org", rep_name_in_rep_table: true },
+    "I" => { full_name: "State Service Organization(s)", short: "State Svc Org" },
     "J" => { full_name: "Maryland Veterans Commission", short: "Md Veterans Comm" },
     "K" => { full_name: "Virginia Department of Veterans Affairs", short: "Virginia Dept of Veteran" },
     "L" => { full_name: "No Representative", short: "None" },
     "M" => { full_name: "Navy Mutual Aid Association", short: "Navy Mut Aid" },
     "N" => { full_name: "Non-Commissioned Officers Association", short: "NCOA" },
+    # TODO: double check that "Other Service Organization" is the correct full name.
+    # Possibly this should just be "Other"
     "O" => { full_name: "Other Service Organization", short: "Other", rep_name_in_rep_table: true },
     "P" => { full_name: "Army & Air Force Mutual Aid Assn.", short: "Army Mut Aid" },
     "Q" => { full_name: "Catholic War Veterans", short: "Catholic War Vets" },

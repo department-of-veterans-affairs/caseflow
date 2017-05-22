@@ -1,7 +1,7 @@
 class Fakes::PowerOfAttorneyRepository
   def self.load_vacols_data(poa)
-    # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
+      # TODO: work out a more thorough set of test data
       { bfso: "A" }
     end
 

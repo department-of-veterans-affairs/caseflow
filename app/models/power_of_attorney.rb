@@ -28,10 +28,12 @@ class PowerOfAttorney
                 :case_record,
                 :file_number
 
-  def load_bgs_record!(file_number)
-    result = self.class.bgs.fetch_poa_by_file_number(file_number)
-    instance_variable_set(:bgs_representative_name, result[:representative_name])
-    instance_variable_set(:bgs_representative_type, result[:representative_type])
+  def load_bgs_record!
+    result = bgs.fetch_poa_by_file_number(file_number)
+    self.bgs_representative_name = result[:representative_name]
+    self.bgs_representative_type = result[:representative_type]
+
+    self
   end
 
   def representative_matches_across_systems?
@@ -50,15 +52,15 @@ class PowerOfAttorney
     # case_record.bfso
   end
 
+  def bgs
+    BGSService.new
+  end
+
   class << self
     attr_writer :repository
 
     def repository
       @repository ||= PowerOfAttorneyRepository
-    end
-
-    def self.bgs
-      BGSService.new
     end
   end
 end

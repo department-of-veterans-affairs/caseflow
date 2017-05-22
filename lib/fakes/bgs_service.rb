@@ -1,7 +1,10 @@
 class Fakes::BGSService
+  include PowerOfAttorneyMapper
+
   cattr_accessor :end_product_data
   cattr_accessor :inaccessible_appeal_vbms_ids
   cattr_accessor :veteran_records
+  cattr_accessor :power_of_attorney_records
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -184,8 +187,11 @@ class Fakes::BGSService
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
-  def fetch_poa_by_file_number(_file_number)
-    PoaMapper.get_poa_from_bgs_poa(default_poa_by_file_number)
+  def fetch_poa_by_file_number(file_number)
+    record = (self.class.power_of_attorney_records || {})[file_number]
+    record ||= default_power_of_attorney_record
+
+    get_poa_from_bgs_poa(record)
   end
 
   def fetch_address_by_participant_id
@@ -194,13 +200,13 @@ class Fakes::BGSService
 
   private
 
-  def default_poa_by_file_number
+  def default_power_of_attorney_record
     {
       file_number: "633792224",
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
-          nm: "LYNDA  WHITEHEAD-TAYLOR",
+          nm: "Clarence Darrow",
           org_type_nm: "POA Attorney",
           ptcpnt_id: "600153863"
         },
