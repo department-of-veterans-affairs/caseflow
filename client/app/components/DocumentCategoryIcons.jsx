@@ -1,6 +1,14 @@
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
-import { categoriesOfDocument } from '../reader/utils';
+import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import * as Constants from '../reader/constants';
+
+const categoriesOfDocument = (document) => _(Constants.documentCategories).
+    filter(
+      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+    ).
+    sortBy('renderOrder').
+    value();
 
 export default class DocumentCategoryIcons extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(

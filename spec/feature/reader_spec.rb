@@ -455,7 +455,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Categories", :focus => true do
+    scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       def get_aria_labels(elems)
@@ -491,7 +491,6 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      sleep(inspection_timeout=500)
       expect(doc_0_categories).to eq(["Medical"])
 
       click_on documents[1].type
