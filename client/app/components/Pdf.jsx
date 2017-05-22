@@ -23,7 +23,7 @@ const PAGE_HEIGHT = 1056;
 
 const NUM_PAGES_TO_PRERENDER = 2;
 
-export const DOCUMENT_DEBOUNCE_TIME = 100;
+export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -57,6 +57,7 @@ export class Pdf extends React.Component {
     this.isRendering = [];
     this.prefetchedPdfs = {};
     this.fakeCanvas = [];
+    this.isPrerendering = 0;
   }
 
   setIsRendered = (index, value) => {
@@ -90,7 +91,7 @@ export class Pdf extends React.Component {
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index > this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+      if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
         return resolve();
       }
 
@@ -127,7 +128,7 @@ export class Pdf extends React.Component {
           viewport
         }).
         then(() => {
-          //console.log(`canvas render page ${index} of file ${this.props.file} took ${performance.now() - t1} ms`);
+          console.log(`canvas render page ${index} of file ${this.props.file} took ${performance.now() - t1} ms`);
           return Promise.resolve({
             pdfPage,
             viewport
@@ -223,7 +224,7 @@ export class Pdf extends React.Component {
         let t0 = performance.now();
         this.renderPage(index, this.props.file).then((actually) => {
           if (actually) {
-            //console.log(`rendering ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
+            console.log(`rendering ${index} of file ${this.props.file} took ${performance.now() - t0} ms`);
           }
         });
       }
@@ -337,23 +338,37 @@ export class Pdf extends React.Component {
   }
 
   componentDidUpdate = () => {
-    this.renderInViewPages();
+    // if (!this.isPrerendering) {
+      this.renderInViewPages();
+    // }
 
     this.props.prefetchFiles.forEach((file, index) => {
       this.getDocument(file).then((pdfDocument) => {
         _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
           if (pageIndex < pdfDocument.pdfInfo.numPages &&
             !_.get(this.prefetchedPdfs, [file, 'rendered', pageIndex], false) &&
-            this.fakeCanvas[index][pageIndex]) {
+            this.fakeCanvas[index][pageIndex] &&
+            this.isPrerendering < 4) {
+            this.isPrerendering++;
             setTimeout(() => {
               this.prefetchedPdfs[file].rendered[pageIndex] = true;
 
               pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
                 const viewport = pdfPage.getViewport(this.props.scale);
-
-                return pdfPage.render({
+                // console.log('prerendering', file, index)
+                pdfPage.render({
                   canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
                   viewport
+                }).then(() => {
+                  this.isPrerendering--;
+                  // if (!this.isPrerendering) {
+                  //   this.renderInViewPages();
+                  // }
+                }).catch(() => {
+                  this.isPrerendering--;
+                  // if (!this.isPrerendering) {
+                  //   this.renderInViewPages();
+                  // }
                 });
               });
             }, 200);
@@ -361,6 +376,8 @@ export class Pdf extends React.Component {
         });
       });
     })
+
+    // console.log('number prerendering', this.isPrerendering);
 
 
     if (this.props.scrollToComment) {
