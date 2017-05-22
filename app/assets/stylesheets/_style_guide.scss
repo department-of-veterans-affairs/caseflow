@@ -6,41 +6,37 @@ $color-tab-text-hover: #1f5593;
 .cf-sg-layout {
   padding-top: 30px;
   position: relative;
-}
 
-// Style Guide Sticky Menu
-div {
-  &[class$="-scrolling"] {
-    position: fixed;
-    top: 0;
-    overflow-y: scroll;
-    height: 75%;
-  }
-
-  &[class$="-not-scrolling"] {
+  .cf-sg-nav {
     position: absolute;
-    overflow-y: scroll;
-  }
-}
+    left: 4rem;
+    width: 10em;
+    height: 100%;
+    clip: rect(0, 0, 10px 0);
 
-.cf-sg-nav {
-  margin-top: 35px;
-  width: 10em;
+    &.re-topped {
+      top: -120px;
+    }
 
-  .current-link {
-    border-left: 4px solid $color-primary;
-    color: $color-primary;
-    font-weight: 700;
-    padding-left: 1.4em;
-  }
+    .cf-sg-nav-scrolling {
+      position: fixed;
+      width: 10.5em;
+      height: 90vh;
+      overflow-y: scroll;
 
-  a {
-    color: $color-primary;
+      .usa-sidenav-list {
+        margin-bottom: 350px;
+      }
+    }
+
+    a {
+      color: $color-primary;
+    }
   }
 }
 
 .cf-sg-content {
-  padding-left: 12em;
+  padding-left: 12.5em;
 }
 
 .usa-accordion {
