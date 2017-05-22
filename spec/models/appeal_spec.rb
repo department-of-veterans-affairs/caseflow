@@ -671,4 +671,12 @@ describe Appeal do
       is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
     end
   end
+
+  context "#power_of_attorney" do
+    subject { appeal.power_of_attorney }
+
+    it "returns veteran loaded with BGS values" do
+      is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
+    end
+  end
 end

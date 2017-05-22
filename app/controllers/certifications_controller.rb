@@ -10,9 +10,7 @@ class CertificationsController < ApplicationController
 
     if feature_enabled?(:certification_v2)
       # only
-      if status == :started
-        certification.fetch_power_of_attorney!
-      end
+      certification.fetch_power_of_attorney! if status == :started
       render "v2", layout: "application"
       return
     end

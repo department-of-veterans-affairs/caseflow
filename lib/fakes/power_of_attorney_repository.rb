@@ -1,4 +1,3 @@
-
 class Fakes::PowerOfAttorneyRepository
   def self.load_vacols_data(poa)
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
