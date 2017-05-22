@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import classNames from 'classnames';
+import { downloadIcon } from '../components/RenderFunctions';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
@@ -73,36 +74,13 @@ export class PdfUI extends React.Component {
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.showDocumentsListNavigation && <Button
             name="backToDocuments"
-            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left']}
+            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
             <i className="fa fa-chevron-left" aria-hidden="true"></i>
             &nbsp; Back to all documents
           </Button> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
-          <Button
-            name="zoomOut"
-            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={this.zoom(-ZOOM_RATE)}
-            ariaLabel="zoom out">
-            <i className="fa fa-minus" aria-hidden="true"></i>
-          </Button>
-          <Button
-            name="fit"
-            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={this.fitToScreen}
-            ariaLabel="fit to screen">
-            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
-          </Button>
-          <Button
-            name="zoomIn"
-            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={this.zoom(ZOOM_RATE)}
-            ariaLabel="zoom in">
-            <i className="fa fa-plus" aria-hidden="true"></i>
-          </Button>
-        </span>
-        <span className="usa-width-one-third">
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
               <DocumentCategoryIcons docId={this.props.doc.id} />
@@ -129,6 +107,35 @@ export class PdfUI extends React.Component {
                 </Button>
               </span>}
             </span>
+        </span>
+        <span className="usa-width-one-third cf-pdf-buttons-right">
+          <Button
+            name="zoomOut"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.zoom(-ZOOM_RATE)}
+            ariaLabel="zoom out">
+            <i className="fa fa-minus" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="fit"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.fitToScreen}
+            ariaLabel="fit to screen">
+            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="zoomIn"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.zoom(ZOOM_RATE)}
+            ariaLabel="zoom in">
+            <i className="fa fa-plus" aria-hidden="true"></i>
+          </Button>
+          <Button
+            name="download"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            ariaLabel="download pdf">
+            {downloadIcon()}
+          </Button>
         </span>
       </div>
       <div className="cf-pdf-navigation">
