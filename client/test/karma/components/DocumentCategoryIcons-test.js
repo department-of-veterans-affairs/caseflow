@@ -2,18 +2,20 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import DocumentCategoryIcons from '../../../app/components/DocumentCategoryIcons';
-import * as Constants from '../../../app/reader/constants';
-import _ from 'lodash';
 
 describe('DocumentCategoryIcons', () => {
-  it('renders nothing when there are no categories', () => {
-    const wrapper = mount(<DocumentCategoryIcons categories={[]} />);
+  it('renders no icons when the doc is not in any categories', () => {
+    const wrapper = mount(<DocumentCategoryIcons doc={{}} />);
 
-    expect(wrapper.html()).to.equal(null);
+    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(0);
   });
 
   it('renders an icon when the doc is in category_procedural', () => {
-    const wrapper = mount(<DocumentCategoryIcons categories={[Constants.documentCategories.procedural]} />);
+    const doc = {
+      category_procedural: true // eslint-disable-line camelcase
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons doc={doc} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
@@ -24,7 +26,11 @@ describe('DocumentCategoryIcons', () => {
   });
 
   it('renders an icon when the doc is in category_other', () => {
-    const wrapper = mount(<DocumentCategoryIcons categories={[Constants.documentCategories.other]} />);
+    const doc = {
+      category_other: true // eslint-disable-line camelcase
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons doc={doc} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
@@ -35,7 +41,11 @@ describe('DocumentCategoryIcons', () => {
   });
 
   it('renders an icon when the doc is in category_medical', () => {
-    const wrapper = mount(<DocumentCategoryIcons categories={[Constants.documentCategories.medical]} />);
+    const doc = {
+      category_medical: true // eslint-disable-line camelcase
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons doc={doc} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
@@ -46,7 +56,13 @@ describe('DocumentCategoryIcons', () => {
   });
 
   it('renders three icons when the doc is in all categories', () => {
-    const wrapper = mount(<DocumentCategoryIcons categories={_.values(Constants.documentCategories)} />);
+    const doc = {
+      category_medical: true, // eslint-disable-line camelcase
+      category_procedural: true, // eslint-disable-line camelcase
+      category_other: true // eslint-disable-line camelcase
+    };
+
+    const wrapper = mount(<DocumentCategoryIcons doc={doc} />);
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(3);
   });
