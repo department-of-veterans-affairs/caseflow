@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170511211242) do
+ActiveRecord::Schema.define(version: 20170517141505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,6 +211,12 @@ ActiveRecord::Schema.define(version: 20170511211242) do
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
+
+  create_table "hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string  "vacols_id", null: false
+  end
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"

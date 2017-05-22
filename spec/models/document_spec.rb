@@ -145,23 +145,21 @@ describe Document do
     end
   end
 
-  context "#load_or_save!" do
-    let(:document) { Generators::Document.build(type: "Form 9") }
-    let(:result) { document.load_or_save! }
-
-    context "if the document exists in the DB" do
-      let!(:existing_document) { Generators::Document.create(vbms_document_id: document.vbms_document_id) }
-
-      it "returns the existing document" do
-        expect(result.id).to eq(existing_document.id)
-        expect(result.type).to eq("Form 9")
-      end
+  context "#merge_into" do
+    let(:from_vbms_document) do
+      Generators::Document.build(
+        type: "Form 9",
+        alt_types: "Alt Form 9",
+        received_at: Time.now.utc,
+        filename: "test")
     end
+    let(:persisted_document) { from_vbms_document.merge_into(Generators::Document.build) }
 
-    context "if the document doesn't exist in the DB" do
-      it "saves the document" do
-        expect(result).to be_persisted
-      end
+    it "fills the persisted document with data from the vbms document" do
+      expect(from_vbms_document.type).to eq(persisted_document.type)
+      expect(from_vbms_document.alt_types).to eq(persisted_document.alt_types)
+      expect(from_vbms_document.received_at).to eq(persisted_document.received_at)
+      expect(from_vbms_document.filename).to eq(persisted_document.filename)
     end
   end
 

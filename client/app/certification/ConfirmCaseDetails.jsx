@@ -116,8 +116,6 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
-    this.props.showValidationErrors(null);
-
     this.props.certificationUpdateStart({
       representativeType: this.props.representativeType,
       otherRepresentativeType: this.props.otherRepresentativeType,
@@ -131,8 +129,11 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.props.erroredFields) {
+    if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
+      // This sets scrollToError to false so that users can edit other fields
+      // without being redirected back to the first errored field.
+      this.props.showValidationErrors(this.props.erroredFields, false);
     }
   }
 
@@ -145,7 +146,7 @@ export class ConfirmCaseDetails extends React.Component {
       otherRepresentativeType,
       changeOtherRepresentativeType,
       loading,
-      updateFailed,
+      serverError,
       updateSucceeded,
       match
     } = this.props;
@@ -155,9 +156,9 @@ export class ConfirmCaseDetails extends React.Component {
         to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
     }
 
-    if (updateFailed) {
-      // TODO: add real error handling and validated error states etc.
-      return <div>500 500 error error</div>;
+    if (serverError) {
+      return <Redirect
+        to={'/certifications/error'}/>;
     }
 
     const shouldShowOtherTypeField =
@@ -220,6 +221,7 @@ ConfirmCaseDetails.propTypes = {
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
+  scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired
 };
 
@@ -228,8 +230,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.updateProgressBar());
   },
 
-  showValidationErrors: (erroredFields) => {
-    dispatch(certificationActions.showValidationErrors(erroredFields));
+  showValidationErrors: (erroredFields, scrollToError = true) => {
+    dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
   resetState: () => dispatch(certificationActions.resetState()),
@@ -249,11 +251,13 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   updateSucceeded: state.updateSucceeded,
-  updateFailed: state.updateFailed,
+  serverError: state.serverError,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
   otherRepresentativeType: state.otherRepresentativeType,
+  continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
+  scrollToError: state.scrollToError,
   loading: state.loading
 });
 

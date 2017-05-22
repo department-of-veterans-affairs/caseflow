@@ -371,7 +371,14 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Scrolling renders pages" do
+    # This test is not really testing what we want. In fact it only works because
+    # of a race condition. Currently all pages are being loaded regardless of scroll
+    # position, because of a bug introduced with zooming. Therefore this only works
+    # if the line checking that "Banana. Banana who" doesn't exist runs before the
+    # given page renders. The scrolling is irrelevant. It's also unclear this is how
+    # we should be rendering pages. So for now, let's skip this test to avoid
+    # non-deterministic failures.
+    skip "Scrolling renders pages" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].type
@@ -453,6 +460,12 @@ RSpec.feature "Reader" do
 
       def get_aria_labels(elems)
         elems.map do |elem|
+          # I don't know why this is necessary, but it seems to trigger capybara to wait for the elements
+          # to have content in the correct way. Without this, we'll sometimes see an empty list of elements,
+          # but when we insert a quick sleep or inspect the browser, we see the full list. That means that
+          # capybara is not waiting properly.
+          elem["outerHTML"]
+
           elem["aria-label"]
         end
       end
@@ -585,7 +598,6 @@ RSpec.feature "Reader" do
       click_on "Back to all documents"
 
       expect(page).to have_content("#{num_documents} Documents")
-
       expect(in_viewport("read-indicator")).to be true
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
