@@ -20,10 +20,11 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :disposition, :decision_date, :status, :prior_decision_date
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :ssn
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -71,6 +72,10 @@ class Appeal < ActiveRecord::Base
   attr_writer :saved_documents
   def saved_documents
     @saved_documents ||= fetch_documents!(save: true)
+  end
+
+  def events
+    AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
   def veteran
@@ -195,6 +200,10 @@ class Appeal < ActiveRecord::Base
     status == "Remand" && issues.none?(&:non_new_material_allowed?)
   end
 
+  def active?
+    status != "Complete"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -291,6 +300,10 @@ class Appeal < ActiveRecord::Base
 
     def fetch_end_products(vbms_id)
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    end
+
+    def for_veteran_ssn(ssn)
+      repository.appeals_by_veteran_ssn(ssn).sort_by(&:nod_date).reverse
     end
 
     def bgs

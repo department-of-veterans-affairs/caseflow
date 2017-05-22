@@ -35,6 +35,16 @@ class AppealRepository
     return false
   end
 
+  def self.appeals_by_veteran_ssn(ssn)
+    cases = MetricsService.record("VACOLS: appeals_by_veteran_ssn",
+                                  service: :vacols,
+                                  name: "appeals_by_veteran_ssn") do
+      VACOLS::Correspondent.find_by!(ssn: ssn).cases.includes(:folder, :correspondent)
+    end
+
+    cases.map { |case_record| build_appeal(case_record) }
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"
@@ -98,8 +108,12 @@ class AppealRepository
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
       decision_date: normalize_vacols_date(case_record.bfddec),
+      prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
-      outcoding_date: normalize_vacols_date(folder_record.tioctime)
+      outcoding_date: normalize_vacols_date(folder_record.tioctime),
+
+      # TODO: Is this the veteran or appellant SSN?
+      ssn: correspondent_record.ssn
     )
 
     appeal

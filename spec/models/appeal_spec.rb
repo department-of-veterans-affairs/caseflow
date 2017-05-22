@@ -1,4 +1,8 @@
 describe Appeal do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
   let(:appeal) do
     Generators::Appeal.build(
       nod_date: nod_date,
@@ -92,6 +96,17 @@ describe Appeal do
         expect(subject.first).to have_attributes(vacols_date: Time.zone.today)
         expect(subject.last).to have_attributes(vacols_date: Time.zone.today - 5.days)
       end
+    end
+  end
+
+  context "#events" do
+    subject { appeal.events }
+    let(:soc_date) { 5.days.ago }
+
+    it "returns list of events sorted from oldest to newest by date" do
+      expect(subject.length > 1).to be_truthy
+      expect(subject.first.date).to eq(5.days.ago)
+      expect(subject.first.type).to eq(:soc)
     end
   end
 
@@ -704,6 +719,22 @@ describe Appeal do
 
     it "returns veteran loaded with BGS values" do
       is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
+    end
+  end
+
+  context ".for_veteran_ssn" do
+    subject { Appeal.for_veteran_ssn("9998887777") }
+
+    let!(:veteran_appeals) do
+      [
+        Generators::Appeal.build(vacols_record: { nod_date: 4.months.ago, ssn: "9998887777" }),
+        Generators::Appeal.build(vacols_record: { nod_date: 3.months.ago, ssn: "9998887777" })
+      ]
+    end
+
+    it "returns appeals for veteran sorted by nod date" do
+      expect(subject.length).to eq(2)
+      expect(subject.first.nod_date).to eq(3.months.ago)
     end
   end
 end
