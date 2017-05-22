@@ -44,6 +44,5 @@ module CaseflowCertification
 
     # Used by the application to determine whether webpack hot reloading is active
     config.webpack_hot = (ENV["REACT_ON_RAILS_ENV"] == "HOT")
-
   end
 end
