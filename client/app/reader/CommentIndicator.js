@@ -5,7 +5,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-const getRenderArgs = (props) => 
+const getRenderArgs = (props) =>
   ({
     annotationCount: _.size(props.annotationsPerDocument[props.doc.id]),
     expanded: props.doc.listComments,
@@ -13,6 +13,8 @@ const getRenderArgs = (props) =>
   });
 
 class CommentIndicator extends React.PureComponent {
+  shouldComponentUpdate = (nextProps) => !_.isEqual(getRenderArgs(this.props), getRenderArgs(nextProps))
+
   toggleComments = () => {
     this.props.handleToggleCommentOpened(this.props.doc.id);
   }
