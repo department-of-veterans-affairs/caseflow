@@ -9,8 +9,15 @@ class CommentIndicator extends React.PureComponent {
     this.props.handleToggleCommentOpened(this.props.doc.id);
   }
 
+  getRenderArgs() {
+    return {
+     annotationCount: _.size(this.props.annotationsPerDocument[doc.id])} expanded={doc.listComments} 
+
+    }
+  }
+
   render() {
-    const {annotationCount} = this.props;
+    const { annotationCount } = this.props;
     const icon = `fa fa-3 ${this.props.expanded ?
       'fa-angle-up' : 'fa-angle-down'}`;
     const name = `expand ${annotationCount} comments`;
