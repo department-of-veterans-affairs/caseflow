@@ -389,15 +389,12 @@ export class PdfListView extends React.Component {
   }
 }
 
-// TODO clean up syntax
-const mapStateToProps = (state) => {
-  return {
-    documents: getFilteredDocuments(state),
-    annotationsPerDocument: getAnnotationsPerDocument(state),
-    ..._.pick(state, 'tagOptions'),
-    ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
-  };
-};
+const mapStateToProps = (state) => ({
+  documents: getFilteredDocuments(state),
+  annotationsPerDocument: getAnnotationsPerDocument(state),
+  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
