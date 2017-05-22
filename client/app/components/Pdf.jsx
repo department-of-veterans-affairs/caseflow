@@ -321,7 +321,7 @@ export class Pdf extends React.Component {
     let pageBox = document.getElementById(`pageContainer${pageNumber}`).
       getBoundingClientRect();
 
-    let coordinates = { 
+    let coordinates = {
       x: (event.pageX - pageBox.left - data.iconCoordinates.x) / this.props.scale,
       y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
