@@ -316,7 +316,7 @@ export class PdfListView extends React.Component {
           }
 
         </div>,
-        valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
+        valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
       },
       {
         cellClass: 'receipt-date-column',
