@@ -3,15 +3,7 @@ class V1::AppealSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
-  # TODO: Validate with Chris
-  attribute :type do
-    {
-      "Original" => "original",
-      "Post Remand" => "post_remand",
-      "Court Remand" => "cavc_remand"
-    }[object.type] || "unknown"
-  end
-
+  attribute :type_code, key: :type
   attribute :active?, key: :active
 
   attribute :prior_decision_date do

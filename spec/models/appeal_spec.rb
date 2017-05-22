@@ -722,19 +722,26 @@ describe Appeal do
     end
   end
 
-  context ".for_veteran_ssn" do
-    subject { Appeal.for_veteran_ssn("9998887777") }
+  context ".for_api" do
+    subject { Appeal.for_api(appellant_ssn: "9998887777") }
 
     let!(:veteran_appeals) do
       [
-        Generators::Appeal.build(vacols_record: { nod_date: 4.months.ago, ssn: "9998887777" }),
-        Generators::Appeal.build(vacols_record: { nod_date: 3.months.ago, ssn: "9998887777" })
+        Generators::Appeal.build(
+          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "9998887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { type: "Reconsideration", appellant_ssn: "9998887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "9998887777" }
+        )
       ]
     end
 
-    it "returns appeals for veteran sorted by nod date" do
+    it "returns filtered appeals for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
-      expect(subject.first.nod_date).to eq(3.months.ago)
+      expect(subject.first.form9_date).to eq(3.days.ago)
     end
   end
 end

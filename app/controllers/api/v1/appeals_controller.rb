@@ -12,7 +12,7 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
   end
 
   def appeals
-    @appeals ||= Appeal.for_veteran_ssn(ssn)
+    @appeals ||= Appeal.for_api(appellant_ssn: ssn)
   end
 
   def verify_feature_enabled

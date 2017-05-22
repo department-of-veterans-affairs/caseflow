@@ -35,11 +35,11 @@ class AppealRepository
     return false
   end
 
-  def self.appeals_by_veteran_ssn(ssn)
-    cases = MetricsService.record("VACOLS: appeals_by_veteran_ssn",
+  def self.appeals_by_appellant_ssn(appellant_ssn)
+    cases = MetricsService.record("VACOLS: appeals_by_appellant_ssn",
                                   service: :vacols,
-                                  name: "appeals_by_veteran_ssn") do
-      VACOLS::Correspondent.find_by!(ssn: ssn).cases.includes(:folder, :correspondent)
+                                  name: "appeals_by_appellant_ssn") do
+      VACOLS::Correspondent.find_by!(ssn: appellant_ssn).cases.includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record) }
@@ -94,6 +94,7 @@ class AppealRepository
       appellant_middle_initial: correspondent_record.sspare2,
       appellant_last_name: correspondent_record.sspare3,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
+      appellant_ssn: correspondent_record.ssn,
       insurance_loan_number: case_record.bfpdnum,
       notification_date: normalize_vacols_date(case_record.bfdrodec),
       nod_date: normalize_vacols_date(case_record.bfdnod),
@@ -110,10 +111,7 @@ class AppealRepository
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
-      outcoding_date: normalize_vacols_date(folder_record.tioctime),
-
-      # TODO: Is this the veteran or appellant SSN?
-      ssn: correspondent_record.ssn
+      outcoding_date: normalize_vacols_date(folder_record.tioctime)
     )
 
     appeal

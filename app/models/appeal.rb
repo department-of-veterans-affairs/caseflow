@@ -11,7 +11,7 @@ class Appeal < ActiveRecord::Base
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :appellant_name, :appellant_relationship
+  vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -24,7 +24,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
-  vacols_attr_accessor :ssn
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -57,6 +56,15 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
+
+  # TODO: the type code should be the base value, and should be
+  #       converted to be human readable, not vis-versa
+  TYPE_CODES = {
+    "Original" => "original",
+    "Post Remand" => "post_remand",
+    "Court Remand" => "cavc_remand"
+  }
+
   attr_writer :ssoc_dates
   def ssoc_dates
     @ssoc_dates ||= []
@@ -75,7 +83,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def events
-    AppealEvents.new(appeal: self).all.sort_by(&:date)
+    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
   def veteran
@@ -274,6 +282,18 @@ class Appeal < ActiveRecord::Base
     end_products.select { |ep| ep.potential_match?(self) }
   end
 
+  def api_supported?
+    !!type_code
+  end
+
+  def type_code
+    TYPE_CODES[type]
+  end
+
+  def latest_event_date
+    events.last.try(:date)
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -318,8 +338,11 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
-    def for_veteran_ssn(ssn)
-      repository.appeals_by_veteran_ssn(ssn).sort_by(&:nod_date).reverse
+    def for_api(appellant_ssn: appellant_ssn)
+      repository.appeals_by_appellant_ssn(appellant_ssn)
+                .select(&:api_supported?)
+                .sort_by(&:latest_event_date)
+                .reverse
     end
 
     def bgs

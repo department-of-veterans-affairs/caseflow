@@ -8,7 +8,7 @@ describe "Appeals API v1", type: :request do
           template: :remand_decided,
           type: "Original",
           status: "Complete",
-          ssn: "1112223333",
+          appellant_ssn: "1112223333",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -22,13 +22,13 @@ describe "Appeals API v1", type: :request do
       Generators::Appeal.create(
         vacols_record: {
           template: :ready_to_certify,
-          ssn: "1112223333",
+          appellant_ssn: "1112223333",
           nod_date: Time.zone.today - 11.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
           ssoc_dates: [
             Time.zone.today - 8.months,
-            Time.zone.today - 6.months
+            Time.zone.today - 4.months
           ],
           decision_date: nil,
           prior_decision_date: Time.zone.today - 12.months

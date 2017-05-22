@@ -6,12 +6,14 @@ class AppealEvent
   DISPOSITIONS_BY_EVENT_TYPE = {
     bva_final_decision: [
       "Allowed",
-      "Denied"
+      "Denied",
+      "Vacated",
+      "Dismissed, Death",
+      "Dismissed, Other"
     ],
     bva_remand: [
       "Remanded",
-      "Manlincon Remand",
-      "Remand Failure to Respond"
+      "Manlincon Remand"
     ],
     field_grant: [
       "Benefits Granted by AOJ",
@@ -19,15 +21,13 @@ class AppealEvent
     ],
     withdrawn: [
       "Withdrawn",
-      "Vacated",
-      "Dismissed, Death",
-      "Dismissed, Other",
       "Motion to Vacate Withdrawn",
       "Withdrawn from Remand",
       "Recon Motion Withdrawn",
       "Advance Withdrawn Death of Veteran",
       "Advance Withdrawn by Appellant/Rep",
-      "Advance Failure to Respond"
+      "Advance Failure to Respond",
+      "Remand Failure to Respond"
     ],
     merged: [
       "Merged Appeal"
