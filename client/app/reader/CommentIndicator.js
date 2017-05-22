@@ -23,18 +23,16 @@ class CommentIndicator extends React.PureComponent {
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
-        <span>
-          <Button
-            classNames={['cf-btn-link']}
-            href="#"
-            ariaLabel={name}
-            name={name}
-            id={`expand-${docId}-comments-button`}
-            onClick={this.toggleComments}>
-            {annotationsCount}
-            <i className={iconClassNames}/>
-          </Button>
-        </span>
+        <Button
+          classNames={['cf-btn-link']}
+          href="#"
+          ariaLabel={name}
+          name={name}
+          id={`expand-${docId}-comments-button`}
+          onClick={this.toggleComments}>
+          {annotationsCount}
+          <i className={iconClassNames}/>
+        </Button>
       }
     </span>;
   }
