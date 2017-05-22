@@ -2,6 +2,8 @@ require "bgs"
 
 # Thin interface to all things BGS
 class ExternalApi::BGSService
+  include PowerOfAttorneyMapper
+
   attr_accessor :client
 
   def initialize
@@ -39,7 +41,7 @@ class ExternalApi::BGSService
                             service: :bgs,
                             name: "org.find_poas_by_file_number") do
         bgs_poa = client.veteran.find_poas_by_file_number(file_number)
-        PoaMapper.get_poa_from_bgs_poa(bgs_poa)
+        get_poa_from_bgs_poa(bgs_poa)
       end
   end
 
