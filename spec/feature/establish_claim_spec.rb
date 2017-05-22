@@ -70,7 +70,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         end
       end
 
-      fill_in "the number of people", with: "2"
+      fill_in "the number of people", with: "3"
       click_on "Update"
       expect(find_field("the number of people").value).to have_content("3")
 
@@ -415,7 +415,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_on "Create End Product"
 
         # Form Page
-        expect(page).to have_content("Route Claim: Add VBMS Note")
+        expect(page).to have_content("Route Claim Add VBMS Note")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
 
         # Validate I cannot return to Review Decision from the VACOLS Update page
@@ -516,7 +516,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         click_on "Route claim"
 
-        expect(find(".cf-app-segment > h1")).to have_content("Create End Product")
+        expect(find(".cf-app-segment > h2")).to have_content("Create End Product")
         expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
         # Test text, radio button, & checkbox inputs
@@ -585,10 +585,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Test that special issues were saved
         expect(task.appeal.reload.rice_compliance).to be_truthy
-
         click_on "Create End Product"
 
-        expect(page).to have_content("Route Claim: Confirm VACOLS Update, Add VBMS Note")
+        expect(page).to have_content("Add the diary note")
 
         # Validate we cannot go back
         expect(page).to_not have_content("< Back to Review Decision")
@@ -613,7 +612,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         # Ensure that the user stays on the note page on a refresh
         visit "/dispatch/establish-claim/#{task.id}"
 
-        expect(find(".cf-app-segment > h2")).to have_content("Route Claim")
+        expect(find(".cf-app-segment > h1")).to have_content("Route Claim")
         find_label_for("confirmNote").click
 
         click_on "Finish routing claim"
@@ -651,7 +650,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
         click_on "Route claim"
 
-        expect(page).to have_content("Route Claim: Confirm VACOLS Update")
+        expect(page).to have_content("Route Claim Confirm VACOLS Update")
 
         # Validate special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
