@@ -105,7 +105,7 @@ export class PdfUI extends React.Component {
         <span className="usa-width-one-third">
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
-              <DocumentCategoryIcons docId={this.props.doc.id} />
+              <DocumentCategoryIcons doc={this.props.doc} />
             </span>
             <span className="cf-pdf-doc-type-button-container">
               <Button
