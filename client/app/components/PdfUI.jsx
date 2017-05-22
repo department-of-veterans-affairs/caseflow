@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../components/Button';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
@@ -194,9 +196,9 @@ export default connect(
 PdfUI.propTypes = {
   doc: PropTypes.shape({
     filename: PropTypes.string,
-    id: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number]),
+    id: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number]),
     type: PropTypes.string,
     receivedAt: PropTypes.string
   }).isRequired,

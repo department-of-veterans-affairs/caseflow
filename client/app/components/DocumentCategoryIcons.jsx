@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import * as Constants from '../reader/constants';
 import { connect } from 'react-redux';
 import _ from 'lodash';
