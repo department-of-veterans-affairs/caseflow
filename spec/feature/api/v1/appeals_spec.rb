@@ -40,16 +40,30 @@ describe "Appeals API v1", type: :request do
       Generators::Appeal.create(
         vacols_record: {
           template: :remand_decided,
-          ssn: "3332223333"
+          appellant_ssn: "3332223333"
         }
       )
     end
 
-    let(:headers) do
-      { "ssn": "1112223333" }
+    let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
+
+    it "returns 401 if API key not authorized" do
+      headers = {
+        "ssn": "1112223333",
+        "Authorization": "Token token=12312kdasdaskd"
+      }
+
+      get "/api/v1/appeals", nil, headers
+
+      expect(response.code).to eq("401")
     end
 
     it "returns list of appeals for veteran with SSN" do
+      headers = {
+        "ssn": "1112223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
       get "/api/v1/appeals", nil, headers
 
       json = JSON.parse(response.body)
