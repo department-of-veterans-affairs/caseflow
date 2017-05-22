@@ -1,4 +1,12 @@
 module PowerOfAttorneyMapper
+  # This is here so when we include this module
+  # in classes (e.g. in PoaRepository),
+  # the class itself and not just its instance
+  # get the methods from this class.
+  def self.included(base)
+    base.extend(PowerOfAttorneyMapper)
+  end
+
   # VACOLS methods
   def vacols_representatives
     VACOLS::Case::REPRESENTATIVES

@@ -121,6 +121,7 @@ end
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
+PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 User.authentication_service = Fakes::AuthenticationService
 
 RSpec.configure do |config|
