@@ -31,7 +31,7 @@ export default function StyleGuideLayout () {
     <br/>
     <h3 id="app-canvas">Main Content Area</h3>
     <p>
-      The main content area is where we put all the application-specific interaction. 
+      The main content area is where we put all the application-specific interaction.
       This includes things like a Queue of tasks for the user to perform,
       workflow specific actions, document previews, confirmation messages, and more.
       The background of the main content area is #f9f9f9.</p>
