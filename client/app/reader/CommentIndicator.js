@@ -3,23 +3,26 @@ import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
+import classnames from 'classnames';
+
+const getRenderArgs = (props) => 
+  ({
+    annotationCount: _.size(props.annotationsPerDocument[props.doc.id]),
+    expanded: props.doc.listComments,
+    docId: props.doc.id
+  });
 
 class CommentIndicator extends React.PureComponent {
   toggleComments = () => {
     this.props.handleToggleCommentOpened(this.props.doc.id);
   }
 
-  getRenderArgs() {
-    return {
-     annotationCount: _.size(this.props.annotationsPerDocument[doc.id])} expanded={doc.listComments} 
-
-    }
-  }
-
   render() {
-    const { annotationCount } = this.props;
-    const icon = `fa fa-3 ${this.props.expanded ?
-      'fa-angle-up' : 'fa-angle-down'}`;
+    const { annotationCount, expanded, docId } = getRenderArgs(this.props);
+    const iconClassNames = classnames('fa fa-3 document-list-comments-indicator-icon', {
+      'fa-angle-up': expanded,
+      'fa-angle-down': !expanded
+    });
     const name = `expand ${annotationCount} comments`;
 
     return <span className="document-list-comments-indicator">
@@ -30,9 +33,10 @@ class CommentIndicator extends React.PureComponent {
             href="#"
             ariaLabel={name}
             name={name}
-            id={`expand-${this.props.doc.id}-comments-button`}
-            onClick={this.toggleComments}>{annotationCount}
-            <i className={`document-list-comments-indicator-icon ${icon}`}/>
+            id={`expand-${docId}-comments-button`}
+            onClick={this.toggleComments}>
+            {annotationCount}
+            <i className={iconClassNames}/>
           </Button>
         </span>
       }
