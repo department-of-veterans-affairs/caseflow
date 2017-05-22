@@ -13,11 +13,12 @@ import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, u
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
   updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation, getAnnotationByDocumentId, sortAnnotations }
+import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
+import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -222,7 +223,7 @@ PdfSidebar.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    comments: getAnnotationByDocumentId(state, ownProps.doc.id),
+    comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,

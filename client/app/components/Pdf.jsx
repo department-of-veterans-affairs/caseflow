@@ -1,13 +1,14 @@
 import React, { PropTypes } from 'react';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation, getAnnotationByDocumentId } from '../reader/utils';
+import { keyOfAnnotation } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
+import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -441,7 +442,7 @@ export class Pdf extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
-  comments: getAnnotationByDocumentId(state, ownProps.documentId),
+  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });
 
