@@ -2,7 +2,6 @@ class AppealEvent
   include ActiveModel::Model
 
   # TODO: Confirm this list with Chris, do we have all dispositions accounted for?
-  # rubocop:disable Style/WordArray
   DISPOSITIONS_BY_EVENT_TYPE = {
     bva_final_decision: [
       "Allowed",
@@ -37,7 +36,6 @@ class AppealEvent
       "Reconsideration by Letter"
     ]
   }.freeze
-  # rubocop:enable Style/WordArray
 
   attr_accessor :type, :date
 

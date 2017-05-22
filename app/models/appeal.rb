@@ -56,14 +56,13 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Court Remand" => "cavc_remand"
-  }
+  }.freeze
 
   attr_writer :ssoc_dates
   def ssoc_dates
@@ -338,7 +337,7 @@ class Appeal < ActiveRecord::Base
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
     end
 
-    def for_api(appellant_ssn: appellant_ssn)
+    def for_api(appellant_ssn:)
       repository.appeals_by_appellant_ssn(appellant_ssn)
                 .select(&:api_supported?)
                 .sort_by(&:latest_event_date)
