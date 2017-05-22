@@ -767,6 +767,6 @@ export const reducer = (state = initialState, action = {}) => {
 };
 
 export default timeFunction(
-  reducer, 
+  reducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
