@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import ProgressBarSection from './ProgressBarSection';
 
 export default class ProgressBar extends React.Component {
@@ -34,8 +36,8 @@ export default class ProgressBar extends React.Component {
 ProgressBar.propTypes = {
   sections: PropTypes.arrayOf(
     PropTypes.shape({
-      activated: React.PropTypes.boolean,
-      title: React.PropTypes.string
+      activated: PropTypes.boolean,
+      title: PropTypes.string
     })
   )
 };
