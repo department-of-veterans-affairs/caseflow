@@ -1,6 +1,8 @@
 /* eslint-disable max-lines */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 import ROUTING_INFORMATION from '../../constants/Routing';
