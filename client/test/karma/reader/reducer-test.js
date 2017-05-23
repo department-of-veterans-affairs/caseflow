@@ -9,7 +9,8 @@ describe('Reader reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 
   describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
-    const state = reduceActions([{type: Constants.REQUEST_INITIAL_DATA_FAILURE}]);
+    const state = reduceActions([{ type: Constants.REQUEST_INITIAL_DATA_FAILURE }]);
+
     expect(state.initialDataLoadingFail).to.equal(true);
   });
 
