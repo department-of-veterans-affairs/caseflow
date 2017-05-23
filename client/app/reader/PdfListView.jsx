@@ -17,7 +17,7 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState, 
+import { setDocListScrollPosition, changeSortState,
   clearSearch, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
@@ -418,13 +418,14 @@ export class PdfListView extends React.Component {
 
       return acc;
     }, []);
-    if (!_.size(rowObjects) && this.props.docFilterCriteria.searchQuery){
+
+    if (!_.size(rowObjects) && this.props.docFilterCriteria.searchQuery) {
       window.removeEventListener('resize', this.setFilterIconPositions);
     }
 
-    const showNoSearchResults = (rows, searchQuery) => {
-      return !_.size(rows) && _.size(searchQuery)
-    };
+    const showNoSearchResults = (rows, searchQuery) => (
+      !_.size(rows) && _.size(searchQuery)
+    );
 
     const showNoSearchResultsMsg = showNoSearchResults(rowObjects, this.props.docFilterCriteria);
 
@@ -438,7 +439,7 @@ export class PdfListView extends React.Component {
               />
             <div>
               { showNoSearchResultsMsg ?
-              <NoSearchResults 
+              <NoSearchResults
                 clearSearch={this.props.clearSearch}
                 searchQuery={this.props.docFilterCriteria.searchQuery}
                 /> :
