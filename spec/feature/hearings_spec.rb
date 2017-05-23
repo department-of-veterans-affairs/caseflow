@@ -30,6 +30,10 @@ RSpec.feature "Hearings" do
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
+      # Verify user
+
+      expect(page).to have_content("VLJ: Lauren Roth")
+
       # Verify dates
 
       day1 = get_day(1)

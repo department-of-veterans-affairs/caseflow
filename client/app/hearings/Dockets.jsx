@@ -62,7 +62,7 @@ export class Dockets extends React.Component {
     return <div className="cf-hearings-schedule">
       <div className="cf-hearings-title-and-judge">
         <h1>Hearings Schedule</h1>
-        <em>How is the judge name calculated?</em>
+        <span>VLJ: {this.props.vlj.full_name}</span>
       </div>
       <Table className="dockets" columns={columns} rowObjects={rowObjects} summary={'Hearings Prep Schedule?'}/>
     </div>;
@@ -70,6 +70,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  vlj: state.vlj,
   dockets: state.dockets
 });
 

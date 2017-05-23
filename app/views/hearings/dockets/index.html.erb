@@ -6,6 +6,7 @@
 
 <%= react_component("Hearings", props: {
   hearings: {
+    vlj: JSON.parse(current_user.to_json),
     dockets: current_user_dockets.map(&:to_hash)
   }
 }) %>
