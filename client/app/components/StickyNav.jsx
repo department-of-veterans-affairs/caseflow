@@ -21,15 +21,21 @@ export default class StickyNav extends React.Component {
 
   handleScroll = () => {
     // Nav bar will attach to top of page if the user scrolls down by 150px
-    if (window.scrollY > 150) {
-      this.setState({
-        className: 'cf-sg-nav-scrolling'
-      });
-    } else if (window.scrollY < 150) {
-      this.setState({
-        className: 'cf-sg-nav-not-scrolling'
-      });
-    }
+    window.setTimeout(() => {
+      if (window.scrollY / document.body.offsetHeight >= 0.96) {
+        this.setState({
+          className: 'cf-sg-nav-scrolling-bottom cf-sg-nav-scrolling'
+        });
+      } else if (window.scrollY > 150) {
+        this.setState({
+          className: 'cf-sg-nav-scrolling'
+        });
+      } else if (window.scrollY < 150) {
+        this.setState({
+          className: 'cf-sg-nav-not-scrolling'
+        });
+      }
+    }, 0);
   }
 
   // TODO(marian): add toggle for nav bar to float right for nice dazzler
