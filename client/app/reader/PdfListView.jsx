@@ -8,7 +8,6 @@ import Table from '../components/Table';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import NoSearchResults from '../components/NoSearchResults';
-import classnames from 'classnames';
 
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
@@ -18,7 +17,8 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
+import { setDocListScrollPosition, changeSortState, 
+  clearSearch, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
@@ -431,11 +431,17 @@ export class PdfListView extends React.Component {
     return <div>
       <div className="usa-grid">
         <div className="cf-app">
-          <div className={classnames('cf-app-segment', { 'cf-app-segment--alt': showNoSearchResultsMsg })}>
-            <DocumentListHeader documents={this.props.documents} />
+          <div className="cf-app-segment cf-app-segment--alt">
+            <DocumentListHeader
+              documents={this.props.documents}
+              clearSearch={this.props.clearSearch}
+              />
             <div>
               { showNoSearchResultsMsg ?
-              <NoSearchResults /> :
+              <NoSearchResults 
+                clearSearch={this.props.clearSearch}
+                searchQuery={this.props.docFilterCriteria.searchQuery}
+                /> :
               <Table
                 columns={this.getDocumentColumns}
                 rowObjects={rowObjects}
@@ -474,7 +480,8 @@ const mapDispatchToProps = (dispatch) => ({
     setDocListScrollPosition,
     setTagFilter,
     setCategoryFilter,
-    changeSortState
+    changeSortState,
+    clearSearch
   }, dispatch),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({

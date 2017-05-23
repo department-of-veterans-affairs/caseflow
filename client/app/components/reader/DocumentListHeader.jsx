@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
 import { connect } from 'react-redux';
-import { setSearch, clearAllFilters, clearSearch, toggleExpandAll } from '../../reader/actions';
+import { setSearch, clearAllFilters, toggleExpandAll } from '../../reader/actions';
 import _ from 'lodash';
 
 export const DocumentListHeader = (props) => {
@@ -73,9 +73,6 @@ const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => dispatch(clearAllFilters()),
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
-  },
-  clearSearch: () => {
-    dispatch(clearSearch());
   },
   toggleExpandAll: () => {
     dispatch(toggleExpandAll());
