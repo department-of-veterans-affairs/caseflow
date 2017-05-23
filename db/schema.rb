@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170517141505) do
+ActiveRecord::Schema.define(version: 20170522132232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,14 @@ ActiveRecord::Schema.define(version: 20170517141505) do
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
   add_index "annotations", ["user_id"], name: "index_annotations_on_user_id", using: :btree
+
+  create_table "api_keys", force: :cascade do |t|
+    t.string "consumer_name", null: false
+    t.string "key_digest",    null: false
+  end
+
+  add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
+  add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
