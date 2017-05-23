@@ -14,24 +14,16 @@ RSpec.feature "Hearings" do
 
     before do
       current_user.full_name = "Lauren Roth"
-      current_user.vacols_id = "LROTH"
       current_user.save!
 
-      Generators::Hearing.build(
-        user: current_user,
-        vacols_id: current_user.vacols_id
-      )
-
-      Generators::Hearing.build(
-        user: current_user,
-        vacols_id: current_user.vacols_id
-      )
+      2.times do
+        Generators::Hearing.build(user: current_user)
+      end
 
       Generators::Hearing.build(
         user: current_user,
         type: "central_office",
-        date: Time.zone.now,
-        vacols_id: current_user.vacols_id
+        date: Time.zone.now
       )
     end
 
