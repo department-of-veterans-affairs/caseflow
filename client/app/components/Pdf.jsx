@@ -235,6 +235,11 @@ export class Pdf extends React.Component {
   // and when it receives it, starts to render it.
   setupPdf = _.debounce((file) => {
     return new Promise((resolve) => {
+      //console.log('old prefetchedPdfs', this.prefetchedPdfs, file, this.props.prefetchFiles);
+      this.prefetchedPdfs = _.pickBy(
+        this.prefetchedPdfs,
+        (value, pdf) => pdf === file || _.includes(this.props.prefetchFiles, pdf));
+      console.log('new prefetchedPdfs rendered', this.prefetchedPdfs);
       //console.log('setuppdf', this.prefetchedPdfs[file]);
       this.getDocument(file).then((pdfDocument) => {
         this.setState({
@@ -355,7 +360,7 @@ export class Pdf extends React.Component {
 
               pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
                 const viewport = pdfPage.getViewport(this.props.scale);
-                // console.log('prerendering', file, index)
+                console.log('prerendering', file, index)
                 pdfPage.render({
                   canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
                   viewport
