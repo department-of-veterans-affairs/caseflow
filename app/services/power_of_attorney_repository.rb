@@ -2,12 +2,17 @@ class PowerOfAttorneyRepository
   # :nocov:
   include PowerOfAttorneyMapper
   # returns either the data or false
+  #
+  def self.poa_query
+    # TODO: include the rep table instead of the folder
+    VACOLS::Case.includes(:folder).find(poa.vacols_id)
+  end
+
   def self.load_vacols_data(poa)
-    case_record = MetricsService.record("VACOLS: load_poa_vacols_data #{poa.vacols_id}",
+    case_record = MetricsService.record("VACOLS POA: load_vacols_data #{poa.vacols_id}",
                                         service: :vacols,
-                                        name: "load_poa_vacols_data") do
-      # TODO: include the rep table instead of the folder
-      VACOLS::Case.includes(:folder).find(poa.vacols_id)
+                                        name: "PowerOfAttorneyRepository.load_vacols_data") do
+      poa_query
     end
 
     set_vacols_values(poa: poa, case_record: case_record)
