@@ -121,6 +121,7 @@ end
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
+PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 

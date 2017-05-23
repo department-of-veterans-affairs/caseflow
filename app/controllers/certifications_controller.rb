@@ -9,6 +9,9 @@ class CertificationsController < ApplicationController
     @form8 = certification.form8
 
     if feature_enabled?(:certification_v2)
+      # only make the bgs and vacols calls if we're actually
+      # starting a certification
+      certification.fetch_power_of_attorney! if status == :started
       render "v2", layout: "application"
       return
     end
