@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
@@ -202,10 +203,10 @@ export class PdfSidebar extends React.Component {
 
 PdfSidebar.propTypes = {
   doc: PropTypes.object,
-  selectedAnnotationId: React.PropTypes.number,
-  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    comment: React.PropTypes.string,
-    uuid: React.PropTypes.number
+  selectedAnnotationId: PropTypes.number,
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    comment: PropTypes.string,
+    uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
@@ -215,7 +216,7 @@ PdfSidebar.propTypes = {
     comment: PropTypes.bool
   }),
   scrollToSidebarComment: PropTypes.shape({
-    id: React.PropTypes.number
+    id: PropTypes.number
   }),
   hidePdfSidebar: PropTypes.bool
 };

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
@@ -158,7 +159,7 @@ PdfViewer.propTypes = {
   doc: PropTypes.object,
   pdfWorker: PropTypes.string,
   scrollToComment: PropTypes.shape({
-    id: React.PropTypes.number
+    id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
   onScrollToComment: PropTypes.func,

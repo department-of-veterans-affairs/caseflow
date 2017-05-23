@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import _ from 'lodash';

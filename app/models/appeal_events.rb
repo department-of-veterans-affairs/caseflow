@@ -34,8 +34,6 @@ class AppealEvents
     appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
   end
 
-  # TODO: Confirm with Chris
-  # if not decision_date, then disposition doesn't matter
   def decision_event
     AppealEvent.new(disposition: appeal.disposition, date: appeal.decision_date)
   end

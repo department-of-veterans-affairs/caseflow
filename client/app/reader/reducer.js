@@ -108,6 +108,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  initialDataLoadingFail: false,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -177,6 +178,12 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.REQUEST_INITIAL_DATA_FAILURE:
+    return update(state, {
+      initialDataLoadingFail: {
+        $set: true
+      }
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,

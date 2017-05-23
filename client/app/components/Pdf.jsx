@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { keyOfAnnotation } from '../reader/utils';
@@ -473,7 +475,7 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
-  selectedAnnotationId: React.PropTypes.number,
+  selectedAnnotationId: PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -488,9 +490,9 @@ Pdf.propTypes = {
   onPageChange: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
-    id: React.PropTypes.number,
-    page: React.PropTypes.number,
-    y: React.PropTypes.number
+    id: PropTypes.number,
+    page: PropTypes.number,
+    y: PropTypes.number
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
