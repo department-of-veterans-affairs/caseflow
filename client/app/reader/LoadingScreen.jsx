@@ -1,9 +1,10 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveAnnotations } from './actions';
+import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
 import { connect } from 'react-redux';
-import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
+import StatusMessage from '../components/StatusMessage';
+import { loadingSymbolHtml } from '../components/RenderFunctions';
 import * as Constants from './constants';
 import _ from 'lodash';
 
@@ -35,12 +36,19 @@ export class LoadingScreen extends React.Component {
       for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
         downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
       }
-    });
+    }, this.props.onInitialDataLoadingFail);
   }
 
   render() {
     if (this.props.documentsLoaded) {
       return this.props.children;
+    }
+
+    if (this.props.initialDataLoadingFail) {
+      return <StatusMessage 
+        title="Unable to load documents">
+        It looks like Caseflow was unable to load this case. Please <a href="">refresh the page</a> and try again.
+        </StatusMessage>;
     }
 
     return <div className="usa-grid">
@@ -57,11 +65,13 @@ export class LoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  ..._.pick(state, 'initialDataLoadingFail'),
   documentsLoaded: _.size(state.documents)
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
+    onInitialDataLoadingFail,
     onReceiveDocs,
     onReceiveAnnotations
   }, dispatch)

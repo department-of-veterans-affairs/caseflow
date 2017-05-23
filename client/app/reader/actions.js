@@ -8,6 +8,10 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
+export const onInitialDataLoadingFail = () => ({
+  type: Constants.INITIAL_DATA_LOADING_FAIL
+});
+
 export const onReceiveDocs = (documents) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
