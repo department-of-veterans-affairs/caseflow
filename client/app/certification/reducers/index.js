@@ -123,8 +123,10 @@ const parseDocumentFromApi = (doc = {}, index) => ({
 });
 
 export const mapDataToInitialState = (state) => ({
-  // TODO alex: fix bug where other representative type won't
-  // come down from the server, dagnabbit.
+  bgsRepresentativeType: state.bgs_representative_type,
+  bgsRepresentativeName: state.bgs_representative_name,
+  vacolsRepresentativeType: state.vacols_representative_type,
+  vacolsRepresentativeName: state.vacols_representative_name,
   representativeType: state.representative_type,
   representativeName: state.representative_name,
   nod: parseDocumentFromApi(state.appeal.nod),
@@ -140,7 +142,6 @@ export const mapDataToInitialState = (state) => ({
   hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
   hearingPreference: state.hearing_preference,
   form9Type: state.form9_type,
-  // Pull these values from form8??
   certifyingOffice: state.certifying_office,
   certifyingUsername: state.certifying_username,
   certificationDate: state.certification_date,
