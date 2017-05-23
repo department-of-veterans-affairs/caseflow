@@ -118,7 +118,7 @@ export const initialState = {
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
-        sortAscending: true
+        sortAscending: false
       },
       category: {},
       tag: {},
