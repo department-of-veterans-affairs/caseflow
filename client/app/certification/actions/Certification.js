@@ -1,16 +1,10 @@
 import * as Constants from '../constants/constants';
 
-export const onContinueClickFailed = () => ({
-  type: Constants.ON_CONTINUE_CLICK_FAILED,
+export const showValidationErrors = (erroredFields, scrollToError) => ({
+  type: Constants.SHOW_VALIDATION_ERRORS,
   payload: {
-    continueClicked: true
-  }
-});
-
-export const onContinueClickSuccess = () => ({
-  type: Constants.ON_CONTINUE_CLICK_SUCCESS,
-  payload: {
-    continueClicked: false
+    erroredFields,
+    scrollToError
   }
 });
 

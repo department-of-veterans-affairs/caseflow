@@ -11,7 +11,7 @@ class Appeal < ActiveRecord::Base
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :appellant_name, :appellant_relationship
+  vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -20,7 +20,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :disposition, :decision_date, :status, :prior_decision_date
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
@@ -56,6 +56,14 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
+  # TODO: the type code should be the base value, and should be
+  #       converted to be human readable, not vis-versa
+  TYPE_CODES = {
+    "Original" => "original",
+    "Post Remand" => "post_remand",
+    "Court Remand" => "cavc_remand"
+  }.freeze
+
   attr_writer :ssoc_dates
   def ssoc_dates
     @ssoc_dates ||= []
@@ -71,6 +79,10 @@ class Appeal < ActiveRecord::Base
   attr_writer :saved_documents
   def saved_documents
     @saved_documents ||= fetch_documents!(save: true)
+  end
+
+  def events
+    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
   def veteran
@@ -135,39 +147,28 @@ class Appeal < ActiveRecord::Base
     result && result.first
   end
 
-  def nod_match?
-    nod_date && documents_with_type("NOD").any? { |doc| doc.received_at.to_date == nod_date.to_date }
+  def nod
+    @nod ||= matched_document("NOD", nod_date)
   end
 
-  def soc_match?
-    soc_date && documents_with_type("SOC").any? { |doc| doc.received_at.to_date == soc_date.to_date }
+  def soc
+    @soc ||= fuzzy_matched_document("SOC", soc_date)
   end
 
-  def form9_match?
-    form9_date && documents_with_type("Form 9").any? { |doc| doc.received_at.to_date == form9_date.to_date }
+  def form9
+    @form9 ||= matched_document("Form 9", form9_date)
   end
 
-  def ssoc_all_match?
-    ssoc_dates.all? { |date| ssoc_match?(date) }
+  def ssocs
+    @ssocs ||= ssoc_dates.map { |ssoc_date| fuzzy_matched_document("SSOC", ssoc_date) }
   end
 
   def certified?
     certification_date != nil
   end
 
-  def ssoc_match?(date)
-    ssoc_documents = documents_with_type("SSOC")
-    ssoc_documents.any? { |doc| doc.received_at.to_date == date.to_date }
-  end
-
-  # This will return an array containing hash of ssoc_dates and ssoc_match?es.
-  # I.e. [{"date"=>"01/01/2010", "match"=>"true"}, {"date"=>"02/02/2012", "match"=>"true"}]
-  def ssoc_dates_with_matches
-    ssoc_dates.map { |item| { date: serialize_date(item), match: ssoc_match?(item) } }
-  end
-
   def documents_match?
-    nod_match? && soc_match? && form9_match? && ssoc_all_match?
+    nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 
   def missing_certification_data?
@@ -183,11 +184,6 @@ class Appeal < ActiveRecord::Base
     decisions
   end
 
-  def form9
-    # TODO: should be most recent form9, not first.
-    documents_with_type("Form 9").first
-  end
-
   # This represents the *date* that the decision occurred,
   # *NOT* a datetime. So if a decision was made in Manila,
   # it will be the date from Manila's perspective
@@ -195,24 +191,28 @@ class Appeal < ActiveRecord::Base
     decision_date ? decision_date.to_formatted_s(:json_date) : ""
   end
 
-  def serialized_form9_date
-    serialize_date(form9_date)
-  end
-
-  def serialized_nod_date
-    serialize_date(nod_date)
-  end
-
-  def serialized_soc_date
-    serialize_date(soc_date)
-  end
-
   def certify!
     Appeal.certify(self)
   end
 
   def fetch_documents!(save:)
-    save ? fetched_documents.map(&:load_or_save!) : fetched_documents
+    save ? find_or_create_documents! : fetched_documents
+  end
+
+  def find_or_create_documents!
+    ids = fetched_documents.map(&:vbms_document_id)
+    existing_documents = Document.where(vbms_document_id: ids)
+                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.vbms_document_id] = document
+    end
+    fetched_documents.map do |document|
+      if existing_documents.key?(document.vbms_document_id)
+        document.merge_into(existing_documents[document.vbms_document_id])
+      else
+        document.save!
+        document
+      end
+    end
   end
 
   def partial_grant?
@@ -225,6 +225,10 @@ class Appeal < ActiveRecord::Base
 
   def remand?
     status == "Remand" && issues.none?(&:non_new_material_allowed?)
+  end
+
+  def active?
+    status != "Complete"
   end
 
   def decision_type
@@ -281,7 +285,35 @@ class Appeal < ActiveRecord::Base
     end_products.select { |ep| ep.potential_match?(self) }
   end
 
+  def api_supported?
+    !!type_code
+  end
+
+  def type_code
+    TYPE_CODES[type]
+  end
+
+  def latest_event_date
+    events.last.try(:date)
+  end
+
   private
+
+  def matched_document(type, vacols_datetime)
+    return nil unless vacols_datetime
+
+    Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
+      doc.match_vbms_document_from(documents)
+    end
+  end
+
+  def fuzzy_matched_document(type, vacols_datetime)
+    return nil unless vacols_datetime
+
+    Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
+      doc.fuzzy_match_vbms_document_from(documents)
+    end
+  end
 
   # List of all end products for the appeal's veteran.
   # NOTE: we cannot currently match end products to a specific appeal.
@@ -291,10 +323,6 @@ class Appeal < ActiveRecord::Base
 
   def fetched_documents
     @fetched_documents ||= self.class.repository.fetch_documents_for(self)
-  end
-
-  def serialize_date(date)
-    date ? date.to_formatted_s(:short_date) : ""
   end
 
   class << self
@@ -311,6 +339,13 @@ class Appeal < ActiveRecord::Base
 
     def fetch_end_products(vbms_id)
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    end
+
+    def for_api(appellant_ssn:)
+      repository.appeals_by_appellant_ssn(appellant_ssn)
+                .select(&:api_supported?)
+                .sort_by(&:latest_event_date)
+                .reverse
     end
 
     def bgs

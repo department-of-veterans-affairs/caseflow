@@ -1,5 +1,19 @@
 class Reader::DocumentsController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled
+  before_action :verify_access, :verify_reader_feature_enabled, :set_application
+
+  def index
+    respond_to do |format|
+      format.html { return render(:index) }
+      format.json do
+        MetricsService.record "Get appeal #{appeal_id} document data" do
+          render json: {
+            appealDocuments: documents,
+            annotations: annotations
+          }
+        end
+      end
+    end
+  end
 
   def show
     # If we have sufficient metadata to show a single document,
@@ -14,6 +28,10 @@ class Reader::DocumentsController < ApplicationController
     Appeal.find_or_create_by_vacols_id(appeal_id)
   end
   helper_method :appeal
+
+  def annotations
+    appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
+  end
 
   def documents
     document_ids = appeal.saved_documents.map(&:id)
@@ -31,7 +49,6 @@ class Reader::DocumentsController < ApplicationController
       end
     end
   end
-  helper_method :documents
 
   def metadata?
     params[:received_at] && params[:type] && params[:filename]
@@ -66,5 +83,9 @@ class Reader::DocumentsController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Reader")
+  end
+
+  def set_application
+    RequestStore.store[:application] = "reader"
   end
 end

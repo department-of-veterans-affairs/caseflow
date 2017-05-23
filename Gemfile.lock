@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 6b54c38426bd5a1b7b7ac1f9fffd9f5f4267b5f4
-  ref: 6b54c38426bd5a1b7b7ac1f9fffd9f5f4267b5f4
+  revision: 53bc0cb27be95072c5c8c777d0f4b8a45a13113b
+  ref: 53bc0cb27be95072c5c8c777d0f4b8a45a13113b
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -83,6 +83,11 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
+    active_model_serializers (0.10.6)
+      actionpack (>= 4.1, < 6)
+      activemodel (>= 4.1, < 6)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.2)
     activejob (4.2.7.1)
       activesupport (= 4.2.7.1)
       globalid (>= 0.3.0)
@@ -107,13 +112,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.9.16)
-      aws-sdk-resources (= 2.9.16)
-    aws-sdk-core (2.9.16)
+    aws-sdk (2.9.17)
+      aws-sdk-resources (= 2.9.17)
+    aws-sdk-core (2.9.17)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.9.16)
-      aws-sdk-core (= 2.9.16)
+    aws-sdk-resources (2.9.17)
+      aws-sdk-core (= 2.9.17)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -133,6 +138,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    case_transform (0.2)
+      activesupport
     childprocess (0.6.3)
       ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
@@ -180,6 +187,7 @@ GEM
       multi_json (~> 1.0)
       therubyracer (~> 0.12.1)
     json (1.8.6)
+    jsonapi-renderer (0.1.2)
     konacha (4.0.0)
       actionpack (>= 4.1, < 5)
       capybara
@@ -430,6 +438,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm (= 4.11.0)
+  active_model_serializers (~> 0.10.0)
   activerecord-jdbcsqlite3-adapter
   activerecord-oracle_enhanced-adapter
   bgs!

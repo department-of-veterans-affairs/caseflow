@@ -13,6 +13,7 @@ import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
+import ErrorMessage from './ErrorMessage';
 
 const UnconnectedEntryPointRedirect = ({ match }) => {
   return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
@@ -40,6 +41,7 @@ const configureStore = (data) => {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   const initialData = mapDataToInitialState(data);
+
   const store = createStore(
     certificationReducers,
     initialData,
@@ -76,6 +78,8 @@ const Certification = ({ certification }) => {
           component={SignAndCertify}/>
         <Route path="/certifications/:vacols_id/success"
           component={Success}/>
+        <Route path="/certifications/error"
+          component={ErrorMessage}/>
           {/* TODO: should we add the cancel certification link
           and continue links here, or keep them on their own page? */}
       </div>

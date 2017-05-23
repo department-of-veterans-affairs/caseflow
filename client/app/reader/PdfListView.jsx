@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,44 +14,49 @@ import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState } from './actions';
+import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
+import { getFilteredDocuments } from './selectors';
 
 const NUMBER_OF_COLUMNS = 6;
 
-const FilterIcon = ({
-  handleActivate, label, getRef, selected, idPrefix
-}) => {
-  const handleKeyDown = (event) => {
-    if (event.key === ' ' || event.key === 'Enter') {
-      handleActivate(event);
-      event.preventDefault();
+class FilterIcon extends React.PureComponent {
+  render() {
+    const {
+      handleActivate, label, getRef, selected, idPrefix
+    } = this.props;
+
+    const handleKeyDown = (event) => {
+      if (event.key === ' ' || event.key === 'Enter') {
+        handleActivate(event);
+        event.preventDefault();
+      }
+    };
+
+    const className = 'table-icon';
+
+    const props = {
+      role: 'button',
+      getRef,
+      'aria-label': label,
+      className,
+      tabIndex: '0',
+      onKeyDown: handleKeyDown,
+      onClick: handleActivate
+    };
+
+    if (selected) {
+      return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
     }
-  };
 
-  const className = 'table-icon';
-
-  const props = {
-    role: 'button',
-    getRef,
-    'aria-label': label,
-    className,
-    tabIndex: '0',
-    onKeyDown: handleKeyDown,
-    onClick: handleActivate
-  };
-
-  if (selected) {
-    return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
+    return <UnselectedFilterIcon {...props} />;
   }
-
-  return <UnselectedFilterIcon {...props} />;
-};
+}
 
 FilterIcon.propTypes = {
   label: PropTypes.string.isRequired,
@@ -59,6 +66,72 @@ FilterIcon.propTypes = {
   idPrefix: PropTypes.string.isRequired,
   className: PropTypes.string
 };
+
+class LastReadIndicator extends React.PureComponent {
+  render() {
+    if (!this.props.shouldShow) {
+      return null;
+    }
+
+    return <span
+      id="read-indicator"
+      ref={this.props.getRef}
+      aria-label="Most recently read document indicator">
+        {rightTriangle()}
+      </span>;
+  }
+}
+
+const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
+  shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
+});
+const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+
+class CommentIndicator extends React.PureComponent {
+  toggleComments = () => {
+    this.props.handleToggleCommentOpened(this.props.doc.id);
+  }
+
+  render() {
+    const numberOfComments = _.size(this.props.numberAnnotations);
+    const icon = `fa fa-3 ${this.props.doc.listComments ?
+      'fa-angle-up' : 'fa-angle-down'}`;
+    const name = `expand ${numberOfComments} comments`;
+
+    return <span className="document-list-comments-indicator">
+      {numberOfComments > 0 &&
+        <span>
+          <Button
+            classNames={['cf-btn-link']}
+            href="#"
+            ariaLabel={name}
+            name={name}
+            id={`expand-${this.props.doc.id}-comments-button`}
+            onClick={this.toggleComments}>{numberOfComments}
+            <i className={`document-list-comments-indicator-icon ${icon}`}/>
+          </Button>
+        </span>
+      }
+    </span>;
+  }
+}
+
+const commentIndicatorMapStateToProps = (state, ownProps) => ({
+  numberAnnotations: getAnnotationByDocumentId(state, ownProps.doc.id)
+});
+const commentIndicatorMapDispatchToProps = (dispatch) => ({
+  handleToggleCommentOpened(docId) {
+    dispatch({
+      type: Constants.TOGGLE_COMMENT_LIST,
+      payload: {
+        docId
+      }
+    });
+  }
+});
+const ConnectedCommentIndicator = connect(
+  commentIndicatorMapStateToProps,
+  commentIndicatorMapDispatchToProps)(CommentIndicator);
 
 export class PdfListView extends React.Component {
   constructor() {
@@ -82,11 +155,29 @@ export class PdfListView extends React.Component {
     window.removeEventListener('resize', this.setFilterIconPositions);
   }
 
-  getTbodyRef = (elem) => this.tbodyElem = elem;
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getTbodyRef = (elem) => this.tbodyElem = elem
 
   componentDidUpdate() {
     if (!this.hasSetScrollPosition) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+      if (this.lastReadIndicatorElem) {
+        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+        const lastReadIndicatorIsInView = tbodyBoundingRect.top <= lastReadBoundingRect.top &&
+          lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
+
+        if (!lastReadIndicatorIsInView) {
+          const rowWithLastRead = _.find(
+            this.tbodyElem.children,
+            (tr) => tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+          );
+
+          this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
+        }
+      }
+
       this.hasSetScrollPosition = true;
     }
     this.setFilterIconPositions();
@@ -121,11 +212,14 @@ export class PdfListView extends React.Component {
     }
   }
 
-  toggleComments = (id) => () => {
-    this.props.handleToggleCommentOpened(id);
-  }
+  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
 
-  getDocumentColumns = () => {
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
+
+  // eslint-disable-next-line max-statements
+  getDocumentColumns = (row) => {
     const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-up' : 'fa-caret-down';
 
     let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
@@ -140,12 +234,6 @@ export class PdfListView extends React.Component {
 
       return content;
     };
-
-    const toggleCategoryDropdownFilterVisiblity = () =>
-      this.props.toggleDropdownFilterVisiblity('category');
-
-    const toggleTagDropdownFilterVisiblity = () =>
-      this.props.toggleDropdownFilterVisiblity('tag');
 
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
@@ -167,169 +255,138 @@ export class PdfListView extends React.Component {
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
-    return (row) => {
-      if (row && row.isComment) {
-        return [{
-          valueFunction: (doc) => {
-            const comments = this.props.annotationsPerDocument[doc.id];
-            const commentNodes = comments.map((comment, commentIndex) => {
-              return <Comment
-                key={comment.uuid}
-                id={`comment${doc.id}-${commentIndex}`}
-                selected={false}
-                page={comment.page}
-                onJumpToComment={this.props.onJumpToComment(comment)}
-                uuid={comment.uuid}
-                horizontalLayout={true}>
-                  {comment.comment}
-                </Comment>;
-            });
+    if (row && row.isComment) {
+      return [{
+        valueFunction: (doc) => {
+          const comments = this.props.annotationsPerDocument[doc.id];
+          const commentNodes = comments.map((comment, commentIndex) => {
+            return <Comment
+              key={comment.uuid}
+              id={`comment${doc.id}-${commentIndex}`}
+              selected={false}
+              page={comment.page}
+              onJumpToComment={this.props.onJumpToComment(comment)}
+              uuid={comment.uuid}
+              horizontalLayout={true}>
+                {comment.comment}
+              </Comment>;
+          });
 
-            return <ul className="cf-no-styling-list" aria-label="Document comments">
-              {commentNodes}
-            </ul>;
-          },
-          span: _.constant(NUMBER_OF_COLUMNS)
-        }];
-      }
+          return <ul className="cf-no-styling-list" aria-label="Document comments">
+            {commentNodes}
+          </ul>;
+        },
+        span: _.constant(NUMBER_OF_COLUMNS)
+      }];
+    }
 
-      const isCategoryDropdownFilterOpen =
-        _.get(this.props.pdfList, ['dropdowns', 'category']);
+    const isCategoryDropdownFilterOpen =
+      _.get(this.props.pdfList, ['dropdowns', 'category']);
 
-      const isTagDropdownFilterOpen =
-        _.get(this.props.pdfList, ['dropdowns', 'tag']);
+    const isTagDropdownFilterOpen =
+      _.get(this.props.pdfList, ['dropdowns', 'tag']);
 
-      return [
-        {
-          cellClass: 'last-read-column',
-          valueFunction: (doc) => {
-            if (doc.id === this.props.pdfList.lastReadDocId) {
-              return <span
-                id="read-indicator"
-                aria-label="Most recently read document indicator">
-                  {rightTriangle()}
-                </span>;
-            }
+    return [
+      {
+        cellClass: 'last-read-column',
+        valueFunction: (doc) => <ConnectedLastReadIndicator docId={doc.id} getRef={this.getLastReadIndicatorRef} />
+      },
+      {
+        cellClass: 'categories-column',
+        header: <div
+          id="categories-header"
+          className="document-list-header-categories">
+          Categories <FilterIcon
+            label="Filter by category"
+            idPrefix="category"
+            getRef={this.getCategoryFilterIconRef}
+            selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
+            handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
+
+          {isCategoryDropdownFilterOpen &&
+            <DropdownFilter baseCoordinates={this.state.filterPositions.category}
+              clearFilters={clearFilters}
+              name="category"
+              isClearEnabled={anyCategoryFiltersAreSet}
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}>
+              <DocCategoryPicker
+                categoryToggleStates={this.props.docFilterCriteria.category}
+                handleCategoryToggle={this.props.setCategoryFilter} />
+            </DropdownFilter>
           }
-        },
-        {
-          cellClass: 'categories-column',
-          header: <div
-            id="categories-header"
-            className="document-list-header-categories">
-            Categories <FilterIcon
-              label="Filter by category"
-              idPrefix="category"
-              getRef={(categoryFilterIcon) => {
-                this.categoryFilterIcon = categoryFilterIcon;
-              }}
-              selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
-              handleActivate={toggleCategoryDropdownFilterVisiblity} />
 
-            {isCategoryDropdownFilterOpen &&
-              <DropdownFilter baseCoordinates={this.state.filterPositions.category}
-                clearFilters={clearFilters}
-                name="category"
-                isClearEnabled={anyCategoryFiltersAreSet}
-                handleClose={toggleCategoryDropdownFilterVisiblity}>
-                <DocCategoryPicker
-                  categoryToggleStates={this.props.docFilterCriteria.category}
-                  handleCategoryToggle={this.props.setCategoryFilter} />
-              </DropdownFilter>
-            }
-
-          </div>,
-          valueFunction: (doc) => <DocumentCategoryIcons docId={doc.id} />
-        },
-        {
-          cellClass: 'receipt-date-column',
-          header: <div
-            id="receipt-date-header"
-            className="document-list-header-recepit-date"
-            onClick={() => this.props.changeSortState('receivedAt')}>
-            Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
-          </div>,
-          valueFunction: (doc) =>
-            <span className="document-list-receipt-date">
-              {formatDateStr(doc.receivedAt)}
-            </span>
-        },
-        {
-          cellClass: 'doc-type-column',
-          header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
-            Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
-          </div>,
-          valueFunction: (doc) => boldUnreadContent(
-            <a
-              href={linkToSingleDocumentView(this.props.documentPathBase, doc)}
-              onMouseUp={this.props.showPdf(doc.id)}>
-              {doc.type}
-            </a>, doc)
-        },
-        {
-          cellClass: 'tags-column',
-          header: <div id="tags-header"
-            className="document-list-header-issue-tags">
-            Issue Tags <FilterIcon
-              label="Filter by tag"
-              idPrefix="tag"
-              getRef={(tagFilterIcon) => {
-                this.tagFilterIcon = tagFilterIcon;
-              }}
-              selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
-              handleActivate={toggleTagDropdownFilterVisiblity}
-            />
-            {isTagDropdownFilterOpen &&
-              <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
-                clearFilters={clearTagFilters}
-                name="tag"
-                isClearEnabled={anyTagFiltersAreSet}
-                handleClose={toggleTagDropdownFilterVisiblity}>
-                <DocTagPicker
-                  tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
-                  handleTagToggle={this.props.setTagFilter} />
-              </DropdownFilter>
-            }
-          </div>,
-          valueFunction: (doc) => {
-            return <TagTableColumn
-              doc={doc}
-            />;
+        </div>,
+        valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
+      },
+      {
+        cellClass: 'receipt-date-column',
+        header: <div
+          id="receipt-date-header"
+          className="document-list-header-recepit-date"
+          onClick={() => this.props.changeSortState('receivedAt')}>
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
+        </div>,
+        valueFunction: (doc) =>
+          <span className="document-list-receipt-date">
+            {formatDateStr(doc.receivedAt)}
+          </span>
+      },
+      {
+        cellClass: 'doc-type-column',
+        header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
+        </div>,
+        valueFunction: (doc) => boldUnreadContent(
+          <a
+            href={linkToSingleDocumentView(this.props.documentPathBase, doc)}
+            onMouseUp={this.props.showPdf(doc.id)}>
+            {doc.type}
+          </a>, doc)
+      },
+      {
+        cellClass: 'tags-column',
+        header: <div id="tags-header"
+          className="document-list-header-issue-tags">
+          Issue Tags <FilterIcon
+            label="Filter by tag"
+            idPrefix="tag"
+            getRef={this.getTagFilterIconRef}
+            selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
+            handleActivate={this.toggleTagDropdownFilterVisiblity}
+          />
+          {isTagDropdownFilterOpen &&
+            <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
+              clearFilters={clearTagFilters}
+              name="tag"
+              isClearEnabled={anyTagFiltersAreSet}
+              handleClose={this.toggleTagDropdownFilterVisiblity}>
+              <DocTagPicker
+                tags={this.props.tagOptions}
+                tagToggleStates={this.props.docFilterCriteria.tag}
+                handleTagToggle={this.props.setTagFilter} />
+            </DropdownFilter>
           }
-        },
-        {
-          cellClass: 'comments-column',
-          header: <div
-            id="comments-header"
-            className="document-list-header-comments">
-            Comments
-          </div>,
-          valueFunction: (doc) => {
-            const numberOfComments = _.size(this.props.annotationsPerDocument[doc.id]);
-            const icon = `fa fa-3 ${doc.listComments ?
-              'fa-angle-up' : 'fa-angle-down'}`;
-            const name = `expand ${numberOfComments} comments`;
-
-            return <span className="document-list-comments-indicator">
-              {numberOfComments > 0 &&
-                <span>
-                  <Button
-                    classNames={['cf-btn-link']}
-                    href="#"
-                    ariaLabel={name}
-                    name={name}
-                    id={`expand-${doc.id}-comments-button`}
-                    onClick={this.toggleComments(doc.id)}>{numberOfComments}
-                    <i className={`document-list-comments-indicator-icon ${icon}`}/>
-                  </Button>
-                </span>
-              }
-            </span>;
-          }
+        </div>,
+        valueFunction: (doc) => {
+          return <TagTableColumn
+            doc={doc}
+          />;
         }
-      ];
-    };
+      },
+      {
+        cellClass: 'comments-column',
+        header: <div
+          id="comments-header"
+          className="document-list-header-comments">
+          Comments
+        </div>,
+        valueFunction: (doc) => <ConnectedCommentIndicator doc={doc} />
+      }
+    ];
+  }
+
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
   }
 
   render() {
@@ -361,7 +418,7 @@ export class PdfListView extends React.Component {
           <DocumentListHeader documents={this.props.documents} />
           <div>
             <Table
-              columns={this.getDocumentColumns()}
+              columns={this.getDocumentColumns}
               rowObjects={rowObjects}
               summary="Document list"
               className="documents-table"
@@ -370,6 +427,7 @@ export class PdfListView extends React.Component {
               rowsPerRowObject={2}
               tbodyId="documents-table-body"
               tbodyRef={this.getTbodyRef}
+              getKeyForRow={this.getKeyForRow}
             />
           </div>
         </div>
@@ -378,52 +436,32 @@ export class PdfListView extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  annotationsPerDocument: _(ownProps.documents).
-    keyBy('id').
-    mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
-    value(),
-  ..._.pick(state, 'tagOptions'),
-  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
-});
+const mapStateToProps = (state) => {
+  const documents = getFilteredDocuments(state);
+
+  return {
+    documents,
+    annotationsPerDocument: _(documents).
+      keyBy('id').
+      mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
+      value(),
+    ..._.pick(state, 'tagOptions'),
+    ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
+    setTagFilter,
+    setCategoryFilter,
     changeSortState
   }, dispatch),
-
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
       payload: {
         filterName
-      }
-    });
-  },
-  setCategoryFilter(categoryName, checked) {
-    dispatch({
-      type: Constants.SET_CATEGORY_FILTER,
-      payload: {
-        categoryName,
-        checked
-      }
-    });
-  },
-  setTagFilter(text, checked) {
-    dispatch({
-      type: Constants.SET_TAG_FILTER,
-      payload: {
-        text,
-        checked
-      }
-    });
-  },
-  handleToggleCommentOpened(docId) {
-    dispatch({
-      type: Constants.TOGGLE_COMMENT_LIST,
-      payload: {
-        docId
       }
     });
   }
@@ -437,7 +475,6 @@ PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
-  handleToggleCommentOpened: PropTypes.func.isRequired,
   pdfList: PropTypes.shape({
     lastReadDocId: PropTypes.number
   })

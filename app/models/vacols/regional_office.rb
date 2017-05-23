@@ -158,4 +158,12 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "DSUSER" => { city: "Digital Service HQ", state: "DC", timezone: "America/New_York" }
   }.freeze
   ROS = CITIES.keys.freeze
+
+  SATELLITE_OFFICES = {
+    "SO62" => { city: "San Antonio", state: "TX", timezone: "America/Chicago", regional_office: "RO62" },
+    "SO06" => { city: "Albany", state: "NY", timezone: "America/New_York", regional_office: "RO06" },
+    "SO54" => { city: "Las Vegas", state: "NV", timezone: "America/Los_Angeles", regional_office: "RO54" },
+    "SO49" => { city: "El Paso", state: "TX", timezone: "America/Chicago", regional_office: "RO49" },
+    "SO43" => { city: "Sacremento", state: "CA", timezone: "America/Los_Angeles", regional_office: "RO43" }
+  }.freeze
 end

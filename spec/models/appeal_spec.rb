@@ -1,5 +1,24 @@
 describe Appeal do
-  let(:appeal) { Generators::Appeal.build }
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  let(:appeal) do
+    Generators::Appeal.build(
+      nod_date: nod_date,
+      soc_date: soc_date,
+      form9_date: form9_date,
+      ssoc_dates: ssoc_dates,
+      documents: documents
+    )
+  end
+
+  let(:nod_date) { 3.days.ago }
+  let(:soc_date) { 1.day.ago }
+  let(:form9_date) { 1.day.ago }
+  let(:ssoc_dates) { [] }
+  let(:documents) { [] }
+
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
@@ -33,19 +52,70 @@ describe Appeal do
     end
   end
 
+  context "#nod" do
+    subject { appeal.nod }
+    it { is_expected.to have_attributes(type: "NOD", vacols_date: appeal.nod_date) }
+
+    context "when nod_date is nil" do
+      let(:nod_date) { nil }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#soc" do
+    subject { appeal.soc }
+    it { is_expected.to have_attributes(type: "SOC", vacols_date: appeal.soc_date) }
+
+    context "when soc_date is nil" do
+      let(:soc_date) { nil }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#form9" do
+    subject { appeal.form9 }
+    it { is_expected.to have_attributes(type: "Form 9", vacols_date: appeal.form9_date) }
+
+    context "when form9_date is nil" do
+      let(:form9_date) { nil }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#ssocs" do
+    subject { appeal.ssocs }
+
+    context "when there are no ssoc dates" do
+      it { is_expected.to eq([]) }
+    end
+
+    context "when there are ssoc dates" do
+      let(:ssoc_dates) { [Time.zone.today, (Time.zone.today - 5.days)] }
+
+      it "returns array of ssoc documents" do
+        expect(subject.first).to have_attributes(vacols_date: Time.zone.today)
+        expect(subject.last).to have_attributes(vacols_date: Time.zone.today - 5.days)
+      end
+    end
+  end
+
+  context "#events" do
+    subject { appeal.events }
+    let(:soc_date) { 5.days.ago }
+
+    it "returns list of events sorted from oldest to newest by date" do
+      expect(subject.length > 1).to be_truthy
+      expect(subject.first.date).to eq(5.days.ago)
+      expect(subject.first.type).to eq(:soc)
+    end
+  end
+
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
     let(:form9_document) { Document.new(type: nil, alt_types: ["Form 9"], received_at: 1.day.ago) }
 
-    let(:appeal) do
-      Generators::Appeal.build(
-        nod_date: 3.days.ago,
-        soc_date: 2.days.ago,
-        form9_date: 1.day.ago,
-        documents: [nod_document, soc_document, form9_document]
-      )
-    end
+    let(:documents) { [nod_document, soc_document, form9_document] }
 
     subject { appeal.documents_match? }
 
@@ -59,7 +129,7 @@ describe Appeal do
             Document.new(type: "SSOC", received_at: 7.days.ago),
             Document.new(type: "SSOC", received_at: 9.days.ago)
           ]
-          appeal.ssoc_dates = [6.days.ago, 7.days.ago]
+          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
         end
 
         it { is_expected.to be_truthy }
@@ -72,7 +142,7 @@ describe Appeal do
     end
 
     context "when the soc date is mismatched" do
-      before { soc_document.received_at = 5.days.ago }
+      before { soc_document.received_at = 6.days.ago }
       it { is_expected.to be_falsy }
     end
 
@@ -92,26 +162,6 @@ describe Appeal do
       end
 
       it { is_expected.to be_falsy }
-    end
-
-    context "ssoc_dates_with_matches returns correct hash" do
-      before do
-        appeal.documents += [
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
-        ]
-
-        appeal.ssoc_dates = [6.days.ago, 9.days.ago]
-      end
-
-      subject { appeal.ssoc_dates_with_matches }
-
-      it do
-        expect(Date.strptime(subject.first[:date], "%m/%d/%Y")).to eq(6.days.ago.to_date)
-        expect(Date.strptime(subject.last[:date], "%m/%d/%Y")).to eq(9.days.ago.to_date)
-        expect(subject.first[:match]).to be_truthy
-        expect(subject.last[:match]).to be_falsy
-      end
     end
   end
 
@@ -684,6 +734,29 @@ describe Appeal do
 
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+  end
+
+  context ".for_api" do
+    subject { Appeal.for_api(appellant_ssn: "9998887777") }
+
+    let!(:veteran_appeals) do
+      [
+        Generators::Appeal.build(
+          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "9998887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { type: "Reconsideration", appellant_ssn: "9998887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "9998887777" }
+        )
+      ]
+    end
+
+    it "returns filtered appeals for veteran sorted by latest event date" do
+      expect(subject.length).to eq(2)
+      expect(subject.first.form9_date).to eq(3.days.ago)
     end
   end
 end

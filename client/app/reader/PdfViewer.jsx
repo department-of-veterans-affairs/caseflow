@@ -10,23 +10,27 @@ import { closeAnnotationDeleteModal, deleteAnnotation,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { getAnnotationByDocumentId } from '../reader/utils';
+import { getFilteredDocuments } from './selectors';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
-  // Returns true if the user is doing some action. i.e.
-  // editing a note, adding a note, or placing a comment.
-  isUserActive = () => this.props.editingCommentsForCurrentDoc
-
   keyListener = (event) => {
-    if (!this.isUserActive()) {
-      if (event.key === 'ArrowLeft' && this.previousDocId()) {
-        this.props.showPdf(this.previousDocId())();
-      }
-      if (event.key === 'ArrowRight' && this.nextDocId()) {
-        this.props.showPdf(this.nextDocId())();
-      }
+    const userIsEditingComment = _.some(
+      document.querySelectorAll('input,textarea'),
+      (elem) => document.activeElement === elem
+    );
+
+    if (userIsEditingComment) {
+      return;
+    }
+
+    if (event.key === 'ArrowLeft') {
+      this.props.showPdf(this.prevDocId())();
+    }
+    if (event.key === 'ArrowRight') {
+      this.props.showPdf(this.nextDocId())();
     }
   }
 
@@ -38,9 +42,8 @@ export class PdfViewer extends React.Component {
     }
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
-
     window.addEventListener('keydown', this.keyListener);
   }
 
@@ -66,22 +69,8 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
-  previousDocId = () => {
-    const previousDocExists = this.selectedDocIndex() > 0;
-
-    if (previousDocExists) {
-      return this.props.documents[this.selectedDocIndex() - 1].id;
-    }
-  }
-
-  nextDocId = () => {
-    const selectedDocIndex = this.selectedDocIndex();
-    const nextDocExists = selectedDocIndex + 1 < _.size(this.props.documents);
-
-    if (nextDocExists) {
-      return this.props.documents[selectedDocIndex + 1].id;
-    }
-  }
+  prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
+  nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
 
   showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
 
@@ -109,7 +98,7 @@ export class PdfViewer extends React.Component {
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.previousDocId()}
+            prevDocId={this.prevDocId()}
             nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
             showDocumentsListNavigation={this.showDocumentsListNavigation()}
@@ -148,6 +137,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  documents: getFilteredDocuments(state),
   editingCommentsForCurrentDoc:
     _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),

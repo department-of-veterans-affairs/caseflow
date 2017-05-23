@@ -20,16 +20,6 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
 
   # Grab all historical full grants within the last 3 days
   def full_grant_outcoded_after
-    Time.zone = "Eastern Time (US & Canada)"
-    current_time = Time.zone.now
-
-    # Round off hours, minutes, and seconds
-    rounded_current_time = Time.zone.local(
-      current_time.year,
-      current_time.month,
-      current_time.day
-    )
-
-    rounded_current_time - 3.days
+    VACOLS::Record.relative_vacols_date(3.days)
   end
 end

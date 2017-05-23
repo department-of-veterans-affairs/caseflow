@@ -21,12 +21,20 @@ Rails.application.routes.draw do
 
   resources :certification_cancellations, only: [:show, :create]
 
+  namespace :api do
+    namespace :v1 do
+      resources :appeals, only: :index
+    end
+  end
+
   scope path: "/dispatch" do
     # TODO(jd): Make this its own controller action that looks at the user's roles
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
+
+    resources :user_quotas, path: "/user-quotas", only: :update
 
     resources :establish_claims,
               path: "/establish-claim",
@@ -89,6 +97,7 @@ Rails.application.routes.draw do
   get 'help' => 'help#index'
   get 'dispatch/help' => 'help#dispatch'
   get 'certification/help' => 'help#certification'
+  get 'reader/help' => 'help#reader'
 
 
   # alias root to help; make sure to keep this below the canonical route so url_for works

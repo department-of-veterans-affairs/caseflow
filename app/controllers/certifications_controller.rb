@@ -23,7 +23,7 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def update_v2_params
+  def update_certification_from_v2_form
     permitted = params
                 .require("update")
                 .permit("representative_name",
@@ -40,12 +40,12 @@ class CertificationsController < ApplicationController
   end
 
   def update_v2
-    update_v2_params
+    update_certification_from_v2_form
     render json: {}
   end
 
   def certify_v2
-    update_v2_params
+    update_certification_from_v2_form
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,

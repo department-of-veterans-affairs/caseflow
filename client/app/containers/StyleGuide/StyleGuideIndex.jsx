@@ -45,7 +45,7 @@ export default function StyleGuideIndex() {
       name: 'Search'
     },
     {
-      anchor: '#dropdown',
+      anchor: '#dropdowns',
       name: 'Dropdown Menus'
     },
     {
@@ -116,7 +116,7 @@ export default function StyleGuideIndex() {
 
 /* eslint-disable max-len */
 
-  return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+  return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
           componentLinks.map((link, i) => (
@@ -163,9 +163,6 @@ export default function StyleGuideIndex() {
           title="Search"
           id="search" />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Dropdown Menus"
-          id="dropdown" />
         <StyleGuideSearchableDropdown />
         <div className="cf-help-divider"></div>
         <StyleGuideCheckboxes />
