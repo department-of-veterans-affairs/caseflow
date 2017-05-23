@@ -1,4 +1,5 @@
 class Fakes::Initializer
+  class << self
 
     def load!
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
