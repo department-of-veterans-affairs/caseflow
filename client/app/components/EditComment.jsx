@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../components/Button';
 
 // A rounded rectangle with a text box for adding
@@ -51,9 +53,9 @@ EditComment.defaultProps = {
 };
 
 EditComment.propTypes = {
-  comment: React.PropTypes.object.isRequired,
-  disableOnEmpty: React.PropTypes.bool,
-  id: React.PropTypes.string,
+  comment: PropTypes.object.isRequired,
+  disableOnEmpty: PropTypes.bool,
+  id: PropTypes.string,
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func
 };
