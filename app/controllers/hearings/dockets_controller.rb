@@ -8,7 +8,7 @@ class Hearings::DocketsController < ApplicationController
   private
 
   def current_user_dockets
-    @current_user_dockets ||= HearingDocket.for_judge(current_user)
+    @current_user_dockets ||= HearingDocket.upcoming_for_judge(current_user)
   end
   helper_method :current_user_dockets
 

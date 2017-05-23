@@ -12,25 +12,30 @@ RSpec.feature "Hearings" do
       User.authenticate!(roles: ["Hearings"])
     end
 
-    scenario "Shows dockets for each day" do
+    before do
       current_user.full_name = "Lauren Roth"
       current_user.vacols_id = "LROTH"
       current_user.save!
 
       Generators::Hearing.build(
-        vacols_user_id: current_user.vacols_id
+        user: current_user,
+        vacols_id: current_user.vacols_id
       )
 
       Generators::Hearing.build(
-        vacols_user_id: current_user.vacols_id
+        user: current_user,
+        vacols_id: current_user.vacols_id
       )
 
       Generators::Hearing.build(
+        user: current_user,
         type: "central_office",
         date: Time.zone.now,
-        vacols_user_id: current_user.vacols_id
+        vacols_id: current_user.vacols_id
       )
+    end
 
+    scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
       # Verify dates
@@ -38,7 +43,7 @@ RSpec.feature "Hearings" do
       day1 = get_day(1)
       day2 = get_day(2)
 
-      expect(day1 + 5).to eql(day2)
+      expect(day1 + 5.days).to eql(day2)
 
       # Verify docket types
 
@@ -67,8 +72,8 @@ end
 # helpers
 
 def get_day(row)
-  # splits "YYYY/MM/DD" and converts DD to integer
-  find(:xpath, "//tbody/tr[#{row}]/td[1]").text.split("/")[2].to_i
+  parts = find(:xpath, "//tbody/tr[#{row}]/td[1]").text.split("/").map(&:to_i)
+  Date.new(parts[2], parts[0], parts[1])
 end
 
 def get_type(row)

@@ -50,10 +50,10 @@ export class Dockets extends React.Component {
 
     let rowObjects = this.props.dockets.map((docket) => {
       return {
-        date: docket.date,
+        date: moment(docket.date).format('l'),
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
-        field_office: `${docket.regional_office.city}, ${docket.regional_office.state} RO`,
+        field_office: `${docket.venue.city}, ${docket.venue.state} RO`,
         slots: _.random(8, 12),
         scheduled: docket.hearings.length
       };
