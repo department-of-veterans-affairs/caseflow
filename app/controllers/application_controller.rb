@@ -74,12 +74,14 @@ class ApplicationController < ActionController::Base
   def application
     RequestStore.store[:application].to_s.downcase
   end
+  helper_method :application
 
   def help_url
     {
       "certification" => certification_help_path,
       "dispatch-arc" => dispatch_help_path,
-      "reader" => reader_help_path
+      "reader" => reader_help_path,
+      "hearings" => hearings_help_path
     }[application] || help_path
   end
   helper_method :help_url
