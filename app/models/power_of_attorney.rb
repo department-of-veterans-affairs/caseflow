@@ -29,8 +29,8 @@ class PowerOfAttorney
 
   def load_bgs_record!
     result = bgs.fetch_poa_by_file_number(file_number)
-    self.bgs_representative_name = result[:representative_name]
-    self.bgs_representative_type = result[:representative_type]
+    bgs_representative_name = result[:representative_name]
+    bgs_representative_type = result[:representative_type]
 
     self
   end
@@ -40,7 +40,7 @@ class PowerOfAttorney
   end
 
   def bgs
-    BGSService.new
+    @bgs ||= BGSService.new
   end
 
   class << self

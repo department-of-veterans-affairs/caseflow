@@ -2,7 +2,7 @@ class Fakes::PowerOfAttorneyRepository
   include PowerOfAttorneyMapper
 
   def self.load_vacols_data(poa)
-    record = MetricsService.record "load poa #{poa.vacols_id}" do
+    record = MetricsService.record "load poa data #{poa.vacols_id}" do
       # TODO: work out a more thorough set of test data
       { bfso: "A" }
     end
