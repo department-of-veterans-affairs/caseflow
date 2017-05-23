@@ -722,6 +722,21 @@ describe Appeal do
     end
   end
 
+  context "#power_of_attorney" do
+    subject { appeal.power_of_attorney }
+
+    it "returns poa loaded with VACOLS values" do
+      is_expected.to have_attributes(
+        vacols_representative_type: "Service Organization",
+        vacols_representative_name: "The American Legion"
+      )
+    end
+
+    it "returns poa loaded with BGS values" do
+      is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+  end
+
   context ".for_api" do
     subject { Appeal.for_api(appellant_ssn: ssn) }
 
