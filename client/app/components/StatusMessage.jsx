@@ -11,6 +11,7 @@ export default class StatusMessage extends React.Component {
       leadMessageList,
       messageText,
       title,
+      children,
       type
     } = this.props;
 
@@ -32,15 +33,18 @@ export default class StatusMessage extends React.Component {
       return h1classNames.join(' ');
     };
 
-    return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment
-      cf-app-segment--alt">
+    return <div id="certifications-generate" className="cf-app-msg-screen cf-app-segment cf-app-segment--alt">
       <h1 className={getClassNames()}>{title}</h1>
-      {leadMessageList.map((listValue, i) =>
-        <h2 className="cf-msg-screen-deck" key={i}>
-          {listValue}
-        </h2>)
-      }
 
+      { children ?
+        <h2 className="cf-msg-screen-deck">
+          {children}
+        </h2> :
+        leadMessageList.map((listValue, i) =>
+          <h2 className="cf-msg-screen-deck" key={i}>
+            {listValue}
+          </h2>)
+      }
       {type === 'success' && <ul className={classNames.join(' ')}>
         {checklist.map((listValue, i) => <li key={i}>{listValue}</li>)}
       </ul>}
