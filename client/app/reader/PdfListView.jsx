@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import NoSearchResults from '../components/NoSearchResults';
+import NoSearchResults from './NoSearchResults';
 
 import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
