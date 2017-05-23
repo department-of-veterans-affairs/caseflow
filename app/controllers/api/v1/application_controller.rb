@@ -36,6 +36,6 @@ class Api::V1::ApplicationController < ActionController::Base
   end
 
   def setup_fakes
-    Fakes::Initializer.setup!
+    Fakes::Initializer.setup!(Rails.env)
   end
 end

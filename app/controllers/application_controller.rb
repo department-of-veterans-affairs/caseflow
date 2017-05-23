@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
   # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
   # - Setup the default authenticated user
   def setup_fakes
-    Fakes::Initializer.setup!
+    Fakes::Initializer.setup!(Rails.env)
   end
 
   def test_user?
