@@ -1,5 +1,5 @@
 import React from 'react';
-import StatusMessage from './StatusMessage';
+import StatusMessage from '../components/StatusMessage';
 
 const NoSearchResults = (props) => {
   return <div className="section--no-search-results">
