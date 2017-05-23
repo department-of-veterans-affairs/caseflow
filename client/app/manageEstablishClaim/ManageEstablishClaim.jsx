@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import EmployeeCount from './EmployeeCount';
 import Table from '../components/Table';
 import Alert from '../components/Alert';

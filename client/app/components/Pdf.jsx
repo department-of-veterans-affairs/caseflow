@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { keyOfAnnotation, getAnnotationByDocumentId } from '../reader/utils';
@@ -41,7 +43,7 @@ export class Pdf extends React.Component {
     // filename of the rendered PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
-      numPages: 0,
+      numPages: null,
       pdfDocument: null,
       isRendered: []
     };
@@ -53,6 +55,7 @@ export class Pdf extends React.Component {
 
     this.currentPage = 0;
     this.isRendering = [];
+    this.pageContainers = [];
   }
 
   setIsRendered = (index, value) => {
@@ -183,23 +186,19 @@ export class Pdf extends React.Component {
       locationOnPage: 0
     };
 
-    this.renderInViewPages();
-  }
-
-  renderInViewPages = () => {
-    let page = document.getElementsByClassName('page');
-
-    Array.prototype.forEach.call(page, (ele, index) => {
-      let boundingRect = ele.getBoundingClientRect();
-
+    this.performFunctionOnEachPage((boundingRect, index) => {
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
       if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-
         this.onPageChange(index + 1);
       }
+    });
+    this.renderInViewPages();
+  }
 
+  renderInViewPages = () => {
+    this.performFunctionOnEachPage((boundingRect, index) => {
       // This renders each page as it comes into view. i.e. when
       // the top of the next page is within a thousand pixels of
       // the current view we render it. If the bottom of the page
@@ -209,6 +208,16 @@ export class Pdf extends React.Component {
       if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
           boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
         this.renderPage(index, this.props.file);
+      }
+    });
+  }
+
+  performFunctionOnEachPage = (func) => {
+    Array.prototype.forEach.call(this.pageContainers, (ele, index) => {
+      if (ele) {
+        const boundingRect = ele.getBoundingClientRect();
+
+        func(boundingRect, index);
       }
     });
   }
@@ -465,7 +474,7 @@ Pdf.defaultProps = {
 };
 
 Pdf.propTypes = {
-  selectedAnnotationId: React.PropTypes.number,
+  selectedAnnotationId: PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -480,9 +489,9 @@ Pdf.propTypes = {
   onPageChange: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
-    id: React.PropTypes.number,
-    page: React.PropTypes.number,
-    y: React.PropTypes.number
+    id: PropTypes.number,
+    page: PropTypes.number,
+    y: PropTypes.number
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,

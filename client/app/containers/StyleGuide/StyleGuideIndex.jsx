@@ -109,7 +109,7 @@ export default function StyleGuideIndex() {
 
 /* eslint-disable max-len */
 
-  return <div className="cf-app cf-push-row cf-sg-layout cf-app-segment cf-app-segment--alt">
+  return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
           componentLinks.map((link, i) => (
