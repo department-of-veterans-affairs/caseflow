@@ -62,7 +62,7 @@ export class Dockets extends React.Component {
     return <div className="cf-hearings-schedule">
       <div className="cf-hearings-title-and-judge">
         <h1>Hearings Schedule</h1>
-        <span>VLJ: {this.props.veteran_line_judge.full_name}</span>
+        <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
       </div>
       <Table className="dockets" columns={columns} rowObjects={rowObjects} summary={'Hearings Prep Schedule?'}/>
     </div>;
@@ -70,7 +70,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  veteran_line_judge: state.veteran_line_judge,
+  veteran_law_judge: state.veteran_law_judge,
   dockets: state.dockets
 });
 
@@ -84,5 +84,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
+  veteran_law_judge: PropTypes.object,
   dockets: PropTypes.arrayOf(PropTypes.object)
 };
