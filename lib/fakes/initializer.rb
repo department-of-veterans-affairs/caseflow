@@ -1,9 +1,10 @@
 class Fakes::Initializer
   class << self
     def load!
+      PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
-      Appeal.repository = Fakes::AppealRepository
       Hearing.repository = Fakes::HearingRepository
+      Appeal.repository = Fakes::AppealRepository
     end
 
     def setup!(rails_env)
