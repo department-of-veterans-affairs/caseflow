@@ -8,7 +8,7 @@ describe "Appeals API v1", type: :request do
           template: :remand_decided,
           type: "Original",
           status: "Complete",
-          appellant_ssn: "1112223333",
+          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -22,7 +22,7 @@ describe "Appeals API v1", type: :request do
       Generators::Appeal.create(
         vacols_record: {
           template: :ready_to_certify,
-          appellant_ssn: "1112223333",
+          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 11.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -49,7 +49,7 @@ describe "Appeals API v1", type: :request do
 
     it "returns 401 if API key not authorized" do
       headers = {
-        "ssn": "1112223333",
+        "ssn": "111223333",
         "Authorization": "Token token=12312kdasdaskd"
       }
 
@@ -58,9 +58,24 @@ describe "Appeals API v1", type: :request do
       expect(response.code).to eq("401")
     end
 
+    it "returns 422 if ssn is invalid" do
+      headers = {
+        "ssn": "11122333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v1/appeals", nil, headers
+
+      expect(response.code).to eq("422")
+
+      json = JSON.parse(response.body)
+      expect(json["errors"].length).to eq(1)
+      expect(json["errors"].first["title"]).to eq("Invalid SSN")
+    end
+
     it "returns list of appeals for veteran with SSN" do
       headers = {
-        "ssn": "1112223333",
+        "ssn": "111223333",
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
