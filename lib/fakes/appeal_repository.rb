@@ -20,7 +20,7 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_accessor :document_records, :issue_records, :hearing_records
+    attr_accessor :document_records, :issue_records
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
@@ -148,6 +148,20 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
+  def self.appeals_by_appellant_ssn(appellant_ssn)
+    Rails.logger.info("Load faked VACOLS appeals data for SSN: #{appellant_ssn}")
+
+    return_records = MetricsService.record "load appeals for ssn #{appellant_ssn}" do
+      records.select { |_, r| r[:appellant_ssn] == appellant_ssn }
+    end
+
+    return_records.map do |vacols_id, r|
+      Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
+        appeal.assign_from_vacols(r)
+      end
+    end
+  end
+
   def self.fetch_documents_for(appeal)
     (document_records || {})[appeal.vbms_id] || @documents || []
   end
@@ -187,10 +201,6 @@ class Fakes::AppealRepository
     (issue_records || {})[vacols_id] || []
   end
 
-  def self.hearings(vacols_user_id)
-    (hearing_records || []).select { |h| h.vacols_user_id == vacols_user_id }
-  end
-
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
@@ -200,14 +210,15 @@ class Fakes::AppealRepository
     seed_certification_data!
     seed_establish_claim_data!
     seed_reader_data!
-    seed_hearings_prep_data!
   end
 
   def self.certification_documents
     [
       Generators::Document.build(type: "NOD", category_procedural: true),
       Generators::Document.build(type: "SOC"),
-      Generators::Document.build(type: "Form 9", category_medical: true)
+      Generators::Document.build(type: "Form 9", category_medical: true),
+      Generators::Document.build(type: "SSOC"),
+      Generators::Document.build(type: "SSOC", received_at: 10.days.ago)
     ]
   end
 
@@ -223,17 +234,6 @@ class Fakes::AppealRepository
     ]
   end
 
-  def self.seed_hearings_prep_data!
-    50.times.each do |i|
-      type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
-      Generators::Hearing.build(
-        type: type,
-        date: Time.zone.now - (i % 9).days - rand(3).days,
-        vacols_user_id: "LROTH"
-      )
-    end
-  end
-
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
     50.times.each do |i|
@@ -247,7 +247,7 @@ class Fakes::AppealRepository
   end
 
   def self.seed_appeal_ready_to_certify!
-    nod, soc, form9 = certification_documents
+    nod, soc, form9, ssoc1, ssoc2 = certification_documents
 
     Generators::Appeal.build(
       vacols_id: "123C",
@@ -255,10 +255,11 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
-        soc_date: soc.received_at,
-        form9_date: form9.received_at
+        soc_date: soc.received_at + 2.days,
+        form9_date: form9.received_at,
+        ssoc_dates: [ssoc1.received_at, ssoc2.received_at]
       },
-      documents: [nod, soc, form9]
+      documents: [nod, soc, form9, ssoc1, ssoc2]
     )
   end
 
@@ -350,14 +351,15 @@ class Fakes::AppealRepository
     ]
   end
 
-  def self.random_reader_documents(num_documents)
+  def self.random_reader_documents(num_documents, seed = Random::DEFAULT.seed)
+    seeded_random = Random.new(seed)
     (0..num_documents).to_a.reduce([]) do |acc, number|
       acc << Generators::Document.build(
         vbms_document_id: number,
-        type: Caseflow::DocumentTypes::TYPES.values[rand(Caseflow::DocumentTypes::TYPES.length)],
-        category_procedural: rand(10) == 1,
-        category_medical: rand(10) == 1,
-        category_other: rand(10) == 1)
+        type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
+        category_procedural: seeded_random.rand(10) == 1,
+        category_medical: seeded_random.rand(10) == 1,
+        category_other: seeded_random.rand(10) == 1)
     end
   end
 
@@ -392,7 +394,7 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      documents: random_reader_documents(1000)
+      documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
       vacols_id: "reader_id3",

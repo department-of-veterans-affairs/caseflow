@@ -27,11 +27,30 @@ class Document < ActiveRecord::Base
   }.freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
+  FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :type, :alt_types, :vbms_doc_type, :received_at, :filename
+  attr_accessor :type, :alt_types, :received_at, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
+  end
+
+  def receipt_date
+    received_at && received_at.to_date
+  end
+
+  def match_vbms_document_from(vbms_documents)
+    match_vbms_document_using(vbms_documents) { |doc| doc.receipt_date == vacols_date }
+  end
+
+  def fuzzy_match_vbms_document_from(vbms_documents)
+    match_vbms_document_using(vbms_documents) { |doc| fuzzy_date_match?(doc) }
+  end
+
+  # If a document was created with a vacols_date and merged with a matching vbms
+  # document with a receipt_date, then the document is considered to be "matching"
+  def matching?
+    !!(received_at && vacols_date)
   end
 
   def self.type_from_vbms_type(vbms_type)
@@ -88,29 +107,68 @@ class Document < ActiveRecord::Base
     File.join(Rails.root, "tmp", "pdfs", file_name)
   end
 
-  def to_hash
-    serializable_hash(
-      methods: [:vbms_document_id, :type, :received_at, :filename,
-                :category_procedural, :category_medical, :category_other]
-    )
+  def serializable_hash(options = {})
+    super({
+      methods: [
+        :vbms_document_id,
+        :type,
+        :received_at,
+        :filename,
+        :category_procedural,
+        :category_medical,
+        :category_other,
+        :serialized_vacols_date,
+        :serialized_receipt_date,
+        :matching?
+      ]
+    }.update(options))
   end
 
-  def load_or_save!
-    existing_document = Document.find_by(vbms_document_id: vbms_document_id)
-    return fill_in(existing_document) if existing_document
-    save! && self
+  def to_hash
+    serializable_hash
+  end
+
+  def merge_into(document)
+    document.assign_attributes(
+      type: type,
+      alt_types: alt_types,
+      received_at: received_at,
+      filename: filename
+    )
+
+    document
+  end
+
+  def serialized_vacols_date
+    serialize_date(vacols_date)
+  end
+
+  def serialized_receipt_date
+    serialize_date(receipt_date)
   end
 
   private
 
-  def fill_in(persisted_document)
-    persisted_document.assign_attributes(
-      type: type,
-      alt_types: alt_types,
-      vbms_doc_type: vbms_doc_type,
-      received_at: received_at,
-      filename: filename
-    )
-    persisted_document
+  def match_vbms_document_using(vbms_documents, &date_match_test)
+    match = vbms_documents.detect do |doc|
+      date_match_test.call(doc) && doc.type?(type)
+    end
+
+    match ? merge_with(match) : self
+  end
+
+  # Because VBMS does not allow the receipt date to be set after the upload date,
+  # we allow it to be up to 4 days before the VACOLS date in some scenarios. In
+  # these scenarios we "fuzzy match" the VBMS and VACOLS dates.
+  def fuzzy_date_match?(vbms_document)
+    ((vacols_date - FUZZY_MATCH_DAYS)..vacols_date).cover?(vbms_document.receipt_date)
+  end
+
+  def serialize_date(date)
+    date ? date.to_formatted_s(:short_date) : ""
+  end
+
+  def merge_with(document)
+    document.merge_into(self)
   end
 end

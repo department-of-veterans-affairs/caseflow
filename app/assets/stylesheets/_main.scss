@@ -267,6 +267,7 @@ select {
 
 .cf-bottom-border {
   border-bottom: 1px solid $color-gray-light;
+  margin: 40px auto;
 }
 
 .cf-bold-ordered-list {
@@ -320,13 +321,18 @@ select {
 }
 
 // candidate for commons
-// Re-assess if we need a number field of a different size
-[type=number] {
-  width: 60px;
-  height: 35px;
+.cf-inline-field {
+  &.cf-form-textinput {
+    margin-bottom: 0;
+  }
+
+  &[type="number"] {
+    width: 60px;
+    height: 35px;
+  }
 }
 
 // add to commons
 .cf-form-textinput {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
