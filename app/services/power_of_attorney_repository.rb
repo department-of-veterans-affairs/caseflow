@@ -27,8 +27,8 @@ class PowerOfAttorneyRepository
     rep_info = get_poa_from_vacols_poa(case_record.bfso)
 
     poa.assign_from_vacols(
-      vacols_representative_type: rep_info[:represenative_type],
-      vacols_representative_name: rep_info[:represenative_name]
+      vacols_representative_type: rep_info[:representative_type],
+      vacols_representative_name: rep_info[:representative_name]
     )
   end
   # :nocov:
