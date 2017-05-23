@@ -342,6 +342,8 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
+      fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
+
       repository.appeals_by_appellant_ssn(appellant_ssn)
                 .select(&:api_supported?)
                 .sort_by(&:latest_event_date)

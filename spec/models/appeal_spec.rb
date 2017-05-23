@@ -738,18 +738,20 @@ describe Appeal do
   end
 
   context ".for_api" do
-    subject { Appeal.for_api(appellant_ssn: "9998887777") }
+    subject { Appeal.for_api(appellant_ssn: ssn) }
+
+    let(:ssn) { "999887777" }
 
     let!(:veteran_appeals) do
       [
         Generators::Appeal.build(
-          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "9998887777" }
+          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
         ),
         Generators::Appeal.build(
-          vacols_record: { type: "Reconsideration", appellant_ssn: "9998887777" }
+          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
         ),
         Generators::Appeal.build(
-          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "9998887777" }
+          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
         )
       ]
     end
@@ -757,6 +759,14 @@ describe Appeal do
     it "returns filtered appeals for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
+    end
+
+    context "when ssn is less than 9 characters" do
+      let(:ssn) { "99887777" }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
     end
   end
 end

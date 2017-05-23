@@ -8,8 +8,8 @@ class Fakes::Initializer
       Appeal.repository = Fakes::AppealRepository
     end
 
-    def setup!
-      development! if Rails.env.development? || Rails.env.demo?
+    def setup!(rails_env)
+      development! if rails_env.development? || rails_env.demo?
     end
 
     private
