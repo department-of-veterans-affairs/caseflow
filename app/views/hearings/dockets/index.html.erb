@@ -1,2 +1,11 @@
 <%# react_component goes here %>
-<p><%= current_user_dockets.map(&:to_hash).to_s %></p>
+
+<% content_for :page_title do page_title('Schedule') end %>
+
+<% content_for :right_actions do %><%= print_link %><% end %>
+
+<%= react_component("Hearings", props: {
+  hearings: {
+    dockets: current_user_dockets.map(&:to_hash)
+  }
+}) %>
