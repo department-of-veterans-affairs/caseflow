@@ -423,11 +423,8 @@ export class PdfListView extends React.Component {
       window.removeEventListener('resize', this.setFilterIconPositions);
     }
 
-    const showNoSearchResults = (rows, searchQuery) => (
-      !_.size(rows) && _.size(searchQuery)
-    );
-
-    const showNoSearchResultsMsg = showNoSearchResults(rowObjects, this.props.docFilterCriteria);
+    const showNoSearchResultsMsg = !_.size(rowObjects) && 
+      _.size(this.props.docFilterCriteria.searchQuery);
 
     return <div>
       <div className="usa-grid">
