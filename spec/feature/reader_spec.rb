@@ -455,7 +455,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Categories" do
+    scenario "Categories", focus:true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       def get_aria_labels(elems)
@@ -472,7 +472,7 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq(["Procedural"])
+      expect(doc_0_categories).to eq([])
 
       doc_1_categories =
         get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
@@ -491,7 +491,7 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq(["Medical"])
+      expect(doc_0_categories).to eq([])
 
       click_on documents[1].type
 
@@ -500,7 +500,7 @@ RSpec.feature "Reader" do
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
-      expect(find("#medical", visible: false).checked?).to be false
+      expect(find("#medical", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
     end
 
