@@ -27,6 +27,7 @@ class Reader::DocumentsController < ApplicationController
   def appeal
     @appeal ||= Appeal.find_or_create_by_vacols_id(appeal_id)
   end
+  helper_method :appeal
 
   def annotations
     appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
