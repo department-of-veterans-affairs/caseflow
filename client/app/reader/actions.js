@@ -9,7 +9,7 @@ export const collectAllTags = (documents) => ({
 });
 
 export const onInitialDataLoadingFail = () => ({
-  type: Constants.INITIAL_DATA_LOADING_FAIL
+  type: Constants.REQUEST_INITIAL_DATA_FAILURE
 });
 
 export const onReceiveDocs = (documents) => (

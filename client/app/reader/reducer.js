@@ -191,7 +191,7 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.INITIAL_DATA_LOADING_FAIL:
+  case Constants.REQUEST_INITIAL_DATA_FAILURE:
     return update(state, {
       initialDataLoadingFail: {
         $set: true
