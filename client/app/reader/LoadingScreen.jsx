@@ -44,21 +44,20 @@ export class LoadingScreen extends React.Component {
       return this.props.children;
     }
 
-    if (this.props.initialDataLoadingFail) {
-      return <StatusMessage
-        title="Unable to load documents">
-        It looks like Caseflow was unable to load this case. Please <a href="">refresh the page</a> and try again.
-        </StatusMessage>;
-    }
-
     return <div className="usa-grid">
         <div className="cf-app">
-          <div
-            id="loading-symbol"
-            className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
-            {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
-            <p>Loading document list in Reader...</p>
-          </div>
+          {this.props.initialDataLoadingFail ?
+            <StatusMessage
+              title="Unable to load documents">
+              It looks like Caseflow was unable to load this case. Please <a href="">refresh the page</a> and try again.
+              </StatusMessage> :
+            <div
+              id="loading-symbol"
+              className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
+              {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
+              <p>Loading document list in Reader...</p>
+            </div>
+          }
         </div>
       </div>;
   }
