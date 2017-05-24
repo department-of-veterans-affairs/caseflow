@@ -60,7 +60,7 @@ export class PdfUI extends React.Component {
 
       return <div className="cf-pdf-buttons-center">
         <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}{' '}</span>
-        | 
+        |
         <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>

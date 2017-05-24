@@ -310,14 +310,16 @@ svg[aria-hidden=true],
 
 .cf-pdf-buttons-center {
   $spacing: 10px;
+
   .page-progress-indicator {
     margin-right: $spacing;
   }
+
   .doc-list-progress-indicator {
     margin-left: $spacing;
 
     .filter-icon {
-      margin-right: $spacing/2;
+      margin-right: $spacing / 2;
       position: relative;
       top: 1px;
     }

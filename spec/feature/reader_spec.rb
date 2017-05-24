@@ -100,14 +100,14 @@ RSpec.feature "Reader" do
       ]
     end
 
-    scenario "Progress indicator", :focus => true do
+    scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")      
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
       click_on "Back to all documents"
       fill_in "searchBar", with: "9"
       click_on documents[1].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")      
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
       expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")
     end
 

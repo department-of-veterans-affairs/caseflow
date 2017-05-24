@@ -169,6 +169,7 @@ export class CategoryIcon extends React.PureComponent {
 }
 
 export class FilterIcon extends React.PureComponent {
+  // eslint-disable-next-line class-methods-use-this
   render() {
     return <svg width="12px" height="14px" viewBox="0 0 12 14" className="filter-icon">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -178,7 +179,7 @@ export class FilterIcon extends React.PureComponent {
               </g>
           </g>
       </g>
-    </svg>
+    </svg>;
   }
 }
 
