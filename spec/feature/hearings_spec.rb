@@ -1,11 +1,11 @@
 require "rails_helper"
 
 RSpec.feature "Hearings" do
-  before do
-    # Set the time zone to the current user's time zone for proper date conversion
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1))
-  end
+#  before do
+#    # Set the time zone to the current user's time zone for proper date conversion
+#    Time.zone = "America/New_York"
+#    Timecop.freeze(Time.utc(2017, 1, 1))
+#  end
 
   context "Schedule" do
     let!(:current_user) do
@@ -34,6 +34,19 @@ RSpec.feature "Hearings" do
 
       day1 = get_day(1)
       day2 = get_day(2)
+
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
+      puts day1
+      puts day2
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
+      puts "******************************"
 
       expect(day1 + 5.days).to eql(day2)
 
