@@ -38,7 +38,7 @@ describe HearingDocket do
     subject { HearingDocket.upcoming_for_judge(user) }
 
     let(:user) { Generators::User.create }
-    let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.day.from_now) }
+    let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.days.from_now) }
     let!(:hearing) { Generators::Hearing.create(user: user, date: 1.day.from_now) }
 
     it "returns an array of hearing dockets in chronological order" do
