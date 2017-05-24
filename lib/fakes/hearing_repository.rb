@@ -15,6 +15,10 @@ class Fakes::HearingRepository
     (hearing_records || []).select { |h| h.appeal_id == appeal.id }
   end
 
+  def self.clean!
+    self.hearing_records = []
+  end
+
   def self.seed!
     user = User.find_by_vacols_id("LROTH")
     50.times.each do |i|
