@@ -56,11 +56,10 @@ export class PdfUI extends React.Component {
   getPdfFooter = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
-      const docListIsFiltered = this.props.filteredDocIds.length !== this.props.allDocumentsLength;
 
       return <div className="cf-pdf-buttons-center">
         Page {this.state.currentPage} of {this.state.numPages}{' '}
-        | {docListIsFiltered ? 'filtered' : ''}
+        | {this.props.docListIsFiltered ? 'filtered' : ''}
         <span id="doc-list-progress-indicator">
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
