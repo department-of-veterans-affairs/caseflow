@@ -8,6 +8,17 @@ class Fakes::HearingRepository
     (hearing_records || []).select { |h| h.user_id == user.id && date_diff }
   end
 
+  def self.hearings_for_appeal(appeal_vacols_id)
+    appeal = Appeal.find_by(vacols_id: appeal_vacols_id)
+    return [] unless appeal
+
+    (hearing_records || []).select { |h| h.appeal_id == appeal.id }
+  end
+
+  def self.clean!
+    self.hearing_records = []
+  end
+
   def self.seed!
     user = User.find_by_vacols_id("LROTH")
     50.times.each do |i|
