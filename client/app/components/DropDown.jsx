@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 export default class DropDown extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.value);

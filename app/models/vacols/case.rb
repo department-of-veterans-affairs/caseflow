@@ -53,6 +53,7 @@ class VACOLS::Case < VACOLS::Record
     "MOT" => "Motion" # appellant has filed a motion for reconsideration
   }.freeze
 
+  # corresponds to BRIEFF.bfso
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -68,15 +69,17 @@ class VACOLS::Case < VACOLS::Record
     "L" => { full_name: "No Representative", short: "None" },
     "M" => { full_name: "Navy Mutual Aid Association", short: "Navy Mut Aid" },
     "N" => { full_name: "Non-Commissioned Officers Association", short: "NCOA" },
-    "O" => { full_name: "Other Service Organization", short: "Other" },
+    # TODO: double check that "Other Service Organization" is the correct full name.
+    # Possibly this should just be "Other"
+    "O" => { full_name: "Other Service Organization", short: "Other", rep_name_in_rep_table: true },
     "P" => { full_name: "Army & Air Force Mutual Aid Assn.", short: "Army Mut Aid" },
     "Q" => { full_name: "Catholic War Veterans", short: "Catholic War Vets" },
     "R" => { full_name: "Fleet Reserve Association", short: "Fleet Reserve" },
     "S" => { full_name: "Marine Corp League", short: "Marine Corps League" },
-    "T" => { full_name: "Attorney", short: "Attorney" },
-    "U" => { full_name: "Agent", short: "Agent" },
+    "T" => { full_name: "Attorney", short: "Attorney", rep_name_in_rep_table: true },
+    "U" => { full_name: "Agent", short: "Agent", rep_name_in_rep_table: true },
     "V" => { full_name: "Vietnam Veterans of America", short: "VVA" },
-    "W" => { full_name: "One Time Representative", short: "One Time Rep" },
+    "W" => { full_name: "One Time Representative", short: "One Time Rep", rep_name_in_rep_table: true },
     "X" => { full_name: "American Ex-Prisoners of War", short: "EXPOW" },
     "Y" => { full_name: "Blinded Veterans Association", short: "Blinded Vet Assoc" },
     "Z" => { full_name: "National Veterans Legal Services Program", short: "NVLSP" },

@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 export default class Logo extends React.Component {
   render() {
     let app = this.props.app || 'default';

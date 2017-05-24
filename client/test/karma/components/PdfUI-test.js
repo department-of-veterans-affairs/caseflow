@@ -40,8 +40,8 @@ describe('PdfUI', () => {
           text()).to.eq(doc.type);
       });
 
-      it('renders the page number', () => {
-        expect(wrapper.text()).to.include('Page 1 of 1');
+      it('does not render the page number when pdf has not been rendered', () => {
+        expect(wrapper.text()).to.not.include('Page 1 of 1');
       });
 
       it('renders the zoom buttons', () => {
@@ -73,6 +73,7 @@ describe('PdfUI', () => {
         let currentPage = 2;
         let numPages = 4;
 
+        wrapper.setProps({ pdfsReadyToShow: { [doc.id]: true } });
         wrapper.instance().onPageChange(currentPage, numPages);
         expect(wrapper.text()).to.include(`Page ${currentPage} of ${numPages}`);
       });

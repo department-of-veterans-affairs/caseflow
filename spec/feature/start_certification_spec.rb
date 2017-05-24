@@ -96,7 +96,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("SOC 09/10/1987 09/06/1987")
 
       click_button("Continue")
-      expect(page).to have_content("Review data from BGS about the appellant's representative")
+      expect(page).to have_content("Review information about the appellant's representative from VBMS and VACOLS.")
 
       within_fieldset("Representative type") do
         find("label", text: "Other").click
