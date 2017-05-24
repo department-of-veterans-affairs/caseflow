@@ -1,12 +1,13 @@
 import * as Constants from './constants';
-import { categoryFieldNameOfCategoryName, getAnnotationByDocumentId } from './utils';
+import { categoryFieldNameOfCategoryName } from './utils';
+import { makeGetAnnotationsByDocumentId } from './selectors';
 
 const metadataContainsString = (searchQuery, doc) =>
   doc.type.toLowerCase().includes(searchQuery) ||
   doc.receivedAt.toLowerCase().includes(searchQuery);
 
 const commentContainsString = (searchQuery, state, doc) =>
-  getAnnotationByDocumentId(state, doc.id).reduce((acc, annotation) =>
+  makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
 
