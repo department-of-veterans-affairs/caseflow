@@ -8,6 +8,7 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
+import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
@@ -84,6 +85,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#layout',
       name: 'Layout'
+    },
+    {
+      anchor: '#messages',
+      name: 'Messages'
     },
     {
       anchor: '#branding',
@@ -183,6 +188,8 @@ export default function StyleGuideIndex() {
           id="alerts" />
         <div className="cf-help-divider"></div>
         <StyleGuideLayout />
+        <div className="cf-help-divider"></div>
+         <StyleGuideMessages />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Branding"

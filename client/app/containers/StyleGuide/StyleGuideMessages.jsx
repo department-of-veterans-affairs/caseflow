@@ -6,7 +6,7 @@ import StyleGuideAlertMessages from './StyleGuideAlertMessages';
 export default function StyleGuideMessages() {
   return <div><br />
   <div className="usa-width-one-whole">
-    <h3 id="messages">Messages</h3>
+    <h2 id="messages">Messages</h2>
   </div>
   <p>Messages are a frequent layout used in Caseflow. These messages are shown
     when the user has completed a task, when there is an error, and to indicate status.</p>

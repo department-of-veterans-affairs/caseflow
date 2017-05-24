@@ -3,7 +3,6 @@ import StyleGuideAction from './StyleGuideAction';
 import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideFooter from './StyleGuideFooter';
-import StyleGuideMessages from './StyleGuideMessages';
 
 export default function StyleGuideLayout () {
 
@@ -49,8 +48,6 @@ export default function StyleGuideLayout () {
     <StyleGuideAction />
     <br/>
     <StyleGuideFooter />
-    <br/>
-    <StyleGuideMessages />
 
   </div>;
 }
