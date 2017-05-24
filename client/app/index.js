@@ -38,7 +38,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
     module.hot.accept([
       './containers/BaseContainer',
       './certification/Certification',
-      './manageEstablishClaim/ManageEstablishClaim'
+      './manageEstablishClaim/ManageEstablishClaim',
+      './hearings/index'
     ], () => renderApp(component));
   }
 };
@@ -46,4 +47,3 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
 _.forOwn(COMPONENTS, (component, name) => {
   ReactOnRails.register({ [name]: componentWrapper(component) });
 });
-

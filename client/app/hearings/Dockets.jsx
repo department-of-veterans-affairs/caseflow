@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
@@ -70,7 +71,6 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  veteran_law_judge: state.veteran_law_judge,
   dockets: state.dockets
 });
 
@@ -84,6 +84,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
-  veteran_law_judge: PropTypes.object,
-  dockets: PropTypes.arrayOf(PropTypes.object)
+  veteran_law_judge: PropTypes.object.isRequired,
+  dockets: PropTypes.arrayOf(PropTypes.object).isRequired
 };
