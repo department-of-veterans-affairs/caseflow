@@ -13,6 +13,7 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @poas = {}
   end
 
   # :nocov:
