@@ -58,15 +58,18 @@ export class PdfUI extends React.Component {
 
       /**
        * Theoretically, this could cause a confusing situation where the user manages to set
-       * a filter that selects all documents. This check would determine that the filter 
+       * a filter that selects all documents. This check would determine that the filter
        * had not been set, so the filter icon wouldn't appear. However, given the way our
-       * filters are currently set up, I am not convinced 
+       * filters are currently set up, I am not convinced
        */
       const docListIsFiltered = this.props.filteredDocIds.length !== this.props.allDocumentsLength;
 
       return <div className="cf-pdf-buttons-center">
         Page {this.state.currentPage} of {this.state.numPages}{' '}
-        | {docListIsFiltered ? 'filtered' : ''} Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+        | {docListIsFiltered ? 'filtered' : ''}
+        <span id="doc-list-progress-indicator">
+          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+        </span>
       </div>;
     }
 
