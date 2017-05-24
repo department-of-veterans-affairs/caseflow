@@ -1,6 +1,4 @@
-class Issue
-  include ActiveModel::Model
-
+class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
                 :program_description
 

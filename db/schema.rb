@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170522214928) do
+ActiveRecord::Schema.define(version: 20170524193647) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,10 +220,32 @@ ActiveRecord::Schema.define(version: 20170522214928) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
+  create_table "hearing_worksheet_issues", force: :cascade do |t|
+    t.integer "issue_id"
+    t.integer "hearing_worksheet_id"
+    t.string  "status"
+    t.string  "reopen"
+    t.string  "vha"
+  end
+
+  create_table "hearing_worksheets", force: :cascade do |t|
+    t.integer "hearing_id"
+    t.string  "witness"
+    t.string  "contentions"
+    t.string  "evidence"
+    t.string  "comments"
+    t.string  "military_service"
+  end
+
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
     t.string  "vacols_id", null: false
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.string  "vacols_sequence_id"
+    t.integer "appeal_id"
   end
 
   create_table "tags", force: :cascade do |t|
