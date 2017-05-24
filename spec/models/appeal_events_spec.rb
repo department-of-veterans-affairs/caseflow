@@ -10,6 +10,7 @@ describe AppealEvents do
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
       certification_date: certification_date,
+      case_review_date: case_review_date,
       decision_date: decision_date,
       disposition: disposition
     )
@@ -20,6 +21,7 @@ describe AppealEvents do
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
   let(:certification_date) { nil }
+  let(:case_review_date) { nil }
   let(:decision_date) { nil }
   let(:disposition) { nil }
 
@@ -98,6 +100,59 @@ describe AppealEvents do
 
       context "when certification date is not set" do
         it { is_expected.to be_nil }
+      end
+    end
+
+    context "activated event" do
+      subject do
+        events.find { |event| event.type == :activated && event.date == case_review_date }
+      end
+
+      context "when case_review_date is set" do
+        let(:case_review_date) { Time.zone.today - 13.days }
+        it { is_expected.to_not be_nil }
+      end
+
+      context "when case_review_date isn't set" do
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "hearing events" do
+      # Save appeal so hearings can be associated to it
+      before { appeal.save! }
+
+      let!(:held_hearing) do
+        Generators::Hearing.create(disposition: :held, closed_at: 4.days.ago, appeal: appeal)
+      end
+
+      let!(:canceled_hearing) do
+        Generators::Hearing.build(disposition: :cancelled, closed_at: 3.days.ago, appeal: appeal)
+      end
+
+      let!(:hearing_not_closed) do
+        Generators::Hearing.create(disposition: :held, closed_at: nil, appeal: appeal)
+      end
+
+      let!(:hearing_another_appeal) do
+        Generators::Hearing.build(disposition: :held, closed_at: 2.days.ago)
+      end
+
+      let!(:postponed_hearing) do
+        Generators::Hearing.build(disposition: :postponed, closed_at: 2.days.ago, appeal: appeal)
+      end
+
+      let(:hearing_held_events) do
+        events.select { |event| event.type == :hearing_held }
+      end
+
+      let(:hearing_cancelled_event) do
+        events.find { |event| event.type == :hearing_cancelled && event.date == 3.days.ago }
+      end
+
+      it "adds hearing events for all closed hearings associated with the appeal" do
+        expect(hearing_held_events.length).to eq(1)
+        expect(hearing_cancelled_event.date).to_not be_nil
       end
     end
 

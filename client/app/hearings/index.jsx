@@ -46,7 +46,7 @@ const Hearings = ({ hearings }) => {
       <BrowserRouter>
         <div>
         <Route path="/hearings/dockets"
-          component={Dockets} />
+          component={() => (<Dockets veteran_law_judge={hearings.veteran_law_judge} />)}/>
       </div>
       </BrowserRouter>
     </div>
