@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
@@ -83,5 +84,5 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
-  dockets: PropTypes.arrayOf(PropTypes.object)
+  dockets: PropTypes.arrayOf(PropTypes.object).isRequired
 };
