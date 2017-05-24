@@ -68,28 +68,23 @@ describe User do
 
     context "user has only system admin role" do
       before { session["user"]["roles"] = ["System Admin"] }
+
       before { session["user"]["admin_roles"] = ["System Admin"] }
-      result = {
-        "Establish Claim" => { enabled: false },
-        "Manage Claim Establishment" => { enabled: false },
-        "Certify Appeal" => { enabled: false },
-        "CertificationV2" => { enabled: false },
-        "Reader" => { enabled: false }
-      }
-      it { is_expected.to eq result }
+      it "disables other roles" do
+        expect(subject["Reader"][:enabled]).to be_falsey
+        expect(subject["Establish Claim"][:enabled]).to be_falsey
+        expect(subject["Certify Appeal"][:enabled]).to be_falsey
+      end
     end
 
     context "user has more than a system admin role" do
       before { session["user"]["roles"] = ["System Admin"] }
       before { session["user"]["admin_roles"] = ["System Admin", "Manage Claim Establishment"] }
-      result = {
-        "Establish Claim" => { enabled: false },
-        "Manage Claim Establishment" => { enabled: true },
-        "Certify Appeal" => { enabled: false },
-        "CertificationV2" => { enabled: false },
-        "Reader" => { enabled: false }
-      }
-      it { is_expected.to eq result }
+
+      it "enables only selected roles" do
+        expect(subject["Manage Claim Establishment"][:enabled]).to be_truthy
+        expect(subject["Reader"][:enabled]).to be_falsey
+      end
     end
   end
 

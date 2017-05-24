@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170511211242) do
+ActiveRecord::Schema.define(version: 20170522214928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,14 @@ ActiveRecord::Schema.define(version: 20170511211242) do
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
   add_index "annotations", ["user_id"], name: "index_annotations_on_user_id", using: :btree
+
+  create_table "api_keys", force: :cascade do |t|
+    t.string "consumer_name", null: false
+    t.string "key_digest",    null: false
+  end
+
+  add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
+  add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
@@ -212,11 +220,19 @@ ActiveRecord::Schema.define(version: 20170511211242) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
+  create_table "hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string  "vacols_id", null: false
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string   "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "tags", ["text"], name: "index_tags_on_text", unique: true, using: :btree
 
   create_table "tasks", force: :cascade do |t|
     t.integer  "appeal_id",             null: false

@@ -1,7 +1,10 @@
 class Fakes::BGSService
+  include PowerOfAttorneyMapper
+
   cattr_accessor :end_product_data
   cattr_accessor :inaccessible_appeal_vbms_ids
   cattr_accessor :veteran_records
+  cattr_accessor :power_of_attorney_records
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -184,7 +187,59 @@ class Fakes::BGSService
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
+  def fetch_poa_by_file_number(file_number)
+    record = (self.class.power_of_attorney_records || {})[file_number]
+    record ||= default_power_of_attorney_record
+
+    get_poa_from_bgs_poa(record)
+  end
+
+  def fetch_address_by_participant_id
+    default_address
+  end
+
   private
+
+  def default_power_of_attorney_record
+    {
+      file_number: "633792224",
+      power_of_attorney:
+        {
+          legacy_poa_cd: "3QQ",
+          nm: "Clarence Darrow",
+          org_type_nm: "POA Attorney",
+          ptcpnt_id: "600153863"
+        },
+      ptcpnt_id: "600085544"
+    }
+  end
+
+  def default_address
+    {
+      addrs_one_txt: "9999 MISSION ST",
+      addrs_three_txt: "APT 2",
+      addrs_two_txt: "UBER",
+      city_nm: "SAN FRANCISCO",
+      cntry_nm: "USA",
+      efctv_dt: 15.days.ago.to_formatted_s(:short_date),
+      jrn_dt: 15.days.ago.to_formatted_s(:short_date),
+      jrn_lctn_id: "283",
+      jrn_obj_id: "SHARE  - PCAN",
+      jrn_status_type_cd: "U",
+      jrn_user_id: "CASEFLOW1",
+      postal_cd: "CA",
+      ptcpnt_addrs_id: "15069061",
+      ptcpnt_addrs_type_nm: "Mailing",
+      ptcpnt_id: "600085544",
+      shared_addrs_ind: "N",
+      trsury_addrs_four_txt: "SAN FRANCISCO CA",
+      trsury_addrs_one_txt: "Jamie Fakerton",
+      trsury_addrs_three_txt: "APT 2",
+      trsury_addrs_two_txt: "9999 MISSION ST",
+      trsury_seq_nbr: "5",
+      zip_prefix_nbr: "94103"
+    }
+  end
 
   def default_veteran_record
     {
