@@ -16,9 +16,8 @@ RSpec.feature "Hearings" do
       current_user.full_name = "Lauren Roth"
       current_user.save!
 
-      2.times do
-        Generators::Hearing.build(user: current_user)
-      end
+      Generators::Hearing.build(user: current_user, date: Time.zone.now + 5.days)
+      Generators::Hearing.build(user: current_user, date: Time.zone.now + 5.days)
 
       Generators::Hearing.build(
         user: current_user,
