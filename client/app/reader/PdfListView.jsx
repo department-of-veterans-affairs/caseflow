@@ -423,7 +423,7 @@ export class PdfListView extends React.Component {
       window.removeEventListener('resize', this.setFilterIconPositions);
     }
 
-    const showNoSearchResultsMsg = !_.size(rowObjects) && 
+    const showNoSearchResultsMsg = !_.size(rowObjects) &&
       _.size(this.props.docFilterCriteria.searchQuery);
 
     return <div>
