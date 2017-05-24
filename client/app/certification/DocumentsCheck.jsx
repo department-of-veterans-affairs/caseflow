@@ -18,6 +18,8 @@ class UnconnectedDocumentsCheck extends React.Component {
   // is there a better way to do this?
   componentWillMount() {
     this.props.updateProgressBar();
+    console.log("LOL");
+    console.log(this.props.certificationStatus);
   }
 
   render() {

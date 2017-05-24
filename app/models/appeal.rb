@@ -152,6 +152,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def documents_match?
+    return false if (!nod || !soc || !form9)
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 

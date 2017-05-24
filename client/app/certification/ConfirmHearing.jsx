@@ -206,8 +206,14 @@ class UnconnectedConfirmHearing extends React.Component {
       loading,
       serverError,
       updateSucceeded,
-      match
+      match,
+      certificationStatus
     } = this.props;
+
+    if(!certificationStatus.includes('started')) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    }
 
     if (updateSucceeded) {
       return <Redirect
@@ -390,7 +396,8 @@ const mapStateToProps = (state) => ({
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
-  serverError: state.serverError
+  serverError: state.serverError,
+  certificationStatus: state.certificationStatus
 });
 
 /*
@@ -413,7 +420,8 @@ ConfirmHearing.propTypes = {
   onTypeOfForm9Change: PropTypes.func,
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationStatus: PropTypes.string
 };
 
 export default ConfirmHearing;

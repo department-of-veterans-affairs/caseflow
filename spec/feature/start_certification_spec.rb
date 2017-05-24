@@ -143,6 +143,29 @@ RSpec.feature "Start Certification" do
       click_button("Refresh page")
       expect(page).to have_content("Cannot find documents in VBMS")
     end
+
+    scenario "When user tries to skip by manually entering URL" do
+      visit "certifications/#{appeal_already_certified.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+      visit "certifications/#{appeal_already_certified.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+      visit "certifications/#{appeal_already_certified.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+
+      visit "certifications/#{appeal_not_ready.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+      visit "certifications/#{appeal_not_ready.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+      visit "certifications/#{appeal_not_ready.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+    end
   end
 
   context "As an authorized user to Certify Appeal" do

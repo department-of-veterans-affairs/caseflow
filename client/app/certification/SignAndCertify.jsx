@@ -113,8 +113,14 @@ class UnconnectedSignAndCertify extends React.Component {
       loading,
       updateSucceeded,
       serverError,
-      match
+      match,
+      certificationStatus
     } = this.props;
+
+    if(!certificationStatus.includes('started')) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    }
 
     if (updateSucceeded) {
       return <Redirect
@@ -201,7 +207,8 @@ const mapStateToProps = (state) => ({
   scrollToError: state.scrollToError,
   loading: state.loading,
   updateSucceeded: state.updateSucceeded,
-  serverError: state.serverError
+  serverError: state.serverError,
+  certificationStatus: state.certificationStatus
 });
 
 const SignAndCertify = connect(
@@ -218,7 +225,8 @@ SignAndCertify.propTypes = {
   certificationDate: PropTypes.string,
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationStatus: PropTypes.string
 };
 
 export default SignAndCertify;
