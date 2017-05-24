@@ -30,3 +30,9 @@ export const changePoaMatches = (state, action) => {
     poaMatches: action.payload.poaMatches
   });
 };
+
+export const changePoaCorrectInVacols = (state, action) => {
+  return Object.assign({}, state, {
+    poaCorrectInVacols: action.payload.poaCorrectInVacols
+  });
+};

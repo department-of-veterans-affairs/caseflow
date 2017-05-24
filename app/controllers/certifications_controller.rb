@@ -29,6 +29,7 @@ class CertificationsController < ApplicationController
                 .permit("representative_name",
                         "representative_type",
                         "poa_matches",
+                        "poa_correct_in_vacols",
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
                         "hearing_preference",

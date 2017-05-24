@@ -47,6 +47,8 @@ export const certificationReducers = function(state = initialState, action = {})
     return ConfirmCaseDetailsReducers.changeOtherRepresentativeType(state, action);
   case Constants.CHANGE_POA_MATCHES:
     return ConfirmCaseDetailsReducers.changePoaMatches(state, action);
+  case Constants.CHANGE_POA_CORRECT_IN_VACOLS:
+    return ConfirmCaseDetailsReducers.changePoaCorrectInVacols(state, action);
 
   // ConfirmHearing
   // ==================
@@ -128,6 +130,17 @@ export const poaMatchesToStr = function(poaMatches) {
   }
 };
 
+export const poaCorrectInVacolsToStr = function(poaCorrectInVacols) {
+  switch (poaCorrectInVacols) {
+    case true:
+      return Constants.poaCorrectInVacols.VACOLS;
+    case false:
+      return Constants.poaCorrectInVacols.VBMS;
+    default:
+      return null;
+  }
+};
+
 const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
@@ -143,6 +156,7 @@ export const mapDataToInitialState = (state) => ({
   representativeType: state.representative_type,
   representativeName: state.representative_name,
   poaMatches: poaMatchesToStr(state.poa_matches),
+  poaCorrectInVacols: poaCorrectInVacolsToStr(state.poa_correct_in_vacols),
   nod: parseDocumentFromApi(state.appeal.nod),
   soc: parseDocumentFromApi(state.appeal.soc),
   form9: parseDocumentFromApi(state.appeal.form9),

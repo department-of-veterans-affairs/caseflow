@@ -37,6 +37,13 @@ export const changePoaMatches = (poaMatches) => ({
   }
 });
 
+export const changePoaCorrectInVacols = (poaCorrectInVacols) => ({
+  type: Constants.CHANGE_POA_CORRECT_IN_VACOLS,
+  payload: {
+    poaCorrectInVacols
+  }
+});
+
 export const handleServerError = () => ({
   type: Constants.HANDLE_SERVER_ERROR
 });
@@ -53,6 +60,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     params.otherRepresentativeType : params.representativeType;
   const name = params.representativeName;
   const poaMatches = params.poaMatches === Constants.poaMatches.MATCH;
+  const poaCorrectInVacols = params.poaCorrectInVacols === Constants.poaCorrectInVacols.VACOLS;
 
   // Translate camelcase React names into snake case
   // Rails key names.
@@ -60,7 +68,8 @@ export const certificationUpdateStart = (params, dispatch) => {
   const update = {
     representative_type: type,
     representative_name: name,
-    poa_matches: poaMatches
+    poa_matches: poaMatches,
+    poa_correct_in_vacols: poaCorrectInVacols
   };
   /* eslint-enable "camelcase" */
 
