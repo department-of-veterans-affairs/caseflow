@@ -1,7 +1,43 @@
 import { expect } from 'chai';
-import { makeGetAnnotationsByDocumentId } from '../../../app/reader/selectors';
+import { makeGetAnnotationsByDocumentId, docListIsFiltered } from '../../../app/reader/selectors';
 
 describe('Reader utils', () => {
+  describe('docListIsFiltered', () => {
+    it('returns false when the list has not been filtered', () => {
+      const state = {
+        documents: {
+          1: {},
+          3: {},
+          5: {}
+        },
+        ui: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {}
+        }
+      };
+
+      expect(docListIsFiltered(state)).to.equal(false);
+    });
+
+    it('returns true when there is a search query', () => {
+      const state = {
+        documents: {
+          1: {},
+          3: {},
+          5: {}
+        },
+        ui: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: 'something that matches all docs'
+          }
+        }
+      };
+
+      expect(docListIsFiltered(state)).to.equal(true);
+    });
+  });
+
   describe('getAnnotationByDocumentId', () => {
     it('gets annotations', () => {
       const documentId = 700;

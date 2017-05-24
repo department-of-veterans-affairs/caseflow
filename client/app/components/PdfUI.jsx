@@ -7,6 +7,7 @@ import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
+import { docListIsFiltered } from '../reader/selectors';
 import classNames from 'classnames';
 import _ from 'lodash';
 
@@ -55,13 +56,6 @@ export class PdfUI extends React.Component {
   getPdfFooter = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
-
-      /**
-       * Theoretically, this could cause a confusing situation where the user manages to set
-       * a filter that selects all documents. This check would determine that the filter
-       * had not been set, so the filter icon wouldn't appear. However, given the way our
-       * filters are currently set up, I am not convinced
-       */
       const docListIsFiltered = this.props.filteredDocIds.length !== this.props.allDocumentsLength;
 
       return <div className="cf-pdf-buttons-center">
@@ -201,7 +195,7 @@ export class PdfUI extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'filteredDocIds'),
-  allDocumentsLength: _.size(state.documents),
+  docListIsFiltered: docListIsFiltered(state),
   ...state.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => ({

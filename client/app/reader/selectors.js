@@ -48,3 +48,16 @@ export const getAnnotationsPerDocument = createSelector(
       mapValues((doc) => getAnnotationsByDocumentId(doc.id)).
       value()
 );
+
+const getDocFilterCriteria = (state) => state.ui.docFilterCriteria;
+
+export const docListIsFiltered = createSelector(
+  [getAllDocs, getFilteredDocIds, getDocFilterCriteria],
+  (documents, filteredDocIds, docFilterCriteria) => 
+    Boolean(
+      _.size(documents) !== filteredDocIds.length || 
+        docFilterCriteria.searchQuery || 
+        _(docFilterCriteria.category).values().some() ||
+        _(docFilterCriteria.tag).values().some()
+    )
+);
