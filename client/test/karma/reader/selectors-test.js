@@ -12,7 +12,9 @@ describe('Reader utils', () => {
         },
         ui: {
           filteredDocIds: [1, 3, 5],
-          docFilterCriteria: {}
+          docFilterCriteria: {
+            searchQuery: ''
+          }
         }
       };
 
@@ -30,6 +32,48 @@ describe('Reader utils', () => {
           filteredDocIds: [1, 3, 5],
           docFilterCriteria: {
             searchQuery: 'something that matches all docs'
+          }
+        }
+      };
+
+      expect(docListIsFiltered(state)).to.equal(true);
+    });
+
+    it('returns true when there is a category filter', () => {
+      const state = {
+        documents: {
+          1: {},
+          3: {},
+          5: {}
+        },
+        ui: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: '',
+            category: {
+              procedural: true
+            }
+          }
+        }
+      };
+
+      expect(docListIsFiltered(state)).to.equal(true);
+    });
+
+    it('returns true when there is a tag filter', () => {
+      const state = {
+        documents: {
+          1: {},
+          3: {},
+          5: {}
+        },
+        ui: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: '',
+            tag: {
+              'some tag': true
+            }
           }
         }
       };
