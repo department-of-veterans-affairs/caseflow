@@ -37,12 +37,16 @@ class ExternalApi::BGSService
   end
 
   def fetch_poa_by_file_number(file_number)
-    bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
+    if !@poas[file_number]
+      bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
                                     service: :bgs,
                                     name: "org.find_poas_by_file_number") do
-      client.org.find_poas_by_file_number(file_number)
+        client.org.find_poas_by_file_number(file_number)
+      end
+      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa)
     end
-    @poas[file_number] ||= get_poa_from_bgs_poa(bgs_poa)
+
+    @poas[file_number]
   end
 
   # TODO(add this service)
