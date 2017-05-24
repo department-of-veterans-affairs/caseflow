@@ -1,8 +1,7 @@
 class AppealEvent
   include ActiveModel::Model
 
-  # TODO: Confirm this list with Chris, do we have all dispositions accounted for?
-  DISPOSITIONS_BY_EVENT_TYPE = {
+  EVENT_TYPE_FOR_DISPOSITIONS = {
     bva_final_decision: [
       "Allowed",
       "Denied",
@@ -37,6 +36,12 @@ class AppealEvent
     ]
   }.freeze
 
+  EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
+    hearing_held: :held,
+    hearing_cancelled: :cancelled,
+    hearing_no_show: :no_show
+  }.freeze
+
   attr_accessor :type, :date
 
   def to_hash
@@ -47,6 +52,11 @@ class AppealEvent
     self.type = type_from_disposition(disposition)
   end
 
+  def hearing=(hearing)
+    self.type = EVENT_TYPE_FOR_HEARING_DISPOSITIONS.key(hearing.disposition)
+    self.date = hearing.closed_on
+  end
+
   def valid?
     type && date
   end
@@ -54,8 +64,8 @@ class AppealEvent
   private
 
   def type_from_disposition(disposition)
-    DISPOSITIONS_BY_EVENT_TYPE.keys.find do |type|
-      DISPOSITIONS_BY_EVENT_TYPE[type].include?(disposition)
+    EVENT_TYPE_FOR_DISPOSITIONS.keys.find do |type|
+      EVENT_TYPE_FOR_DISPOSITIONS[type].include?(disposition)
     end
   end
 end

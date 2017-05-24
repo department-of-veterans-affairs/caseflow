@@ -31,7 +31,9 @@ describe "Appeals API v1", type: :request do
             Time.zone.today - 4.months
           ],
           decision_date: nil,
-          prior_decision_date: Time.zone.today - 12.months
+          prior_decision_date: Time.zone.today - 12.months,
+          hearing_request_type: :travel_board,
+          video_hearing_requested: true
         }
       )
     end
@@ -42,6 +44,22 @@ describe "Appeals API v1", type: :request do
           template: :remand_decided,
           appellant_ssn: "3332223333"
         }
+      )
+    end
+
+    let!(:held_hearing) do
+      Generators::Hearing.create(
+        appeal: resolved_appeal,
+        closed_on: 6.months.ago,
+        disposition: :held
+      )
+    end
+
+    let!(:scheduled_hearing) do
+      Generators::Hearing.create(
+        appeal: current_appeal,
+        date: 1.month.from_now,
+        type: :travel_board
       )
     end
 
@@ -58,7 +76,7 @@ describe "Appeals API v1", type: :request do
       expect(response.code).to eq("401")
     end
 
-    it "returns 422 if ssn is invalid" do
+    it "returns 422 if SSN is invalid" do
       headers = {
         "ssn": "11122333",
         "Authorization": "Token token=#{api_key.key_string}"
@@ -97,16 +115,31 @@ describe "Appeals API v1", type: :request do
       json_nod_date = json["data"].first["attributes"]["events"].first["date"]
       expect(json_nod_date).to eq((Time.zone.today - 11.months).to_formatted_s(:csv_date))
 
+      # check for the hearing in the first appeal
+      scheduled_hearings = json["data"].first["relationships"]["scheduled_hearings"]["data"]
+      expect(scheduled_hearings.length).to eq(1)
+      expect(scheduled_hearings.first["id"]).to eq(scheduled_hearing.id.to_s)
+
+      # check that the scheduled hearing data is included
+      expect(json["included"].first["id"]).to eq(scheduled_hearing.id.to_s)
+      expect(json["included"].first["type"]).to eq("hearings")
+      expect(json["included"].first["attributes"]["type"]).to eq("travel_board")
+      scheduled_date = (Time.zone.today + 1.month).to_formatted_s(:csv_date)
+      expect(json["included"].first["attributes"]["date"]).to eq(scheduled_date)
+
+      # check the other attribtues on the first appeal
       json_prior_decision_date = json["data"].first["attributes"]["prior_decision_date"]
       expect(json_prior_decision_date).to eq((Time.zone.today - 12.months).to_formatted_s(:csv_date))
       expect(json["data"].first["attributes"]["active"]).to eq(true)
+      expect(json["data"].first["attributes"]["requested_hearing_type"]).to eq("video")
 
+      # check the attribtues on the last appeal
       expect(json["data"].last["attributes"]["type"]).to eq("original")
       expect(json["data"].last["attributes"]["active"]).to eq(false)
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 bva_remand))
+      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
     end
   end
 end

@@ -29,6 +29,31 @@ describe AppealEvent do
     end
   end
 
+  context "hearing=" do
+    subject { appeal_event.hearing = hearing }
+
+    context "when disposition is supported" do
+      let(:hearing) { Hearing.new(closed_on: 4.days.ago, disposition: :no_show) }
+
+      it "sets type and date based off of hearing" do
+        subject
+
+        expect(appeal_event.date).to eq(4.days.ago)
+        expect(appeal_event.type).to eq(:hearing_no_show)
+      end
+    end
+
+    context "when disposition is not supported" do
+      let(:hearing) { Hearing.new(closed_on: 4.days.ago, disposition: :postponed) }
+
+      it "sets type to falsey" do
+        subject
+
+        expect(appeal_event.type).to be_falsey
+      end
+    end
+  end
+
   context "valid?" do
     subject { appeal_event.valid? }
 
@@ -45,9 +70,9 @@ describe AppealEvent do
     end
   end
 
-  context "::DISPOSITIONS_BY_EVENT_TYPE" do
+  context "::EVENT_TYPE_FOR_DISPOSITIONS" do
     let(:vacols_dispositions) { VACOLS::Case::DISPOSITIONS.values }
-    let(:event_dispositions) { AppealEvent::DISPOSITIONS_BY_EVENT_TYPE.values.flatten }
+    let(:event_dispositions) { AppealEvent::EVENT_TYPE_FOR_DISPOSITIONS.values.flatten }
 
     it "accounts for all VACOLS dispositions" do
       expect(vacols_dispositions - event_dispositions).to eq([])
