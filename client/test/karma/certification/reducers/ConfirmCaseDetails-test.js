@@ -49,3 +49,18 @@ describe('.changeOtherRepresentativeType', () => {
         otherRepresentativeType).to.eq('new other rep type');
   });
 });
+
+describe('.changePoaInfoMatching', () => {
+  it('should change the poaInfoMatching field', () => {
+    let initialState = getBlankInitialState();
+    let action = {
+      type: Constants.CHANGE_POA_INFO_MATCHING,
+      payload: {
+        poaInfoMatching: 'MATCH'
+      }
+    };
+
+    expect(ConfirmCaseDetails.changePoaInfoMatching(initialState, action).
+      poaInfoMatching).to.eq('MATCH');
+  });
+});

@@ -28,6 +28,7 @@ class CertificationsController < ApplicationController
                 .require("update")
                 .permit("representative_name",
                         "representative_type",
+                        "poa_matches",
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
                         "hearing_preference",

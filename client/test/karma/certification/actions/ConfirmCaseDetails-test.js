@@ -60,6 +60,21 @@ describe('.changeOtherRepresentativeType', () => {
   });
 });
 
+describe('.changePoaInfoMatching', () => {
+  it('should create an action to change poaInfoMatching', () => {
+    const poaInfoMatching = 'MATCH';
+    const expectedAction = {
+      type: Constants.CHANGE_POA_INFO_MATCHING,
+      payload: {
+        poaInfoMatching
+      }
+    };
+
+    expect(Actions.changePoaInfoMatching(poaInfoMatching)).
+      to.eql(expectedAction);
+  });
+});
+
 describe('.handleServerError', () => {
   it('should create an action to mark an update failure', () => {
     const expectedAction = {
@@ -90,6 +105,7 @@ describe('.certificationUpdateStart', () => {
       type: Constants.CERTIFICATION_UPDATE_REQUEST,
       payload: {
         update: {
+          poa_matches: false,
           representative_type: 'ATTORNEY',
           representative_name: 'my attorney'
         }

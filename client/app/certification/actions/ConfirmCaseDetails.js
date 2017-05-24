@@ -30,6 +30,13 @@ export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   }
 });
 
+export const changePoaInfoMatching = (poaInfoMatching) => ({
+  type: Constants.CHANGE_POA_INFO_MATCHING,
+  payload: {
+    poaInfoMatching
+  }
+});
+
 export const handleServerError = () => ({
   type: Constants.HANDLE_SERVER_ERROR
 });
@@ -45,13 +52,15 @@ export const certificationUpdateStart = (params, dispatch) => {
   const type = params.representativeType === Constants.representativeTypes.OTHER ?
     params.otherRepresentativeType : params.representativeType;
   const name = params.representativeName;
+  const poaMatches = params.poaInfoMatching === Constants.poaInformationMatch.MATCH;
 
   // Translate camelcase React names into snake case
   // Rails key names.
   /* eslint-disable camelcase */
   const update = {
     representative_type: type,
-    representative_name: name
+    representative_name: name,
+    poa_matches: poaMatches
   };
   /* eslint-enable "camelcase" */
 

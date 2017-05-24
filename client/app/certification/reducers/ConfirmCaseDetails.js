@@ -24,3 +24,9 @@ export const changeOtherRepresentativeType = (state, action) => {
     otherRepresentativeType: action.payload.otherRepresentativeType
   });
 };
+
+export const changePoaInfoMatching = (state, action) => {
+  return Object.assign({}, state, {
+    poaInfoMatching: action.payload.poaInfoMatching
+  });
+};

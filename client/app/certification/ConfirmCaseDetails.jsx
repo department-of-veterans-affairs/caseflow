@@ -35,11 +35,19 @@ const representativeTypeOptions = [
   }
 ];
 
+const poaInfoMatchingOptions = [
+  { displayText: 'Yes',
+    value: Constants.poaInformationMatch.MATCH },
+  { displayText: 'No',
+    value: Constants.poaInformationMatch.NO_MATCH }
+];
+
 // TODO: We should give each question a constant name.
 const ERRORS = {
   representativeType: 'Please enter the representative type.',
   representativeName: 'Please enter the representative name.',
-  otherRepresentativeType: 'Please enter the other representative type.'
+  otherRepresentativeType: 'Please enter the other representative type.',
+  poaInfoMatching: 'Please select yes or no.'
 };
 
 /*
@@ -83,10 +91,15 @@ export class ConfirmCaseDetails extends React.Component {
     let {
       representativeName,
       representativeType,
-      otherRepresentativeType
+      otherRepresentativeType,
+      poaInfoMatching
     } = this.props;
 
     const erroredFields = [];
+
+    if (ValidatorsUtil.requiredValidator(poaInfoMatching)) {
+      erroredFields.push('poaInfoMatching');
+    }
 
     // We always need a representative type.
     if (ValidatorsUtil.requiredValidator(representativeType)) {
@@ -122,6 +135,7 @@ export class ConfirmCaseDetails extends React.Component {
       representativeType: this.props.representativeType,
       otherRepresentativeType: this.props.otherRepresentativeType,
       representativeName: this.props.representativeName,
+      poaInfoMatching: this.props.poaInfoMatching,
       vacolsId: this.props.match.params.vacols_id
     });
   }
@@ -143,6 +157,8 @@ export class ConfirmCaseDetails extends React.Component {
     let {
       representativeType,
       changeRepresentativeType,
+      poaInfoMatching,
+      changePoaInfoMatching,
       bgsRepresentativeType,
       bgsRepresentativeName,
       vacolsRepresentativeType,
@@ -211,6 +227,15 @@ export class ConfirmCaseDetails extends React.Component {
           <div className="cf-help-divider"></div>
 
           <RadioField
+            name="Does the representative information from VBMS and VACOLS match?"
+            required={true}
+            options={poaInfoMatchingOptions}
+            value={poaInfoMatching}
+            errorMessage={this.isFieldErrored('poaInfoMatching') ? ERRORS.poaInfoMatching : null}
+            onChange={changePoaInfoMatching}
+          />
+
+          <RadioField
             name="Representative type"
             options={representativeTypeOptions}
             value={representativeType}
@@ -253,6 +278,8 @@ ConfirmCaseDetails.propTypes = {
   changeRepresentativeType: PropTypes.func,
   representativeName: PropTypes.string,
   changeRepresentativeName: PropTypes.func,
+  poaInfoMatching: PropTypes.string,
+  changePoaInfoMatching: PropTypes.func,
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
@@ -279,6 +306,8 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
+  changePoaInfoMatching: (poaInfoMatching) => dispatch(actions.changePoaInfoMatching(poaInfoMatching)),
+
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
   }
@@ -294,6 +323,7 @@ const mapStateToProps = (state) => ({
   vacolsRepresentativeType: state.vacolsRepresentativeType,
   vacolsRepresentativeName: state.vacolsRepresentativeName,
   otherRepresentativeType: state.otherRepresentativeType,
+  poaInfoMatching: state.poaInfoMatching,
   continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
