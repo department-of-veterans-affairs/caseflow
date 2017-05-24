@@ -22,9 +22,6 @@ const PAGE_WIDTH = 1;
 const PAGE_HEIGHT = 1056;
 
 const NUM_PAGES_TO_PRERENDER = 2;
-let canvasId = 0;
-
-export const DOCUMENT_DEBOUNCE_TIME = 500;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -56,7 +53,7 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isRendering = [];
-    this.prefetchedPdfs = {};
+    this.prerenderedPdfs = {};
     this.fakeCanvas = [];
 
     this.isPrerendering = false;
@@ -100,17 +97,16 @@ export class Pdf extends React.PureComponent {
 
       // Page numbers are one-indexed
       let pageNumber = index + 1;
-      let canvas = this.pageElements.canvases[index];
-      let container = this.pageElements.textLayers[index];
-      let page = this.pageContainers[index];
+      let canvas = this.pageElements[index].canvas;
+      let container = this.pageElements[index].textLayer;
+      let page = this.pageElements[index].pageContainer;
 
       if (!canvas || !container || !page) {
         this.isRendering[index] = false;
         return reject();
       }
-      const t0 = performance.now();
-      pdfDocument.getPage(pageNumber).then((pdfPage) => {
 
+      pdfDocument.getPage(pageNumber).then((pdfPage) => {
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
         let viewport = pdfPage.getViewport(this.props.scale);
@@ -125,7 +121,6 @@ export class Pdf extends React.PureComponent {
         container.innerHTML = '';
 
         // Call PDFJS to actually render the page.
-        const t1 = performance.now();
         return pdfPage.render({
           canvasContext: canvas.getContext('2d', { alpha: false }),
           viewport
@@ -159,8 +154,12 @@ export class Pdf extends React.PureComponent {
         // in the current state. It is possible that the
         // user switched between PDFs quickly and this
         // condition is no longer true, in which case we
-        // should render this page again with the new file.
-        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements.canvases[index]) {
+        // should render this page again with the new file. We
+        // also check if the canvas rendered on still exists.
+        // If the pages are changed quickly it's possible to
+        // render on a canvas that has since been change which
+        // means we need to render it again.
+        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
           // If it is the same, then we mark this page as rendered
           this.setIsRendered(index, {
             pdfDocument,
@@ -168,12 +167,13 @@ export class Pdf extends React.PureComponent {
             ..._.pick(viewport, ['width', 'height'])
           });
 
-          // We try to prerender pages if nothing in the current document is being rendered.
+          // Whenever we finish rendering a page, we assume that we have some spare cycles
+          // and we try to prerender pages for documents in the prefetchFiles list.
           this.prerenderPages();
 
-          // this.props.file may not be a value in this.prefetchedPdfs. If it is not
+          // this.props.file may not be a value in this.prerenderedPdfs. If it is not
           // already present, then we want to create it.
-          _.set(this.prefetchedPdfs, [this.props.file, 'rendered', index], true);
+          _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
           resolve();
         } else {
           // If it is not, then we try to render it again.
@@ -227,7 +227,6 @@ export class Pdf extends React.PureComponent {
       // TODO: Make this more robust.
       if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
           boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
-        let t0 = performance.now();
         this.renderPage(index, this.props.file);
       }
     });
@@ -245,10 +244,7 @@ export class Pdf extends React.PureComponent {
           return resolve();
         }
 
-        this.pageElements = {
-          textLayers: [],
-          canvases: []
-        };
+        this.pageElements = [];
 
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
@@ -256,11 +252,11 @@ export class Pdf extends React.PureComponent {
           isRendered: []
         }, () => {
           // If the user moves between pages quickly we want to make sure that we just
-          // setup the most recent file. So we call this function recursively. If we get
-          // the same document from this.getDocument, then we break out of the recursive loop.
-          this.setupPdf(this.latestFile);
-          resolve();
-          this.onPageChange(1);
+          // setup the most recent file. So we call this function recursively.
+          this.setupPdf(this.latestFile).then(() => {
+            resolve();
+            this.onPageChange(1);
+          });
         });
         this.props.setPdfReadyToShow(this.props.documentId);
       });
@@ -269,20 +265,16 @@ export class Pdf extends React.PureComponent {
 
   getDocument = (file) => {
     return new Promise((resolve, reject) => {
-      if (_.get(this.prefetchedPdfs, [file, 'pdfDocument'])) {
-        resolve(this.prefetchedPdfs[file].pdfDocument);
+      if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+        resolve(this.prerenderedPdfs[file].pdfDocument);
       } else {
         PDFJS.getDocument(file).then((pdfDocument) => {
-          if (this.prefetchedPdfs[file]) {
-            // There is a chance another async call has already resolved. If so
-            // just use the cached version.
-            if (this.prefetchedPdfs[file].pdfDocument) {
-              resolve(this.prefetchedPdfs[file].pdfDocument);
-            } else {
-              this.prefetchedPdfs[file].pdfDocument = pdfDocument
-            }
+          // There is a chance another async call has resolved in the time that
+          // getDocument took to run. If so, again just use the cached version.
+          if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+            resolve(this.prerenderedPdfs[file].pdfDocument);
           } else {
-            this.prefetchedPdfs[file] = {
+            this.prerenderedPdfs[file] = {
               pdfDocument,
               rendered: []
             };
@@ -304,7 +296,7 @@ export class Pdf extends React.PureComponent {
         const halfHeight = height / 2;
 
         this.scrollWindow.scrollTop =
-          this.pageContainers[pageNumber - 1].getBoundingClientRect().top +
+          this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
           yPosition + this.scrollWindow.scrollTop - halfHeight;
       });
     }
@@ -315,7 +307,7 @@ export class Pdf extends React.PureComponent {
     this.props.onPageChange(
       currentPage,
       this.state.numPages,
-      this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
+      this.scrollWindow.offsetHeight / (this.pageElements[currentPage - 1].pageContainer.offsetHeight / this.props.scale));
   }
 
   componentDidMount = () => {
@@ -343,14 +335,17 @@ export class Pdf extends React.PureComponent {
 
       this.scrollLocation = {
         page: this.currentPage,
-        locationOnPage: (this.scrollWindow.scrollTop - this.pageContainers[this.currentPage - 1].offsetTop) * zoomFactor
+        locationOnPage: (this.scrollWindow.scrollTop - this.pageElements[this.currentPage - 1].pageContainer.offsetTop) * zoomFactor
       };
     }
     /* eslint-enable no-negated-condition */
   }
 
   prerenderPages = () => {
-    // Don't prerender if we are trying to render an in view page.
+    // Don't prerender if we are currently trying to render a page on the current document.
+    // We want those pages to take precedence over pages on non-visible documents.
+    // At the end of rendering pages from this document we always call prerenderPages
+    // again in case there are still pages to prerender.
     if (this.isRendering.some((value) => value)) {
       return;
     }
@@ -359,12 +354,14 @@ export class Pdf extends React.PureComponent {
       this.getDocument(file).then((pdfDocument) => {
         _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
           if (pageIndex < pdfDocument.pdfInfo.numPages &&
-            !_.get(this.prefetchedPdfs, [file, 'rendered', pageIndex], false) &&
+            !_.get(this.prerenderedPdfs, [file, 'rendered', pageIndex], false) &&
             this.fakeCanvas[index][pageIndex] &&
             !this.isPrerendering) {
+            // We set this to true, so that only one page can prerender at a time. In this
+            // way we can prerender page 1 before prerendering page 2.
             this.isPrerendering = true;
 
-            this.prefetchedPdfs[file].rendered[pageIndex] = true;
+            this.prerenderedPdfs[file].rendered[pageIndex] = true;
 
             pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
               const viewport = pdfPage.getViewport(this.props.scale);
@@ -373,15 +370,15 @@ export class Pdf extends React.PureComponent {
                 canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
                 viewport
               }).then(() => {
-                this.prerenderPages();
                 this.isPrerendering = false;
+                this.prerenderPages();
               }).catch(() => {
-                this.prerenderPages();
                 this.isPrerendering = false;
+                this.prerenderPages();
               });
             }).catch(() => {
-              this.prerenderPages();
               this.isPrerendering = false;
+              this.prerenderPages();
             });
           }
         });
@@ -404,7 +401,7 @@ export class Pdf extends React.PureComponent {
 
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
-        this.pageContainers[this.scrollLocation.page - 1].offsetTop;
+        this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
     }
   }
 
@@ -466,15 +463,13 @@ export class Pdf extends React.PureComponent {
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
-    this.pageContainers = [];
-
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       const onPageClick = (event) => {
         if (!this.props.isPlacingAnnotation) {
           return;
         }
 
-        let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
+        let container = this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect();
         let xPosition = (event.pageX - container.left) / this.props.scale;
         let yPosition = (event.pageY - container.top) / this.props.scale;
 
@@ -507,15 +502,13 @@ export class Pdf extends React.PureComponent {
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
         ref={(pageContainer) => {
-          this.pageContainers[pageNumber - 1] = pageContainer;
+          _.set(this.pageElements, [pageNumber - 1, 'pageContainer'], pageContainer);
         }}>
           <div className={pageContentsVisibleClass}>
             <canvas
-              id={`canvas${pageNumber}-${this.props.file}-${canvasId++}`}
+              id={`canvas${pageNumber}-${this.props.file}`}
               ref={(canvas) => {
-                this.pageElements.canvases[pageNumber - 1] = canvas;
-                this.pageElements.file = this.props.file;
-
+                _.set(this.pageElements, [pageNumber - 1, 'canvas'], canvas);
               }}
               className="canvasWrapper" />
             <div className="cf-pdf-annotationLayer">
@@ -524,18 +517,19 @@ export class Pdf extends React.PureComponent {
             <div
               id={`textLayer${pageNumber}`}
               ref={(textLayer) => {
-                this.pageElements.textLayers[pageNumber - 1] = textLayer;
+                _.set(this.pageElements, [pageNumber - 1, 'textLayer'], textLayer);
               }}
               className="textLayer"/>
           </div>
         </div>);
     }
-//style={{visibility: 'hidden'}}
+
     const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
       this.fakeCanvas[index] = [];
 
       const canvases = _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
         <canvas
+          style={{display: 'none'}}
           ref={(ele) => {
             this.fakeCanvas[index][pageIndex] = ele;
           }}/>
@@ -561,7 +555,6 @@ export class Pdf extends React.PureComponent {
           className={'cf-pdf-page pdfViewer singlePageView'}>
           {pages}
         </div>
-        
       </div>;
   }
 }

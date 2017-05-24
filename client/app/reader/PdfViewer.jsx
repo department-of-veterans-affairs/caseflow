@@ -94,8 +94,6 @@ export class PdfViewer extends React.Component {
       return null;
     }
 
-    console.log('prefetchFiles', this.prefetchFiles());
-
     return (
       <div>
         <div className="cf-pdf-page-container">
