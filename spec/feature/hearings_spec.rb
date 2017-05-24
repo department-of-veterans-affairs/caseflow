@@ -16,7 +16,11 @@ RSpec.feature "Hearings" do
       current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
 
       2.times do
-        Generators::Hearing.build(user: current_user)
+        Generators::Hearing.build(
+          user: current_user,
+          date: 5.days.from_now,
+          type: "video"
+        )
       end
 
       Generators::Hearing.build(
@@ -46,16 +50,16 @@ RSpec.feature "Hearings" do
       docket1_type = get_type(1)
       docket2_type = get_type(2)
 
-      expect(docket1_type).to eql("Video")
-      expect(docket2_type).to eql("CO")
+      expect(docket1_type).to eql("CO")
+      expect(docket2_type).to eql("Video")
 
       # Verify hearings count in each docket
 
       docket1_hearings = get_hearings(1)
       docket2_hearings = get_hearings(2)
 
-      expect(docket1_hearings).to eql("2")
-      expect(docket2_hearings).to eql("1")
+      expect(docket1_hearings).to eql("1")
+      expect(docket2_hearings).to eql("2")
 
       # Validate help link
       find('#menu-trigger').click
