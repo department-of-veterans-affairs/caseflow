@@ -9,23 +9,22 @@ import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import NoSearchResults from './NoSearchResults';
 
-import Button from '../components/Button';
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import * as Constants from './constants';
+import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
 import { setDocListScrollPosition, changeSortState,
   clearSearch, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import { getAnnotationByDocumentId } from './utils';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
-import { getFilteredDocuments } from './selectors';
+import { getFilteredDocuments, getAnnotationsPerDocument } from './selectors';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -90,52 +89,6 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
   shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
-
-class CommentIndicator extends React.PureComponent {
-  toggleComments = () => {
-    this.props.handleToggleCommentOpened(this.props.doc.id);
-  }
-
-  render() {
-    const numberOfComments = _.size(this.props.numberAnnotations);
-    const icon = `fa fa-3 ${this.props.doc.listComments ?
-      'fa-angle-up' : 'fa-angle-down'}`;
-    const name = `expand ${numberOfComments} comments`;
-
-    return <span className="document-list-comments-indicator">
-      {numberOfComments > 0 &&
-        <span>
-          <Button
-            classNames={['cf-btn-link']}
-            href="#"
-            ariaLabel={name}
-            name={name}
-            id={`expand-${this.props.doc.id}-comments-button`}
-            onClick={this.toggleComments}>{numberOfComments}
-            <i className={`document-list-comments-indicator-icon ${icon}`}/>
-          </Button>
-        </span>
-      }
-    </span>;
-  }
-}
-
-const commentIndicatorMapStateToProps = (state, ownProps) => ({
-  numberAnnotations: getAnnotationByDocumentId(state, ownProps.doc.id)
-});
-const commentIndicatorMapDispatchToProps = (dispatch) => ({
-  handleToggleCommentOpened(docId) {
-    dispatch({
-      type: Constants.TOGGLE_COMMENT_LIST,
-      payload: {
-        docId
-      }
-    });
-  }
-});
-const ConnectedCommentIndicator = connect(
-  commentIndicatorMapStateToProps,
-  commentIndicatorMapDispatchToProps)(CommentIndicator);
 
 export class PdfListView extends React.Component {
   constructor() {
@@ -387,7 +340,7 @@ export class PdfListView extends React.Component {
           className="document-list-header-comments">
           Comments
         </div>,
-        valueFunction: (doc) => <ConnectedCommentIndicator doc={doc} />
+        valueFunction: (doc) => <CommentIndicator docId={doc.id} />
       }
     ];
   }
@@ -459,19 +412,12 @@ export class PdfListView extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const documents = getFilteredDocuments(state);
-
-  return {
-    documents,
-    annotationsPerDocument: _(documents).
-      keyBy('id').
-      mapValues((doc) => getAnnotationByDocumentId(state, doc.id)).
-      value(),
-    ..._.pick(state, 'tagOptions'),
-    ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
-  };
-};
+const mapStateToProps = (state) => ({
+  documents: getFilteredDocuments(state),
+  annotationsPerDocument: getAnnotationsPerDocument(state),
+  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state.ui, 'pdfList', 'docFilterCriteria')
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

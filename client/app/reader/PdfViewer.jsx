@@ -10,7 +10,6 @@ import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { bindActionCreators } from 'redux';
-import { getAnnotationByDocumentId } from '../reader/utils';
 import { getFilteredDocuments } from './selectors';
 
 // PdfViewer is a smart component that renders the entire
@@ -137,10 +136,8 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  editingCommentsForCurrentDoc:
-    _.some(getAnnotationByDocumentId(state, Number(ownProps.match.params.docId)), 'editing'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
 });
