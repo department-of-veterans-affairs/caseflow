@@ -98,7 +98,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def scheduled_hearings
-    hearings.select(&:scheduled?)
+    hearings.select(&:scheduled_pending?)
   end
 
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused

@@ -29,7 +29,7 @@ describe Hearing do
       expect(subject.date).to eq(date)
       expect(subject.appeal.id).to eq(appeal.id)
       expect(subject.user.id).to eq(user.id)
-      expect(subject.closed_on).to be_a(Time)
+      expect(subject.closed_at).to be_a(Time)
       expect(subject.disposition).to eq(:no_show)
     end
   end

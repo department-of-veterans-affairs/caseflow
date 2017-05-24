@@ -123,23 +123,23 @@ describe AppealEvents do
       before { appeal.save! }
 
       let!(:held_hearing) do
-        Generators::Hearing.create(disposition: :held, closed_on: 4.days.ago, appeal: appeal)
+        Generators::Hearing.create(disposition: :held, closed_at: 4.days.ago, appeal: appeal)
       end
 
       let!(:canceled_hearing) do
-        Generators::Hearing.build(disposition: :cancelled, closed_on: 3.days.ago, appeal: appeal)
+        Generators::Hearing.build(disposition: :cancelled, closed_at: 3.days.ago, appeal: appeal)
       end
 
       let!(:hearing_not_closed) do
-        Generators::Hearing.create(disposition: :held, closed_on: nil, appeal: appeal)
+        Generators::Hearing.create(disposition: :held, closed_at: nil, appeal: appeal)
       end
 
       let!(:hearing_another_appeal) do
-        Generators::Hearing.build(disposition: :held, closed_on: 2.days.ago)
+        Generators::Hearing.build(disposition: :held, closed_at: 2.days.ago)
       end
 
       let!(:postponed_hearing) do
-        Generators::Hearing.build(disposition: :postponed, closed_on: 2.days.ago, appeal: appeal)
+        Generators::Hearing.build(disposition: :postponed, closed_at: 2.days.ago, appeal: appeal)
       end
 
       let(:hearing_held_events) do
