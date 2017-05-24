@@ -45,8 +45,8 @@ export const certificationReducers = function(state = initialState, action = {})
     return ConfirmCaseDetailsReducers.changeRepresentativeType(state, action);
   case Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE:
     return ConfirmCaseDetailsReducers.changeOtherRepresentativeType(state, action);
-  case Constants.CHANGE_POA_INFO_MATCHING:
-    return ConfirmCaseDetailsReducers.changePoaInfoMatching(state, action);
+  case Constants.CHANGE_POA_MATCHES:
+    return ConfirmCaseDetailsReducers.changePoaMatches(state, action);
 
   // ConfirmHearing
   // ==================
@@ -117,12 +117,12 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
   }
 };
 
-export const poaInfoMatchingToStr = function(poaInfoMatching) {
-  switch (poaInfoMatching) {
+export const poaMatchesToStr = function(poaMatches) {
+  switch (poaMatches) {
   case true:
-    return Constants.poaInformationMatch.MATCH;
+    return Constants.poaMatches.MATCH;
   case false:
-    return Constants.poaInformationMatch.NO_MATCH;
+    return Constants.poaMatches.NO_MATCH;
   default:
     return null;
   }
@@ -142,7 +142,7 @@ export const mapDataToInitialState = (state) => ({
   vacolsRepresentativeName: state.vacols_representative_name,
   representativeType: state.representative_type,
   representativeName: state.representative_name,
-  poaInfoMatching: poaInfoMatchingToStr(state.poa_matches),
+  poaMatches: poaMatchesToStr(state.poa_matches),
   nod: parseDocumentFromApi(state.appeal.nod),
   soc: parseDocumentFromApi(state.appeal.soc),
   form9: parseDocumentFromApi(state.appeal.form9),

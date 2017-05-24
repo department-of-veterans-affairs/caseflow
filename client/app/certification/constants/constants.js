@@ -9,7 +9,7 @@ export const CHANGE_TYPE_OF_HEARING = 'CHANGE_TYPE_OF_HEARING';
 export const CHANGE_REPRESENTATIVE_NAME = 'CHANGE_REPRESENTATIVE_NAME';
 export const CHANGE_REPRESENTATIVE_TYPE = 'CHANGE_REPRESENTATIVE_TYPE';
 export const CHANGE_OTHER_REPRESENTATIVE_TYPE = 'CHANGE_OTHER_REPRESENTATIVE_TYPE';
-export const CHANGE_POA_INFO_MATCHING = 'CHANGE_POA_INFO_MATCHING';
+export const CHANGE_POA_MATCHES = 'CHANGE_POA_MATCHES';
 
 export const CHANGE_SIGN_AND_CERTIFY_FORM = 'CHANGE_SIGN_AND_CERTIFY_FORM';
 
@@ -77,7 +77,7 @@ export const certifyingOfficialTitles = {
 };
 
 // does the POA information match?
-export const poaInformationMatch = {
+export const poaMatches = {
   MATCH: 'MATCH',
   NO_MATCH: 'NO_MATCH'
 };

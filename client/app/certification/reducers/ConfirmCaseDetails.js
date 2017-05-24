@@ -25,8 +25,8 @@ export const changeOtherRepresentativeType = (state, action) => {
   });
 };
 
-export const changePoaInfoMatching = (state, action) => {
+export const changePoaMatches = (state, action) => {
   return Object.assign({}, state, {
-    poaInfoMatching: action.payload.poaInfoMatching
+    poaMatches: action.payload.poaMatches
   });
 };

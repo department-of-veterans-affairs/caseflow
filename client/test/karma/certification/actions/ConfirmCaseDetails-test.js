@@ -60,17 +60,17 @@ describe('.changeOtherRepresentativeType', () => {
   });
 });
 
-describe('.changePoaInfoMatching', () => {
-  it('should create an action to change poaInfoMatching', () => {
-    const poaInfoMatching = 'MATCH';
+describe('.changePoaMatches', () => {
+  it('should create an action to change poaMatches', () => {
+    const poaMatches = 'MATCH';
     const expectedAction = {
-      type: Constants.CHANGE_POA_INFO_MATCHING,
+      type: Constants.CHANGE_POA_MATCHES,
       payload: {
-        poaInfoMatching
+        poaMatches
       }
     };
 
-    expect(Actions.changePoaInfoMatching(poaInfoMatching)).
+    expect(Actions.changePoaMatches(poaMatches)).
       to.eql(expectedAction);
   });
 });

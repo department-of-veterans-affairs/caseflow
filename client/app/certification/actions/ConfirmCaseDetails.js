@@ -30,10 +30,10 @@ export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   }
 });
 
-export const changePoaInfoMatching = (poaInfoMatching) => ({
-  type: Constants.CHANGE_POA_INFO_MATCHING,
+export const changePoaMatches = (poaMatches) => ({
+  type: Constants.CHANGE_POA_MATCHES,
   payload: {
-    poaInfoMatching
+    poaMatches
   }
 });
 
@@ -52,7 +52,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   const type = params.representativeType === Constants.representativeTypes.OTHER ?
     params.otherRepresentativeType : params.representativeType;
   const name = params.representativeName;
-  const poaMatches = params.poaInfoMatching === Constants.poaInformationMatch.MATCH;
+  const poaMatches = params.poaMatches === Constants.poaMatches.MATCH;
 
   // Translate camelcase React names into snake case
   // Rails key names.
