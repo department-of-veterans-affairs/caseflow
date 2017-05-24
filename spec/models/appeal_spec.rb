@@ -1,4 +1,8 @@
 describe Appeal do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
   let(:appeal) do
     Generators::Appeal.build(
       nod_date: nod_date,
@@ -92,6 +96,17 @@ describe Appeal do
         expect(subject.first).to have_attributes(vacols_date: Time.zone.today)
         expect(subject.last).to have_attributes(vacols_date: Time.zone.today - 5.days)
       end
+    end
+  end
+
+  context "#events" do
+    subject { appeal.events }
+    let(:soc_date) { 5.days.ago }
+
+    it "returns list of events sorted from oldest to newest by date" do
+      expect(subject.length > 1).to be_truthy
+      expect(subject.first.date).to eq(5.days.ago)
+      expect(subject.first.type).to eq(:soc)
     end
   end
 
@@ -710,6 +725,54 @@ describe Appeal do
 
     it "returns veteran loaded with BGS values" do
       is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
+    end
+  end
+
+  context "#power_of_attorney" do
+    subject { appeal.power_of_attorney }
+
+    it "returns poa loaded with VACOLS values" do
+      is_expected.to have_attributes(
+        vacols_representative_type: "Service Organization",
+        vacols_representative_name: "The American Legion"
+      )
+    end
+
+    it "returns poa loaded with BGS values" do
+      is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+  end
+
+  context ".for_api" do
+    subject { Appeal.for_api(appellant_ssn: ssn) }
+
+    let(:ssn) { "999887777" }
+
+    let!(:veteran_appeals) do
+      [
+        Generators::Appeal.build(
+          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
+        ),
+        Generators::Appeal.build(
+          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
+        )
+      ]
+    end
+
+    it "returns filtered appeals for veteran sorted by latest event date" do
+      expect(subject.length).to eq(2)
+      expect(subject.first.form9_date).to eq(3.days.ago)
+    end
+
+    context "when ssn is less than 9 characters" do
+      let(:ssn) { "99887777" }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
     end
   end
 end

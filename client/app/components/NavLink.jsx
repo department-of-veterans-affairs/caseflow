@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 // To be used with the "StickyNav" component
 // This generates the list of links for a side navigation list
 
