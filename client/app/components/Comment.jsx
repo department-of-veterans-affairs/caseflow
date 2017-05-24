@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../components/Button';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -97,7 +99,7 @@ Comment.defaultProps = {
 };
 
 Comment.propTypes = {
-  children: React.PropTypes.string,
+  children: PropTypes.string,
   id: PropTypes.string,
   selected: PropTypes.bool,
   onEditComment: PropTypes.func,

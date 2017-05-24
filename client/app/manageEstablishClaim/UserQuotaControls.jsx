@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants/index';

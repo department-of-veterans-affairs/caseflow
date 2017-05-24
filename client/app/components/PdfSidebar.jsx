@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
@@ -13,11 +14,12 @@ import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, u
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
   updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation, getAnnotationByDocumentId, sortAnnotations }
+import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { plusIcon } from './RenderFunctions';
 import classNames from 'classnames';
+import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -201,10 +203,10 @@ export class PdfSidebar extends React.Component {
 
 PdfSidebar.propTypes = {
   doc: PropTypes.object,
-  selectedAnnotationId: React.PropTypes.number,
-  comments: React.PropTypes.arrayOf(React.PropTypes.shape({
-    comment: React.PropTypes.string,
-    uuid: React.PropTypes.number
+  selectedAnnotationId: PropTypes.number,
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    comment: PropTypes.string,
+    uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
@@ -214,7 +216,7 @@ PdfSidebar.propTypes = {
     comment: PropTypes.bool
   }),
   scrollToSidebarComment: PropTypes.shape({
-    id: React.PropTypes.number
+    id: PropTypes.number
   }),
   hidePdfSidebar: PropTypes.bool
 };
@@ -222,7 +224,7 @@ PdfSidebar.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    comments: getAnnotationByDocumentId(state, ownProps.doc.id),
+    comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
