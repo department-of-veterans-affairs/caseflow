@@ -152,9 +152,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def documents_match?
-    # This nil? check prevents server throwing an error in v2
-    # when certification_status is :data_missing
-    return false if (!nod || !soc || !form9)
+    return false if missing_certification_data?
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 

@@ -39,9 +39,6 @@ class Certification < ActiveRecord::Base
     end
   end
 
-  # documents_match? will throw an error in case certification_status is :data_missing,
-  # which means it will never reach v2
-  # TODO: remove documents_match? from to_hash
   def to_hash
     serializable_hash(
       methods: :certification_status,

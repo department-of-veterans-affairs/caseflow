@@ -155,7 +155,6 @@ describe Appeal do
     end
   end
 
-
   context "#serialized_decision_date" do
     let(:appeal) { Appeal.new(decision_date: decision_date) }
     subject { appeal.serialized_decision_date }
