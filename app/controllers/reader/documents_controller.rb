@@ -26,7 +26,7 @@ class Reader::DocumentsController < ApplicationController
   private
 
   def appeal
-    Appeal.find_or_create_by_vacols_id(appeal_id)
+    @appeal ||= Appeal.find_or_create_by_vacols_id(appeal_id)
   end
   helper_method :appeal
 
