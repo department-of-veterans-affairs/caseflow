@@ -477,7 +477,6 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         sleep(1)
         expect(page).to have_content "Something went wrong"
-
       end
 
       scenario "Error cerifying appeal" do

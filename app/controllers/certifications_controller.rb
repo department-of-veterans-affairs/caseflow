@@ -101,7 +101,16 @@ class CertificationsController < ApplicationController
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
   def validate_data_presence_v2
-    raise StandardError unless (certification.representative_type && certification.representative_name && certification.hearing_preference && ((certification.form9_type && !certification.hearing_change_doc_found_in_vbms) || certification.hearing_change_doc_found_in_vbms))
+    fail CertificationDataMissing unless check_confirm_case_data && check_confirm_hearing_data
+  end
+
+  def check_confirm_case_data
+    certification.representative_type && certification.representative_name
+  end
+
+  def check_confirm_hearing_data
+    certification.hearing_preference && ((certification.form9_type &&
+    !certification.hearing_change_doc_found_in_vbms) || certification.hearing_change_doc_found_in_vbms)
   end
 
   def certification_cancellation
