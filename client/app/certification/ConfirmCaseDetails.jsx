@@ -158,7 +158,7 @@ export class ConfirmCaseDetails extends React.Component {
       certificationStatus
     } = this.props;
 
-    if(!certificationStatus.includes('started')) {
+    if (!certificationStatus.includes('started')) {
       return <Redirect
         to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
     }
