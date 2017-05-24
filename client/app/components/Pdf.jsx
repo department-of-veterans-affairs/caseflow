@@ -268,8 +268,8 @@ export class Pdf extends React.PureComponent {
           // If the user moves between pages quickly we want to make sure that we just
           // setup the most recent file. So we call this function recursively.
           this.setupPdf(this.latestFile).then(() => {
-            resolve();
             this.onPageChange(1);
+            resolve();
           });
         });
         this.props.setPdfReadyToShow(this.props.documentId);

@@ -23,8 +23,11 @@ describe('Pdf', () => {
   /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
     let wrapper;
+    let onPageChange;
 
     beforeEach(() => {
+      onPageChange = sinon.spy();
+
       PdfJsStub.beforeEach();
 
       wrapper = mount(<Pdf
@@ -35,6 +38,7 @@ describe('Pdf', () => {
         setPdfReadyToShow={_.noop}
         pdfWorker="noworker"
         scale={1}
+        onPageChange={onPageChange}
       />, { attachTo: document.getElementById('app') });
     });
 
@@ -52,18 +56,9 @@ describe('Pdf', () => {
 
     context('.setuppdf', () => {
       context('onPageChange set', () => {
-        let onPageChange;
-
-        beforeEach(() => {
-          onPageChange = sinon.spy();
-          wrapper.setProps({
-            onPageChange
-          });
-        });
-
         it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
           wrapper.instance().setupPdf('test.pdf');
-          await pause(DOCUMENT_DEBOUNCE_TIME + 50);
+          await pause(0);
 
           expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
         }));
