@@ -8,7 +8,8 @@ class Reader::DocumentsController < ApplicationController
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
-            annotations: annotations
+            annotations: annotations,
+            pdfLink: pdf_download_path
           }
         end
       end
@@ -75,6 +76,10 @@ class Reader::DocumentsController < ApplicationController
 
   def logo_path
     reader_appeal_documents_path(appeal_id: appeal_id)
+  end
+
+  def pdf_download_path
+    pdf_reader_appeal_document_path(id: single_document.id, time: Time.now.to_i)
   end
 
   def verify_reader_feature_enabled

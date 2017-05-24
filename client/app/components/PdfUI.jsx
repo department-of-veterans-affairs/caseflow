@@ -145,9 +145,9 @@ export class PdfUI extends React.Component {
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={() => console.log("HALP")}
             ariaLabel="download pdf"
-            download
-            onClick={() => console.log("WHY WONT YOU WORK")}>
+            download>
             {downloadIcon()}
           </Button>
         </span>

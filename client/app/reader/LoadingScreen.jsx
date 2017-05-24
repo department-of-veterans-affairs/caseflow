@@ -18,6 +18,7 @@ export class LoadingScreen extends React.Component {
       const returnedObject = JSON.parse(response.text);
       const documents = returnedObject.appealDocuments;
       const { annotations } = returnedObject;
+      const pdfLink = returnedObject.pdfLink;
 
       this.props.onReceiveDocs(documents);
       this.props.onReceiveAnnotations(annotations);
