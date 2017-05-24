@@ -59,9 +59,9 @@ export class PdfUI extends React.Component {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
       return <div className="cf-pdf-buttons-center">
-        Page {this.state.currentPage} of {this.state.numPages}{' '}
-        | {this.props.docListIsFiltered && <FilterIcon />}
-        <span id="doc-list-progress-indicator">
+        <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}{' '}</span>
+        | 
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
       </div>;

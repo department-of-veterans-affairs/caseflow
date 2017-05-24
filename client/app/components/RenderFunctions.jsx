@@ -170,7 +170,7 @@ export class CategoryIcon extends React.PureComponent {
 
 export class FilterIcon extends React.PureComponent {
   render() {
-    return <svg width="12px" height="14px" viewBox="0 0 12 14">
+    return <svg width="12px" height="14px" viewBox="0 0 12 14" className="filter-icon">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <g fillRule="nonzero" fill="#FFFFFF">
               <g id="filter-filled-tool-symbol" transform="translate(6.000000, 7.000000) scale(-1, 1) translate(-6.000000, -7.000000) translate(0.000000, 1.000000)">
