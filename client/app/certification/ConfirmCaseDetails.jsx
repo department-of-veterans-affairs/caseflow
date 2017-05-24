@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import TextField from '../components/TextField';
+import Table from '../components/Table';
 import Footer from './Footer';
 
 const representativeTypeOptions = [
@@ -142,6 +143,10 @@ export class ConfirmCaseDetails extends React.Component {
     let {
       representativeType,
       changeRepresentativeType,
+      bgsRepresentativeType,
+      bgsRepresentativeName,
+      vacolsRepresentativeType,
+      vacolsRepresentativeName,
       representativeName,
       changeRepresentativeName,
       otherRepresentativeType,
@@ -165,14 +170,43 @@ export class ConfirmCaseDetails extends React.Component {
     const shouldShowOtherTypeField =
       representativeType === Constants.representativeTypes.OTHER;
 
+    let appellantInfoColumns = [
+      {
+        header: <h3>From VBMS</h3>,
+        valueName: 'vbms'
+      },
+      {
+        header: <h3>From VACOLS</h3>,
+        valueName: 'vacols'
+      }
+    ];
+
+    let appellantInfoRowObjects = [
+      {
+        vbms: bgsRepresentativeName,
+        vacols: vacolsRepresentativeName
+      },
+      {
+        vbms: bgsRepresentativeType,
+        vacols: vacolsRepresentativeType
+      }
+    ];
+
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Confirm Case Details</h2>
 
           <div>
-            {`Review data from BGS about the appellant's
-              representative and make changes if necessary.`}
+            {`Review information about the appellant's
+              representative from VBMS and VACOLS.`}
           </div>
+
+          <Table
+            className="cf-borderless-rows"
+            columns={appellantInfoColumns}
+            rowObjects={appellantInfoRowObjects}
+            summary="Appellant Information"
+          />
 
           <div className="cf-help-divider"></div>
 
@@ -255,6 +289,10 @@ const mapStateToProps = (state) => ({
   serverError: state.serverError,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
+  bgsRepresentativeType: state.bgsRepresentativeType,
+  bgsRepresentativeName: state.bgsRepresentativeName,
+  vacolsRepresentativeType: state.vacolsRepresentativeType,
+  vacolsRepresentativeName: state.vacolsRepresentativeName,
   otherRepresentativeType: state.otherRepresentativeType,
   continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
