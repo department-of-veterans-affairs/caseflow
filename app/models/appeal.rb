@@ -90,7 +90,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: vbms_id, vacols_id: vacols_id).load_bgs_record!
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
 
   def hearings

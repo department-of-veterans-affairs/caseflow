@@ -336,3 +336,36 @@ select {
 .cf-form-textinput {
   margin-bottom: 30px;
 }
+
+.cf-borderless-rows {
+
+  thead {
+    border: 0;
+    padding: 0;
+
+    tr {
+      border: 0;
+      padding: 0;
+
+      th {
+        border: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  tbody {
+    border: 0;
+    padding: 0;
+
+    tr {
+      border: 0;
+      padding: 0;
+
+      td {
+        border: 0;
+        padding: 0;
+      }
+    }
+  }
+}
