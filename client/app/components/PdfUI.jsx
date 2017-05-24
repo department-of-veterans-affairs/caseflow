@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import classNames from 'classnames';
+import _ from 'lodash';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
@@ -52,9 +53,12 @@ export class PdfUI extends React.Component {
   }
 
   getPdfFooter = () => {
-    if (this.props.pdfsReadyToShow && this.props.pdfsReadyToShow[this.props.doc.id] && this.state.numPages) {
+    if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
+      const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+
       return <div className="cf-pdf-buttons-center">
-        Page {this.state.currentPage} of {this.state.numPages}
+        Page {this.state.currentPage} of {this.state.numPages}{' '}
+        | Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
       </div>;
     }
 
@@ -184,7 +188,10 @@ export class PdfUI extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => state.ui.pdf;
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'filteredDocIds'),
+  ...state.ui.pdf
+});
 const mapDispatchToProps = (dispatch) => ({
   stopPlacingAnnotation: () => {
     dispatch(stopPlacingAnnotation());
