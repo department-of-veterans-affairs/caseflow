@@ -3,6 +3,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString } from './search';
+import { timeFunction } from '../util/PerfDebug';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -107,6 +108,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  initialDataLoadingFail: false,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -154,20 +156,6 @@ export const initialState = {
   documents: {}
 };
 
-const timeReducer = (fn) => (state, action) => {
-  const start = window.performance.now();
-  const returnValue = fn(state, action);
-  const end = window.performance.now();
-
-  if (start !== 'RUNNING_IN_NODE') {
-    // eslint-disable-next-line no-console
-    console.log(`Action ${action.type} reducer time: ${(end - start).toFixed(2)}ms`);
-  }
-
-
-  return returnValue;
-};
-
 export const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
@@ -190,6 +178,12 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.REQUEST_INITIAL_DATA_FAILURE:
+    return update(state, {
+      initialDataLoadingFail: {
+        $set: true
+      }
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -779,6 +773,7 @@ export const reducer = (state = initialState, action = {}) => {
   }
 };
 
-export default timeReducer(reducer);
-
-/* eslint-enable max-lines */
+export default timeFunction(
+  reducer,
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);

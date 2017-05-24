@@ -11,7 +11,7 @@ class Appeal < ActiveRecord::Base
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :appellant_name, :appellant_relationship
+  vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -20,7 +20,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :disposition, :decision_date, :status, :prior_decision_date
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
@@ -56,6 +56,14 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
+  # TODO: the type code should be the base value, and should be
+  #       converted to be human readable, not vis-versa
+  TYPE_CODES = {
+    "Original" => "original",
+    "Post Remand" => "post_remand",
+    "Court Remand" => "cavc_remand"
+  }.freeze
+
   attr_writer :ssoc_dates
   def ssoc_dates
     @ssoc_dates ||= []
@@ -73,8 +81,16 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  def events
+    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
+  end
+
   def veteran
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+  end
+
+  def power_of_attorney
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
 
   def veteran_name
@@ -211,6 +227,10 @@ class Appeal < ActiveRecord::Base
     status == "Remand" && issues.none?(&:non_new_material_allowed?)
   end
 
+  def active?
+    status != "Complete"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -265,6 +285,18 @@ class Appeal < ActiveRecord::Base
     end_products.select { |ep| ep.potential_match?(self) }
   end
 
+  def api_supported?
+    !!type_code
+  end
+
+  def type_code
+    TYPE_CODES[type]
+  end
+
+  def latest_event_date
+    events.last.try(:date)
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -307,6 +339,15 @@ class Appeal < ActiveRecord::Base
 
     def fetch_end_products(vbms_id)
       bgs.get_end_products(vbms_id).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    end
+
+    def for_api(appellant_ssn:)
+      fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
+
+      repository.appeals_by_appellant_ssn(appellant_ssn)
+                .select(&:api_supported?)
+                .sort_by(&:latest_event_date)
+                .reverse
     end
 
     def bgs

@@ -133,4 +133,8 @@ module ApplicationHelper
     return full_path unless route
     ["", route[:controller], route[:action]].join("/")
   end
+
+  def print_link
+    link_to "Print", "#", onclick: "window.print()"
+  end
 end

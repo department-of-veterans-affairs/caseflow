@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../components/Button';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
@@ -34,7 +36,7 @@ export class PdfUI extends React.Component {
     this.state = {
       scale: 1,
       currentPage: 1,
-      numPages: 1
+      numPages: null
     };
   }
   componentDidUpdate(prevProps) {
@@ -47,6 +49,16 @@ export class PdfUI extends React.Component {
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
+  }
+
+  getPdfFooter = () => {
+    if (this.props.pdfsReadyToShow && this.props.pdfsReadyToShow[this.props.doc.id] && this.state.numPages) {
+      return <div className="cf-pdf-buttons-center">
+        Page {this.state.currentPage} of {this.state.numPages}
+      </div>;
+    }
+
+    return '';
   }
 
   fitToScreen = () => {
@@ -105,7 +117,7 @@ export class PdfUI extends React.Component {
         <span className="usa-width-one-third">
           <span className="category-icons-and-doc-type">
             <span className="cf-pdf-doc-category-icons">
-              <DocumentCategoryIcons docId={this.props.doc.id} />
+              <DocumentCategoryIcons doc={this.props.doc} />
             </span>
             <span className="cf-pdf-doc-type-button-container">
               <Button
@@ -166,9 +178,7 @@ export class PdfUI extends React.Component {
         />
       </div>
       <div className="cf-pdf-footer cf-pdf-toolbar">
-        <div className="cf-pdf-buttons-center">
-          Page {this.state.currentPage} of {this.state.numPages}
-        </div>
+        { this.getPdfFooter(this.props, this.state) }
       </div>
     </div>;
   }
@@ -194,9 +204,9 @@ export default connect(
 PdfUI.propTypes = {
   doc: PropTypes.shape({
     filename: PropTypes.string,
-    id: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number]),
+    id: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number]),
     type: PropTypes.string,
     receivedAt: PropTypes.string
   }).isRequired,

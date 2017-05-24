@@ -2,6 +2,8 @@ require "bgs"
 
 # Thin interface to all things BGS
 class ExternalApi::BGSService
+  include PowerOfAttorneyMapper
+
   attr_accessor :client
 
   def initialize
@@ -32,6 +34,19 @@ class ExternalApi::BGSService
         client.veteran.find_by_file_number(vbms_id)
       end
   end
+
+  def fetch_poa_by_file_number(file_number)
+    bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
+                                    service: :bgs,
+                                    name: "org.find_poas_by_file_number") do
+      client.org.find_poas_by_file_number(file_number)
+    end
+    @poas[file_number] ||= get_poa_from_bgs_poa(bgs_poa)
+  end
+
+  # TODO(add this service)
+  # def fetch_address_by_participant_id(participant_id)
+  # end
 
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
