@@ -31,6 +31,9 @@ RSpec.feature "Hearings" do
 
       expect(page).to have_content("Hearings Schedule")
 
+      # Verify user
+      expect(page).to have_content("VLJ: Lauren Roth")
+
       # Verify dates
 
       day1 = get_day(1)

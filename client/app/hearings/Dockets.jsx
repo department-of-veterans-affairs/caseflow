@@ -63,7 +63,7 @@ export class Dockets extends React.Component {
     return <div className="cf-hearings-schedule">
       <div className="cf-hearings-title-and-judge">
         <h1>Hearings Schedule</h1>
-        <em>How is the judge name calculated?</em>
+        <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
       </div>
       <Table className="dockets" columns={columns} rowObjects={rowObjects} summary={'Hearings Prep Schedule?'}/>
     </div>;
@@ -84,5 +84,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
+  veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.arrayOf(PropTypes.object).isRequired
 };
