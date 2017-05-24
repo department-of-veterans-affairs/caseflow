@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
+import { FilterIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 
@@ -59,7 +60,7 @@ export class PdfUI extends React.Component {
 
       return <div className="cf-pdf-buttons-center">
         Page {this.state.currentPage} of {this.state.numPages}{' '}
-        | {this.props.docListIsFiltered ? 'filtered' : ''}
+        | {this.props.docListIsFiltered && <FilterIcon />}
         <span id="doc-list-progress-indicator">
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
