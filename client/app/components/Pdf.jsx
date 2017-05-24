@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -96,6 +98,7 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve, reject) => {
       if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
         this.isRendering[index] = false;
+
         return resolve();
       }
 
@@ -107,6 +110,7 @@ export class Pdf extends React.PureComponent {
 
       if (!canvas || !container || !page) {
         this.isRendering[index] = false;
+
         return reject();
       }
 
@@ -290,7 +294,10 @@ export class Pdf extends React.PureComponent {
             };
             resolve(pdfDocument);
           }
-        });  
+        }).
+        catch(() => {
+          reject();
+        });
       }
     });
   }
@@ -313,11 +320,13 @@ export class Pdf extends React.PureComponent {
   }
 
   onPageChange = (currentPage) => {
+    const unscaledHeight = (this.pageElements[currentPage - 1].pageContainer.offsetHeight / this.props.scale);
+
     this.currentPage = currentPage;
     this.props.onPageChange(
       currentPage,
       this.state.numPages,
-      this.scrollWindow.offsetHeight / (this.pageElements[currentPage - 1].pageContainer.offsetHeight / this.props.scale));
+      this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
   componentDidMount = () => {
@@ -342,10 +351,12 @@ export class Pdf extends React.PureComponent {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
+      const nonZoomedLocation = (this.scrollWindow.scrollTop -
+        this.pageElements[this.currentPage - 1].pageContainer.offsetTop);
 
       this.scrollLocation = {
         page: this.currentPage,
-        locationOnPage: (this.scrollWindow.scrollTop - this.pageElements[this.currentPage - 1].pageContainer.offsetTop) * zoomFactor
+        locationOnPage: nonZoomedLocation * zoomFactor
       };
     }
     /* eslint-enable no-negated-condition */
@@ -379,14 +390,17 @@ export class Pdf extends React.PureComponent {
               pdfPage.render({
                 canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
                 viewport
-              }).then(() => {
+              }).
+              then(() => {
                 this.isPrerendering = false;
                 this.prerenderPages();
-              }).catch(() => {
+              }).
+              catch(() => {
                 this.isPrerendering = false;
                 this.prerenderPages();
               });
-            }).catch(() => {
+            }).
+            catch(() => {
               this.isPrerendering = false;
               this.prerenderPages();
             });
@@ -539,7 +553,7 @@ export class Pdf extends React.PureComponent {
 
       const canvases = _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
         <canvas
-          style={{display: 'none'}}
+          style={{ display: 'none' }}
           ref={(ele) => {
             this.fakeCanvas[index][pageIndex] = ele;
           }}/>
