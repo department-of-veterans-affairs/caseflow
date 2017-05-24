@@ -5,6 +5,7 @@
     page: "DecisionReviewer",
     appealDocuments: [single_document.to_hash],
     annotations: single_document.annotations.map(&:to_hash),
-    pdfWorker: asset_path('pdf.worker.js')
+    pdfWorker: asset_path('pdf.worker.js'),
+    pdfLink: pdf_reader_appeal_document_path(id: single_document.id, time: Time.now.to_i)
   }) %>
 <% end %>

@@ -146,8 +146,8 @@ export class PdfUI extends React.Component {
             name="download"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             ariaLabel="download pdf"
-            onClick={() => window.open(
-              linkToSingleDocumentView(this.props.documentPathBase, this.props.doc), '_blank')}>
+            download
+            onClick={() => console.log("WHY WONT YOU WORK")}>
             {downloadIcon()}
           </Button>
         </span>
