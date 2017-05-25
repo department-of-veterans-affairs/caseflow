@@ -36,7 +36,7 @@ class Hearing < ActiveRecord::Base
         hearing.attributes = {
           vacols_record: vacols_hearing,
           venue_key: vacols_hearing.hearing_venue,
-          disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_hearing.hearing_disp.to_sym],
+          disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_hearing.hearing_disp.try(:to_sym)],
           closed_at: AppealRepository.normalize_vacols_date(vacols_hearing.clsdate),
           date: AppealRepository.normalize_vacols_date(vacols_hearing.hearing_date),
           appeal: Appeal.find_or_create_by(vacols_id: vacols_hearing.folder_nr),

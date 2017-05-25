@@ -161,7 +161,7 @@ export default class CancelCertificationModal extends BaseForm {
               changes made to this case in Caseflow will not be saved.
             </p>
             <RadioField
-              name="Why can't be this case certified in Caseflow"
+              name="Why can't this case be certified in Caseflow?"
               options={cancellationReasonOptions}
               value={this.state.cancellationReasonValue}
               required={true}
