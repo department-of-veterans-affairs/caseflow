@@ -48,24 +48,12 @@ class UnconnectedSignAndCertify extends React.Component {
 
     const erroredFields = [];
 
-    if (ValidatorsUtil.requiredValidator(this.props.certifyingOffice)) {
-      erroredFields.push('certifyingOffice');
-    }
-
-    if (ValidatorsUtil.requiredValidator(this.props.certifyingUsername)) {
-      erroredFields.push('certifyingUsername');
-    }
-
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialName)) {
       erroredFields.push('certifyingOfficialName');
     }
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitle)) {
       erroredFields.push('certifyingOfficialTitle');
-    }
-
-    if (ValidatorsUtil.dateValidator(this.props.certificationDate)) {
-      erroredFields.push('certificationDate');
     }
 
     return erroredFields;
@@ -81,11 +69,8 @@ class UnconnectedSignAndCertify extends React.Component {
     }
 
     this.props.certificationUpdateStart({
-      certifyingOffice: this.props.certifyingOffice,
-      certifyingUsername: this.props.certifyingUsername,
       certifyingOfficialName: this.props.certifyingOfficialName,
       certifyingOfficialTitle: this.props.certifyingOfficialTitle,
-      certificationDate: this.props.certificationDate,
       vacolsId: this.props.match.params.vacols_id
     });
   }
@@ -142,15 +127,13 @@ class UnconnectedSignAndCertify extends React.Component {
           <TextField
             name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            errorMessage={(this.isFieldErrored('certifyingOffice') ? ERRORS.certifyingOffice : null)}
-            required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOffice')}/>
+            readOnly={true}
+          />
           <TextField
             name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            errorMessage={(this.isFieldErrored('certifyingUsername') ? ERRORS.certifyingUsername : null)}
-            required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingUsername')}/>
+            readOnly={true}
+          />
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
@@ -167,9 +150,8 @@ class UnconnectedSignAndCertify extends React.Component {
           <DateSelector
             name={'Date:'}
             value={certificationDate}
-            errorMessage={(this.isFieldErrored('certificationDate') ? ERRORS.certificationDate : null)}
-            required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certificationDate')}/>
+            readOnly={true}
+          />
         </div>
       </form>
     <Footer

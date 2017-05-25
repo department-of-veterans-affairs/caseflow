@@ -311,7 +311,7 @@ RSpec.feature "Save Certification" do
     end
   end
 
-  context "As an authorized user for Certification v2" do
+  context "As an authorized user for Certification v2", focus: true do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
     let(:vbms_error) do
@@ -434,26 +434,24 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
 
-        fill_in "Name and location of certifying office", with: "Office in DC"
-        fill_in "Organizational elements certifying appeal", with: "User4567"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        fill_in "Date:", with: "02/01/2016"
 
         click_button("Continue")
         expect(page).to have_content "Success"
 
         form8 = Form8.find_by(vacols_id: appeal.vacols_id)
-        expect(form8.certifying_office).to eq "Office in DC"
-        expect(form8.certifying_username).to eq "User4567"
+        expect(form8.certifying_office).to eq "Digital Service HQ, DC"
+        expect(form8.certifying_username).to eq "DSUSER"
         expect(form8.certifying_official_name).to eq "Tom Cruz"
+        sleep(3000)
         expect(form8.certification_date.strftime("%m/%d/%Y")).to eq "02/01/2016"
 
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
-        expect(find_field("Name and location of certifying office").value).to eq "Office in DC"
-        expect(find_field("Organizational elements certifying appeal").value).to eq "User4567"
+        expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
+        expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
         expect(find_field("Name of certifying official").value).to eq "Tom Cruz"
 
         within_fieldset("Title of certifying official") do
@@ -482,26 +480,20 @@ RSpec.feature "Save Certification" do
       scenario "Error cerifying appeal" do
         allow(Appeal.repository).to receive(:upload_document_to_vbms).and_raise(vbms_error)
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
-        fill_in "Name and location of certifying office", with: "Office in DC"
-        fill_in "Organizational elements certifying appeal", with: "User4567"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        fill_in "Date:", with: "02/01/2016"
         click_button("Continue")
         expect(page).to have_content "Something went wrong"
         expect(page).to_not have_content "Check Documents"
 
         allow(Appeal.repository).to receive(:certify).and_raise(generic_error)
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
-        fill_in "Name and location of certifying office", with: "Office in DC"
-        fill_in "Organizational elements certifying appeal", with: "User4567"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        fill_in "Date:", with: "02/01/2016"
         click_button("Continue")
         expect(page).to have_content "Something went wrong"
         expect(page).to_not have_content "Check Documents"
@@ -543,11 +535,8 @@ RSpec.feature "Save Certification" do
       scenario "on the save and certify page" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         click_button("Continue")
-        expect(page).to have_content "Please enter the certifying office."
-        expect(page).to have_content "Please enter the organizational element."
         expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
         expect(page).to have_content "Please enter the title of the certifying official."
-        expect(page).to have_content "Please enter today's date."
       end
     end
   end
