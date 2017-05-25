@@ -91,10 +91,18 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
+    let representativeName = this.props.vacolsRepresentativeName;
+    let representativeType = this.props.vacolsRepresentativeType;
+
+    if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+      this.props.poaMatches === Constants.poaMatches.NO_MATCH) {
+      representativeName = this.props.bgsRepresentativeName;
+      representativeType = this.props.bgsRepresentativeType;
+    }
+
     this.props.certificationUpdateStart({
-      representativeType: this.props.representativeType,
-      otherRepresentativeType: this.props.otherRepresentativeType,
-      representativeName: this.props.representativeName,
+      representativeType,
+      representativeName,
       poaMatches: this.props.poaMatches,
       poaCorrectLocation: this.props.poaCorrectLocation,
       vacolsId: this.props.match.params.vacols_id

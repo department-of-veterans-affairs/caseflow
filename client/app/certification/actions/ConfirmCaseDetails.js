@@ -53,11 +53,7 @@ export const certificationUpdateSuccess = () => ({
 });
 
 export const certificationUpdateStart = (params, dispatch) => {
-  // On the backend, we only have one column for "representativeType",
-  // and we don't store "Other" in that column.
-  // TODO (alex): create column for this?
-  const type = params.representativeType === Constants.representativeTypes.OTHER ?
-    params.otherRepresentativeType : params.representativeType;
+  const type = params.representativeType;
   const name = params.representativeName;
   const poaMatches = params.poaMatches === Constants.poaMatches.MATCH;
   const poaCorrectInVacols = params.poaCorrectLocation === Constants.poaCorrectLocation.VACOLS;
