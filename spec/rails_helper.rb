@@ -13,6 +13,7 @@ require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
+require_relative "support/download_helper"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

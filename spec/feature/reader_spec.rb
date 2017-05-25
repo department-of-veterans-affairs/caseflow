@@ -583,12 +583,16 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Form 9")
     end
 
-    skip "Download PDF file", focus:true do
+    ## TODO: test that name of file is downloaded instead of checking for download(?)
+    scenario "Download PDF file", focus: true do
+      DownloadHelpers::clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].type
       find("#button-download").click
-      page.response_headers['Content-Disposition'].should eq "attachment"
+      DownloadHelpers::wait_for_download
+      download = DownloadHelpers::downloaded?
+      expect(download).to be_truthy
     end
   end
 
