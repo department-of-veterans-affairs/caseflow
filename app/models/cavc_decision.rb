@@ -9,8 +9,6 @@ class CAVCDecision
     attr_writer :repository
 
     def load_from_vacols(vacols_cavc_decision)
-      return nil unless vacols_cavc_decision
-
       new(
         appeal_vacols_id: vacols_cavc_decision.cvfolder,
         decision_date: AppealRepository.normalize_vacols_date(vacols_cavc_decision.cvddec)
