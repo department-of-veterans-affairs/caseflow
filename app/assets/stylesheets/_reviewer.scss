@@ -173,13 +173,14 @@ svg[aria-hidden=true],
   }
 
   // We want the buttons to be 40px from the outer edge of the toolbar.
-  // Other margins that are involved add up to 28px, so we add an 
+  // Other margins that are involved add up to 28px, so we add an
   // additional margin to make it 40.
   $outer-margin: 12px;
 
   .cf-pdf-footer-buttons-right {
     margin-right: $outer-margin;
   }
+
   .cf-pdf-footer-buttons-left {
     margin-left: $outer-margin;
   }
