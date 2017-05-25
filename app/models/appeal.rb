@@ -113,6 +113,10 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def cavc_decisions
+    @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
+  end
+
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
