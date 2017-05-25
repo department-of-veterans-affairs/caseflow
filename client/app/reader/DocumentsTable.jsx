@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
@@ -10,7 +11,11 @@ import Table from '../components/Table';
 import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
-import _ from 'lodash';
+import { bindActionCreators } from 'redux';
+
+import { setDocListScrollPosition, changeSortState,
+  setTagFilter, setCategoryFilter } from './actions';
+import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
 } from '../components/RenderFunctions';
@@ -367,6 +372,7 @@ class DocumentsTable extends React.Component {
   }
 }
 
+
 DocumentsTable.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
@@ -376,4 +382,29 @@ DocumentsTable.propTypes = {
   })
 };
 
-export default DocumentsTable;
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setDocListScrollPosition,
+    setTagFilter,
+    setCategoryFilter,
+    changeSortState
+  }, dispatch),
+  toggleDropdownFilterVisiblity(filterName) {
+    dispatch({
+      type: Constants.TOGGLE_FILTER_DROPDOWN,
+      payload: {
+        filterName
+      }
+    });
+  }
+});
+
+const mapStateToProps = (state) => ({
+  annotationsPerDocument: getAnnotationsPerDocument(state),
+  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state.ui, 'pdfList')
+});
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(DocumentsTable);
