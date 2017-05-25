@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import StatusMessage from '../components/StatusMessage';
 import { connect } from 'react-redux';
 import { clearSearch } from './actions';
+import _ from 'lodash';
 
 export class NoSearchResults extends PureComponent {
   render() {
@@ -21,9 +22,7 @@ NoSearchResults.propTypes = {
   searchQuery: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({
-  searchQuery: state.ui.docFilterCriteria.searchQuery
-});
+const mapStateToProps = (state) => _.pick(state.ui.docFilterCriteria, 'searchQuery');
 
 const mapDispatchToProps = (dispatch) => ({
   clearSearch() {
