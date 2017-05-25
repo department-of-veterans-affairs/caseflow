@@ -1,4 +1,4 @@
-class Hearings::DocketsController < ApplicationController
+class Hearings::DocketsController < HearingsController
   before_action :verify_access, :set_application
 
   def index
