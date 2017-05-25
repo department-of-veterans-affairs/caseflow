@@ -14,7 +14,6 @@ class StyleGuideSearch extends Component {
   }
 
   render() {
-   
     const options = [{ value: 'unitedstates',
       label: 'United States' },
     { value: 'germany',
@@ -33,9 +32,8 @@ class StyleGuideSearch extends Component {
         />
 
         <h3>Search Small</h3>
-        <SearchBar
-         label= "Really"
-        />
+        {this.state.name}
+        <SearchBar />
       </div>
     );
   }
