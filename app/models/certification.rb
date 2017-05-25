@@ -22,7 +22,7 @@ class Certification < ActiveRecord::Base
       vacols_hearing_preference: appeal.hearing_request_type,
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
-      certification_date: Time.zone.now.to_date
+      certification_date: form8.certification_date
     )
 
     certification_status
@@ -48,6 +48,7 @@ class Certification < ActiveRecord::Base
       @form8.assign_attributes_from_appeal(appeal)
       @form8.save!
     else
+      # This method seems obsolete since assign_attributes_from_appeal does the same thing
       form8.update_certification_date
     end
   end

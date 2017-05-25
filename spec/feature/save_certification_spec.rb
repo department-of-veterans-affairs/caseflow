@@ -311,7 +311,7 @@ RSpec.feature "Save Certification" do
     end
   end
 
-  context "As an authorized user for Certification v2", focus: true do
+  context "As an authorized user for Certification v2" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal", "CertificationV2"]) }
 
     let(:vbms_error) do
@@ -408,13 +408,10 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
 
-        fill_in "Name and location of certifying office", with: "Office in DC"
-        fill_in "Organizational elements certifying appeal", with: "User4567"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        fill_in "Date:", with: "02/01/2016"
 
         click_button("Continue")
         expect(page).to have_content "Success"
@@ -446,8 +443,7 @@ RSpec.feature "Save Certification" do
         expect(form8.certifying_office).to eq "Digital Service HQ, DC"
         expect(form8.certifying_username).to eq "DSUSER"
         expect(form8.certifying_official_name).to eq "Tom Cruz"
-        sleep(3000)
-        expect(form8.certification_date.strftime("%m/%d/%Y")).to eq "02/01/2016"
+        expect(form8.certification_date.strftime("%m/%d/%Y")).to eq Time.zone.today.strftime("%m/%d/%Y")
 
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
@@ -457,23 +453,17 @@ RSpec.feature "Save Certification" do
         within_fieldset("Title of certifying official") do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
-        expect(find_field("Date").value).to eq "02/01/2016"
+        expect(find_field("Date").value).to eq Time.zone.today.strftime("%Y-%m-%d")
       end
 
       scenario "Trying to skip steps" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
-        sleep(10)
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
-        fill_in "Name and location of certifying office", with: "Office in DC"
-        fill_in "Organizational elements certifying appeal", with: "User4567"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Veterans Service Representative").click
         end
-        fill_in "Date:", with: "02/01/2016"
-        sleep(1)
         click_button("Continue")
-        sleep(1)
         expect(page).to have_content "Something went wrong"
       end
 

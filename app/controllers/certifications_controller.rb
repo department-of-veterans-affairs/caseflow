@@ -54,8 +54,7 @@ class CertificationsController < ApplicationController
       certifying_office: certification.certifying_office,
       certifying_username:  certification.certifying_username,
       certifying_official_name: certification.certifying_official_name,
-      certifying_official_title: certification.certifying_official_title,
-      certification_date: certification.certification_date
+      certifying_official_title: certification.certifying_official_title
     )
     form8.save_pdf!
     @certification.complete!(current_user.id)
