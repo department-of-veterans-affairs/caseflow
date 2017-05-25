@@ -77,10 +77,6 @@ class Reader::DocumentsController < ApplicationController
     reader_appeal_documents_path(appeal_id: appeal_id)
   end
 
-  def pdf_download_path
-    pdf_reader_appeal_document_path(id: single_document.id, time: Time.now.to_i)
-  end
-
   def verify_reader_feature_enabled
     verify_feature_enabled(:reader)
   end

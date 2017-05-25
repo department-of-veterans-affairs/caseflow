@@ -571,6 +571,14 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("Form 9")
     end
+
+    skip "Download PDF file", focus:true do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      click_on documents[0].type
+      find("#button-download").click
+      page.response_headers['Content-Disposition'].should eq "attachment"
+    end
   end
 
   context "Large number of documents" do
