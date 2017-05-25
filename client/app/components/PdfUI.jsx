@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { FilterIcon } from '../components/RenderFunctions';
+import { FilterIcon, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 
@@ -66,7 +66,7 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button']}
               onClick={this.props.showPdf(this.props.prevDocId)}
               ariaLabel="previous PDF">
-              <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
+              <ArrowLeft />
             </Button>
           </span> }
 
@@ -83,7 +83,7 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button cf-right-side']}
               onClick={this.props.showPdf(this.props.nextDocId)}
               ariaLabel="next PDF">
-              <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
+              <ArrowRight />
             </Button>
           </span> }
       </div>;
