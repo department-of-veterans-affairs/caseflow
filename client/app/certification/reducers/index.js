@@ -130,17 +130,21 @@ export const poaMatchesToStr = function(poaMatches) {
   }
 };
 
+// poaCorrectLocation/poaCorrectInVacols/poaCorrectinBGS will all be null if poaMatches is true
+// if poaMatches is false, either one of poaCorrectInVacols or poaCorrectInBgs will be true, or
+// they will both be false.
+// poaCorrectInVacols and poaCorrectInBGs should never both be true
 export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectInBgs) {
   if (poaCorrectInVacols === true) {
     return Constants.poaCorrectLocation.VACOLS;
   }
-  if (poaCorrectInBgs === true) {
+  else if (poaCorrectInBgs === true) {
     return Constants.poaCorrectLocation.VBMS;
   }
-  if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
+  else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
     return Constants.poaCorrectLocation.NONE;
   }
-  if (poaCorrectInVacols === null || poaCorrectInBgs === null) {
+  else {
     return null;
   }
 };
