@@ -19,8 +19,6 @@ class HearingDocket
     }
   end
 
-  private
-
   class << self
     def from_hearings(hearings)
       new(

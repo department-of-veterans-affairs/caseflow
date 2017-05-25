@@ -4,21 +4,19 @@ class Judge
     @user = user
   end
 
- class << self
-   def upcoming_dockets
-      upcoming_hearings_grouped_by_date.map do |_date, hearings|
-        HearingDocket.from_hearings(hearings)
-      end.sort_by(&:date)
-   end
+  def upcoming_dockets
+    @upcoming_dockets ||= upcoming_hearings_grouped_by_date.map do |_date, hearings|
+      HearingDocket.from_hearings(hearings)
+    end.sort_by(&:date)
+  end
 
-    private
+  private
 
-    def upcoming_hearings_grouped_by_date
-      upcoming_hearings.group_by { |h| h.date.to_i }
-    end
+  def upcoming_hearings_grouped_by_date
+    upcoming_hearings.group_by { |h| h.date.to_i }
+  end
 
-    def upcoming_hearings
-      Hearing.repository.upcoming_hearings_for_judge(user.vacols_id)
-    end
- end
+  def upcoming_hearings
+    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id)
+  end
 end
