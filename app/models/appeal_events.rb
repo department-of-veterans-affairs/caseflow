@@ -3,8 +3,6 @@ class AppealEvents
 
   attr_accessor :appeal
 
-  # TODO: Add future event types
-  # activated, hearing_held, hearing_cancelled, hearing_no_show, cavc_decision
   def all
     [
       nod_event,
@@ -12,6 +10,8 @@ class AppealEvents
       form9_event,
       ssoc_events,
       certification_event,
+      activation_event,
+      hearing_events,
       decision_event
     ].flatten.select(&:valid?)
   end
@@ -34,13 +34,19 @@ class AppealEvents
     appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
   end
 
-  # TODO: Confirm with Chris
-  # if not decision_date, then disposition doesn't matter
   def decision_event
     AppealEvent.new(disposition: appeal.disposition, date: appeal.decision_date)
   end
 
   def certification_event
     AppealEvent.new(type: :certified, date: appeal.certification_date)
+  end
+
+  def activation_event
+    AppealEvent.new(type: :activated, date: appeal.case_review_date)
+  end
+
+  def hearing_events
+    appeal.hearings.select(&:closed?).map { |hearing| AppealEvent.new(hearing: hearing) }
   end
 end

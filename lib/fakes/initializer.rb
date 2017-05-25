@@ -1,13 +1,14 @@
 class Fakes::Initializer
   class << self
     def load!
+      PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
-      Appeal.repository = Fakes::AppealRepository
       Hearing.repository = Fakes::HearingRepository
+      Appeal.repository = Fakes::AppealRepository
     end
 
-    def setup!
-      development! if Rails.env.development? || Rails.env.demo?
+    def setup!(rails_env)
+      development! if rails_env.development? || rails_env.demo?
     end
 
     private

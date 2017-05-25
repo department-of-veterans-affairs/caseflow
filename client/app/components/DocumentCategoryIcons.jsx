@@ -1,12 +1,24 @@
-import React, { PropTypes } from 'react';
-import * as Constants from '../reader/constants';
-import { connect } from 'react-redux';
+import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
+import * as Constants from '../reader/constants';
 
-export class DocumentCategoryIcons extends React.PureComponent {
+const categoriesOfDocument = (document) => _(Constants.documentCategories).
+    filter(
+      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+    ).
+    sortBy('renderOrder').
+    value();
+
+export default class DocumentCategoryIcons extends React.Component {
+  shouldComponentUpdate = (nextProps) => !_.isEqual(
+    categoriesOfDocument(this.props.doc),
+    categoriesOfDocument(nextProps.doc)
+  )
+
   render() {
-    const { categories } = this.props;
+    const categories = categoriesOfDocument(this.props.doc);
 
     if (!_.size(categories)) {
       return null;
@@ -27,19 +39,6 @@ export class DocumentCategoryIcons extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  categories: _(Constants.documentCategories).
-    filter(
-      (category, categoryName) => state.documents[ownProps.docId][categoryFieldNameOfCategoryName(categoryName)]
-    ).
-    sortBy('renderOrder').
-    value()
-});
-
-const ConnectedDocumentCategoryIcons = connect(mapStateToProps)(DocumentCategoryIcons);
-
-ConnectedDocumentCategoryIcons.propTypes = {
-  docId: PropTypes.number.isRequired
+DocumentCategoryIcons.propTypes = {
+  doc: PropTypes.object.isRequired
 };
-
-export default ConnectedDocumentCategoryIcons;

@@ -113,6 +113,7 @@ User.prepend(StubbableUser)
 def reset_application!
   User.clear_stub!
   Fakes::AppealRepository.clean!
+  Fakes::HearingRepository.clean!
 end
 
 def current_user
@@ -121,6 +122,7 @@ end
 
 # Setup fakes
 Appeal.repository = Fakes::AppealRepository
+PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 

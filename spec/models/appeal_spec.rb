@@ -9,7 +9,9 @@ describe Appeal do
       soc_date: soc_date,
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
-      documents: documents
+      documents: documents,
+      hearing_request_type: hearing_request_type,
+      video_hearing_requested: video_hearing_requested
     )
   end
 
@@ -18,6 +20,8 @@ describe Appeal do
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
   let(:documents) { [] }
+  let(:hearing_request_type) { :central_office }
+  let(:video_hearing_requested) { false }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -722,19 +726,64 @@ describe Appeal do
     end
   end
 
+  context "#power_of_attorney" do
+    subject { appeal.power_of_attorney }
+
+    it "returns poa loaded with VACOLS values" do
+      is_expected.to have_attributes(
+        vacols_representative_type: "Service Organization",
+        vacols_representative_name: "The American Legion"
+      )
+    end
+
+    it "returns poa loaded with BGS values" do
+      is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+  end
+
+  context "#sanitized_hearing_request_type" do
+    subject { appeal.sanitized_hearing_request_type }
+    let(:video_hearing_requested) { true }
+
+    context "when central_office" do
+      let(:hearing_request_type) { :central_office }
+      it { is_expected.to eq(:central_office) }
+    end
+
+    context "when travel_board" do
+      let(:hearing_request_type) { :travel_board }
+
+      context "when video_hearing_requested" do
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when video_hearing_requested is false" do
+        let(:video_hearing_requested) { false }
+        it { is_expected.to eq(:travel_board) }
+      end
+    end
+
+    context "when unsupported type" do
+      let(:hearing_request_type) { :confirmation_needed }
+      it { is_expected.to be_nil }
+    end
+  end
+
   context ".for_api" do
-    subject { Appeal.for_api(appellant_ssn: "9998887777") }
+    subject { Appeal.for_api(appellant_ssn: ssn) }
+
+    let(:ssn) { "999887777" }
 
     let!(:veteran_appeals) do
       [
         Generators::Appeal.build(
-          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "9998887777" }
+          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
         ),
         Generators::Appeal.build(
-          vacols_record: { type: "Reconsideration", appellant_ssn: "9998887777" }
+          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
         ),
         Generators::Appeal.build(
-          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "9998887777" }
+          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
         )
       ]
     end
@@ -742,6 +791,14 @@ describe Appeal do
     it "returns filtered appeals for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
+    end
+
+    context "when ssn is less than 9 characters" do
+      let(:ssn) { "99887777" }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
     end
   end
 end

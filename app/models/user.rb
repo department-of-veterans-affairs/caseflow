@@ -7,7 +7,8 @@ class User < ActiveRecord::Base
   attr_accessor :ip_address, :admin_roles
   attr_writer :regional_office
 
-  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal", "CertificationV2", "Reader"].freeze
+  FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
+               "CertificationV2", "Reader", "Hearings"].freeze
 
   # Because of the funciton character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -96,6 +97,10 @@ class User < ActiveRecord::Base
 
   def current_task(task_type)
     tasks.to_complete.find_by(type: task_type)
+  end
+
+  def to_hash
+    serializable_hash
   end
 
   private
