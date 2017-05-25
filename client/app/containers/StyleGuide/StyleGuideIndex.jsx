@@ -8,12 +8,10 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
+import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
-import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
-import StyleGuideNavigationBar from './StyleGuideNavigationBar';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
-import StyleGuideMessages from './StyleGuideMessages';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
@@ -191,10 +189,7 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideLayout />
         <div className="cf-help-divider"></div>
-        <StyleGuideNavigationBar />
-        <StyleGuideUserDropdownMenu />
-        <div className="cf-help-divider"></div>
-        <StyleGuideMessages />
+         <StyleGuideMessages />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Branding"

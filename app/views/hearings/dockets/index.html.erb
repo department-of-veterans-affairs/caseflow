@@ -6,6 +6,7 @@
 
 <%= react_component("Hearings", props: {
   hearings: {
+    veteran_law_judge: current_user.to_hash,
     dockets: current_user_dockets.map(&:to_hash)
   }
 }) %>
