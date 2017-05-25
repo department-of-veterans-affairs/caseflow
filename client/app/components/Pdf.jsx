@@ -64,6 +64,9 @@ export class Pdf extends React.PureComponent {
     this.pageElements = [];
     this.fakeCanvas = [];
     this.scrollWindow = null;
+
+    this.getRefFunctions = {};
+    this.setUpFakeCanvasRefFunctions();
   }
 
   setIsRendered = (index, value) => {
@@ -265,6 +268,16 @@ export class Pdf extends React.PureComponent {
 
         this.pageElements = [];
 
+        this.getRefFunctions.canvas = [];
+        this.getRefFunctions.textLayer = [];
+        this.getRefFunctions.pageContainer = [];
+
+        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
+          this.getRefFunctions.canvas[index] = this.makeGetCanvasRef(index);
+          this.getRefFunctions.textLayer[index] = this.makeGetTextRef(index);
+          this.getRefFunctions.pageContainer[index] = this.makeGetPageContainerRef(index);
+        });
+
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument,
@@ -332,11 +345,22 @@ export class Pdf extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.renderInViewPages);
+
     this.setUpPdf(this.props.file);
   }
 
   comopnentWillUnmount = () => {
     window.removeEventListener('resize', this.renderInViewPages);
+  }
+
+  setUpFakeCanvasRefFunctions = () => {
+    this.getRefFunctions.fakeCanvas = [];
+
+    this.props.prefetchFiles.forEach((_unused, index) => {
+      _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
+        _.set(this.getRefFunctions, ['fakeCanvas', index, pageIndex], this.makeGetFakeCanvasRef(index, pageIndex));
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -358,6 +382,10 @@ export class Pdf extends React.PureComponent {
         page: this.currentPage,
         locationOnPage: nonZoomedLocation * zoomFactor
       };
+    }
+
+    if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
+      this.setUpFakeCanvasRefFunctions();
     }
     /* eslint-enable no-negated-condition */
   }
@@ -390,15 +418,14 @@ export class Pdf extends React.PureComponent {
             pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
               const viewport = pdfPage.getViewport(this.props.scale);
 
-              pdfPage.render({
+              return pdfPage.render({
                 canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
                 viewport
-              }).
-              then(() => {
-                this.prerenderedPdfs[file].rendered[pageIndex] = true;
-                finishPrerender();
-              }).
-              catch(finishPrerender);
+              });
+            }).
+            then(() => {
+              this.prerenderedPdfs[file].rendered[pageIndex] = true;
+              finishPrerender();
             }).
             catch(finishPrerender);
           }
@@ -453,13 +480,12 @@ export class Pdf extends React.PureComponent {
     event.preventDefault();
   }
 
-  getCanvasRef = (pageNumber) => (canvas) => _.set(this.pageElements, [pageNumber - 1, 'canvas'], canvas)
-  getTextRef = (pageNumber) => (textLayer) => _.set(this.pageElements, [pageNumber - 1, 'textLayer'], textLayer)
-  getFakeCanvasRef = (index, pageIndex) => (ele) => this.fakeCanvas[index][pageIndex] = ele
-  getPageContainerRef = (pageNumber) => (pageContainer) =>
-    _.set(this.pageElements, [pageNumber - 1, 'pageContainer'], pageContainer)
+  makeGetCanvasRef = (pageNumber) => (canvas) => _.set(this.pageElements, [pageNumber, 'canvas'], canvas)
+  makeGetTextRef = (pageNumber) => (textLayer) => _.set(this.pageElements, [pageNumber, 'textLayer'], textLayer)
+  makeGetFakeCanvasRef = (index, pageIndex) => (ele) => _.set(this.fakeCanvas, [index, pageIndex], ele)
+  makeGetPageContainerRef = (pageNumber) => (pageContainer) =>
+    _.set(this.pageElements, [pageNumber, 'pageContainer'], pageContainer)
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
-
 
   // eslint-disable-next-line max-statements
   render() {
@@ -530,34 +556,30 @@ export class Pdf extends React.PureComponent {
         key={`${this.props.file}-${pageNumber}`}
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
-        ref={this.getPageContainerRef(pageNumber)}>
+        ref={this.getRefFunctions.pageContainer[pageNumber - 1]}>
           <div className={pageContentsVisibleClass}>
             <canvas
               id={`canvas${pageNumber}-${this.props.file}`}
-              ref={this.getCanvasRef(pageNumber)}
+              ref={this.getRefFunctions.canvas[pageNumber - 1]}
               className="canvasWrapper" />
             <div className="cf-pdf-annotationLayer">
               {commentIcons[pageNumber]}
             </div>
             <div
               id={`textLayer${pageNumber}`}
-              ref={this.getTextRef(pageNumber)}
+              ref={this.getRefFunctions.textLayer[pageNumber - 1]}
               className="textLayer"/>
           </div>
         </div>);
     }
 
     const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
-      this.fakeCanvas[index] = [];
-
-      const canvases = _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
+      return _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
         <canvas
           style={{ display: 'none' }}
           key={`${pageIndex}-${index}`}
-          ref={this.getFakeCanvasRef(index, pageIndex)}/>
+          ref={_.get(this.getRefFunctions.fakeCanvas, [index, pageIndex])}/>
       );
-
-      return canvases;
     });
 
     return <div
