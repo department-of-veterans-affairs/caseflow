@@ -47,8 +47,8 @@ export const certificationReducers = function(state = initialState, action = {})
     return ConfirmCaseDetailsReducers.changeOtherRepresentativeType(state, action);
   case Constants.CHANGE_POA_MATCHES:
     return ConfirmCaseDetailsReducers.changePoaMatches(state, action);
-  case Constants.CHANGE_POA_CORRECT_IN_VACOLS:
-    return ConfirmCaseDetailsReducers.changePoaCorrectInVacols(state, action);
+  case Constants.CHANGE_POA_CORRECT_LOCATION:
+    return ConfirmCaseDetailsReducers.changePoaCorrectLocation(state, action);
 
   // ConfirmHearing
   // ==================
@@ -130,14 +130,18 @@ export const poaMatchesToStr = function(poaMatches) {
   }
 };
 
-export const poaCorrectInVacolsToStr = function(poaCorrectInVacols) {
-  switch (poaCorrectInVacols) {
-    case true:
-      return Constants.poaCorrectInVacols.VACOLS;
-    case false:
-      return Constants.poaCorrectInVacols.VBMS;
-    default:
-      return null;
+export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectInBgs) {
+  if (poaCorrectInVacols === true) {
+    return Constants.poaCorrectLocation.VACOLS;
+  }
+  if (poaCorrectInBgs === true) {
+    return Constants.poaCorrectLocation.VBMS;
+  }
+  if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
+    return Constants.poaCorrectLocation.NONE;
+  }
+  if (poaCorrectInVacols === null || poaCorrectInBgs === null) {
+    return null;
   }
 };
 
@@ -156,7 +160,7 @@ export const mapDataToInitialState = (state) => ({
   representativeType: state.representative_type,
   representativeName: state.representative_name,
   poaMatches: poaMatchesToStr(state.poa_matches),
-  poaCorrectInVacols: poaCorrectInVacolsToStr(state.poa_correct_in_vacols),
+  poaCorrectLocation: poaCorrectLocationToStr(state.poa_correct_in_vacols, state.poa_correct_in_bgs),
   nod: parseDocumentFromApi(state.appeal.nod),
   soc: parseDocumentFromApi(state.appeal.soc),
   form9: parseDocumentFromApi(state.appeal.form9),

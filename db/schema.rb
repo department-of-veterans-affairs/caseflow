@@ -98,6 +98,7 @@ ActiveRecord::Schema.define(version: 20170522214928) do
     t.string   "vacols_representative_name"
     t.boolean  "poa_matches"
     t.boolean  "poa_correct_in_vacols"
+    t.boolean  "poa_correct_in_bgs"
     t.string   "representative_type"
     t.string   "representative_name"
     t.boolean  "hearing_change_doc_found_in_vbms"

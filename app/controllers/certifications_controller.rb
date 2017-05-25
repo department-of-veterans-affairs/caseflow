@@ -30,6 +30,7 @@ class CertificationsController < ApplicationController
                         "representative_type",
                         "poa_matches",
                         "poa_correct_in_vacols",
+                        "poa_correct_in_bgs",
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
                         "hearing_preference",

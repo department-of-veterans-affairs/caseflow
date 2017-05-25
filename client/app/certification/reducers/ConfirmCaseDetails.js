@@ -31,8 +31,8 @@ export const changePoaMatches = (state, action) => {
   });
 };
 
-export const changePoaCorrectInVacols = (state, action) => {
+export const changePoaCorrectLocation = (state, action) => {
   return Object.assign({}, state, {
-    poaCorrectInVacols: action.payload.poaCorrectInVacols
+    poaCorrectLocation: action.payload.poaCorrectLocation
   });
 };
