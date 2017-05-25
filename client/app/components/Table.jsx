@@ -127,7 +127,7 @@ export default class Table extends React.PureComponent {
       bodyClassName = '',
       rowClassNames = this.defaultRowClassNames,
       getKeyForRow,
-      slowReRendersAreOk,
+      slowReRendersAreOk = true,
       tbodyId,
       tbodyRef,
       caption,

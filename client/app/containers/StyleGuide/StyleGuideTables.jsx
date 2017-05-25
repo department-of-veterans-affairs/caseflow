@@ -9,13 +9,13 @@ export default function StyleGuideTables() {
   // List of objects which will be used to create each row
   let rowObjects = [
     { name: 'Shane',
-      spiritAnimal: 'Hamster',
+      patronus: 'Hamster',
       likesSports: true },
     { name: 'Kavi',
-      spiritAnimal: 'Koala Bear',
+      patronus: 'Koala Bear',
       likesSports: false },
     { name: 'Gina',
-      spiritAnimal: 'Otter',
+      patronus: 'Otter',
       likesSports: false }
   ];
 
@@ -26,9 +26,9 @@ export default function StyleGuideTables() {
       footer: 'Totals'
     },
     {
-      header: 'Spirit Animal',
+      header: 'Patronus',
       align: 'center',
-      valueName: 'spiritAnimal',
+      valueName: 'patronus',
       footer: '3'
     },
     {
