@@ -7,6 +7,18 @@ class Api::V1::ApplicationController < ActionController::Base
   before_action :setup_fakes,
                 :verify_authentication_token
 
+  rescue_from Exception do |error|
+    Raven.capture_exception(error)
+
+    render json: {
+      "errors": [
+        "status": "500",
+        "title": "Unknown error occured",
+        "detail": "#{error} (Sentry event id: #{Raven.last_event_id})"
+      ]
+    }, status: 500
+  end
+
   private
 
   def verify_authentication_token
@@ -21,10 +33,6 @@ class Api::V1::ApplicationController < ActionController::Base
 
   def unauthorized
     render json: { status: "unauthorized" }, status: 401
-  end
-
-  def not_found
-    render json: { status: "not found" }, status: 404
   end
 
   def ssl_enabled?
