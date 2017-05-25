@@ -115,6 +115,7 @@ def reset_application!
   User.clear_stub!
   Fakes::AppealRepository.clean!
   Fakes::HearingRepository.clean!
+  Fakes::CAVCDecisionRepository.clean!
 end
 
 def current_user
@@ -126,6 +127,7 @@ Appeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
+CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
 RSpec.configure do |config|
   # This checks whether compiled webpack assets already exist

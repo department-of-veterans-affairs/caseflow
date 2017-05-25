@@ -54,7 +54,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader" do
+RSpec.feature "Reader", focus:true do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)
@@ -584,7 +584,7 @@ RSpec.feature "Reader" do
     end
 
     ## TODO: test that name of file is downloaded instead of checking for download(?)
-    scenario "Download PDF file", focus: true do
+    scenario "Download PDF file" do
       DownloadHelpers::clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -594,7 +594,15 @@ RSpec.feature "Reader" do
       download = DownloadHelpers::downloaded?
       expect(download).to be_truthy
     end
-  end
+
+    scenario "When user search term is not found" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      search_query = "does not exist in annoations"
+      fill_in "searchBar", with: search_query
+
+      expect(page).to have_content("Search results not found")
+      expect(page).to have_content(search_query)
+    end
 
   context "Large number of documents" do
     # This assumes that num_documents is enough to force the viewport to scroll.
@@ -651,4 +659,5 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Unauthorized")
     end
   end
+end
 end
