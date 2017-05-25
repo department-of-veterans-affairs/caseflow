@@ -229,6 +229,10 @@ svg[aria-hidden=true],
     text-decoration: none;
     background-color: transparent;
     color: $color-focus;
+
+    svg g {
+      fill: $color-focus;
+    }
   }
 
   &:focus {
