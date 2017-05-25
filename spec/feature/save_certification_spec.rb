@@ -415,7 +415,7 @@ RSpec.feature "Save Certification" do
         within_fieldset("Which information source shows the correct representative for this appeal?") do
           find("label", text: "VBMS").click
         end
-        expect(page).to have_content "Great! Caseflow will update the representative name, type, and address in " +
+        expect(page).to have_content "Great! Caseflow will update the representative name, type, and address in " \
                                          "VACOLS with information from VBMS."
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")

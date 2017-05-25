@@ -137,16 +137,14 @@ export const poaMatchesToStr = function(poaMatches) {
 export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectInBgs) {
   if (poaCorrectInVacols === true) {
     return Constants.poaCorrectLocation.VACOLS;
-  }
-  else if (poaCorrectInBgs === true) {
+  } else if (poaCorrectInBgs === true) {
     return Constants.poaCorrectLocation.VBMS;
-  }
-  else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
+  } else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
     return Constants.poaCorrectLocation.NONE;
   }
-  else {
-    return null;
-  }
+
+  return null;
+
 };
 
 const parseDocumentFromApi = (doc = {}, index) => ({
