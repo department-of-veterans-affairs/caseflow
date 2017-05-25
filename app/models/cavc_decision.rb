@@ -13,7 +13,7 @@ class CAVCDecision
 
       new(
         appeal_vacols_id: vacols_cavc_decision.cvfolder,
-        decision_date: vacols_cavc_decision.cvddec
+        decision_date: AppealRepository.normalize_vacols_date(vacols_cavc_decision.cvddec)
       )
     end
 
