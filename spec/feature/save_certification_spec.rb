@@ -331,6 +331,25 @@ RSpec.feature "Save Certification" do
     end
 
     context "Save certification data in the DB" do
+      scenario "For the confirm case details page" do
+        visit "/certifications/#{appeal.vacols_id}/confirm_case_details"
+        within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+          find("label", text: "No").click
+        end
+        within_fieldset("Which information source shows the correct representative for this appeal?") do
+          find("label", text: "VBMS").click
+        end
+        click_button("Continue")
+
+        visit "/certifications/#{appeal.vacols_id}/confirm_case_details"
+        within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+          expect(find_field("No", visible: false)).to be_checked
+        end
+        within_fieldset("Which information source shows the correct representative for this appeal?") do
+          expect(find_field("VBMS", visible: false)).to be_checked
+        end
+      end
+
       scenario "For the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
@@ -390,10 +409,13 @@ RSpec.feature "Save Certification" do
         visit "certifications/new/#{appeal.vacols_id}"
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_case_details")
-        within_fieldset("Representative type") do
-          find("label", text: "Agent").click
+        within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+          find("label", text: "No").click
         end
-        fill_in "Representative name", with: "First Last"
+        within_fieldset("Which information source shows the correct representative for this appeal?") do
+          find("label", text: "VBMS").click
+        end
+        expect(page).to have_content "Great! Caseflow will update the representative name, type, and address in VACOLS with information from VBMS."
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
 
@@ -512,13 +534,12 @@ RSpec.feature "Save Certification" do
       scenario "on the confirm case details page" do
         visit "certifications/#{appeal.vacols_id}/confirm_case_details"
         click_button("Continue")
-        expect(page).to have_content "Please enter the representative type."
-        expect(page).to have_content "Please enter the representative name."
-        within_fieldset("Representative type") do
-          find("label", text: "Other").click
+        expect(page).to have_content "Please select yes or no."
+        within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+          find("label", text: "No").click
         end
         click_button("Continue")
-        expect(page).to have_content "Please enter the other representative type."
+        expect(page).to have_content "Please select an option."
       end
       scenario "on the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"

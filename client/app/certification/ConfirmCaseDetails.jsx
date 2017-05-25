@@ -30,7 +30,7 @@ const poaCorrectLocationOptions = [
 // TODO: We should give each question a constant name.
 const ERRORS = {
   poaMatches: 'Please select yes or no.',
-  poaCorrectLocation: 'Please select an option'
+  poaCorrectLocation: 'Please select an option.'
 };
 
 /*
