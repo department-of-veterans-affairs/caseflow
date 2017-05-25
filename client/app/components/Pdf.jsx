@@ -65,7 +65,7 @@ export class Pdf extends React.PureComponent {
     this.fakeCanvas = [];
     this.scrollWindow = null;
 
-    this.getRefFunctions = {};
+    this.refFunctionGetters = {};
     this.setUpFakeCanvasRefFunctions();
   }
 
@@ -268,14 +268,17 @@ export class Pdf extends React.PureComponent {
 
         this.pageElements = [];
 
-        this.getRefFunctions.canvas = [];
-        this.getRefFunctions.textLayer = [];
-        this.getRefFunctions.pageContainer = [];
+        this.refFunctionGetters.canvas = [];
+        this.refFunctionGetters.textLayer = [];
+        this.refFunctionGetters.pageContainer = [];
 
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-          this.getRefFunctions.canvas[index] = this.makeGetCanvasRef(index);
-          this.getRefFunctions.textLayer[index] = this.makeGetTextRef(index);
-          this.getRefFunctions.pageContainer[index] = this.makeGetPageContainerRef(index);
+          this.refFunctionGetters.canvas[index] = (canvas) =>
+            _.set(this.pageElements, [index, 'canvas'], canvas);
+          this.refFunctionGetters.textLayer[index] = (textLayer) =>
+            _.set(this.pageElements, [index, 'textLayer'], textLayer);
+          this.refFunctionGetters.pageContainer[index] = (pageContainer) =>
+            _.set(this.pageElements, [index, 'pageContainer'], pageContainer);
         });
 
         this.setState({
@@ -354,11 +357,14 @@ export class Pdf extends React.PureComponent {
   }
 
   setUpFakeCanvasRefFunctions = () => {
-    this.getRefFunctions.fakeCanvas = [];
+    this.refFunctionGetters.fakeCanvas = [];
 
     this.props.prefetchFiles.forEach((_unused, index) => {
       _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
-        _.set(this.getRefFunctions, ['fakeCanvas', index, pageIndex], this.makeGetFakeCanvasRef(index, pageIndex));
+        _.set(
+          this.refFunctionGetters,
+          ['fakeCanvas', index, pageIndex],
+          (ele) => _.set(this.fakeCanvas, [index, pageIndex], ele));
       });
     });
   }
@@ -480,11 +486,6 @@ export class Pdf extends React.PureComponent {
     event.preventDefault();
   }
 
-  makeGetCanvasRef = (pageNumber) => (canvas) => _.set(this.pageElements, [pageNumber, 'canvas'], canvas)
-  makeGetTextRef = (pageNumber) => (textLayer) => _.set(this.pageElements, [pageNumber, 'textLayer'], textLayer)
-  makeGetFakeCanvasRef = (index, pageIndex) => (ele) => _.set(this.fakeCanvas, [index, pageIndex], ele)
-  makeGetPageContainerRef = (pageNumber) => (pageContainer) =>
-    _.set(this.pageElements, [pageNumber, 'pageContainer'], pageContainer)
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   // eslint-disable-next-line max-statements
@@ -556,18 +557,18 @@ export class Pdf extends React.PureComponent {
         key={`${this.props.file}-${pageNumber}`}
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
-        ref={this.getRefFunctions.pageContainer[pageNumber - 1]}>
+        ref={this.refFunctionGetters.pageContainer[pageNumber - 1]}>
           <div className={pageContentsVisibleClass}>
             <canvas
               id={`canvas${pageNumber}-${this.props.file}`}
-              ref={this.getRefFunctions.canvas[pageNumber - 1]}
+              ref={this.refFunctionGetters.canvas[pageNumber - 1]}
               className="canvasWrapper" />
             <div className="cf-pdf-annotationLayer">
               {commentIcons[pageNumber]}
             </div>
             <div
               id={`textLayer${pageNumber}`}
-              ref={this.getRefFunctions.textLayer[pageNumber - 1]}
+              ref={this.refFunctionGetters.textLayer[pageNumber - 1]}
               className="textLayer"/>
           </div>
         </div>);
@@ -578,7 +579,7 @@ export class Pdf extends React.PureComponent {
         <canvas
           style={{ display: 'none' }}
           key={`${pageIndex}-${index}`}
-          ref={_.get(this.getRefFunctions.fakeCanvas, [index, pageIndex])}/>
+          ref={_.get(this.refFunctionGetters.fakeCanvas, [index, pageIndex])}/>
       );
     });
 
