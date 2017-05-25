@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -24,12 +26,12 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
-export const DOCUMENT_DEBOUNCE_TIME = 500;
+const NUM_PAGES_TO_PRERENDER = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
-export class Pdf extends React.Component {
+export class Pdf extends React.PureComponent {
   constructor(props) {
     super(props);
     // We use two variables to maintain the state of rendering.
@@ -56,7 +58,15 @@ export class Pdf extends React.Component {
 
     this.currentPage = 0;
     this.isRendering = [];
-    this.pageContainers = [];
+    this.prerenderedPdfs = {};
+    this.isPrerendering = false;
+
+    this.pageElements = [];
+    this.fakeCanvas = [];
+    this.scrollWindow = null;
+
+    this.refFunctionGetters = {};
+    this.setUpFakeCanvasRefFunctions();
   }
 
   setIsRendered = (index, value) => {
@@ -90,17 +100,21 @@ export class Pdf extends React.Component {
     this.isRendering[index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index > this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+      if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
+        this.isRendering[index] = false;
+
         return resolve();
       }
 
       // Page numbers are one-indexed
       let pageNumber = index + 1;
-      let canvas = document.getElementById(`canvas${pageNumber}`);
-      let container = document.getElementById(`textLayer${pageNumber}`);
-      let page = this.pageContainers[pageNumber - 1];
+      let canvas = this.pageElements[index].canvas;
+      let container = this.pageElements[index].textLayer;
+      let page = this.pageElements[index].pageContainer;
 
       if (!canvas || !container || !page) {
+        this.isRendering[index] = false;
+
         return reject();
       }
 
@@ -152,14 +166,30 @@ export class Pdf extends React.Component {
         // in the current state. It is possible that the
         // user switched between PDFs quickly and this
         // condition is no longer true, in which case we
-        // should render this page again with the new file.
-        if (pdfDocument === this.state.pdfDocument) {
+        // should render this page again with the new file. We
+        // also check if the canvas rendered on still exists.
+        // If the pages are changed quickly it's possible to
+        // render on a canvas that has since been changed which
+        // means we need to render it again.
+        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
           // If it is the same, then we mark this page as rendered
           this.setIsRendered(index, {
             pdfDocument,
             scale,
             ..._.pick(viewport, ['width', 'height'])
           });
+
+          // Whenever we finish rendering a page, we assume that this was the last page
+          // to render within the current document. We then try to prerender pages for documents in the
+          // prefetchFiles list. The prerenderPages call validates this assumption by
+          // checking if any other pages of the current document are being rendered,
+          // and will not proceed if they are since we want the current document's pages
+          // to take precedence over prerendering other documents' pages.
+          this.prerenderPages();
+
+          // this.props.file may not be a value in this.prerenderedPdfs. If it is not
+          // already present, then we want to create it.
+          _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
           resolve();
         } else {
           // If it is not, then we try to render it again.
@@ -168,6 +198,7 @@ export class Pdf extends React.Component {
             resolve();
           }).
           catch(() => {
+            this.isRendering[index] = false;
             reject();
           });
         }
@@ -214,9 +245,9 @@ export class Pdf extends React.Component {
   }
 
   performFunctionOnEachPage = (func) => {
-    Array.prototype.forEach.call(this.pageContainers, (ele, index) => {
-      if (ele) {
-        const boundingRect = ele.getBoundingClientRect();
+    this.pageElements.forEach((ele, index) => {
+      if (ele.pageContainer) {
+        const boundingRect = ele.pageContainer.getBoundingClientRect();
 
         func(boundingRect, index);
       }
@@ -225,24 +256,67 @@ export class Pdf extends React.Component {
 
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
-  setupPdf = _.debounce((file) => {
+  setUpPdf = (file) => {
+    this.latestFile = file;
+
     return new Promise((resolve) => {
-      PDFJS.getDocument(file).then((pdfDocument) => {
+      this.getDocument(this.latestFile).then((pdfDocument) => {
+        // Don't continue seting up the pdf if it's already been set up.
+        if (pdfDocument === this.state.pdfDocument) {
+          return resolve();
+        }
+
+        this.pageElements = [];
+
+        this.refFunctionGetters.canvas = [];
+        this.refFunctionGetters.textLayer = [];
+        this.refFunctionGetters.pageContainer = [];
+
+        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
+          this.refFunctionGetters.canvas[index] = (canvas) =>
+            _.set(this.pageElements, [index, 'canvas'], canvas);
+          this.refFunctionGetters.textLayer[index] = (textLayer) =>
+            _.set(this.pageElements, [index, 'textLayer'], textLayer);
+          this.refFunctionGetters.pageContainer[index] = (pageContainer) =>
+            _.set(this.pageElements, [index, 'pageContainer'], pageContainer);
+        });
+
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument,
           isRendered: []
         }, () => {
-          resolve();
-          this.onPageChange(1);
+          // If the user moves between pages quickly we want to make sure that we just
+          // set up the most recent file, so we call this function recursively.
+          this.setUpPdf(this.latestFile).then(() => {
+            this.onPageChange(1);
+            this.props.setPdfReadyToShow(this.props.documentId);
+            resolve();
+          });
         });
-        this.props.setPdfReadyToShow(this.props.documentId);
       });
     });
-  }, DOCUMENT_DEBOUNCE_TIME, {
-    leading: true,
-    trailing: true
-  });
+  }
+
+  getDocument = (file) => {
+    if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+      return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
+    }
+
+    return PDFJS.getDocument(file).then((pdfDocument) => {
+      // There is a chance another async call has resolved in the time that
+      // getDocument took to run. If so, again just use the cached version.
+      if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+        return this.prerenderedPdfs[file].pdfDocument;
+      }
+      this.prerenderedPdfs[file] = {
+        pdfDocument,
+        rendered: []
+      };
+
+      return pdfDocument;
+    });
+  }
 
   onJumpToComment = (comment) => {
     if (comment) {
@@ -255,28 +329,44 @@ export class Pdf extends React.Component {
         const halfHeight = height / 2;
 
         this.scrollWindow.scrollTop =
-          this.pageContainers[pageNumber - 1].getBoundingClientRect().top +
+          this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
           yPosition + this.scrollWindow.scrollTop - halfHeight;
       });
     }
   }
 
   onPageChange = (currentPage) => {
+    const unscaledHeight = (this.pageElements[currentPage - 1].pageContainer.offsetHeight / this.props.scale);
+
     this.currentPage = currentPage;
     this.props.onPageChange(
       currentPage,
       this.state.numPages,
-      this.scrollWindow.offsetHeight / (this.pageContainers[currentPage - 1].offsetHeight / this.props.scale));
+      this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.renderInViewPages);
-    this.setupPdf(this.props.file);
+
+    this.setUpPdf(this.props.file);
   }
 
   comopnentWillUnmount = () => {
     window.removeEventListener('resize', this.renderInViewPages);
+  }
+
+  setUpFakeCanvasRefFunctions = () => {
+    this.refFunctionGetters.fakeCanvas = [];
+
+    this.props.prefetchFiles.forEach((_unused, index) => {
+      _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
+        _.set(
+          this.refFunctionGetters,
+          ['fakeCanvas', index, pageIndex],
+          (ele) => _.set(this.fakeCanvas, [index, pageIndex], ele));
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -286,22 +376,74 @@ export class Pdf extends React.Component {
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
-      this.setupPdf(nextProps.file);
+      this.setUpPdf(nextProps.file);
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
+      const nonZoomedLocation = (this.scrollWindow.scrollTop -
+        this.pageElements[this.currentPage - 1].pageContainer.offsetTop);
 
       this.scrollLocation = {
         page: this.currentPage,
-        locationOnPage: (this.scrollWindow.scrollTop - this.pageContainers[this.currentPage - 1].offsetTop) * zoomFactor
+        locationOnPage: nonZoomedLocation * zoomFactor
       };
+    }
+
+    if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
+      this.setUpFakeCanvasRefFunctions();
     }
     /* eslint-enable no-negated-condition */
   }
 
+  prerenderPages = () => {
+    const finishPrerender = () => {
+      this.isPrerendering = false;
+      this.prerenderPages();
+    };
+
+    // Don't prerender if we are currently trying to render a page on the current document.
+    // We want those pages to take precedence over pages on non-visible documents.
+    // At the end of rendering pages from this document we always call prerenderPages
+    // again in case there are still pages to prerender.
+    if (_.some(this.isRendering)) {
+      return;
+    }
+
+    this.props.prefetchFiles.forEach((file, index) => {
+      this.getDocument(file).then((pdfDocument) => {
+        _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
+          if (pageIndex < pdfDocument.pdfInfo.numPages &&
+            !_.get(this.prerenderedPdfs, [file, 'rendered', pageIndex]) &&
+            this.fakeCanvas[index][pageIndex] &&
+            !this.isPrerendering) {
+            // We set this to true, so that only one page can prerender at a time. In this
+            // way we can prerender page 1 before prerendering page 2.
+            this.isPrerendering = true;
+
+            pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
+              const viewport = pdfPage.getViewport(this.props.scale);
+
+              return pdfPage.render({
+                canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
+                viewport
+              });
+            }).
+            then(() => {
+              this.prerenderedPdfs[file].rendered[pageIndex] = true;
+              finishPrerender();
+            }).
+            catch(finishPrerender);
+          }
+        });
+      });
+    });
+  }
+
+
   componentDidUpdate = () => {
     this.renderInViewPages();
+    this.prerenderPages();
 
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
@@ -313,7 +455,7 @@ export class Pdf extends React.Component {
 
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
-        this.pageContainers[this.scrollLocation.page - 1].offsetTop;
+        this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
     }
   }
 
@@ -343,6 +485,8 @@ export class Pdf extends React.Component {
     // on the event.
     event.preventDefault();
   }
+
+  getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   // eslint-disable-next-line max-statements
   render() {
@@ -375,15 +519,13 @@ export class Pdf extends React.Component {
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
-    this.pageContainers = [];
-
     for (let pageNumber = 1; pageNumber <= this.state.numPages; pageNumber++) {
       const onPageClick = (event) => {
         if (!this.props.isPlacingAnnotation) {
           return;
         }
 
-        let container = this.pageContainers[pageNumber - 1].getBoundingClientRect();
+        let container = this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect();
         let xPosition = (event.pageX - container.left) / this.props.scale;
         let yPosition = (event.pageY - container.top) / this.props.scale;
 
@@ -415,31 +557,38 @@ export class Pdf extends React.Component {
         key={`${this.props.file}-${pageNumber}`}
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
-        ref={(pageContainer) => {
-          this.pageContainers[pageNumber - 1] = pageContainer;
-        }}>
+        ref={this.refFunctionGetters.pageContainer[pageNumber - 1]}>
           <div className={pageContentsVisibleClass}>
             <canvas
-              id={`canvas${pageNumber}`}
+              id={`canvas${pageNumber}-${this.props.file}`}
+              ref={this.refFunctionGetters.canvas[pageNumber - 1]}
               className="canvasWrapper" />
             <div className="cf-pdf-annotationLayer">
               {commentIcons[pageNumber]}
             </div>
             <div
               id={`textLayer${pageNumber}`}
+              ref={this.refFunctionGetters.textLayer[pageNumber - 1]}
               className="textLayer"/>
           </div>
         </div>);
     }
-    this.scrollWindow = null;
+
+    const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
+      return _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
+        <canvas
+          style={{ display: 'none' }}
+          key={`${pageIndex}-${index}`}
+          ref={_.get(this.refFunctionGetters.fakeCanvas, [index, pageIndex])}/>
+      );
+    });
 
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
       onScroll={_.debounce(this.scrollEvent, 0)}
-      ref={(scrollWindow) => {
-        this.scrollWindow = scrollWindow;
-      }}>
+      ref={this.getScrollWindowRef}>
+      {prerenderCanvases}
         <div
           id={this.props.file}
           className={'cf-pdf-page pdfViewer singlePageView'}>
@@ -471,6 +620,7 @@ export default connect(
 
 Pdf.defaultProps = {
   onPageChange: _.noop,
+  prefetchFiles: [],
   scale: 1
 };
 
@@ -496,5 +646,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   handleSelectCommentIcon: PropTypes.func
 };
