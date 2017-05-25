@@ -179,12 +179,12 @@ export class Pdf extends React.PureComponent {
             ..._.pick(viewport, ['width', 'height'])
           });
 
-          // Whenever we finish rendering a page, we assume that we have some spare time.
-          // We use that spare time to try and prerender pages for documents in the
-          // prefetchFiles list. The prerenderPages call checks to see if any other pages
-          // of the current document are being rendered, and will not proceed if they are
-          // since the current document's pages take precedence over prerendering other
-          // documents' pages.
+          // Whenever we finish rendering a page, we assume that this was the last page
+          // to render within the current document. We then try to prerender pages for documents in the
+          // prefetchFiles list. The prerenderPages call validates this assumption by
+          // checking if any other pages of the current document are being rendered,
+          // and will not proceed if they are since we want the current document's pages
+          // to take precedence over prerendering other documents' pages.
           this.prerenderPages();
 
           // this.props.file may not be a value in this.prerenderedPdfs. If it is not
