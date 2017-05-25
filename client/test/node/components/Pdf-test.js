@@ -54,10 +54,10 @@ describe('Pdf', () => {
       });
     });
 
-    context('.setuppdf', () => {
+    context('.setUppdf', () => {
       context('onPageChange set', () => {
         it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
-          wrapper.instance().setupPdf('test.pdf');
+          wrapper.instance().setUpPdf('test.pdf');
           await pause();
 
           expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
@@ -69,7 +69,7 @@ describe('Pdf', () => {
       let draw;
 
       beforeEach(() => {
-        draw = sinon.spy(wrapper.instance(), 'setupPdf');
+        draw = sinon.spy(wrapper.instance(), 'setUpPdf');
       });
 
       context('when file is set', () => {
