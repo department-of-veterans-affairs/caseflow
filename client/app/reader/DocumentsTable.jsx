@@ -372,7 +372,6 @@ class DocumentsTable extends React.Component {
   }
 }
 
-
 DocumentsTable.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
