@@ -5,6 +5,7 @@ class Fakes::Initializer
       User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
+      CAVCDecision.repository = Fakes::CAVCDecisionRepository
     end
 
     def setup!(rails_env)

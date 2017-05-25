@@ -12,7 +12,8 @@ describe AppealEvents do
       certification_date: certification_date,
       case_review_date: case_review_date,
       decision_date: decision_date,
-      disposition: disposition
+      disposition: disposition,
+      prior_decision_date: prior_decision_date
     )
   end
 
@@ -20,6 +21,7 @@ describe AppealEvents do
   let(:soc_date) { 2.days.ago }
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
+  let(:prior_decision_date) { nil }
   let(:certification_date) { nil }
   let(:case_review_date) { nil }
   let(:decision_date) { nil }
@@ -29,6 +31,20 @@ describe AppealEvents do
 
   context "#all" do
     let(:events) { appeal_events.all }
+
+    context "when the appeal has a prior decision date" do
+      let(:prior_decision_date) { 6.months.ago }
+      let(:nod_date) { 8.months.ago }
+      let(:soc_date) { 7.months.ago }
+      let(:form9_date) { 5.months.ago }
+
+      subject { events.map(&:type) }
+
+      it "filters out events that happened before that date" do
+        is_expected.to_not include(:nod, :soc)
+        is_expected.to include(:form9)
+      end
+    end
 
     context "nod event" do
       subject do
@@ -177,6 +193,23 @@ describe AppealEvents do
       end
 
       context "when no decision date" do
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "cavc decision event" do
+      subject do
+        events.find { |event| event.type == :cavc_decision && event.date == cavc_date }
+      end
+
+      let(:cavc_date) { 6.months.ago }
+
+      context "when appeal has a cavc decision" do
+        let!(:cavc_decision) { Generators::CAVCDecision.build(appeal: appeal, decision_date: cavc_date) }
+        it { is_expected.to_not be_nil }
+      end
+
+      context "when appeal doesn't have a cavc decision" do
         it { is_expected.to be_nil }
       end
     end
