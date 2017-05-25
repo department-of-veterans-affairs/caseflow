@@ -20,10 +20,17 @@ class DocumentController < ApplicationController
 
     # The line below enables document caching for a month.
     expires_in 30.days, public: true
-    send_file(
-      document.serve,
-      type: "application/pdf",
-      disposition: "inline")
+    if params[:download]
+      send_file(
+        document.serve,
+        type: "application/pdf",
+        disposition: "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'")
+    else
+      send_file(
+        document.serve,
+        type: "application/pdf",
+        disposition: "inline")
+    end
   end
 
   def mark_as_read

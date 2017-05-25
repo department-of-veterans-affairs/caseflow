@@ -8,8 +8,7 @@ class Reader::DocumentsController < ApplicationController
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
-            annotations: annotations,
-            pdfLink: pdf_download_path
+            annotations: annotations
           }
         end
       end

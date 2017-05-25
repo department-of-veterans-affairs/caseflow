@@ -140,7 +140,7 @@ svg[aria-hidden=true],
   position: absolute;
   z-index: 15;
   opacity: 1;
-  padding: 15px 17px;
+  padding: 15px 24px 15px 15px;
 
   .category-icons-and-doc-type {
     display: flex;
@@ -181,7 +181,7 @@ svg[aria-hidden=true],
 }
 
 // TODO: Remove !important
-[type="button"].cf-pdf-button {
+.cf-pdf-button {
   margin: 0 8px;
   color: inherit;
   padding: 0;
@@ -196,12 +196,23 @@ svg[aria-hidden=true],
     color: $color-focus;
   }
 
+  svg {
+    g {
+      g {
+        &:hover {
+          fill: $color-focus;
+        }
+      }
+    }
+    vertical-align: middle;
+  }
+
   &:focus {
     box-shadow: none;
   }
 }
 
-[type="button"].cf-pdf-spaced-buttons {
+.cf-pdf-spaced-buttons {
   padding: 0 15px;
 }
 

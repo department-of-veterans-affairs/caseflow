@@ -62,9 +62,7 @@ Rails.application.routes.draw do
 
   namespace :reader do
     resources :appeal, only: [] do
-      resources :documents, only: [:show, :index] do
-        get 'pdf', on: :member
-      end
+      resources :documents, only: [:show, :index]
     end
   end
 

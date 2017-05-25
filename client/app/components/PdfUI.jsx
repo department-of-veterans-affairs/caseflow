@@ -20,6 +20,11 @@ export const linkToSingleDocumentView = (basePath, doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
+export const downloadLink = (file, type) => {
+
+  return `${file}?download=true&type=${type}`
+}
+
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
 
@@ -145,9 +150,8 @@ export class PdfUI extends React.Component {
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={() => console.log("HALP")}
-            ariaLabel="download pdf"
-            download>
+            onClick={() => window.open(downloadLink(this.props.file, this.props.doc.type))}
+            ariaLabel="download pdf">
             {downloadIcon()}
           </Button>
         </span>
