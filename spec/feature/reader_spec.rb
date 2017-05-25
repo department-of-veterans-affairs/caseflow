@@ -589,7 +589,7 @@ RSpec.feature "Reader" do
       fill_in "searchBar", with: search_query
 
       expect(page).to have_content("Search results not found")
-      expect(page).to_not have_content("\"#{search_query}\"")
+      expect(page).to have_content("#{search_query}")
     end
   end
 
