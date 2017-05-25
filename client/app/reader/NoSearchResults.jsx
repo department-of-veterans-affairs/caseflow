@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import StatusMessage from '../components/StatusMessage';
+import { connect } from 'react-redux';
+import { clearSearch } from './actions';
 
-class NoSearchResults extends PureComponent {
+export class NoSearchResults extends PureComponent {
   render() {
     return <div className="section--no-search-results">
       <StatusMessage
@@ -19,4 +21,16 @@ NoSearchResults.propTypes = {
   searchQuery: PropTypes.string
 };
 
-export default NoSearchResults;
+const mapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  clearSearch() {
+    dispatch(clearSearch());
+  }
+});
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(NoSearchResults);

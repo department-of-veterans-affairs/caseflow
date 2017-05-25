@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import _ from 'lodash';
-import { clearSearch } from './actions';
 import DocumentsTable from './DocumentsTable';
 
 import { getFilteredDocuments } from './selectors';
@@ -20,14 +19,10 @@ export class PdfListView extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <DocumentListHeader
             documents={this.props.documents}
-            clearSearch={this.props.clearSearch}
             noDocuments={noDocuments}
           />
           { noDocuments ?
-          <NoSearchResults
-            clearSearch={this.props.clearSearch}
-            searchQuery={this.props.docFilterCriteria.searchQuery}
-            /> :
+          <NoSearchResults /> :
           <DocumentsTable
             documents={this.props.documents}
             onJumpToComment={this.props.onJumpToComment}
@@ -43,18 +38,11 @@ export class PdfListView extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  ..._.pick(state, 'tagOptions'),
   ..._.pick(state.ui, 'docFilterCriteria')
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  clearSearch() {
-    dispatch(clearSearch());
-  }
-});
-
 export default connect(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps, null
 )(PdfListView);
 
 PdfListView.propTypes = {
