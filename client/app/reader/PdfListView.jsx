@@ -7,6 +7,8 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
+import NoSearchResults from './NoSearchResults';
+
 import { linkToSingleDocumentView } from '../components/PdfUI';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
@@ -15,7 +17,8 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import _ from 'lodash';
-import { setDocListScrollPosition, changeSortState, setTagFilter, setCategoryFilter } from './actions';
+import { setDocListScrollPosition, changeSortState,
+  clearSearch, setTagFilter, setCategoryFilter } from './actions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 import {
@@ -113,6 +116,7 @@ export class PdfListView extends React.Component {
   getTbodyRef = (elem) => this.tbodyElem = elem
 
   componentDidUpdate() {
+
     if (!this.hasSetScrollPosition) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
@@ -134,7 +138,9 @@ export class PdfListView extends React.Component {
 
       this.hasSetScrollPosition = true;
     }
-    this.setFilterIconPositions();
+    if (_.size(this.props.documents)) {
+      this.setFilterIconPositions();
+    }
   }
 
   setCategoryFilterIconPosition = () => {
@@ -366,23 +372,39 @@ export class PdfListView extends React.Component {
       return acc;
     }, []);
 
-    return <div className="usa-grid">
-      <div className="cf-app">
-        <div className="cf-app-segment cf-app-segment--alt">
-          <DocumentListHeader documents={this.props.documents} />
-          <div>
-            <Table
-              columns={this.getDocumentColumns}
-              rowObjects={rowObjects}
-              summary="Document list"
-              className="documents-table"
-              headerClassName="cf-document-list-header-row"
-              bodyClassName="cf-document-list-body"
-              rowsPerRowObject={2}
-              tbodyId="documents-table-body"
-              tbodyRef={this.getTbodyRef}
-              getKeyForRow={this.getKeyForRow}
-            />
+    if (!_.size(rowObjects) && this.props.docFilterCriteria.searchQuery) {
+      window.removeEventListener('resize', this.setFilterIconPositions);
+    }
+
+    const showNoSearchResultsMsg = !_.size(rowObjects) &&
+      _.size(this.props.docFilterCriteria.searchQuery);
+
+    return <div>
+      <div className="usa-grid">
+        <div className="cf-app">
+          <div className="cf-app-segment cf-app-segment--alt">
+            <DocumentListHeader
+              documents={this.props.documents}
+              clearSearch={this.props.clearSearch}
+              />
+            <div>
+              { showNoSearchResultsMsg ?
+              <NoSearchResults
+                clearSearch={this.props.clearSearch}
+                searchQuery={this.props.docFilterCriteria.searchQuery}
+                /> :
+              <Table
+                columns={this.getDocumentColumns}
+                rowObjects={rowObjects}
+                summary="Document list"
+                className="documents-table"
+                headerClassName="cf-document-list-header-row"
+                bodyClassName="cf-document-list-body"
+                rowsPerRowObject={2}
+                tbodyId="documents-table-body"
+                tbodyRef={this.getTbodyRef}
+              />}
+            </div>
           </div>
         </div>
       </div>
@@ -402,7 +424,8 @@ const mapDispatchToProps = (dispatch) => ({
     setDocListScrollPosition,
     setTagFilter,
     setCategoryFilter,
-    changeSortState
+    changeSortState,
+    clearSearch
   }, dispatch),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
