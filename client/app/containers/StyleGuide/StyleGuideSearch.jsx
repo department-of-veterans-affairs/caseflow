@@ -32,8 +32,10 @@ class StyleGuideSearch extends Component {
         />
 
         <h3>Search Small</h3>
-        {this.state.name}
-        <SearchBar />
+        <SearchBar 
+          id="search-field-big"
+          classNames="usa-search usa-search-big"
+        />
       </div>
     );
   }
