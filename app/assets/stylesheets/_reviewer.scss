@@ -155,6 +155,39 @@ svg[aria-hidden=true],
   bottom: 0;
   padding: 0 20px;
   line-height: 50px;
+
+  display: flex;
+
+  $button-label-spacing: 10px;
+
+  .left-button-label {
+    margin-left: $button-label-spacing;
+  }
+
+  .right-button-label {
+    margin-right: $button-label-spacing;
+  }
+
+  .cf-pdf-buttons-center {
+    $spacing: 25px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    .page-progress-indicator {
+      margin-right: $spacing;
+    }
+
+    .doc-list-progress-indicator {
+      margin-left: $spacing;
+
+      .filter-icon {
+        margin-right: $spacing / 2;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
 }
 
 .cf-comment-cursor {
@@ -306,24 +339,6 @@ svg[aria-hidden=true],
 
 .cf-pdf-bookmark-va-medial {
   color: $bookmark-pink;
-}
-
-.cf-pdf-buttons-center {
-  $spacing: 25px;
-
-  .page-progress-indicator {
-    margin-right: $spacing;
-  }
-
-  .doc-list-progress-indicator {
-    margin-left: $spacing;
-
-    .filter-icon {
-      margin-right: $spacing / 2;
-      position: relative;
-      top: 1px;
-    }
-  }
 }
 
 .cf-pdf-bookmark-layperson {
