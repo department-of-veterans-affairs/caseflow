@@ -1,12 +1,40 @@
 import React from 'react';
-import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import StyleGuideAction from './StyleGuideAction';
+import StyleGuideNavigationBar from './StyleGuideNavigationBar';
+import StyleGuideUserDropdownMenu from './StyleGuideUserDropdownMenu';
 import StyleGuideFooter from './StyleGuideFooter';
 
-let StyleGuideLayout = () => {
+export default function StyleGuideLayout () {
 
   return <div>
     <h2 id="layout">Layout</h2>
+
+    <p>
+      Any Caseflow app should always follow the same layout and structure shown here.
+      At the top of the application is the Navigation Bar.
+      Next, sitting on the canvass of the application is the main content area.
+      This is where the title of the page, instructions for the user, and detailed interaction should be placed.
+      The primary and secondary actions sit below the main content area.
+      Finally, the Footer should go at the bottom of the app.
+    </p>
+
+    <p>
+      We try to be consistent in this layout across all our applications
+      so that our interface is predictable and familiar to our user.
+      The consistency also helps us reuse common code in Caseflow Commons.</p>
+
+    <br/>
+    <StyleGuideNavigationBar />
+    <br/>
+    <StyleGuideUserDropdownMenu />
+    <br/>
+    <h3 id="app-canvas">Main Content Area</h3>
+    <p>
+      The main content area is where we put all the application-specific interaction.
+      This includes things like a Queue of tasks for the user to perform,
+      workflow specific actions, document previews, confirmation messages, and more.
+      The background of the main content area is #f9f9f9.</p>
+    <br/>
 
     <h3 id="app-canvas">App Canvas</h3>
 
@@ -15,44 +43,12 @@ let StyleGuideLayout = () => {
       The content starts off with a page title and minimal instructions for what the user
       needs to do to complete their task on the page.
       It then contains any interaction that well help this to accomplish their task including forms,
-      document previews, tables, error messages, and more.
-    </p>
-
-    <StyleGuideComponentTitle
-        title="Actions"
-        id="actions"
-        link="StyleGuideAction.jsx"
-        isSubsection={true}
-    />
-
-    <p>
-      For most task-based pages, Primary and Secondary Actions sit under the App Canvas.
-      The number of actions per page should be limited intentionally.
-      These tasks should relate specifically to the user’s goal for the page they are on.
-    </p>
-
-    <p>
-      The actions at the bottom of the page are arranged such as the primary
-      task (the task that takes the user forward) is on the bottom right of the App Canvas.
-      The label of this action usually hints at the title of the next page.
-      Escape actions are placed to the left of the primary action.
-      On the bottom left, of the App Canvas, there will be a back link,
-      preferably with a description of where the user will go to
-      or a link to the main page after a user has completed a task.
-      These are actions that allow the user to move back a step
-      or completely leave the task they’re working on.
-    </p>
-    <p>
-      The consistent layout and arrangement of these actions
-      reinforces the users mental model as the use Caseflow.
-      You should avoid placing these actions in other parts
-      of the page without good reason.
-    </p>
+      document previews, tables, error messages, and more.</p>
+    <br/>
     <StyleGuideAction />
-     <br/>
+    <br/>
     <StyleGuideFooter />
 
   </div>;
-};
+}
 
-export default StyleGuideLayout;
