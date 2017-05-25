@@ -44,7 +44,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Make sure you've selected an option below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow") do
         find("label", text: "Other").click
       end
       fill_in "What's your VA email address?", with: "fk@va.gov"
@@ -56,7 +56,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow") do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: " "
@@ -65,7 +65,7 @@ RSpec.feature "Cancel certification" do
       end
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow") do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: "Test"
@@ -89,7 +89,7 @@ RSpec.feature "Cancel certification" do
     scenario "Test Characters remaining" do
       visit "certifications/new/#{appeal.vacols_id}"
       click_on "Cancel Certification"
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow") do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: "Test"
@@ -151,7 +151,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Not found")
       click_on "Cancel Certification"
       expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow") do
         find("label", text: "Missing document could not be found").click
       end
       fill_in "What's your VA email address?", with: "fk@va.gov"
@@ -183,7 +183,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Make sure you’ve selected an option below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow?") do
         find("label", text: "Other").click
       end
       fill_in "What's your VA email address?", with: "fk@va.gov"
@@ -193,14 +193,14 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       expect(page).to have_content("Make sure you’ve entered a valid email address below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow?") do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: " "
       click_button "Cancel certification"
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
 
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow?") do
         find("label", text: "Other").click
       end
       fill_in "Tell us more about your situation.", with: "Test"
@@ -224,7 +224,7 @@ RSpec.feature "Cancel certification" do
       expect(page).to have_content("Not Found")
       click_on "Cancel Certification"
       expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow?") do
         find("label", text: "Missing document could not be found").click
       end
       fill_in "What's your VA email address?", with: "fk@va.gov"
@@ -240,7 +240,7 @@ RSpec.feature "Cancel certification" do
       click_button("Cancel-Certification-button-id-close")
       expect(page).to_not have_content("Please explain why")
       click_link("cancel this certification")
-      within_fieldset("Why can't be this case certified in Caseflow") do
+      within_fieldset("Why can't this case be certified in Caseflow?") do
         find("label", text: "Missing document could not be found").click
       end
       fill_in "What's your VA email address?", with: "fk@va.gov"
