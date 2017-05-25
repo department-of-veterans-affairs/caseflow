@@ -11,6 +11,13 @@ class VACOLS::CaseHearing < VACOLS::Record
     C: :central_office
   }.freeze
 
+  HEARING_DISPOSITIONS = {
+    H: :held,
+    C: :canceled,
+    P: :postponed,
+    N: :no_show
+  }.freeze
+
   NOT_MASTER_RECORD = %(
     vdkey is NOT NULL
   ).freeze
@@ -24,23 +31,38 @@ class VACOLS::CaseHearing < VACOLS::Record
   }.freeze
 
   # :nocov:
-  def self.upcoming_for_judge(vacols_user_id, date_diff: 7.days)
-    id = connection.quote(vacols_user_id)
+  class << self
+    def upcoming_for_judge(vacols_user_id, date_diff: 7.days)
+      id = connection.quote(vacols_user_id)
 
-    select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
-           :hearing_disp,
-           :hearing_pkseq,
-           :hearing_date,
-           :hearing_type,
-           :notes1,
-           :folder_nr,
-           :vdkey,
-           :sattyid)
-      .joins(:staff)
-      .where("staff.stafkey = #{id}")
-      .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
-             relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
-      .where(NOT_MASTER_RECORD)
+      select_hearings
+        .where("staff.stafkey = #{id}")
+        .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
+               relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
+        .where(NOT_MASTER_RECORD)
+    end
+
+    def for_appeal(appeal_vacols_id)
+      select_hearings.where(folder_nr: appeal_vacols_id)
+    end
+
+    private
+
+    def select_hearings
+      select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
+             "staff.stafkey as user_id",
+             :hearing_disp,
+             :hearing_pkseq,
+             :hearing_date,
+             :hearing_type,
+             :notes1,
+             :folder_nr,
+             :vdkey,
+             :sattyid,
+             :clsdate)
+        .joins(:staff)
+    end
   end
+
   # :nocov:
 end
