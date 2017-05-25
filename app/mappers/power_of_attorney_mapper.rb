@@ -56,6 +56,37 @@ module PowerOfAttorneyMapper
     "POA State Organization": "Service Organization"
   }.freeze
 
+  BGS_REP_NAMES_TO_VACOLS_REP_CODES = {
+    "AMERICAN LEGION": "A",
+    "AMVETS": "B",
+    "AMERICAN RED CROSS": "C",
+    "DISABLED AMERICAN VETERANS": "D",
+    "JEWISH WAR VETERANS OF THE US": "E",
+    "MILITARY ORDER OF THE PURPLE HEART": "F",
+    "PARALYZED VETERANS OF AMERICA": "G",
+    "VETERANS OF FOREIGN WARS OF THE US": "H",
+    # skip "I" - "State Service Organization(s)" - not a specific organization
+    "MARYLAND DEPT OF VETERANS AFFAIRS": "J", # in Vacols, "Maryland Veterans Commission"
+    "VIRGINIA DEPARTMENT OF VETERANS SERVICES": "K", # In Vacols, "Virginia Department of Veterans Affairs"
+    # skip "L" - "No Representative"
+    "NAVY MUTUAL AID ASSOCIATION": "M",
+    "NONCOMMISSIONED OFFICERS ASSOCIATION": "N",
+    # skip "O" - "Other Service Organization"
+    # "P" - Army & Air Force Mutual Aid Assn. - cannot find it in the BGS POA list
+    "CATHOLIC WAR VETERANS OF THE USA": "Q",
+    "FLEET RESERVE ASSOCIATION": "R",
+    "MARINE CORPS LEAGUE": "S",
+    # skip "T" - "Attorney"
+    # skip "U" - "Agent"
+    "VIETNAM VETERANS OF AMERICA": "V",
+    # skip "W" - "One Time Representative"
+    "AMERICAN EX-PRISONERS OF WAR, INC.": "X", # yes, it has a dot
+    "BLINDED VETERANS ASSOCIATION": "Y",
+    "NATIONAL VETERANS LEGAL SERVICES PROGRAM": "Z",
+    "NATIONAL VETERANS ORGANIZATION OF AMERICA, INC.": "1",
+    "WOUNDED WARRIOR PROJECT": "2"
+  }.freeze
+
   def get_poa_from_bgs_poa(bgs_poa)
     # TODO: what do we do if we encounter a rep type we don't know?
     # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
