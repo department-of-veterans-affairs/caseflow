@@ -104,20 +104,20 @@ describe('DecisionReviewer', () => {
         await pause();
 
         let pdf = wrapper.find('Pdf').getNode();
-        let setupPdf = sinon.spy(pdf, 'setupPdf');
+        let setUpPdf = sinon.spy(pdf, 'setUpPdf');
 
         // Next button moves us to the next page
         wrapper.find('#button-next').simulate('click');
         await pause();
 
-        expect(setupPdf.lastCall.calledWith(
+        expect(setUpPdf.lastCall.calledWith(
           `/document/${documents[1].id}/pdf`)).to.be.true;
 
         // Previous button moves us to the previous page
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        expect(setupPdf.lastCall.calledWith(
+        expect(setUpPdf.lastCall.calledWith(
           `/document/${documents[0].id}/pdf`)).to.be.true;
       }));
 
