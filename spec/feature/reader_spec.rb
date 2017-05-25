@@ -100,7 +100,18 @@ RSpec.feature "Reader" do
       ]
     end
 
-    scenario "user visits help page" do
+    scenario "Progress indicator" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      click_on documents[0].type
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
+      click_on "Back to all documents"
+      fill_in "searchBar", with: "9"
+      click_on documents[1].type
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
+      expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")
+    end
+
+    scenario "User visits help page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       find('#menu-trigger').click
       find_link("Help").click

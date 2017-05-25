@@ -99,6 +99,10 @@ class User < ActiveRecord::Base
     tasks.to_complete.find_by(type: task_type)
   end
 
+  def to_hash
+    serializable_hash
+  end
+
   private
 
   def station_offices
