@@ -287,10 +287,10 @@ export class Pdf extends React.PureComponent {
           // set up the most recent file, so we call this function recursively.
           this.setUpPdf(this.latestFile).then(() => {
             this.onPageChange(1);
+            this.props.setPdfReadyToShow(this.props.documentId);
             resolve();
           });
         });
-        this.props.setPdfReadyToShow(this.props.documentId);
       });
     });
   }
