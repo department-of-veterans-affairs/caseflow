@@ -15,29 +15,7 @@ import NoSearchResults from './NoSearchResults';
 export class PdfListView extends React.Component {
 
   render() {
-    let commentSelectorClassNames = ['cf-pdf-button'];
-
-    if (this.props.isCommentLabelSelected) {
-      commentSelectorClassNames.push('cf-selected-label');
-    } else {
-      commentSelectorClassNames.push('cf-label');
-    }
-
-    let rowObjects = this.props.documents.reduce((acc, row) => {
-      acc.push(row);
-      const doc = _.find(this.props.documents, _.pick(row, 'id'));
-
-      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
-        acc.push({
-          ...row,
-          isComment: true
-        });
-      }
-
-      return acc;
-    }, []);
-
-    const showNoSearchResultsMsg = !_.size(rowObjects) &&
+    const showNoSearchResultsMsg = !_.size(this.props.documents) &&
       _.size(this.props.docFilterCriteria.searchQuery);
 
     return <div className="usa-grid">
