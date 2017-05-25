@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default class TextField extends React.Component {
+
   onChange = (event) => {
+    if (this.props.isInteger && (event.target.value === '' || (/\D/).test(event.target.value))) {
+      event.target.value = '';
+    }
+
     this.props.onChange(event.target.value);
   }
 

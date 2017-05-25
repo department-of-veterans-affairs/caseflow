@@ -35,6 +35,7 @@ export default class StyleGuideInlineForm extends React.Component {
           label="Enter the number of people working today"
           name="dummyEmployeeCount"
           type="number"
+          isInteger={true}
           value={this.state.value}
           onChange={(value) => {
             this.setState({ value });

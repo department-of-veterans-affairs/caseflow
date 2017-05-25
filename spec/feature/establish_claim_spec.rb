@@ -49,6 +49,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("Caseflow Dispatch Help")
       page.driver.go_back
 
+      [".", "+", "e"].each do |bad_value|
+        fill_in "the number of people", with: bad_value
+        expect(find_field("the number of people").value).to have_content("")
+      end
+
       fill_in "the number of people", with: "2"
       click_on "Update"
       expect(find_field("the number of people").value).to have_content("2")
@@ -106,6 +111,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       within("#table-row-1") do
         click_on "Edit"
+
+        [".", "+", "e"].each do |bad_value|
+          fill_in "quota-#{june_quota.id}", with: bad_value
+          expect(find_field("quota-#{june_quota.id}").value).to have_content("")
+        end
+
         fill_in "quota-#{june_quota.id}", with: "5"
         click_on "Save"
       end

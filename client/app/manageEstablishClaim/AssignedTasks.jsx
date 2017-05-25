@@ -21,6 +21,7 @@ const AssignedTasks = ({
         className={['cf-inline-field']}
         onChange={handleEditTaskCount}
         type="number"
+        isInteger={true}
         value={userQuota.newTaskCount}
         title={`Update ${userQuota.userName}'s assigned tasks`}
       />

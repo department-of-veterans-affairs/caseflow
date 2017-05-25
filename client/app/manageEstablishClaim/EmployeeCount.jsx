@@ -18,6 +18,7 @@ const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeC
           onChange={handleEmployeeCountChange}
           value={employeeCount}
           type="number"
+          isInteger={true}
           {...employeeCount}
         />
         <Button
