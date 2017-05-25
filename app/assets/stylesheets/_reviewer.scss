@@ -146,6 +146,21 @@ svg[aria-hidden=true],
     display: flex;
     justify-content: flex-end;
   }
+
+  .cf-pdf-buttons {
+    &-left {
+      min-height: 1px;
+      text-align: left;
+    }
+
+    &-right {
+      text-align: right;
+    }
+
+    &-center {
+      text-align: center;
+    }
+  }
 }
 
 .cf-pdf-footer {
