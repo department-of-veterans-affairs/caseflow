@@ -58,7 +58,8 @@ class VACOLS::CaseHearing < VACOLS::Record
              :notes1,
              :folder_nr,
              :vdkey,
-             :sattyid)
+             :sattyid,
+             :clsdate)
         .joins(:staff)
     end
   end
