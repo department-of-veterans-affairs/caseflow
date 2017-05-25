@@ -57,34 +57,34 @@ module PowerOfAttorneyMapper
   }.freeze
 
   BGS_REP_NAMES_TO_VACOLS_REP_CODES = {
-    "AMERICAN LEGION": "A",
-    "AMVETS": "B",
-    "AMERICAN RED CROSS": "C",
-    "DISABLED AMERICAN VETERANS": "D",
-    "JEWISH WAR VETERANS OF THE US": "E",
-    "MILITARY ORDER OF THE PURPLE HEART": "F",
-    "PARALYZED VETERANS OF AMERICA": "G",
-    "VETERANS OF FOREIGN WARS OF THE US": "H",
+    "AMERICAN LEGION" => "A",
+    "AMVETS" => "B",
+    "AMERICAN RED CROSS" => "C",
+    "DISABLED AMERICAN VETERANS" => "D",
+    "JEWISH WAR VETERANS OF THE US" => "E",
+    "MILITARY ORDER OF THE PURPLE HEART" => "F",
+    "PARALYZED VETERANS OF AMERICA" => "G",
+    "VETERANS OF FOREIGN WARS OF THE US" => "H",
     # skip "I" - "State Service Organization(s)" - not a specific organization
-    "MARYLAND DEPT OF VETERANS AFFAIRS": "J", # in Vacols, "Maryland Veterans Commission"
-    "VIRGINIA DEPARTMENT OF VETERANS SERVICES": "K", # In Vacols, "Virginia Department of Veterans Affairs"
+    "MARYLAND DEPT OF VETERANS AFFAIRS" => "J", # in Vacols, "Maryland Veterans Commission"
+    "VIRGINIA DEPARTMENT OF VETERANS SERVICES" => "K", # In Vacols, "Virginia Department of Veterans Affairs"
     # skip "L" - "No Representative"
-    "NAVY MUTUAL AID ASSOCIATION": "M",
-    "NONCOMMISSIONED OFFICERS ASSOCIATION": "N",
+    "NAVY MUTUAL AID ASSOCIATION" => "M",
+    "NONCOMMISSIONED OFFICERS ASSOCIATION" => "N",
     # skip "O" - "Other Service Organization"
     # "P" - Army & Air Force Mutual Aid Assn. - cannot find it in the BGS POA list
-    "CATHOLIC WAR VETERANS OF THE USA": "Q",
-    "FLEET RESERVE ASSOCIATION": "R",
-    "MARINE CORPS LEAGUE": "S",
+    "CATHOLIC WAR VETERANS OF THE USA" => "Q",
+    "FLEET RESERVE ASSOCIATION" => "R",
+    "MARINE CORPS LEAGUE" => "S",
     # skip "T" - "Attorney"
     # skip "U" - "Agent"
-    "VIETNAM VETERANS OF AMERICA": "V",
+    "VIETNAM VETERANS OF AMERICA" => "V",
     # skip "W" - "One Time Representative"
-    "AMERICAN EX-PRISONERS OF WAR, INC.": "X", # yes, it has a dot
-    "BLINDED VETERANS ASSOCIATION": "Y",
-    "NATIONAL VETERANS LEGAL SERVICES PROGRAM": "Z",
-    "NATIONAL VETERANS ORGANIZATION OF AMERICA, INC.": "1",
-    "WOUNDED WARRIOR PROJECT": "2"
+    "AMERICAN EX-PRISONERS OF WAR, INC." => "X", # yes, it has a period
+    "BLINDED VETERANS ASSOCIATION" => "Y",
+    "NATIONAL VETERANS LEGAL SERVICES PROGRAM" => "Z",
+    "NATIONAL VETERANS ORGANIZATION OF AMERICA, INC." => "1",
+    "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
 
   def get_poa_from_bgs_poa(bgs_poa)
