@@ -111,7 +111,6 @@ class SeedDB
     create_tasks(50)
     create_annotations
     create_tags
-    create_hearings
   end
 end
 
