@@ -8,7 +8,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation,
-  handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+  handleSelectCommentIcon, selectCurrentPdf, startPlacingAnnotation } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 
@@ -31,6 +31,10 @@ export class PdfViewer extends React.Component {
     }
     if (event.key === 'ArrowRight') {
       this.props.showPdf(this.nextDocId())();
+    }
+
+    if (event.altKey && event.code === 'KeyC') {
+      this.props.startPlacingAnnotation();
     }
   }
 
@@ -150,6 +154,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     closeAnnotationDeleteModal,
+    startPlacingAnnotation,
     deleteAnnotation
   }, dispatch),
 
