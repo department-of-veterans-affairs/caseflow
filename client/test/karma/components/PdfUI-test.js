@@ -15,7 +15,7 @@ describe('PdfUI', () => {
     beforeEach(() => {
       doc = {
         filename: 'My PDF',
-        id: 'myPdf',
+        id: 3,
         type: 'Form 8',
         receivedAt: '1/2/2017'
       };
@@ -23,6 +23,7 @@ describe('PdfUI', () => {
       wrapper = shallow(<PdfUI
         doc={doc}
         file="test.pdf"
+        filteredDocIds={[3]}
         id="pdf"
         pdfWorker="noworker"
         documentPathBase={DOCUMENT_PATH_BASE}

@@ -319,6 +319,24 @@ svg[aria-hidden=true],
   color: $bookmark-pink;
 }
 
+.cf-pdf-buttons-center {
+  $spacing: 25px;
+
+  .page-progress-indicator {
+    margin-right: $spacing;
+  }
+
+  .doc-list-progress-indicator {
+    margin-left: $spacing;
+
+    .filter-icon {
+      margin-right: $spacing / 2;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
 .cf-pdf-bookmark-layperson {
   color: $bookmark-green;
 }

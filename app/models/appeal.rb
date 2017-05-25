@@ -13,12 +13,12 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :representative
-  vacols_attr_accessor :hearing_request_type
+  vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
-  vacols_attr_accessor :certification_date
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
+  vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status, :prior_decision_date
   vacols_attr_accessor :file_type
@@ -90,7 +90,27 @@ class Appeal < ActiveRecord::Base
   end
 
   def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: vbms_id, vacols_id: vacols_id).load_bgs_record!
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  end
+
+  def hearings
+    @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+  end
+
+  def scheduled_hearings
+    hearings.select(&:scheduled_pending?)
+  end
+
+  # `hearing_request_type` is a direct mapping from VACOLS and has some unused
+  # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
+  # from a travel board hearing. This method cleans all of these issues up.
+  def sanitized_hearing_request_type
+    case hearing_request_type
+    when :central_office
+      :central_office
+    when :travel_board
+      video_hearing_requested ? :video : :travel_board
+    end
   end
 
   def veteran_name
