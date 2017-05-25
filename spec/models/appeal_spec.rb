@@ -739,6 +739,14 @@ describe Appeal do
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
+
+    context "#bgs_address" do
+      subject { appeal.power_of_attorney.bgs_address }
+
+      it "returns address if we are able to retrieve it" do
+        is_expected.to have_attributes(address_line1: "9999 MISSION ST", city: "SAN FRANCISCO")
+      end
+    end
   end
 
   context "#sanitized_hearing_request_type" do
