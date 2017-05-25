@@ -5,6 +5,17 @@ $gray-font-color: #6b7079;
 $tag-backgrond-color: #d6d7d9;
 
 .section--document-list {
+  .section--no-search-results {
+    .cf-app-segment--alt {
+      border: none;
+      margin-top: 0;
+
+      .cf-msg-screen-deck {
+        word-break: break-word;
+      }
+    }
+  }
+
   .table-icon {
     margin: 1px;
     margin-left: 5px;
