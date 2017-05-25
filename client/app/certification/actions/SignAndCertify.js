@@ -30,11 +30,8 @@ export const certificationUpdateStart = (params, dispatch) => {
   /* eslint-disable camelcase */
 
   const update = {
-    certifying_office: params.certifyingOffice,
-    certifying_username: params.certifyingUsername,
     certifying_official_name: params.certifyingOfficialName,
-    certifying_official_title: params.certifyingOfficialTitle,
-    certification_date: params.certificationDate
+    certifying_official_title: params.certifyingOfficialTitle
   };
 
   /* eslint-enable "camelcase" */
