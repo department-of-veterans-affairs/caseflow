@@ -38,6 +38,7 @@ export const DocumentListHeader = (props) => {
             name={buttonText}
             onClick={props.toggleExpandAll}
             id="btn-default"
+            disabled={props.noDocuments}
           />
         </span>
       </div>
@@ -60,6 +61,7 @@ DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
   expandAll: PropTypes.bool,
   toggleExpandAll: PropTypes.func,
+  noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
   numberOfDocuments: PropTypes.number.isRequired
 };

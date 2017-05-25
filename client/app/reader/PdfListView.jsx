@@ -15,15 +15,19 @@ import NoSearchResults from './NoSearchResults';
 export class PdfListView extends React.Component {
 
   render() {
-    const showNoSearchResultsMsg = !_.size(this.props.documents) &&
+    const noDocuments = !_.size(this.props.documents) &&
       _.size(this.props.docFilterCriteria.searchQuery);
 
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <DocumentListHeader documents={this.props.documents} clearSearch={this.props.clearSearch} />
+          <DocumentListHeader
+            documents={this.props.documents}
+            clearSearch={this.props.clearSearch}
+            noDocuments={noDocuments}
+          />
           <div>
-            { showNoSearchResultsMsg ?
+            { noDocuments ?
             <NoSearchResults
               clearSearch={this.props.clearSearch}
               searchQuery={this.props.docFilterCriteria.searchQuery}

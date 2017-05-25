@@ -9,9 +9,11 @@ $tag-backgrond-color: #d6d7d9;
     .cf-app-segment--alt {
       border: none;
       margin-top: 0;
+      padding: 4rem 4rem 0rem 4rem;
 
       .cf-msg-screen-deck {
         word-break: break-word;
+        margin-bottom: 0 !important;
       }
     }
   }
