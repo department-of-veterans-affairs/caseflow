@@ -4,7 +4,7 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
 
   def index
-    render json: appeals, each_serializer: ::V1::AppealSerializer
+    render json: appeals, each_serializer: ::V1::AppealSerializer, include: "scheduled_hearings"
   end
 
   private

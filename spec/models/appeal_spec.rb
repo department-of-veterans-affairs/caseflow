@@ -9,7 +9,9 @@ describe Appeal do
       soc_date: soc_date,
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
-      documents: documents
+      documents: documents,
+      hearing_request_type: hearing_request_type,
+      video_hearing_requested: video_hearing_requested
     )
   end
 
@@ -18,6 +20,8 @@ describe Appeal do
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
   let(:documents) { [] }
+  let(:hearing_request_type) { :central_office }
+  let(:video_hearing_requested) { false }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -734,6 +738,34 @@ describe Appeal do
 
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+  end
+
+  context "#sanitized_hearing_request_type" do
+    subject { appeal.sanitized_hearing_request_type }
+    let(:video_hearing_requested) { true }
+
+    context "when central_office" do
+      let(:hearing_request_type) { :central_office }
+      it { is_expected.to eq(:central_office) }
+    end
+
+    context "when travel_board" do
+      let(:hearing_request_type) { :travel_board }
+
+      context "when video_hearing_requested" do
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when video_hearing_requested is false" do
+        let(:video_hearing_requested) { false }
+        it { is_expected.to eq(:travel_board) }
+      end
+    end
+
+    context "when unsupported type" do
+      let(:hearing_request_type) { :confirmation_needed }
+      it { is_expected.to be_nil }
     end
   end
 
