@@ -23,20 +23,18 @@ export class PdfListView extends React.Component {
             clearSearch={this.props.clearSearch}
             noDocuments={noDocuments}
           />
-          <div>
-            { noDocuments ?
-            <NoSearchResults
-              clearSearch={this.props.clearSearch}
-              searchQuery={this.props.docFilterCriteria.searchQuery}
-              /> :
-            <DocumentsTable
-              documents={this.props.documents}
-              onJumpToComment={this.props.onJumpToComment}
-              sortBy={this.props.sortBy}
-              docFilterCriteria={this.props.docFilterCriteria}
-              showPdf={this.props.showPdf}
-            />}
-          </div>
+          { noDocuments ?
+          <NoSearchResults
+            clearSearch={this.props.clearSearch}
+            searchQuery={this.props.docFilterCriteria.searchQuery}
+            /> :
+          <DocumentsTable
+            documents={this.props.documents}
+            onJumpToComment={this.props.onJumpToComment}
+            sortBy={this.props.sortBy}
+            docFilterCriteria={this.props.docFilterCriteria}
+            showPdf={this.props.showPdf}
+          />}
         </div>
       </div>
     </div>;
