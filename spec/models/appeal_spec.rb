@@ -176,6 +176,11 @@ describe Appeal do
 
       it { is_expected.to be_falsy }
     end
+
+    context "when one of the dates is missing" do
+      before { appeal.nod_date = nil }
+      it { is_expected.to be_falsy }
+    end
   end
 
   context "#serialized_decision_date" do

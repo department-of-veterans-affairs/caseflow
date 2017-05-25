@@ -196,6 +196,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def documents_match?
+    return false if missing_certification_data?
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 

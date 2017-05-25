@@ -49,7 +49,8 @@ export class LoadingScreen extends React.Component {
           {this.props.initialDataLoadingFail ?
             <StatusMessage
               title="Unable to load documents">
-              It looks like Caseflow was unable to load this case. Please <a href="">refresh the page</a> and try again.
+              It looks like Caseflow was unable to load this case.<br />
+              Please <a href="">refresh the page</a> and try again.
               </StatusMessage> :
             <div
               id="loading-symbol"
