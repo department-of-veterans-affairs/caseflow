@@ -59,11 +59,33 @@ export class PdfUI extends React.Component {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
       return <div className="cf-pdf-buttons-center">
+        { this.props.prevDocId &&
+          <span className="cf-pdf-buttons-left">
+            <Button
+              name="previous"
+              classNames={['cf-pdf-button']}
+              onClick={this.props.showPdf(this.props.prevDocId)}
+              ariaLabel="previous PDF">
+              <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
+            </Button>
+          </span> }
+
         <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
         |
         <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
+
+        { this.props.nextDocId &&
+          <span className="cf-pdf-buttons-right">
+            <Button
+              name="next"
+              classNames={['cf-pdf-button cf-right-side']}
+              onClick={this.props.showPdf(this.props.nextDocId)}
+              ariaLabel="next PDF">
+              <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
+            </Button>
+          </span> }
       </div>;
     }
 
@@ -151,28 +173,6 @@ export class PdfUI extends React.Component {
               </span>}
             </span>
         </span>
-      </div>
-      <div className="cf-pdf-navigation">
-        { this.props.prevDocId &&
-          <span className="cf-pdf-buttons-left">
-            <Button
-              name="previous"
-              classNames={['cf-pdf-button']}
-              onClick={this.props.showPdf(this.props.prevDocId)}
-              ariaLabel="previous PDF">
-              <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
-        { this.props.nextDocId &&
-          <span className="cf-pdf-buttons-right">
-            <Button
-              name="next"
-              classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.showPdf(this.props.nextDocId)}
-              ariaLabel="next PDF">
-              <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
       </div>
       <div>
         <Pdf
