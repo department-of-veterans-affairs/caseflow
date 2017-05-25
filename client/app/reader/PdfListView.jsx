@@ -91,7 +91,7 @@ export default connect(
 )(PdfListView);
 
 PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  //documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   pdfList: PropTypes.shape({

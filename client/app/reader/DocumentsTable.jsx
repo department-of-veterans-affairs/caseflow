@@ -367,4 +367,13 @@ class DocumentsTable extends React.Component {
   }
 }
 
+DocumentsTable.propTypes = {
+  //documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string,
+  pdfList: PropTypes.shape({
+    lastReadDocId: PropTypes.number
+  })
+};
+
 export default DocumentsTable;
