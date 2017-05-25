@@ -62,7 +62,7 @@ describe('.changeOtherRepresentativeType', () => {
 
 describe('.changePoaMatches', () => {
   it('should create an action to change poaMatches', () => {
-    const poaMatches = 'MATCH';
+    const poaMatches = Constants.poaMatches.NO_MATCH;
     const expectedAction = {
       type: Constants.CHANGE_POA_MATCHES,
       payload: {
@@ -71,6 +71,21 @@ describe('.changePoaMatches', () => {
     };
 
     expect(Actions.changePoaMatches(poaMatches)).
+      to.eql(expectedAction);
+  });
+});
+
+describe('.changePoaCorrectLocation', () => {
+  it('should create an action to change the poa correct location', () => {
+    const poaCorrectLocation = Constants.poaCorrectLocation.VACOLS;
+    const expectedAction = {
+      type: Constants.CHANGE_POA_CORRECT_LOCATION,
+      payload: {
+        poaCorrectLocation
+      }
+    };
+
+    expect(Actions.changePoaCorrectLocation(poaCorrectLocation)).
       to.eql(expectedAction);
   });
 });
@@ -105,6 +120,8 @@ describe('.certificationUpdateStart', () => {
       type: Constants.CERTIFICATION_UPDATE_REQUEST,
       payload: {
         update: {
+          poa_correct_in_bgs: false,
+          poa_correct_in_vacols: false,
           poa_matches: false,
           representative_type: 'ATTORNEY',
           representative_name: 'my attorney'

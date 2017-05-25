@@ -207,7 +207,9 @@ export class ConfirmCaseDetails extends React.Component {
           }
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
-            'Great! Caseflow will update the representative name, type, and address in VACOLS with information from VBMS.'          }
+            'Great! Caseflow will update the representative name, type, and address ' +
+              'in VACOLS with information from VBMS.'
+          }
           {
             poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
             'Please go to VACOLS and manually enter the correct representative information.'

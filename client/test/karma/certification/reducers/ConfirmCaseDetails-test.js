@@ -64,3 +64,18 @@ describe('.changePoaMatches', () => {
       poaMatches).to.eq('MATCH');
   });
 });
+
+describe('.changePoaCorrectLocation', () => {
+  it('should change the correct poa location', () => {
+    let initialState = getBlankInitialState();
+    let action = {
+      type: Constants.CHANGE_POA_CORRECT_LOCATION,
+      payload: {
+        poaCorrectLocation: Constants.poaCorrectLocation.VACOLS
+      }
+    };
+
+    expect(ConfirmCaseDetails.changePoaCorrectLocation(initialState, action).
+      poaCorrectLocation).to.eq(Constants.poaCorrectLocation.VACOLS);
+  });
+});
