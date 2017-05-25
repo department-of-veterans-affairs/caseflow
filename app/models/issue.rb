@@ -2,6 +2,8 @@ class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
                 :program_description
 
+  belongs_to :appeal
+
   PROGRAMS = {
     "02" => :compensation
   }.freeze
@@ -52,6 +54,7 @@ class Issue < ActiveRecord::Base
                     .parameterize.underscore.to_sym
 
       new(
+        vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: TYPES[hash["isscode"]],
         category: CATEGORIES[category_code],

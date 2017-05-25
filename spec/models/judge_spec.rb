@@ -23,5 +23,4 @@ describe Judge do
       expect(subject.last.hearings.first).to eq(hearing_later_date)
     end
   end
-
 end

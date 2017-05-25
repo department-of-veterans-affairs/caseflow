@@ -14,6 +14,16 @@ class HearingsController < ApplicationController
     hearings_dockets_path
   end
 
+  private
+
+  def hearing
+    @hearing ||= Hearing.find(hearing_id)
+  end
+
+  def hearing_id
+    params[:id]
+  end
+
   def verify_access
     verify_authorized_roles("Hearings")
   end

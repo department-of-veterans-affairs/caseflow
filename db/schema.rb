@@ -221,19 +221,19 @@ ActiveRecord::Schema.define(version: 20170524193647) do
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
   create_table "hearing_worksheet_issues", force: :cascade do |t|
-    t.integer "issue_id"
-    t.integer "hearing_worksheet_id"
-    t.string  "status"
-    t.string  "reopen"
-    t.string  "vha"
+    t.integer "issue_id",                             null: false
+    t.integer "hearing_worksheet_id",                 null: false
+    t.integer "status"
+    t.boolean "reopen",               default: false
+    t.boolean "vha",                  default: false
   end
 
   create_table "hearing_worksheets", force: :cascade do |t|
-    t.integer "hearing_id"
+    t.integer "hearing_id",            null: false
     t.string  "witness"
     t.string  "contentions"
     t.string  "evidence"
-    t.string  "comments"
+    t.string  "comments_for_attorney"
     t.string  "military_service"
   end
 

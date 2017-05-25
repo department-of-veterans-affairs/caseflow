@@ -46,6 +46,13 @@ class Generators::Appeal
         certified: {
           certification_date: 1.day.ago
         },
+        pending_hearing: {
+          status: "Active",
+          decision_date: nil,
+          issues: [
+            { disposition: :nil, program: :compensation, type: :service_connection, category: :knee }
+          ]
+        },
         remand_decided: {
           status: "Remand",
           disposition: "Remanded",
@@ -131,12 +138,16 @@ class Generators::Appeal
     private
 
     def set_vacols_issues(appeal:, issues:)
-      (issues ||= []).map! do |issue|
-        issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
-      end
+      (issues || []).map! do |issue|
+        if issue.is_a?(Hash)
+          appeal.save unless appeal.id
 
-      Fakes::AppealRepository.issue_records ||= {}
-      Fakes::AppealRepository.issue_records[appeal.vacols_id] = issues
+          issue[:appeal_id] = appeal.id
+          Generators::Issue.create(issue)
+        else
+          issue
+        end
+      end
     end
 
     def add_inaccessible_appeal(appeal)

@@ -11,8 +11,12 @@ class Generators::Hearing
       }
     end
 
+    def default_appeal
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing })
+    end
+
     def build(attrs = {})
-      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::Appeal.create.id
+      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal.id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
