@@ -376,7 +376,6 @@ export class Pdf extends React.PureComponent {
     }
 
     const {xPosition, yPosition} = this.getPageCoordinatesOfMouseEvent(event, pageIndex);
-    console.log(event, xPosition, yPosition);
 
     this.props.showPlaceAnnotationIcon(pageIndex, xPosition, yPosition);
   }
@@ -530,10 +529,15 @@ export class Pdf extends React.PureComponent {
 
   getPageCoordinatesOfMouseEvent(event, pageNumber) {
     const container = this.pageElements[pageNumber].pageContainer.getBoundingClientRect();
+    // We could do something clever where we inspect the SVG to determine its width,
+    // but that seems to be more effort than it's worth.
+    const annotationIconSideLength = 40;
+    const unconstrainedX = (event.pageX - container.left) / this.props.scale;
+    const unconstrainedY = (event.pageY - container.top) / this.props.scale;
 
     return {
-      xPosition: (event.pageX - container.left) / this.props.scale,
-      yPosition: (event.pageY - container.top) / this.props.scale
+      xPosition: _.clamp(unconstrainedX, 0, container.right - annotationIconSideLength),
+      yPosition: _.clamp(unconstrainedY, 0, container.bottom - annotationIconSideLength)
     };
   }
 

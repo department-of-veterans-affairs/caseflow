@@ -566,6 +566,9 @@ export const reducer = (state = initialState, action = {}) => {
     });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
+      placingAnnotationIconCoords: {
+        $set: null
+      },
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pdf: {
