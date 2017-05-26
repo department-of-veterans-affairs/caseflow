@@ -7,7 +7,7 @@ class Api::V1::ApplicationController < ActionController::Base
   before_action :setup_fakes,
                 :verify_authentication_token
 
-  rescue_from Exception do |error|
+  rescue_from StandardError do |error|
     Raven.capture_exception(error)
 
     render json: {
