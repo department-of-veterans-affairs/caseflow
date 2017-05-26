@@ -7,11 +7,22 @@ class StyleGuideSearch extends Component {
     super(props);
 
     this.state = {
-      value: ''
+      loading: {
+        default: false
   
-    }
+      }
+   };
 
+}
+
+toggle = (event) => {
+    let state = this.state;
+    let attr = event.target.getAttribute('id').split('-')[1];
+
+    state.loading[attr] = !state.loading[attr];
+    this.setState(state);
   }
+
 
   render() {
     
@@ -28,8 +39,11 @@ class StyleGuideSearch extends Component {
         <div className="cf-sg-searchbar-example">
           <SearchBar 
             id="search-field"
-            xclassNames="usa-search usa-search-big"
+            classNames="usa-search usa-search-big"
+            onClick={this.toggle}
+            loading={this.state.loading.default}
           />
+
         </div>
       </div>
     );
