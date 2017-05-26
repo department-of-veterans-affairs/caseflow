@@ -32,8 +32,8 @@ class CertificationsController < ApplicationController
                         "form9_type",
                         "hearing_preference",
                         "certifying_official_name",
-                        "certifying_official_title",
-                        "certification_date")
+                        "certifying_official_title"
+                       )
     certification.update!(permitted)
   end
 
