@@ -122,7 +122,8 @@ export default class TextStyles extends React.Component {
         className="cf-sg-typography-text-styles"
         columns={columns}
         rowObjects={rowObjects}
-        summary="Caseflow Typography - Text Styles" />
+        summary="Caseflow Typography - Text Styles"
+        slowReRendersAreOk={true} />
     </div>;
   };
 }
