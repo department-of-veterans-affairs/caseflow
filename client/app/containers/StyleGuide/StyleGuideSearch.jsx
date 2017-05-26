@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import SearchBar from '../../components/SearchBar';
+import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 class StyleGuideSearch extends Component {
@@ -8,25 +10,19 @@ class StyleGuideSearch extends Component {
 
     this.state = {
       loading: {
-        default: false
-  
+        search: false
       }
    };
 
 }
 
-toggle = (event) => {
-    let state = this.state;
-    let attr = event.target.getAttribute('id').split('-')[1];
-
-    state.loading[attr] = !state.loading[attr];
-    this.setState(state);
-  }
-
+  handleMenuClick = () => {
+    this.setState((prevState) => ({
+      search: !prevState.search
+    }));
+  };
 
   render() {
-    
-
     return (
       <div>
         <StyleGuideComponentTitle
@@ -37,13 +33,21 @@ toggle = (event) => {
 
         <h3>Search Small</h3>
         <div className="cf-sg-searchbar-example">
-          <SearchBar 
-            id="search-field"
-            classNames="usa-search usa-search-big"
-            onClick={this.toggle}
-            loading={this.state.loading.default}
-          />
-
+          <InlineForm>
+            <SearchBar
+              id="search-field"
+              classNames="usa-search usa-search-big"
+              onClick={this.handleMenuClick}
+              loading={this.state.search}
+            />
+            <Button
+              id="reset-default"
+              name="Reset"
+              onClick={this.handleMenuClick}
+              classNames={['cf-btn-link']}
+              disabled={!this.state.search}
+            />
+          </InlineForm>
         </div>
       </div>
     );

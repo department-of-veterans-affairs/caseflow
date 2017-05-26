@@ -14,7 +14,8 @@ export default class SearchBar extends React.Component {
       id,
       onClick,
       value,
-      onClearSearch
+      onClearSearch,
+      loading
     } = this.props;
 
     let getSrOnlyClassName = () => {
@@ -44,9 +45,9 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <button onClick={onClick} type="submit">
+      <Button name="search" onClick={onClick} type="submit" loading={loading}>
         <span className={getSrOnlyClassName()}>Search</span>
-      </button>
+      </Button>
     </span>;
   }
 }
