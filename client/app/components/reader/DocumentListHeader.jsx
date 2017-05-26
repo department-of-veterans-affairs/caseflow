@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
 import { connect } from 'react-redux';
-import { setSearch, clearAllFilters, clearSearch, toggleExpandAll } from '../../reader/actions';
+import { setSearch, clearAllFilters, toggleExpandAll, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
 
 export const DocumentListHeader = (props) => {
@@ -38,6 +38,7 @@ export const DocumentListHeader = (props) => {
             name={buttonText}
             onClick={props.toggleExpandAll}
             id="btn-default"
+            disabled={props.noDocuments}
           />
         </span>
       </div>
@@ -60,6 +61,7 @@ DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
   expandAll: PropTypes.bool,
   toggleExpandAll: PropTypes.func,
+  noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
   numberOfDocuments: PropTypes.number.isRequired
 };
@@ -71,11 +73,9 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => dispatch(clearAllFilters()),
+  clearSearch: () => dispatch(clearSearch()),
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
-  },
-  clearSearch: () => {
-    dispatch(clearSearch());
   },
   toggleExpandAll: () => {
     dispatch(toggleExpandAll());
