@@ -531,6 +531,8 @@ export class Pdf extends React.PureComponent {
   getPageCoordinatesOfMouseEvent(event, pageNumber) {
     const container = this.pageElements[pageNumber].pageContainer.getBoundingClientRect();
 
+    // This does not seem to be correct. The coordinates it produces, when placed on the page, are not where the mouse actually is.
+    // What about onCommentDrop? It uses a slightly different formula. Maybe that's the right one?
     return {
       // xPosition: event.pageY,
       // yPosition: event.pageY
