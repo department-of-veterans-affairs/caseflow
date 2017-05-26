@@ -15,6 +15,10 @@ class DocumentController < ApplicationController
 
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
+  def document_filename
+    '#{params[:type]}-#{params[:id]}'
+  end
+
   def pdf
     document = Document.find(params[:id])
 
@@ -24,7 +28,7 @@ class DocumentController < ApplicationController
       send_file(
         document.serve,
         type: "application/pdf",
-        disposition: "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'")
+        disposition: "attachment; filename='#{document_filename}.pdf'")
     else
       send_file(
         document.serve,

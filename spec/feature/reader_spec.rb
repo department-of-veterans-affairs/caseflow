@@ -583,7 +583,6 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Form 9")
     end
 
-    ## TODO: test that name of file is downloaded instead of checking for download(?)
     scenario "Download PDF file" do
       DownloadHelpers.clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
