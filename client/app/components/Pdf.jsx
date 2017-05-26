@@ -63,7 +63,7 @@ export class Pdf extends React.PureComponent {
     this.prerenderedPdfs = {};
     this.isPrerendering = false;
 
-    this.pageElements = [];
+    this.pageElements = {};
     this.fakeCanvas = [];
     this.scrollWindow = null;
 
@@ -247,11 +247,11 @@ export class Pdf extends React.PureComponent {
   }
 
   performFunctionOnEachPage = (func) => {
-    this.pageElements.forEach((ele, index) => {
+    _.forEach(this.pageElements, (ele, index) => {
       if (ele.pageContainer) {
         const boundingRect = ele.pageContainer.getBoundingClientRect();
 
-        func(boundingRect, index);
+        func(boundingRect, Number(index));
       }
     });
   }
@@ -268,19 +268,33 @@ export class Pdf extends React.PureComponent {
           return resolve();
         }
 
-        this.pageElements = [];
+        this.pageElements = {};
 
         this.refFunctionGetters.canvas = [];
         this.refFunctionGetters.textLayer = [];
         this.refFunctionGetters.pageContainer = [];
 
+
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-          this.refFunctionGetters.canvas[index] = (canvas) =>
-            _.set(this.pageElements, [index, 'canvas'], canvas);
-          this.refFunctionGetters.textLayer[index] = (textLayer) =>
-            _.set(this.pageElements, [index, 'textLayer'], textLayer);
-          this.refFunctionGetters.pageContainer[index] = (pageContainer) =>
-            _.set(this.pageElements, [index, 'pageContainer'], pageContainer);
+          const makeSetRef = (elemKey) => (elem) => {
+            // We only want to save the element if it actually exists.
+            // When the node unmounts, React will call the ref function
+            // with null. When this happens, we want to delete the 
+            // entire pageElements object for this index, instead of 
+            // setting it as a null value. This makes code that reads
+            // this.pageElements much simpler, because it does not need
+            // to account for the possibility that some pageElements are
+            // nulled out because they refer to pages that are no longer rendered.
+            if (elem) {
+              _.set(this.pageElements, [index, elemKey], elem)
+            } else {
+              delete this.pageElements[index];
+            }
+          };
+
+          this.refFunctionGetters.canvas[index] = makeSetRef('canvas');
+          this.refFunctionGetters.textLayer[index] = makeSetRef('textLayer');
+          this.refFunctionGetters.pageContainer[index] = makeSetRef('pageContainer');
         });
 
         this.setState({
@@ -539,6 +553,14 @@ export class Pdf extends React.PureComponent {
     const unconstrainedY = (event.pageY - container.top) / this.props.scale;
     const xUpperBound = (container.right - annotationOffset) / this.props.scale;
     const yUpperBound = (container.bottom - annotationOffset) / this.props.scale;
+
+    console.log({
+      pageX: event.pageX,
+      containerRight: container.right,
+      containerLeft: container.left,
+      unconstrainedX,
+      xUpperBound
+    })
 
     // TODO this does not work at different zoom levels, and does not work for y.
 
