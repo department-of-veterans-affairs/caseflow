@@ -582,6 +582,15 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("Form 9")
     end
+
+    scenario "When user search term is not found" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      search_query = "does not exist in annoations"
+      fill_in "searchBar", with: search_query
+
+      expect(page).to have_content("Search results not found")
+      expect(page).to have_content(search_query)
+    end
   end
 
   context "Large number of documents" do
