@@ -155,7 +155,7 @@ class Fakes::AppealRepository
       records.select { |_, r| r[:appellant_ssn] == appellant_ssn }
     end
 
-    raise ActiveRecord::RecordNotFound if return_records.empty?
+    fail ActiveRecord::RecordNotFound if return_records.empty?
 
     return_records.map do |vacols_id, r|
       Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
