@@ -5,13 +5,14 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation } from '../reader/utils';
+import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow,
+  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
@@ -345,15 +346,27 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
-  componentDidMount = () => {
+  keyListener = (event) => {
+    if (isUserEditingText()) {
+      return;
+    }
+
+    if (event.altKey && event.code === 'KeyC') {
+      this.props.startPlacingAnnotation();
+    }
+  }
+
+  componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.renderInViewPages);
+    window.addEventListener('keydown', this.keyListener);
 
     this.setUpPdf(this.props.file);
   }
 
-  comopnentWillUnmount = () => {
+  comopnentWillUnmount() {
     window.removeEventListener('resize', this.renderInViewPages);
+    window.removeEventListener('keydown', this.keyListener);
   }
 
   setUpFakeCanvasRefFunctions = () => {
@@ -607,6 +620,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
+    startPlacingAnnotation,
     requestMoveAnnotation
   }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
