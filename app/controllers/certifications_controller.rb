@@ -31,8 +31,6 @@ class CertificationsController < ApplicationController
                         "hearing_change_doc_found_in_vbms",
                         "form9_type",
                         "hearing_preference",
-                        "certifying_office",
-                        "certifying_username",
                         "certifying_official_name",
                         "certifying_official_title",
                         "certification_date")
@@ -46,17 +44,15 @@ class CertificationsController < ApplicationController
 
   def certify_v2
     update_certification_from_v2_form
+    validate_data_presence_v2
     form8.update_from_string_params(
       representative_type: certification.representative_type,
       representative_name: certification.representative_name,
       hearing_preference: certification.hearing_preference,
       # This field is necessary when on v2 certification but v1 form8
       hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
-      certifying_office: certification.certifying_office,
-      certifying_username:  certification.certifying_username,
       certifying_official_name: certification.certifying_official_name,
-      certifying_official_title: certification.certifying_official_title,
-      certification_date: certification.certification_date
+      certifying_official_title: certification.certifying_official_title
     )
     form8.save_pdf!
     @certification.complete!(current_user.id)
@@ -100,6 +96,19 @@ class CertificationsController < ApplicationController
   end
 
   private
+
+  # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
+  def validate_data_presence_v2
+    fail CertificationMissingData unless check_confirm_case_data && check_confirm_hearing_data
+  end
+
+  def check_confirm_case_data
+    certification.representative_type && certification.representative_name
+  end
+
+  def check_confirm_hearing_data
+    certification.hearing_preference
+  end
 
   def certification_cancellation
     @certification_cancellation ||= CertificationCancellation.new(certification_id: certification.id)
