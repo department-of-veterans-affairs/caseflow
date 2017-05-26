@@ -39,7 +39,7 @@ require_relative "support/download_helper"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-download_directory = Rails.root.join('tmp/downloads')
+download_directory = Rails.root.join("tmp/downloads")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 

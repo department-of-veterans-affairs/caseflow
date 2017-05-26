@@ -1,8 +1,8 @@
 module DownloadHelpers
   TIMEOUT = 60
-  WORKDIR = Rails.root.join('tmp/downloads')
+  WORKDIR = Rails.root.join("tmp/downloads")
 
-  extend self
+  module_function
 
   def downloads
     Dir.entries(WORKDIR)
@@ -34,5 +34,4 @@ module DownloadHelpers
   def clear_downloads
     FileUtils.rm_f(downloads)
   end
-
 end

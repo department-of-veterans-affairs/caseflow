@@ -8,9 +8,8 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { FilterIcon } from '../components/RenderFunctions';
+import { downloadIcon, FilterIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
-import { downloadIcon } from '../components/RenderFunctions';
 import _ from 'lodash';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
@@ -25,8 +24,8 @@ export const linkToSingleDocumentView = (basePath, doc) => {
 
 export const downloadLink = (file, type) => {
 
-  return `${file}?download=true&type=${type}`
-}
+  return `${file}?download=true&type=${type}`;
+};
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
