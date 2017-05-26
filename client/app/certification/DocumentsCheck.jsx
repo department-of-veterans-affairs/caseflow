@@ -51,7 +51,7 @@ class UnconnectedDocumentsCheck extends React.Component {
           with an <NotFoundIcon/> in the appellant's eFolder. This usually happens when
           something doesn't match up. Try checking:</p>
         <ul>The <strong>document type</strong> in VBMS to make sure it's
-          <a href="/help#mismatched-documents"> labeled correctly</a></ul>
+          <a href="/certification/help#mismatched-documents"> labeled correctly</a></ul>
         <ul>The <strong>document date</strong> — the date in VBMS must match
         the date in VACOLS</ul>
         <p>Once you've made corrections, <a href="">refresh this page.</a></p>
