@@ -5,14 +5,14 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation, isUserEditingText, boundingBoxContains } from '../reader/utils';
+import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow,
-  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation, 
+  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -274,19 +274,18 @@ export class Pdf extends React.PureComponent {
         this.refFunctionGetters.textLayer = [];
         this.refFunctionGetters.pageContainer = [];
 
-
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
           const makeSetRef = (elemKey) => (elem) => {
             // We only want to save the element if it actually exists.
             // When the node unmounts, React will call the ref function
-            // with null. When this happens, we want to delete the 
-            // entire pageElements object for this index, instead of 
+            // with null. When this happens, we want to delete the
+            // entire pageElements object for this index, instead of
             // setting it as a null value. This makes code that reads
             // this.pageElements much simpler, because it does not need
             // to account for the possibility that some pageElements are
             // nulled out because they refer to pages that are no longer rendered.
             if (elem) {
-              _.set(this.pageElements, [index, elemKey], elem)
+              _.set(this.pageElements, [index, elemKey], elem);
               if (elemKey === 'pageContainer') {
                 elem.addEventListener('mousemove', this.mouseListener);
               }
@@ -375,19 +374,17 @@ export class Pdf extends React.PureComponent {
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
-    } 
+    }
   }
 
   mouseListener = (event) => {
     const pageIndex = _(this.pageElements).
       map('pageContainer').
-      findIndex((pageContainer) => boundingBoxContains(event, pageContainer.getBoundingClientRect()));
-
-    if (pageIndex === -1) {
-      return;
-    }
-
-    const {xPosition, yPosition} = this.getPageCoordinatesOfMouseEvent(event, pageIndex);
+      indexOf(event.currentTarget);
+    const { xPosition, yPosition } = this.getPageCoordinatesOfMouseEvent(
+      event,
+      event.currentTarget.getBoundingClientRect()
+    );
 
     this.props.showPlaceAnnotationIcon(pageIndex, xPosition, yPosition);
   }
@@ -537,8 +534,7 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
-  getPageCoordinatesOfMouseEvent(event, pageNumber) {
-    const container = this.pageElements[pageNumber].pageContainer.getBoundingClientRect();
+  getPageCoordinatesOfMouseEvent(event, container) {
     // We could do something clever where we inspect the SVG to determine its width,
     // but that seems to be more effort than it's worth.
     const annotationIconSideLength = 40;
@@ -573,7 +569,7 @@ export class Pdf extends React.PureComponent {
       if (!acc[comment.page]) {
         acc[comment.page] = [];
       }
-      
+
       acc[comment.page].push(
         <CommentIcon
           comment={comment}
@@ -600,7 +596,10 @@ export class Pdf extends React.PureComponent {
           return;
         }
 
-        const {xPosition, yPosition} = this.getPageCoordinatesOfMouseEvent(event, pageNumber - 1);
+        const { xPosition, yPosition } = this.getPageCoordinatesOfMouseEvent(
+          event,
+          this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect()
+        );
 
         this.props.placeAnnotation(pageNumber, {
           xPosition,
