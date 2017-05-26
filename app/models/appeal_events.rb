@@ -66,8 +66,8 @@ class AppealEvents
   end
 
   def cavc_decision_events
-    appeal.cavc_decisions.map do |cavc_decision|
-      AppealEvent.new(type: :cavc_decision, date: cavc_decision.decision_date)
+    appeal.cavc_decisions.map(&:decision_date).uniq.map do |cavc_decision_date|
+      AppealEvent.new(type: :cavc_decision, date: cavc_decision_date)
     end
   end
 end
