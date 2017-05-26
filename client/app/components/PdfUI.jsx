@@ -7,7 +7,10 @@ import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
+import { docListIsFiltered } from '../reader/selectors';
+import { FilterIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
+import _ from 'lodash';
 
 export const linkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
@@ -52,9 +55,15 @@ export class PdfUI extends React.Component {
   }
 
   getPdfFooter = () => {
-    if (this.props.pdfsReadyToShow && this.props.pdfsReadyToShow[this.props.doc.id] && this.state.numPages) {
+    if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
+      const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+
       return <div className="cf-pdf-buttons-center">
-        Page {this.state.currentPage} of {this.state.numPages}
+        <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
+        |
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+        </span>
       </div>;
     }
 
@@ -174,6 +183,7 @@ export class PdfUI extends React.Component {
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
+          prefetchFiles={this.props.prefetchFiles}
           onCommentScrolledTo={this.props.onCommentScrolledTo}
         />
       </div>
@@ -184,7 +194,11 @@ export class PdfUI extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => state.ui.pdf;
+const mapStateToProps = (state) => ({
+  ..._.pick(state.ui, 'filteredDocIds'),
+  docListIsFiltered: docListIsFiltered(state),
+  ...state.ui.pdf
+});
 const mapDispatchToProps = (dispatch) => ({
   stopPlacingAnnotation: () => {
     dispatch(stopPlacingAnnotation());
@@ -221,5 +235,6 @@ PdfUI.propTypes = {
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
   showDocumentsListNavigation: PropTypes.bool.isRequired,
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool
 };

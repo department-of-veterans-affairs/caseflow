@@ -103,6 +103,15 @@ describe Appeal do
     end
   end
 
+  context "#cavc_decisions" do
+    subject { appeal.cavc_decisions }
+
+    let!(:cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
+    let!(:another_cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
+
+    it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
+  end
+
   context "#events" do
     subject { appeal.events }
     let(:soc_date) { 5.days.ago }
@@ -165,6 +174,11 @@ describe Appeal do
         appeal.ssoc_dates = [6.days.ago, 9.days.ago]
       end
 
+      it { is_expected.to be_falsy }
+    end
+
+    context "when one of the dates is missing" do
+      before { appeal.nod_date = nil }
       it { is_expected.to be_falsy }
     end
   end
