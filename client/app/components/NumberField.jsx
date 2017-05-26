@@ -14,16 +14,6 @@ export default class NumberField extends React.Component {
     this.props.onChange(val && Number(val));
   }
 
-  getClassName = () => {
-    let cn = this.props.className;
-
-    if (this.props.isInteger) {
-      cn.push('cf-form-int-input');
-    }
-
-    return cn;
-  };
-
   render() {
     return <div className={this.props.isInteger && 'cf-form-int-input'}>
       <TextField
