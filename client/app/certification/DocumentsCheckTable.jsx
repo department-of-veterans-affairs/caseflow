@@ -4,22 +4,25 @@ import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
 import Table from '../components/Table';
 
+const found = <div style={{ display: 'inline-flex' }}><FoundIcon/>
+                    <span>&emsp;Found in VBMS</span>
+                 </div>;
+
+const notFound = <div style={{ display: 'inline-flex' }}><NotFoundIcon/>
+                    <span style={{ lineHeight: 1 }} className="usa-input-error-message">&emsp;Not found in VBMS</span>
+                 </div>;
+
 const documentIcon = (doc) => {
-  return doc.isMatching ? <FoundIcon/> : <NotFoundIcon/>;
+  return doc.isMatching ? found : notFound;
 };
 
 const formattedVbmsDate = (doc) => {
-  return doc.isMatching ? doc.vbmsDate : 'Not Found';
+  return doc.isMatching ? doc.vbmsDate : '\u2014';
 };
 
 class DocumentsCheckTable extends React.Component {
   getUserColumns = () => {
     return [
-      {
-        header: <span><span className="usa-sr-only">Status</span>Found in VBMS?</span>,
-        valueFunction: (doc) => documentIcon(doc),
-        align: 'center'
-      },
       {
         header: 'Document',
         valueName: 'name'
@@ -27,12 +30,17 @@ class DocumentsCheckTable extends React.Component {
       {
         header: 'VACOLS date',
         valueName: 'vacolsDate',
-        align: 'center'
+        align: 'left'
       },
       {
         header: 'VBMS date',
         valueFunction: (doc) => formattedVbmsDate(doc),
-        align: 'center'
+        align: 'left'
+      },
+      {
+        header: <span><span className="usa-sr-only">Status</span>Status</span>,
+        valueFunction: (doc) => documentIcon(doc),
+        align: 'left'
       }
     ];
   }
