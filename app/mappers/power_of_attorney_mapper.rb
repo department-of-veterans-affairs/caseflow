@@ -48,12 +48,13 @@ module PowerOfAttorneyMapper
   end
 
   # BGS Methods
-  # todo: fill out this hash
+  # TODO: fill out this hash for "Other" and "No Representative"
   BGS_REP_TYPE_TO_REP_TYPE = {
-    "POA Attorney": "Attorney",
-    "POA Agent": "Agent",
-    "POA Local/Regional Organization": "Service Organization",
-    "POA State Organization": "Service Organization"
+    "POA Attorney" => "Attorney",
+    "POA Agent" => "Agent",
+    "POA Local/Regional Organization" => "Service Organization",
+    "POA State Organization" => "Service Organization",
+    "POA National Organization" => "Service Organization"
   }.freeze
 
   BGS_REP_NAMES_TO_VACOLS_REP_CODES = {
