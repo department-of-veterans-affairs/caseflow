@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import TextField from '../components/TextField';
+import NumberField from '../components/NumberField';
 import Button from '../components/Button';
 import InlineForm from '../components/InlineForm';
 import ApiUtil from '../util/ApiUtil';
@@ -11,13 +11,12 @@ import * as Constants from './constants/index';
 const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeCountChange }) => {
   return <div>
     <InlineForm>
-        <TextField
+        <NumberField
           label="Enter the number of people working today"
           name="employeeCount"
           readOnly={false}
           onChange={handleEmployeeCountChange}
           value={employeeCount}
-          type="number"
           isInteger={true}
           {...employeeCount}
         />

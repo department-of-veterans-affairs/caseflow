@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextField from '../components/TextField';
+import NumberField from '../components/NumberField';
 import { connect } from 'react-redux';
 import * as Constants from './constants/index';
 
@@ -13,14 +13,13 @@ const AssignedTasks = ({
     {!userQuota.isEditingTaskCount && userQuota.taskCount }
 
     {userQuota.isEditingTaskCount &&
-      <TextField
+      <NumberField
         label={false}
         validationError={false}
         name={`quota-${userQuota.id}`}
         id={`quota-${userQuota.id}`}
         className={['cf-inline-field']}
         onChange={handleEditTaskCount}
-        type="number"
         isInteger={true}
         value={userQuota.newTaskCount}
         title={`Update ${userQuota.userName}'s assigned tasks`}
