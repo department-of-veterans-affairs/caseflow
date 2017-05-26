@@ -105,7 +105,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
       click_on "Back to all documents"
-      fill_in "searchBar", with: "9"
+      fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
       expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")

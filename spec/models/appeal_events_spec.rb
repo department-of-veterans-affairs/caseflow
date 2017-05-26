@@ -199,18 +199,23 @@ describe AppealEvents do
 
     context "cavc decision event" do
       subject do
-        events.find { |event| event.type == :cavc_decision && event.date == cavc_date }
+        events.select { |event| event.type == :cavc_decision && event.date == cavc_date }
       end
 
       let(:cavc_date) { 6.months.ago }
 
-      context "when appeal has a cavc decision" do
-        let!(:cavc_decision) { Generators::CAVCDecision.build(appeal: appeal, decision_date: cavc_date) }
-        it { is_expected.to_not be_nil }
+      context "when appeal has cavc decisions" do
+        let!(:cavc_decisions) do
+          2.times { Generators::CAVCDecision.build(appeal: appeal, decision_date: cavc_date) }
+        end
+
+        it "creates one event per cavc decision date" do
+          expect(subject.length).to eq(1)
+        end
       end
 
       context "when appeal doesn't have a cavc decision" do
-        it { is_expected.to be_nil }
+        it { is_expected.to be_empty }
       end
     end
   end
