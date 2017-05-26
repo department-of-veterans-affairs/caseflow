@@ -30,6 +30,10 @@ const PAGE_HEIGHT = 1056;
 
 const NUM_PAGES_TO_PRERENDER = 2;
 
+// We could do something clever where we inspect the SVG to determine its width,
+// but that seems to be more effort than it's worth.
+const ANNOTATION_ICON_SIDE_LENGTH = 40;
+
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
 // they become visible.
@@ -370,6 +374,10 @@ export class Pdf extends React.PureComponent {
 
     if (event.altKey && event.code === 'KeyC') {
       this.props.startPlacingAnnotation();
+
+      const firstPageWithRoomForIcon = _(this.pageElements).
+        map('pageContainer').
+        findIndex((pageContainer) => pageContainer.getBoundingClientRect().bottom >= this.scrollWindow.getBoundingClientRect().top + ANNOTATION_ICON_SIDE_LENGTH);
     }
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
@@ -535,13 +543,10 @@ export class Pdf extends React.PureComponent {
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   getPageCoordinatesOfMouseEvent(event, container) {
-    // We could do something clever where we inspect the SVG to determine its width,
-    // but that seems to be more effort than it's worth.
-    const annotationIconSideLength = 40;
     const unconstrainedPageX = event.pageX - container.left;
     const unconstrainedPageY = event.pageY - container.top;
-    const constrainedPageX = Math.min(unconstrainedPageX, container.right - container.left - annotationIconSideLength);
-    const constrainedPageY = Math.min(unconstrainedPageY, container.bottom - container.top - annotationIconSideLength);
+    const constrainedPageX = Math.min(unconstrainedPageX, container.right - container.left - ANNOTATION_ICON_SIDE_LENGTH);
+    const constrainedPageY = Math.min(unconstrainedPageY, container.bottom - container.top - ANNOTATION_ICON_SIDE_LENGTH);
 
     return {
       xPosition: constrainedPageX / this.props.scale,
