@@ -45,6 +45,10 @@ export const certificationReducers = function(state = initialState, action = {})
     return ConfirmCaseDetailsReducers.changeRepresentativeType(state, action);
   case Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE:
     return ConfirmCaseDetailsReducers.changeOtherRepresentativeType(state, action);
+  case Constants.CHANGE_POA_MATCHES:
+    return ConfirmCaseDetailsReducers.changePoaMatches(state, action);
+  case Constants.CHANGE_POA_CORRECT_LOCATION:
+    return ConfirmCaseDetailsReducers.changePoaCorrectLocation(state, action);
 
   // ConfirmHearing
   // ==================
@@ -115,6 +119,34 @@ export const hearingDocumentIsInVbmsToStr = function(hearingDocumentIsInVbms) {
   }
 };
 
+export const poaMatchesToStr = function(poaMatches) {
+  switch (poaMatches) {
+  case true:
+    return Constants.poaMatches.MATCH;
+  case false:
+    return Constants.poaMatches.NO_MATCH;
+  default:
+    return null;
+  }
+};
+
+// poaCorrectLocation/poaCorrectInVacols/poaCorrectinBGS will all be null if poaMatches is true
+// if poaMatches is false, either one of poaCorrectInVacols or poaCorrectInBgs will be true, or
+// they will both be false.
+// poaCorrectInVacols and poaCorrectInBGs should never both be true
+export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectInBgs) {
+  if (poaCorrectInVacols === true) {
+    return Constants.poaCorrectLocation.VACOLS;
+  } else if (poaCorrectInBgs === true) {
+    return Constants.poaCorrectLocation.VBMS;
+  } else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
+    return Constants.poaCorrectLocation.NONE;
+  }
+
+  return null;
+
+};
+
 const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
@@ -129,6 +161,8 @@ export const mapDataToInitialState = (state) => ({
   vacolsRepresentativeName: state.vacols_representative_name,
   representativeType: state.representative_type,
   representativeName: state.representative_name,
+  poaMatches: poaMatchesToStr(state.poa_matches),
+  poaCorrectLocation: poaCorrectLocationToStr(state.poa_correct_in_vacols, state.poa_correct_in_bgs),
   nod: parseDocumentFromApi(state.appeal.nod),
   soc: parseDocumentFromApi(state.appeal.soc),
   form9: parseDocumentFromApi(state.appeal.form9),

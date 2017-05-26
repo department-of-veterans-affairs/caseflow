@@ -30,6 +30,20 @@ export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   }
 });
 
+export const changePoaMatches = (poaMatches) => ({
+  type: Constants.CHANGE_POA_MATCHES,
+  payload: {
+    poaMatches
+  }
+});
+
+export const changePoaCorrectLocation = (poaCorrectLocation) => ({
+  type: Constants.CHANGE_POA_CORRECT_LOCATION,
+  payload: {
+    poaCorrectLocation
+  }
+});
+
 export const handleServerError = () => ({
   type: Constants.HANDLE_SERVER_ERROR
 });
@@ -39,19 +53,21 @@ export const certificationUpdateSuccess = () => ({
 });
 
 export const certificationUpdateStart = (params, dispatch) => {
-  // On the backend, we only have one column for "representativeType",
-  // and we don't store "Other" in that column.
-  // TODO (alex): create column for this?
-  const type = params.representativeType === Constants.representativeTypes.OTHER ?
-    params.otherRepresentativeType : params.representativeType;
+  const type = params.representativeType;
   const name = params.representativeName;
+  const poaMatches = params.poaMatches === Constants.poaMatches.MATCH;
+  const poaCorrectInVacols = params.poaCorrectLocation === Constants.poaCorrectLocation.VACOLS;
+  const poaCorrectInBgs = params.poaCorrectLocation === Constants.poaCorrectLocation.VBMS;
 
   // Translate camelcase React names into snake case
   // Rails key names.
   /* eslint-disable camelcase */
   const update = {
     representative_type: type,
-    representative_name: name
+    representative_name: name,
+    poa_matches: poaMatches,
+    poa_correct_in_vacols: poaCorrectInVacols,
+    poa_correct_in_bgs: poaCorrectInBgs
   };
   /* eslint-enable "camelcase" */
 
