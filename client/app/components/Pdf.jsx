@@ -353,6 +353,8 @@ export class Pdf extends React.PureComponent {
     }
 
     if (event.altKey && event.code === 'KeyC') {
+      // TODO Be sure to show the annotation as soon as the key is pressed, instead of hiding the cursor
+      // after the key is pressed but before the mouse is moved
       this.props.startPlacingAnnotation();
     }
 
@@ -532,12 +534,17 @@ export class Pdf extends React.PureComponent {
     // We could do something clever where we inspect the SVG to determine its width,
     // but that seems to be more effort than it's worth.
     const annotationIconSideLength = 40;
+    const annotationOffset = annotationIconSideLength + 15;
     const unconstrainedX = (event.pageX - container.left) / this.props.scale;
     const unconstrainedY = (event.pageY - container.top) / this.props.scale;
+    const xUpperBound = (container.right - annotationOffset) / this.props.scale;
+    const yUpperBound = (container.bottom - annotationOffset) / this.props.scale;
+
+    // TODO this does not work at different zoom levels, and does not work for y.
 
     return {
-      xPosition: _.clamp(unconstrainedX, 0, container.right - annotationIconSideLength),
-      yPosition: _.clamp(unconstrainedY, 0, container.bottom - annotationIconSideLength)
+      xPosition: _.clamp(unconstrainedX, 0, xUpperBound),
+      yPosition: _.clamp(unconstrainedY, 0, yUpperBound)
     };
   }
 
