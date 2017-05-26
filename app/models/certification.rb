@@ -48,7 +48,6 @@ class Certification < ActiveRecord::Base
       @form8.assign_attributes_from_appeal(appeal)
       @form8.save!
     else
-      # TODO: This method seems obsolete since assign_attributes_from_appeal does the same
       form8.update_certification_date
     end
   end
