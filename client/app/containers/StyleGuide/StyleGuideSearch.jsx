@@ -14,14 +14,7 @@ class StyleGuideSearch extends Component {
   }
 
   render() {
-    const options = [{ value: 'unitedstates',
-      label: 'United States' },
-    { value: 'germany',
-      label: 'Germany' },
-    { value: 'france',
-      label: 'France' },
-    { value: 'russia',
-      label: 'Russia' }];
+    
 
     return (
       <div>
@@ -32,10 +25,12 @@ class StyleGuideSearch extends Component {
         />
 
         <h3>Search Small</h3>
-        <SearchBar 
-          id="search-field-big"
-          classNames="usa-search usa-search-big"
-        />
+        <div className="cf-sg-searchbar-example">
+          <SearchBar 
+            id="search-field"
+            xclassNames="usa-search usa-search-big"
+          />
+        </div>
       </div>
     );
   }

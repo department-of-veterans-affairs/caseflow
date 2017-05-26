@@ -369,3 +369,12 @@ select {
     }
   }
 }
+
+.usa-search {
+  &.usa-search-medium,
+  &.usa-search-big {
+    [type="submit"] {
+      background-image: none;
+    } 
+  } 
+}
