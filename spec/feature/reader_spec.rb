@@ -511,7 +511,7 @@ RSpec.feature "Reader" do
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
-      expect(find("#medical", visible: false).checked?).to be false
+      expect(find("#medical", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
     end
 
@@ -613,7 +613,7 @@ RSpec.feature "Reader" do
 
       scroll_to_bottom("documents-table-body")
       original_scroll_position = scroll_position("documents-table-body")
-      click_on documents.first.type
+      click_on documents.last.type
 
       click_on "Back to all documents"
 
