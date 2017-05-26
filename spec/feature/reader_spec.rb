@@ -103,7 +103,7 @@ RSpec.feature "Reader" do
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
       click_on "Back to all documents"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
@@ -466,7 +466,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Categories", focus:true do
+    scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       def get_aria_labels(elems)
@@ -511,7 +511,7 @@ RSpec.feature "Reader" do
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
-      expect(find("#medical", visible: false).checked?).to be true
+      expect(find("#medical", visible: false).checked?).to be false
       expect(find("#other", visible: false).checked?).to be false
     end
 
@@ -625,8 +625,7 @@ RSpec.feature "Reader" do
     scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      scroll_to_bottom("documents-table-body")
-      click_on documents.last.type
+      click_on documents.first.type
 
       (num_documents - 1).times { find("#button-next").click }
 
