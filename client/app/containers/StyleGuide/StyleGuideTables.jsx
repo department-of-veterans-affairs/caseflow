@@ -26,7 +26,7 @@ export default function StyleGuideTables() {
       footer: 'Totals'
     },
     {
-      header: 'Patronus',
+      header: 'Favorite Animal',
       align: 'center',
       valueName: 'patronus',
       footer: '3'
@@ -57,6 +57,8 @@ export default function StyleGuideTables() {
 
   let summary = 'Example styleguide table';
 
+  let slowReRendersAreOk;
+
   return <div className="cf-sg-tables-section">
     <StyleGuideComponentTitle
       title="Tables"
@@ -78,7 +80,7 @@ export default function StyleGuideTables() {
       always be placed in the right most column of the table and
       should be right aligned with the edge of the table.
     </p>
-    <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary} />
+    <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary} slowReRendersAreOk={true}/>
 
     <h3>Queues</h3>
     <p>
@@ -89,6 +91,6 @@ export default function StyleGuideTables() {
       right-aligned actionable link, such as
       "Assign >>," located on the far right column.
     </p>
-    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} />
+    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
   </div>;
 }
