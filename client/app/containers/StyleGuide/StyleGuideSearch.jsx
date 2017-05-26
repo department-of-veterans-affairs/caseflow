@@ -31,11 +31,11 @@ class StyleGuideSearch extends Component {
           link="StyleGuideSearch.jsx"
         />
 
-        <h3>Search Small</h3>
+        <h3>Search Big</h3>
         <div className="cf-sg-searchbar-example">
-          <InlineForm>
             <SearchBar
               id="search-field"
+              title="SEARCH BIG"
               classNames="usa-search usa-search-big"
               onClick={this.handleMenuClick}
               loading={this.state.search}
@@ -47,7 +47,6 @@ class StyleGuideSearch extends Component {
               classNames={['cf-btn-link']}
               disabled={!this.state.search}
             />
-          </InlineForm>
         </div>
       </div>
     );

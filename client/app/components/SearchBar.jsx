@@ -15,7 +15,8 @@ export default class SearchBar extends React.Component {
       onClick,
       value,
       onClearSearch,
-      loading
+      loading,
+      title
     } = this.props;
 
     let getSrOnlyClassName = () => {
@@ -29,7 +30,7 @@ export default class SearchBar extends React.Component {
     const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
 
     return <span className={this.props.classNames} role="search">
-      <label className={getSrOnlyClassName()} htmlFor={id}>Search small</label>
+      <label className={getSrOnlyClassName()} htmlFor={id}>{title}</label>
       <input
         className={inputClassName}
         id={id}
@@ -58,6 +59,7 @@ SearchBar.defaultProps = {
 
 SearchBar.propTypes = {
   id: PropTypes.string.isRequired,
+  title: PropTypes.string,
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
