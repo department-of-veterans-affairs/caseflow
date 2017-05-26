@@ -98,24 +98,24 @@ RSpec.feature "Start Certification" do
       click_button("Continue")
       expect(page).to have_content("Review information about the appellant's representative from VBMS and VACOLS.")
 
-      within_fieldset("Representative type") do
-        find("label", text: "Other").click
+      within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+        find("label", text: "No").click
       end
-
-      fill_in "Specify other representative type", with: "Records"
-      fill_in "Representative name", with: "Johnny Depp"
+      within_fieldset("Which information source shows the correct representative for this appeal?") do
+        find("label", text: "None").click
+      end
 
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
 
       # go back to the case datails page
       page.go_back
-      within_fieldset("Representative type") do
-        expect(find_field("Other", visible: false)).to be_checked
+      within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+        expect(find_field("No", visible: false)).to be_checked
       end
-      expect(find_field("Specify other representative type").value).to eq("Records")
-      expect(find_field("Representative name").value).to eq("Johnny Depp")
-
+      within_fieldset("Which information source shows the correct representative for this appeal?") do
+        expect(find_field("None", visible: false)).to be_checked
+      end
       click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
@@ -142,6 +142,29 @@ RSpec.feature "Start Certification" do
       expect(page).to have_selector(:link_or_button, "cancel this certification")
       click_button("Refresh page")
       expect(page).to have_content("Cannot find documents in VBMS")
+    end
+
+    scenario "When user tries to skip by manually entering URL" do
+      visit "certifications/#{appeal_already_certified.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+      visit "certifications/#{appeal_already_certified.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+      visit "certifications/#{appeal_already_certified.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_already_certified.vacols_id}/check_documents")
+
+      visit "certifications/#{appeal_not_ready.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+      visit "certifications/#{appeal_not_ready.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+      visit "certifications/#{appeal_not_ready.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_not_ready.vacols_id}/check_documents")
+
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/confirm_case_details"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/confirm_hearing"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+      visit "certifications/#{appeal_mismatched_documents.vacols_id}/sign_and_certify"
+      expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
     end
   end
 
