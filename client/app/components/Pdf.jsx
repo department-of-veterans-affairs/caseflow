@@ -548,25 +548,14 @@ export class Pdf extends React.PureComponent {
     // We could do something clever where we inspect the SVG to determine its width,
     // but that seems to be more effort than it's worth.
     const annotationIconSideLength = 40;
-    const annotationOffset = annotationIconSideLength + 15;
-    const unconstrainedX = (event.pageX - container.left) / this.props.scale;
-    const unconstrainedY = (event.pageY - container.top) / this.props.scale;
-    const xUpperBound = (container.right - annotationOffset) / this.props.scale;
-    const yUpperBound = (container.bottom - annotationOffset) / this.props.scale;
-
-    console.log({
-      pageX: event.pageX,
-      containerRight: container.right,
-      containerLeft: container.left,
-      unconstrainedX,
-      xUpperBound
-    })
-
-    // TODO this does not work at different zoom levels, and does not work for y.
+    const unconstrainedPageX = event.pageX - container.left;
+    const unconstrainedPageY = event.pageY - container.top;
+    const constrainedPageX = Math.min(unconstrainedPageX, container.right - container.left - annotationIconSideLength);
+    const constrainedPageY = Math.min(unconstrainedPageY, container.bottom - container.top - annotationIconSideLength);
 
     return {
-      xPosition: _.clamp(unconstrainedX, 0, xUpperBound),
-      yPosition: _.clamp(unconstrainedY, 0, yUpperBound)
+      xPosition: constrainedPageX / this.props.scale,
+      yPosition: constrainedPageY / this.props.scale
     };
   }
 
