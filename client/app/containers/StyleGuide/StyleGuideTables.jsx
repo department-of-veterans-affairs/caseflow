@@ -9,13 +9,13 @@ export default function StyleGuideTables() {
   // List of objects which will be used to create each row
   let rowObjects = [
     { name: 'Shane',
-      patronus: 'Hamster',
+      favoriteAnimal: 'Hamster',
       likesSports: true },
     { name: 'Kavi',
-      patronus: 'Koala Bear',
+      favoriteAnimal: 'Koala Bear',
       likesSports: false },
     { name: 'Gina',
-      patronus: 'Otter',
+      favoriteAnimal: 'Otter',
       likesSports: false }
   ];
 
@@ -28,7 +28,7 @@ export default function StyleGuideTables() {
     {
       header: 'Favorite Animal',
       align: 'center',
-      valueName: 'patronus',
+      valueName: 'favoriteAnimal',
       footer: '3'
     },
     {
