@@ -259,7 +259,8 @@ class Fakes::AppealRepository
         nod_date: nod.received_at,
         soc_date: soc.received_at + 2.days,
         form9_date: form9.received_at,
-        ssoc_dates: [ssoc1.received_at, ssoc2.received_at]
+        ssoc_dates: [ssoc1.received_at, ssoc2.received_at],
+        appellant_ssn: "111223333"
       },
       documents: [nod, soc, form9, ssoc1, ssoc2]
     )
@@ -274,7 +275,8 @@ class Fakes::AppealRepository
         template: :ready_to_certify,
         nod_date: nod.received_at,
         soc_date: soc.received_at,
-        form9_date: form9.received_at
+        form9_date: form9.received_at,
+        appellant_ssn: "111224444"
       },
       documents: [nod, soc]
     )
