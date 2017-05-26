@@ -287,6 +287,9 @@ export class Pdf extends React.PureComponent {
             // nulled out because they refer to pages that are no longer rendered.
             if (elem) {
               _.set(this.pageElements, [index, elemKey], elem)
+              if (elemKey === 'pageContainer') {
+                elem.addEventListener('mousemove', this.mouseListener);
+              }
             } else {
               delete this.pageElements[index];
             }
@@ -367,8 +370,6 @@ export class Pdf extends React.PureComponent {
     }
 
     if (event.altKey && event.code === 'KeyC') {
-      // TODO Be sure to show the annotation as soon as the key is pressed, instead of hiding the cursor
-      // after the key is pressed but before the mouse is moved
       this.props.startPlacingAnnotation();
     }
 
@@ -378,11 +379,6 @@ export class Pdf extends React.PureComponent {
   }
 
   mouseListener = (event) => {
-    // As a slight optimization, we could only attach this mouse listener when this.props.isPlacingAnnotation is true.
-    if (!this.props.isPlacingAnnotation) {
-      return;
-    }
-
     const pageIndex = _(this.pageElements).
       map('pageContainer').
       findIndex((pageContainer) => boundingBoxContains(event, pageContainer.getBoundingClientRect()));
@@ -400,7 +396,6 @@ export class Pdf extends React.PureComponent {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.renderInViewPages);
     window.addEventListener('keydown', this.keyListener);
-    window.addEventListener('mousemove', this.mouseListener);
 
     this.setUpPdf(this.props.file);
   }
@@ -408,7 +403,6 @@ export class Pdf extends React.PureComponent {
   comopnentWillUnmount() {
     window.removeEventListener('resize', this.renderInViewPages);
     window.removeEventListener('keydown', this.keyListener);
-    window.removeEventListener('mousemove', this.mouseListener);
   }
 
   setUpFakeCanvasRefFunctions = () => {
@@ -561,7 +555,7 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconCoords ?
+    const annotations = this.props.placingAnnotationIconCoords && this.props.isPlacingAnnotation ?
       this.props.comments.concat([{
         temporaryId: 'placing-annotation-icon',
         page: this.props.placingAnnotationIconCoords.pageIndex + 1,
