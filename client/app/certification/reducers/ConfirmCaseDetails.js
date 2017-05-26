@@ -24,3 +24,15 @@ export const changeOtherRepresentativeType = (state, action) => {
     otherRepresentativeType: action.payload.otherRepresentativeType
   });
 };
+
+export const changePoaMatches = (state, action) => {
+  return Object.assign({}, state, {
+    poaMatches: action.payload.poaMatches
+  });
+};
+
+export const changePoaCorrectLocation = (state, action) => {
+  return Object.assign({}, state, {
+    poaCorrectLocation: action.payload.poaCorrectLocation
+  });
+};
