@@ -154,8 +154,14 @@ export class ConfirmCaseDetails extends React.Component {
       loading,
       serverError,
       updateSucceeded,
-      match
+      match,
+      certificationStatus
     } = this.props;
+
+    if (!certificationStatus.includes('started')) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    }
 
     if (updateSucceeded) {
       return <Redirect
@@ -257,7 +263,8 @@ ConfirmCaseDetails.propTypes = {
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationStatus: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -297,7 +304,8 @@ const mapStateToProps = (state) => ({
   continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
-  loading: state.loading
+  loading: state.loading,
+  certificationStatus: state.certificationStatus
 });
 
 export default connect(

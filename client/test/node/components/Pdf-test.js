@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { Pdf, DOCUMENT_DEBOUNCE_TIME } from '../../../app/components/Pdf';
+import { Pdf } from '../../../app/components/Pdf';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -23,8 +23,11 @@ describe('Pdf', () => {
   /* eslint-disable max-statements */
   context('mount and mock out pdfjs', () => {
     let wrapper;
+    let onPageChange;
 
     beforeEach(() => {
+      onPageChange = sinon.spy();
+
       PdfJsStub.beforeEach();
 
       wrapper = mount(<Pdf
@@ -35,6 +38,7 @@ describe('Pdf', () => {
         setPdfReadyToShow={_.noop}
         pdfWorker="noworker"
         scale={1}
+        onPageChange={onPageChange}
       />, { attachTo: document.getElementById('app') });
     });
 
@@ -50,20 +54,11 @@ describe('Pdf', () => {
       });
     });
 
-    context('.setuppdf', () => {
+    context('.setUppdf', () => {
       context('onPageChange set', () => {
-        let onPageChange;
-
-        beforeEach(() => {
-          onPageChange = sinon.spy();
-          wrapper.setProps({
-            onPageChange
-          });
-        });
-
         it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
-          wrapper.instance().setupPdf('test.pdf');
-          await pause(DOCUMENT_DEBOUNCE_TIME + 50);
+          wrapper.instance().setUpPdf('test.pdf');
+          await pause();
 
           expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
         }));
@@ -74,7 +69,7 @@ describe('Pdf', () => {
       let draw;
 
       beforeEach(() => {
-        draw = sinon.spy(wrapper.instance(), 'setupPdf');
+        draw = sinon.spy(wrapper.instance(), 'setUpPdf');
       });
 
       context('when file is set', () => {
