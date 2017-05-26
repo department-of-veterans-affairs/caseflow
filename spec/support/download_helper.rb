@@ -1,11 +1,11 @@
 module DownloadHelpers
   TIMEOUT = 60
-  WORKDIR = '~/Downloads'
+  WORKDIR = Rails.root.join('tmp/downloads')
 
   extend self
 
   def downloads
-    Dir.entries(File.expand_path('~/Downloads/'))
+    Dir.entries(WORKDIR)
   end
 
   def download

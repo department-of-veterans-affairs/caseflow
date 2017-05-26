@@ -39,10 +39,20 @@ require_relative "support/download_helper"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
+download_directory = Rails.root.join('tmp/downloads')
+
+Dir.mkdir download_directory unless File.directory?(download_directory)
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
-    browser: :chrome
+    browser: :chrome,
+    prefs: {
+      download: {
+        prompt_for_download: false,
+        default_directory: download_directory
+      }
+    }
   }
 
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)

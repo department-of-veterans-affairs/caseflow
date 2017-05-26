@@ -54,7 +54,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader", focus:true do
+RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)
@@ -593,6 +593,7 @@ RSpec.feature "Reader", focus:true do
       DownloadHelpers::wait_for_download
       download = DownloadHelpers::downloaded?
       expect(download).to be_truthy
+      DownloadHelpers::clear_downloads
     end
 
     scenario "When user search term is not found" do
