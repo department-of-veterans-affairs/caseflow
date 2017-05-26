@@ -2,6 +2,7 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
 
   has_many :tasks
+  has_many :issues
 
   class MultipleDecisionError < StandardError; end
 

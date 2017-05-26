@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170524193647) do
+ActiveRecord::Schema.define(version: 20170526152033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,14 +220,6 @@ ActiveRecord::Schema.define(version: 20170524193647) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
-  create_table "hearing_worksheet_issues", force: :cascade do |t|
-    t.integer "issue_id",                             null: false
-    t.integer "hearing_worksheet_id",                 null: false
-    t.integer "status"
-    t.boolean "reopen",               default: false
-    t.boolean "vha",                  default: false
-  end
-
   create_table "hearing_worksheets", force: :cascade do |t|
     t.integer "hearing_id",            null: false
     t.string  "witness"
@@ -240,12 +232,20 @@ ActiveRecord::Schema.define(version: 20170524193647) do
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
-    t.string  "vacols_id", null: false
+    t.string  "vacols_id",                       null: false
+    t.string  "worksheet_witness"
+    t.string  "worksheet_contentions"
+    t.string  "worksheet_evidence"
+    t.string  "worksheet_military_service"
+    t.string  "worksheet_comments_for_attorney"
   end
 
   create_table "issues", force: :cascade do |t|
     t.string  "vacols_sequence_id"
     t.integer "appeal_id"
+    t.integer "status"
+    t.boolean "reopen",             default: false
+    t.boolean "vha",                default: false
   end
 
   create_table "tags", force: :cascade do |t|
