@@ -419,9 +419,9 @@ svg[aria-hidden=true],
 .cf-pdf-placing-comment {
   outline: 10px solid $color-focus;
 
-  * {
-    cursor: url(asset-path('comment-cursor.svg')), auto !important;
-  }
+  // * {
+  //   cursor: url(asset-path('comment-cursor.svg')), auto !important;
+  // }
 }
 
 // scss-lint:disable QualifyingElement

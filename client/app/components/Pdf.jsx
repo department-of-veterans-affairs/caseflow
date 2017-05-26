@@ -5,14 +5,15 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
+import { keyOfAnnotation, isUserEditingText, boundingBoxContains } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow,
-  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation } from '../reader/actions';
+  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation, 
+  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
@@ -354,12 +355,37 @@ export class Pdf extends React.PureComponent {
     if (event.altKey && event.code === 'KeyC') {
       this.props.startPlacingAnnotation();
     }
+
+    if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    } 
+  }
+
+  mouseListener = (event) => {
+    // As a slight optimization, we could only attach this mouse listener when this.props.isPlacingAnnotation is true.
+    if (!this.props.isPlacingAnnotation) {
+      return;
+    }
+
+    const pageIndex = _(this.pageElements).
+      map('pageContainer').
+      findIndex((pageContainer) => boundingBoxContains(event, pageContainer.getBoundingClientRect()));
+
+    if (pageIndex === -1) {
+      return;
+    }
+
+    const {xPosition, yPosition} = this.getPageCoordinatesOfMouseEvent(event, pageIndex);
+    console.log(event, xPosition, yPosition);
+
+    this.props.showPlaceAnnotationIcon(pageIndex, xPosition, yPosition);
   }
 
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.renderInViewPages);
     window.addEventListener('keydown', this.keyListener);
+    window.addEventListener('mousemove', this.mouseListener);
 
     this.setUpPdf(this.props.file);
   }
@@ -367,6 +393,7 @@ export class Pdf extends React.PureComponent {
   comopnentWillUnmount() {
     window.removeEventListener('resize', this.renderInViewPages);
     window.removeEventListener('keydown', this.keyListener);
+    window.removeEventListener('mousemove', this.mouseListener);
   }
 
   setUpFakeCanvasRefFunctions = () => {
@@ -501,9 +528,28 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
+  getPageCoordinatesOfMouseEvent(event, pageNumber) {
+    const container = this.pageElements[pageNumber].pageContainer.getBoundingClientRect();
+
+    return {
+      // xPosition: event.pageY,
+      // yPosition: event.pageY
+      xPosition: (event.pageX - container.left) / this.props.scale,
+      yPosition: (event.pageY - container.top) / this.props.scale
+    };
+  }
+
   // eslint-disable-next-line max-statements
   render() {
-    let commentIcons = this.props.comments.reduce((acc, comment) => {
+    const annotations = this.props.placingAnnotationIconCoords ?
+      this.props.comments.concat([{
+        temporaryId: 'placing-annotation-icon',
+        page: this.props.placingAnnotationIconCoords.pageIndex + 1,
+        ..._.pick(this.props.placingAnnotationIconCoords, 'x', 'y')
+      }]) :
+      this.props.comments;
+
+    const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
       if (_.get(this.state.isRendered[comment.page - 1], 'pdfDocument') !==
         this.state.pdfDocument) {
@@ -538,9 +584,7 @@ export class Pdf extends React.PureComponent {
           return;
         }
 
-        let container = this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect();
-        let xPosition = (event.pageX - container.left) / this.props.scale;
-        let yPosition = (event.pageY - container.top) / this.props.scale;
+        const {xPosition, yPosition} = this.getPageCoordinatesOfMouseEvent(event, pageNumber - 1);
 
         this.props.placeAnnotation(pageNumber, {
           xPosition,
@@ -613,6 +657,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
+  ..._.pick(state, 'placingAnnotationIconCoords'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });
@@ -621,6 +666,9 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
     startPlacingAnnotation,
+    stopPlacingAnnotation,
+    showPlaceAnnotationIcon,
+    hidePlaceAnnotationIcon,
     requestMoveAnnotation
   }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),

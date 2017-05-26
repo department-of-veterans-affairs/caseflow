@@ -67,3 +67,6 @@ export const isUserEditingText = () => _.some(
   document.querySelectorAll('input,textarea'),
   (elem) => document.activeElement === elem
 );
+
+export const boundingBoxContains = ({x, y}, {left, right, top, bottom}) => 
+  left <= x && x <= right && top <= y && y <= bottom;

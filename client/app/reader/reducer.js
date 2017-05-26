@@ -109,6 +109,7 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   initialDataLoadingFail: false,
+  placingAnnotationIconCoords: null,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -555,6 +556,12 @@ export const reducer = (state = initialState, action = {}) => {
         pdf: {
           isPlacingAnnotation: { $set: true }
         }
+      }
+    });
+  case Constants.SHOW_PLACE_ANNOTATION_ICON:
+    return update(state, {
+      placingAnnotationIconCoords: {
+        $set: action.payload
       }
     });
   case Constants.STOP_PLACING_ANNOTATION:
