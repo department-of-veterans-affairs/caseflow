@@ -1,4 +1,4 @@
-# The result of a decision at the higher court, CAVC (Court of Appeals for Veteran Claims)
+# The result of a decision on an *issue* at the higher court, CAVC (Court of Appeals for Veteran Claims)
 # This is relevant mostly for appeals that are remanded from CAVC.
 class CAVCDecision
   include ActiveModel::Model
