@@ -93,7 +93,7 @@ module PowerOfAttorneyMapper
     # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
     bgs_type = bgs_poa[:power_of_attorney][:org_type_nm]
     {
-      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type.to_sym] || "Other",
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
       representative_name: bgs_poa[:power_of_attorney][:nm]
     }
   end
