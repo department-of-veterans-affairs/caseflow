@@ -138,15 +138,8 @@ class Generators::Appeal
     private
 
     def set_vacols_issues(appeal:, issues:)
-      (issues || []).map! do |issue|
-        if issue.is_a?(Hash)
-          appeal.save unless appeal.id
-
-          issue[:appeal_id] = appeal.id
-          Generators::Issue.create(issue)
-        else
-          issue
-        end
+      appeal.issues = (issues || []).map do |issue|
+        issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
       end
     end
 

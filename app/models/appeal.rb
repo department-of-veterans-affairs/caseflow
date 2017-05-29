@@ -4,6 +4,9 @@ class Appeal < ActiveRecord::Base
   has_many :tasks
   has_many :issues
 
+  def issues=
+  end
+
   class MultipleDecisionError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -290,6 +293,10 @@ class Appeal < ActiveRecord::Base
   def clear_documents!
     @documents = []
     @documents_by_type = {}
+  end
+
+  def issues=(issues)
+    @issues = issues
   end
 
   def issues

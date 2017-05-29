@@ -99,6 +99,11 @@ class SeedDB
       document_id: 2)
   end
 
+  def create_hearings
+    Generators::Hearing.create
+    Generators::HearingWorksheet.create
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -111,6 +116,7 @@ class SeedDB
     create_tasks(50)
     create_annotations
     create_tags
+    create_hearings
   end
 end
 

@@ -5,15 +5,7 @@ class Hearing < ActiveRecord::Base
   attr_accessor :date, :type, :venue_key, :vacols_record, :closed_at, :disposition
 
   def worksheet
-    @worksheet ||= HearingWorksheet.find_or_create_by(hearing: self)
-  end
-
-  def attributes
-    {
-      date: date,
-      type: type,
-      venue: venue
-    }
+    @worksheet ||= HearingWorksheet.new(attributes)
   end
 
   def venue
