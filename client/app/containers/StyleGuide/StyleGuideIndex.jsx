@@ -206,5 +206,3 @@ export default function StyleGuideIndex() {
     </div>;
 
 }
-
-/* eslint-enable max-len */
