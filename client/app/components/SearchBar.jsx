@@ -16,7 +16,7 @@ export default class SearchBar extends React.Component {
       value,
       onClearSearch,
       loading,
-      title
+      title,
     } = this.props;
 
     let getSrOnlyClassName = () => {

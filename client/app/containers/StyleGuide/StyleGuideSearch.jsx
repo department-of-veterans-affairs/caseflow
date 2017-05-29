@@ -15,10 +15,9 @@ class StyleGuideSearch extends Component {
    };
 
 }
-
-  handleMenuClick = () => {
+ handleMenuClick = () => {
     this.setState((prevState) => ({
-      search: !prevState.search
+      search: !prevState.search,
     }));
   };
 
@@ -30,11 +29,11 @@ class StyleGuideSearch extends Component {
           id="search"
           link="StyleGuideSearch.jsx"
         />
-
+        <p>
         <h3>Search Big</h3>
         <div className="cf-sg-searchbar-example">
             <SearchBar
-              id="search-field"
+              id="search-field-big"
               title="SEARCH BIG"
               classNames="usa-search usa-search-big"
               onClick={this.handleMenuClick}
@@ -46,6 +45,32 @@ class StyleGuideSearch extends Component {
               onClick={this.handleMenuClick}
               classNames={['cf-btn-link']}
               disabled={!this.state.search}
+            />
+        </div>
+        </p>
+        
+        <p>
+        <h3>Search Medium</h3>
+        <div className="cf-sg-searchbar-example">
+            <SearchBar
+              id="search-field"
+              title="SEARCH MEDIUM"
+              classNames="usa-search usa-search-medium"
+              onClick={this.handleMenuClick}
+              loading={this.state.search}
+            />
+        </div>
+        </p>
+       
+        
+        <h3>Search Small</h3>
+        <div className="cf-sg-searchbar-example">
+            <SearchBar
+              id="search-field-small"
+              title="SEARCH SMALL"
+              classNames="usa-search usa-search-small"
+              onClick={this.handlesMenuClick}
+              loading={this.state.search}
             />
         </div>
       </div>
