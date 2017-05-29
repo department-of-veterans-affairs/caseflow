@@ -53,22 +53,16 @@ describe('.certificationUpdateSuccess', () => {
 describe('.certificationUpdateStart', () => {
   it('should create an action to mark an update start', () => {
     const params = {
-      certifyingOffice: 'Office',
-      certifyingUsername: 'Username',
       certifyingOfficialName: 'Official Name',
-      certifyingOfficialTitle: 'Official Title',
-      certificationDate: '09/12/1999'
+      certifyingOfficialTitle: 'Official Title'
     };
 
     const expectedAction = {
       type: Constants.CERTIFICATION_UPDATE_REQUEST,
       payload: {
         update: {
-          certifying_office: params.certifyingOffice,
-          certifying_username: params.certifyingUsername,
           certifying_official_name: params.certifyingOfficialName,
-          certifying_official_title: params.certifyingOfficialTitle,
-          certification_date: params.certificationDate
+          certifying_official_title: params.certifyingOfficialTitle
         }
       }
     };

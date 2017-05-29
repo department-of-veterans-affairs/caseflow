@@ -5,6 +5,8 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
 
   def index
     render json: appeals, each_serializer: ::V1::AppealSerializer, include: "scheduled_hearings"
+  rescue ActiveRecord::RecordNotFound
+    veteran_not_found
   end
 
   private
@@ -19,6 +21,16 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
 
   def verify_feature_enabled
     not_found unless FeatureToggle.enabled?(:appeals_status)
+  end
+
+  def veteran_not_found
+    render json: {
+      "errors": [
+        "status": "404",
+        "title": "Veteran not found",
+        "detail": "A veteran with that SSN was not found in our systems."
+      ]
+    }, status: 404
   end
 
   def invalid_ssn
