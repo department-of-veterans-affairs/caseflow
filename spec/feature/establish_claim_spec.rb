@@ -150,7 +150,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       click_on "View Canceled Tasks"
 
-      # should see the unprepared task
+      # should see the canceled tasks
       page.within_window windows.last do
         expect(page).to have_content("Canceled EPs")
         expect(find(:xpath, "//tbody/tr[1]/td[5]").text).to eql(reason)
