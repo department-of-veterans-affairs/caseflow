@@ -1,7 +1,7 @@
 import React from 'react';
 
 // components
-import TextField from '../../components/TextField';
+import NumberField from '../../components/NumberField';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import InlineForm from '../../components/InlineForm';
@@ -31,10 +31,10 @@ export default class StyleGuideInlineForm extends React.Component {
         actionable steps.
       </p>
       <InlineForm>
-        <TextField
+        <NumberField
           label="Enter the number of people working today"
           name="dummyEmployeeCount"
-          type="number"
+          isInteger={true}
           value={this.state.value}
           onChange={(value) => {
             this.setState({ value });
