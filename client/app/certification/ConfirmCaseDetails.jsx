@@ -8,38 +8,29 @@ import { Redirect } from 'react-router-dom';
 
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
-import TextField from '../components/TextField';
 import Table from '../components/Table';
 import Footer from './Footer';
 
-const representativeTypeOptions = [
-  {
-    displayText: 'Attorney',
-    value: Constants.representativeTypes.ATTORNEY
-  },
-  {
-    displayText: 'Agent',
-    value: Constants.representativeTypes.AGENT
-  },
-  {
-    displayText: 'Organization',
-    value: Constants.representativeTypes.ORGANIZATION
-  },
-  {
-    displayText: 'None',
-    value: Constants.representativeTypes.NONE
-  },
-  {
-    displayText: 'Other',
-    value: Constants.representativeTypes.OTHER
-  }
+const poaMatchesOptions = [
+  { displayText: 'Yes',
+    value: Constants.poaMatches.MATCH },
+  { displayText: 'No',
+    value: Constants.poaMatches.NO_MATCH }
+];
+
+const poaCorrectLocationOptions = [
+  { displayText: 'VBMS',
+    value: Constants.poaCorrectLocation.VBMS },
+  { displayText: 'VACOLS',
+    value: Constants.poaCorrectLocation.VACOLS },
+  { displayText: 'None of the above',
+    value: Constants.poaCorrectLocation.NONE }
 ];
 
 // TODO: We should give each question a constant name.
 const ERRORS = {
-  representativeType: 'Please enter the representative type.',
-  representativeName: 'Please enter the representative name.',
-  otherRepresentativeType: 'Please enter the other representative type.'
+  poaMatches: 'Please select yes or no.',
+  poaCorrectLocation: 'Please select an option.'
 };
 
 /*
@@ -69,40 +60,22 @@ export class ConfirmCaseDetails extends React.Component {
     this.props.resetState();
   }
 
-  representativeTypeIsNone() {
-    return this.props.representativeType === Constants.representativeTypes.NONE;
-  }
-
-  representativeTypeIsOther() {
-    return this.props.representativeType === Constants.representativeTypes.OTHER;
-  }
-
   getValidationErrors() {
     // TODO: consider breaking this and all validation out into separate
     // modules.
     let {
-      representativeName,
-      representativeType,
-      otherRepresentativeType
+      poaMatches,
+      poaCorrectLocation
     } = this.props;
 
     const erroredFields = [];
 
-    // We always need a representative type.
-    if (ValidatorsUtil.requiredValidator(representativeType)) {
-      erroredFields.push('representativeType');
+    if (ValidatorsUtil.requiredValidator(poaMatches)) {
+      erroredFields.push('poaMatches');
     }
 
-    // Unless the type of representative is "None",
-    // we need a representative name.
-    if (ValidatorsUtil.requiredValidator(representativeName) && !this.representativeTypeIsNone()) {
-      erroredFields.push('representativeName');
-    }
-
-    // If the representative type is "Other",
-    // fill out the representative type.
-    if (this.representativeTypeIsOther() && ValidatorsUtil.requiredValidator(otherRepresentativeType)) {
-      erroredFields.push('otherRepresentativeType');
+    if (poaMatches === Constants.poaMatches.NO_MATCH && ValidatorsUtil.requiredValidator(poaCorrectLocation)) {
+      erroredFields.push('poaCorrectLocation');
     }
 
     return erroredFields;
@@ -118,10 +91,20 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
+    let representativeName = this.props.vacolsRepresentativeName;
+    let representativeType = this.props.vacolsRepresentativeType;
+
+    if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+      this.props.poaMatches === Constants.poaMatches.NO_MATCH) {
+      representativeName = this.props.bgsRepresentativeName;
+      representativeType = this.props.bgsRepresentativeType;
+    }
+
     this.props.certificationUpdateStart({
-      representativeType: this.props.representativeType,
-      otherRepresentativeType: this.props.otherRepresentativeType,
-      representativeName: this.props.representativeName,
+      representativeType,
+      representativeName,
+      poaMatches: this.props.poaMatches,
+      poaCorrectLocation: this.props.poaCorrectLocation,
       vacolsId: this.props.match.params.vacols_id
     });
   }
@@ -141,21 +124,25 @@ export class ConfirmCaseDetails extends React.Component {
 
   render() {
     let {
-      representativeType,
-      changeRepresentativeType,
+      poaMatches,
+      changePoaMatches,
+      poaCorrectLocation,
+      changePoaCorrectLocation,
       bgsRepresentativeType,
       bgsRepresentativeName,
       vacolsRepresentativeType,
       vacolsRepresentativeName,
-      representativeName,
-      changeRepresentativeName,
-      otherRepresentativeType,
-      changeOtherRepresentativeType,
       loading,
       serverError,
       updateSucceeded,
-      match
+      match,
+      certificationStatus
     } = this.props;
+
+    if (!certificationStatus.includes('started')) {
+      return <Redirect
+        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    }
 
     if (updateSucceeded) {
       return <Redirect
@@ -166,9 +153,6 @@ export class ConfirmCaseDetails extends React.Component {
       return <Redirect
         to={'/certifications/error'}/>;
     }
-
-    const shouldShowOtherTypeField =
-      representativeType === Constants.representativeTypes.OTHER;
 
     let appellantInfoColumns = [
       {
@@ -211,33 +195,39 @@ export class ConfirmCaseDetails extends React.Component {
           <div className="cf-help-divider"></div>
 
           <RadioField
-            name="Representative type"
-            options={representativeTypeOptions}
-            value={representativeType}
-            onChange={changeRepresentativeType}
-            errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
+            name="Does the representative information from VBMS and VACOLS match?"
             required={true}
+            options={poaMatchesOptions}
+            value={poaMatches}
+            errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
+            onChange={changePoaMatches}
           />
 
           {
-            shouldShowOtherTypeField &&
-            <TextField
-              name={'Specify other representative type'}
-              value={otherRepresentativeType}
-              onChange={changeOtherRepresentativeType}
-              errorMessage={this.isFieldErrored('otherRepresentativeType') ? ERRORS.otherRepresentativeType : null}
+            poaMatches === Constants.poaMatches.NO_MATCH &&
+            <RadioField
+              name="Which information source shows the correct representative for this appeal?"
+              options={poaCorrectLocationOptions}
+              value={poaCorrectLocation}
+              onChange={changePoaCorrectLocation}
+              errorMessage={this.isFieldErrored('poaCorrectLocation') ? ERRORS.poaCorrectLocation : null}
               required={true}
             />
           }
 
-          <TextField
-            name={'Representative name'}
-            value={representativeName}
-            onChange={changeRepresentativeName}
-            errorMessage={this.isFieldErrored('representativeName') ? ERRORS.representativeName : null}
-            required={true}
-          />
-
+          {
+            poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
+            'Great! Caseflow will keep the representative information as it exists now in VACOLS.'
+          }
+          {
+            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+            'Great! Caseflow will update the representative name, type, and address ' +
+              'in VACOLS with information from VBMS.'
+          }
+          {
+            poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+            'Please go to VACOLS and manually enter the correct representative information.'
+          }
         </div>
 
         <Footer
@@ -253,11 +243,16 @@ ConfirmCaseDetails.propTypes = {
   changeRepresentativeType: PropTypes.func,
   representativeName: PropTypes.string,
   changeRepresentativeName: PropTypes.func,
+  poaMatches: PropTypes.string,
+  poaCorrectLocation: PropTypes.string,
+  changePoaMatches: PropTypes.func,
+  changePoaCorrectLocation: PropTypes.func,
   otherRepresentativeType: PropTypes.string,
   changeOtherRepresentativeType: PropTypes.func,
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  certificationStatus: PropTypes.string
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -279,6 +274,9 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(actions.changeOtherRepresentativeType(other));
   },
 
+  changePoaMatches: (poaMatches) => dispatch(actions.changePoaMatches(poaMatches)),
+  changePoaCorrectLocation: (poaCorrectLocation) => dispatch(actions.changePoaCorrectLocation(poaCorrectLocation)),
+
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
   }
@@ -294,10 +292,13 @@ const mapStateToProps = (state) => ({
   vacolsRepresentativeType: state.vacolsRepresentativeType,
   vacolsRepresentativeName: state.vacolsRepresentativeName,
   otherRepresentativeType: state.otherRepresentativeType,
+  poaMatches: state.poaMatches,
+  poaCorrectLocation: state.poaCorrectLocation,
   continueClicked: state.continueClicked,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
-  loading: state.loading
+  loading: state.loading,
+  certificationStatus: state.certificationStatus
 });
 
 export default connect(

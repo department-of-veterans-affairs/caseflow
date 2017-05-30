@@ -96,31 +96,6 @@ describe('DecisionReviewer', () => {
     });
 
     context('navigation buttons', () => {
-      it('move to the next and previous pdfs', asyncTest(async() => {
-        // Click on first document link
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
-        await pause();
-
-        let pdf = wrapper.find('Pdf').getNode();
-        let setupPdf = sinon.spy(pdf, 'setupPdf');
-
-        // Next button moves us to the next page
-        wrapper.find('#button-next').simulate('click');
-        await pause();
-
-        expect(setupPdf.lastCall.calledWith(
-          `/document/${documents[1].id}/pdf`)).to.be.true;
-
-        // Previous button moves us to the previous page
-        wrapper.find('#button-previous').simulate('click');
-        await pause();
-
-        expect(setupPdf.lastCall.calledWith(
-          `/document/${documents[0].id}/pdf`)).to.be.true;
-      }));
-
       it('are hidden when there is no next or previous pdf', () => {
         // Filter documents on the second document's type
         wrapper.find('input').simulate('change',

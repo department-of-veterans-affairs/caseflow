@@ -4,6 +4,12 @@ class AppealEvents
   attr_accessor :appeal
 
   def all
+    scope_to_appeal(all_unscoped)
+  end
+
+  private
+
+  def all_unscoped
     [
       nod_event,
       soc_event,
@@ -12,11 +18,20 @@ class AppealEvents
       certification_event,
       activation_event,
       hearing_events,
-      decision_event
+      decision_event,
+      cavc_decision_events
     ].flatten.select(&:valid?)
   end
 
-  private
+  # If there is a prior_decision_date for this appeal, we should scope
+  # events to only those made after the prior_decision_date, because
+  # any events that happened before the prior_decision_date are associated
+  # with the remanded appeal, not this appeal.
+  def scope_to_appeal(events)
+    return events unless appeal.prior_decision_date
+
+    events.reject { |event| event.date < appeal.prior_decision_date }
+  end
 
   def nod_event
     AppealEvent.new(type: :nod, date: appeal.nod_date)
@@ -48,5 +63,11 @@ class AppealEvents
 
   def hearing_events
     appeal.hearings.select(&:closed?).map { |hearing| AppealEvent.new(hearing: hearing) }
+  end
+
+  def cavc_decision_events
+    appeal.cavc_decisions.map(&:decision_date).uniq.map do |cavc_decision_date|
+      AppealEvent.new(type: :cavc_decision, date: cavc_decision_date)
+    end
   end
 end

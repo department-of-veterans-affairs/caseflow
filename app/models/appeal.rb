@@ -20,10 +20,14 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
-  vacols_attr_accessor :disposition, :decision_date, :status, :prior_decision_date
+  vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+
+  # If the case is Post-Remand, this is the date the decision was made to
+  # remand the original appeal
+  vacols_attr_accessor :prior_decision_date
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -113,6 +117,10 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def cavc_decisions
+    @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
+  end
+
   def veteran_name
     [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
   end
@@ -188,6 +196,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def documents_match?
+    return false if missing_certification_data?
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 

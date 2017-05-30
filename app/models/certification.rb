@@ -19,7 +19,10 @@ class Certification < ActiveRecord::Base
       ssocs_required:      calculate_ssocs_required,
       ssocs_matching_at:   calculcate_ssocs_matching_at,
       form8_started_at:    (certification_status == :started) ? now : nil,
-      vacols_hearing_preference: appeal.hearing_request_type
+      vacols_hearing_preference: appeal.hearing_request_type,
+      certifying_office: appeal.regional_office_name,
+      certifying_username: appeal.regional_office_key,
+      certification_date: Time.zone.now.to_date
     )
 
     certification_status

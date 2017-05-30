@@ -9,13 +9,13 @@ export default function StyleGuideTables() {
   // List of objects which will be used to create each row
   let rowObjects = [
     { name: 'Shane',
-      spiritAnimal: 'Hamster',
+      favoriteAnimal: 'Hamster',
       likesSports: true },
     { name: 'Kavi',
-      spiritAnimal: 'Koala Bear',
+      favoriteAnimal: 'Koala Bear',
       likesSports: false },
     { name: 'Gina',
-      spiritAnimal: 'Otter',
+      favoriteAnimal: 'Otter',
       likesSports: false }
   ];
 
@@ -26,9 +26,9 @@ export default function StyleGuideTables() {
       footer: 'Totals'
     },
     {
-      header: 'Spirit Animal',
+      header: 'Favorite Animal',
       align: 'center',
-      valueName: 'spiritAnimal',
+      valueName: 'favoriteAnimal',
       footer: '3'
     },
     {
@@ -78,7 +78,8 @@ export default function StyleGuideTables() {
       always be placed in the right most column of the table and
       should be right aligned with the edge of the table.
     </p>
-    <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary} />
+    <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary}
+     slowReRendersAreOk={true}/>
 
     <h3>Queues</h3>
     <p>
@@ -89,6 +90,6 @@ export default function StyleGuideTables() {
       right-aligned actionable link, such as
       "Assign >>," located on the far right column.
     </p>
-    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} />
+    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
   </div>;
 }

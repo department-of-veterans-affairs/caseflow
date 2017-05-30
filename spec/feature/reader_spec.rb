@@ -105,7 +105,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
       click_on "Back to all documents"
-      fill_in "searchBar", with: "9"
+      fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
       expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")
@@ -126,6 +126,15 @@ RSpec.feature "Reader" do
       add_comment_without_clicking_save("text")
       find("#button-next").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
+    end
+
+    scenario "Next and Previous buttons move between docs" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      find("#button-next").click
+      expect(find(".cf-document-type")).to have_text("NOD")
+      find("#button-previous").click
+      find("#button-previous").click
+      expect(find(".cf-document-type")).to have_text("BVA Decision")
     end
 
     scenario "Arrow keys to navigate through documents" do
@@ -581,6 +590,15 @@ RSpec.feature "Reader" do
       find(".cf-search-close-icon").click
 
       expect(page).to have_content("Form 9")
+    end
+
+    scenario "When user search term is not found" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      search_query = "does not exist in annoations"
+      fill_in "searchBar", with: search_query
+
+      expect(page).to have_content("Search results not found")
+      expect(page).to have_content(search_query)
     end
   end
 
