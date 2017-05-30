@@ -106,6 +106,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       within("#table-row-1") do
         click_on "Edit"
+
         fill_in "quota-#{june_quota.id}", with: "5"
         click_on "Save"
       end
@@ -124,11 +125,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
-      visit "/dispatch/missing-decision"
+      visit "/dispatch/establish-claim"
+      click_on "View Claims Missing Decisions"
 
       # should see the unprepared task
-      expect(page).to have_content("Claims Missing Decisions")
-      expect(page).to have_content(unprepared_task.appeal.veteran_name)
+      page.within_window windows.last do
+        expect(page).to have_content("Claims Missing Decisions")
+        expect(page).to have_content(unprepared_task.appeal.veteran_name)
+        page.driver.browser.close
+      end
     end
   end
 
