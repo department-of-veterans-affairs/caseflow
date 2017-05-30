@@ -241,15 +241,12 @@ svg[aria-hidden=true],
   line-height: normal;
 
   &:hover {
-    // Defined in USWDS
-    $primary-alt: #02bfe7;
-
     text-decoration: none;
     background-color: transparent;
-    color: $primary-alt;
+    color: $color-primary-alt;
 
     svg g {
-      fill: $primary-alt;
+      fill: $color-primary-alt;
     }
   }
 
