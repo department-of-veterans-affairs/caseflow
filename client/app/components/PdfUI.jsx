@@ -22,7 +22,7 @@ export const linkToSingleDocumentView = (basePath, doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
-export const downloadLink = (file, type) => () => window.open(`${file}?download=true&type=${type}`);
+export const downloadLink = (file, type) => () => window.open(`${file}?type=${type}&download=true`);
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;

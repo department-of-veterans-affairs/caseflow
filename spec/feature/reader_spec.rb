@@ -606,10 +606,12 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       click_on documents[0].type
+      filename = "#{documents[0].type}-#{documents[0].vbms_document_id}"
       find("#button-download").click
       DownloadHelpers.wait_for_download
       download = DownloadHelpers.downloaded?
       expect(download).to be_truthy
+      expect(filename).to have_content("BVA Decision-5")
       DownloadHelpers.clear_downloads
     end
   end
