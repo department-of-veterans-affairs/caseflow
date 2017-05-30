@@ -71,13 +71,9 @@ class ManageEstablishClaim extends React.Component {
           </span>
         </h1>
 
-        <EmployeeCount />
+        <h2>Manage Work Assignments</h2>
 
-        <div className="cf-right-side">
-          <a href="/dispatch/stats">
-            <i className="fa fa-line-chart" aria-hidden="true"></i> View Dashboard
-          </a>
-        </div>
+        <EmployeeCount />
 
         <Table
           columns={this.getUserColumns()}
@@ -85,6 +81,20 @@ class ManageEstablishClaim extends React.Component {
           rowClassNames={rowClassNames}
           summary="Appeals worked by user"
         />
+
+        <h2>ARC Reports</h2>
+        <p>
+          <a href="/dispatch/stats">
+            View Dashboard <i className="fa fa-line-chart" aria-hidden="true"></i>
+          </a>
+        </p>
+
+        <h2>BVA Reports</h2>
+        <p>
+          <a href="/dispatch/missing-decision" target="_blank">
+            View Claims Missing Decisions <i className="fa fa-external-link" aria-hidden="true"></i>
+          </a>
+        </p>
       </div>
     </div>;
   }
