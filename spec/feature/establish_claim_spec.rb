@@ -125,11 +125,32 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
-      visit "/dispatch/missing-decision"
+      visit "/dispatch/establish-claim"
+      click_on "View Claims Missing Decisions"
 
       # should see the unprepared task
-      expect(page).to have_content("Claims Missing Decisions")
-      expect(page).to have_content(unprepared_task.appeal.veteran_name)
+      page.within_window windows.last do
+        expect(page).to have_content("Claims Missing Decisions")
+        expect(page).to have_content(unprepared_task.appeal.veteran_name)
+        page.driver.browser.close
+      end
+    end
+
+    scenario "View cancelled EPs page" do
+      reason = "Cuz it's canceled"
+
+      Generators::EstablishClaim.create(
+        user: Generators::User.create(full_name: "Cance L. Smith"),
+        aasm_state: :assigned
+      ).tap do |task|
+        task.start!
+        task.cancel!(reason)
+      end
+
+      visit "/dispatch/canceled"
+
+      expect(page).to have_content("Canceled EPs")
+      expect(find(:xpath, "//tbody/tr[1]/td[5]").text).to eql(reason)
     end
   end
 
