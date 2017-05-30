@@ -1,9 +1,6 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import StatusMessage from '../../components/StatusMessage';
 import LoadingContainer from '../../components/LoadingContainer';
-
-
 
 export default class StyleGuideLoaders extends React.Component {
 
@@ -15,18 +12,17 @@ export default class StyleGuideLoaders extends React.Component {
         link="StyleGuideLoaders.jsx"
       />
      <p>
-     A large Caseflow loading indicator in the center of the page is used
-     when some information has been retrieved but other information is still being pulled.
-     Each loader should have a message underneath the logo in 'gray-dark' that explains 
-     what is currently happening or where the information is being drawn from. </p>
-
+       A large Caseflow loading indicator in the center of the page is used
+       when some information has been retrieved but other information is still being pulled.
+       Each loader should have a message underneath the logo in 'gray-dark' that explains
+       what is currently happening or where the information is being drawn from. </p>
 
      <LoadingContainer >
-     <div style={{width:500, height: 500}}> 
-     </div>
-      <p> Gathering information in VBMS now.....'</p>       
-      </LoadingContainer>
-
+      <div style={{ width: 400,
+        height: 400 }}>
+      </div>
+      <p> Gathering information in VBMS now......</p>
+     </LoadingContainer>
 
     </div>;
   }
