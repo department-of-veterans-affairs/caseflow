@@ -36,10 +36,25 @@ class Certification < ActiveRecord::Base
       vacols_representative_type: poa.vacols_representative_type,
       vacols_representative_name: poa.vacols_representative_name
     }
+
     address = poa.bgs_representative_address
-    update = update.merge(address) if address
+    if address
+      update.merge({
+        bgs_address_line_1: address[:address_line_1],
+        bgs_address_line_2: address[:address_line_2],
+        bgs_address_line_3: address[:address_line_3],
+        bgs_city: address[:city],
+        bgs_country: address[:country],
+        bgs_state: address[:state],
+        bgs_zip: address[:zip]
+      })
+    end
 
     update_attributes!(update)
+  end
+
+  def bgs_poa_address_found?
+    !!appeal.power_of_attorney.bgs_representative_address
   end
 
   def create_or_update_form8
@@ -57,7 +72,7 @@ class Certification < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      methods: :certification_status,
+      methods: [:certification_status, :bgs_poa_address_found?],
       include: [
         :form8,
         appeal: {
