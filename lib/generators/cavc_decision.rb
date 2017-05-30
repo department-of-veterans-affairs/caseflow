@@ -10,7 +10,7 @@ class Generators::CAVCDecision
       attrs[:appeal_vacols_id] ||= attrs.delete(:appeal).vacols_id
 
       ::CAVCDecision.new(default_attrs.merge(attrs)).tap do |cavc_decision|
-        Fakes::CAVCDecisionRepository.cavc_decision_records ||= {}
+        Fakes::CAVCDecisionRepository.cavc_decision_records ||= []
         Fakes::CAVCDecisionRepository.cavc_decision_records.push(cavc_decision)
       end
     end
