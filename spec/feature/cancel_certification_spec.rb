@@ -221,7 +221,7 @@ RSpec.feature "Cancel certification" do
 
     scenario "Click cancel when certification has mistmatched documents" do
       visit "certifications/new/#{appeal_mismatched_docs.vacols_id}"
-      expect(page).to have_content("Not Found")
+      expect(page).to have_content("Not found")
       click_on "Cancel Certification"
       expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
       within_fieldset("Why can't this case be certified in Caseflow?") do
@@ -231,7 +231,7 @@ RSpec.feature "Cancel certification" do
       click_button "Cancel certification"
       expect(page).to have_content("The certification has been cancelled")
       visit "certifications/new/#{appeal_mismatched_docs.vacols_id}"
-      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to have_content("Some documents could not be found in VBMS.")
       click_link("cancel this certification")
       expect(page).to have_content("Please explain why")
       click_button("Go back")
