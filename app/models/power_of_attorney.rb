@@ -32,6 +32,7 @@ class PowerOfAttorney
     result = bgs.fetch_poa_by_file_number(file_number)
     self.bgs_representative_name = result[:representative_name]
     self.bgs_representative_type = result[:representative_type]
+
     if result[:participant_id]
       self.participant_id = result[:participant_id]
       load_bgs_address!
@@ -46,7 +47,7 @@ class PowerOfAttorney
 
   def bgs_address
     return nil if bgs_address_not_found
-    self.bgs_representative_address ||= load_bgs_address!
+    self.bgs_representative_address ||= load_bgs_record!
   end
 
   def overwrite_vacols_with_bgs_value
