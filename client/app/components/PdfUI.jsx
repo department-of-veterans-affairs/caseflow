@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 
@@ -60,12 +60,34 @@ export class PdfUI extends React.Component {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
-      return <div className="cf-pdf-buttons-center">
-        <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
-        |
-        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
-          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
-        </span>
+      return <div className="cf-pdf-footer cf-pdf-toolbar">
+        { this.props.prevDocId &&
+          <div className="cf-pdf-footer-buttons-left">
+            <Button
+              name="previous"
+              classNames={['cf-pdf-button']}
+              onClick={this.props.showPdf(this.props.prevDocId)}
+              ariaLabel="previous PDF">
+              <ArrowLeft /><span className="left-button-label">Previous</span>
+            </Button>
+          </div> }
+        <div className="cf-pdf-buttons-center">
+          <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
+          |
+          <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+            Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+          </span>
+        </div>
+        { this.props.nextDocId &&
+          <div className="cf-pdf-footer-buttons-right">
+            <Button
+              name="next"
+              classNames={['cf-pdf-button cf-right-side']}
+              onClick={this.props.showPdf(this.props.nextDocId)}
+              ariaLabel="next PDF">
+              <span className="right-button-label">Next</span><ArrowRight />
+            </Button>
+          </div> }
       </div>;
     }
 
@@ -161,28 +183,6 @@ export class PdfUI extends React.Component {
           </Button>
         </span>
       </div>
-      <div className="cf-pdf-navigation">
-        { this.props.prevDocId &&
-          <span className="cf-pdf-buttons-left">
-            <Button
-              name="previous"
-              classNames={['cf-pdf-button']}
-              onClick={this.props.showPdf(this.props.prevDocId)}
-              ariaLabel="previous PDF">
-              <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
-        { this.props.nextDocId &&
-          <span className="cf-pdf-buttons-right">
-            <Button
-              name="next"
-              classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.showPdf(this.props.nextDocId)}
-              ariaLabel="next PDF">
-              <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
-      </div>
       <div>
         <Pdf
           documentId={this.props.doc.id}
@@ -196,9 +196,7 @@ export class PdfUI extends React.Component {
           onCommentScrolledTo={this.props.onCommentScrolledTo}
         />
       </div>
-      <div className="cf-pdf-footer cf-pdf-toolbar">
-        { this.getPdfFooter(this.props, this.state) }
-      </div>
+      { this.getPdfFooter(this.props, this.state) }
     </div>;
   }
 }

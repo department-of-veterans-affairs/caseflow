@@ -15,6 +15,7 @@ import Reader from '../reader/index.jsx';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
+import CanceledTasksIndex from './CanceledTasksIndex';
 
 const Pages = {
   CaseWorkerIndex,
@@ -26,7 +27,8 @@ const Pages = {
   StyleGuideModal,
   StyleGuideTabs,
   TestPage,
-  UnpreparedTasksIndex
+  UnpreparedTasksIndex,
+  CanceledTasksIndex
 };
 
 // This is the "base page" that wraps all pages rendered directly

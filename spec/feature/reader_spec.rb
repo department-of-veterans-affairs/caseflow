@@ -128,6 +128,15 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
+    scenario "Next and Previous buttons move between docs" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      find("#button-next").click
+      expect(find(".cf-document-type")).to have_text("NOD")
+      find("#button-previous").click
+      find("#button-previous").click
+      expect(find(".cf-document-type")).to have_text("BVA Decision")
+    end
+
     scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
