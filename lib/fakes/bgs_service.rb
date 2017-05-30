@@ -9,6 +9,8 @@ class Fakes::BGSService
   cattr_accessor :address_records
   attr_accessor :client
 
+  ID_TO_RAISE_ERROR = "ERROR-ID"
+
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -199,6 +201,11 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
+    if participant_id == ID_TO_RAISE_ERROR
+      raise Savon::Error
+    end
+
+
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address
 

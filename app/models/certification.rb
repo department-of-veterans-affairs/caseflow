@@ -26,15 +26,14 @@ class Certification < ActiveRecord::Base
   end
 
   def fetch_power_of_attorney!
-    power_of_attorney = appeal.power_of_attorney
+    poa = appeal.power_of_attorney
     update = {
       bgs_representative_type: poa.bgs_representative_type,
       bgs_representative_name: poa.bgs_representative_name,
       vacols_representative_type: poa.vacols_representative_type,
       vacols_representative_name: poa.vacols_representative_name
     }
-
-    address = power_of_attorney.bgs_address
+    address = poa.bgs_representative_address
     update = update.merge(address) if address
 
     update_attributes!(update)
