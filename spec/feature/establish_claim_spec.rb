@@ -135,6 +135,23 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         page.driver.browser.close
       end
     end
+
+    scenario "View cancelled EPs page" do
+      reason = "Cuz it's canceled"
+
+      Generators::EstablishClaim.create(
+        user: Generators::User.create(full_name: "Cance L. Smith"),
+        aasm_state: :assigned
+      ).tap do |task|
+        task.start!
+        task.cancel!(reason)
+      end
+
+      visit "/dispatch/canceled"
+
+      expect(page).to have_content("Canceled EPs")
+      expect(find(:xpath, "//tbody/tr[1]/td[5]").text).to eql(reason)
+    end
   end
 
   context "As a caseworker" do
