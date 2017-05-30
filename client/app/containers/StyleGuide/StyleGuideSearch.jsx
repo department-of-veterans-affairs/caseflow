@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import InlineForm from '../../components/InlineForm';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
+
 class StyleGuideSearch extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +12,8 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         search: false,
-        medium: false
+        medium: false,
+        big: false
       }
 
    };
@@ -20,11 +22,14 @@ class StyleGuideSearch extends Component {
    handleMenuClick = () => {
     this.setState((prevState) => ({
      search: !prevState.search,
-     medium: !prevState.medium,
    }));
  };
 
-
+handleBigClick = () => {
+    this.setState((prevState) => ({
+     big: !prevState.big,
+   }));
+ };
 
 
   render() {
@@ -45,22 +50,22 @@ class StyleGuideSearch extends Component {
         Based on the app there are three sizes: big, medium, and small.
         There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
         </p> 
-
+        
         <h3>Search Big</h3>
         <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-field-big"
               title="SEARCH BIG"
               classNames="usa-search usa-search-big"
-              onClick={this.handleMenuClick}
-              loading={this.state.search}
+              onClick={this.handleBigClick}
+              loading={this.state.big}
             />
             <Button
               id="reset-default"
               name="Reset"
-              onClick={this.handleMenuClick}
+              onClick={this.handleBigClick}
               classNames={['cf-btn-link']}
-              disabled={!this.state.search}
+              disabled={!this.state.big}
             />
         </div>
         
