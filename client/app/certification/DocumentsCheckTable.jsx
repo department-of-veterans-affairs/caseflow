@@ -4,12 +4,10 @@ import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
 import Table from '../components/Table';
 
-const found = <div style={{ display: 'inline-flex' }}><FoundIcon/>
-                    <span>&emsp;Found in VBMS</span>
-                 </div>;
+const found = <div><FoundIcon/><span>&emsp;Found in VBMS</span></div>;
 
-const notFound = <div style={{ display: 'inline-flex' }}><NotFoundIcon/>
-                    <span style={{ lineHeight: 1 }} className="usa-input-error-message">&emsp;Not found in VBMS</span>
+const notFound = <div><NotFoundIcon/>
+                    <span className="error-status">&emsp;Not found in VBMS</span>
                  </div>;
 
 const documentIcon = (doc) => {
@@ -17,7 +15,7 @@ const documentIcon = (doc) => {
 };
 
 const formattedVbmsDate = (doc) => {
-  return doc.isMatching ? doc.vbmsDate : '\u2014';
+  return doc.isMatching ? doc.vbmsDate : '-';
 };
 
 class DocumentsCheckTable extends React.Component {
@@ -38,7 +36,7 @@ class DocumentsCheckTable extends React.Component {
         align: 'left'
       },
       {
-        header: <span><span className="usa-sr-only">Status</span>Status</span>,
+        header: <span>Status</span>,
         valueFunction: (doc) => documentIcon(doc),
         align: 'left'
       }
