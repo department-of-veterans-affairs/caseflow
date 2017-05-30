@@ -519,9 +519,8 @@ describe EstablishClaim do
     end
   end
 
-  context "#past_weeks" do
+  context "#past_weeks", focus: true do
     before do
-      establish_claim
       establish_claim.update(completed_at: Time.zone.today - 2.weeks)
     end
 
