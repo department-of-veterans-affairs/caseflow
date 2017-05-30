@@ -155,6 +155,8 @@ class Fakes::AppealRepository
       records.select { |_, r| r[:appellant_ssn] == appellant_ssn }
     end
 
+    fail ActiveRecord::RecordNotFound if return_records.empty?
+
     return_records.map do |vacols_id, r|
       Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
         appeal.assign_from_vacols(r)
@@ -257,7 +259,8 @@ class Fakes::AppealRepository
         nod_date: nod.received_at,
         soc_date: soc.received_at + 2.days,
         form9_date: form9.received_at,
-        ssoc_dates: [ssoc1.received_at, ssoc2.received_at]
+        ssoc_dates: [ssoc1.received_at, ssoc2.received_at],
+        appellant_ssn: "111223333"
       },
       documents: [nod, soc, form9, ssoc1, ssoc2]
     )
@@ -272,7 +275,8 @@ class Fakes::AppealRepository
         template: :ready_to_certify,
         nod_date: nod.received_at,
         soc_date: soc.received_at,
-        form9_date: form9.received_at
+        form9_date: form9.received_at,
+        appellant_ssn: "111224444"
       },
       documents: [nod, soc]
     )
