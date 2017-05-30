@@ -17,12 +17,15 @@ export default class StyleGuideLoaders extends React.Component {
        Each loader should have a message underneath the logo in 'gray-dark' that explains
        what is currently happening or where the information is being drawn from. </p>
 
+
+    <div className = "cf-dispatch-loader">
      <LoadingContainer >
       <div style={{ width: 400,
         height: 400 }}>
       </div>
-      <p> Gathering information in VBMS now......</p>
+      <p className="cf-text-align"> Gathering information in VBMS now......</p>
      </LoadingContainer>
+    </div>
 
     </div>;
   }
