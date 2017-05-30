@@ -15,10 +15,7 @@
 # model but in the same request. is this something we should optimize?
 class PowerOfAttorney
   include ActiveModel::Model
-  include ActiveSupport::Rescuable
   include AssociatedVacolsModel
-
-  rescue_from Savon::SOAPFault, with: :on_bgs_error
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name
@@ -37,6 +34,7 @@ class PowerOfAttorney
     self.bgs_representative_type = result[:representative_type]
     if result[:participant_id]
       self.participant_id = result[:participant_id]
+      load_bgs_address!
     else
       # if we don't have a participant id,
       # we can't find the address.
@@ -61,16 +59,26 @@ class PowerOfAttorney
 
   private
 
+  def find_bgs_address
+    bgs.find_address_by_participant_id(participant_id)
+  end
+
   def load_bgs_address!
     load_bgs_record! unless participant_id
-    bgs.find_address_by_participant_id(participant_id)
+    bgs_address = nil
 
-  rescue Savon::SOAPFault => e
-    on_bgs_adress_error(e)
+    begin
+      bgs_address = find_bgs_address
+    rescue Savon::SOAPFault => e
+      on_bgs_adress_error(e)
+    end
+
+    self.bgs_representative_address
   end
 
   def on_bgs_address_error(e)
     self.bgs_address_not_found = true
+    # TODO: should this be a Raven exception? it might be noisy.
     return Raven.capture_exception(e) if e.message.include?("No Person found")
     fail e
   end
