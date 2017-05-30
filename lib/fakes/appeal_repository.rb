@@ -179,6 +179,8 @@ class Fakes::AppealRepository
         File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
       when 4
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+      when 5
+        File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
       else
         file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
         file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
@@ -346,11 +348,11 @@ class Fakes::AppealRepository
       Generators::Document.build(vbms_document_id: 3, type: "Form 9",
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
-        vbms_document_id: 4,
+        vbms_document_id: 5,
         type: "This is a very long document type let's see what it does to the UI!",
         received_at: 7.days.ago,
         category_other: true),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
                                  category_medical: true, category_procedural: true, category_other: true)
     ]
   end

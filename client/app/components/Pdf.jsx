@@ -18,12 +18,12 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
-const RENDER_WITHIN_SCROLL = 1000;
-// This is the default page width.
-const PAGE_WIDTH = 1;
-// This comes from _pdf_viewer.css and is the default height
+const RENDER_WITHIN_SCROLL = 3000;
+
+// These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
 // able to expand/contract the height of the pages as we zoom.
+const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
 const NUM_PAGES_TO_PRERENDER = 2;
@@ -64,6 +64,8 @@ export class Pdf extends React.PureComponent {
     this.pageElements = [];
     this.fakeCanvas = [];
     this.scrollWindow = null;
+
+    this.pagesToRender = new Set();
 
     this.refFunctionGetters = {};
     this.setUpFakeCanvasRefFunctions();
@@ -185,6 +187,8 @@ export class Pdf extends React.PureComponent {
           // checking if any other pages of the current document are being rendered,
           // and will not proceed if they are since we want the current document's pages
           // to take precedence over prerendering other documents' pages.
+          // this.prioritizeRender();
+          this.renderInViewPages();
           this.prerenderPages();
 
           // this.props.file may not be a value in this.prerenderedPdfs. If it is not
@@ -229,6 +233,49 @@ export class Pdf extends React.PureComponent {
     this.renderInViewPages();
   }
 
+  prioritizeRender = () => {
+    // If we're already rendering a page, delay this calculation.
+    if (_.some(this.isRendering)) {
+      return;
+    }
+
+    let prioritzedPage = null;
+    let minPageDistance = Number.MAX_SAFE_INTEGER;
+    let pagesToRemove = [];
+
+    this.pagesToRender.forEach((index) => {
+      if (this.state.isRendered[index]) {
+        pagesToRemove.push(index);
+      } else {
+        const boundingRect = this.pageElements[index].pageContainer.getBoundingClientRect();
+        const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
+          Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
+        
+        console.log('index', index, 'distance', distanceToCenter);
+        if (distanceToCenter > 2 * RENDER_WITHIN_SCROLL + this.scrollWindow.clientHeight) {
+          pagesToRemove.push(index);
+        } else if (distanceToCenter < minPageDistance) {
+          prioritzedPage = index;
+          minPageDistance = distanceToCenter;
+        }
+      }
+    });
+
+    pagesToRemove.forEach((index) => {
+      this.pagesToRender.delete(index);
+    })
+
+    console.log('pagesToRender', this.pagesToRender, 'page about to render', prioritzedPage);
+
+    // Have to explicitly check for null since prioritizedPage can be zero.
+    if (prioritzedPage === null) {
+      return;
+    }
+
+    this.pagesToRender.delete(prioritzedPage);
+    this.renderPage(prioritzedPage, this.props.file);
+  }
+
   renderInViewPages = () => {
     this.performFunctionOnEachPage((boundingRect, index) => {
       // This renders each page as it comes into view. i.e. when
@@ -239,9 +286,11 @@ export class Pdf extends React.PureComponent {
       // TODO: Make this more robust.
       if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
           boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
-        this.renderPage(index, this.props.file);
+        this.pagesToRender.add(index);
       }
     });
+
+    //this.prioritizeRender();
   }
 
   performFunctionOnEachPage = (func) => {
@@ -586,7 +635,7 @@ export class Pdf extends React.PureComponent {
     return <div
       id="scrollWindow"
       className="cf-pdf-scroll-view"
-      onScroll={_.debounce(this.scrollEvent, 0)}
+      onScroll={_.debounce(this.scrollEvent, 10)}
       ref={this.getScrollWindowRef}>
       {prerenderCanvases}
         <div
