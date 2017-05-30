@@ -55,6 +55,10 @@ class PowerOfAttorney
     # case_record.bfso
   end
 
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
   private
 
   def load_bgs_address!
@@ -69,10 +73,6 @@ class PowerOfAttorney
     self.bgs_address_not_found = true
     return Raven.capture_exception(e) if e.message.include?("No Person found")
     fail e
-  end
-
-  def bgs
-    @bgs ||= BGSService.new
   end
 
   class << self

@@ -13,4 +13,19 @@ describe PowerOfAttorney do
   it "returns bgs address" do
     expect(power_of_attorney.bgs_address[:city]).to eq "SAN FRANCISCO"
   end
+
+  describe "error handling" do
+    before do
+      allow_any_instance_of(BGSService).to receive(:find_address_by_participant_id).and_raise("Ramalama")
+    end
+
+    let()
+
+  end
+
+  it "gracefully handles error fetching address" do
+    expect(poa.bgs.find_address_by_participant_id("ptcpntid")).to raise_error("Ramalama")
+    expect(poa.bgs_address).to eq nil
+    expect(poa.bgs_address_not_found).to eq true
+  end
 end
