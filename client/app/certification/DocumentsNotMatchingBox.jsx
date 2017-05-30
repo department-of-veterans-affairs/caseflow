@@ -4,10 +4,7 @@ import React from 'react';
 const DocumentsNotMatchingBox = () => {
   return <div className="usa-alert usa-alert-error cf-app-segment" role="alert">
     <div className="usa-alert-body">
-      <h3 className="usa-alert-heading">Cannot find documents in VBMS</h3>
-      <p className="usa-alert-text">
-        Some of the files listed in VACOLS could not be found in VBMS.
-      </p>
+      <h3 className="usa-alert-heading">Some documents could not be found in VBMS.</h3>
     </div>
   </div>;
 };
