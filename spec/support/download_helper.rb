@@ -1,3 +1,6 @@
+# Taken from the following:
+# https://collectiveidea.com/blog/archives/2012/01/27/testing-file-downloads-with-capybara-and-chromedriver
+
 module DownloadHelpers
   TIMEOUT = 60
   WORKDIR = Rails.root.join("tmp/downloads")

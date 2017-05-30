@@ -583,6 +583,15 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Form 9")
     end
 
+    scenario "When user search term is not found" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      search_query = "does not exist in annoations"
+      fill_in "searchBar", with: search_query
+
+      expect(page).to have_content("Search results not found")
+      expect(page).to have_content(search_query)
+    end
+
     scenario "Download PDF file" do
       DownloadHelpers.clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
@@ -594,70 +603,61 @@ RSpec.feature "Reader" do
       expect(download).to be_truthy
       DownloadHelpers.clear_downloads
     end
+  end
 
-    scenario "When user search term is not found" do
+  context "Large number of documents" do
+    # This assumes that num_documents is enough to force the viewport to scroll.
+    let(:num_documents) { 20 }
+    let(:documents) do
+      (1..num_documents).to_a.reduce([]) do |acc, number|
+        acc << Generators::Document.create(
+          filename: number.to_s,
+          type: "BVA Decision #{number}",
+          received_at: number.days.ago,
+          vbms_document_id: number,
+          category_procedural: true
+        )
+      end
+    end
+
+    scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      search_query = "does not exist in annoations"
-      fill_in "searchBar", with: search_query
 
-      expect(page).to have_content("Search results not found")
-      expect(page).to have_content(search_query)
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.first.type
+
+      click_on "Back to all documents"
+
+      expect(page).to have_content("#{num_documents} Documents")
+      expect(in_viewport("read-indicator")).to be true
+      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
-    context "Large number of documents" do
-      # This assumes that num_documents is enough to force the viewport to scroll.
-      let(:num_documents) { 20 }
-      let(:documents) do
-        (1..num_documents).to_a.reduce([]) do |acc, number|
-          acc << Generators::Document.create(
-            filename: number.to_s,
-            type: "BVA Decision #{number}",
-            received_at: number.days.ago,
-            vbms_document_id: number,
-            category_procedural: true
-          )
-        end
-      end
+    scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      scenario "Open a document and return to list" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      scroll_to_bottom("documents-table-body")
+      click_on documents.last.type
 
-        scroll_to_bottom("documents-table-body")
-        original_scroll_position = scroll_position("documents-table-body")
-        click_on documents.first.type
+      (num_documents - 1).times { find("#button-next").click }
 
-        click_on "Back to all documents"
+      click_on "Back to all documents"
 
-        expect(page).to have_content("#{num_documents} Documents")
-        expect(in_viewport("read-indicator")).to be true
-        expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
-      end
+      expect(page).to have_content("#{num_documents} Documents")
 
-      scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(in_viewport("read-indicator")).to be true
+    end
+  end
 
-        scroll_to_bottom("documents-table-body")
-        click_on documents.last.type
-
-        (num_documents - 1).times { find("#button-next").click }
-
-        click_on "Back to all documents"
-
-        expect(page).to have_content("#{num_documents} Documents")
-
-        expect(in_viewport("read-indicator")).to be true
-      end
+  context "When user is not whitelisted" do
+    before do
+      FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
     end
 
-    context "When user is not whitelisted" do
-      before do
-        FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
-      end
-
-      scenario "it redirects to unauthorized" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        expect(page).to have_content("Unauthorized")
-      end
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
     end
   end
 end

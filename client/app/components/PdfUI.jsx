@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { downloadIcon, FilterIcon } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 
@@ -22,10 +22,7 @@ export const linkToSingleDocumentView = (basePath, doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
-export const downloadLink = (file, type) => {
-
-  return `${file}?download=true&type=${type}`;
-};
+export const downloadLink = (file, type) => () => window.open(`${file}?download=true&type=${type}`);
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -158,9 +155,9 @@ export class PdfUI extends React.Component {
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={() => window.open(downloadLink(this.props.file, this.props.doc.type))}
+            onClick={downloadLink(this.props.file, this.props.doc.type)}
             ariaLabel="download pdf">
-            {downloadIcon()}
+            <DownloadIcon />
           </Button>
         </span>
       </div>
