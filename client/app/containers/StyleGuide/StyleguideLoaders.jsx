@@ -20,8 +20,7 @@ export default class StyleGuideLoaders extends React.Component {
 
     <div className = "cf-dispatch-loader">
      <LoadingContainer >
-      <div style={{ width: 400,
-        height: 400 }}>
+      <div style={{ width: 400, height: 400 }}>
       </div>
       <p className="cf-text-align"> Gathering information in VBMS now......</p>
      </LoadingContainer>
