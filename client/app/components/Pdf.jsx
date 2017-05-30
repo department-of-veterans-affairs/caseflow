@@ -375,9 +375,19 @@ export class Pdf extends React.PureComponent {
     if (event.altKey && event.code === 'KeyC') {
       this.props.startPlacingAnnotation();
 
-      const firstPageWithRoomForIcon = _(this.pageElements).
+      const firstPageWithRoomForIconIndex = _(this.pageElements).
         map('pageContainer').
-        findIndex((pageContainer) => pageContainer.getBoundingClientRect().bottom >= this.scrollWindow.getBoundingClientRect().top + ANNOTATION_ICON_SIDE_LENGTH);
+        findIndex((pageContainer) => 
+          pageContainer.getBoundingClientRect().bottom >= 
+            this.scrollWindow.getBoundingClientRect().top + ANNOTATION_ICON_SIDE_LENGTH);
+
+      const iconPageBoundingBox = this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+      // TODO: We don't actually want to use the page bounding box. We want to clip it to what's actually on the screen. 
+      // If the user has scrolled down 100 pixels, we want to center on what's actually visisble.
+      const xPosition = _.mean([iconPageBoundingBox.left, iconPageBoundingBox.right]) - iconPageBoundingBox.left - (ANNOTATION_ICON_SIDE_LENGTH / 2);
+      const yPosition = _.mean([iconPageBoundingBox.bottom, iconPageBoundingBox.top]) - iconPageBoundingBox.top - (ANNOTATION_ICON_SIDE_LENGTH / 2);
+
+      this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, xPosition, yPosition);
     }
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
