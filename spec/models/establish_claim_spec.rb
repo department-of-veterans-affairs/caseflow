@@ -518,4 +518,19 @@ describe EstablishClaim do
       end
     end
   end
+
+  context "#past_weeks" do
+    before do
+      establish_claim
+      establish_claim.update(completed_at: Time.zone.today - 2.weeks)
+    end
+
+    it "returns tasks completed in the specified range" do
+      expect(EstablishClaim.past_weeks(2).count).to eql(1)
+    end
+
+    it "returns no tasks outside the specified range" do
+      expect(EstablishClaim.past_weeks(1).count).to eql(0)
+    end
+  end
 end
