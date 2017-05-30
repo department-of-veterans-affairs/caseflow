@@ -1,0 +1,4 @@
+<%= react_component("BaseContainer", props: {
+    canceledTasks: @canceled_tasks.map(&:to_hash),
+    page: "CanceledTasksIndex"
+}) %>
