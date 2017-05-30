@@ -1,6 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import StatusMessage from '../../components/StatusMessage';
+import LoadingContainer from '../../components/LoadingContainer';
 
 
 
@@ -19,8 +20,14 @@ export default class StyleGuideLoaders extends React.Component {
      Each loader should have a message underneath the logo in 'gray-dark' that explains 
      what is currently happening or where the information is being drawn from. </p>
 
-      <StatusMessage
-        leadMessageList={['Gathering information in VBMS now.....']} />
+
+     <LoadingContainer >
+     <div style={{width:500, height: 500}}> 
+     </div>
+      <p> Gathering information in VBMS now.....'</p>       
+      </LoadingContainer>
+
+
     </div>;
   }
 }
