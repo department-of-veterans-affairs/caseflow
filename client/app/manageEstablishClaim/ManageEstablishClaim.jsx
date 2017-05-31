@@ -84,6 +84,11 @@ class ManageEstablishClaim extends React.Component {
 
         <h2>ARC Reports</h2>
         <p>
+          <a href="/dispatch/canceled" target="_blank">
+            View Canceled Tasks <i className="fa fa-external-link" aria-hidden="true"></i>
+          </a>
+        </p>
+        <p>
           <a href="/dispatch/stats">
             View Dashboard <i className="fa fa-line-chart" aria-hidden="true"></i>
           </a>
