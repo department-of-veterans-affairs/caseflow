@@ -151,7 +151,8 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
   vbmsDate: doc.serialized_receipt_date,
-  isMatching: doc['matching?']
+  isMatching: doc['matching?'],
+  isDateExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
 export const mapDataToInitialState = (state) => ({
