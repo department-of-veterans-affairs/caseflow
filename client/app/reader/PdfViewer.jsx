@@ -31,7 +31,8 @@ export class PdfViewer extends React.Component {
     }[event.key];
 
     if (this.props.isPlacingAnnotation && direction) {
-      this.props.movePlacingAnnotation(direction);  
+      this.props.movePlacingAnnotation(direction);
+
       return;
     }
 

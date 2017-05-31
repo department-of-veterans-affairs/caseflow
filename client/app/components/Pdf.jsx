@@ -397,6 +397,39 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
+  handleAltC = () => {
+    this.props.startPlacingAnnotation();
+
+    const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
+    const firstPageWithRoomForIconIndex = _(this.pageElements).
+      map('pageContainer').
+      findIndex((pageContainer) =>
+        pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
+
+    const iconPageBoundingBox =
+      this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+
+
+    const { x, y } = getInitialAnnotationIconCoords(
+      iconPageBoundingBox,
+      scrollWindowBoundingRect,
+      this.props.scale
+    );
+
+    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
+  }
+
+  handleAltEnter = () => {
+    this.props.placeAnnotation(
+      pageNumberOfPageIndex(this.props.placingAnnotationIconCoords.pageIndex),
+      {
+        xPosition: this.props.placingAnnotationIconCoords.x,
+        yPosition: this.props.placingAnnotationIconCoords.y
+      },
+      this.props.documentId
+    );
+  }
+
   keyListener = (event) => {
     if (isUserEditingText()) {
       return;
@@ -404,32 +437,11 @@ export class Pdf extends React.PureComponent {
 
     if (event.altKey) {
       if (event.code === 'KeyC') {
-        this.props.startPlacingAnnotation();
-
-        const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
-        const firstPageWithRoomForIconIndex = _(this.pageElements).
-          map('pageContainer').
-          findIndex((pageContainer) =>
-            pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
-
-        const iconPageBoundingBox =
-          this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
-
-
-        const { x, y } = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
-
-        this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
+        this.handleAltC();
       }
 
       if (event.code === 'Enter') {
-        this.props.placeAnnotation(
-          pageNumberOfPageIndex(this.props.placingAnnotationIconCoords.pageIndex), 
-          {
-            xPosition: this.props.placingAnnotationIconCoords.x,
-            yPosition: this.props.placingAnnotationIconCoords.y,
-          }, 
-          this.props.documentId
-        );
+        this.handleAltEnter();
       }
     }
 
