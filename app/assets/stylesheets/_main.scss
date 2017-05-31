@@ -384,16 +384,31 @@ select {
   }
 }
 
-<<<<<<< HEAD
 .usa-search {
   &.usa-search-medium,
   &.usa-search-big {
     [type="submit"] {
       background-image: none;
-    } 
-  } 
-=======
+
+       &[class*="cf-loading"] {
+      width: 13rem;
+      } 
+    }
+  }
+}
+
+.usa-search {
+  &.usa-search-small {
+    [type="submit"] {
+      background-image: none;
+
+       &[class*="cf-loading"] {
+      width: 13rem;
+      } 
+    }
+  }
+}
+
 .cf-title-meta-right {
   line-height: 3em;
->>>>>>> master
 }

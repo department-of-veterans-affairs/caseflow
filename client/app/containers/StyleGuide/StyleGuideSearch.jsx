@@ -31,6 +31,11 @@ handleBigClick = () => {
    }));
  };
 
+handleMediumClick = () => {
+    this.setState((prevState) => ({
+     medium: !prevState.medium,
+   }));
+ };
 
   render() {
     return (
@@ -61,7 +66,7 @@ handleBigClick = () => {
               loading={this.state.big}
             />
             <Button
-              id="reset-default"
+              id="reset-big"
               name="Reset"
               onClick={this.handleBigClick}
               classNames={['cf-btn-link']}
@@ -75,8 +80,15 @@ handleBigClick = () => {
               id="search-field"
               title="SEARCH MEDIUM"
               classNames="usa-search usa-search-medium"
-              onClick={this.handleMenuClick}
+              onClick={this.handleMediumClick}
               loading={this.state.medium}
+            />
+            <Button
+              id="reset-medium"
+              name="Reset"
+              onClick={this.handleMediumClick}
+              classNames={['cf-btn-link']}
+              disabled={!this.state.medium}
             />
         </div>
         
@@ -87,8 +99,15 @@ handleBigClick = () => {
               id="search-field-small"
               title="SEARCH SMALL"
               classNames="usa-search usa-search-small"
-              onClick={this.handlesMenuClick}
+              onClick={this.handleMenuClick}
               loading={this.state.search}
+            />
+            <Button
+              id="reset-default"
+              name="Reset"
+              onClick={this.handleMenuClick}
+              classNames={['cf-btn-link']}
+              disabled={!this.state.search}
             />
         </div>
         
