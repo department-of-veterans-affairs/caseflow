@@ -136,6 +136,16 @@ describe('EstablishClaim', () => {
         handleAlertClear={func}
         task={task}/>);
 
+      if (stationOfJurisdiction !== '397') {
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_SPECIAL_ISSUE,
+          payload: {
+            specialIssue: 'mustardGas',
+            value: true
+          }
+        });
+      }
+
       wrapper.node.store.dispatch({
         type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
         payload: {
