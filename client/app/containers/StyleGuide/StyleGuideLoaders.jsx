@@ -14,7 +14,7 @@ export default class StyleGuideLoaders extends React.Component {
      <p>
        A large Caseflow loading indicator in the center of the page is used
        when some information has been retrieved but other information is still being pulled.
-       Each loader should have a message underneath the logo in <font color="#323a45">gray-dark</font> that explains
+       Each loader should have a message underneath the logo in <code>gray-dark</code> that explains
        what is currently happening or where the information is being drawn from. </p>
 
 
