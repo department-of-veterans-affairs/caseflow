@@ -5,9 +5,13 @@ class Fakes::PowerOfAttorneyRepository < PowerOfAttorneyRepository
     def self.bfso
       "A"
     end
+
+    def self.representative
+      nil
+    end
   end
 
-  def self.poa_query
+  def self.poa_query(_poa)
     FakePoaRecord
   end
 end
