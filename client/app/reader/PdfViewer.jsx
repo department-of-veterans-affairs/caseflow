@@ -12,7 +12,7 @@ import { closeAnnotationDeleteModal, deleteAnnotation, movePlacingAnnotation,
 import { isUserEditingText } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
-import * as Constants from '../reader/Constants';
+import * as Constants from '../reader/constants';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
