@@ -35,19 +35,21 @@ export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindow
     y: screenCoords.y / scale
   };
 
+  const pageCoords = {
+    x: scaledCoords.x - (leftBound / scale),
+    y: scaledCoords.y - (topBound / scale)
+  };
+
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
   const coordsOffsetForAnnotationIcon = {
-    x: scaledCoords.x - annotationIconOffset,
-    y: scaledCoords.y - annotationIconOffset
+    x: pageCoords.x - annotationIconOffset,
+    y: pageCoords.y - annotationIconOffset
   };
 
-  console.log({leftBound, rightBound, screenCoords, scaledCoords, coordsOffsetForAnnotationIcon})
+  console.log({leftBound, rightBound, topBound, bottomBound, screenCoords, scaledCoords, pageCoords, coordsOffsetForAnnotationIcon})
 
-  return {
-    x: coordsOffsetForAnnotationIcon.x - iconPageBoundingBox.left,
-    y: coordsOffsetForAnnotationIcon.y - iconPageBoundingBox.top
-  };
+  return coordsOffsetForAnnotationIcon;
 };
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
@@ -415,7 +417,7 @@ export class Pdf extends React.PureComponent {
         this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
 
-      const {x, y} = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect);
+      const {x, y} = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
 
       this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
     }
