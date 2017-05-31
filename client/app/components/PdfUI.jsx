@@ -12,7 +12,7 @@ import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight } from '../components/R
 import classNames from 'classnames';
 import _ from 'lodash';
 
-export const linkToSingleDocumentView = (basePath, doc) => () => {
+export const makeOpenSingleDocumentView = (basePath, doc) => () => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
@@ -134,7 +134,7 @@ export class PdfUI extends React.Component {
                 name="newTab"
                 classNames={['cf-pdf-button cf-pdf-doc-type-button']}
                 ariaLabel="open document in new tab"
-                onClick={linkToSingleDocumentView(this.props.documentPathBase, this.props.doc)}>
+                onClick={makeOpenSingleDocumentView(this.props.documentPathBase, this.props.doc)}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>
