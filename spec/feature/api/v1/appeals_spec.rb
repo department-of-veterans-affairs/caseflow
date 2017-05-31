@@ -106,6 +106,34 @@ describe "Appeals API v1", type: :request do
       expect(json["errors"].first["title"]).to eq("Veteran not found")
     end
 
+    it "caches response" do
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # Make a new appeal and check that it isn't returned because of the cache
+      Generators::Appeal.create(
+        vacols_record: { template: :remand_decided, appellant_ssn: "111223333" }
+      )
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # tests that reload=true busts cache
+      get "/api/v1/appeals?reload=true", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(3)
+    end
+
     it "returns 500 on any other error" do
       headers = {
         "ssn": "444444444",
