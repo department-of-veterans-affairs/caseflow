@@ -1,6 +1,26 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "105c3011204fb816350b3b7b49c4ea14920e4ea4e2ccc6b81e32f8adc28232aa",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/document_controller.rb",
+      "line": 32,
+      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => document_disposition)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "DocumentController",
+        "method": "pdf"
+      },
+      "user_input": "Document.find(params[:id]).serve",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
       "fingerprint": "108b511c30dd04b89bb7f85ddf0c0603f46405bcc7d8dec11a864eff909ed1b7",
@@ -18,26 +38,6 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Because it's an API, :null_session is the appropriate CSRF protection"
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "764bd11a5e9e394bb9f87ccfa2377363fb124a0396129121634a3dbf08f038d8",
-      "check_name": "SendFile",
-      "message": "Model attribute used in file name",
-      "file": "app/controllers/document_controller.rb",
-      "line": 31,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => (\"attachment; filename='#{document_filename}.pdf'\"))",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "DocumentController",
-        "method": "pdf"
-      },
-      "user_input": "Document.find(params[:id]).serve",
-      "confidence": "Medium",
-      "note": ""
     },
     {
       "warning_type": "File Access",
@@ -78,28 +78,8 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Permitting update for all form8 values from form"
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "f9647c88ae35b9d7c923077a3962eaae4265ffa8a2605645c215b94b3e79e6d1",
-      "check_name": "SendFile",
-      "message": "Model attribute used in file name",
-      "file": "app/controllers/document_controller.rb",
-      "line": 36,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => \"inline\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "DocumentController",
-        "method": "pdf"
-      },
-      "user_input": "Document.find(params[:id]).serve",
-      "confidence": "Medium",
-      "note": "Param is used in finding the document from the DB, which is sanitized"
     }
   ],
-  "updated": "2017-05-26 15:07:14 -0400",
+  "updated": "2017-05-30 21:46:03 -0400",
   "brakeman_version": "3.6.0"
 }
