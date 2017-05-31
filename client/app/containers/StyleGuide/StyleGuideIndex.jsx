@@ -12,6 +12,7 @@ import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
+import StyleGuideLoaders from './StyleGuideLoaders';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLayout from './StyleGuideLayout';
@@ -73,6 +74,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#form_fields',
       name: 'Form Fields'
+    },
+    {
+      anchor: '#loaders',
+      name: 'Loaders'
     },
     {
       anchor: '#loading_buttons',
@@ -181,6 +186,8 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideFormFields />
         <div className="cf-help-divider"></div>
+        <StyleGuideLoaders />
+        <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
@@ -206,5 +213,3 @@ export default function StyleGuideIndex() {
     </div>;
 
 }
-
-/* eslint-enable max-len */
