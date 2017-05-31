@@ -389,10 +389,8 @@ export class Pdf extends React.PureComponent {
       const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
       const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
 
-      const xPosition = _.mean([leftBound, rightBound]) - leftBound - (ANNOTATION_ICON_SIDE_LENGTH / 2);
-      const yPosition = _.mean([topBound, bottomBound]) - topBound - (ANNOTATION_ICON_SIDE_LENGTH / 2);
-
-      // debugger;
+      const xPosition = _.mean([leftBound, rightBound]) - iconPageBoundingBox.left - (ANNOTATION_ICON_SIDE_LENGTH / 2);
+      const yPosition = _.mean([topBound, bottomBound]) - iconPageBoundingBox.top - (ANNOTATION_ICON_SIDE_LENGTH / 2);
 
       this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, xPosition, yPosition);
     }
