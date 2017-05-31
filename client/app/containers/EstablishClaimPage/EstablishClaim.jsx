@@ -35,14 +35,14 @@ export const EMAIL_PAGE = 'email';
 
 export const END_PRODUCT_INFO = {
   ARC: {
-    'Full Grant': ['172BVAG', 'BVA Grant'],
-    'Partial Grant': ['170PGAMC', 'ARC-Partial Grant'],
-    Remand: ['170RMDAMC', 'ARC-Remand']
+    'Full Grant': ['070BVAGRARC', 'ARC BVA Grant'],
+    'Partial Grant': ['070RMBVAGARC', 'ARC Remand with BVA Grant'],
+    Remand: ['070RMNDARC', 'ARC Remand (070)']
   },
   Routed: {
-    'Full Grant': ['172BVAG', 'BVA Grant'],
-    'Partial Grant': ['170RBVAG', 'Remand with BVA Grant'],
-    Remand: ['170RMD', 'Remand']
+    'Full Grant': ['070BVAGR', 'BVA Grant (070)'],
+    'Partial Grant': ['070RMNDBVAG', 'Remand with BVA Grant (070)'],
+    Remand: ['070RMND', 'Remand (070)']
   }
 };
 

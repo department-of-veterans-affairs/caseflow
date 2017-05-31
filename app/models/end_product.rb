@@ -11,6 +11,9 @@ class EndProduct
   INACTIVE_STATUSES = %w(CAN CLR).freeze
 
   DISPATCH_CODES = {
+    # TODO(jd): Remove this when we've verified they are
+    # no longer needed. Maybe 30 days after May 2017?
+    # original dispatch codes
     "170APPACT" => "Appeal Action",
     "170APPACTPMC" => "PMC-Appeal Action",
     "170PGAMC" => "ARC-Partial Grant",
@@ -24,13 +27,21 @@ class EndProduct
     "400CORRC" => "Correspondence",
     "400CORRCPMC" => "PMC-Correspondence",
     "930RC" => "Rating Control",
-    "930RCPMC" => "PMC-Rating Control"
+    "930RCPMC" => "PMC-Rating Control",
+
+    # new ones released in May 2017
+    "070BVAGR" => "BVA Grant (070)",
+    "070BVAGRARC" => "ARC BVA Grant",
+    "070BVAGRPMC" => "PMC BVA Grant (070)",
+    "070RMND" => "Remand (070)",
+    "070RMNDARC" => "ARC Remand (070)",
+    "070RMNDPMC" => "PMC Remand (070)",
+    "070RMNDBVAG" => "Remand with BVA Grant (070)",
+    "070RMBVAGARC" => "ARC Remand with BVA Grant",
+    "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES
-
-  FULL_GRANT_MODIFIER = "172".freeze
-  DISPATCH_MODIFIERS = %w(170 171 175 176 177 178 179 172).freeze
+  DISPATCH_MODIFIERS = %w(070 071 072 073 074 075 076 077 078 079 171 175 176 177 178 179 172).freeze
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
@@ -92,10 +103,8 @@ class EndProduct
     (claim_date - appeal.decision_date).abs < 30.days
   end
 
-  # Enforcing rule that there should never be an EP with a 172 modifier that isn't
-  # associated with a dispatch code
   def dispatch_code?
-    DISPATCH_CODES.keys.include?(claim_type_code) || (modifier == FULL_GRANT_MODIFIER)
+    DISPATCH_CODES.keys.include?(claim_type_code)
   end
 
   def dispatch_modifier?
