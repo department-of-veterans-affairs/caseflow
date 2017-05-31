@@ -10,16 +10,17 @@ export const INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR = 'INCREMENT_MODIFIER_ON_D
 
 // constants
 export const FULL_GRANT = 'Full Grant';
-export const FULL_GRANT_MODIFIER_OPTIONS = [
-  '172'
+export const MODIFIER_OPTIONS = [
+  '070',
+  '071',
+  '072',
+  '073',
+  '074',
+  '075',
+  '076',
+  '077',
+  '078',
+  '079'
 ];
-export const PARTIAL_GRANT_MODIFIER_OPTIONS = [
-  '170',
-  '171',
-  '175',
-  '176',
-  '177',
-  '178',
-  '179'
-];
+
 export const ARC_STATION_OF_JURISDICTION = '397';

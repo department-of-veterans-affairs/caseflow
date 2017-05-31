@@ -136,6 +136,16 @@ describe('EstablishClaim', () => {
         handleAlertClear={func}
         task={task}/>);
 
+      if (stationOfJurisdiction !== '397') {
+        wrapper.node.store.dispatch({
+          type: Constants.CHANGE_SPECIAL_ISSUE,
+          payload: {
+            specialIssue: 'mustardGas',
+            value: true
+          }
+        });
+      }
+
       wrapper.node.store.dispatch({
         type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
         payload: {
@@ -164,42 +174,42 @@ describe('EstablishClaim', () => {
     });
 
     context('when ARC EP', () => {
-      it('returns 170RMDAMC - ARC-Remand for remand', () => {
+      it('returns proper values for remand', () => {
         mountApp('Remand');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['170RMDAMC', 'ARC-Remand']);
+          eql(['070RMNDARC', 'ARC Remand (070)']);
       });
 
-      it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
+      it('returns proper values for partial grant', () => {
         mountApp('Partial Grant');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['170PGAMC', 'ARC-Partial Grant']);
+          eql(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
       });
 
-      it('returns 172BVAG - BVA Grant for full', () => {
+      it('returns proper values for full grant', () => {
         mountApp('Full Grant');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['172BVAG', 'BVA Grant']);
+          eql(['070BVAGRARC', 'ARC BVA Grant']);
       });
     });
 
     context('when Routed EP', () => {
-      it('returns 170RMDAMC - ARC-Remand for remand', () => {
+      it('returns proper value for remand', () => {
         mountApp('Remand', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['170RMD', 'Remand']);
+          eql(['070RMND', 'Remand (070)']);
       });
 
-      it('returns 170PGAMC - ARC-Partial Grant for partial', () => {
+      it('returns proper value for partial grant', () => {
         mountApp('Partial Grant', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['170RBVAG', 'Remand with BVA Grant']);
+          eql(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
       });
 
-      it('returns 172BVAG - BVA Grant for full', () => {
+      it('returns proper value for full grant', () => {
         mountApp('Full Grant', '301');
         expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['172BVAG', 'BVA Grant']);
+          eql(['070BVAGR', 'BVA Grant (070)']);
       });
     });
   });
