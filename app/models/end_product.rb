@@ -41,6 +41,8 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
+  CODES = DISPATCH_CODES
+
   DISPATCH_MODIFIERS = %w(070 071 072 073 074 075 076 077 078 079 171 175 176 177 178 179 172).freeze
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,

@@ -600,8 +600,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             station_of_jurisdiction: "313",
             date: task.appeal.decision_date.to_date,
             end_product_modifier: "070",
-            end_product_label: "ARC Remand with BVA Grant",
-            end_product_code: "070RMBVAGARC",
+            end_product_label: "Remand with BVA Grant (070)",
+            end_product_code: "070RMNDBVAG",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: true
           },
