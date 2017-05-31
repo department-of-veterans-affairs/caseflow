@@ -131,10 +131,10 @@ RSpec.feature "Reader" do
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("#button-next").click
-      expect(find(".cf-document-type")).to have_text("NOD")
-      find("#button-previous").click
-      find("#button-previous").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
+      find("#button-previous").click
+      find("#button-previous").click
+      expect(find(".cf-document-type")).to have_text("NOD")
     end
 
     scenario "Arrow keys to navigate through documents" do
@@ -160,7 +160,7 @@ RSpec.feature "Reader" do
       # Please forgive me.
       unless ENV["TRAVIS"]
         find("body").send_keys(:arrow_right)
-        expect_doc_type_to_be "NOD"
+        expect_doc_type_to_be "BVA Decision"
 
         find("body").send_keys(:arrow_left)
         expect_doc_type_to_be "Form 9"
