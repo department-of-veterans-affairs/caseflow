@@ -1,3 +1,7 @@
+<% content_for :new_window_title do %>Claims Missing Decisions<% end %>
+
+<% content_for :page_title do page_title('Claims Missing Decisions') end %>
+
 <%= react_component("BaseContainer", props: {
     unpreparedTasks: @unprepared_tasks.map(&:to_hash),
     page: "UnpreparedTasksIndex"
