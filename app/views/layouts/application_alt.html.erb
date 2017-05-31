@@ -3,7 +3,13 @@
 <head>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
-  <title>Caseflow <%= logo_name %></title>
+  <title>
+    <% if content_for?(:new_window_title) %>
+      <%= yield :new_window_title %>
+    <% else %>
+      Caseflow <%= logo_name %>
+    <% end %>
+  </title>
 
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
     <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
