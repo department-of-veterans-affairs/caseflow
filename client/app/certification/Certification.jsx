@@ -59,6 +59,7 @@ const configureStore = (data) => {
 };
 
 const Certification = ({ certification }) => {
+  debugger;
 
   return <Provider store={configureStore(certification)}>
     <div>

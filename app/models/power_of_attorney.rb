@@ -1,4 +1,4 @@
-# A model that centralizes all information
+  # A model that centralizes all information
 # about the appellant's legal representation.
 #
 # Power of attorney (also referred to as "representative")
@@ -43,14 +43,19 @@ class PowerOfAttorney
 
     begin
       self.bgs_representative_address = find_bgs_address
-    rescue Savon::Error => e
-      # If we can't find the address, Savon::SOAPFault will be thrown.
-      # However, this is not a blocking error, the user can continue
-      # without the address. So we won't re-raise the exception.
+    rescue => e
+      # If there is no address associated with the participant id,
+      # Savon::SOAPFault will be thrown.
+      # However, any error here is not a blocking error,
+      # the user can continue without the address.
+      # So we won't re-raise the exception.
       #
       # TODO: should this be a Raven exception? We might consider making it
       # a Prometheus metric instead.
       # TODO: Should we treat Savon::SOAPFault as different from other errors?
+      # TODO: probably should narrow down the type of errors we rescue from --
+      # but right now we don't know. Best to rescue broadly and narrow this down
+      # from the errors we see in Sentry.
       Raven.capture_exception(e)
     end
 
