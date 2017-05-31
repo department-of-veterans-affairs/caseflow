@@ -106,6 +106,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       within("#table-row-1") do
         click_on "Edit"
+
         fill_in "quota-#{june_quota.id}", with: "5"
         click_on "Save"
       end
@@ -124,11 +125,37 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
-      visit "/dispatch/missing-decision"
+      visit "/dispatch/establish-claim"
+      click_on "View Claims Missing Decisions"
 
       # should see the unprepared task
-      expect(page).to have_content("Claims Missing Decisions")
-      expect(page).to have_content(unprepared_task.appeal.veteran_name)
+      page.within_window windows.last do
+        expect(page).to have_content("Claims Missing Decisions")
+        expect(page).to have_content(unprepared_task.appeal.veteran_name)
+        page.driver.browser.close
+      end
+    end
+
+    scenario "View canceled EPs page" do
+      reason = "Cuz it's canceled"
+
+      Generators::EstablishClaim.create(
+        user: Generators::User.create(full_name: "Cance L. Smith"),
+        aasm_state: :assigned
+      ).tap do |task|
+        task.start!
+        task.cancel!(reason)
+      end
+
+      visit "/dispatch/establish-claim"
+      click_on "View Canceled Tasks"
+
+      # should see the canceled tasks
+      page.within_window windows.last do
+        expect(page).to have_content("Canceled EPs")
+        expect(find(:xpath, "//tbody/tr[1]/td[5]").text).to eql(reason)
+        page.driver.browser.close
+      end
     end
   end
 
@@ -318,13 +345,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim/#{task.id}"
       click_on "Route claim"
 
-      expect(find_field("endProductModifier")[:value]).to eq("170")
+      expect(find_field("endProductModifier")[:value]).to eq("070")
 
       click_on "Create End Product"
 
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("Unable to assign or create a new EP for this claim")
-      expect(find_field("endProductModifier")[:value]).to eq("171")
+      expect(find_field("endProductModifier")[:value]).to eq("071")
 
       # Missing SSN error
       allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
@@ -394,7 +421,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("Reviewed Full Grant decision")
-        expect(page).to have_content("Established EP: 172BVAG - BVA Grant for Station 351 - Muskogee")
+        expect(page).to have_content("Established EP: 070BVAGR - BVA Grant (070) for Station 351 - Muskogee")
 
         expect(page).to have_content("There are no more claims in your queue")
         expect(page).to have_button("Establish next claim", disabled: true)
@@ -455,14 +482,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      context "When there is an existing 172 EP" do
+      context "When there is an existing 070 EP" do
         before do
           BGSService.end_product_data = [
             {
               benefit_claim_id: "1",
               claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-              claim_type_code: "172GRANT",
-              end_product_type_code: "172",
+              claim_type_code: "070BVAGRARC",
+              end_product_type_code: "070",
               status_type_code: "PEND"
             }
           ]
@@ -478,11 +505,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          expect(page).to have_content("EP & Claim Label Modifiers in use")
-
-          # Validate the full grant associate page disables the Create new EP button
-          expect(page.find("#button-Create-new-EP")[:class]).to include("usa-button-disabled")
-
           page.find("#button-Assign-to-Claim1").click
 
           expect(page).to have_content("Success!")
@@ -525,7 +547,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Confirmation Page
         expect(page).to have_content("Success!")
-        expect(page).to have_content("Established EP: 170PGAMC - ARC-Partial Grant for Station 397 - ARC")
+        expect(page).to have_content("Established EP: 070RMBVAGARC - ARC Remand with BVA Grant for Station 397 - ARC")
         expect(page).to have_content("VACOLS Updated: Changed Location to 98")
         expect(page).to_not have_content("Added VBMS Note")
         expect(page).to_not have_content("Added Diary Note")
@@ -543,9 +565,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             claim_type: "Claim",
             station_of_jurisdiction: "397",
             date: task.appeal.decision_date.to_date,
-            end_product_modifier: "170",
-            end_product_label: "ARC-Partial Grant",
-            end_product_code: "170PGAMC",
+            end_product_modifier: "070",
+            end_product_label: "ARC Remand with BVA Grant",
+            end_product_code: "070RMBVAGARC",
             gulf_war_registry: true,
             suppress_acknowledgement_letter: true
           },
@@ -633,9 +655,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             claim_type: "Claim",
             station_of_jurisdiction: "313",
             date: task.appeal.decision_date.to_date,
-            end_product_modifier: "170",
-            end_product_label: "Remand with BVA Grant",
-            end_product_code: "170RBVAG",
+            end_product_modifier: "070",
+            end_product_label: "Remand with BVA Grant (070)",
+            end_product_code: "070RMNDBVAG",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: true
           },
@@ -672,20 +694,20 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
       end
 
-      context "When there is an existing 170 EP" do
+      context "When there is an existing 070 EP" do
         before do
           BGSService.end_product_data = [
             {
               benefit_claim_id: "2",
               claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
-              claim_type_code: "170RMD",
-              end_product_type_code: "170",
+              claim_type_code: "070RMND",
+              end_product_type_code: "070",
               status_type_code: "PEND"
             }
           ]
         end
 
-        scenario "Establish a new claim defaults to creating a 171 EP" do
+        scenario "Establish a new claim defaults to creating a 071 EP" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           click_on "Route claim"
@@ -710,10 +732,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               predischarge: false,
               claim_type: "Claim",
               date: task.appeal.decision_date.to_date,
-              # Testing that the modifier is now 171 since 170 was taken
-              end_product_modifier: "171",
-              end_product_label: "ARC-Partial Grant",
-              end_product_code: "170PGAMC",
+              # Testing that the modifier is now 071 since 070 was taken
+              end_product_modifier: "071",
+              end_product_label: "ARC Remand with BVA Grant",
+              end_product_code: "070RMBVAGARC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
               suppress_acknowledgement_letter: true

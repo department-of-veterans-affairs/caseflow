@@ -29,8 +29,8 @@ describe EndProduct do
     subject { end_product.claim_type }
 
     context "when claim type code is recognized" do
-      let(:claim_type_code) { "170RMDAMC" }
-      it { is_expected.to eq("ARC-Remand") }
+      let(:claim_type_code) { "070BVAGR" }
+      it { is_expected.to eq("BVA Grant (070)") }
     end
 
     context "when claim type code is unrecognized" do
@@ -57,7 +57,7 @@ describe EndProduct do
     subject { end_product.dispatch_conflict? }
 
     context "when modifier is a dispatch modifier" do
-      let(:modifier) { "170" }
+      let(:modifier) { "070" }
 
       context "when active" do
         let(:status_type_code) { "RFD" }
@@ -117,11 +117,6 @@ describe EndProduct do
     context "when it doesn't have a dispatch code" do
       let(:status_type_code) { "PEND" }
       it { is_expected.to be_falsey }
-
-      context "when it has a full grant modifier" do
-        let(:modifier) { "172" }
-        it { is_expected.to be_truthy }
-      end
     end
   end
 

@@ -98,24 +98,24 @@ RSpec.feature "Start Certification" do
       click_button("Continue")
       expect(page).to have_content("Review information about the appellant's representative from VBMS and VACOLS.")
 
-      within_fieldset("Representative type") do
-        find("label", text: "Other").click
+      within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+        find("label", text: "No").click
       end
-
-      fill_in "Specify other representative type", with: "Records"
-      fill_in "Representative name", with: "Johnny Depp"
+      within_fieldset("Which information source shows the correct representative for this appeal?") do
+        find("label", text: "None").click
+      end
 
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
 
       # go back to the case datails page
       page.go_back
-      within_fieldset("Representative type") do
-        expect(find_field("Other", visible: false)).to be_checked
+      within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+        expect(find_field("No", visible: false)).to be_checked
       end
-      expect(find_field("Specify other representative type").value).to eq("Records")
-      expect(find_field("Representative name").value).to eq("Johnny Depp")
-
+      within_fieldset("Which information source shows the correct representative for this appeal?") do
+        expect(find_field("None", visible: false)).to be_checked
+      end
       click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
@@ -136,12 +136,12 @@ RSpec.feature "Start Certification" do
 
     scenario "When some documents aren't matching shows missing documents page" do
       visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
-      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to have_content("Some documents could not be found in VBMS.")
       expect(page).to_not have_selector(:link_or_button, "Continue")
       expect(page).to have_selector(:link_or_button, "Refresh page")
       expect(page).to have_selector(:link_or_button, "cancel this certification")
       click_button("Refresh page")
-      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to have_content("Some documents could not be found in VBMS.")
     end
 
     scenario "When user tries to skip by manually entering URL" do

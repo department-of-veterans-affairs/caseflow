@@ -91,6 +91,69 @@ describe "Appeals API v1", type: :request do
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
     end
 
+    it "returns 404 if veteran with that SSN isn't found" do
+      headers = {
+        "ssn": "444444444",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v1/appeals", nil, headers
+
+      expect(response.code).to eq("404")
+
+      json = JSON.parse(response.body)
+      expect(json["errors"].length).to eq(1)
+      expect(json["errors"].first["title"]).to eq("Veteran not found")
+    end
+
+    it "caches response" do
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # Make a new appeal and check that it isn't returned because of the cache
+      Generators::Appeal.create(
+        vacols_record: { template: :remand_decided, appellant_ssn: "111223333" }
+      )
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # tests that reload=true busts cache
+      get "/api/v1/appeals?reload=true", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(3)
+    end
+
+    it "returns 500 on any other error" do
+      headers = {
+        "ssn": "444444444",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      allow(ApiKey).to receive(:authorize).and_raise("Much random error")
+      expect(Raven).to receive(:capture_exception)
+      expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
+
+      get "/api/v1/appeals", nil, headers
+
+      expect(response.code).to eq("500")
+
+      json = JSON.parse(response.body)
+      expect(json["errors"].length).to eq(1)
+      expect(json["errors"].first["title"]).to eq("Unknown error occured")
+      expect(json["errors"].first["detail"]).to match("Much random error (Sentry event id: a1b2c3)")
+    end
+
     it "returns list of appeals for veteran with SSN" do
       headers = {
         "ssn": "111223333",
