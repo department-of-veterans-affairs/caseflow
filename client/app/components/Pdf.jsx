@@ -16,6 +16,8 @@ import { handleSelectCommentIcon, setPdfReadyToShow,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
+const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
+
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
@@ -400,22 +402,35 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    if (event.altKey && event.code === 'KeyC') {
-      this.props.startPlacingAnnotation();
+    if (event.altKey) {
+      if (event.code === 'KeyC') {
+        this.props.startPlacingAnnotation();
 
-      const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
-      const firstPageWithRoomForIconIndex = _(this.pageElements).
-        map('pageContainer').
-        findIndex((pageContainer) =>
-          pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
+        const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
+        const firstPageWithRoomForIconIndex = _(this.pageElements).
+          map('pageContainer').
+          findIndex((pageContainer) =>
+            pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
 
-      const iconPageBoundingBox =
-        this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+        const iconPageBoundingBox =
+          this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
 
-      const { x, y } = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
+        const { x, y } = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
 
-      this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
+        this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
+      }
+
+      if (event.code === 'Enter') {
+        this.props.placeAnnotation(
+          pageNumberOfPageIndex(this.props.placingAnnotationIconCoords.pageIndex), 
+          {
+            xPosition: this.props.placingAnnotationIconCoords.x,
+            yPosition: this.props.placingAnnotationIconCoords.y,
+          }, 
+          this.props.documentId
+        );
+      }
     }
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
