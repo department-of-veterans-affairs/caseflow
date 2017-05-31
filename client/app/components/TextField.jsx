@@ -2,11 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default class TextField extends React.Component {
+
   onChange = (event) => {
     this.props.onChange(event.target.value);
   }
 
   render() {
+
     let {
       errorMessage,
       className,
@@ -92,8 +94,8 @@ TextField.propTypes = {
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType(
+  value: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.number,
-  )
+    PropTypes.number
+  ])
 };

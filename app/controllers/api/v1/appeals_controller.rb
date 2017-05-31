@@ -4,7 +4,7 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
 
   def index
-    render json: appeals, each_serializer: ::V1::AppealSerializer, include: "scheduled_hearings"
+    render json: json_appeals
   rescue ActiveRecord::RecordNotFound
     veteran_not_found
   end
@@ -15,12 +15,27 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
     request.headers["ssn"]
   end
 
+  def json_appeals
+    Rails.cache.fetch("appeals/v1/#{ssn}", expires_in: 24.hours, force: reload?) do
+      ActiveModelSerializers::SerializableResource.new(
+        appeals,
+        each_serializer: ::V1::AppealSerializer,
+        include: "scheduled_hearings"
+      ).as_json
+    end
+  end
+
   def appeals
     @appeals ||= Appeal.for_api(appellant_ssn: ssn)
   end
 
+  # Cache can't be busted in prod
+  def reload?
+    !!params[:reload] && !Rails.deploy_env?(:prod)
+  end
+
   def verify_feature_enabled
-    not_found unless FeatureToggle.enabled?(:appeals_status)
+    unauthorized unless FeatureToggle.enabled?(:appeals_status)
   end
 
   def veteran_not_found
