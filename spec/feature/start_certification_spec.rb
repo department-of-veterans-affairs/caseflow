@@ -136,12 +136,12 @@ RSpec.feature "Start Certification" do
 
     scenario "When some documents aren't matching shows missing documents page" do
       visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
-      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to have_content("Some documents could not be found in VBMS.")
       expect(page).to_not have_selector(:link_or_button, "Continue")
       expect(page).to have_selector(:link_or_button, "Refresh page")
       expect(page).to have_selector(:link_or_button, "cancel this certification")
       click_button("Refresh page")
-      expect(page).to have_content("Cannot find documents in VBMS")
+      expect(page).to have_content("Some documents could not be found in VBMS.")
     end
 
     scenario "When user tries to skip by manually entering URL" do
