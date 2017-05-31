@@ -18,21 +18,34 @@ describe PowerOfAttorneyMapper do
 
     context "#get_poa_from_vacols_poa" do
       it "returns None if there's no rep" do
-        poa = poa_mapper.new.get_poa_from_vacols_poa("L")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "L")
         expect(poa[:representative_type]).to eq("None")
       end
 
       it "returns poa if rep name is found in vacols case record" do
-        poa = poa_mapper.new.get_poa_from_vacols_poa("M")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "M")
         expect(poa[:representative_name]).to eq("Navy Mutual Aid Association")
         expect(poa[:representative_type]).to eq("Service Organization")
       end
 
       it "returns poa if rep name is found in rep table" do
-        poa = poa_mapper.new.get_poa_from_vacols_poa("T")
-        # TODO: finish when we implement this
-        expect(poa[:representative_name]).to eq("Stub POA Name")
-        expect(poa[:representative_type]).to eq("Stub POA Type")
+        representative_record = OpenStruct.new(repfirst: "Brad", repmi: "B", replast: "Pitt")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "O", representative_record: representative_record)
+        expect(poa[:representative_name]).to eq("Brad B Pitt")
+        expect(poa[:representative_type]).to eq("Other")
+      end
+
+      it "returns blank for representative_name if first and last names are blank in rep table" do
+        representative_record = OpenStruct.new(repmi: "B")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "T", representative_record: representative_record)
+        expect(poa[:representative_name]).to eq nil
+        expect(poa[:representative_type]).to eq("Attorney")
+      end
+
+      it "returns blank for representative_name if representative record is nil" do
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "U")
+        expect(poa[:representative_name]).to eq nil
+        expect(poa[:representative_type]).to eq("Agent")
       end
     end
 
