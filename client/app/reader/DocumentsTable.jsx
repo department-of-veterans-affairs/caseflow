@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { makeLinkToSingleDocumentView } from '../reader/utils';
+import { createLinkToSingleDocument } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -121,7 +121,7 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
-  singleDocumentView = () => makeLinkToSingleDocumentView(this.props.documentPathBase, this.props.doc)
+  singleDocumentView = () => createLinkToSingleDocument(this.props.documentPathBase, this.props.doc)
 
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
