@@ -16,6 +16,40 @@ import { handleSelectCommentIcon, setPdfReadyToShow,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
+// If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
+const ANNOTATION_ICON_SIDE_LENGTH = 40;
+
+export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
+  const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
+  const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
+  const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
+  const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
+
+  const screenCoords = {
+    x: _.mean([leftBound, rightBound]),
+    y: _.mean([topBound, bottomBound])
+  };
+
+  const scaledCoords = {
+    x: screenCoords.x / scale,
+    y: screenCoords.y / scale
+  };
+
+  const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
+
+  const coordsOffsetForAnnotationIcon = {
+    x: scaledCoords.x - annotationIconOffset,
+    y: scaledCoords.y - annotationIconOffset
+  };
+
+  console.log({leftBound, rightBound, screenCoords, scaledCoords, coordsOffsetForAnnotationIcon})
+
+  return {
+    x: coordsOffsetForAnnotationIcon.x - iconPageBoundingBox.left,
+    y: coordsOffsetForAnnotationIcon.y - iconPageBoundingBox.top
+  };
+};
+
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
@@ -29,10 +63,6 @@ const PAGE_WIDTH = 1;
 const PAGE_HEIGHT = 1056;
 
 const NUM_PAGES_TO_PRERENDER = 2;
-
-// We could do something clever where we inspect the SVG to determine its width,
-// but that seems to be more effort than it's worth.
-const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -378,21 +408,16 @@ export class Pdf extends React.PureComponent {
       const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
       const firstPageWithRoomForIconIndex = _(this.pageElements).
         map('pageContainer').
-        findIndex((pageContainer) => 
+        findIndex((pageContainer) =>
           pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
 
-      const iconPageBoundingBox = 
+      const iconPageBoundingBox =
         this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
-      const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
-      const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
-      const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
-      const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
 
-      const xPosition = _.mean([leftBound, rightBound]) - iconPageBoundingBox.left - (ANNOTATION_ICON_SIDE_LENGTH / 2);
-      const yPosition = _.mean([topBound, bottomBound]) - iconPageBoundingBox.top - (ANNOTATION_ICON_SIDE_LENGTH / 2);
+      const {x, y} = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect);
 
-      this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, xPosition, yPosition);
+      this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
     }
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {

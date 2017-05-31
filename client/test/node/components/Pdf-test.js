@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { Pdf } from '../../../app/components/Pdf';
+import { Pdf, getInitialAnnotationIconCoords } from '../../../app/components/Pdf';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -89,7 +89,47 @@ describe('Pdf', () => {
     });
   });
 
-  /* eslint-enable max-statements */
+  describe.only('getInitialAnnotationIconCoords', () => {
+    it('centers the icon when the page is contained entirely by the scroll window', () => {
+      const pageBox = {
+        top: 100,
+        bottom: 500,
+        left: 200,
+        right: 300
+      };
+      const scrollWindowBox = {
+        top: 0,
+        bottom: 1000,
+        left: 0,
+        right: 900
+      };
+      
+      expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
+        y: 180,
+        x: 30
+      });
+    })
+
+    it('centers the icon when the scroll window is contained entirely by the page', () => {
+      const pageBox = {
+        top: -300,
+        bottom: 1000,
+        left: -500,
+        right: 1200
+      };
+      const scrollWindowBox = {
+        top: 0,
+        bottom: 900,
+        left: 0,
+        right: 700
+      };
+      
+      expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
+        y: 730,
+        x: 830
+      });
+    })
+  })
 });
 
 /* eslint-enable no-unused-expressions */
