@@ -754,11 +754,14 @@ describe Appeal do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
 
-    context "#bgs_address" do
-      subject { appeal.power_of_attorney.bgs_address }
+    context "#power_of_attorney.bgs_representative_address" do
+      subject { appeal.power_of_attorney.bgs_representative_address }
 
       it "returns address if we are able to retrieve it" do
-        is_expected.to have_attributes(address_line1: "9999 MISSION ST", city: "SAN FRANCISCO")
+        is_expected.to include(
+          address_line_1: "9999 MISSION ST",
+          city: "SAN FRANCISCO",
+          zip: "94103")
       end
     end
   end

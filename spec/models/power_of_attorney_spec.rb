@@ -24,5 +24,4 @@ describe PowerOfAttorney do
       expect(power_of_attorney.bgs_representative_address).to eq nil
     end
   end
-
 end

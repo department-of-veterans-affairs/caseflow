@@ -54,7 +54,7 @@ class PowerOfAttorney
       Raven.capture_exception(e)
     end
 
-    self.bgs_representative_address
+    bgs_representative_address
   end
 
   def overwrite_vacols_with_bgs_value
