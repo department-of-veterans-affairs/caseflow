@@ -1,9 +1,5 @@
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
-import {
-  FULL_GRANT,
-  FULL_GRANT_MODIFIER_OPTIONS,
-  PARTIAL_GRANT_MODIFIER_OPTIONS
-} from '../constants';
+import { MODIFIER_OPTIONS } from '../constants';
 
 /*
  * This function returns a nicely formatted string for the station of jurisdiction
@@ -43,19 +39,12 @@ export const formattedStationOfJurisdiction = (
 };
 
 /*
- * This function gets the set of unused modifiers. For a full grant, only one
- * modifier, 172, is valid. For partial grants, 170, 171, 175, 176, 177, 178, 179
- * are all potentially valid. This removes any modifiers that have already been
+ * This function gets the set of unused modifiers.
+ * This removes any modifiers that have already been
  * used in previous EPs.
  */
-export const validModifiers = (endProducts, decisionType) => {
-  let modifiers = [];
-
-  if (decisionType === FULL_GRANT) {
-    modifiers = FULL_GRANT_MODIFIER_OPTIONS;
-  } else {
-    modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS;
-  }
+export const validModifiers = (endProducts) => {
+  let modifiers = MODIFIER_OPTIONS;
 
   let modifierHash = endProducts.reduce((modifierObject, endProduct) => {
     modifierObject[endProduct.end_product_type_code] = true;
