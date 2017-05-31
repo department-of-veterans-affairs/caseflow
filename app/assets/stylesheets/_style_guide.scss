@@ -233,13 +233,15 @@ pre {
   }
 }
 
-.cf-text-align {
-  text-align: center;
-  margin-bottom: 15px;
+.cf-sg-loader {
+  .loadingContainer-positioning {
+    height: auto;
+  }
 }
 
-.cf-dispatch-loader {
-  margin-top: 40px;
+.cf-image-loader {
+  width: 400px;
+  height: 400px;
 }
 
 

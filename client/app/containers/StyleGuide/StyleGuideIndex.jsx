@@ -76,6 +76,10 @@ export default function StyleGuideIndex() {
       name: 'Form Fields'
     },
     {
+      anchor: '#loaders',
+      name: 'Loaders'
+    },
+    {
       anchor: '#loading_buttons',
       name: 'Loading Buttons'
     },
