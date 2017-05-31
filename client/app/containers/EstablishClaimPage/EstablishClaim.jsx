@@ -330,7 +330,7 @@ export default class EstablishClaim extends BaseForm {
     });
 
     let data = ApiUtil.convertToSnakeCase({
-      vacolsNote
+      vacolsNote: vacolsNote.substring(0, 280)
     });
 
     return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).
