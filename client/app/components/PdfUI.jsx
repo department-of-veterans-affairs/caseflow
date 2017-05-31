@@ -11,18 +11,7 @@ import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
-
-export const makeOpenSingleDocumentView = (basePath, doc) => () => {
-  let id = doc.id;
-  let filename = doc.filename;
-  let type = doc.type;
-  let receivedAt = doc.receivedAt;
-
-  return window.open(`${basePath}/${id}?type=${type}` +
-    `&received_at=${receivedAt}&filename=${filename}`, "_blank");
-};
-
-export const downloadLink = (file, type) => () => window.open(`${file}?type=${type}&download=true`);
+import { makeLinkToSingleDocumentView } from '../reader/utils'
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -55,6 +44,11 @@ export class PdfUI extends React.Component {
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
     });
   }
+
+  openDownloadLink = () =>
+    window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
+
+  singleDocumentView = () => makeLinkToSingleDocumentView(this.props.documentPathBase, this.props.doc)
 
   getPdfFooter = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
@@ -134,7 +128,7 @@ export class PdfUI extends React.Component {
                 name="newTab"
                 classNames={['cf-pdf-button cf-pdf-doc-type-button']}
                 ariaLabel="open document in new tab"
-                onClick={makeOpenSingleDocumentView(this.props.documentPathBase, this.props.doc)}>
+                onClick={this.singleDocumentView}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>
@@ -176,7 +170,7 @@ export class PdfUI extends React.Component {
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={downloadLink(this.props.file, this.props.doc.type)}
+            onClick={this.openDownloadLink}
             ariaLabel="download pdf">
             <DownloadIcon />
           </Button>

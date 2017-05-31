@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { makeOpenSingleDocumentView } from '../components/PdfUI';
+import { makeLinkToSingleDocumentView } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -293,7 +293,7 @@ class DocumentsTable extends React.Component {
         </div>,
         valueFunction: (doc) => boldUnreadContent(
           <a
-            href={makeOpenSingleDocumentView(this.props.documentPathBase, doc)}
+            href={makeLinkToSingleDocumentView(this.props.documentPathBase, doc)}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
           </a>, doc)
