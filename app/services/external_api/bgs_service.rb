@@ -52,17 +52,17 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    unless @addresses[participant_id]
+    unless @poa_addresses[participant_id]
       bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                           service: :bgs,
                                           name: "address.find_by_participant_id") do
         client.address.find_by_participant_id(participant_id)
       end
       # handle no address found
-      @addresses[participant_id] = get_address_from_bgs_address(bgs_address)
+      @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
     end
 
-    @addresses[participant_id]
+    @poa_addresses[participant_id]
   end
 
   # This method checks to see if the current user has access to this case
