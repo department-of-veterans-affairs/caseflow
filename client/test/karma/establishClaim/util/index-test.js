@@ -3,11 +3,7 @@ import {
   formattedStationOfJurisdiction,
   validModifiers
 } from '../../../../app/establishClaim/util';
-import {
-  FULL_GRANT,
-  FULL_GRANT_MODIFIER_OPTIONS,
-  PARTIAL_GRANT_MODIFIER_OPTIONS
-} from '../../../../app/establishClaim/constants';
+import { MODIFIER_OPTIONS } from '../../../../app/establishClaim/constants';
 
 context('establishClaimUtil', () => {
   let result;
@@ -58,27 +54,22 @@ context('establishClaimUtil', () => {
   });
 
   context('.validModifiers', () => {
-    it('returns full grant modifiers', () => {
-      result = validModifiers([], FULL_GRANT);
-      expect(result).to.eql(FULL_GRANT_MODIFIER_OPTIONS);
-    });
-
-    it('returns partial grant modifiers', () => {
-      result = validModifiers([], 'partial grants!');
-      expect(result).to.eql(PARTIAL_GRANT_MODIFIER_OPTIONS);
+    it('returns modifiers', () => {
+      result = validModifiers([]);
+      expect(result).to.eql(MODIFIER_OPTIONS);
     });
 
     it('filters modifiers based on existing end products', () => {
       result = validModifiers(
         [
           {
-            end_product_type_code: '170'
+            end_product_type_code: '070'
           }
         ],
         'partial grants'
       );
 
-      let modifiers = PARTIAL_GRANT_MODIFIER_OPTIONS.slice();
+      let modifiers = MODIFIER_OPTIONS.slice();
       // Remove first modifier since it's taken
 
       modifiers.shift();
