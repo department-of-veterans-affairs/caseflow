@@ -29,14 +29,14 @@ class Fakes::BGSService
         benefit_claim_id: "3",
         claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
         claim_type_code: "070BVAGR",
-        end_product_type_code: "070",
+        end_product_type_code: "071",
         status_type_code: "CAN"
       },
       {
         benefit_claim_id: "4",
         claim_receive_date: 200.days.ago.to_formatted_s(:short_date),
         claim_type_code: "070BVAGR",
-        end_product_type_code: "070",
+        end_product_type_code: "072",
         status_type_code: "CLR"
       },
       {

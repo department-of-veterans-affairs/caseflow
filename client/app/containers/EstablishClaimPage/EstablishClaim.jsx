@@ -213,8 +213,10 @@ export default class EstablishClaim extends BaseForm {
   }
 
   getRoutingType = () => {
-    let stationOfJurisdiction =
-      this.store.getState().establishClaimForm.stationOfJurisdiction;
+    let stationOfJurisdiction = getStationOfJurisdiction(
+      this.store.getState().specialIssues,
+      this.props.task.appeal.station_key
+    );
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
   }
