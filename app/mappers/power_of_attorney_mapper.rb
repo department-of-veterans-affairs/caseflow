@@ -48,12 +48,13 @@ module PowerOfAttorneyMapper
   end
 
   # BGS Methods
-  # todo: fill out this hash
+  # TODO: fill out this hash for "Other" and "No Representative"
   BGS_REP_TYPE_TO_REP_TYPE = {
-    "POA Attorney": "Attorney",
-    "POA Agent": "Agent",
-    "POA Local/Regional Organization": "Service Organization",
-    "POA State Organization": "Service Organization"
+    "POA Attorney" => "Attorney",
+    "POA Agent" => "Agent",
+    "POA Local/Regional Organization" => "Service Organization",
+    "POA State Organization" => "Service Organization",
+    "POA National Organization" => "Service Organization"
   }.freeze
 
   BGS_REP_NAMES_TO_VACOLS_REP_CODES = {
@@ -92,7 +93,7 @@ module PowerOfAttorneyMapper
     # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
     bgs_type = bgs_poa[:power_of_attorney][:org_type_nm]
     {
-      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type.to_sym] || "Other",
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
       representative_name: bgs_poa[:power_of_attorney][:nm]
     }
   end
