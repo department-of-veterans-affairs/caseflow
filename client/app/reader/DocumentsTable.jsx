@@ -121,6 +121,8 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
+  singleDocumentView = () => makeLinkToSingleDocumentView(this.props.documentPathBase, this.props.doc)
+
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
@@ -293,7 +295,7 @@ class DocumentsTable extends React.Component {
         </div>,
         valueFunction: (doc) => boldUnreadContent(
           <a
-            href={makeLinkToSingleDocumentView(this.props.documentPathBase, doc)}
+            href={this.singleDocumentView}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
           </a>, doc)

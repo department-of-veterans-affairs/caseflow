@@ -13,18 +13,15 @@ class DocumentController < ApplicationController
 
   # :nocov:
 
-  def document_disposition
-    if params[:download]
-      "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
-    else
-      "inline"
-    end
-  end
-
   # TODO: Scope this down so that users can only see documents
   # associated with assigned appeals
   def pdf
     document = Document.find(params[:id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
 
     # The line below enables document caching for a month.
     expires_in 30.days, public: true

@@ -5,7 +5,7 @@ export const update = newContext();
 
 update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
-export const makeLinkToSingleDocumentView = (basePath, doc) => () => {
+export const makeLinkToSingleDocumentView = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
