@@ -89,7 +89,7 @@ describe('Pdf', () => {
     });
   });
 
-  describe.only('getInitialAnnotationIconCoords', () => {
+  describe('getInitialAnnotationIconCoords', () => {
     describe('zoom = 1', () => {
       it('centers the icon when the page is contained entirely by the scroll window', () => {
         const pageBox = {
@@ -104,12 +104,12 @@ describe('Pdf', () => {
           left: 0,
           right: 900
         };
-        
+
         expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
           y: 180,
           x: 30
         });
-      })
+      });
 
       it('centers the icon when the scroll window is contained entirely by the page', () => {
         const pageBox = {
@@ -124,12 +124,12 @@ describe('Pdf', () => {
           left: 0,
           right: 700
         };
-        
+
         expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
           y: 730,
           x: 830
         });
-      })
+      });
     });
 
     describe('zoom = 2', () => {
@@ -146,12 +146,12 @@ describe('Pdf', () => {
           left: 0,
           right: 900
         };
-        
+
         expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
           y: 80,
           x: 5
         });
-      })
+      });
 
       it('centers the icon when the scroll window is contained entirely by the page', () => {
         const pageBox = {
@@ -166,14 +166,14 @@ describe('Pdf', () => {
           left: 100,
           right: 700
         };
-        
+
         expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
-          y: 180,
-          x: 130
+          y: 380,
+          x: 430
         });
-      })      
-    })
-  })
+      });
+    });
+  });
 });
 
 /* eslint-enable no-unused-expressions */

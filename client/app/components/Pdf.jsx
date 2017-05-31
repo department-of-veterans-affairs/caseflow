@@ -36,20 +36,16 @@ export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindow
   };
 
   const pageCoords = {
-    x: scaledCoords.x - (leftBound / scale),
-    y: scaledCoords.y - (topBound / scale)
+    x: scaledCoords.x - (iconPageBoundingBox.left / scale),
+    y: scaledCoords.y - (iconPageBoundingBox.top / scale)
   };
 
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
-  const coordsOffsetForAnnotationIcon = {
+  return {
     x: pageCoords.x - annotationIconOffset,
     y: pageCoords.y - annotationIconOffset
   };
-
-  console.log({leftBound, rightBound, topBound, bottomBound, screenCoords, scaledCoords, pageCoords, coordsOffsetForAnnotationIcon})
-
-  return coordsOffsetForAnnotationIcon;
 };
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
@@ -417,7 +413,7 @@ export class Pdf extends React.PureComponent {
         this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
 
-      const {x, y} = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
+      const { x, y } = getInitialAnnotationIconCoords(iconPageBoundingBox, scrollWindowBoundingRect, this.props.scale);
 
       this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
     }
@@ -587,8 +583,10 @@ export class Pdf extends React.PureComponent {
   getPageCoordinatesOfMouseEvent(event, container) {
     const unconstrainedPageX = event.pageX - container.left;
     const unconstrainedPageY = event.pageY - container.top;
-    const constrainedPageX = Math.min(unconstrainedPageX, container.right - container.left - ANNOTATION_ICON_SIDE_LENGTH);
-    const constrainedPageY = Math.min(unconstrainedPageY, container.bottom - container.top - ANNOTATION_ICON_SIDE_LENGTH);
+    const constrainedPageX =
+      Math.min(unconstrainedPageX, container.right - container.left - ANNOTATION_ICON_SIDE_LENGTH);
+    const constrainedPageY =
+      Math.min(unconstrainedPageY, container.bottom - container.top - ANNOTATION_ICON_SIDE_LENGTH);
 
     return {
       xPosition: constrainedPageX / this.props.scale,
