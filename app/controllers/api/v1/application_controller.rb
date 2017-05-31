@@ -17,8 +17,6 @@ class Api::V1::ApplicationController < ActionController::Base
         "detail": "#{error} (Sentry event id: #{Raven.last_event_id})"
       ]
     }, status: 500
-
-    fail error unless Rails.env.production?
   end
 
   private
