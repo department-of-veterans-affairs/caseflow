@@ -7,11 +7,12 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { closeAnnotationDeleteModal, deleteAnnotation,
+import { closeAnnotationDeleteModal, deleteAnnotation, movePlacingAnnotation,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
 import { isUserEditingText } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
+import * as Constants from '../reader/Constants';
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
@@ -19,6 +20,18 @@ import { getFilteredDocuments } from './selectors';
 export class PdfViewer extends React.Component {
   keyListener = (event) => {
     if (isUserEditingText()) {
+      return;
+    }
+
+    const direction = {
+      ArrowLeft: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
+      ArrowRight: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
+      ArrowUp: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
+      ArrowDown: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN
+    }[event.key];
+
+    if (this.props.isPlacingAnnotation && direction) {
+      this.props.movePlacingAnnotation(direction);  
       return;
     }
 
@@ -141,10 +154,11 @@ export class PdfViewer extends React.Component {
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
+  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    movePlacingAnnotation,
     closeAnnotationDeleteModal,
     deleteAnnotation
   }, dispatch),

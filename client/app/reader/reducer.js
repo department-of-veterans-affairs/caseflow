@@ -564,6 +564,25 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload
       }
     });
+  case Constants.MOVE_PLACE_ANNOTATION_ICON:
+    return (() => {
+      const moveAmountPx = 5;
+      const movementDirection = action.payload.direction === Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP || 
+        action.payload.direction === Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT ?
+          -1 : 1;
+      const movementDimension = _.includes(
+        [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN], 
+        action.payload.direction
+      ) ? 'y' : 'x';
+
+      return update(state, {
+        placingAnnotationIconCoords: {
+          [movementDimension]: {
+            $apply: (coord) => coord + (moveAmountPx * movementDirection)
+          }
+        }
+      });
+    })();
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
       placingAnnotationIconCoords: {
