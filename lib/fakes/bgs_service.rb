@@ -196,12 +196,14 @@ class Fakes::BGSService
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record)
+    get_poa_from_bgs_rep(record)
   end
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
-    fail if participant_id == ID_TO_RAISE_ERROR
+    if participant_id == ID_TO_RAISE_ERROR
+      raise Savon::Error
+    end
 
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address

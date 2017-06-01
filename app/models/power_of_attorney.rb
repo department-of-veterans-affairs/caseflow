@@ -43,7 +43,7 @@ class PowerOfAttorney
 
     begin
       self.bgs_representative_address = find_bgs_address
-    rescue Savon::SOAPFault => e
+    rescue Savon::Error => e
       # If there is no address associated with the participant id,
       # Savon::SOAPFault will be thrown. Let's not reraise since
       # this error shouldn't block the user.
