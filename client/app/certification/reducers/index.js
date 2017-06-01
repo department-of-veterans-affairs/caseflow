@@ -157,6 +157,7 @@ const parseDocumentFromApi = (doc = {}, index) => ({
 export const mapDataToInitialState = (state) => ({
   bgsRepresentativeType: state.bgs_representative_type,
   bgsRepresentativeName: state.bgs_representative_name,
+  bgsPoaAddressFound: state['bgs_rep_address_found?'],
   vacolsRepresentativeType: state.vacols_representative_type,
   vacolsRepresentativeName: state.vacols_representative_name,
   representativeType: state.representative_type,
