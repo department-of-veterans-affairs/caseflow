@@ -44,8 +44,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
-  revision: d514f7876385cd014a66bfb957b2aa9dd18ceb8a
-  branch: selenium
+  revision: d5f94213dcef08756f8d1622355015739e96ff4f
+  branch: master
   specs:
     sniffybara (0.0.1)
       rainbow
@@ -140,7 +140,7 @@ GEM
       xpath (~> 2.0)
     case_transform (0.2)
       activesupport
-    childprocess (0.6.3)
+    childprocess (0.7.0)
       ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
     coderay (1.1.1)
@@ -360,7 +360,7 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    selenium-webdriver (3.3.0)
+    selenium-webdriver (3.4.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
       websocket (~> 1.0)

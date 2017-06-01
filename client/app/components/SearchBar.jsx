@@ -65,5 +65,6 @@ SearchBar.propTypes = {
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
+  loading: PropTypes.func,
   value: PropTypes.string
 };

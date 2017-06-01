@@ -600,6 +600,20 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Search results not found")
       expect(page).to have_content(search_query)
     end
+
+    scenario "Download PDF file" do
+      DownloadHelpers.clear_downloads
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      click_on documents[0].type
+      filename = "#{documents[0].type}-#{documents[0].vbms_document_id}"
+      find("#button-download").click
+      DownloadHelpers.wait_for_download
+      download = DownloadHelpers.downloaded?
+      expect(download).to be_truthy
+      expect(filename).to have_content("BVA Decision-5")
+      DownloadHelpers.clear_downloads
+    end
   end
 
   context "Large number of documents" do
