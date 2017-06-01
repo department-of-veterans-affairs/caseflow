@@ -56,11 +56,11 @@ handleMediumClick = () => {
         There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
         </p> 
         
-        <h3>Search Big</h3>
-        <div className="cf-sg-searchbar-example">
+        
+          <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-field-big"
-              title="SEARCH BIG"
+              title="Search Big"
               classNames="usa-search usa-search-big"
               onClick={this.handleBigClick}
               loading={this.state.big}
@@ -72,13 +72,13 @@ handleMediumClick = () => {
               classNames={['cf-btn-link']}
               disabled={!this.state.big}
             />
-        </div>
+          </div>
+
         
-        <h3>Search Medium</h3>
-        <div className="cf-sg-searchbar-example">
+          <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-field"
-              title="SEARCH MEDIUM"
+              title="Search medium"
               classNames="usa-search usa-search-medium"
               onClick={this.handleMediumClick}
               loading={this.state.medium}
@@ -93,11 +93,10 @@ handleMediumClick = () => {
         </div>
         
         <br />
-        <h3>Search Small</h3>
         <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-field-small"
-              title="SEARCH SMALL"
+              title="Search Small"
               classNames="usa-search usa-search-small"
               onClick={this.handleMenuClick}
               loading={this.state.search}

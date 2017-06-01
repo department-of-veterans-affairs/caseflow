@@ -391,7 +391,7 @@ select {
       background-image: none;
 
        &[class*="cf-loading"] {
-      width: 13rem;
+      width: 14rem;
       } 
     }
   }
@@ -400,7 +400,6 @@ select {
 .usa-search {
   &.usa-search-small {
     [type="submit"] {
-      background-image: none;
 
        &[class*="cf-loading"] {
       width: 13rem;
