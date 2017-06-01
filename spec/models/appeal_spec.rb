@@ -370,6 +370,35 @@ describe Appeal do
     end
   end
 
+  context ".convert_file_number_to_vacols" do
+    subject { Appeal.convert_file_number_to_vacols(file_number) }
+
+    context "for a file number with less than 9 digits" do
+      context "with leading zeros" do
+        let(:file_number) { "00001234" }
+        it { is_expected.to eq("1234C") }
+      end
+
+      context "with no leading zeros" do
+        let(:file_number) { "12345678" }
+        it { is_expected.to eq("12345678C") }
+      end
+    end
+
+    context "for a file number with 9 digits" do
+      let(:file_number) { "123456789" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "for a file number with more than 9 digits" do
+      let(:file_number) { "1234567890" }
+
+      it "raises InvalidFileNumber error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
+      end
+    end
+  end
+
   context "#partial_grant?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant? }
@@ -802,13 +831,16 @@ describe Appeal do
     let!(:veteran_appeals) do
       [
         Generators::Appeal.build(
-          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago }
         ),
         Generators::Appeal.build(
-          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { type: "Reconsideration" }
         ),
         Generators::Appeal.build(
-          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: 3.days.ago }
         )
       ]
     end
@@ -823,6 +855,16 @@ describe Appeal do
 
       it "raises InvalidSSN error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
+    context "when SSN not found in BGS" do
+      before do
+        Fakes::BGSService.ssn_not_found = true
+      end
+
+      it "raises ActiveRecord::RecordNotFound error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

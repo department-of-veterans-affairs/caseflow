@@ -117,6 +117,14 @@ class User < ActiveRecord::Base
     def before_set_user
     end
 
+    def system_user(ip_address)
+      new(
+        station_id: "283",
+        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1",
+        ip_address: ip_address
+      )
+    end
+
     def from_session(session, request)
       user = session["user"] ||= authentication_service.default_user_session
 

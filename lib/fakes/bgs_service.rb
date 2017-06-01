@@ -7,6 +7,7 @@ class Fakes::BGSService
   cattr_accessor :veteran_records
   cattr_accessor :power_of_attorney_records
   cattr_accessor :address_records
+  cattr_accessor :ssn_not_found
   attr_accessor :client
 
   ID_TO_RAISE_ERROR = "ERROR-ID".freeze
@@ -207,6 +208,10 @@ class Fakes::BGSService
     address ||= default_address
 
     get_address_from_bgs_address(address)
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    ssn_not_found ? nil : ssn
   end
 
   private
