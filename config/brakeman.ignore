@@ -22,6 +22,26 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
+      "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/document_controller.rb",
+      "line": 29,
+      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{params[:type]}-#{params[:id]}.pdf'\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "DocumentController",
+        "method": "pdf"
+      },
+      "user_input": "Document.find(params[:id]).serve",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
       "fingerprint": "acbfe5fab11db87920ae335a116c837c694a058ce49f06fb94dcf3dbfb14e66f",
       "check_name": "SendFile",
       "message": "Parameter value used in file name",
@@ -46,7 +66,7 @@
       "check_name": "MassAssignment",
       "message": "Parameters should be whitelisted for mass assignment",
       "file": "app/controllers/certifications_controller.rb",
-      "line": 67,
+      "line": 69,
       "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "params.require(:form8).permit!",
       "render_path": null,
@@ -58,28 +78,8 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Permitting update for all form8 values from form"
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "f9647c88ae35b9d7c923077a3962eaae4265ffa8a2605645c215b94b3e79e6d1",
-      "check_name": "SendFile",
-      "message": "Model attribute used in file name",
-      "file": "app/controllers/document_controller.rb",
-      "line": 24,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => \"inline\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "DocumentController",
-        "method": "pdf"
-      },
-      "user_input": "Document.find(params[:id]).serve",
-      "confidence": "Medium",
-      "note": "Param is used in finding the document from the DB, which is sanitized"
     }
   ],
-  "updated": "2017-05-22 08:09:39 -0400",
+  "updated": "2017-05-31 19:31:33 -0400",
   "brakeman_version": "3.6.0"
 }
