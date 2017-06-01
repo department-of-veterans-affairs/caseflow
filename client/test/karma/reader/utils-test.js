@@ -35,11 +35,15 @@ describe('Reader utils', () => {
     });
   });
   describe('isValidNum', () => {
+
+    /* eslint-disable no-unused-expressions */
     it('checks if number is a valid number', () => {
       expect(isValidNum(10)).to.be.true;
       expect(isValidNum('er')).to.be.false;
       expect(isValidNum('10')).to.be.true;
       expect(isValidNum('-10abc')).to.be.false;
     });
+
+    /* eslint-disable no-unused-expressions */
   });
 });

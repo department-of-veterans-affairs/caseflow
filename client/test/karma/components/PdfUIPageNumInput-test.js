@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 
 import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
 
-describe.only('PdfUIPageNumInput', () => {
+describe('PdfUIPageNumInput', () => {
   let wrapper;
 
   context('input value', () => {
@@ -16,8 +16,11 @@ describe.only('PdfUIPageNumInput', () => {
           currentPage={1}
           numPages={4}
           docId={1}
-          jumpToPage={ () => { } }
-        />,  { lifecycleExperimental: true }
+          jumpToPage={ () => {
+            return null;
+          }}
+        />,
+        { lifecycleExperimental: true }
       );
 
       const input = wrapper.find('input');
