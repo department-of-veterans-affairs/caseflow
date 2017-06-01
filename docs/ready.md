@@ -85,7 +85,7 @@ See [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-
 1. Ensure that backend logging is correct.
     * Verify that new logging is added where necessary
     * Verify that logs aren't becoming less useful (logging removed when it shouldn't be, or logs are noisy now, etc)
-1. Everything in [this doc](https://1drv.ms/w/s!Av1mb2ibWxcMlKxcfn2PyVPt_ZGWPQ)
+1. Everything in [this doc](./nick-cr-how-to.pdf).
 
 ## Hypothesis / Rationale
 We move tickets through a series of steps. When a ticket is moved to the next step too soon, it causes churn. If we look at these checklists before moving tickets to the next step, we may be able to reduce churn.
