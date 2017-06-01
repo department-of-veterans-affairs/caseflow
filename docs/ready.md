@@ -8,9 +8,7 @@ This is being piloted by the Whiskey team.
 Acceptance criteria includes handling for the following (or explicitly stating that they are out of scope or not applicable):
 
 **Summary**
-The purpose of this checklist are for designers to think about
-This is NOT meant to be written 
-
+The purpose of the Ready for Dev checklist are for designers and developers to consider all aspects of a new design and interactions for an application. This will help us prevent excessive dialogues between designers and developers during development. We highly discourage putting all of the information below in one ticket.
 
 #### Story / Description
 1. Where applicable (for more complicated tickets), please include a brief rationale for this solution to the problem.
