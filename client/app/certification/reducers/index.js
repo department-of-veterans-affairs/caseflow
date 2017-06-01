@@ -152,7 +152,7 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   vacolsDate: doc.serialized_vacols_date,
   vbmsDate: doc.serialized_receipt_date,
   isMatching: doc['matching?'],
-  isDateExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
+  isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
 export const mapDataToInitialState = (state) => ({
