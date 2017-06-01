@@ -7,7 +7,7 @@ module PowerOfAttorneyMapper
     base.extend(PowerOfAttorneyMapper)
   end
 
-  def get_poa_from_bgs_rep(bgs_rep = {})
+  def get_poa_from_bgs_poa(bgs_rep = {})
     # TODO: what do we do if we encounter a rep type we don't know?
     # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
     bgs_type = bgs_rep[:power_of_attorney][:org_type_nm]
