@@ -101,7 +101,6 @@ class SeedDB
 
   def create_hearings
     Generators::Hearing.create
-    Generators::HearingWorksheet.create
   end
 
   def clean_db

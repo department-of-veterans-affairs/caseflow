@@ -7,13 +7,15 @@ class Hearings::WorksheetsController < HearingsController
   private
 
   def worksheet
-    @worksheet ||= hearing.worksheet
+    @worksheet ||= hearing
   end
 
   def worksheet_params
-    params.require(:worksheet).permit(:witness, :contentions, :evidence,
-                                      :coments_for_attorney, :military_service,
-                                      hearing_worksheet_issues_attributes: [:id, :issue_id,
-                                                                            :status, :reopen, :vha])
+    params.require(:worksheet).permit(:worksheet_witness, :worksheet_contentions, :worksheet_evidence,
+                                      :worksheet_coments_for_attorney, :worksheet_military_service,
+                                      issues_attributes: [
+                                        :id, :hearing_worksheet_status,
+                                        :hearing_worksheet_reopen, :hearing_worksheet_vha
+                                      ])
   end
 end

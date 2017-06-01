@@ -7,7 +7,11 @@ class Generators::Hearing
         type: :video,
         date: Time.zone.now - 5.days,
         venue_key: "RO13",
-        vacols_id: generate_external_id
+        vacols_id: generate_external_id,
+        worksheet_witness: "Jane Doe attended",
+        worksheet_contentions: "The veteran believes their knee is hurt",
+        worksheet_evidence: "Medical exam occurred on 10/10/2008",
+        worksheet_comments_for_attorney: "Look for knee-related medical records"
       }
     end
 
