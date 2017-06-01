@@ -70,7 +70,7 @@ Acceptance criteria includes handling for the following (or explicitly stating t
     1. All CSS colors are variables, not magic values
 1. Feedback from previous PRs about style and best practices is applied in this PR as well
 
-### Ready To Merge
+### Ready To Merge (i.e. what to look for in code review)
 1. Use the React perf tools to see if there are extra new renders
 1. Use the Network tools to see if there are superfluous requests
 1. Use the Redux tools to see if there are superfluous actions
