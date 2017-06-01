@@ -331,12 +331,48 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
+      def get_element_position(selector)
+        page.driver.evaluate_script <<-EOS
+          function() {
+            var rect = document.querySelector('#{selector}').getBoundingClientRect();
+            return {
+              top: rect.top, 
+              left: rect.left
+            };
+          }();
+        EOS
+      end
+
       scenario "Leave annotation with keyboard", :focus => true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         assert_selector(".commentIcon-container", :count => 5)
         find("body").send_keys [:alt, "c"]
         expect(page).to have_css(".cf-pdf-placing-comment")
         assert_selector(".commentIcon-container", :count => 6)
+
+        def get_placing_annotation_icon_position
+          get_element_position "data-placing-annotation-icon"
+        end
+
+        sleep(inspection_timeout=400)
+        orig_position = get_placing_annotation_icon_position
+        puts orig_position
+        
+        find("body").send_keys [:up]
+        after_up_position = get_placing_annotation_icon_position
+        puts after_up_position
+        
+        find("body").send_keys [:down]
+        after_down_position = get_placing_annotation_icon_position
+        
+        find("body").send_keys [:right]
+        after_right_position = get_placing_annotation_icon_position
+        
+        find("body").send_keys [:left]
+        after_left_position = get_placing_annotation_icon_position
+
+        expect(after_up_position).to_equal orig_position
+
         find("body").send_keys [:alt, :enter]
         expect(page).to_not have_css(".cf-pdf-placing-comment")
       end

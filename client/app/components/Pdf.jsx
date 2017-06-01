@@ -627,7 +627,7 @@ export class Pdf extends React.PureComponent {
       this.props.comments.concat([{
         temporaryId: 'placing-annotation-icon',
         page: this.props.placingAnnotationIconCoords.pageIndex + 1,
-        ignoreClick: true,
+        isPlacingAnnotationIcon: true,
         ..._.pick(this.props.placingAnnotationIconCoords, 'x', 'y')
       }]) :
       this.props.comments;
@@ -650,7 +650,7 @@ export class Pdf extends React.PureComponent {
             y: comment.y * this.props.scale
           }}
           key={keyOfAnnotation(comment)}
-          onClick={comment.ignoreClick ? _.noop : this.props.handleSelectCommentIcon} />);
+          onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
 
       return acc;
     }, {});

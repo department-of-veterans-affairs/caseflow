@@ -24,7 +24,7 @@ export class CommentIcon extends React.Component {
     event.dataTransfer.setData('text', JSON.stringify(data));
   }
 
-  render = () => {
+  render() {
     const selected = this.props.comment.id === this.props.selectedAnnotationId;
 
     return <div
@@ -32,6 +32,7 @@ export class CommentIcon extends React.Component {
         left: this.props.position.x,
         top: this.props.position.y
       }}
+      data-placing-annotation-icon={this.props.comment.isPlacingAnnotationIcon}
       className="commentIcon-container"
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
