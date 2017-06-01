@@ -22,7 +22,7 @@ class UnconnectedDocumentsCheck extends React.Component {
   }
 
   areDatesExactlyMatching() {
-    if (this.props.ssocs) {
+    if (this.props.ssocs && this.props.ssocs.length) {
       return this.props.soc.isExactlyMatching &&
       this.props.ssocs.reduce((total, ssoc) => total && ssoc.isExactlyMatching);
     }
