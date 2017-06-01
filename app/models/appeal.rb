@@ -2,7 +2,6 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
 
   has_many :tasks
-  attr_writer :issues
 
   class MultipleDecisionError < StandardError; end
 
@@ -293,7 +292,6 @@ class Appeal < ActiveRecord::Base
   end
 
   attr_writer :issues
-
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
