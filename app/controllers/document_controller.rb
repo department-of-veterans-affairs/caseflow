@@ -18,12 +18,18 @@ class DocumentController < ApplicationController
   def pdf
     document = Document.find(params[:id])
 
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
     # The line below enables document caching for a month.
     expires_in 30.days, public: true
     send_file(
       document.serve,
       type: "application/pdf",
-      disposition: "inline")
+      disposition: document_disposition
+    )
   end
 
   def mark_as_read

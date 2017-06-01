@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
+    get 'canceled', to: 'establish_claims#canceled_tasks'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update

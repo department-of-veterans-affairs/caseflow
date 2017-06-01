@@ -21,6 +21,15 @@ class UnconnectedDocumentsCheck extends React.Component {
     this.props.updateProgressBar();
   }
 
+  areDatesExactlyMatching() {
+    if (this.props.ssocs && this.props.ssocs.length) {
+      return this.props.soc.isExactlyMatching &&
+      this.props.ssocs.reduce((total, ssoc) => total && ssoc.isExactlyMatching);
+    }
+
+    return this.props.soc.isExactlyMatching;
+  }
+
   render() {
     let {
       certificationStatus,
@@ -47,13 +56,14 @@ class UnconnectedDocumentsCheck extends React.Component {
 
     const missingInformation =
       <div>
-        <p>Caseflow could not find the documents marked
-          with an <NotFoundIcon/> in the appellant's eFolder. This usually happens when
-          something doesn't match up. Try checking:</p>
+        <p>If the document status is marked
+          with an <NotFoundIcon/>, try checking:</p>
         <ul>The <strong>document type</strong> in VBMS to make sure it's
-          <a href="/certification/help#mismatched-documents"> labeled correctly</a></ul>
-        <ul>The <strong>document date</strong> — the date in VBMS must match
-        the date in VACOLS</ul>
+          <a href="/certification/help#mismatched-documents"> labeled correctly.</a></ul>
+        <ul>The <strong>document date</strong> in VBMS. NOD and Form 9 dates must match their VACOLS dates.
+        SOC and SSOC dates are considered matching if the VBMS date is the same as the VACOLS date,
+        or if the VBMS date is 4 days or fewer before the VACOLS date.
+        <a href="/certification/help#document-dates"> Learn more about document dates.</a> </ul>
         <p>Once you've made corrections, <a href="">refresh this page.</a></p>
         <p>If you can't find the document, <a href="#"
           onClick={toggleCancellationModal}>cancel this certification.</a></p>
@@ -65,8 +75,8 @@ class UnconnectedDocumentsCheck extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
-
-        { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
+        { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()}/> :
+        <DocumentsNotMatchingBox/> }
 
         <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs}/>
 

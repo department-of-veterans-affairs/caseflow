@@ -661,26 +661,26 @@ describe Appeal do
       BGSService.end_product_data = [
         {
           claim_receive_date: twenty_days_ago,
-          claim_type_code: "172GRANT",
-          end_product_type_code: "172",
+          claim_type_code: "070BVAGR",
+          end_product_type_code: "071",
           status_type_code: "PEND"
         },
         {
           claim_receive_date: last_year,
-          claim_type_code: "170RMD",
-          end_product_type_code: "170",
+          claim_type_code: "070BVAGRARC",
+          end_product_type_code: "070",
           status_type_code: "PEND"
         },
         {
           claim_receive_date: yesterday,
-          claim_type_code: "172BVAG",
-          end_product_type_code: "172",
+          claim_type_code: "070RMND",
+          end_product_type_code: "072",
           status_type_code: "CAN"
         },
         {
           claim_receive_date: last_year,
-          claim_type_code: "172BVAG",
-          end_product_type_code: "172",
+          claim_type_code: "070RMNDARC",
+          end_product_type_code: "072",
           status_type_code: "CLR"
         }
       ]
@@ -691,8 +691,8 @@ describe Appeal do
     it "returns only pending eps" do
       expect(result.length).to eq(2)
 
-      expect(result.first.claim_type_code).to eq("172GRANT")
-      expect(result.last.claim_type_code).to eq("170RMD")
+      expect(result.first.claim_type_code).to eq("070BVAGR")
+      expect(result.last.claim_type_code).to eq("070BVAGRARC")
     end
   end
 
@@ -752,6 +752,17 @@ describe Appeal do
 
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+
+    context "#power_of_attorney.bgs_representative_address" do
+      subject { appeal.power_of_attorney.bgs_representative_address }
+
+      it "returns address if we are able to retrieve it" do
+        is_expected.to include(
+          address_line_1: "9999 MISSION ST",
+          city: "SAN FRANCISCO",
+          zip: "94103")
+      end
     end
   end
 
