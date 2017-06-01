@@ -117,7 +117,7 @@ group :development, :test do
   gem 'rspec-rails'
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
-  gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "selenium"
+  gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "master"
   gem 'simplecov', '0.12.0', require: false
   gem 'timecop'
 
