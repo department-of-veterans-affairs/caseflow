@@ -4,7 +4,6 @@ class Appeal < ActiveRecord::Base
   has_many :tasks
   attr_writer :issues
 
-
   class MultipleDecisionError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -293,9 +292,7 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
-  def issues=(issues)
-    @issues = issues
-  end
+  attr_writer :issues
 
   def issues
     @issues ||= self.class.repository.issues(vacols_id)

@@ -14,7 +14,7 @@ class Generators::HearingWorksheet
     def build(attrs = {})
       # Build a hearing using the base attrs required, then merge
       # in worksheet-specific attributes
-      hearing =  Generators::Hearing.build
+      hearing = Generators::Hearing.build
 
       # Use default Hearing attributes and "cast" the object to a HearingWorksheet
       hearing_worksheet = ::HearingWorksheet.new(hearing.attributes.merge(default_attrs)

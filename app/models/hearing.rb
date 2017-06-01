@@ -4,9 +4,10 @@ class Hearing < ActiveRecord::Base
 
   attr_accessor :date, :type, :venue_key, :vacols_record, :closed_at, :disposition
 
-  def worksheet
-    @worksheet ||= HearingWorksheet.new(attributes)
-  end
+  belongs_to :appeal
+  belongs_to :user # the judge
+  has_many :issues, foreign_key: :appeal_id, primary_key: :appeal_id
+  accepts_nested_attributes_for :issues
 
   def venue
     self.class.venues[venue_key]

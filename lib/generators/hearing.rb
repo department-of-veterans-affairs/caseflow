@@ -27,6 +27,5 @@ class Generators::Hearing
     def default_appeal
       Generators::Appeal.create(vacols_record: { template: :pending_hearing })
     end
-
   end
 end
