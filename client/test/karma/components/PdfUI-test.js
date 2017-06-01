@@ -76,7 +76,7 @@ describe('PdfUI', () => {
 
         wrapper.setProps({ pdfsReadyToShow: { [doc.id]: true } });
         wrapper.instance().onPageChange(currentPage, numPages);
-        expect(wrapper.text()).to.include(`Page ${currentPage} of ${numPages}`);
+        expect(wrapper.text()).to.include(`of ${numPages}`);
       });
     });
 

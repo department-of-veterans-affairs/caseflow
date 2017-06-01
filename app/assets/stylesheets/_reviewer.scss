@@ -362,6 +362,39 @@ svg[aria-hidden=true],
   color: $bookmark-pink;
 }
 
+.cf-pdf-buttons-center {
+  $spacing: 25px;
+
+  .page-progress-indicator {
+    margin-right: $spacing;
+  }
+
+  .page-progress-indicator-input {
+    width: 48px;
+    height: 22px;
+    display: inline-block;
+    color: white;
+    padding: 5px;
+    text-align: right;
+    background-color: rgb(91, 97, 107);
+    border-width: 1px;
+    border-style: solid;
+    border-color: white;
+    text-align: center;
+    margin: 5px;
+  }
+
+  .doc-list-progress-indicator {
+    margin-left: $spacing;
+
+    .filter-icon {
+      margin-right: $spacing / 2;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
 .cf-pdf-bookmark-layperson {
   color: $bookmark-green;
 }

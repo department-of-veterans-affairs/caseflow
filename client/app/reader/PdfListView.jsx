@@ -22,7 +22,9 @@ export class PdfListView extends React.Component {
             noDocuments={noDocuments}
           />
           { noDocuments ?
-          <NoSearchResults /> :
+          <NoSearchResults
+            searchQuery={this.props.docFilterCriteria.searchQuery}
+          /> :
           <DocumentsTable
             documents={this.props.documents}
             onJumpToComment={this.props.onJumpToComment}

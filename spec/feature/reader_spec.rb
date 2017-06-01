@@ -389,6 +389,17 @@ RSpec.feature "Reader" do
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
       end
+
+      scenario "Switch between pages" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[0].type
+
+        #fill_in '.page-progress-indicator-input', :with => 2
+        fill_in "#page-progress-indicator-input", wait: 2, with: ("2\n")
+        binding.pry
+        expect(in_viewport(find('#pageContainer2'))).to be true
+      end
     end
 
     # This test is not really testing what we want. In fact it only works because

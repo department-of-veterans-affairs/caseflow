@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { moveModel } from '../../../app/reader/utils';
+import { moveModel, isValidNum } from '../../../app/reader/utils';
 
 describe('Reader utils', () => {
   describe('moveModel', () => {
@@ -32,6 +32,14 @@ describe('Reader utils', () => {
         },
         annotations: {}
       });
+    });
+  });
+  describe('isValidNum', () => {
+    it('checks if number is a valid number', () => {
+      expect(isValidNum(10)).to.be.true;
+      expect(isValidNum('er')).to.be.false;
+      expect(isValidNum('10')).to.be.true;
+      expect(isValidNum('-10abc')).to.be.false;
     });
   });
 });

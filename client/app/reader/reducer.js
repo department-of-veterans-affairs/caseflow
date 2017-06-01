@@ -129,7 +129,8 @@ export const initialState = {
     pdf: {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
-      hidePdfSidebar: false
+      hidePdfSidebar: false,
+      jumpToPageNumber: null
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
@@ -400,6 +401,32 @@ export const reducer = (state = initialState, action = {}) => {
           }
         }
       }));
+  case Constants.JUMP_TO_PAGE:
+    return update(
+      state,
+      {
+        ui: {
+          pdf: {
+            $merge: {
+              jumpToPageNumber: action.payload.pageNumber
+            }
+          }
+        }
+      }
+    );
+  case Constants.RESET_JUMP_TO_PAGE:
+    return update(
+      state,
+      {
+        ui: {
+          pdf: {
+            $merge: {
+              jumpToPageNumber: null
+            }
+          }
+        }
+      }
+    );
   case Constants.SET_TAG_FILTER:
     return updateFilteredDocIds(update(
       state,

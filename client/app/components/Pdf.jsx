@@ -26,6 +26,8 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
+const SIXTH = 6;
+
 const NUM_PAGES_TO_PRERENDER = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -440,11 +442,25 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  renderAndScrollToPage(pageNumber) {
+    const boundingBox = this.scrollWindow.getBoundingClientRect();
+    const height = (boundingBox.bottom - boundingBox.top);
+    const coverScrollHeight = height / SIXTH;
+
+    this.scrollWindow.scrollTop =
+      this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
+      this.scrollWindow.scrollTop - coverScrollHeight;
+  }
 
   componentDidUpdate = () => {
     this.renderInViewPages();
     this.prerenderPages();
 
+    // if jump to page number is provided
+    // render the page and jump the page
+    if (this.props.jumpToPageNumber) {
+      this.renderAndScrollToPage(this.props.jumpToPageNumber);
+    }
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
         this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
