@@ -58,6 +58,13 @@ class CertificationsController < ApplicationController
       certifying_official_title: certification.certifying_official_title
     )
     form8.save_pdf!
+    unless @certification.poa_correct_in_vacols
+      Appeal.repository.update_vacols_rep_info!(
+        appeal: @certification.appeal,
+        representative_type: certification.representative_type,
+        representative_name: certification.representative_name
+      )
+    end
     @certification.complete!(current_user.id)
     render json: {}
   end

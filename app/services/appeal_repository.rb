@@ -203,6 +203,9 @@ class AppealRepository
     end
   end
 
+  def self.update_vacols_rep_info!(appeal:, representative_type:, representative_name:)
+  end
+
   def self.update_location_after_dispatch!(appeal:)
     location = location_after_dispatch(appeal: appeal)
 
