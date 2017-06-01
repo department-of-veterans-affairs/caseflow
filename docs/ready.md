@@ -23,11 +23,11 @@ Acceptance criteria includes handling for the following (or explicitly stating t
     1. Pixel or percentage measurements for layout
 
 #### Icons
-1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser
+1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser. Do not add new icons that are Font (not so) Awesome.
 
 #### Error Handling
-1. Invalid / unexpected user input
-1. Server failure
+1. What happens for invalid / unexpected user input?
+1. What happens for server failure?
 1. If necessary, consult with engineer about which errors may occur
 
 #### Data persisting to the backend
