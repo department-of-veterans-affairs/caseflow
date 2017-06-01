@@ -73,6 +73,9 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 1. Use the React perf tools to see if there are extra new renders
 1. Use the Network tools to see if there are superfluous requests
 1. Use the Redux tools to see if there are superfluous actions
+1. Ensure that backend logging is correct.
+    * Verify that new logging is added where necessary
+    * Verify that logs aren't becoming less useful (logging removed when it shouldn't be, or logs are noisy now, etc)
 1. Everything in [this doc](https://1drv.ms/w/s!Av1mb2ibWxcMlKxcfn2PyVPt_ZGWPQ)
 
 ## Hypothesis / Rationale
