@@ -196,7 +196,7 @@ class Fakes::BGSService
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_rep(record)
+    get_poa_from_bgs_poa(record)
   end
 
   # TODO: add more test cases
