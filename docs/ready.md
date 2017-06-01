@@ -20,7 +20,7 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 #### Mockups and Specs
 1. If the mockups and specs are inconsistent with each other, or are out of date, please note this explicitly.
 1. Specify all colors used (preferably in terms of semantic variables like `$tag-backgrond-color`)
-  1. Pixel or percentage measurements for layout
+    1. Pixel or percentage measurements for layout
 
 #### Icons
 1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser
@@ -44,26 +44,26 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 1. There are no new warnings in the test output
 1. There are no new console errors in the browser
 1. PR only addresses one ticket, unless:
-  * Addressing a separate ticket only requires a small amount (~10 lines) of code.
-  * Two tickets are fixed by the same diff / the two tickets really should have been one ticket
-  * Some other very good reason
+    * Addressing a separate ticket only requires a small amount (~10 lines) of code.
+    * Two tickets are fixed by the same diff / the two tickets really should have been one ticket
+    * Some other very good reason
 1. Everything (comments, variable names, etc) is spelled correctly using American English
 1. Best practices
-  1. Redux
-    1. No computed state is being stored in Redux
-    1. If you're adding new state to Redux, add it to the initial state, even if the initial value is falsey:
-    ```js
-      initialState = {
-        // ...
-        myNewValue: null
-      }
-    ```
-    1. All actions are used
-    1. All actions have a reducer part that updates the state
-  1. Lodash is being used effectively
-  1. All variables are scoped as tightly as possible
-  1. Class methods all use `this`; if `this` is not needed, it shouldn't be a class method
-  1. All CSS colors are variables, not magic values
+    1. Redux
+        1. No computed state is being stored in Redux
+        1. If you're adding new state to Redux, add it to the initial state, even if the initial value is falsey:
+            ```js
+              initialState = {
+                // ...
+                myNewValue: null
+              }
+            ```
+        1. All actions are used
+        1. All actions have a reducer part that updates the state
+    1. Lodash is being used effectively
+    1. All variables are scoped as tightly as possible
+    1. Class methods all use `this`; if `this` is not needed, it shouldn't be a class method
+    1. All CSS colors are variables, not magic values
 1. Feedback from previous PRs about style and best practices is applied in this PR as well
 
 ### Ready To Merge
