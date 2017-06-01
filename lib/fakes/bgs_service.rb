@@ -180,6 +180,10 @@ class Fakes::BGSService
     []
   end
 
+  def self.clean!
+    self.ssn_not_found = false
+  end
+
   def get_end_products(_veteran_id)
     end_product_data || self.class.no_grants
   end
@@ -329,9 +333,5 @@ class Fakes::BGSService
       power_of_atty_code2: "00",
       sex: "F"
     }
-  end
-
-  def self.clean!
-    self.ssn_not_found = false
   end
 end
