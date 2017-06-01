@@ -64,7 +64,6 @@ export class PdfUIPageNumInput extends React.PureComponent {
         value={this.state.pageNumber}
         className="page-progress-indicator-input"
         name="page-progress-indicator-input"
-        id="page-progress-indicator-input"
       />;
   }
 }
