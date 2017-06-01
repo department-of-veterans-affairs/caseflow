@@ -42,6 +42,7 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 
 ### Ready For PR
 1. The PR improves the app in some way
+1. If necessary: do over-the-shoulder demo with designer and ensure that functionality is correct 
 1. Tests are passing on Travis
 1. New tests are added for new functionality
 1. There are no new warnings in the test output
