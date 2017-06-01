@@ -10,6 +10,9 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 #### Story / Description
 1. Where applicable (for more complicated tickets), please include a brief rationale for this solution to the problem.
 
+#### Dependencies
+1. Link any other related tickets. This is particularly important for blockers.
+
 #### Accessibility
 1. Keyboard operability
 1. Screen-reader usability
