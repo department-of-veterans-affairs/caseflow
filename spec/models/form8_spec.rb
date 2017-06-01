@@ -68,13 +68,13 @@ describe Form8 do
 
       params = {}
       date_fields.each do |date_field|
-        params[date_field] = "02/01/2005"
+        params[date_field] = "02/31/2005"
       end
 
       form8.update_from_string_params(params)
 
       date_fields.each do |date_field|
-        expect(form8[date_field].class).to eq(Date)
+        expect(form8[date_field]).to eq Date.strptime("02/31/2005", "%m/%d/%Y")
       end
     end
   end
