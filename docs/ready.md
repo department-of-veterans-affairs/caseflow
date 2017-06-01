@@ -53,5 +53,11 @@ This is being piloted by the Whiskey team.
   1. All CSS colors are variables, not magic values
 1. Feedback from previous PRs about style and best practices is applied in this PR as well
 
+### Ready To Merge
+1. Use the React perf tools to see if there are extra new renders
+1. Use the Network tools to see if there are superfluous requests
+1. Use the Redux tools to see if there are superfluous actions
+1. Everything in [this doc](https://1drv.ms/w/s!Av1mb2ibWxcMlKxcfn2PyVPt_ZGWPQ)
+
 ## Hypothesis / Rationale
 We move tickets through a series of steps. When a ticket is moved to the next step too soon, it causes churn. If we look at these checklists before moving tickets to the next step, we may be able to reduce churn.
