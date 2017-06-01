@@ -2,20 +2,6 @@ describe PowerOfAttorneyMapper do
   let(:poa_mapper) { Class.new { include PowerOfAttorneyMapper } }
 
   describe "Maps VACOLS POA to POA" do
-    context "#get_short_name" do
-      let(:short_name) { poa_mapper.new.get_short_name("O") }
-      it "returns short name" do
-        expect(short_name).to eq("Other")
-      end
-    end
-
-    context "#get_full_name" do
-      let(:full_name) { poa_mapper.new.get_full_name("B") }
-      it "returns full name" do
-        expect(full_name).to eq("AMVETS")
-      end
-    end
-
     context "#get_poa_from_vacols_poa" do
       it "returns None if there's no rep" do
         poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "L")
