@@ -1,4 +1,5 @@
 class HearingsController < ApplicationController
+  # :nocov:
   before_action :verify_access, :set_application
 
   # TODO(jd): Remove this when we have a unique hearings logo
@@ -31,4 +32,5 @@ class HearingsController < ApplicationController
   def set_application
     RequestStore.store[:application] = "hearings"
   end
+  # :nocov:
 end
