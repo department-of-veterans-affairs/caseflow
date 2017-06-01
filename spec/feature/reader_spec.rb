@@ -331,6 +331,16 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
+      scenario "Leave annotation with keyboard", :focus => true do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        assert_selector(".commentIcon-container", :count => 5)
+        find("body").send_keys [:alt, "c"]
+        expect(page).to have_css(".cf-pdf-placing-comment")
+        assert_selector(".commentIcon-container", :count => 6)
+        find("body").send_keys [:alt, :enter]
+        expect(page).to_not have_css(".cf-pdf-placing-comment")
+      end
+
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
