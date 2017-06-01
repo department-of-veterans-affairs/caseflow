@@ -19,7 +19,12 @@ module PowerOfAttorneyMapper
     }
   end
 
-  def get_poa_from_vacols_poa(vacols_code)
+  def get_rep_name_from_rep_record(rep_record)
+    return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
+    "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
+  end
+
+  def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
     case
     when get_short_name(vacols_code) == "None"
       { representative_type: "None" }
@@ -33,11 +38,9 @@ module PowerOfAttorneyMapper
     else
       # Otherwise we have to look up the specific name of the rep
       # in the REP table.
-      # TODO: modify poa repository to look it up and pass that
-      # info into this method.
       {
-        representative_name: "Stub POA Name",
-        representative_type: "Stub POA Type"
+        representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_type: get_short_name(vacols_code)
       }
     end
   end
@@ -61,13 +64,13 @@ module PowerOfAttorneyMapper
     vacols_representatives[vacols_code][:full_name]
   end
 
-  # BGS Methods
-  # todo: fill out this hash
+  # TODO: fill out this hash for "Other" and "No Representative"
   BGS_REP_TYPE_TO_REP_TYPE = {
-    "POA Attorney"=> "Attorney",
-    "POA Agent"=> "Agent",
-    "POA Local/Regional Organization"=> "Service Organization",
-    "POA State Organization"=> "Service Organization"
+    "POA Attorney" => "Attorney",
+    "POA Agent" => "Agent",
+    "POA Local/Regional Organization" => "Service Organization",
+    "POA State Organization" => "Service Organization",
+    "POA National Organization" => "Service Organization"
   }.freeze
 
   BGS_REP_NAMES_TO_VACOLS_REP_CODES = {
