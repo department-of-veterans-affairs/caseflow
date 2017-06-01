@@ -16,24 +16,17 @@ export default class SearchBar extends React.Component {
       value,
       onClearSearch,
       loading,
-      title,
+      title
     } = this.props;
 
     let getSrOnlyClassName = () => {
-      //let classes = [];
-    // if (/usa-search-small/.test(this.props.classNames)) {
-    //   classes.push('usa-sr-only');
-    // }
-    // if (this.props.loading){
-    //   classes.push('cf-loading');
-    // }
-    // return classes.join(' ')
 
-       if (/usa-search-(big|medium)/.test(this.props.classNames)) {
-         return '';
-       } else {
-         return 'usa-sr-only';
-       }
+      if (/usa-search-(big|medium)/.test(this.props.classNames)) {
+        return '';
+      }
+
+      return 'usa-sr-only';
+
     };
 
     const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
@@ -63,7 +56,7 @@ export default class SearchBar extends React.Component {
 }
 
 SearchBar.defaultProps = {
-  classNames: "usa-search usa-search-small"
+  classNames: 'usa-search usa-search-small'
 };
 
 SearchBar.propTypes = {

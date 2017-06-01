@@ -390,9 +390,9 @@ select {
     [type="submit"] {
       background-image: none;
 
-       &[class*="cf-loading"] {
-      width: 14rem;
-      } 
+      &[class*="cf-loading"] {
+        width: 14rem;
+      }
     }
   }
 }
@@ -401,9 +401,9 @@ select {
   &.usa-search-small {
     [type="submit"] {
 
-       &[class*="cf-loading"] {
-      width: 13rem;
-      } 
+      &[class*="cf-loading"] {
+        width: 13rem;
+      }
     }
   }
 }
