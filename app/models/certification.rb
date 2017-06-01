@@ -42,10 +42,10 @@ class Certification < ActiveRecord::Base
       update = update.merge(bgs_rep_address_line_1: address[:address_line_1],
                    bgs_rep_address_line_2: address[:address_line_2],
                    bgs_rep_address_line_3: address[:address_line_3],
-                   bgs_poa_city: address[:city],
-                   bgs_poa_country: address[:country],
-                   bgs_poa_state: address[:state],
-                   bgs_poa_zip: address[:zip])
+                   bgs_rep_city: address[:city],
+                   bgs_rep_country: address[:country],
+                   bgs_rep_state: address[:state],
+                   bgs_rep_zip: address[:zip])
     end
 
     update_attributes!(update)
