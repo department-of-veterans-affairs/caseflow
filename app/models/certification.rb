@@ -40,12 +40,12 @@ class Certification < ActiveRecord::Base
     address = poa.bgs_representative_address
     if address
       update = update.merge(bgs_rep_address_line_1: address[:address_line_1],
-                   bgs_rep_address_line_2: address[:address_line_2],
-                   bgs_rep_address_line_3: address[:address_line_3],
-                   bgs_rep_city: address[:city],
-                   bgs_rep_country: address[:country],
-                   bgs_rep_state: address[:state],
-                   bgs_rep_zip: address[:zip])
+                            bgs_rep_address_line_2: address[:address_line_2],
+                            bgs_rep_address_line_3: address[:address_line_3],
+                            bgs_rep_city: address[:city],
+                            bgs_rep_country: address[:country],
+                            bgs_rep_state: address[:state],
+                            bgs_rep_zip: address[:zip])
     end
 
     update_attributes!(update)

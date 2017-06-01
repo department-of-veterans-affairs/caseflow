@@ -47,7 +47,6 @@ module PowerOfAttorneyMapper
 
   private
 
-  # VACOLS methods
   def vacols_representatives
     VACOLS::Case::REPRESENTATIVES
   end

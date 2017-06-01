@@ -1,4 +1,4 @@
-    # A model that centralizes all information
+# A model that centralizes all information
 # about the appellant's legal representation.
 #
 # Power of attorney (also referred to as "representative")
