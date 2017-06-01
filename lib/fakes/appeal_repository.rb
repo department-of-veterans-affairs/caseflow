@@ -165,10 +165,16 @@ class Fakes::AppealRepository
   end
 
   def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || @documents || []
+    name = "ListDocuments"
+    MetricsService.record("sent VBMS request #{name} for #{appeal.sanitized_vbms_id}",
+                          service: :vbms,
+                          name: name,
+                          id: appeal.sanitized_vbms_id) do
+      (document_records || {})[appeal.vbms_id] || @documents || []
+    end
   end
 
-  def self.fetch_document_file(document)
+  def self.fetch_document_file_from_drive
     path =
       case document.vbms_document_id.to_i
       when 1
@@ -185,6 +191,16 @@ class Fakes::AppealRepository
         file
       end
     IO.binread(path)
+  end
+
+  def self.fetch_document_file(document)
+    name = "FetchDocumentById"
+    MetricsService.record("sent VBMS request #{name} for #{document.vbms_document_id}",
+                          service: :vbms,
+                          name: name,
+                          id: document.vbms_document_id) do
+      fetch_document_file_from_drive(document)
+    end
   end
 
   def self.remands_ready_for_claims_establishment

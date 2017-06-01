@@ -140,9 +140,14 @@ RSpec.configure do |config|
     User.unauthenticate!
   end
 
+  config.before(:each) do
+    RequestStore.clear!
+  end
+
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    RequestStore.clear!
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

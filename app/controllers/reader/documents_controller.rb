@@ -69,6 +69,10 @@ class Reader::DocumentsController < ApplicationController
     "Reader"
   end
 
+  def set_application
+    RequestStore.store[:application] = "reader"
+  end
+
   def appeal_id
     params[:appeal_id]
   end
