@@ -13,6 +13,7 @@ require "react_on_rails"
 require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
+require_relative "support/download_helper"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -38,10 +39,20 @@ require_relative "support/database_cleaner"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
+download_directory = Rails.root.join("tmp/downloads")
+
+Dir.mkdir download_directory unless File.directory?(download_directory)
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
-    browser: :chrome
+    browser: :chrome,
+    prefs: {
+      download: {
+        prompt_for_download: false,
+        default_directory: download_directory
+      }
+    }
   }
 
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
