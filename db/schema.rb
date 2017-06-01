@@ -110,13 +110,13 @@ ActiveRecord::Schema.define(version: 20170530202048) do
     t.boolean  "poa_matches"
     t.boolean  "poa_correct_in_vacols"
     t.boolean  "poa_correct_in_bgs"
-    t.string   "bgs_address_line_1"
-    t.string   "bgs_address_line_2"
-    t.string   "bgs_address_line_3"
-    t.string   "bgs_city"
-    t.string   "bgs_country"
-    t.string   "bgs_state"
-    t.string   "bgs_zip"
+    t.string   "bgs_rep_address_line_1"
+    t.string   "bgs_rep_address_line_2"
+    t.string   "bgs_rep_address_line_3"
+    t.string   "bgs_rep_city"
+    t.string   "bgs_rep_country"
+    t.string   "bgs_rep_state"
+    t.string   "bgs_rep_zip"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
