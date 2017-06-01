@@ -22,9 +22,11 @@ class Generators::Issue
 
       issue = ::Issue.new(default_attrs.merge(attrs))
 
-      Fakes::AppealRepository.issue_records ||= {}
-      Fakes::AppealRepository.issue_records[issue.appeal.vacols_id] ||= []
-      Fakes::AppealRepository.issue_records[issue.appeal.vacols_id].push(issue)
+      if issue.appeal.vacols_id
+        Fakes::AppealRepository.issue_records ||= {}
+        Fakes::AppealRepository.issue_records[issue.appeal.vacols_id] ||= []
+        Fakes::AppealRepository.issue_records[issue.appeal.vacols_id].push(issue)
+      end
 
       issue
     end

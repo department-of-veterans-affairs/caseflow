@@ -141,6 +141,9 @@ class Generators::Appeal
       appeal.issues = (issues || []).map do |issue|
         issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
       end
+
+      Fakes::AppealRepository.issue_records ||= {}
+      Fakes::AppealRepository.issue_records[appeal.vacols_id] = appeal.issues
     end
 
     def add_inaccessible_appeal(appeal)

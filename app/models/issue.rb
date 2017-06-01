@@ -38,6 +38,17 @@ class Issue < ActiveRecord::Base
     !new_material?
   end
 
+  def attributes
+    super.merge(
+      program: program,
+      type: type,
+      category: category,
+      description: description,
+      disposition: disposition,
+      program_description: program_description
+    )
+  end
+
   class << self
     def description(hash)
       description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
