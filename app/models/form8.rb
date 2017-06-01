@@ -193,10 +193,10 @@ class Form8 < ActiveRecord::Base
     "form8-#{vacols_id}.tmp"
   end
 
+  # Removed certification_date from date_fields since it's read only
   def update_from_string_params(params)
-    date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
+    date_fields = [:service_connection_notification_date, :increased_rating_notification_date,
                    :other_notification_date, :soc_date]
-
     date_fields.each do |f|
       raw_value = params[f]
       params[f] = begin
@@ -205,7 +205,6 @@ class Form8 < ActiveRecord::Base
                     nil
                   end if raw_value && raw_value.is_a?(String)
     end
-
     update(params)
   end
 

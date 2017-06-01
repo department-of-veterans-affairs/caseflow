@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170526152033) do
+ActiveRecord::Schema.define(version: 20170525191011) do
+>>>>>>> master
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +108,9 @@ ActiveRecord::Schema.define(version: 20170526152033) do
     t.string   "certifying_official_name"
     t.string   "certifying_official_title"
     t.string   "certification_date"
+    t.boolean  "poa_matches"
+    t.boolean  "poa_correct_in_vacols"
+    t.boolean  "poa_correct_in_bgs"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree

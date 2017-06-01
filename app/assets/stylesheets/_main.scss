@@ -337,6 +337,20 @@ select {
   margin-bottom: 30px;
 }
 
+// add to commons
+.cf-inline-form {
+  line-height: 4em;
+
+  .cf-form-int-input {
+    input {
+      &[class*="cf-form-textinput"] {
+        margin-bottom: 0;
+        width: 3em;
+      }
+    }
+  }
+}
+
 .cf-borderless-rows {
 
   thead {
@@ -368,4 +382,8 @@ select {
       }
     }
   }
+}
+
+.cf-title-meta-right {
+  line-height: 3em;
 }

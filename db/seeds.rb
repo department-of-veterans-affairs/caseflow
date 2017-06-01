@@ -105,7 +105,7 @@ class SeedDB
   end
 
   def clean_db
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.clean_with(:truncation, {:except => %w[api_keys]})
   end
 
   def seed
