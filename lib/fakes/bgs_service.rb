@@ -330,4 +330,8 @@ class Fakes::BGSService
       sex: "F"
     }
   end
+
+  def self.clean!
+    self.ssn_not_found = false
+  end
 end

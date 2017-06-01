@@ -380,7 +380,7 @@ class Appeal < ActiveRecord::Base
     def for_api(appellant_ssn:)
       fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
 
-      repository.appeals_by_vbms_id(vbms_id_for(appellant_ssn))
+      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
                 .sort_by(&:latest_event_date)
                 .reverse
@@ -419,7 +419,7 @@ class Appeal < ActiveRecord::Base
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
     # up in VACOLS
-    def vbms_id_for(ssn)
+    def vbms_id_for_ssn(ssn)
       file_number = bgs.fetch_file_number_by_ssn(ssn)
 
       fail ActiveRecord::RecordNotFound unless file_number
