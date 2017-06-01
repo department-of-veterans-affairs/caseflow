@@ -102,4 +102,14 @@ module PowerOfAttorneyMapper
     "NATIONAL VETERANS ORGANIZATION OF AMERICA, INC." => "1",
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
+
+  def get_poa_from_bgs_poa(bgs_poa)
+    # TODO: what do we do if we encounter a rep type we don't know?
+    return {} if bgs_poa[:message] =~ /No POA found/
+    bgs_type = bgs_poa[:power_of_attorney][:org_type_nm]
+    {
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
+      representative_name: bgs_poa[:power_of_attorney][:nm]
+    }
+  end
 end
