@@ -7,6 +7,11 @@ This is being piloted by the Whiskey team.
 ### Ready For Dev
 Acceptance criteria includes handling for the following (or explicitly stating that they are out of scope or not applicable):
 
+**Summary**
+The purpose of this checklist are for designers to think about
+This is NOT meant to be written 
+
+
 #### Story / Description
 1. Where applicable (for more complicated tickets), please include a brief rationale for this solution to the problem.
 
@@ -16,17 +21,20 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 #### Accessibility
 1. Keyboard operability
 1. Screen-reader usability
+See [508 Guidelines](https://github.com/department-of-veterans-affairs/appeals-design-research/blob/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Section%20508/508.Section.Guidelines.pdf)
 
 #### Style Guide
 1. If a specific component from the styleguide is supposed to be used, please name that component.
+See [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide)
 
 #### Mockups and Specs
 1. If the mockups and specs are inconsistent with each other, or are out of date, please note this explicitly.
 1. Specify all colors used (preferably in terms of semantic variables like `$tag-backgrond-color`)
     1. Pixel or percentage measurements for layout
+    1. Highly recommend designers to use [Sketch Measure](http://utom.design/measure/)
 
 #### Icons
-1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser. Do not add new icons that are Font (not so) Awesome.
+1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser. Do not add new icons that are Font (not so) Awesome. See all [icons in design repo](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Icons).
 
 #### Error Handling
 1. What happens for invalid / unexpected user input?
