@@ -395,10 +395,10 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
-        #fill_in '.page-progress-indicator-input', :with => 2
-        fill_in "#page-progress-indicator-input", wait: 2, with: ("2\n")
-        binding.pry
-        expect(in_viewport(find('#pageContainer2'))).to be true
+        fill_in "page-progress-indicator-input", with: ("2\n")
+        expect(in_viewport('pageContainer2')).to be true
+        fill_in "page-progress-indicator-input", with: ("100e\n")
+        expect(in_viewport('pageContainer2')).to be true
       end
     end
 

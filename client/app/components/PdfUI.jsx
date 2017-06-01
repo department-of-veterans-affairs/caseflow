@@ -47,8 +47,8 @@ export class PdfUI extends React.Component {
   componentDidUpdate(prevProps) {
     // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id) {
-      if (this.props.isPlacingAnnotation) { 
-        this.props.stopPlacingAnnotation(); 
+      if (this.props.isPlacingAnnotation) {
+        this.props.stopPlacingAnnotation();
       }
       this.props.resetJumpToPage();
     }
@@ -76,7 +76,7 @@ export class PdfUI extends React.Component {
           </div> }
         <div className="cf-pdf-buttons-center">
           <span className="page-progress-indicator">
-            Page 
+            Page
             <PdfUIPageNumInput
               currentPage={this.state.currentPage}
               numPages={this.state.numPages}
