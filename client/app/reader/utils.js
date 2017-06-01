@@ -5,7 +5,7 @@ export const update = newContext();
 
 update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
-export const createLinkToSingleDocument = (basePath, doc) => {
+export const openDocumentInNewTab = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;

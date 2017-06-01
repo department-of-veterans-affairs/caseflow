@@ -11,7 +11,7 @@ import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { createLinkToSingleDocument } from '../reader/utils';
+import { openDocumentInNewTab } from '../reader/utils';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -48,7 +48,7 @@ export class PdfUI extends React.Component {
   openDownloadLink = () =>
     window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
 
-  singleDocumentView = () => createLinkToSingleDocument(this.props.documentPathBase, this.props.doc)
+  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
 
   getPdfFooter = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
