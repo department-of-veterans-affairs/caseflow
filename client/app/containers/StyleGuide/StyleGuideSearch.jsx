@@ -10,33 +10,22 @@ class StyleGuideSearch extends Component {
 
     this.state = {
       loading: {
-        search: false,
+        small: false,
         medium: false,
         big: false
       }
-
     };
 
   }
-  handleMenuClick = () => {
-    this.setState((prevState) => ({
-      search: !prevState.search
-    }));
-  };
 
-  handleBigClick = () => {
+  handleMenuClick = (elem) => ()=> {
     this.setState((prevState) => ({
-      big: !prevState.big
-    }));
-  };
-
-  handleMediumClick = () => {
-    this.setState((prevState) => ({
-      medium: !prevState.medium
-    }));
+      [elem]: !prevState[elem]
+    }))
   };
 
   render() {
+
     return (
       <div>
         <StyleGuideComponentTitle
@@ -57,16 +46,16 @@ class StyleGuideSearch extends Component {
 
           <div className="cf-sg-searchbar-example">
             <SearchBar
-              id="search-field-big"
+              id="search-big"
               title="Search Big"
               classNames="usa-search usa-search-big"
-              onClick={this.handleBigClick}
+              onClick={this.handleMenuClick('big')}
               loading={this.state.big}
             />
             <Button
               id="reset-big"
               name="Reset"
-              onClick={this.handleBigClick}
+              onClick={this.handleMenuClick('big')}
               classNames={['cf-btn-link']}
               disabled={!this.state.big}
             />
@@ -74,16 +63,16 @@ class StyleGuideSearch extends Component {
 
           <div className="cf-sg-searchbar-example">
             <SearchBar
-              id="search-field"
+              id="search-medium"
               title="Search medium"
               classNames="usa-search usa-search-medium"
-              onClick={this.handleMediumClick}
+              onClick={this.handleMenuClick('medium')}
               loading={this.state.medium}
             />
             <Button
               id="reset-medium"
               name="Reset"
-              onClick={this.handleMediumClick}
+              onClick={this.handleMenuClick('medium')}
               classNames={['cf-btn-link']}
               disabled={!this.state.medium}
             />
@@ -92,18 +81,18 @@ class StyleGuideSearch extends Component {
         <br />
         <div className="cf-sg-searchbar-example">
             <SearchBar
-              id="search-field-small"
+              id="search-small"
               title="Search Small"
               classNames="usa-search usa-search-small"
-              onClick={this.handleMenuClick}
-              loading={this.state.search}
+              onClick={this.handleMenuClick('small')}
+              loading={this.state.small}
             />
             <Button
-              id="reset-default"
+              id="reset-small"
               name="Reset"
-              onClick={this.handleMenuClick}
+              onClick={this.handleMenuClick('small')}
               classNames={['cf-btn-link']}
-              disabled={!this.state.search}
+              disabled={!this.state.small}
             />
         </div>
 
