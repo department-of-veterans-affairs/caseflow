@@ -32,7 +32,7 @@ export default class SearchBar extends React.Component {
     const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
 
     return <span className={this.props.classNames} role="search">
-      <label className={getSrOnlyClassName()} htmlFor={id}>{title}</label>
+      <label htmlFor={id}>{title}</label>
       <input
         className={inputClassName}
         id={id}
@@ -48,7 +48,7 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name="search" onClick={onClick} type="submit" loading={loading}>
+      <Button name={"search-"+id} onClick={onClick} type="submit" loading={loading}>
         <span className={getSrOnlyClassName()}>Search</span>
       </Button>
     </span>;

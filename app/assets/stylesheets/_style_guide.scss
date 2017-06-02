@@ -234,7 +234,7 @@ pre {
 }
 
 .cf-sg-searchbar-example {
-  label.usa-sr-only {
+  [type="label"].usa-sr-only {
     position: relative;
     left: auto;
   }

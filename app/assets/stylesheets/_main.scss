@@ -395,14 +395,13 @@ select {
       }
     }
   }
-}
 
-.usa-search {
   &.usa-search-small {
     [type="submit"] {
 
       &[class*="cf-loading"] {
         width: 13rem;
+        background-image: none;
       }
     }
   }
