@@ -11,8 +11,6 @@ import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
 import * as certificationActions from './actions/Certification';
 
-
-// TODO: refactor to use shared components where helpful
 class UnconnectedDocumentsCheck extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
@@ -109,11 +107,6 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-/*
- * Creates a component that's connected to the Redux store
- * using the state & dispatch map functions and the
- * ConfirmHearing function.
- */
 const DocumentsCheck = connect(
   mapStateToProps,
   mapDispatchToProps

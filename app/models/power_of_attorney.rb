@@ -8,10 +8,7 @@
 # and lets the user modify VACOLS with BGS information
 # (but not the other way around).
 #
-# TODO: fetch POA address information from BGS
-# TODO: fetch POA address information from VACOLS
-# TODO: include the REP table in the VACOLS query and
-# fetch representative name information from VACOLS
+#
 # TODO: we query VACOLS when the vacols methods are
 # called, even if we've also queried VACOLS outside of this
 # model but in the same request. is this something we should optimize?
