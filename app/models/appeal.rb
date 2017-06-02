@@ -291,6 +291,7 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
+  attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
