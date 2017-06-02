@@ -1,6 +1,6 @@
 # Design Issue Checklist 
 
-**Summary**  
+### Summary
 The purpose of the Ready for Dev checklist is for designers and developers to consider all aspects of a new design and interactions for an application, prior to labeling a ticket "Ready for Dev." This will help us prevent excessive dialogues between designers and developers during development. We highly discourage putting all of the information below in a single ticket, and encourage linking out to relevant, related tickets where possible.
 
 This is being piloted by the Whiskey team.
@@ -13,12 +13,10 @@ Acceptance criteria includes handling for the following (or explicitly stating t
 
 #### Accessibility
 1. Keyboard operability
-1. Screen-reader usability
-See [508 Guidelines](https://github.com/department-of-veterans-affairs/appeals-design-research/blob/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Section%20508/508.Section.Guidelines.pdf)
+1. Screen-reader usability (see [508 Guidelines](https://github.com/department-of-veterans-affairs/appeals-design-research/blob/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Section%20508/508.Section.Guidelines.pdf))
 
 #### Style Guide
-1. If a specific component from the styleguide is supposed to be used, please name that component.
-See [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide)
+1. If a specific component from the styleguide is supposed to be used, please name that component (see [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide))
 
 #### Mockups and Specs
 1. If the mockups and specs are inconsistent with each other, or are out of date, please note this explicitly.
@@ -27,7 +25,7 @@ See [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-
     1. Highly recommend designers to use [Sketch Measure](http://utom.design/measure/)
 
 #### Icons
- 1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser. Do not add new icons that are Font (not so) Awesome. See all [icons in design repo](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Icons).
+ 1. Ensure that all necessary SVGs are linked from the ticket and render correctly in the GitHub browser. Do not add new icons that are Font (not so) Awesome (see all [icons in design repo](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/7d850e611d94c448b7e143273bc74a414d3fb3ca/Projects/Styleguide/Design%20files/Icons)).
  
 #### Complex Use cases
 1. Is the design scalable for scenarios where there are many files and documents?
@@ -35,13 +33,15 @@ See [Caseflow Style guide](https://dsva-appeals-certification-dev-1895622301.us-
 #### Error Handling
 1. What happens for invalid / unexpected user input?
 1. What happens for server failure?
-- For [Success, Status and Alert Messages](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide#messages) after a user took an action. For [Banner Alerts](https://github.com/department-of-veterans-affairs/caseflow/issues/1084).
-- If necessary, consult with engineer about which errors may occur
+    - For [Success, Status and Alert Messages](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide#messages) after a user took an action.
+    - For [Banner Alerts](https://github.com/department-of-veterans-affairs/caseflow/issues/1084).
+    - If necessary, consult with engineer about which errors may occur
 
 #### Data persisting to the backend
 1. What actions cause data to be saved?
 1. Is there a "save successful" indicator? 
-- For [Success, Status and Alert Messages](https://dsva-appeals-certification-dev-1895622301.us-gov-westelb.amazonaws.com/styleguide#messages) after a user took an action. For [Banner Alerts](https://github.com/department-of-veterans-affairs/caseflow/issues/1084).
+    - For [Success, Status and Alert Messages](https://dsva-appeals-certification-dev-1895622301.us-gov-westelb.amazonaws.com/styleguide#messages) after a user took an action.
+    - For [Banner Alerts](https://github.com/department-of-veterans-affairs/caseflow/issues/1084).
 
 #### Latency
 1. Is there a [loading indicator](https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide#loaders)?
