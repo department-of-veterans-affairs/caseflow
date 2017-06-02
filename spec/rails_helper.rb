@@ -126,6 +126,7 @@ def reset_application!
   Fakes::AppealRepository.clean!
   Fakes::HearingRepository.clean!
   Fakes::CAVCDecisionRepository.clean!
+  Fakes::BGSService.clean!
 end
 
 def current_user
