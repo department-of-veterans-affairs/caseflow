@@ -379,7 +379,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)

@@ -850,6 +850,14 @@ describe Appeal do
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
 
+    context "when ssn is nil" do
+      let(:ssn) { nil }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
     context "when ssn is less than 9 characters" do
       let(:ssn) { "99887777" }
 
