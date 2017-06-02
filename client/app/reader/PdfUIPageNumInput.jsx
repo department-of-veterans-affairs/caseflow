@@ -52,7 +52,6 @@ export class PdfUIPageNumInput extends React.PureComponent {
   }
 
   handleOnChange = (value) => {
-    console.log(event);
     this.setState({
       pageNumber: value
     });
@@ -63,13 +62,15 @@ export class PdfUIPageNumInput extends React.PureComponent {
     return (
     <div style={{ display: 'inline-block' }}>
       <TextField
-        name="Page"
+        maxlength="10"
+        name="page-progress-indicator-input"
+        label="Page"
         onChange={this.handleOnChange.bind(this)}
         onKeyPress={this.handleKeyPress}
         value={this.state.pageNumber}
         required={false}
         className={['page-progress-indicator-input']}
-        />
+      />
     </div>);
   }
 }

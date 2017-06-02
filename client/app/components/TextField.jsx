@@ -22,7 +22,8 @@ export default class TextField extends React.Component {
       invisible,
       placeholder,
       title,
-      onKeyPress
+      onKeyPress,
+      maxLength
     } = this.props;
 
     let textInputClass = className.concat(
@@ -52,12 +53,13 @@ export default class TextField extends React.Component {
         name={name}
         id={name}
         onChange={this.onChange}
-        onKeyPress={this.props.onKeyPress}
+        onKeyPress={onKeyPress}
         type={type}
         value={value}
         readOnly={readOnly}
         placeholder={placeholder}
         title={title}
+        maxLength={maxLength}
       />
 
       {(validationError !== false) &&
