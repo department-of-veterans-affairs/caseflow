@@ -1,8 +1,19 @@
-class Issue
-  include ActiveModel::Model
-
+# Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
+# Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
+# VACOLS' equivalent
+class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
                 :program_description
+
+  belongs_to :appeal
+  belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
+
+  enum hearing_worksheet_status: {
+    allow: 0,
+    deny: 1,
+    remand: 2,
+    dismiss: 3
+  }
 
   PROGRAMS = {
     "02" => :compensation
@@ -38,6 +49,17 @@ class Issue
     !new_material?
   end
 
+  def attributes
+    super.merge(
+      program: program,
+      type: type,
+      category: category,
+      description: description,
+      disposition: disposition,
+      program_description: program_description
+    )
+  end
+
   class << self
     def description(hash)
       description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
@@ -54,6 +76,7 @@ class Issue
                     .parameterize.underscore.to_sym
 
       new(
+        vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: TYPES[hash["isscode"]],
         category: CATEGORIES[category_code],
