@@ -375,14 +375,20 @@ svg[aria-hidden=true],
   }
 
   .page-progress-indicator-input {
-    width: 48px;
-    height: 22px;
-    display: inline-block;
-    color: $bookmark-white;
-    background-color: $page-number-input-background;
-    border: 1px solid $bookmark-white;
-    text-align: center;
-    margin: 5px;
+    > input {
+      width: 48px;
+      height: 22px;
+      display: inline-block;
+      color: $bookmark-white;
+      background-color: $page-number-input-background;
+      border: 1px solid $bookmark-white;
+      text-align: center;
+      margin: 5px;
+    }
+
+    > label {
+      display: inline-block;
+    }
   }
 
   .doc-list-progress-indicator {

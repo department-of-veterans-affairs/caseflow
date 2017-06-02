@@ -72,7 +72,6 @@ export class PdfUI extends React.Component {
           </div> }
         <div className="cf-pdf-buttons-center">
           <span className="page-progress-indicator">
-            Page
             <PdfUIPageNumInput
               currentPage={this.state.currentPage}
               numPages={this.state.numPages}
