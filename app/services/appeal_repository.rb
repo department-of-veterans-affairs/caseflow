@@ -35,11 +35,11 @@ class AppealRepository
     return false
   end
 
-  def self.appeals_by_appellant_ssn(appellant_ssn)
-    cases = MetricsService.record("VACOLS: appeals_by_appellant_ssn",
+  def self.appeals_by_vbms_id(vbms_id)
+    cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
-                                  name: "appeals_by_appellant_ssn") do
-      VACOLS::Correspondent.find_by!(ssn: appellant_ssn).cases.includes(:folder, :correspondent)
+                                  name: "appeals_by_vbms_id") do
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record) }

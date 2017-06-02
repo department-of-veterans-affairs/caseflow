@@ -9,7 +9,9 @@ module PowerOfAttorneyMapper
 
   def get_poa_from_bgs_poa(bgs_rep = {})
     # TODO: what do we do if we encounter a rep type we don't know?
-    # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
+
+    return {} unless bgs_rep[:power_of_attorney]
+
     bgs_type = bgs_rep[:power_of_attorney][:org_type_nm]
     {
       representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",

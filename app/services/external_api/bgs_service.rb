@@ -16,6 +16,7 @@ class ExternalApi::BGSService
     @veteran_info = {}
     @poas = {}
     @poa_addresses = {}
+    @people_by_ssn = {}
   end
 
   # :nocov:
@@ -36,6 +37,17 @@ class ExternalApi::BGSService
                             name: "veteran.find_by_file_number") do
         client.veteran.find_by_file_number(vbms_id)
       end
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    @people_by_ssn[ssn] ||=
+      MetricsService.record("BGS: fetch person by ssn: #{ssn}",
+                            service: :bgs,
+                            name: "people.find_by_ssn") do
+        client.people.find_by_ssn(ssn)
+      end
+
+    @people_by_ssn[ssn] && @people_by_ssn[ssn][:file_nbr]
   end
 
   def fetch_poa_by_file_number(file_number)
