@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SearchBar from '../../components/SearchBar';
-import Button from '../../components/Button';
+
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 
@@ -18,10 +18,16 @@ class StyleGuideSearch extends Component {
 
   }
 
-  handleMenuClick = (elem) => ()=> {
-    this.setState((prevState) => ({
-      [elem]: !prevState[elem]
-    }))
+  handleSearchClick = (elem) => () => {
+    let load = () => {
+      this.setState((prevState) => ({
+        [elem]: !prevState[elem]
+      }));
+    };
+
+    load();
+
+    setTimeout(() => load(), 2000);
   };
 
   render() {
@@ -49,50 +55,28 @@ class StyleGuideSearch extends Component {
               id="search-big"
               title="Search Big"
               classNames="usa-search usa-search-big"
-              onClick={this.handleMenuClick('big')}
+              onClick={this.handleSearchClick('big')}
               loading={this.state.big}
             />
-            <Button
-              id="reset-big"
-              name="Reset"
-              onClick={this.handleMenuClick('big')}
-              classNames={['cf-btn-link']}
-              disabled={!this.state.big}
-            />
           </div>
-
+          <br/>
           <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-medium"
-              title="Search medium"
+              title="Search Medium"
               classNames="usa-search usa-search-medium"
-              onClick={this.handleMenuClick('medium')}
+              onClick={this.handleSearchClick('medium')}
               loading={this.state.medium}
             />
-            <Button
-              id="reset-medium"
-              name="Reset"
-              onClick={this.handleMenuClick('medium')}
-              classNames={['cf-btn-link']}
-              disabled={!this.state.medium}
-            />
         </div>
-
-        <br />
-        <div className="cf-sg-searchbar-example">
+         <br/>
+         <div className="cf-sg-searchbar-example">
             <SearchBar
               id="search-small"
               title="Search Small"
               classNames="usa-search usa-search-small"
-              onClick={this.handleMenuClick('small')}
+              onClick={this.handleSearchClick('small')}
               loading={this.state.small}
-            />
-            <Button
-              id="reset-small"
-              name="Reset"
-              onClick={this.handleMenuClick('small')}
-              classNames={['cf-btn-link']}
-              disabled={!this.state.small}
             />
         </div>
 

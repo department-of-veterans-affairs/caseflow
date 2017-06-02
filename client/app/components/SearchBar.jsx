@@ -48,7 +48,7 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={"search-"+id} onClick={onClick} type="submit" loading={loading}>
+      <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
         <span className={getSrOnlyClassName()}>Search</span>
       </Button>
     </span>;
@@ -65,6 +65,6 @@ SearchBar.propTypes = {
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
-  loading: PropTypes.func,
+  loading: PropTypes.bool,
   value: PropTypes.string
 };
