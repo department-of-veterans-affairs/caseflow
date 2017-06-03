@@ -231,22 +231,29 @@ export class Pdf extends React.PureComponent {
   }
     
   unRenderPages = (indices) => {
+    console.log('unrendering', indices);
+    if (indices.length === 0) {
+      return;
+    }
+
     let isRendered = [...this.state.isRendered];
 
     indices.forEach((index) => {
       const canvas = this.pageElements[index].canvas;
       const textLayer = this.pageElements[index].textLayer;
 
-      isRendered[index] = false;
+      isRendered[index] = null;
       const t0 = performance.now();
       canvas.getContext('2d', { alpha: false }).clearRect(0, 0, canvas.width, canvas.height);
-      console.log('clear canvas', performance.now() - t0);
+      // console.log('clear canvas', performance.now() - t0);
       const t1 = performance.now();
-      textLayer.removeChild = '';
-      console.log('clear text', performance.now() - t1);
+      textLayer.innerHTML = '';
+      // console.log('clear text', performance.now() - t1);
         
     })
+    const t2 = performance.now();
     this.setState({ isRendered });
+    console.log('setState', performance.now() - t2);
   }
 
   scrollEvent = () => {
@@ -336,32 +343,30 @@ export class Pdf extends React.PureComponent {
       const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
         Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
         
-      if (!this.state.isRendered[index]) {
-        // console.log('index', index, 'distance', distanceToCenter);
+      if (!this.state.isRendered[index] || this.state.isRendered[index].scale != this.props.scale) {
         if (distanceToCenter < minPageDistance && (distanceToCenter < RENDER_WITHIN_SCROLL || !this.isPagePrerendered[index])) {
           prioritzedPage = index;
           minPageDistance = distanceToCenter;
         }
       } else {
         if (distanceToCenter > RENDER_WITHIN_SCROLL * 2) {
-          // console.log('clearing', index, 'distanceToCenter', distanceToCenter, 'rendered', this.state.isRendered[index])
           const t1 = performance.now();
           pagesToUnrender.push(index);
-          // ;
           // console.log('time to unrender', performance.now() - t1);
         }
       }
     });
     console.log('time to loop', performance.now() - t0);
 
-    this.unRenderPages(pagesToUnrender);
+    if (pagesToUnrender.length > 20) {
+      this.unRenderPages(pagesToUnrender);
+    }
     // Have to explicitly check for null since prioritizedPage can be zero.
     if (prioritzedPage === null) {
       return;
     }
 
     console.log('rendering page', prioritzedPage);
-
     this.renderPage(prioritzedPage, this.props.file);
 
     //this.prioritizeRender();
@@ -539,6 +544,7 @@ export class Pdf extends React.PureComponent {
       const nonZoomedLocation = (this.scrollWindow.scrollTop -
         this.pageElements[this.currentPage - 1].pageContainer.offsetTop);
 
+      this.isPagePrerendered = [];
       this.scrollLocation = {
         page: this.currentPage,
         locationOnPage: nonZoomedLocation * zoomFactor
