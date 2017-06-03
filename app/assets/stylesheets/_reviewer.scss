@@ -391,6 +391,10 @@ svg[aria-hidden=true],
     > label {
       display: inline-block;
     }
+
+    .cf-validation {
+      display: none;
+    }
   }
 
   .doc-list-progress-indicator {
