@@ -41,7 +41,7 @@ describe('PdfUIPageNumInput', () => {
     wrapper.setProps({ currentPage: 3 });
     const input = wrapper.find(TextField).dive().
       find('input');
-        
+
     input.simulate('change', { target: { value: 100 } });
     input.simulate('keypress', {
       key: 'Enter',
