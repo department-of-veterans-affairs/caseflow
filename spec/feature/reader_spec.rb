@@ -343,7 +343,7 @@ RSpec.feature "Reader" do
         EOS
       end
 
-      scenario "Leave annotation with keyboard", :focus => true do
+      scenario "Leave annotation with keyboard" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         assert_selector(".commentIcon-container", :count => 5)
         find("body").send_keys [:alt, "c"]
@@ -351,27 +351,31 @@ RSpec.feature "Reader" do
         assert_selector(".commentIcon-container", :count => 6)
 
         def get_placing_annotation_icon_position
-          get_element_position "data-placing-annotation-icon"
+          get_element_position "[data-placing-annotation-icon]"
         end
 
-        sleep(inspection_timeout=400)
         orig_position = get_placing_annotation_icon_position
-        puts orig_position
+
+        KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
         
         find("body").send_keys [:up]
         after_up_position = get_placing_annotation_icon_position
-        puts after_up_position
+        expect(after_up_position['left']).to eq(orig_position['left'])
+        expect(after_up_position['top']).to eq(orig_position['top'] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
         
         find("body").send_keys [:down]
         after_down_position = get_placing_annotation_icon_position
+        expect(after_down_position).to eq(orig_position)
         
         find("body").send_keys [:right]
         after_right_position = get_placing_annotation_icon_position
+        expect(after_right_position['left']).to eq(orig_position['left'] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+        expect(after_right_position['top']).to eq(orig_position['top'])
         
         find("body").send_keys [:left]
         after_left_position = get_placing_annotation_icon_position
 
-        expect(after_up_position).to_equal orig_position
+        expect(after_left_position).to eq(orig_position)
 
         find("body").send_keys [:alt, :enter]
         expect(page).to_not have_css(".cf-pdf-placing-comment")
