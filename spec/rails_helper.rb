@@ -43,6 +43,10 @@ download_directory = Rails.root.join("tmp/downloads")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 
+Capybara.configure do |config|
+  config.default_max_wait_time = 10
+end
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
