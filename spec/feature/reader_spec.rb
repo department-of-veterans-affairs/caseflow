@@ -308,6 +308,12 @@ RSpec.feature "Reader" do
             comment: "hello world",
             document_id: documents[0].id,
             y: 750
+          ),
+          Generators::Annotation.create(
+            comment: "nice comment",
+            document_id: documents[1].id,
+            y: 300,
+            page: 3
           )
         ]
       end
@@ -329,6 +335,14 @@ RSpec.feature "Reader" do
         click_on "Collapse all"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
+      end
+
+      scenario "Jump to to section for a comment" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_button("expand-#{documents[1].id}-comments-button")
+        click_button("jumpToComment#{documents[1].annotations[0].id}")
+        expect(in_viewport("pageContainer#{documents[1].annotations[0].page}")).to be true
       end
 
       scenario "Scroll to comment" do
