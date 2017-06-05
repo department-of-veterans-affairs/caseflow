@@ -11,35 +11,57 @@ export default class SearchBar extends React.Component {
 
   render() {
     let {
-      classNames,
       id,
       onClick,
       value,
       onClearSearch,
       loading,
+      size,
       title
     } = this.props;
 
-    let getSrOnlyClassName = () => {
-
-      // if (/usa-search-(big|medium)/.test(this.props.classNames)) {
-      //   return '';
-      // }
-
-      // return 'usa-sr-only';
-
-      if(/usa-search-small/.test(this.props.classNames)) {
-        return classNames.push('usa-sr-only')
+    let sizeClasses = () => {
+      if (size==="big") {
+        sizeClasses = ['usa-search', 'usa-search-big']
       }
+      else if (size==="small")
+        sizeClasses = ['usa-search', 'usa-search-small']
+      else {
+        sizeClasses = ['usa-search', 'usa-search-medium']
+      }
+      return sizeClasses.join(" ");
+    }
 
-    };
+    // This returns the magnifying glass for small sized searchbars
+    let buttonClassNames = () => {
+      if (size==="small") {
+        return 'usa-sr-only'
+      }
+      else {
+        return 'usa-search-submit-text'
+      }
+    }
+
+    let label = () => {
+      if (size==="big") {
+        label = ('usa-search-big')
+      }
+      else if (size==="medium") {
+        label = ('usa-search-medium')
+      }
+      else {
+        label = 'usa-search-small'
+      }
+      return label;
+    }
 
     const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
 
-    return <span className={this.props.classNames} role="search">
-      <label className={this.props.classNames} htmlFor={id}>{title}</label>
+    return <span className={sizeClasses()} role="search">
+      <label className={title ? label() : 'usa-sr-only'} htmlFor={id}>
+        {title ? title : 'Search small'}
+      </label>
       <input
-        className={inputClassName}
         id={id}
         onChange={this.onChange}
         type="search"
@@ -54,15 +76,11 @@ export default class SearchBar extends React.Component {
           {closeIcon()}
         </Button>}
       <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
-        <span className={getSrOnlyClassName()}>Search</span>
+        <span className={buttonClassNames()}>Search</span>
       </Button>
     </span>;
   }
 }
-
-SearchBar.defaultProps = {
-  classNames: ['usa-search']
-};
 
 SearchBar.propTypes = {
   id: PropTypes.string.isRequired,
