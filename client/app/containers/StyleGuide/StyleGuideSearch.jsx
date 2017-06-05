@@ -54,7 +54,7 @@ class StyleGuideSearch extends Component {
             <SearchBar
               id="search-big"
               title="Search Big"
-              classNames="usa-search usa-search-big"
+              classNames={['usa-search-big']}
               onClick={this.handleSearchClick('big')}
               loading={this.state.big}
             />
@@ -64,7 +64,7 @@ class StyleGuideSearch extends Component {
             <SearchBar
               id="search-medium"
               title="Search Medium"
-              classNames="usa-search usa-search-medium"
+              classNames={['usa-search-medium']}
               onClick={this.handleSearchClick('medium')}
               loading={this.state.medium}
             />
@@ -74,7 +74,7 @@ class StyleGuideSearch extends Component {
             <SearchBar
               id="search-small"
               title="Search Small"
-              classNames="usa-search usa-search-small"
+              classNames={['usa-search-small']}
               onClick={this.handleSearchClick('small')}
               loading={this.state.small}
             />

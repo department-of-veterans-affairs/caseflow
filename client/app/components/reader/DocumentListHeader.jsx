@@ -27,6 +27,7 @@ export const DocumentListHeader = (props) => {
           onChange={props.setSearch}
           onClearSearch={props.clearSearch}
           value={props.docFilterCriteria.searchQuery}
+          classNames={['usa-search-small']}
         />
       </div>
       <div className="usa-width-one-third num-of-documents">
