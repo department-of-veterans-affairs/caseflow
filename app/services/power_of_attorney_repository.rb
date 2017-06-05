@@ -49,6 +49,7 @@ class PowerOfAttorneyRepository
     representative_name.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
   end
 
+  # :nocov:
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
     VACOLS::Representative.update_vacols_rep_type!(case_record: case_record, rep_type: vacols_rep_type)
   end
@@ -68,24 +69,25 @@ class PowerOfAttorneyRepository
         address_one: address_one
     )
   end
+  # :nocov:
 
   def self.update_vacols_rep_table(appeal:, representative_name:)
-    if PowerOfAttorneyRepository.first_last_name?(representative_name: representative_name)
-      PowerOfAttorneyRepository.update_vacols_rep_name!(
+    if first_last_name?(representative_name: representative_name)
+      update_vacols_rep_name!(
           case_record: appeal.case_record,
           first_name: representative_name.split(" ")[0],
           middle_initial: "",
           last_name: representative_name.split(" ")[1]
       )
-    elsif PowerOfAttorneyRepository.first_middle_last_name?(representative_name: representative_name)
-      PowerOfAttorneyRepository.update_vacols_rep_name!(
+    elsif first_middle_last_name?(representative_name: representative_name)
+      update_vacols_rep_name!(
           case_record: appeal.case_record,
           first_name: representative_name.split(" ")[0],
           middle_initial: representative_name.split(" ")[1],
           last_name: representative_name.split(" ")[2]
       )
     else
-      PowerOfAttorneyRepository.update_vacols_rep_address_one!(
+      update_vacols_rep_address_one!(
           case_record: appeal.case_record,
           address_one: representative_name
       )
@@ -96,16 +98,16 @@ class PowerOfAttorneyRepository
     if representative_type == "Service Organization"
       # We set the rep type to the service organization name, unless we don't have a record
       # of it. Then we set it to 'other'.
-      vacols_rep_type = PowerOfAttorneyRepository.get_vacols_reptype_code(short_name: representative_name) ||
-          PowerOfAttorneyRepository.get_vacols_reptype_code(short_name: "Other")
+      vacols_rep_type = get_vacols_reptype_code(short_name: representative_name) ||
+          get_vacols_reptype_code(short_name: "Other")
     else
-      vacols_rep_type = PowerOfAttorneyRepository.get_vacols_reptype_code(short_name: representative_type)
+      vacols_rep_type = get_vacols_reptype_code(short_name: representative_type)
     end
-    PowerOfAttorneyRepository.update_vacols_rep_type!(case_record: appeal.case_record, vacols_rep_type: vacols_rep_type)
+    update_vacols_rep_type!(case_record: appeal.case_record, vacols_rep_type: vacols_rep_type)
 
     if %w(T U O).include? vacols_rep_type
       # We only update representative table if the vacols_rep_type is attorney, agent, or other.
-      PowerOfAttorneyRepository.update_vacols_rep_table(appeal: appeal, representative_name: representative_name)
+      update_vacols_rep_table(appeal: appeal, representative_name: representative_name)
     end
   end
 end
