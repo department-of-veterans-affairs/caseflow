@@ -7,7 +7,7 @@ class VACOLS::Representative < VACOLS::Record
   def self.update_vacols_rep_type!(case_record:, rep_type:)
     return unless rep_type
 
-    # fail(InvalidRepTypeError) unless VALID_UPDATE_REP_TYPES.include?(rep_type)
+    fail(InvalidRepTypeError) unless VACOLS::CASE::REPRESENTATIVES.include?(rep_type)
 
     conn = connection
 

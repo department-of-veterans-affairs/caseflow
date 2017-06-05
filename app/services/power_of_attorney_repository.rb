@@ -42,7 +42,7 @@ class PowerOfAttorneyRepository
   end
 
   def self.first_last_name?(representative_name:)
-    representative_name.split(" ").length == 2 && !representative_name.include?("-")
+    representative_name.split(" ").length == 2 && !representative_name.include?("&")
   end
 
   def self.first_middle_last_name?(representative_name:)
