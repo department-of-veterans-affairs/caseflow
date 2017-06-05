@@ -21,41 +21,39 @@ export default class SearchBar extends React.Component {
     } = this.props;
 
     let sizeClasses = () => {
-      if (size==="big") {
-        sizeClasses = ['usa-search', 'usa-search-big']
+      if (size === 'big') {
+        sizeClasses = ['usa-search', 'usa-search-big'];
+      } else if (size === 'small') {
+        sizeClasses = ['usa-search', 'usa-search-small'];
+      } else {
+        sizeClasses = ['usa-search', 'usa-search-medium'];
       }
-      else if (size==="small")
-        sizeClasses = ['usa-search', 'usa-search-small']
-      else {
-        sizeClasses = ['usa-search', 'usa-search-medium']
-      }
-      return sizeClasses.join(" ");
-    }
+
+      return sizeClasses.join(' ');
+    };
 
     // This returns the magnifying glass for small sized searchbars
     let buttonClassNames = () => {
-      if (size==="small") {
-        return 'usa-sr-only'
+      if (size === 'small') {
+        return 'usa-sr-only';
       }
-      else {
-        return 'usa-search-submit-text'
-      }
-    }
+
+      return 'usa-search-submit-text';
+
+    };
 
     let label = () => {
-      if (size==="big") {
-        label = ('usa-search-big')
+      if (size === 'big') {
+        label = ('usa-search-big');
+      } else if (size === 'medium') {
+        label = ('usa-search-medium');
+      } else {
+        label = 'usa-search-small';
       }
-      else if (size==="medium") {
-        label = ('usa-search-medium')
-      }
-      else {
-        label = 'usa-search-small'
-      }
-      return label;
-    }
 
-    const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
+      return label;
+    };
+
 
     return <span className={sizeClasses()} role="search">
       <label className={title ? label() : 'usa-sr-only'} htmlFor={id}>
