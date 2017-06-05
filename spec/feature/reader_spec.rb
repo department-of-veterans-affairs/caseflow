@@ -342,7 +342,9 @@ RSpec.feature "Reader" do
 
         click_button("expand-#{documents[1].id}-comments-button")
         click_button("jumpToComment#{documents[1].annotations[0].id}")
-        expect(in_viewport("pageContainer#{documents[1].annotations[0].page}")).to be true
+        page = documents[1].annotations[0].page
+        puts "pageContainer#{page}"
+        expect(in_viewport("pageContainer#{page}")).to be true
       end
 
       scenario "Scroll to comment" do
