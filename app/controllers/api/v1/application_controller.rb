@@ -5,7 +5,8 @@ class Api::V1::ApplicationController < ActionController::Base
   before_action :strict_transport_security
 
   before_action :setup_fakes,
-                :verify_authentication_token
+                :verify_authentication_token,
+                :set_api_user
 
   rescue_from StandardError do |error|
     Raven.capture_exception(error)
@@ -20,6 +21,11 @@ class Api::V1::ApplicationController < ActionController::Base
   end
 
   private
+
+  # For API calls, we use the system user to make all BGS calls
+  def set_api_user
+    RequestStore.store[:current_user] = User.system_user(request.remote_ip)
+  end
 
   def verify_authentication_token
     return unauthorized unless api_key

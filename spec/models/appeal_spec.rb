@@ -370,6 +370,35 @@ describe Appeal do
     end
   end
 
+  context ".convert_file_number_to_vacols" do
+    subject { Appeal.convert_file_number_to_vacols(file_number) }
+
+    context "for a file number with less than 9 digits" do
+      context "with leading zeros" do
+        let(:file_number) { "00001234" }
+        it { is_expected.to eq("1234C") }
+      end
+
+      context "with no leading zeros" do
+        let(:file_number) { "12345678" }
+        it { is_expected.to eq("12345678C") }
+      end
+    end
+
+    context "for a file number with 9 digits" do
+      let(:file_number) { "123456789" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "for a file number with more than 9 digits" do
+      let(:file_number) { "1234567890" }
+
+      it "raises InvalidFileNumber error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
+      end
+    end
+  end
+
   context "#partial_grant?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant? }
@@ -753,6 +782,17 @@ describe Appeal do
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
+
+    context "#power_of_attorney.bgs_representative_address" do
+      subject { appeal.power_of_attorney.bgs_representative_address }
+
+      it "returns address if we are able to retrieve it" do
+        is_expected.to include(
+          address_line_1: "9999 MISSION ST",
+          city: "SAN FRANCISCO",
+          zip: "94103")
+      end
+    end
   end
 
   context "#sanitized_hearing_request_type" do
@@ -791,13 +831,16 @@ describe Appeal do
     let!(:veteran_appeals) do
       [
         Generators::Appeal.build(
-          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago }
         ),
         Generators::Appeal.build(
-          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { type: "Reconsideration" }
         ),
         Generators::Appeal.build(
-          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: 3.days.ago }
         )
       ]
     end
@@ -807,11 +850,29 @@ describe Appeal do
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
 
+    context "when ssn is nil" do
+      let(:ssn) { nil }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
     context "when ssn is less than 9 characters" do
       let(:ssn) { "99887777" }
 
       it "raises InvalidSSN error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
+    context "when SSN not found in BGS" do
+      before do
+        Fakes::BGSService.ssn_not_found = true
+      end
+
+      it "raises ActiveRecord::RecordNotFound error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

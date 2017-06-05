@@ -7,21 +7,18 @@ module PowerOfAttorneyMapper
     base.extend(PowerOfAttorneyMapper)
   end
 
-  # VACOLS methods
-  def vacols_representatives
-    VACOLS::Case::REPRESENTATIVES
-  end
+  def get_poa_from_bgs_poa(bgs_rep = {})
+    # TODO: what do we do if we encounter a rep type we don't know?
 
-  def rep_name_found_in_rep_table?(vacols_code)
-    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
-  end
+    return {} unless bgs_rep[:power_of_attorney]
 
-  def get_short_name(vacols_code)
-    vacols_representatives[vacols_code][:short]
-  end
-
-  def get_full_name(vacols_code)
-    vacols_representatives[vacols_code][:full_name]
+    bgs_type = bgs_rep[:power_of_attorney][:org_type_nm]
+    {
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
+      representative_name: bgs_rep[:power_of_attorney][:nm],
+      # Used to find the POA address
+      participant_id: bgs_rep[:power_of_attorney][:ptcpnt_id]
+    }
   end
 
   def get_rep_name_from_rep_record(rep_record)
@@ -50,7 +47,24 @@ module PowerOfAttorneyMapper
     end
   end
 
-  # BGS Methods
+  private
+
+  def vacols_representatives
+    VACOLS::Case::REPRESENTATIVES
+  end
+
+  def rep_name_found_in_rep_table?(vacols_code)
+    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
+  end
+
+  def get_short_name(vacols_code)
+    vacols_representatives[vacols_code][:short]
+  end
+
+  def get_full_name(vacols_code)
+    vacols_representatives[vacols_code][:full_name]
+  end
+
   # TODO: fill out this hash for "Other" and "No Representative"
   BGS_REP_TYPE_TO_REP_TYPE = {
     "POA Attorney" => "Attorney",
@@ -90,14 +104,4 @@ module PowerOfAttorneyMapper
     "NATIONAL VETERANS ORGANIZATION OF AMERICA, INC." => "1",
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
-
-  def get_poa_from_bgs_poa(bgs_poa)
-    # TODO: what do we do if we encounter a rep type we don't know?
-    # TODO: gracefully handle possible cases where bgs poa is nil or unexpected
-    bgs_type = bgs_poa[:power_of_attorney][:org_type_nm]
-    {
-      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
-      representative_name: bgs_poa[:power_of_attorney][:nm]
-    }
-  end
 end
