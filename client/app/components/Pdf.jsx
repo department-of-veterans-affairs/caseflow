@@ -358,9 +358,9 @@ export class Pdf extends React.PureComponent {
     });
     
 
-    if (pagesToUnrender.length > 20) {
-      this.unRenderPages(pagesToUnrender);
-    }
+    // if (pagesToUnrender.length > 20) {
+    //   this.unRenderPages(pagesToUnrender);
+    // }
     // Have to explicitly check for null since prioritizedPage can be zero.
     if (prioritzedPage === null) {
       return;
