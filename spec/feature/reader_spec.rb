@@ -331,12 +331,12 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
-      def get_element_position(selector)
+      def element_position(selector)
         page.driver.evaluate_script <<-EOS
           function() {
             var rect = document.querySelector('#{selector}').getBoundingClientRect();
             return {
-              top: rect.top, 
+              top: rect.top,
               left: rect.left
             };
           }();
@@ -345,35 +345,35 @@ RSpec.feature "Reader" do
 
       scenario "Leave annotation with keyboard" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        assert_selector(".commentIcon-container", :count => 5)
+        assert_selector(".commentIcon-container", count: 5)
         find("body").send_keys [:alt, "c"]
         expect(page).to have_css(".cf-pdf-placing-comment")
-        assert_selector(".commentIcon-container", :count => 6)
+        assert_selector(".commentIcon-container", count: 6)
 
-        def get_placing_annotation_icon_position
-          get_element_position "[data-placing-annotation-icon]"
+        def placing_annotation_icon_position
+          element_position "[data-placing-annotation-icon]"
         end
 
-        orig_position = get_placing_annotation_icon_position
+        orig_position = placing_annotation_icon_position
 
         KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
-        
+
         find("body").send_keys [:up]
-        after_up_position = get_placing_annotation_icon_position
-        expect(after_up_position['left']).to eq(orig_position['left'])
-        expect(after_up_position['top']).to eq(orig_position['top'] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
-        
+        after_up_position = placing_annotation_icon_position
+        expect(after_up_position["left"]).to eq(orig_position["left"])
+        expect(after_up_position["top"]).to eq(orig_position["top"] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+
         find("body").send_keys [:down]
-        after_down_position = get_placing_annotation_icon_position
+        after_down_position = placing_annotation_icon_position
         expect(after_down_position).to eq(orig_position)
-        
+
         find("body").send_keys [:right]
-        after_right_position = get_placing_annotation_icon_position
-        expect(after_right_position['left']).to eq(orig_position['left'] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
-        expect(after_right_position['top']).to eq(orig_position['top'])
-        
+        after_right_position = placing_annotation_icon_position
+        expect(after_right_position["left"]).to eq(orig_position["left"] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+        expect(after_right_position["top"]).to eq(orig_position["top"])
+
         find("body").send_keys [:left]
-        after_left_position = get_placing_annotation_icon_position
+        after_left_position = placing_annotation_icon_position
 
         expect(after_left_position).to eq(orig_position)
 
