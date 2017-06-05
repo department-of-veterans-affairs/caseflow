@@ -319,7 +319,7 @@ export class Pdf extends React.PureComponent {
   }
 
   renderInViewPages = () => {
-
+    const t0 = performance.now();
     // if (this.pageElements.length > 10)
     //   this.getCachedBoundingClientRect(this.pageElements[10].pageContainer);
 
@@ -332,7 +332,7 @@ export class Pdf extends React.PureComponent {
     let minPageDistance = Number.MAX_SAFE_INTEGER;
     let pagesToUnrender = [];
 
-    const t0 = performance.now();
+    
     this.performFunctionOnEachPage((boundingRect, index) => {
       // This renders each page as it comes into view. i.e. when
       // the top of the next page is within a thousand pixels of
@@ -356,7 +356,7 @@ export class Pdf extends React.PureComponent {
         }
       }
     });
-    console.log('time to loop', performance.now() - t0);
+    
 
     if (pagesToUnrender.length > 20) {
       this.unRenderPages(pagesToUnrender);
@@ -368,7 +368,7 @@ export class Pdf extends React.PureComponent {
 
     console.log('rendering page', prioritzedPage);
     this.renderPage(prioritzedPage, this.props.file);
-
+    console.log('renderInViewPages', performance.now() - t0);
     //this.prioritizeRender();
   }
 
