@@ -289,6 +289,7 @@ const mapStateToProps = (state) => ({
   representativeName: state.representativeName,
   bgsRepresentativeType: state.bgsRepresentativeType,
   bgsRepresentativeName: state.bgsRepresentativeName,
+  bgsPoaAddressFound: state.bgsPoaAddressFound,
   vacolsRepresentativeType: state.vacolsRepresentativeType,
   vacolsRepresentativeName: state.vacolsRepresentativeName,
   otherRepresentativeType: state.otherRepresentativeType,

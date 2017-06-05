@@ -1,4 +1,4 @@
-class Hearings::DocketsController < ApplicationController
+class Hearings::DocketsController < HearingsController
   before_action :verify_access, :set_application
 
   def index
@@ -12,7 +12,7 @@ class Hearings::DocketsController < ApplicationController
   private
 
   def current_user_dockets
-    @current_user_dockets ||= HearingDocket.upcoming_for_judge(current_user)
+    @current_user_dockets ||= Judge.new(current_user).upcoming_dockets
   end
   helper_method :current_user_dockets
 

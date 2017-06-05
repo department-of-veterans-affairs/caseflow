@@ -221,14 +221,14 @@ describe('DecisionReviewer', () => {
           simulate('mouseUp');
         await pause();
 
-        // Next button moves us to the next page
-        wrapper.find('#button-next').simulate('click');
+        // Previous button moves us to the previous page
+        wrapper.find('#button-previous').simulate('click');
         await pause();
 
         wrapper.find('#button-backToDocuments').simulate('click');
-        // Make sure that the 1st row has the last
+        // Make sure that the 2nd row has the last
         // read indicator in the first column.
-        expect(wrapper.find('#table-row-2').childAt(0).
+        expect(wrapper.find('#table-row-2').childAt(1).
           children()).to.have.length(1);
       }));
 
@@ -266,42 +266,42 @@ describe('DecisionReviewer', () => {
       it('date is ordered correctly', () => {
         expect(wrapper.find('#receipt-date-header').
           find('i').
-          hasClass('fa-caret-down')).to.be.true;
+          hasClass('fa-caret-up')).to.be.true;
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
-        expect(textArray[2]).to.include(formatDateStr(documents[1].received_at));
+        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
         expect(wrapper.find('#receipt-date-header').
           find('i').
-          hasClass('fa-caret-up')).to.be.true;
+          hasClass('fa-caret-down')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
-        expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
+        expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
+        expect(textArray[2]).to.include(formatDateStr(documents[1].received_at));
       });
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-up')).to.be.true;
+          hasClass('fa-caret-down')).to.be.true;
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        expect(textArray[1]).to.include(documents[1].type);
-        expect(textArray[2]).to.include(documents[0].type);
+        expect(textArray[1]).to.include(documents[0].type);
+        expect(textArray[2]).to.include(documents[1].type);
 
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header').
           find('i').
-          hasClass('fa-caret-down')).to.be.true;
+          hasClass('fa-caret-up')).to.be.true;
 
         textArray = wrapper.find('tr').map((node) => node.text());
-        expect(textArray[1]).to.include(documents[0].type);
-        expect(textArray[2]).to.include(documents[1].type);
+        expect(textArray[1]).to.include(documents[1].type);
+        expect(textArray[2]).to.include(documents[0].type);
       });
     });
 

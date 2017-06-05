@@ -151,12 +151,14 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
   vbmsDate: doc.serialized_receipt_date,
-  isMatching: doc['matching?']
+  isMatching: doc['matching?'],
+  isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
 export const mapDataToInitialState = (state) => ({
   bgsRepresentativeType: state.bgs_representative_type,
   bgsRepresentativeName: state.bgs_representative_name,
+  bgsPoaAddressFound: state['bgs_rep_address_found?'],
   vacolsRepresentativeType: state.vacols_representative_type,
   vacolsRepresentativeName: state.vacols_representative_name,
   representativeType: state.representative_type,
