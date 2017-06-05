@@ -68,9 +68,7 @@ export const moveModel = (state, srcPath, destPath, id) =>
   );
 
 export const isValidNum = (number) => {
-  const convertedNum = parseInt(number, 10);
-
-  return !isNaN(convertedNum) && convertedNum % 1 === 0;
+  return !isNaN(number) && number % 1 === 0;
 };
 
 export const sortAnnotations = (annotations) =>

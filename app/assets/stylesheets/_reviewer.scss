@@ -11,7 +11,6 @@ $bookmark-white-outline: #5b616b;
 $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
-$page-number-input-background: rgb(91, 97, 107);
 
 .cf-nav-full-screen {
   padding: 10px 30px;
@@ -380,7 +379,7 @@ svg[aria-hidden=true],
       height: 22px;
       display: inline-block;
       color: $color-white;
-      background-color: $page-number-input-background;
+      background-color: $color-gray;
       border: 1px solid $color-white;
       text-align: center;
       margin: 5px;

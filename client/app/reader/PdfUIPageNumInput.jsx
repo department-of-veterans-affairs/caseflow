@@ -44,12 +44,14 @@ export class PdfUIPageNumInput extends React.PureComponent {
   }
 
   validatePageNum = (pageNumber) => {
-    if (!pageNumber || !isValidNum(pageNumber) ||
-      (pageNumber < 1 || pageNumber > this.props.numPages)) {
+    let pageNum = parseInt(pageNumber, RADIX);
+
+    if (!pageNum || !isValidNum(pageNum) ||
+      (pageNum < 1 || pageNum > this.props.numPages)) {
       return this.props.currentPage;
     }
 
-    return parseInt(pageNumber, RADIX);
+    return pageNum;
   }
 
   handleOnChange = (value) => {
