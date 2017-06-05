@@ -48,18 +48,18 @@ class CertificationsController < ApplicationController
   def certify_v2
     update_certification_from_v2_form
     validate_data_presence_v2
-    form8.update_from_string_params(
-      representative_type: certification.representative_type,
-      representative_name: certification.representative_name,
-      hearing_preference: certification.hearing_preference,
-      # This field is necessary when on v2 certification but v1 form8
-      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
-      certifying_official_name: certification.certifying_official_name,
-      certifying_official_title: certification.certifying_official_title
-    )
-    form8.save_pdf!
+    # form8.update_from_string_params(
+    #   representative_type: certification.representative_type,
+    #   representative_name: certification.representative_name,
+    #   hearing_preference: certification.hearing_preference,
+    #   # This field is necessary when on v2 certification but v1 form8
+    #   hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
+    #   certifying_official_name: certification.certifying_official_name,
+    #   certifying_official_title: certification.certifying_official_title
+    # )
+    # form8.save_pdf!
     unless @certification.poa_correct_in_vacols
-      Appeal.repository.update_vacols_rep_info!(
+      PowerOfAttorneyRepository.update_vacols_rep_info!(
         appeal: @certification.appeal,
         representative_type: certification.representative_type,
         representative_name: certification.representative_name

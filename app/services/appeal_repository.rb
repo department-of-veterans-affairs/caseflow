@@ -203,61 +203,6 @@ class AppealRepository
     end
   end
 
-  def self.get_vacols_reptype_code(short_name:)
-    VACOLS::Case::REPRESENTATIVES.each do |representative|
-      return representative[0] if representative[1][:short] == short_name
-    end
-    nil
-  end
-
-  def self.first_last_name?(representative_name:)
-    representative_name.split(" ").length == 2 &&
-      !representative_name.include?("-") &&
-      !representative_name.include?("&")
-  end
-
-  def self.first_middle_last_name?(representative_name:)
-    representative_name.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
-  end
-
-  def self.update_vacols_rep_info!(appeal:, representative_type:, representative_name:)
-    if representative_type == "Service Organization"
-      # We set the rep type to the service organization name, unless we don't have a record
-      # of it. Then we set it to 'other'.
-      vacols_rep_type = Appeal.repository.get_vacols_reptype_code(short_name: representative_name) ||
-                        Appeal.repository.get_vacols_reptype_code(short_name: "Other")
-    else
-      vacols_rep_type = Appeal.repository.get_vacols_reptype_code(short_name: representative_type)
-    end
-    VACOLS::Representative.update_vacols_rep_type!(case_record: appeal.case_record, rep_type: vacols_rep_type)
-
-    unless %w(T U O).include? vacols_rep_type
-      # We only update representative name if the vacols_rep_type is attorney, agent, or other.
-      return
-    end
-
-    if Appeal.repository.first_last_name?(representative_name: representative_name)
-      VACOLS::Representative.update_vacols_rep_name!(
-        case_record: appeal.case_record,
-        first_name: representative_name.split(" ")[0],
-        middle_initial: "",
-        last_name: representative_name.split(" ")[1]
-      )
-    elsif Appeal.repository.first_middle_last_name?(representative_name: representative_name)
-      VACOLS::Representative.update_vacols_rep_name!(
-        case_record: appeal.case_record,
-        first_name: representative_name.split(" ")[0],
-        middle_initial: representative_name.split(" ")[1],
-        last_name: representative_name.split(" ")[2]
-      )
-    else
-      VACOLS::Representative.update_vacols_rep_address_one!(
-        case_record: appeal.case_record,
-        address_one: representative_name
-      )
-    end
-  end
-
   def self.update_location_after_dispatch!(appeal:)
     location = location_after_dispatch(appeal: appeal)
 

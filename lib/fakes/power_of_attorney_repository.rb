@@ -14,4 +14,16 @@ class Fakes::PowerOfAttorneyRepository < PowerOfAttorneyRepository
   def self.poa_query(_poa)
     FakePoaRecord
   end
+
+  def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
+    nil
+  end
+
+  def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
+    nil
+  end
+
+  def self.update_vacols_rep_address_one!(case_record:, address_one:)
+    nil
+  end
 end

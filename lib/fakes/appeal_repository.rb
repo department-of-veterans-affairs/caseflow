@@ -23,7 +23,6 @@ class Fakes::AppealRepository
     attr_accessor :document_records, :issue_records
     attr_accessor :end_product_claim_id
     attr_accessor :vacols_dispatch_update
-    attr_accessor :vacols_representative_update
     attr_accessor :location_updated_for
     attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
 
@@ -89,14 +88,6 @@ class Fakes::AppealRepository
 
   def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
     self.vacols_dispatch_update = { appeal: appeal, vacols_note: vacols_note }
-  end
-
-  def self.update_vacols_rep_info!(appeal:, representative_type:, representative_name:)
-    self.vacols_representative_update = {
-      appeal: appeal,
-      representative_type: representative_type,
-      representative_name: representative_name
-    }
   end
 
   def self.update_location_after_dispatch!(appeal:)
