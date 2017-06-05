@@ -206,7 +206,6 @@ svg[aria-hidden=true],
 
     margin-left: auto;
     margin-right: auto;
-    height: 65%;
 
     .page-progress-indicator {
       margin-right: $spacing;
@@ -380,9 +379,9 @@ svg[aria-hidden=true],
       width: 48px;
       height: 22px;
       display: inline-block;
-      color: $bookmark-white;
+      color: $color-white;
       background-color: $page-number-input-background;
-      border: 1px solid $bookmark-white;
+      border: 1px solid $color-white;
       text-align: center;
       margin: 5px;
       padding: 0;
@@ -392,9 +391,6 @@ svg[aria-hidden=true],
       display: inline-block;
     }
 
-    .cf-validation {
-      display: none;
-    }
   }
 
   .doc-list-progress-indicator {

@@ -62,7 +62,7 @@ export default class TextField extends React.Component {
         maxLength={maxLength}
       />
 
-      {(validationError !== false) &&
+      {(validationError) &&
         <div className="cf-validation">
           <span>{validationError}</span>
         </div>

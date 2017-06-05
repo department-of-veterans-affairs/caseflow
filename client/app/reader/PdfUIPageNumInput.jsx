@@ -65,7 +65,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
         maxlength="10"
         name="page-progress-indicator-input"
         label="Page"
-        onChange={this.handleOnChange.bind(this)}
+        onChange={this.handleOnChange}
         onKeyPress={this.handleKeyPress}
         value={this.state.pageNumber}
         required={false}

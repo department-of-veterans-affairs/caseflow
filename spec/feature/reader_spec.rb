@@ -393,12 +393,14 @@ RSpec.feature "Reader" do
       scenario "Switch between pages" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on documents[0].type
+        click_on documents[1].type
 
-        fill_in "page-progress-indicator-input", with: "2\n"
-        expect(in_viewport("pageContainer2")).to be true
+        fill_in "page-progress-indicator-input", with: "4\n"
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
         fill_in "page-progress-indicator-input", with: "100e\n"
-        expect(in_viewport("pageContainer2")).to be true
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
       end
     end
 
