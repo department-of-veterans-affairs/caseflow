@@ -216,7 +216,7 @@ class AppealRepository
       !representative_name.include?("&")
   end
 
-  def self.irst_middle_last_name?(representative_name:)
+  def self.first_middle_last_name?(representative_name:)
     representative_name.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
   end
 
