@@ -76,6 +76,7 @@ export class PdfUI extends React.Component {
               currentPage={this.state.currentPage}
               numPages={this.state.numPages}
               docId={this.props.doc.id}
+              onPageChange={this.onPageChange}
             />
             of {this.state.numPages}</span>
           |
@@ -198,6 +199,7 @@ export class PdfUI extends React.Component {
           onPageChange={this.onPageChange}
           prefetchFiles={this.props.prefetchFiles}
           onCommentScrolledTo={this.props.onCommentScrolledTo}
+          resetJumpToPage={this.props.resetJumpToPage}
         />
       </div>
       { this.getPdfFooter(this.props, this.state) }

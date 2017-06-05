@@ -7,6 +7,7 @@ import { isValidNum } from './utils';
 import TextField from '../components/TextField';
 
 const ENTER_KEY = 'Enter';
+const RADIX = 10;
 
 export class PdfUIPageNumInput extends React.PureComponent {
   constructor(props) {
@@ -48,7 +49,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
       return this.props.currentPage;
     }
 
-    return pageNumber;
+    return parseInt(pageNumber, RADIX);
   }
 
   handleOnChange = (value) => {
@@ -58,7 +59,6 @@ export class PdfUIPageNumInput extends React.PureComponent {
   }
 
   render() {
-
     return (
     <div style={{ display: 'inline-block' }}>
       <TextField
