@@ -140,11 +140,11 @@ svg[aria-hidden=true],
   position: absolute;
   z-index: 15;
   opacity: 1;
-  padding: 15px 20px;
+  padding: 15px 24px 15px 15px;
 
   .category-icons-and-doc-type {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   .cf-pdf-buttons {
@@ -231,7 +231,7 @@ svg[aria-hidden=true],
 }
 
 // TODO: Remove !important
-[type="button"].cf-pdf-button {
+.cf-pdf-button {
   margin: 0 8px;
   color: inherit;
   padding: 0;
@@ -250,12 +250,16 @@ svg[aria-hidden=true],
     }
   }
 
+  svg {
+    vertical-align: middle;
+  }
+
   &:focus {
     box-shadow: none;
   }
 }
 
-[type="button"].cf-pdf-spaced-buttons {
+.cf-pdf-spaced-buttons {
   padding: 0 15px;
 }
 
@@ -422,7 +426,6 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 100%;
 }
 
 .cf-pdf-open-menu {

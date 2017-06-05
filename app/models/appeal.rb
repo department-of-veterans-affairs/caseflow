@@ -291,10 +291,18 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
+  attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  # VACOLS stores the VBA veteran unique identifier a little
+  # differently from BGS and VBMS. vbms_id correlates to the
+  # VACOLS formatted veteran identifier, sanitized_vbms_id
+  # correlates to the VBMS/BGS veteran identifier, which is
+  # sometimes called file_number.
+  #
+  # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
@@ -371,9 +379,9 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
-      repository.appeals_by_appellant_ssn(appellant_ssn)
+      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
                 .sort_by(&:latest_event_date)
                 .reverse
@@ -397,6 +405,27 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal: appeal, certification: certification)
       repository.upload_document_to_vbms(appeal, form8)
       repository.clean_document(form8.pdf_location)
+    end
+
+    # TODO: Move to AppealMapper?
+    def convert_file_number_to_vacols(file_number)
+      return "#{file_number}S" if file_number.length == 9
+      return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
+
+      fail Caseflow::Error::InvalidFileNumber
+    end
+
+    private
+
+    # Because SSN is not accurate in VACOLS, we pull the file
+    # number from BGS for the SSN and use that to look appeals
+    # up in VACOLS
+    def vbms_id_for_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
+
+      fail ActiveRecord::RecordNotFound unless file_number
+
+      convert_file_number_to_vacols(file_number)
     end
   end
 end
