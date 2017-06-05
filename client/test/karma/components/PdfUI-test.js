@@ -1,9 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { PdfUI } from '../../../app/components/PdfUI';
-
 import sinon from 'sinon';
+
+import { PdfUI } from '../../../app/components/PdfUI';
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
@@ -28,7 +28,6 @@ describe('PdfUI', () => {
         id="pdf"
         pdfWorker="noworker"
         documentPathBase={DOCUMENT_PATH_BASE}
-        showDocumentsListNavigation={true}
       />);
     });
 
