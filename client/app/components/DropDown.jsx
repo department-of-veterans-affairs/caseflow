@@ -25,9 +25,9 @@ export default class DropDown extends React.Component {
       <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
         {options.map((option, index) =>
           <option
-            value={option}
-            id={`${name}_${option}`}
-            key={index}>{option}
+            value={option.value}
+            id={`${name}_${option.value}`}
+            key={index}>{option.displayText}
           </option>
         )}
       </select>
