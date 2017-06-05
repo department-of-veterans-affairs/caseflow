@@ -32,6 +32,29 @@ RSpec.feature "Start Certification" do
     }
   end
 
+  let(:vacols_record_exact_match) do
+    {
+      template: :ready_to_certify,
+      type: "Original",
+      file_type: "VVA",
+      representative: "The American Legion",
+      veteran_first_name: "Davy",
+      veteran_last_name: "Crockett",
+      veteran_middle_initial: "X",
+      appellant_first_name: "Susie",
+      appellant_middle_initial: nil,
+      appellant_last_name: "Crockett",
+      appellant_relationship: "Daughter",
+      nod_date: nod.received_at,
+      soc_date: soc.received_at,
+      form9_date: form9.received_at
+    }
+  end
+
+  let(:appeal_ready_exact_match) do
+    Generators::Appeal.build(vacols_record: vacols_record_exact_match, documents: documents)
+  end
+
   let(:vacols_record_with_ssocs) do
     vacols_record.merge(ssoc_dates: [6.days.from_now, 7.days.from_now])
   end
@@ -92,7 +115,8 @@ RSpec.feature "Start Certification" do
     scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
-      expect(page).to have_content("Matching documents found in VBMS for all VACOLS documents")
+      expect(page).to have_content("All documents found with matching VBMS and VACOLS dates.")
+      expect(page).to have_content("SOC and SSOC dates in VBMS can be up to 4 days")
       expect(page).to have_content("SOC 09/10/1987 09/06/1987")
 
       click_button("Continue")
@@ -132,6 +156,12 @@ RSpec.feature "Start Certification" do
         find("label", text: "Statement in lieu of Form 9").click
       end
       expect(page).to have_content("What optional board hearing preference, if any")
+    end
+
+    scenario "When documents are found and have exactly matching dates" do
+      visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
+      expect(page).to have_content("All documents found with matching VBMS and VACOLS dates.")
+      expect(page).to_not have_content("SOC and SSOC dates in VBMS can be up to 4 days")
     end
 
     scenario "When some documents aren't matching shows missing documents page" do

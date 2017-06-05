@@ -3,6 +3,7 @@ require "bgs"
 # Thin interface to all things BGS
 class ExternalApi::BGSService
   include PowerOfAttorneyMapper
+  include AddressMapper
 
   attr_accessor :client
 
@@ -14,6 +15,8 @@ class ExternalApi::BGSService
     @end_products = {}
     @veteran_info = {}
     @poas = {}
+    @poa_addresses = {}
+    @people_by_ssn = {}
   end
 
   # :nocov:
@@ -36,6 +39,17 @@ class ExternalApi::BGSService
       end
   end
 
+  def fetch_file_number_by_ssn(ssn)
+    @people_by_ssn[ssn] ||=
+      MetricsService.record("BGS: fetch person by ssn: #{ssn}",
+                            service: :bgs,
+                            name: "people.find_by_ssn") do
+        client.people.find_by_ssn(ssn)
+      end
+
+    @people_by_ssn[ssn] && @people_by_ssn[ssn][:file_nbr]
+  end
+
   def fetch_poa_by_file_number(file_number)
     unless @poas[file_number]
       bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
@@ -49,9 +63,19 @@ class ExternalApi::BGSService
     @poas[file_number]
   end
 
-  # TODO(add this service)
-  # def fetch_address_by_participant_id(participant_id)
-  # end
+  def find_address_by_participant_id(participant_id)
+    unless @poa_addresses[participant_id]
+      bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
+                                          service: :bgs,
+                                          name: "address.find_by_participant_id") do
+        client.address.find_by_participant_id(participant_id)
+      end
+      # handle no address found
+      @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
+    end
+
+    @poa_addresses[participant_id]
+  end
 
   # This method checks to see if the current user has access to this case
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be

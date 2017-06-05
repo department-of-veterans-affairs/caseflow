@@ -103,7 +103,7 @@ RSpec.feature "Reader" do
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
       click_on "Back to all documents"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
@@ -131,10 +131,10 @@ RSpec.feature "Reader" do
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("#button-next").click
-      expect(find(".cf-document-type")).to have_text("NOD")
-      find("#button-previous").click
-      find("#button-previous").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
+      find("#button-previous").click
+      find("#button-previous").click
+      expect(find(".cf-document-type")).to have_text("NOD")
     end
 
     scenario "Arrow keys to navigate through documents" do
@@ -160,7 +160,7 @@ RSpec.feature "Reader" do
       # Please forgive me.
       unless ENV["TRAVIS"]
         find("body").send_keys(:arrow_right)
-        expect_doc_type_to_be "NOD"
+        expect_doc_type_to_be "BVA Decision"
 
         find("body").send_keys(:arrow_left)
         expect_doc_type_to_be "Form 9"
@@ -538,7 +538,7 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq(["Procedural"])
+      expect(doc_0_categories).to eq([])
 
       doc_1_categories =
         get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
@@ -557,7 +557,7 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq(["Medical"])
+      expect(doc_0_categories).to eq([])
 
       click_on documents[1].type
 
@@ -566,7 +566,7 @@ RSpec.feature "Reader" do
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
-      expect(find("#medical", visible: false).checked?).to be false
+      expect(find("#medical", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
     end
 
@@ -646,6 +646,20 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Search results not found")
       expect(page).to have_content(search_query)
     end
+
+    scenario "Download PDF file" do
+      DownloadHelpers.clear_downloads
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      click_on documents[0].type
+      filename = "#{documents[0].type}-#{documents[0].vbms_document_id}"
+      find("#button-download").click
+      DownloadHelpers.wait_for_download
+      download = DownloadHelpers.downloaded?
+      expect(download).to be_truthy
+      expect(filename).to have_content("BVA Decision-5")
+      DownloadHelpers.clear_downloads
+    end
   end
 
   context "Large number of documents" do
@@ -668,7 +682,7 @@ RSpec.feature "Reader" do
 
       scroll_to_bottom("documents-table-body")
       original_scroll_position = scroll_position("documents-table-body")
-      click_on documents.first.type
+      click_on documents.last.type
 
       click_on "Back to all documents"
 
@@ -680,8 +694,7 @@ RSpec.feature "Reader" do
     scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      scroll_to_bottom("documents-table-body")
-      click_on documents.last.type
+      click_on documents.first.type
 
       (num_documents - 1).times { find("#button-next").click }
 
