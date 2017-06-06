@@ -65,10 +65,10 @@ class PowerOfAttorney
     vacols_rep_type = if representative_type == "Service Organization"
                         # We set the rep type to the service organization name, unless we don't have a record
                         # of it. Then we set it to 'other'.
-                        repo.get_vacols_reptype_code(representative_name) ||
-                          repo.get_vacols_reptype_code("Other")
+                        repo.get_vacols_rep_code(representative_name) ||
+                          repo.get_vacols_rep_code("Other")
                       else
-                        repo.get_vacols_reptype_code(representative_type)
+                        repo.get_vacols_rep_code(representative_type)
                       end
     repo.update_vacols_rep_type!(case_record: appeal.case_record, vacols_rep_type: vacols_rep_type)
 

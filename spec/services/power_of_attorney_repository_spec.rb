@@ -1,6 +1,6 @@
 describe PowerOfAttorneyRepository do
-  context ".get_vacols_reptype_code" do
-    subject { PowerOfAttorney.repository.get_vacols_reptype_code(short_name) }
+  context ".get_vacols_rep_code" do
+    subject { PowerOfAttorney.repository.get_vacols_rep_code(short_name) }
 
     context "returns the VACOLS code when it exists" do
       let(:short_name) { "American Legion" }
