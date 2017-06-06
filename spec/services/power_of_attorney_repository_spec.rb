@@ -40,4 +40,35 @@ describe PowerOfAttorneyRepository do
       it { is_expected.to eq(false) }
     end
   end
+
+  context ".update_vacols_rep_table!" do
+    before do
+      allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_name!).and_call_original
+      allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_address_one!).and_call_original
+      PowerOfAttorney.repository.update_vacols_rep_table!(
+          appeal: Appeal.new(vacols_id: "123C"),
+          representative_name: "Jane M Smith"
+      )
+      PowerOfAttorney.repository.update_vacols_rep_table!(
+          appeal: Appeal.new(vacols_id: "123C"),
+          representative_name: "This is not a name!"
+      )
+    end
+
+    it "calls update_vacols_rep_name with the correct arguments" do
+      expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
+          case_record: nil,
+          first_name: "Jane",
+          middle_initial: "M",
+          last_name: "Smith"
+      )
+    end
+
+    it "calls update_vacols_rep_address_one with the correct arguments" do
+      expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_address_one!).with(
+          case_record: nil,
+          address_one: "This is not a name!"
+      )
+    end
+  end
 end
