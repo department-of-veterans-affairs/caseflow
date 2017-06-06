@@ -409,7 +409,6 @@ export class Pdf extends React.PureComponent {
     const iconPageBoundingBox =
       this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
-
     const { x, y } = getInitialAnnotationIconCoords(
       iconPageBoundingBox,
       scrollWindowBoundingRect,
