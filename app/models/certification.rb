@@ -84,9 +84,9 @@ class Certification < ActiveRecord::Base
   def complete!(user_id)
     unless poa_correct_in_vacols
       appeal.power_of_attorney.update_vacols_rep_info!(
-          appeal: appeal,
-          representative_type: representative_type,
-          representative_name: representative_name
+        appeal: appeal,
+        representative_type: representative_type,
+        representative_name: representative_name
       )
     end
     appeal.certify!
