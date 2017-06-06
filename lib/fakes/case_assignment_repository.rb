@@ -1,6 +1,6 @@
-class Fakes::DasRepository
+class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
   # rubocop:disable MethodLength
-  def self.get_cases_assigned_to_user(_user_id)
+  def self.load_from_vacols(_user_id)
     [
       {
         vacols_id: "2743803",

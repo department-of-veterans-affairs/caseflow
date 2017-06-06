@@ -1,4 +1,4 @@
-class VACOLS::Das < VACOLS::Record
+class VACOLS::CaseAssignment < VACOLS::Record
   self.table_name = "vacols.decass"
 
   has_one :staff, foreign_key: :sattyid, primary_key: :deatty
