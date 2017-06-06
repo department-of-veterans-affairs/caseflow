@@ -1,6 +1,6 @@
 describe PowerOfAttorneyRepository do
   context ".get_vacols_reptype_code" do
-    subject { PowerOfAttorney.repository.get_vacols_reptype_code(short_name: short_name) }
+    subject { PowerOfAttorney.repository.get_vacols_reptype_code(short_name) }
 
     context "returns the VACOLS code when it exists" do
       let(:short_name) { "American Legion" }
@@ -14,7 +14,7 @@ describe PowerOfAttorneyRepository do
   end
 
   context ".first_last_name?" do
-    subject { PowerOfAttorney.repository.first_last_name?(representative_name: representative_name) }
+    subject { PowerOfAttorney.repository.first_last_name?(representative_name) }
 
     context "returns true for a first and last name" do
       let(:representative_name) { "Jane Smith" }
@@ -28,7 +28,7 @@ describe PowerOfAttorneyRepository do
   end
 
   context ".first_middle_last_name?" do
-    subject { PowerOfAttorney.repository.first_middle_last_name?(representative_name: representative_name) }
+    subject { PowerOfAttorney.repository.first_middle_last_name?(representative_name) }
 
     context "returns true for a first, middle initial, and last name" do
       let(:representative_name) { "Jane A. Smith" }
