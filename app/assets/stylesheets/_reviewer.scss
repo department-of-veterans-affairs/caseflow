@@ -199,27 +199,6 @@ svg[aria-hidden=true],
   .cf-pdf-footer-buttons-left {
     margin-left: $outer-margin;
   }
-
-  .cf-pdf-buttons-center {
-    $spacing: 25px;
-
-    margin-left: auto;
-    margin-right: auto;
-
-    .page-progress-indicator {
-      margin-right: $spacing;
-    }
-
-    .doc-list-progress-indicator {
-      margin-left: $spacing;
-
-      .filter-icon {
-        margin-right: $spacing / 2;
-        position: relative;
-        top: 1px;
-      }
-    }
-  }
 }
 
 .cf-comment-cursor {
@@ -368,6 +347,8 @@ svg[aria-hidden=true],
 
 .cf-pdf-buttons-center {
   $spacing: 25px;
+  margin-left: auto;
+  margin-right: auto;
 
   .page-progress-indicator {
     margin-right: $spacing;
