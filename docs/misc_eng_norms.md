@@ -18,8 +18,8 @@ Explanatory comments are used to give added context on some item. They’re espe
 Feel empowered to delete other people’s comments if they’ve become stale or redundant. 
  
 ## PR Descriptions
- 
-Add "Fixes #{github issue number}", "Resolves #{github issue number}", or "Closes #{github issue number}" to programmatically associate your PR with the GitHub issue.
+
+Add "Connects #{github issue number}" to associate your PR with the GitHub issue.
  
 Each PR should contain enough information to allow someone to effectively review it. For example, if you're submitting a fix for an obscure bug that causes a blank screen in some edge case, explain the edge case and how your fix prevents the bug. You should aim not to just prove to your reviewer/s that your change works, but to understand and explain **why** it works to a reasonable degree of depth.
  
