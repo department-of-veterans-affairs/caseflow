@@ -11,10 +11,12 @@ export default class StyleGuideColors extends React.Component {
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
     'Gray-lighter': '#d6d7d9',
+    'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
     White: '#ffffff',
     Secondary: '#e31c3d',
     Green: '#2e8540',
+    'Primary-alt': '#02bfe7',
     'Secondary-lightest': '#f9dede',
     'Green-lightest': '#e7f4e4',
     'Primary-alt-lightest': '#e1f3f8',
@@ -32,6 +34,7 @@ export default class StyleGuideColors extends React.Component {
     'Gray',
     'Gray-light',
     'Gray-lighter',
+    'Gray-warm-light',
     'Primary',
     'White'
   ];
@@ -39,6 +42,7 @@ export default class StyleGuideColors extends React.Component {
   Secondary = [
     'Secondary',
     'Green',
+    'Primary-alt',
     'Secondary-lightest',
     'Green-lightest',
     'Primary-alt-lightest',
@@ -113,7 +117,7 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(0, 2).map((name, i) =>
+      {this.Secondary.slice(0, 3).map((name, i) =>
         <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
@@ -124,7 +128,7 @@ export default class StyleGuideColors extends React.Component {
       </div>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(2).map((name, i) =>
+      {this.Secondary.slice(3).map((name, i) =>
         <div className="sg-colors-swatch" key={name + i}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
