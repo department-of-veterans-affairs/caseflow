@@ -359,6 +359,7 @@ RSpec.feature "Reader" do
         EOS
       end
 
+      # :nocov:
       skip_because_sending_keys_to_body_does_not_work_on_travis do
         scenario "Leave annotation with keyboard" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
@@ -398,6 +399,7 @@ RSpec.feature "Reader" do
           expect(page).to_not have_css(".cf-pdf-placing-comment")
         end
       end
+      # :nocov:
 
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
