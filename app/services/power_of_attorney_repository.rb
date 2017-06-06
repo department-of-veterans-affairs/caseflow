@@ -46,7 +46,8 @@ class PowerOfAttorneyRepository
   end
 
   def self.first_middle_last_name?(representative_name)
-    representative_name.strip.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
+    split_representative_name = representative_name.strip.split(" ")
+    split_representative_name.length == 3 && split_representative_name[1].tr(".", "").length == 1
   end
 
   # :nocov:
