@@ -17,7 +17,7 @@ class VACOLS::Das < VACOLS::Record
              "dereceive as date_received",
              "staff.slogid as vacols_user_id",
              "brieff.bfddec as signed_date")
-            .joins(:staff, :case)
+        .joins(:staff, :case)
     end
   end
 end
