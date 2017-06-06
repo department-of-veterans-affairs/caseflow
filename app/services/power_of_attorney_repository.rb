@@ -34,29 +34,29 @@ class PowerOfAttorneyRepository
     )
   end
 
-  def self.get_vacols_reptype_code(short_name:)
+  def self.get_vacols_reptype_code(short_name)
     VACOLS::Case::REPRESENTATIVES.each do |representative|
       return representative[0] if representative[1][:short] == short_name
     end
     nil
   end
 
-  def self.first_last_name?(representative_name:)
-    representative_name.split(" ").length == 2 && !representative_name.include?("&")
+  def self.first_last_name?(representative_name)
+    representative_name.strip.split(" ").length == 2 && !representative_name.include?("&")
   end
 
-  def self.first_middle_last_name?(representative_name:)
-    representative_name.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
+  def self.first_middle_last_name?(representative_name)
+    representative_name.strip.split(" ").length == 3 && representative_name.split(" ")[1].tr(".", "").length == 1
   end
 
   # :nocov:
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
-    VACOLS::Representative.update_vacols_rep_type!(case_record: case_record, rep_type: vacols_rep_type)
+    VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
   end
 
   def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
     VACOLS::Representative.update_vacols_rep_name!(
-      case_record: case_record,
+      bfkey: case_record.bfkey,
       first_name: first_name,
       middle_initial: middle_initial,
       last_name: last_name
@@ -65,49 +65,31 @@ class PowerOfAttorneyRepository
 
   def self.update_vacols_rep_address_one!(case_record:, address_one:)
     VACOLS::Representative.update_vacols_rep_address_one!(
-      case_record: case_record,
+      bfkey: case_record.bfkey,
       address_one: address_one
     )
   end
   # :nocov:
 
-  def self.update_vacols_rep_table(appeal:, representative_name:)
-    if first_last_name?(representative_name: representative_name)
+  # TODO: Consider changing this logic. Move the entire name into one field.
+  def self.update_vacols_rep_table!(appeal:, representative_name:)
+    split_representative_name = representative_name.strip.split(" ")
+    if first_last_name?(representative_name)
       update_vacols_rep_name!(
         case_record: appeal.case_record,
-        first_name: representative_name.split(" ")[0],
+        first_name: split_representative_name[0],
         middle_initial: "",
-        last_name: representative_name.split(" ")[1]
+        last_name: split_representative_name[1]
       )
-    elsif first_middle_last_name?(representative_name: representative_name)
+    elsif first_middle_last_name?(representative_name)
       update_vacols_rep_name!(
         case_record: appeal.case_record,
-        first_name: representative_name.split(" ")[0],
-        middle_initial: representative_name.split(" ")[1],
-        last_name: representative_name.split(" ")[2]
+        first_name: split_representative_name[0],
+        middle_initial: split_representative_name[1],
+        last_name: split_representative_name[2]
       )
     else
-      update_vacols_rep_address_one!(
-        case_record: appeal.case_record,
-        address_one: representative_name
-      )
-    end
-  end
-
-  def self.update_vacols_rep_info!(appeal:, representative_type:, representative_name:)
-    if representative_type == "Service Organization"
-      # We set the rep type to the service organization name, unless we don't have a record
-      # of it. Then we set it to 'other'.
-      vacols_rep_type = get_vacols_reptype_code(short_name: representative_name) ||
-                        get_vacols_reptype_code(short_name: "Other")
-    else
-      vacols_rep_type = get_vacols_reptype_code(short_name: representative_type)
-    end
-    update_vacols_rep_type!(case_record: appeal.case_record, vacols_rep_type: vacols_rep_type)
-
-    if %w(T U O).include? vacols_rep_type
-      # We only update representative table if the vacols_rep_type is attorney, agent, or other.
-      update_vacols_rep_table(appeal: appeal, representative_name: representative_name)
+      update_vacols_rep_address_one!(case_record: appeal.case_record, address_one: representative_name)
     end
   end
 end

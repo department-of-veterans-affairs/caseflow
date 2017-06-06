@@ -4,15 +4,13 @@ class VACOLS::Representative < VACOLS::Record
 
   class InvalidRepTypeError < StandardError; end
 
-  def self.update_vacols_rep_type!(case_record:, rep_type:)
-    return unless rep_type
-
+  def self.update_vacols_rep_type!(bfkey:, rep_type:)
     fail(InvalidRepTypeError) unless VACOLS::CASE::REPRESENTATIVES.include?(rep_type)
 
     conn = connection
 
     rep_type = conn.quote(rep_type)
-    case_id = conn.quote(case_record.bfkey)
+    case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_rep_type! #{case_id}",
                           service: :vacols,
@@ -27,12 +25,12 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
+  def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
     conn = connection
     first_name = conn.quote(first_name)
     middle_initial = conn.quote(middle_initial)
     last_name = conn.quote(last_name)
-    case_id = conn.quote(case_record.bfkey)
+    case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_rep_first_name! #{case_id}",
                           service: :vacols,
@@ -49,13 +47,11 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_address_one!(case_record:, address_one:)
-    return unless address_one
-
+  def self.update_vacols_rep_address_one!(bfkey:, address_one:)
     conn = connection
 
     address_one = conn.quote(address_one)
-    case_id = conn.quote(case_record.bfkey)
+    case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_rep_address_one! #{case_id}",
                           service: :vacols,

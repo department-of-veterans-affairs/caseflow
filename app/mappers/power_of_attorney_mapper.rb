@@ -47,14 +47,14 @@ module PowerOfAttorneyMapper
     end
   end
 
+  def rep_name_found_in_rep_table?(vacols_code)
+    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
+  end
+
   private
 
   def vacols_representatives
     VACOLS::Case::REPRESENTATIVES
-  end
-
-  def rep_name_found_in_rep_table?(vacols_code)
-    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
   end
 
   def get_short_name(vacols_code)
