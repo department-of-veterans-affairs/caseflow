@@ -351,10 +351,11 @@ RSpec.feature "Reader" do
         EOS
       end
 
-      scenario "Leave annotation with keyboard" do
+      scenario "Leave annotation with keyboard", :focus => true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         assert_selector(".commentIcon-container", count: 5)
         find("body").send_keys [:alt, "c"]
+        sleep(inspection_timeout=10)
         expect(page).to have_css(".cf-pdf-placing-comment")
         assert_selector(".commentIcon-container", count: 6)
 
