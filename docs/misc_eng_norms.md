@@ -27,7 +27,7 @@ If your changes are visible in the UI, add one or more screenshots. On OSX, Comm
  
 Where appropriate, GIFs are also great. Check out [Licecap](http://www.cockos.com/licecap/), a simple program for recording GIFs from your display.
  
-Every PR should have a “Testing:” section, where you describe how you validated your change. For complex changes, the testing section may be quite extensive, but for simple changes like styling or content, it might be no more than “Verified change in UI.”
+Almost every PR should have a “Testing:” section, where you describe how you validated your change. For complex changes, the testing section may be quite extensive, but for simple changes like styling or content, it might be no more than “Verified change in UI.”
 
 ## Code Reviews
  
