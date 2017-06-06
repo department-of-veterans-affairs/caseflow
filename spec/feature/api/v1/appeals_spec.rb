@@ -4,11 +4,11 @@ describe "Appeals API v1", type: :request do
 
     let!(:resolved_appeal) do
       Generators::Appeal.create(
+        vbms_id: "111223333S",
         vacols_record: {
           template: :remand_decided,
           type: "Original",
           status: "Complete",
-          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -20,9 +20,9 @@ describe "Appeals API v1", type: :request do
 
     let!(:current_appeal) do
       Generators::Appeal.create(
+        vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
-          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 11.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -39,12 +39,7 @@ describe "Appeals API v1", type: :request do
     end
 
     let!(:another_veteran_appeal) do
-      Generators::Appeal.create(
-        vacols_record: {
-          template: :remand_decided,
-          appellant_ssn: "3332223333"
-        }
-      )
+      Generators::Appeal.create(vbms_id: "333222333S")
     end
 
     let!(:held_hearing) do
@@ -119,7 +114,8 @@ describe "Appeals API v1", type: :request do
 
       # Make a new appeal and check that it isn't returned because of the cache
       Generators::Appeal.create(
-        vacols_record: { template: :remand_decided, appellant_ssn: "111223333" }
+        vbms_id: "111223333S",
+        vacols_record: { template: :remand_decided }
       )
 
       get "/api/v1/appeals", nil, headers
