@@ -97,8 +97,8 @@ describe Appeal do
       let(:ssoc_dates) { [Time.zone.today, (Time.zone.today - 5.days)] }
 
       it "returns array of ssoc documents" do
-        expect(subject.first).to have_attributes(vacols_date: Time.zone.today)
-        expect(subject.last).to have_attributes(vacols_date: Time.zone.today - 5.days)
+        expect(subject.first).to have_attributes(vacols_date: Time.zone.today - 5.days)
+        expect(subject.last).to have_attributes(vacols_date: Time.zone.today)
       end
     end
   end
@@ -135,14 +135,28 @@ describe Appeal do
     context "when there is an nod, soc, and form9 document matching the respective dates" do
       it { is_expected.to be_truthy }
 
-      context "and ssoc dates match" do
+      context "when ssoc dates don't match" do
         before do
           appeal.documents += [
-            Document.new(type: "SSOC", received_at: 6.days.ago),
-            Document.new(type: "SSOC", received_at: 7.days.ago),
-            Document.new(type: "SSOC", received_at: 9.days.ago)
+            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+          appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
+        end
+
+        it { is_expected.to be_falsy }
+      end
+
+      context "and ssoc dates match" do
+        before do
+          # vbms documents
+          appeal.documents += [
+            Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
+          ]
+          # vacols dates
+          appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
         end
 
         it { is_expected.to be_truthy }
