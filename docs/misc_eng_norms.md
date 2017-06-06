@@ -33,7 +33,7 @@ Almost every PR should have a “Testing:” section, where you describe how you
  
 The best way to ensure shared context and correct software is through a culture of deep code reviews. Expect your reviewer to poke holes in your reasoning, point out improvements, ask you to test more thoroughly, add more unit tests, etc. This is done out of love and reverence for our project.
  
-As the reviewer, be mindful of scope creep. Sometimes, it takes more than one PR to put the code in a good state. As the dev, if you feel you’re being asked to significantly expand the scope of the original change, it’s perfectly fine to say “I agree with your comment, but I think that change is out of scope and should be addressed in a future PR. I’ve opened issue ### to capture this suggestion”.
+As the reviewer, be mindful of scope creep. Sometimes, it takes more than one PR to put the code in a good state. As the dev, if you feel you’re being asked to significantly expand the scope of the original change, it’s perfectly fine to say “I agree with your comment, but I think that change is out of scope and should be addressed in a future PR. 
  
 If you and your reviewer disagree on the technical direction, try your best to see the other point of view. You’re encouraged to seek third or fourth or ++ opinions if desired.
  
