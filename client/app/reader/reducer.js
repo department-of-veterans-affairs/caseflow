@@ -567,9 +567,10 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.MOVE_PLACE_ANNOTATION_ICON:
     return (() => {
       const moveAmountPx = 5;
-      const movementDirection = action.payload.direction === Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP ||
-        action.payload.direction === Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT ?
-          -1 : 1;
+      const movementDirection = _.includes(
+        [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
+        action.payload.direction
+      ) ? -1 : 1;
       const movementDimension = _.includes(
         [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
         action.payload.direction
