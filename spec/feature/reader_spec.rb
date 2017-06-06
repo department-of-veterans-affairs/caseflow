@@ -355,7 +355,8 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         assert_selector(".commentIcon-container", count: 5)
         find("body").send_keys [:alt, "c"]
-        sleep(inspection_timeout=10)
+        sleep(inspection_timeout=100)
+        print page.body
         expect(page).to have_css(".cf-pdf-placing-comment")
         assert_selector(".commentIcon-container", count: 6)
 
