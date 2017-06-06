@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import SearchBar from '../../components/SearchBar';
-
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 
@@ -19,7 +18,7 @@ class StyleGuideSearch extends Component {
   }
 
   handleSearchClick = (elem) => () => {
-    let load = () => {
+    const load = () => {
       this.setState((prevState) => ({
         [elem]: !prevState[elem]
       }));
@@ -27,7 +26,7 @@ class StyleGuideSearch extends Component {
 
     load();
 
-    setTimeout(() => load(), 2000);
+    setTimeout(load, 2000);
   };
 
   render() {
@@ -40,7 +39,7 @@ class StyleGuideSearch extends Component {
           link="StyleGuideSearch.jsx"
         />
         <p>
-        Search bars are a are block that allows users to search for specific content
+        Search bars are a block that allows users to search for specific content
         if they know what search terms to use or can’t find desired content in the main navigation.
         In Caseflow they serve as a vital UI component that allows users to
         find information necessary in completing their tasks.</p>

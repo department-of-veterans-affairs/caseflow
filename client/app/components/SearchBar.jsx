@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
+import classnames from 'classnames';
 import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
@@ -20,44 +21,26 @@ export default class SearchBar extends React.Component {
       title
     } = this.props;
 
-    let sizeClasses = () => {
-      if (size === 'big') {
-        sizeClasses = ['usa-search', 'usa-search-big'];
-      } else if (size === 'small') {
-        sizeClasses = ['usa-search', 'usa-search-small'];
-      } else {
-        sizeClasses = ['usa-search', 'usa-search-medium'];
-      }
 
-      return sizeClasses.join(' ');
-    };
+    const sizeClasses = classnames('usa-search', {
+      'usa-search-big': size === 'big',
+      'usa-search-medium': size === 'medium',
+      'usa-search-small': size === 'small'
+    });
 
-    // This returns the magnifying glass for small sized searchbars
-    let buttonClassNames = () => {
-      if (size === 'small') {
-        return 'usa-sr-only';
-      }
+    const buttonClassNames = classnames({
+      'usa-sr-only': size === 'small'
+    });
 
-      return 'usa-search-submit-text';
+    const label = classnames({
+      'usa-search-big': size === 'big',
+      'usa-search-medium': size === 'medium',
+      'usa-search-small': size === 'small'
+    });
 
-    };
-
-    let label = () => {
-      if (size === 'big') {
-        label = ('usa-search-big');
-      } else if (size === 'medium') {
-        label = ('usa-search-medium');
-      } else {
-        label = 'usa-search-small';
-      }
-
-      return label;
-    };
-
-
-    return <span className={sizeClasses()} role="search">
-      <label className={title ? label() : 'usa-sr-only'} htmlFor={id}>
-        {title ? title : 'Search small'}
+    return <span className={sizeClasses} role="search">
+      <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
+        {title || 'Search small'}
       </label>
       <input
         id={id}
@@ -74,7 +57,7 @@ export default class SearchBar extends React.Component {
           {closeIcon()}
         </Button>}
       <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
-        <span className={buttonClassNames()}>Search</span>
+        <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;
   }
