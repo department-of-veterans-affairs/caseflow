@@ -1,0 +1,10 @@
+<% content_for :page_title do page_title('Daily Docket') end %>
+
+<% content_for :left_actions do %><%= link_to "< Back to Hearing Schedule", hearings_dockets_path %><% end %>
+
+<%= react_component("Hearings", props: {
+  hearings: {
+    veteran_law_judge: current_user.to_hash,
+    hearings: @current_user_docket
+  }
+}) %>

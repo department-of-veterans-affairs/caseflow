@@ -34,7 +34,7 @@ describe HearingDocket do
     end
   end
 
-  context ".upcoming_from_judge" do
+  context "#upcoming_for_judge" do
     subject { HearingDocket.upcoming_for_judge(user) }
 
     let(:user) { Generators::User.create }
@@ -51,6 +51,55 @@ describe HearingDocket do
 
       expect(subject.last.date).to eq(3.days.from_now)
       expect(subject.last.hearings.first).to eq(hearing_later_date)
+    end
+  end
+
+  context "#docket_for_judge" do
+    subject { HearingDocket.docket_for_judge(user, date) }
+
+    let(:user) { Generators::User.create }
+    let(:date) { Time.zone.now.strftime("%Y-%m-%d") }
+
+    let!(:hearings) do
+      [
+        Generators::Hearing.create(user: user, date: 1.hour.from_now),
+        Generators::Hearing.create(user: user, date: 2.hours.from_now)
+      ]
+    end
+
+    it "returns a docket's hearings in chronological order" do
+      [0, 1].each do |index|
+        expect(subject[index][:date]).to eq(hearings[index].date)
+        expect(subject[index][:type]).to eq(HearingDocket.hearing_type(hearings[index].type))
+        expect(subject[index][:venue]).to eq(hearings[index].venue)
+        expect(subject[index][:appellant]).to eq(HearingDocket.appellant(hearings[index].appeal))
+        expect(subject[index][:appellantId]).to eq(hearings[index].appeal.vbms_id)
+        expect(subject[index][:representative]).to eq(hearings[index].appeal.representative)
+      end
+    end
+
+    it "raises a NoDocket exception on error" do
+      expect { HearingDocket.docket_for_judge(user, "Bad Date") }.to raise_error(HearingDocket::NoDocket)
+    end
+  end
+
+  context "#hearing_type" do
+    it "returns 'CO' for :central_office" do
+      expect(HearingDocket.hearing_type(:central_office)).to eql("CO")
+    end
+
+    it "otherwise returns type in sentence case" do
+      expect(HearingDocket.hearing_type(:video)).to eql("Video")
+    end
+  end
+
+  context "#appellant" do
+    let(:appeal) { Generators::Appeal.create(vacols_record: :full_grant_decided) }
+
+    it "returns appellant's name in format '<lastname>, <firstname>'" do
+      expect(HearingDocket.appellant(appeal)).to eql(
+        "#{appeal.appellant_last_name}, #{appeal.appellant_first_name}"
+      )
     end
   end
 end
