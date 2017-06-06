@@ -65,12 +65,12 @@ module PowerOfAttorneyMapper
   end
 
   def get_short_name(vacols_code)
-    return if vacols_code.blank?
+    return if vacols_representatives[vacols_code].blank?
     vacols_representatives[vacols_code][:short]
   end
 
   def get_full_name(vacols_code)
-    return if vacols_code.blank?
+    return if vacols_representatives[vacols_code].blank?
     vacols_representatives[vacols_code][:full_name]
   end
 
