@@ -71,6 +71,10 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index]
   end
 
+  resources :hearings, only: []  do
+    resource :worksheet, only: [:update]
+  end
+
   patch "certifications" => "certifications#create"
 
   namespace :admin do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170530202048) do
+ActiveRecord::Schema.define(version: 20170602182637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,7 +233,20 @@ ActiveRecord::Schema.define(version: 20170530202048) do
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
-    t.string  "vacols_id", null: false
+    t.string  "vacols_id",                       null: false
+    t.string  "worksheet_witness"
+    t.string  "worksheet_contentions"
+    t.string  "worksheet_evidence"
+    t.string  "worksheet_military_service"
+    t.string  "worksheet_comments_for_attorney"
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.integer "hearing_worksheet_status"
+    t.boolean "hearing_worksheet_reopen", default: false
+    t.boolean "hearing_worksheet_vha",    default: false
   end
 
   create_table "tags", force: :cascade do |t|
