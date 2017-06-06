@@ -275,7 +275,6 @@ export class Pdf extends React.PureComponent {
       // the current view we render it. If the bottom of the page
       // above is within a thousand pixels of the current view
       // we also render it.
-
       if (!this.isRendering[index]) {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
