@@ -199,6 +199,45 @@ svg[aria-hidden=true],
   .cf-pdf-footer-buttons-left {
     margin-left: $outer-margin;
   }
+
+  .cf-pdf-buttons-center {
+    $spacing: 25px;
+    margin-left: auto;
+    margin-right: auto;
+
+    .page-progress-indicator {
+      margin-right: $spacing;
+    }
+
+    .page-progress-indicator-input {
+      > input {
+        width: 48px;
+        height: 22px;
+        display: inline-block;
+        color: $color-white;
+        background-color: $color-gray;
+        border: 1px solid $color-white;
+        text-align: center;
+        margin: 5px;
+        padding: 0;
+      }
+
+      > label {
+        display: inline-block;
+      }
+
+    }
+
+    .doc-list-progress-indicator {
+      margin-left: $spacing;
+
+      .filter-icon {
+        margin-right: $spacing / 2;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
 }
 
 .cf-comment-cursor {
@@ -343,45 +382,6 @@ svg[aria-hidden=true],
 
 .cf-pdf-bookmark-va-medial {
   color: $bookmark-pink;
-}
-
-.cf-pdf-buttons-center {
-  $spacing: 25px;
-  margin-left: auto;
-  margin-right: auto;
-
-  .page-progress-indicator {
-    margin-right: $spacing;
-  }
-
-  .page-progress-indicator-input {
-    > input {
-      width: 48px;
-      height: 22px;
-      display: inline-block;
-      color: $color-white;
-      background-color: $color-gray;
-      border: 1px solid $color-white;
-      text-align: center;
-      margin: 5px;
-      padding: 0;
-    }
-
-    > label {
-      display: inline-block;
-    }
-
-  }
-
-  .doc-list-progress-indicator {
-    margin-left: $spacing;
-
-    .filter-icon {
-      margin-right: $spacing / 2;
-      position: relative;
-      top: 1px;
-    }
-  }
 }
 
 .cf-pdf-bookmark-layperson {
