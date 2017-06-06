@@ -90,10 +90,7 @@ export const certificationReducers = function(state = initialState, action = {})
       // reset some parts of state so we don't skip pages or end up in loops
       updateSucceeded: null,
       loading: false,
-      showCancellationModal: false,
-      representativeType: null,
-      representativeName: null,
-      organizationName: null
+      showCancellationModal: false
     });
 
   case Constants.SHOW_VALIDATION_ERRORS:
@@ -147,7 +144,7 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   } else if (poaCorrectInBgs === true) {
     return Constants.poaCorrectLocation.VBMS;
   } else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
-    return Constants.poaCorrectLocation.NONE;
+    return null;
   }
 
   return null;
