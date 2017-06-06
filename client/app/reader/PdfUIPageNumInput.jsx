@@ -70,7 +70,8 @@ export class PdfUIPageNumInput extends React.PureComponent {
 PdfUIPageNumInput.propTypes = {
   currentPage: PropTypes.number,
   numPages: PropTypes.number,
-  jumpToPage: PropTypes.func
+  jumpToPage: PropTypes.func,
+  docId: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => ({

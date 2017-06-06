@@ -26,7 +26,7 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
-const FIFTH = 5;
+const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PRERENDER = 2;
 
@@ -449,13 +449,9 @@ export class Pdf extends React.PureComponent {
   }
 
   renderAndScrollToPage(pageNumber) {
-    const boundingBox = this.scrollWindow.getBoundingClientRect();
-    const height = (boundingBox.bottom - boundingBox.top);
-    const coverScrollHeight = height / FIFTH;
-
     this.scrollWindow.scrollTop =
       this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
-      this.scrollWindow.scrollTop - coverScrollHeight;
+      this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
   componentDidUpdate = () => {
