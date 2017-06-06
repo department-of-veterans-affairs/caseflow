@@ -30,7 +30,7 @@ module PowerOfAttorneyMapper
     case
     when vacols_code.blank?
       # If VACOLS doesn't have a rep code in its dropdown,
-      # it still may have a representative name in the REP table —
+      # it still may have a representative name in the REP table
       # so let's grab that if we can, since we want to show all
       # the information we have.
       {
