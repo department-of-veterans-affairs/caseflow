@@ -148,11 +148,11 @@ class Fakes::AppealRepository
     appeal.assign_from_vacols(record[1])
   end
 
-  def self.appeals_by_appellant_ssn(appellant_ssn)
-    Rails.logger.info("Load faked VACOLS appeals data for SSN: #{appellant_ssn}")
+  def self.appeals_by_vbms_id(vbms_id)
+    Rails.logger.info("Load faked VACOLS appeals data for vbms id: #{vbms_id}")
 
-    return_records = MetricsService.record "load appeals for ssn #{appellant_ssn}" do
-      records.select { |_, r| r[:appellant_ssn] == appellant_ssn }
+    return_records = MetricsService.record "load appeals for vbms_id #{vbms_id}" do
+      records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
     fail ActiveRecord::RecordNotFound if return_records.empty?

@@ -287,5 +287,9 @@ class EstablishClaim < Task
     def joins_task_result
       joins(:claim_establishment)
     end
+
+    def past_weeks(num)
+      where("completed_at >= ?", Time.zone.today - num.weeks)
+    end
   end
 end

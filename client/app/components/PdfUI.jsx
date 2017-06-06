@@ -8,19 +8,10 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { FilterIcon } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight, LeftChevron } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
-
-export const linkToSingleDocumentView = (basePath, doc) => {
-  let id = doc.id;
-  let filename = doc.filename;
-  let type = doc.type;
-  let receivedAt = doc.receivedAt;
-
-  return `${basePath}/${id}?type=${type}` +
-    `&received_at=${receivedAt}&filename=${filename}`;
-};
+import { openDocumentInNewTab } from '../reader/utils';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -54,16 +45,43 @@ export class PdfUI extends React.Component {
     });
   }
 
+  openDownloadLink = () =>
+    window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
+
+  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
+
   getPdfFooter = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
-      return <div className="cf-pdf-buttons-center">
-        <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
-        |
-        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
-          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
-        </span>
+      return <div className="cf-pdf-footer cf-pdf-toolbar">
+        { this.props.prevDocId &&
+          <div className="cf-pdf-footer-buttons-left">
+            <Button
+              name="previous"
+              classNames={['cf-pdf-button']}
+              onClick={this.props.showPdf(this.props.prevDocId)}
+              ariaLabel="previous PDF">
+              <ArrowLeft /><span className="left-button-label">Previous</span>
+            </Button>
+          </div> }
+        <div className="cf-pdf-buttons-center">
+          <span className="page-progress-indicator">Page {this.state.currentPage} of {this.state.numPages}</span>
+          |
+          <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+            Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+          </span>
+        </div>
+        { this.props.nextDocId &&
+          <div className="cf-pdf-footer-buttons-right">
+            <Button
+              name="next"
+              classNames={['cf-pdf-button cf-right-side']}
+              onClick={this.props.showPdf(this.props.nextDocId)}
+              ariaLabel="next PDF">
+              <span className="right-button-label">Next</span><ArrowRight />
+            </Button>
+          </div> }
       </div>;
     }
 
@@ -94,13 +112,40 @@ export class PdfUI extends React.Component {
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.showDocumentsListNavigation && <Button
             name="backToDocuments"
-            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left']}
+            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
-            <i className="fa fa-chevron-left" aria-hidden="true"></i>
+            <LeftChevron />
             &nbsp; Back to all documents
           </Button> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
+          <span className="category-icons-and-doc-type">
+            <span className="cf-pdf-doc-category-icons">
+              <DocumentCategoryIcons doc={this.props.doc} />
+            </span>
+            <span className="cf-pdf-doc-type-button-container">
+              <Button
+                name="newTab"
+                classNames={['cf-pdf-button cf-pdf-doc-type-button']}
+                ariaLabel="open document in new tab"
+                onClick={this.singleDocumentView}>
+                <span title={this.props.doc.type}>{this.props.doc.type}</span>
+              </Button>
+            </span>
+            {this.props.hidePdfSidebar &&
+              <span className="cf-pdf-open-menu">
+                <Button
+                  name="open menu"
+                  classNames={['cf-pdf-button']}
+                  onClick={this.props.handleTogglePdfSidebar}>
+                  <strong>
+                    Open menu
+                  </strong>
+                </Button>
+              </span>}
+            </span>
+        </span>
+        <span className="usa-width-one-third cf-pdf-buttons-right">
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
@@ -122,57 +167,14 @@ export class PdfUI extends React.Component {
             ariaLabel="zoom in">
             <i className="fa fa-plus" aria-hidden="true"></i>
           </Button>
+          <Button
+            name="download"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.openDownloadLink}
+            ariaLabel="download pdf">
+            <DownloadIcon />
+          </Button>
         </span>
-        <span className="usa-width-one-third">
-          <span className="category-icons-and-doc-type">
-            <span className="cf-pdf-doc-category-icons">
-              <DocumentCategoryIcons doc={this.props.doc} />
-            </span>
-            <span className="cf-pdf-doc-type-button-container">
-              <Button
-                name="newTab"
-                classNames={['cf-pdf-button cf-pdf-doc-type-button']}
-                ariaLabel="open document in new tab"
-                onClick={() => window.open(
-                  linkToSingleDocumentView(this.props.documentPathBase, this.props.doc), '_blank')}>
-                <span title={this.props.doc.type}>{this.props.doc.type}</span>
-              </Button>
-            </span>
-            {this.props.hidePdfSidebar &&
-              <span className="cf-pdf-open-menu">
-                <Button
-                  name="open menu"
-                  classNames={['cf-pdf-button']}
-                  onClick={this.props.handleTogglePdfSidebar}>
-                  <strong>
-                    Open menu
-                  </strong>
-                </Button>
-              </span>}
-            </span>
-        </span>
-      </div>
-      <div className="cf-pdf-navigation">
-        { this.props.prevDocId &&
-          <span className="cf-pdf-buttons-left">
-            <Button
-              name="previous"
-              classNames={['cf-pdf-button']}
-              onClick={this.props.showPdf(this.props.prevDocId)}
-              ariaLabel="previous PDF">
-              <i className="fa fa-arrow-circle-left fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
-        { this.props.nextDocId &&
-          <span className="cf-pdf-buttons-right">
-            <Button
-              name="next"
-              classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.showPdf(this.props.nextDocId)}
-              ariaLabel="next PDF">
-              <i className="fa fa-arrow-circle-right fa-3x" aria-hidden="true"></i>
-            </Button>
-          </span> }
       </div>
       <div>
         <Pdf
@@ -187,9 +189,7 @@ export class PdfUI extends React.Component {
           onCommentScrolledTo={this.props.onCommentScrolledTo}
         />
       </div>
-      <div className="cf-pdf-footer cf-pdf-toolbar">
-        { this.getPdfFooter(this.props, this.state) }
-      </div>
+      { this.getPdfFooter(this.props, this.state) }
     </div>;
   }
 }

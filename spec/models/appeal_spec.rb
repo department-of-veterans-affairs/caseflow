@@ -97,8 +97,8 @@ describe Appeal do
       let(:ssoc_dates) { [Time.zone.today, (Time.zone.today - 5.days)] }
 
       it "returns array of ssoc documents" do
-        expect(subject.first).to have_attributes(vacols_date: Time.zone.today)
-        expect(subject.last).to have_attributes(vacols_date: Time.zone.today - 5.days)
+        expect(subject.first).to have_attributes(vacols_date: Time.zone.today - 5.days)
+        expect(subject.last).to have_attributes(vacols_date: Time.zone.today)
       end
     end
   end
@@ -135,14 +135,28 @@ describe Appeal do
     context "when there is an nod, soc, and form9 document matching the respective dates" do
       it { is_expected.to be_truthy }
 
-      context "and ssoc dates match" do
+      context "when ssoc dates don't match" do
         before do
           appeal.documents += [
-            Document.new(type: "SSOC", received_at: 6.days.ago),
-            Document.new(type: "SSOC", received_at: 7.days.ago),
-            Document.new(type: "SSOC", received_at: 9.days.ago)
+            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
           ]
-          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+          appeal.ssoc_dates = [2.days.ago, 7.days.ago, 8.days.ago]
+        end
+
+        it { is_expected.to be_falsy }
+      end
+
+      context "and ssoc dates match" do
+        before do
+          # vbms documents
+          appeal.documents += [
+            Document.new(type: "SSOC", received_at: 9.days.ago, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 6.days.ago, vbms_document_id: "1235"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1236")
+          ]
+          # vacols dates
+          appeal.ssoc_dates = [2.days.ago, 8.days.ago, 7.days.ago]
         end
 
         it { is_expected.to be_truthy }
@@ -367,6 +381,35 @@ describe Appeal do
     it "doesn't left-pad social security ids" do
       subject.vbms_id = "123S"
       expect(subject.sanitized_vbms_id).to eq("123")
+    end
+  end
+
+  context ".convert_file_number_to_vacols" do
+    subject { Appeal.convert_file_number_to_vacols(file_number) }
+
+    context "for a file number with less than 9 digits" do
+      context "with leading zeros" do
+        let(:file_number) { "00001234" }
+        it { is_expected.to eq("1234C") }
+      end
+
+      context "with no leading zeros" do
+        let(:file_number) { "12345678" }
+        it { is_expected.to eq("12345678C") }
+      end
+    end
+
+    context "for a file number with 9 digits" do
+      let(:file_number) { "123456789" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "for a file number with more than 9 digits" do
+      let(:file_number) { "1234567890" }
+
+      it "raises InvalidFileNumber error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
+      end
     end
   end
 
@@ -661,26 +704,26 @@ describe Appeal do
       BGSService.end_product_data = [
         {
           claim_receive_date: twenty_days_ago,
-          claim_type_code: "172GRANT",
-          end_product_type_code: "172",
+          claim_type_code: "070BVAGR",
+          end_product_type_code: "071",
           status_type_code: "PEND"
         },
         {
           claim_receive_date: last_year,
-          claim_type_code: "170RMD",
-          end_product_type_code: "170",
+          claim_type_code: "070BVAGRARC",
+          end_product_type_code: "070",
           status_type_code: "PEND"
         },
         {
           claim_receive_date: yesterday,
-          claim_type_code: "172BVAG",
-          end_product_type_code: "172",
+          claim_type_code: "070RMND",
+          end_product_type_code: "072",
           status_type_code: "CAN"
         },
         {
           claim_receive_date: last_year,
-          claim_type_code: "172BVAG",
-          end_product_type_code: "172",
+          claim_type_code: "070RMNDARC",
+          end_product_type_code: "072",
           status_type_code: "CLR"
         }
       ]
@@ -691,8 +734,8 @@ describe Appeal do
     it "returns only pending eps" do
       expect(result.length).to eq(2)
 
-      expect(result.first.claim_type_code).to eq("172GRANT")
-      expect(result.last.claim_type_code).to eq("170RMD")
+      expect(result.first.claim_type_code).to eq("070BVAGR")
+      expect(result.last.claim_type_code).to eq("070BVAGRARC")
     end
   end
 
@@ -753,6 +796,17 @@ describe Appeal do
     it "returns poa loaded with BGS values" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
+
+    context "#power_of_attorney.bgs_representative_address" do
+      subject { appeal.power_of_attorney.bgs_representative_address }
+
+      it "returns address if we are able to retrieve it" do
+        is_expected.to include(
+          address_line_1: "9999 MISSION ST",
+          city: "SAN FRANCISCO",
+          zip: "94103")
+      end
+    end
   end
 
   context "#sanitized_hearing_request_type" do
@@ -791,13 +845,16 @@ describe Appeal do
     let!(:veteran_appeals) do
       [
         Generators::Appeal.build(
-          vacols_record: { soc_date: 4.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago }
         ),
         Generators::Appeal.build(
-          vacols_record: { type: "Reconsideration", appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { type: "Reconsideration" }
         ),
         Generators::Appeal.build(
-          vacols_record: { form9_date: 3.days.ago, appellant_ssn: "999887777" }
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: 3.days.ago }
         )
       ]
     end
@@ -807,11 +864,29 @@ describe Appeal do
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
 
+    context "when ssn is nil" do
+      let(:ssn) { nil }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
     context "when ssn is less than 9 characters" do
       let(:ssn) { "99887777" }
 
       it "raises InvalidSSN error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
+    context "when SSN not found in BGS" do
+      before do
+        Fakes::BGSService.ssn_not_found = true
+      end
+
+      it "raises ActiveRecord::RecordNotFound error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

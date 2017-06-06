@@ -140,11 +140,26 @@ svg[aria-hidden=true],
   position: absolute;
   z-index: 15;
   opacity: 1;
-  padding: 15px 20px;
+  padding: 15px 24px 15px 15px;
 
   .category-icons-and-doc-type {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+  }
+
+  .cf-pdf-buttons {
+    &-left {
+      min-height: 1px;
+      text-align: left;
+    }
+
+    &-right {
+      text-align: right;
+    }
+
+    &-center {
+      text-align: center;
+    }
   }
 }
 
@@ -154,26 +169,61 @@ svg[aria-hidden=true],
   opacity: 1;
   bottom: 0;
   padding: 0 20px;
-  line-height: 50px;
+
+  display: flex;
+  align-items: center;
+
+  button {
+    display: flex;
+
+    $button-label-spacing: 10px;
+
+    .left-button-label {
+      margin-left: $button-label-spacing;
+    }
+
+    .right-button-label {
+      margin-right: $button-label-spacing;
+    }
+  }
+
+  // We want the buttons to be 40px from the outer edge of the toolbar.
+  // Other margins that are involved add up to 28px, so we add an
+  // additional margin to make it 40.
+  $outer-margin: 12px;
+
+  .cf-pdf-footer-buttons-right {
+    margin-right: $outer-margin;
+  }
+
+  .cf-pdf-footer-buttons-left {
+    margin-left: $outer-margin;
+  }
+
+  .cf-pdf-buttons-center {
+    $spacing: 25px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    .page-progress-indicator {
+      margin-right: $spacing;
+    }
+
+    .doc-list-progress-indicator {
+      margin-left: $spacing;
+
+      .filter-icon {
+        margin-right: $spacing / 2;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
 }
 
 .cf-comment-cursor {
   cursor: copy;
-}
-
-.cf-pdf-buttons {
-  &-left {
-    min-height: 1px;
-    text-align: left;
-  }
-
-  &-right {
-    text-align: right;
-  }
-
-  &-center {
-    text-align: center;
-  }
 }
 
 .cf-pdf-bookmarks {
@@ -181,7 +231,7 @@ svg[aria-hidden=true],
 }
 
 // TODO: Remove !important
-[type="button"].cf-pdf-button {
+.cf-pdf-button {
   margin: 0 8px;
   color: inherit;
   padding: 0;
@@ -193,7 +243,15 @@ svg[aria-hidden=true],
   &:hover {
     text-decoration: none;
     background-color: transparent;
-    color: $color-focus;
+    color: $color-primary-alt;
+
+    svg g {
+      fill: $color-primary-alt;
+    }
+  }
+
+  svg {
+    vertical-align: bottom;
   }
 
   &:focus {
@@ -201,7 +259,7 @@ svg[aria-hidden=true],
   }
 }
 
-[type="button"].cf-pdf-spaced-buttons {
+.cf-pdf-spaced-buttons {
   padding: 0 15px;
 }
 
@@ -308,24 +366,6 @@ svg[aria-hidden=true],
   color: $bookmark-pink;
 }
 
-.cf-pdf-buttons-center {
-  $spacing: 25px;
-
-  .page-progress-indicator {
-    margin-right: $spacing;
-  }
-
-  .doc-list-progress-indicator {
-    margin-left: $spacing;
-
-    .filter-icon {
-      margin-right: $spacing / 2;
-      position: relative;
-      top: 1px;
-    }
-  }
-}
-
 .cf-pdf-bookmark-layperson {
   color: $bookmark-green;
 }
@@ -386,7 +426,6 @@ svg[aria-hidden=true],
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 100%;
 }
 
 .cf-pdf-open-menu {

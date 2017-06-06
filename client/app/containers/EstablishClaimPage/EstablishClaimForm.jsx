@@ -12,11 +12,6 @@ import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { connect } from 'react-redux';
 
-export const MODIFIER_OPTIONS = [
-  '170',
-  '172'
-];
-
 export class EstablishClaimForm extends React.Component {
   formattedStationOfJurisdiction() {
     return formattedStationOfJurisdiction(

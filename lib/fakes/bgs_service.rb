@@ -1,11 +1,16 @@
 class Fakes::BGSService
   include PowerOfAttorneyMapper
+  include AddressMapper
 
   cattr_accessor :end_product_data
   cattr_accessor :inaccessible_appeal_vbms_ids
   cattr_accessor :veteran_records
   cattr_accessor :power_of_attorney_records
+  cattr_accessor :address_records
+  cattr_accessor :ssn_not_found
   attr_accessor :client
+
+  ID_TO_RAISE_ERROR = "ERROR-ID".freeze
 
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
@@ -14,29 +19,29 @@ class Fakes::BGSService
       {
         benefit_claim_id: "1",
         claim_receive_date: 20.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "172GRANT",
-        end_product_type_code: "172",
+        claim_type_code: "070BVAGR",
+        end_product_type_code: "070",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
         claim_receive_date: default_date,
-        claim_type_code: "170RMD",
-        end_product_type_code: "170",
+        claim_type_code: "070RMND",
+        end_product_type_code: "070",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
         claim_receive_date: Time.zone.now.to_formatted_s(:short_date),
-        claim_type_code: "172BVAG",
-        end_product_type_code: "172",
+        claim_type_code: "070BVAGR",
+        end_product_type_code: "071",
         status_type_code: "CAN"
       },
       {
         benefit_claim_id: "4",
         claim_receive_date: 200.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "172BVAG",
-        end_product_type_code: "172",
+        claim_type_code: "070BVAGR",
+        end_product_type_code: "072",
         status_type_code: "CLR"
       },
       {
@@ -84,7 +89,7 @@ class Fakes::BGSService
       {
         benefit_claim_id: "11",
         claim_receive_date: default_date,
-        claim_type_code: "172GRANT",
+        claim_type_code: "070BVAGRARC",
         end_product_type_code: "170",
         status_type_code: "PEND"
       },
@@ -138,8 +143,8 @@ class Fakes::BGSService
       {
         benefit_claim_id: "1",
         claim_receive_date: 20.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "172GRANT",
-        end_product_type_code: "172",
+        claim_type_code: "070BVAGR",
+        end_product_type_code: "070",
         status_type_code: "PEND"
       }
     ]
@@ -150,22 +155,22 @@ class Fakes::BGSService
       {
         benefit_claim_id: "1",
         claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "170RMD",
-        end_product_type_code: "170",
+        claim_type_code: "070RMBVAGARC",
+        end_product_type_code: "070",
         status_type_code: "PEND"
       },
       {
         benefit_claim_id: "2",
         claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "170RMD",
-        end_product_type_code: "171",
+        claim_type_code: "070RMBVAGARC",
+        end_product_type_code: "071",
         status_type_code: "CLR"
       },
       {
         benefit_claim_id: "3",
         claim_receive_date: 200.days.ago.to_formatted_s(:short_date),
-        claim_type_code: "170RMD",
-        end_product_type_code: "175",
+        claim_type_code: "070RMBVAGARC",
+        end_product_type_code: "072",
         status_type_code: "PEND"
       }
     ]
@@ -173,6 +178,10 @@ class Fakes::BGSService
 
   def self.no_grants
     []
+  end
+
+  def self.clean!
+    self.ssn_not_found = false
   end
 
   def get_end_products(_veteran_id)
@@ -187,6 +196,7 @@ class Fakes::BGSService
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
+  # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_power_of_attorney_record
@@ -194,8 +204,18 @@ class Fakes::BGSService
     get_poa_from_bgs_poa(record)
   end
 
-  def fetch_address_by_participant_id
-    default_address
+  # TODO: add more test cases
+  def find_address_by_participant_id(participant_id)
+    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
+
+    address = (self.class.address_records || {})[participant_id]
+    address ||= default_address
+
+    get_address_from_bgs_address(address)
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    ssn_not_found ? nil : ssn
   end
 
   private

@@ -4,11 +4,11 @@ describe "Appeals API v1", type: :request do
 
     let!(:resolved_appeal) do
       Generators::Appeal.create(
+        vbms_id: "111223333S",
         vacols_record: {
           template: :remand_decided,
           type: "Original",
           status: "Complete",
-          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -20,9 +20,9 @@ describe "Appeals API v1", type: :request do
 
     let!(:current_appeal) do
       Generators::Appeal.create(
+        vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
-          appellant_ssn: "111223333",
           nod_date: Time.zone.today - 11.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 7.months,
@@ -39,12 +39,7 @@ describe "Appeals API v1", type: :request do
     end
 
     let!(:another_veteran_appeal) do
-      Generators::Appeal.create(
-        vacols_record: {
-          template: :remand_decided,
-          appellant_ssn: "3332223333"
-        }
-      )
+      Generators::Appeal.create(vbms_id: "333222333S")
     end
 
     let!(:held_hearing) do
@@ -104,6 +99,35 @@ describe "Appeals API v1", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Veteran not found")
+    end
+
+    it "caches response" do
+      headers = {
+        "ssn": "111223333",
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # Make a new appeal and check that it isn't returned because of the cache
+      Generators::Appeal.create(
+        vbms_id: "111223333S",
+        vacols_record: { template: :remand_decided }
+      )
+
+      get "/api/v1/appeals", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(2)
+
+      # tests that reload=true busts cache
+      get "/api/v1/appeals?reload=true", nil, headers
+      json = JSON.parse(response.body)
+
+      expect(json["data"].length).to eq(3)
     end
 
     it "returns 500 on any other error" do
