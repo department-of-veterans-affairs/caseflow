@@ -133,7 +133,8 @@ class Document < ActiveRecord::Base
       type: type,
       alt_types: alt_types,
       received_at: received_at,
-      filename: filename
+      filename: filename,
+      vbms_document_id: vbms_document_id
     )
 
     document
