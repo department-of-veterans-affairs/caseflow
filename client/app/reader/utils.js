@@ -67,7 +67,7 @@ export const moveModel = (state, srcPath, destPath, id) =>
     }
   );
 
-export const isValidNum = (number) => {
+export const isValidWholeNumber = (number) => {
   return !isNaN(number) && number % 1 === 0;
 };
 

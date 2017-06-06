@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { jumpToPage } from './actions';
-import { isValidNum } from './utils';
+import { isValidWholeNumber } from './utils';
 import TextField from '../components/TextField';
 
 const ENTER_KEY = 'Enter';
@@ -34,19 +34,15 @@ export class PdfUIPageNumInput extends React.PureComponent {
       const pageNumber = event.target.value;
       const newPageNumber = this.validatePageNum(pageNumber);
 
-      if (newPageNumber) {
-        this.props.jumpToPage(newPageNumber, this.props.docId);
-        this.setState({
-          pageNumber: newPageNumber
-        });
-      }
+      this.props.jumpToPage(newPageNumber, this.props.docId);
+      this.setPageNumber(newPageNumber);
     }
   }
 
   validatePageNum = (pageNumber) => {
     let pageNum = parseInt(pageNumber, RADIX);
 
-    if (!pageNum || !isValidNum(pageNum) ||
+    if (!pageNum || !isValidWholeNumber(pageNum) ||
       (pageNum < 1 || pageNum > this.props.numPages)) {
       return this.props.currentPage;
     }
@@ -54,20 +50,14 @@ export class PdfUIPageNumInput extends React.PureComponent {
     return pageNum;
   }
 
-  handleOnChange = (value) => {
-    this.setState({
-      pageNumber: value
-    });
-  }
-
   render() {
     return (
     <div style={{ display: 'inline-block' }}>
       <TextField
-        maxlength="10"
+        maxLength="4"
         name="page-progress-indicator-input"
         label="Page"
-        onChange={this.handleOnChange}
+        onChange={this.setPageNumber}
         onKeyPress={this.handleKeyPress}
         value={this.state.pageNumber}
         required={false}
