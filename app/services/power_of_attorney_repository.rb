@@ -56,17 +56,17 @@ class PowerOfAttorneyRepository
 
   def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
     VACOLS::Representative.update_vacols_rep_name!(
-        case_record: case_record,
-        first_name: first_name,
-        middle_initial: middle_initial,
-        last_name: last_name
+      case_record: case_record,
+      first_name: first_name,
+      middle_initial: middle_initial,
+      last_name: last_name
     )
   end
 
   def self.update_vacols_rep_address_one!(case_record:, address_one:)
     VACOLS::Representative.update_vacols_rep_address_one!(
-        case_record: case_record,
-        address_one: address_one
+      case_record: case_record,
+      address_one: address_one
     )
   end
   # :nocov:
@@ -74,22 +74,22 @@ class PowerOfAttorneyRepository
   def self.update_vacols_rep_table(appeal:, representative_name:)
     if first_last_name?(representative_name: representative_name)
       update_vacols_rep_name!(
-          case_record: appeal.case_record,
-          first_name: representative_name.split(" ")[0],
-          middle_initial: "",
-          last_name: representative_name.split(" ")[1]
+        case_record: appeal.case_record,
+        first_name: representative_name.split(" ")[0],
+        middle_initial: "",
+        last_name: representative_name.split(" ")[1]
       )
     elsif first_middle_last_name?(representative_name: representative_name)
       update_vacols_rep_name!(
-          case_record: appeal.case_record,
-          first_name: representative_name.split(" ")[0],
-          middle_initial: representative_name.split(" ")[1],
-          last_name: representative_name.split(" ")[2]
+        case_record: appeal.case_record,
+        first_name: representative_name.split(" ")[0],
+        middle_initial: representative_name.split(" ")[1],
+        last_name: representative_name.split(" ")[2]
       )
     else
       update_vacols_rep_address_one!(
-          case_record: appeal.case_record,
-          address_one: representative_name
+        case_record: appeal.case_record,
+        address_one: representative_name
       )
     end
   end
@@ -99,7 +99,7 @@ class PowerOfAttorneyRepository
       # We set the rep type to the service organization name, unless we don't have a record
       # of it. Then we set it to 'other'.
       vacols_rep_type = get_vacols_reptype_code(short_name: representative_name) ||
-          get_vacols_reptype_code(short_name: "Other")
+                        get_vacols_reptype_code(short_name: "Other")
     else
       vacols_rep_type = get_vacols_reptype_code(short_name: representative_type)
     end
