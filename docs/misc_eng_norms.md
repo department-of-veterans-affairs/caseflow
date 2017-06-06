@@ -3,7 +3,7 @@ We want to foster a strong spirit of collaboration on the Caseflow team. Below, 
 
 ## Technical improvements
 
-Developers are encouraged to identify technical debt items and create GitHub issues for them. Each sprint should contain some technical improvement items. If you see something, say something! When you create a GitHub issue, you should add information into it such that another developer could take on the task.
+Developers are encouraged to identify technical debt items and create GitHub issues for them. Each sprint should contain some technical improvement items. If you see something, say something! When you create a GitHub issue, you should add information into it such that another developer could take on the task. Reference https://github.com/department-of-veterans-affairs/caseflow/issues/1731 for an example. 
  
 ## Code Comments
  
