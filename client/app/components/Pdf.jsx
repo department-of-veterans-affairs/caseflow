@@ -200,8 +200,6 @@ export class Pdf extends React.PureComponent {
           if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
             this.defaultWidth = viewport.width;
             this.defaultHeight = viewport.height;
-
-            // cache bust
           }
 
           // Whenever we finish rendering a page, we assume that this was the last page
@@ -210,7 +208,6 @@ export class Pdf extends React.PureComponent {
           // checking if any other pages of the current document are being rendered,
           // and will not proceed if they are since we want the current document's pages
           // to take precedence over prerendering other documents' pages.
-          // this.prioritizeRender();
           this.renderInViewPages();
           this.prerenderPages();
 
@@ -458,7 +455,6 @@ export class Pdf extends React.PureComponent {
       this.prerenderPages();
     };
 
-    // Don't prerender if we are currently trying to render an early page on the current.
     // We want the first few pages of the current document to take precedence over pages
     // on non-visible documents. At the end of rendering pages from this document we always
     // call prerenderPages again in case there are still pages to prerender.
