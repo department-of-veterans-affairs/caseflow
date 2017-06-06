@@ -1,11 +1,16 @@
 class Fakes::BGSService
   include PowerOfAttorneyMapper
+  include AddressMapper
 
   cattr_accessor :end_product_data
   cattr_accessor :inaccessible_appeal_vbms_ids
   cattr_accessor :veteran_records
   cattr_accessor :power_of_attorney_records
+  cattr_accessor :address_records
+  cattr_accessor :ssn_not_found
   attr_accessor :client
+
+  ID_TO_RAISE_ERROR = "ERROR-ID".freeze
 
   # rubocop:disable Metrics/MethodLength
   def self.all_grants
@@ -175,6 +180,10 @@ class Fakes::BGSService
     []
   end
 
+  def self.clean!
+    self.ssn_not_found = false
+  end
+
   def get_end_products(_veteran_id)
     end_product_data || self.class.no_grants
   end
@@ -187,6 +196,7 @@ class Fakes::BGSService
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
+  # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_power_of_attorney_record
@@ -194,8 +204,18 @@ class Fakes::BGSService
     get_poa_from_bgs_poa(record)
   end
 
-  def fetch_address_by_participant_id
-    default_address
+  # TODO: add more test cases
+  def find_address_by_participant_id(participant_id)
+    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
+
+    address = (self.class.address_records || {})[participant_id]
+    address ||= default_address
+
+    get_address_from_bgs_address(address)
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    ssn_not_found ? nil : ssn
   end
 
   private

@@ -21,6 +21,15 @@ class UnconnectedDocumentsCheck extends React.Component {
     this.props.updateProgressBar();
   }
 
+  areDatesExactlyMatching() {
+    if (this.props.ssocs && this.props.ssocs.length) {
+      return this.props.soc.isExactlyMatching &&
+      this.props.ssocs.reduce((total, ssoc) => total && ssoc.isExactlyMatching);
+    }
+
+    return this.props.soc.isExactlyMatching;
+  }
+
   render() {
     let {
       certificationStatus,
@@ -66,8 +75,8 @@ class UnconnectedDocumentsCheck extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
-
-        { documentsMatch ? <DocumentsMatchingBox/> : <DocumentsNotMatchingBox/> }
+        { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()}/> :
+        <DocumentsNotMatchingBox/> }
 
         <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs}/>
 
