@@ -26,7 +26,9 @@ const RENDER_WITHIN_SCROLL = 5000;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
+const NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING = 5;
 const NUM_PAGES_TO_PRERENDER = 2;
+const MAX_PAGES_TO_RENDER_AT_ONCE = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -62,8 +64,6 @@ export class Pdf extends React.PureComponent {
     this.defaultWidth = PAGE_WIDTH;
     this.defaultHeight = PAGE_HEIGHT;
 
-    this.isPagePrerendered = [];
-
     this.refFunctionGetters = {};
 
     this.setUpFakeCanvasRefFunctions();
@@ -87,7 +87,6 @@ export class Pdf extends React.PureComponent {
     let isRendered = [...this.state.isRendered];
 
     isRendered[index] = value;
-    this.isPagePrerendered[index] = true;
     this.setState({
       isRendered
     });
@@ -263,14 +262,12 @@ export class Pdf extends React.PureComponent {
       return acc + (rendering ? 1 : 0);
     }, 0);
 
-    if (numberOfPagesRendering >= 2) {
+    if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
       return;
     }
 
     let prioritzedPage = null;
     let minPageDistance = Number.MAX_SAFE_INTEGER;
-    let pagesToUnrender = [];
-
 
     this.performFunctionOnEachPage((boundingRect, index) => {
       // This renders each page as it comes into view. i.e. when
@@ -284,28 +281,21 @@ export class Pdf extends React.PureComponent {
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
         if (!this.state.isRendered[index] || this.state.isRendered[index].scale !== this.props.scale) {
-          if (distanceToCenter < minPageDistance &&
-            (distanceToCenter < RENDER_WITHIN_SCROLL || !this.isPagePrerendered[index])) {
+          if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
           }
-        } else if (distanceToCenter > RENDER_WITHIN_SCROLL * 2) {
-          pagesToUnrender.push(index);
         }
       }
     });
 
-
-    // if (pagesToUnrender.length > 20) {
-    //   this.unRenderPages(pagesToUnrender);
-    // }
     // Have to explicitly check for null since prioritizedPage can be zero.
     if (prioritzedPage === null) {
       return;
     }
 
     this.renderPage(prioritzedPage, this.props.file);
-    setTimeout(this.renderInViewPages, 0);
+    this.renderInViewPages();
   }
 
   performFunctionOnEachPage = (func) => {
@@ -331,7 +321,6 @@ export class Pdf extends React.PureComponent {
         }
 
         this.pageElements = [];
-        this.isPagePrerendered = [];
 
         this.refFunctionGetters.canvas = [];
         this.refFunctionGetters.textLayer = [];
@@ -359,7 +348,6 @@ export class Pdf extends React.PureComponent {
           this.setUpPdf(this.latestFile).then(() => {
             this.onPageChange(1);
             this.props.setPdfReadyToShow(this.props.documentId);
-
             resolve();
           });
         });
@@ -453,7 +441,6 @@ export class Pdf extends React.PureComponent {
       const nonZoomedLocation = (this.scrollWindow.scrollTop -
         this.pageElements[this.currentPage - 1].pageContainer.offsetTop);
 
-      this.isPagePrerendered = [];
       this.scrollLocation = {
         page: this.currentPage,
         locationOnPage: nonZoomedLocation * zoomFactor
@@ -472,11 +459,11 @@ export class Pdf extends React.PureComponent {
       this.prerenderPages();
     };
 
-    // Don't prerender if we are currently trying to render a page on the current document.
-    // We want those pages to take precedence over pages on non-visible documents.
-    // At the end of rendering pages from this document we always call prerenderPages
-    // again in case there are still pages to prerender.
-    if (_.some(this.isRendering.slice(0, 5))) {
+    // Don't prerender if we are currently trying to render an early page on the current.
+    // We want the first few pages of the current document to take precedence over pages
+    // on non-visible documents. At the end of rendering pages from this document we always
+    // call prerenderPages again in case there are still pages to prerender.
+    if (_.some(this.isRendering.slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
       return;
     }
 
@@ -512,7 +499,6 @@ export class Pdf extends React.PureComponent {
 
   componentDidUpdate = () => {
     this.renderInViewPages();
-
     this.prerenderPages();
 
     if (this.props.scrollToComment) {
