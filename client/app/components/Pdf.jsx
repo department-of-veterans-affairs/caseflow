@@ -97,6 +97,7 @@ export class Pdf extends React.PureComponent {
     if (this.isRendering[index] ||
       (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
       _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
+      this.renderInViewPages();
       return Promise.resolve();
     }
 
@@ -109,7 +110,7 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve, reject) => {
       if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
         this.isRendering[index] = false;
-
+        this.renderInViewPages();
         return resolve();
       }
 
@@ -229,32 +230,6 @@ export class Pdf extends React.PureComponent {
       });
     });
   }
-    
-  unRenderPages = (indices) => {
-    console.log('unrendering', indices);
-    if (indices.length === 0) {
-      return;
-    }
-
-    let isRendered = [...this.state.isRendered];
-
-    indices.forEach((index) => {
-      const canvas = this.pageElements[index].canvas;
-      const textLayer = this.pageElements[index].textLayer;
-
-      isRendered[index] = null;
-      const t0 = performance.now();
-      canvas.getContext('2d', { alpha: false }).clearRect(0, 0, canvas.width, canvas.height);
-      // console.log('clear canvas', performance.now() - t0);
-      const t1 = performance.now();
-      textLayer.innerHTML = '';
-      // console.log('clear text', performance.now() - t1);
-        
-    })
-    const t2 = performance.now();
-    this.setState({ isRendered });
-    console.log('setState', performance.now() - t2);
-  }
 
   scrollEvent = () => {
     // Now that the user is scrolling we reset the scroll location
@@ -293,7 +268,6 @@ export class Pdf extends React.PureComponent {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
         
-        console.log('index', index, 'distance', distanceToCenter);
         if (distanceToCenter > 2 * RENDER_WITHIN_SCROLL + this.scrollWindow.clientHeight) {
           pagesToRemove.push(index);
         } else if (distanceToCenter < minPageDistance) {
@@ -306,8 +280,6 @@ export class Pdf extends React.PureComponent {
     pagesToRemove.forEach((index) => {
       this.pagesToRender.delete(index);
     })
-
-    console.log('pagesToRender', this.pagesToRender, 'page about to render', prioritzedPage);
 
     // Have to explicitly check for null since prioritizedPage can be zero.
     if (prioritzedPage === null) {
@@ -324,7 +296,11 @@ export class Pdf extends React.PureComponent {
     //   this.getCachedBoundingClientRect(this.pageElements[10].pageContainer);
 
     // If we're already rendering a page, delay this calculation.
-    if (_.some(this.isRendering)) {
+    const numberOfPagesRendering = this.isRendering.reduce((acc, rendering) => {
+      return acc + (rendering ? 1 : 0)
+    }, 0);
+
+    if (numberOfPagesRendering >= 2) {
       return;
     }
 
@@ -339,20 +315,21 @@ export class Pdf extends React.PureComponent {
       // the current view we render it. If the bottom of the page
       // above is within a thousand pixels of the current view
       // we also render it.
-      // TODO: Make this more robust.
-      const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
-        Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
-        
-      if (!this.state.isRendered[index] || this.state.isRendered[index].scale != this.props.scale) {
-        if (distanceToCenter < minPageDistance && (distanceToCenter < RENDER_WITHIN_SCROLL || !this.isPagePrerendered[index])) {
-          prioritzedPage = index;
-          minPageDistance = distanceToCenter;
-        }
-      } else {
-        if (distanceToCenter > RENDER_WITHIN_SCROLL * 2) {
-          const t1 = performance.now();
-          pagesToUnrender.push(index);
-          // console.log('time to unrender', performance.now() - t1);
+      
+      if (!this.isRendering[index]) {
+        const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
+          Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
+          
+        if (!this.state.isRendered[index] || this.state.isRendered[index].scale != this.props.scale) {
+          if (distanceToCenter < minPageDistance && (distanceToCenter < RENDER_WITHIN_SCROLL || !this.isPagePrerendered[index])) {
+            prioritzedPage = index;
+            minPageDistance = distanceToCenter;
+          }
+        } else {
+          if (distanceToCenter > RENDER_WITHIN_SCROLL * 2) {
+            const t1 = performance.now();
+            pagesToUnrender.push(index);
+          }
         }
       }
     });
@@ -366,43 +343,14 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    console.log('rendering page', prioritzedPage);
     this.renderPage(prioritzedPage, this.props.file);
-    console.log('renderInViewPages', performance.now() - t0);
-    //this.prioritizeRender();
-  }
-
-  getCachedBoundingClientRect = (ele) => {
-    if (!this.cachedBoundingClientRect[ele]) {
-      const boundingRect = ele.getBoundingClientRect();
-
-      this.cachedBoundingClientRect[ele] = {
-        ...boundingRect,
-        top: boundingRect.top + this.scrollWindow.scrollTop,
-        bottom: boundingRect.bottom + this.scrollWindow.scrollTop
-      }
-    } else {
-      console.log({
-      ...this.cachedBoundingClientRect[ele],
-      top: this.cachedBoundingClientRect[ele].top - this.scrollWindow.scrollTop,
-      bottom: this.cachedBoundingClientRect[ele].bottom - this.scrollWindow.scrollTop
-    }, this.scrollWindow.scrollTop);
-      console.log(ele.getBoundingClientRect());
-    }
-
-    return {
-      ...this.cachedBoundingClientRect[ele],
-      top: this.cachedBoundingClientRect[ele].top - this.scrollWindow.scrollTop,
-      bottom: this.cachedBoundingClientRect[ele].bottom - this.scrollWindow.scrollTop
-    };
+    setTimeout(this.renderInViewPages, 0);
   }
 
   performFunctionOnEachPage = (func) => {
     this.pageElements.forEach((ele, index) => {
       if (ele.pageContainer) {
-        const t0 = performance.now();
-        const boundingRect = ele.pageContainer.getBoundingClientRect();//this.getCachedBoundingClientRect(ele.pageContainer);
-        // console.log('time to getbounding rect', performance.now() - t0);
+        const boundingRect = ele.pageContainer.getBoundingClientRect();
         func(boundingRect, index);
       }
     });
@@ -567,7 +515,7 @@ export class Pdf extends React.PureComponent {
     // We want those pages to take precedence over pages on non-visible documents.
     // At the end of rendering pages from this document we always call prerenderPages
     // again in case there are still pages to prerender.
-    if (_.some(this.isRendering)) {
+    if (_.some(this.isRendering.slice(0, 5))) {
       return;
     }
 
@@ -601,9 +549,9 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-
   componentDidUpdate = () => {
-    // this.renderInViewPages();
+    this.renderInViewPages();
+
     this.prerenderPages();
 
     if (this.props.scrollToComment) {
@@ -711,7 +659,8 @@ export class Pdf extends React.PureComponent {
         style={ {
           marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
           width: `${relativeScale * currentWidth}px`,
-          height: `${relativeScale * currentHeight}px`
+          height: `${relativeScale * currentHeight}px`,
+          verticalAlign: 'top'
         } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
