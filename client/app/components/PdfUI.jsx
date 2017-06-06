@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight, LeftChevron } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { openDocumentInNewTab } from '../reader/utils';
@@ -126,7 +126,7 @@ export class PdfUI extends React.Component {
             name="backToDocuments"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
-            <i className="fa fa-chevron-left" aria-hidden="true"></i>
+            <LeftChevron />
             &nbsp; Back to all documents
           </Button> }
         </span>
