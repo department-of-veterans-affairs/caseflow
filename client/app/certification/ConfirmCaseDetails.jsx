@@ -167,12 +167,12 @@ export class ConfirmCaseDetails extends React.Component {
 
     let appellantInfoRowObjects = [
       {
-        vbms: bgsRepresentativeName || 'Representative Name Not Found',
-        vacols: vacolsRepresentativeName || 'Representative Name Not Found'
+        vbms: bgsRepresentativeName || 'Representative name not found',
+        vacols: vacolsRepresentativeName || 'Representative name not found'
       },
       {
-        vbms: bgsRepresentativeType || 'Representative Type Not Found',
-        vacols: vacolsRepresentativeType || 'Representative Type Not Found'
+        vbms: bgsRepresentativeType || 'Representative type not found',
+        vacols: vacolsRepresentativeType || 'Representative type not found'
       }
     ];
 
