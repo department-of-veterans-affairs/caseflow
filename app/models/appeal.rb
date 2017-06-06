@@ -1,6 +1,5 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
-
   has_many :tasks
 
   class MultipleDecisionError < StandardError; end
@@ -188,7 +187,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def ssocs
-    @ssocs ||= ssoc_dates.map { |ssoc_date| fuzzy_matched_document("SSOC", ssoc_date) }
+    # an appeal might have multiple SSOC documents so match vacols date
+    # to each VBMS document
+    @ssocs ||= ssoc_dates.sort.inject([]) do |docs, ssoc_date|
+      docs << fuzzy_matched_document("SSOC", ssoc_date, excluding: docs)
+    end
   end
 
   def certified?
@@ -344,12 +347,16 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def fuzzy_matched_document(type, vacols_datetime)
+  def fuzzy_matched_document(type, vacols_datetime, excluding: [])
     return nil unless vacols_datetime
-
     Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
-      doc.fuzzy_match_vbms_document_from(documents)
+      doc.fuzzy_match_vbms_document_from(exclude_and_sort_documents(excluding))
     end
+  end
+
+  def exclude_and_sort_documents(excluding)
+    excluding_ids = excluding.map(&:vbms_document_id)
+    documents.reject { |doc| excluding_ids.include? doc.vbms_document_id }.sort_by(&:received_at)
   end
 
   # List of all end products for the appeal's veteran.
