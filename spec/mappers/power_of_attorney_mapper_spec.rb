@@ -33,6 +33,13 @@ describe PowerOfAttorneyMapper do
         expect(poa[:representative_name]).to eq nil
         expect(poa[:representative_type]).to eq("Agent")
       end
+
+      it "returns name from rep table if vacols code is blank" do
+        representative_record = OpenStruct.new(repfirst: "Brad", repmi: "B", replast: "Pitt")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: " ", representative_record: representative_record)
+        expect(poa[:representative_type]).to eq nil
+        expect(poa[:representative_name]).to eq("Brad B Pitt")
+      end
     end
 
     context "#get_poa_from_bgs_poa" do
