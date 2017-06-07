@@ -2,9 +2,9 @@ require "rails_helper"
 
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
-def ensure_stable(&test)
+def ensure_stable
   10.times do
-    test.call
+    yield
   end
 end
 
@@ -16,11 +16,11 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
-def skip_because_sending_keys_to_body_does_not_work_on_travis(&block)
+def skip_because_sending_keys_to_body_does_not_work_on_travis
   if ENV["TRAVIS"]
     puts "Warning: skipping block because find('body').send_keys does not work on Travis"
   else
-    block.call
+    yield
   end
 end
 
