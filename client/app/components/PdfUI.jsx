@@ -208,6 +208,11 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
     });
+  },
+  handleOpenShortcutsModal() {
+    dispatch({
+      type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
+    });
   }
 });
 
@@ -236,5 +241,6 @@ PdfUI.propTypes = {
   selectCurrentPdf: PropTypes.func,
   showDocumentsListNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  hidePdfSidebar: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool,
+  viewKeyboardShortcuts: PropTypes.bool
 };

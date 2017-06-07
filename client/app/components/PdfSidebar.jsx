@@ -8,6 +8,8 @@ import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
+import Table from '../components/Table';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -125,6 +127,35 @@ export class PdfSidebar extends React.Component {
 
     const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
 
+    const scrollInstructions = [
+      { instruction: "Page up",
+        shortcut: <span><code>alt</code> + up arrow</span> },
+      { instruction: "Page down",
+        shortcut: <span><code>alt</code> + down arrow</span> }
+    ]
+
+    const commentInstructions = [
+      { instruction: "Add comment mode",
+        shortcut: <span><code>alt</code> + up arrow</span> },
+      { instruction: "Move comment up",
+        shortcut: <span><code>alt</code> + down arrow</span> },
+      { instruction: "Move comment down",
+        shortcut: <span><code>alt</code> + down arrow</span> },
+      { instruction: "Move comment left",
+        shortcut: <span><code>alt</code> + down arrow</span> },
+      { instruction: "Move comment right",
+        shortcut: <span><code>alt</code> + down arrow</span> },
+      { instruction: "Place a comment",
+        shortcut: <span><code>alt</code> + down arrow</span> }
+    ]
+
+    const documentsInstructions = [
+      { instruction: "Next document",
+        shortcut: <span><code>alt</code> + up arrow</span> },
+      { instruction: "Previous document",
+        shortcut: <span><code>alt</code> + down arrow</span> }
+    ]
+
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
@@ -197,6 +228,36 @@ export class PdfSidebar extends React.Component {
             {comments}
           </div>
         </div>
+        <div className="cf-pdf-center-text cf-keyboard-shortcuts">
+          <Button
+              name="View keyboard shortcuts"
+              onClick={this.props.handleOpenShortcutsModal}
+              classNames={['cf-btn-link']}
+          />
+          { this.props.viewKeyboardShortcuts && <Modal
+            buttons = {[
+              { classNames: ['usa-button', 'usa-button-secondary'],
+                name: 'Thanks, got it!',
+              }
+            ]}
+            closeHandler={!this.props.handleOpenShortcutsModal}
+            title = "Keyboard shortcuts">
+            <Table
+              summary=" "
+              columns={[{ header: "Scroll",
+                valueName: "scroll"},
+                { header: "Shortcut",
+                  valueName: "shortcut"}]}
+              rowObjects={[
+                { instruction: "Page up",
+                  shortcut: <span><code>alt</code> + up arrow</span> },
+                { instruction: "Page down",
+                  shortcut: <span><code>alt</code> + down arrow</span> }
+              ]}
+              slowReRendersAreOk={true}/>
+          </Modal>
+        }
+        </div>
       </div>;
   }
 }
@@ -209,6 +270,7 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
+  handleOpenShortcutsModal: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
@@ -218,7 +280,8 @@ PdfSidebar.propTypes = {
   scrollToSidebarComment: PropTypes.shape({
     id: PropTypes.number
   }),
-  hidePdfSidebar: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool,
+  viewKeyboardShortcuts: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -229,7 +292,8 @@ const mapStateToProps = (state, ownProps) => {
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,
-    tagOptions: state.tagOptions
+    tagOptions: state.tagOptions,
+    viewKeyboardShortcuts: state.ui.pdf.viewKeyboardShortcuts
   };
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -275,6 +339,11 @@ const mapDispatchToProps = (dispatch) => ({
   handleTogglePdfSidebar() {
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
+    });
+  },
+  handleOpenShortcutsModal() {
+    dispatch({
+      type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
     });
   }
 });

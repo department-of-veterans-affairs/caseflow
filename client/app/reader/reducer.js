@@ -129,7 +129,8 @@ export const initialState = {
     pdf: {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
-      hidePdfSidebar: false
+      hidePdfSidebar: false,
+      viewKeyboardShortcuts: false
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
@@ -749,6 +750,18 @@ export const reducer = (state = initialState, action = {}) => {
         ui: {
           pdf: {
             hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
+          }
+        }
+      }
+    );
+  case Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            viewKeyboardShortcuts: !state.ui.pdfSidebar.viewKeyboardShortcuts
           }
         }
       }
