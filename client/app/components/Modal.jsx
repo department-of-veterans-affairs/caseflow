@@ -75,6 +75,7 @@ export default class Modal extends React.Component {
     let {
       children,
       closeHandler,
+      noDivider,
       title
     } = this.props;
 
@@ -98,7 +99,7 @@ export default class Modal extends React.Component {
         <div className="cf-modal-normal-text">
           {children}
         </div>
-        <div className="cf-modal-divider"></div>
+        {noDivider ? "" : <div className="cf-modal-divider"></div>}
         <div className="cf-push-row cf-modal-controls">
           {this.generateButtons()}
         </div>
@@ -114,6 +115,7 @@ Modal.defaultProps = {
 Modal.propTypes = {
   buttons: PropTypes.arrayOf(PropTypes.object),
   label: PropTypes.string,
+  noDivider: PropTypes.bool,
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired
 };

@@ -216,7 +216,8 @@ export class PdfSidebar extends React.Component {
               }
             ]}
             closeHandler={this.props.handleCloseShortcutsModal}
-            title="Keyboard shortcuts">
+            title="Keyboard shortcuts"
+            noDivider={true}>
             <Table
               summary=" "
               columns={scrollColumns}
