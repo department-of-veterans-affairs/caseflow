@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import SearchBar from '../../components/SearchBar';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-
 class StyleGuideSearch extends Component {
   constructor(props) {
     super(props);
@@ -10,32 +9,29 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         small: false,
-        medium: false,
         big: false
       }
     };
 
   }
 
-  handleSearchClick = (elem) => () => {
+  handleSearchClick = (elemName) => {
     const load = () => {
       this.setState((prevState) => ({
-        [elem]: !prevState[elem]
+        [elemName]: !prevState[elemName]
       }));
     };
 
     load();
 
     setTimeout(load, 2000);
-  };
+  }
+
+  handleBigClick = () => this.handleSearchClick('big')
+
+  handleSmallClick = () => this.handleSearchClick('small')
 
   render() {
-
-    const handleBigClick = this.handleSearchClick('big');
-
-    const handleMediumClick = this.handleSearchClick('medium');
-
-    const handleSmallClick = this.handleSearchClick('small');
 
     return (
       <div>
@@ -51,41 +47,30 @@ class StyleGuideSearch extends Component {
         find information necessary in completing their tasks.</p>
 
         <p>
-        Based on the app there are three sizes: big, medium, and small.
+        Based on the app there are two sizes: big and small.
         There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
         </p>
 
-          <div className="cf-sg-searchbar-example">
-            <SearchBar
-              id="search-big"
-              title="Search Big"
-              size="big"
-              onClick={handleBigClick}
-              loading={this.state.big}
-            />
-          </div>
-          <br/>
-          <div className="cf-sg-searchbar-example">
-            <SearchBar
-              id="search-medium"
-              title="Search Medium"
-              size="medium"
-              onClick={handleMediumClick}
-              loading={this.state.medium}
-            />
+        <div className="cf-sg-searchbar-example">
+          <SearchBar
+            id="search-big"
+            title="Search Big"
+            size="big"
+            onClick={this.handleBigClick}
+            loading={this.state.big}
+          />
         </div>
         <br/>
         <div className="cf-sg-searchbar-example">
-           <SearchBar
-              id="search-small"
-              title="Search Small"
-              size="small"
-              onClick={handleSmallClick}
-              loading={this.state.small}
-           />
-        </div>
-
-      </div>
+          <SearchBar
+            id="search-small"
+            title="Search Small"
+            size="small"
+            onClick={this.handleSmallClick}
+            loading={this.state.small}
+          />
+       </div>
+    </div>
     );
   }
 }

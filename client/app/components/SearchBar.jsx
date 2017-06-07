@@ -21,10 +21,8 @@ export default class SearchBar extends React.Component {
       title
     } = this.props;
 
-
     const sizeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
-      'usa-search-medium': size === 'medium',
       'usa-search-small': size === 'small'
     });
 
@@ -34,15 +32,17 @@ export default class SearchBar extends React.Component {
 
     const label = classnames({
       'usa-search-big': size === 'big',
-      'usa-search-medium': size === 'medium',
       'usa-search-small': size === 'small'
     });
+
+    const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
 
     return <span className={sizeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
+        className={inputClassName}
         id={id}
         onChange={this.onChange}
         type="search"
