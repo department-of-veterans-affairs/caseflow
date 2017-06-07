@@ -35,7 +35,7 @@ export default class Dropdown extends React.Component {
   }
 }
 
-DropDown.propTypes = {
+Dropdown.propTypes = {
   errorMessage: PropTypes.string,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,
