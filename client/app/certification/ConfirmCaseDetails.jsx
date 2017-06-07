@@ -97,11 +97,11 @@ const organizationNamesOptions = [
 
 // TODO: We should give each question a constant name.
 const ERRORS = {
-  poaMatches: 'Please select yes or no.',
-  poaCorrectLocation: 'Please select an option.',
-  representativeType: 'Please select a representative type.',
-  representativeName: 'Please select a service organization`s name.',
-  organizationName: 'Please select an organization.'
+  poaMatches: `Please select yes or no.`,
+  poaCorrectLocation: `Please select an option.`,
+  representativeType: `Please select a representative type.`,
+  representativeName: `Please select a service organization's name.`,
+  organizationName: `Please select an organization.`
 };
 
 /*
@@ -345,7 +345,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
             <RadioField
-              name="What type of representative did the appelant request for this appeal?"
+              name="What type of representative did the appellant request for this appeal?"
               options={representativeTypeOptions}
               value={representativeType}
               onChange={changeRepresentativeType}
