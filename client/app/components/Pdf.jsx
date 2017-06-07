@@ -31,7 +31,7 @@ const pageCoordsOfScreenCoords = ({x, y}, pageBoundingBox) => ({
   y: y - pageBoundingBox.top
 });
 
-export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
+export const getInitialAnnotationIconScaledPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
   const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
@@ -412,21 +412,21 @@ export class Pdf extends React.PureComponent {
     const iconPageBoundingBox =
       this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
-    const { x, y } = getInitialAnnotationIconCoords(
+    const scaledPageCoords = getInitialAnnotationIconScaledPageCoords(
       iconPageBoundingBox,
       scrollWindowBoundingRect,
       this.props.scale
     );
 
-    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, x, y);
+    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, scaledPageCoords);
   }
 
   handleAltEnter = () => {
     this.props.placeAnnotation(
-      pageNumberOfPageIndex(this.props.placingAnnotationIconCoords.pageIndex),
+      pageNumberOfPageIndex(this.props.placingAnnotationIconScaledPageCoords.pageIndex),
       {
-        xPosition: this.props.placingAnnotationIconCoords.x,
-        yPosition: this.props.placingAnnotationIconCoords.y
+        xPosition: this.props.placingAnnotationIconScaledPageCoords.x,
+        yPosition: this.props.placingAnnotationIconScaledPageCoords.y
       },
       this.props.documentId
     );
@@ -461,7 +461,10 @@ export class Pdf extends React.PureComponent {
       event.currentTarget.getBoundingClientRect()
     );
 
-    this.props.showPlaceAnnotationIcon(pageIndex, xPosition, yPosition);
+    this.props.showPlaceAnnotationIcon(pageIndex, {
+      x: xPosition,
+      y: yPosition
+    });
   }
 
   componentDidMount() {
@@ -625,12 +628,12 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconCoords && this.props.isPlacingAnnotation ?
+    const annotations = this.props.placingAnnotationIconScaledPageCoords && this.props.isPlacingAnnotation ?
       this.props.comments.concat([{
         temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconCoords.pageIndex + 1,
+        page: this.props.placingAnnotationIconScaledPageCoords.pageIndex + 1,
         isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconCoords, 'x', 'y')
+        ..._.pick(this.props.placingAnnotationIconScaledPageCoords, 'x', 'y')
       }]) :
       this.props.comments;
 
@@ -746,7 +749,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconCoords'),
+  ..._.pick(state, 'placingAnnotationIconScaledPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });

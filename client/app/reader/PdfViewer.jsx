@@ -41,13 +41,16 @@ export class PdfViewer extends React.Component {
         direction
       ) ? 'y' : 'x';
 
-      const {pageIndex, x, y} = update(this.props.placingAnnotationIconCoords, {
+      const {
+        pageIndex, 
+        ...scaledPageCoords
+      } = update(this.props.placingAnnotationIconScaledPageCoords, {
         [movementDimension]: {
           $apply: (coord) => coord + (moveAmountPx * movementDirection)
         }
       });
 
-      this.props.showPlaceAnnotationIcon(pageIndex, x, y);
+      this.props.showPlaceAnnotationIcon(pageIndex, scaledPageCoords);
 
       return;
     }
@@ -170,7 +173,7 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  ..._.pick(state, 'placingAnnotationIconCoords'),
+  ..._.pick(state, 'placingAnnotationIconScaledPageCoords'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
