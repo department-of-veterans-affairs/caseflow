@@ -251,6 +251,8 @@ class Fakes::AppealRepository
   def self.seed_appeal_ready_to_certify!
     nod, soc, form9, ssoc1, ssoc2 = certification_documents
 
+    form9.vbms_document_id = "2"
+
     Generators::Appeal.build(
       vacols_id: "123C",
       vbms_id: "1111",
