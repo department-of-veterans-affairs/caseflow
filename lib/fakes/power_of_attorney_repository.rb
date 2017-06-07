@@ -26,7 +26,7 @@ class Fakes::PowerOfAttorneyRepository < PowerOfAttorneyRepository
     nil
   end
 
-  def self.update_vacols_rep_address_one!(*)
+  def self.update_vacols_rep_address!(*)
     nil
   end
 end

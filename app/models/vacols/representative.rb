@@ -47,19 +47,27 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_address_one!(bfkey:, address_one:)
+  def self.update_vacols_rep_address!(bfkey:, address_one:, address_two:, city:, state:, zip:)
     conn = connection
 
     address_one = conn.quote(address_one)
+    address_two = conn.quote(address_two)
+    city = conn.quote(city)
+    state = conn.quote(state)
+    zip = conn.quote(zip)
     case_id = conn.quote(bfkey)
 
-    MetricsService.record("VACOLS: update_vacols_rep_address_one! #{case_id}",
+    MetricsService.record("VACOLS: update_vacols_rep_address! #{case_id}",
                           service: :vacols,
-                          name: "update_vacols_rep_address_one") do
+                          name: "update_vacols_rep_address") do
       conn.transaction do
         conn.execute(<<-SQL)
           UPDATE REP
-          SET REPADDR1 = #{address_one}
+          SET REPADDR1 = #{address_one},
+              REPADDR2 = #{address_two},
+              REPCITY = #{city},
+              REPST = #{state},
+              REPZIP = #{zip}
           WHERE REPKEY = #{case_id}
         SQL
       end
