@@ -21,12 +21,12 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
-const getScaledCoords = ({x, y}, scale) => ({
+const getScaledCoords = ({ x, y }, scale) => ({
   x: x / scale,
   y: y / scale
 });
 
-const pageCoordsOfScreenCoords = ({x, y}, pageBoundingBox) => ({
+const pageCoordsOfScreenCoords = ({ x, y }, pageBoundingBox) => ({
   x: x - pageBoundingBox.left,
   y: y - pageBoundingBox.top
 });

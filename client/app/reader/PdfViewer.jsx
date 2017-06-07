@@ -42,7 +42,7 @@ export class PdfViewer extends React.Component {
       ) ? 'y' : 'x';
 
       const {
-        pageIndex, 
+        pageIndex,
         ...scaledPageCoords
       } = update(this.props.placingAnnotationIconScaledPageCoords, {
         [movementDimension]: {
