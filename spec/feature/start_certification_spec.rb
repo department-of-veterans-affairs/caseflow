@@ -131,23 +131,23 @@ RSpec.feature "Start Certification" do
 
       click_button("Continue")
       expect(page).to have_content("Please select a representative type.")
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Attorney").click
       end
       expect(page).to have_content("Since you selected Attorney")
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Agent").click
       end
       expect(page).to have_content("Since you selected Agent")
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Other").click
       end
       expect(page).to have_content("Since you selected Other")
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "No representative").click
       end
       expect(page).to_not have_content("Since you selected")
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Service organization").click
       end
       expect(page).to have_content("Service organization name")
@@ -164,7 +164,7 @@ RSpec.feature "Start Certification" do
       within_fieldset("Which information source shows the correct representative for this appeal?") do
         find("label", text: "None").click
       end
-      within_fieldset("What type of representative did the appelant request for this appeal? ") do
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Service organization").click
       end
       select "Unlisted service organization", from: "Service organization name"
@@ -183,7 +183,7 @@ RSpec.feature "Start Certification" do
       within_fieldset("Which information source shows the correct representative for this appeal?") do
         expect(find_field("None", visible: false)).to be_checked
       end
-      within_fieldset("What type of representative did the appelant request for this appeal?") do
+      within_fieldset("What type of representative did the appellant request for this appeal?") do
         expect(find_field("Service organization", visible: false)).to be_checked
       end
       expect(page).to have_content("Unlisted service organization")
