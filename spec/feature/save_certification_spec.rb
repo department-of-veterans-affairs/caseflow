@@ -4,6 +4,7 @@ RSpec.feature "Save Certification" do
   before do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
+    allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_name!).and_call_original
   end
 
   let(:nod) { Generators::Document.build(type: "NOD") }
@@ -438,6 +439,13 @@ RSpec.feature "Save Certification" do
 
         click_button("Continue")
         expect(page).to have_content "Success"
+
+        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
+          case_record: nil,
+          first_name: "Clarence",
+          middle_initial: "",
+          last_name: "Darrow"
+        )
 
         # path 2 - select 'no' first question and select informal form 9
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
