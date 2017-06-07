@@ -58,7 +58,7 @@ class CertificationsController < ApplicationController
       certifying_official_title: certification.certifying_official_title
     )
     form8.save_pdf!
-    @certification.complete!(current_user.id)
+    certification.complete!(current_user.id)
     render json: {}
   end
 
