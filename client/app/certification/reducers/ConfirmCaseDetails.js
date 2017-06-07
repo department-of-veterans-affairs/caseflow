@@ -36,25 +36,24 @@ export const changeOtherRepresentativeType = (state, action) => {
 };
 
 export const changePoaMatches = (state, action) => {
-  const update = {};
-
-  update.poaMatches = action.payload.poaMatches;
-  update.poaCorrectLocation = null;
-  update.organizationName = null;
-  update.representativeName = null;
-  update.representativeType = null;
+  const update = {
+    poaMatches: action.payload.poaMatches,
+    poaCorrectLocation: null,
+    organizationName: null,
+    representativeName: null,
+    representativeType: null
+  };
 
   return Object.assign({}, state, update);
 };
 
 export const changePoaCorrectLocation = (state, action) => {
-  const update = {};
-
-  update.poaCorrectLocation = action.payload.poaCorrectLocation;
-  update.organizationName = null;
-  update.representativeName = null;
-  update.representativeType = null;
-
+  const update = {
+    poaCorrectLocation: action.payload.poaCorrectLocation,
+    organizationName: null,
+    representativeName: null,
+    representativeType: null
+  };
 
   return Object.assign({}, state, update);
 };

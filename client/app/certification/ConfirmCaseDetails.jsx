@@ -10,7 +10,7 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import Table from '../components/Table';
 import Footer from './Footer';
-import DropDown from '../components/DropDown';
+import Dropdown from '../components/Dropdown';
 import TextField from '../components/TextField';
 
 const poaMatchesOptions = [
@@ -209,6 +209,15 @@ export class ConfirmCaseDetails extends React.Component {
     });
   }
 
+  getDisplayText(value) {
+      const hash = {};
+
+      representativeTypeOptions.map((item) =>
+        hash[item.value] = item.displayText);
+
+      return hash[value];
+  };
+
   isFieldErrored(fieldName) {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
   }
@@ -261,15 +270,6 @@ export class ConfirmCaseDetails extends React.Component {
         to={'/certifications/error'}/>;
     }
 
-    let getDisplayText = (value) => {
-      const hash = {};
-
-      representativeTypeOptions.map((item) =>
-        hash[item.value] = item.displayText);
-
-      return hash[value];
-    };
-
     let appellantInfoColumns = [
       {
         header: <h3>From VBMS</h3>,
@@ -293,13 +293,13 @@ export class ConfirmCaseDetails extends React.Component {
     ];
 
     const representativeTypeMessage =
-        <p>Since you selected <strong>{getDisplayText(representativeType)}</strong>, make sure you update
+        <p>Since you selected <strong>{this.getDisplayText(representativeType)}</strong>, make sure you update
         the representative's name and address information in VACOLS before continuing. Caseflow will update
          the representative type in VACOLS.</p>;
 
     const unlistedServiceMessage =
         <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
-         the representative’s address information in VACOLS before continuing. Caseflow will update
+         the representative's address information in VACOLS before continuing. Caseflow will update
          the representative type and name in VACOLS.</p>;
 
 
