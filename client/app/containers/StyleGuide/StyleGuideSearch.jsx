@@ -31,6 +31,12 @@ class StyleGuideSearch extends Component {
 
   render() {
 
+    const handleBigClick = this.handleSearchClick('big');
+
+    const handleMediumClick = this.handleSearchClick('medium');
+
+    const handleSmallClick = this.handleSearchClick('small');
+
     return (
       <div>
         <StyleGuideComponentTitle
@@ -54,7 +60,7 @@ class StyleGuideSearch extends Component {
               id="search-big"
               title="Search Big"
               size="big"
-              onClick={this.handleSearchClick('big')}
+              onClick={handleBigClick}
               loading={this.state.big}
             />
           </div>
@@ -64,19 +70,19 @@ class StyleGuideSearch extends Component {
               id="search-medium"
               title="Search Medium"
               size="medium"
-              onClick={this.handleSearchClick('medium')}
+              onClick={handleMediumClick}
               loading={this.state.medium}
             />
         </div>
-         <br/>
-         <div className="cf-sg-searchbar-example">
-            <SearchBar
+        <br/>
+        <div className="cf-sg-searchbar-example">
+           <SearchBar
               id="search-small"
               title="Search Small"
               size="small"
-              onClick={this.handleSearchClick('small')}
+              onClick={handleSmallClick}
               loading={this.state.small}
-            />
+           />
         </div>
 
       </div>
