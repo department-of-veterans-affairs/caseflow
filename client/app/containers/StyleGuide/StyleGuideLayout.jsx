@@ -51,7 +51,7 @@ export default function StyleGuideLayout () {
     <StyleGuideHorizontalLine />
     <br/>
     <StyleGuideFooter />
-    
+
   </div>;
 }
 
