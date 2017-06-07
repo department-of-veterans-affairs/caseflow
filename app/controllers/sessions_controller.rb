@@ -10,7 +10,12 @@ class SessionsController < ApplicationController
     end
 
     if current_user.ro_is_ambiguous_from_station_office?
-      @station_offices = current_user.station_offices
+      @regional_office_options = current_user.station_offices.map do |regional_office_code|
+        {
+          "regional_office_code" => regional_office_code,  
+          "city" => VACOLS::RegionalOffice::CITIES[regional_office_code]
+        }
+      end
     else
       return redirect_to(ENV["SSO_URL"]) unless current_user
     end
