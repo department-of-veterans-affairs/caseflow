@@ -99,6 +99,10 @@ class User < ActiveRecord::Base
     tasks.to_complete.find_by(type: task_type)
   end
 
+  def current_case_assignments
+    self.class.case_assignment_repository.load_from_vacols(vacols_id)
+  end
+
   def to_hash
     serializable_hash
   end
@@ -110,6 +114,7 @@ class User < ActiveRecord::Base
   end
 
   class << self
+    attr_writer :case_assignment_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -145,6 +150,10 @@ class User < ActiveRecord::Base
 
     def authentication_service
       @authentication_service ||= AuthenticationService
+    end
+
+    def case_assignment_repository
+      @case_assignment_repository ||= CaseAssignmentRepository
     end
   end
 end
