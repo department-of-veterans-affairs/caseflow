@@ -170,8 +170,8 @@ RSpec.feature "Start Certification" do
       select "Unlisted service organization", from: "Service organization name"
       expect(page).to_not have_content("Since you selected Unlisted")
       click_button("Continue")
-      expect(page).to have_content("Please select a service organization`s name.")
-      fill_in "Enter the service organization`s name:", with: "Test"
+      expect(page).to have_content("Please select a service organization's name.")
+      fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
 
@@ -187,7 +187,7 @@ RSpec.feature "Start Certification" do
         expect(find_field("Service organization", visible: false)).to be_checked
       end
       expect(page).to have_content("Unlisted service organization")
-      expect(find_field("Enter the service organization`s name:").value).to eq("Test")
+      expect(find_field("Enter the service organization's name:").value).to eq("Test")
       click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]

@@ -176,25 +176,16 @@ export class ConfirmCaseDetails extends React.Component {
 
       return;
     }
+
     let representativeType, representativeName;
 
-    if (this.props.poaCorrectLocation !== Constants.poaCorrectLocation.NONE) {
-      representativeName = this.props.vacolsRepresentativeName;
-      representativeType = this.props.vacolsRepresentativeType;
-
-      if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
-        this.props.poaMatches === Constants.poaMatches.NO_MATCH) {
-        representativeName = this.props.bgsRepresentativeName;
-        representativeType = this.props.bgsRepresentativeType;
-      }
-    }
-    else {
+    // Send updates only if neither VBMS nor VACOLS info is correct
+    if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.NONE) {
       representativeType = this.props.representativeType;
       if (this.props.representativeType === Constants.representativeTypes.ORGANIZATION) {
         if(this.props.organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) {
           representativeName = this.props.organizationName;
-        }
-        else {
+        } else {
           representativeName = this.props.representativeName;
         }
       }
@@ -356,7 +347,7 @@ export class ConfirmCaseDetails extends React.Component {
 
           {
             representativeType === Constants.representativeTypes.ORGANIZATION &&
-            <DropDown
+            <Dropdown
               name="Service organization name"
               options={organizationNamesOptions}
               value={organizationName}
@@ -368,7 +359,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             <TextField
-              name={'Enter the service organization`s name:'}
+              name={`Enter the service organization's name:`}
               value={representativeName}
               errorMessage={(this.isFieldErrored('representativeName') ? ERRORS.representativeName : null)}
               required={true}
