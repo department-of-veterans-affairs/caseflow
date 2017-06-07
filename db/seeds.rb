@@ -103,8 +103,12 @@ class SeedDB
     Generators::Hearing.create
   end
 
+  def create_api_key
+    ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
+  end
+
   def clean_db
-    DatabaseCleaner.clean_with(:truncation, {:except => %w[api_keys]})
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   def seed
@@ -116,6 +120,7 @@ class SeedDB
     create_annotations
     create_tags
     create_hearings
+    create_api_key
   end
 end
 
