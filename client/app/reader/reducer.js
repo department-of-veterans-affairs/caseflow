@@ -766,17 +766,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-    case Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL:
-      return _.merge(
+  case Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL:
+    return _.merge(
         {},
         state,
-        {
-          ui: {
-            pdf: {
-              viewKeyboardShortcuts: false
-            }
+      {
+        ui: {
+          pdf: {
+            viewKeyboardShortcuts: false
           }
         }
+      }
       );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);

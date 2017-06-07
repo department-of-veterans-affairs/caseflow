@@ -87,7 +87,7 @@ Button.propTypes = {
   loading: PropTypes.bool,
   name: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.node,
+    PropTypes.node
   ]).isRequired,
   onClick: PropTypes.func,
   type: PropTypes.string

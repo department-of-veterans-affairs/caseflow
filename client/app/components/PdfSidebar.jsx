@@ -19,7 +19,9 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
-import { plusIcon, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from './RenderFunctions';
+import { plusIcon, Keyboard } from './RenderFunctions';
+import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -126,56 +128,6 @@ export class PdfSidebar extends React.Component {
     );
 
     const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
-
-    const scrollInstructions = [
-      { scrollInstruction: "Page up",
-        shortcut: <span><code>alt</code> + <ArrowUp /></span> },
-      { scrollInstruction: "Page down",
-        shortcut: <span><code>alt</code> + <ArrowDown /></span> }
-    ]
-
-    const scrollColumns = [{ header: "Scroll",
-      valueName: "scrollInstruction",
-      align: "left"},
-      { header: "Shortcut",
-        valueName: "shortcut",
-          align: "left"}]
-
-    const commentInstructions = [
-      { commentInstruction: "Add comment mode",
-        shortcut: <span><code>alt</code> + <ArrowUp /></span> },
-      { commentInstruction: "Move comment up",
-        shortcut: <span><ArrowUp /></span> },
-      { commentInstruction: "Move comment down",
-        shortcut: <span><ArrowDown /></span> },
-      { commentInstruction: "Move comment left",
-        shortcut: <span><ArrowLeft /></span> },
-      { commentInstruction: "Move comment right",
-        shortcut: <span><ArrowRight /></span> },
-      { commentInstruction: "Place a comment",
-        shortcut: <span><code>alt</code> + <code>enter</code></span> }
-    ]
-
-    const commentColumns = [{ header: "Add/ edit comment",
-      valueName: "commentInstruction",
-      align: "left"},
-      { header: "Shortcut",
-        valueName: "shortcut",
-        align: "left"}]
-
-    const documentsInstructions = [
-      { documentsInstruction: "Next document",
-        shortcut: <span><ArrowRight /></span> },
-      { documentsInstruction: "Previous document",
-        shortcut: <span><ArrowLeft /></span> }
-    ]
-
-    const documentsColumns = [{ header: "View documents",
-      valueName: "documentsInstruction",
-      align: "left"},
-      { header: "Shortcut",
-        valueName: "shortcut",
-        align: "left"}]
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
