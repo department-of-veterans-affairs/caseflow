@@ -27,7 +27,11 @@ class User < ActiveRecord::Base
 
   # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
   def regional_office
-    station_offices.is_a?(String) ? station_offices : @regional_office
+    ro_is_ambiguous_from_station_office? ? @regional_office : station_office 
+  end
+
+  def ro_is_ambiguous_from_station_office?
+    station_offices.is_a?(Array)
   end
 
   def timezone
@@ -107,11 +111,11 @@ class User < ActiveRecord::Base
     serializable_hash
   end
 
-  private
-
   def station_offices
     VACOLS::RegionalOffice::STATIONS[station_id]
   end
+
+  private
 
   class << self
     attr_writer :case_assignment_repository

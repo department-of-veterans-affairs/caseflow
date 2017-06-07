@@ -9,7 +9,11 @@ class SessionsController < ApplicationController
       return render "errors/500", layout: "application", status: 503
     end
 
-    return redirect_to(ENV["SSO_URL"]) unless current_user
+    if current_user.ro_is_ambiguous_from_station_office?
+      @station_offices = current_user.station_offices
+    else
+      return redirect_to(ENV["SSO_URL"]) unless current_user
+    end
   end
 
   def create

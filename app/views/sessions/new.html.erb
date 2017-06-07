@@ -1,3 +1,5 @@
 <% content_for :page_title do %>&nbsp &gt &nbspLogin<% end %>
 
-<%= react_component("Login") %>
+<%= react_component("Login", props: {
+  certification: @station_offices
+}) %>
