@@ -17,7 +17,7 @@ export const scrollColumns = [{ header: 'Scroll',
 
 export const commentInstructions = [
   { commentInstruction: 'Add comment mode',
-    shortcut: <span><code>alt</code> + <ArrowUp /></span> },
+    shortcut: <span><code>alt</code> + <code>c</code></span> },
   { commentInstruction: 'Move comment up',
     shortcut: <span><ArrowUp /></span> },
   { commentInstruction: 'Move comment down',

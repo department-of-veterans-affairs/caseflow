@@ -75,6 +75,7 @@ export default class Modal extends React.Component {
     let {
       children,
       closeHandler,
+      id,
       noDivider,
       title
     } = this.props;
@@ -86,7 +87,7 @@ export default class Modal extends React.Component {
             aria-labelledby="modal_id-title"
             aria-describedby="modal_id-desc"
           >
-      <div className="cf-modal-body">
+      <div className="cf-modal-body" id={id || ""}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
