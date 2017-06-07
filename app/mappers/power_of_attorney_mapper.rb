@@ -28,6 +28,15 @@ module PowerOfAttorneyMapper
 
   def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
     case
+    when vacols_code.blank?
+      # If VACOLS doesn't have a rep code in its dropdown,
+      # it still may have a representative name in the REP table
+      # so let's grab that if we can, since we want to show all
+      # the information we have.
+      {
+        representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_type: nil
+      }
     when get_short_name(vacols_code) == "None"
       { representative_type: "None" }
     when !rep_name_found_in_rep_table?(vacols_code)
@@ -58,10 +67,12 @@ module PowerOfAttorneyMapper
   end
 
   def get_short_name(vacols_code)
+    return if vacols_representatives[vacols_code].blank?
     vacols_representatives[vacols_code][:short]
   end
 
   def get_full_name(vacols_code)
+    return if vacols_representatives[vacols_code].blank?
     vacols_representatives[vacols_code][:full_name]
   end
 
