@@ -449,7 +449,6 @@ export class Pdf extends React.PureComponent {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
         this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
-        this.props.onCommentScrolledTo();
       }
     }
 
@@ -638,7 +637,6 @@ Pdf.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
     id: PropTypes.number,
     page: PropTypes.number,
