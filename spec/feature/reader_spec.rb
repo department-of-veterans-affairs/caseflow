@@ -337,7 +337,7 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
-      scenario "Jump to to section for a comment" do
+      scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         annotation = documents[1].annotations[0]
