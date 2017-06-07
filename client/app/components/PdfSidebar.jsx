@@ -128,33 +128,54 @@ export class PdfSidebar extends React.Component {
     const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
 
     const scrollInstructions = [
-      { instruction: "Page up",
+      { scrollInstruction: "Page up",
         shortcut: <span><code>alt</code> + up arrow</span> },
-      { instruction: "Page down",
+      { scrollInstruction: "Page down",
         shortcut: <span><code>alt</code> + down arrow</span> }
     ]
+
+    const scrollColumns = [{ header: "Scroll",
+      valueName: "scrollInstruction",
+      align: "left"},
+      { header: "Shortcut",
+        valueName: "shortcut",
+          align: "left"}]
 
     const commentInstructions = [
-      { instruction: "Add comment mode",
+      { commentInstruction: "Add comment mode",
         shortcut: <span><code>alt</code> + up arrow</span> },
-      { instruction: "Move comment up",
+      { commentInstruction: "Move comment up",
         shortcut: <span><code>alt</code> + down arrow</span> },
-      { instruction: "Move comment down",
+      { commentInstruction: "Move comment down",
         shortcut: <span><code>alt</code> + down arrow</span> },
-      { instruction: "Move comment left",
+      { commentInstruction: "Move comment left",
         shortcut: <span><code>alt</code> + down arrow</span> },
-      { instruction: "Move comment right",
+      { commentInstruction: "Move comment right",
         shortcut: <span><code>alt</code> + down arrow</span> },
-      { instruction: "Place a comment",
+      { commentInstruction: "Place a comment",
         shortcut: <span><code>alt</code> + down arrow</span> }
     ]
 
+    const commentColumns = [{ header: "Add/ edit comment",
+      valueName: "commentInstruction",
+      align: "left"},
+      { header: "Shortcut",
+        valueName: "shortcut",
+        align: "left"}]
+
     const documentsInstructions = [
-      { instruction: "Next document",
+      { documentsInstruction: "Next document",
         shortcut: <span><code>alt</code> + up arrow</span> },
-      { instruction: "Previous document",
+      { documentsInstruction: "Previous document",
         shortcut: <span><code>alt</code> + down arrow</span> }
     ]
+
+    const documentsColumns = [{ header: "View documents",
+      valueName: "documentsInstruction",
+      align: "left"},
+      { header: "Shortcut",
+        valueName: "shortcut",
+        align: "left"}]
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -241,19 +262,21 @@ export class PdfSidebar extends React.Component {
               }
             ]}
             closeHandler={!this.props.handleOpenShortcutsModal}
-            title = "Keyboard shortcuts">
+            title="Keyboard shortcuts">
             <Table
               summary=" "
-              columns={[{ header: "Scroll",
-                valueName: "scroll"},
-                { header: "Shortcut",
-                  valueName: "shortcut"}]}
-              rowObjects={[
-                { instruction: "Page up",
-                  shortcut: <span><code>alt</code> + up arrow</span> },
-                { instruction: "Page down",
-                  shortcut: <span><code>alt</code> + down arrow</span> }
-              ]}
+              columns={scrollColumns}
+              rowObjects={scrollInstructions}
+              slowReRendersAreOk={true}/>
+            <Table
+              summary=" "
+              columns={commentColumns}
+              rowObjects={commentInstructions}
+              slowReRendersAreOk={true}/>
+            <Table
+              summary=" "
+              columns={documentsColumns}
+              rowObjects={documentsInstructions}
               slowReRendersAreOk={true}/>
           </Modal>
         }
