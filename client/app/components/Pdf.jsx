@@ -21,6 +21,16 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
+const getScaledCoords = ({x, y}, scale) => ({
+  x: x / scale,
+  y: y / scale
+});
+
+const pageCoordsOfScreenCoords = ({x, y}, pageBoundingBox) => ({
+  x: x - pageBoundingBox.left,
+  y: y - pageBoundingBox.top
+});
+
 export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
@@ -32,21 +42,14 @@ export const getInitialAnnotationIconCoords = (iconPageBoundingBox, scrollWindow
     y: _.mean([topBound, bottomBound])
   };
 
-  const scaledCoords = {
-    x: screenCoords.x / scale,
-    y: screenCoords.y / scale
-  };
-
-  const pageCoords = {
-    x: scaledCoords.x - (iconPageBoundingBox.left / scale),
-    y: scaledCoords.y - (iconPageBoundingBox.top / scale)
-  };
+  const pageCoords = pageCoordsOfScreenCoords(screenCoords, iconPageBoundingBox);
+  const scaledCoords = getScaledCoords(pageCoords, scale);
 
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
   return {
-    x: pageCoords.x - annotationIconOffset,
-    y: pageCoords.y - annotationIconOffset
+    x: scaledCoords.x - annotationIconOffset,
+    y: scaledCoords.y - annotationIconOffset
   };
 };
 
@@ -612,14 +615,11 @@ export class Pdf extends React.PureComponent {
       y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
     };
 
-    const pageCoords = {
-      x: constrainedScreenCoords.x - container.left,
-      y: constrainedScreenCoords.y - container.top
-    };
+    const coords = getScaledCoords(pageCoordsOfScreenCoords(constrainedScreenCoords, container), this.props.scale);
 
     return {
-      xPosition: pageCoords.x / this.props.scale,
-      yPosition: pageCoords.y / this.props.scale
+      xPosition: coords.x,
+      yPosition: coords.y
     };
   }
 
