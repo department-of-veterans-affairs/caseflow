@@ -371,7 +371,7 @@ RSpec.feature "Reader" do
         original_scroll = scroll_position(element)
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: (annotations.size - 1))[annotations.size - 3].click
+        all(".commentIcon-container", wait: 3, count: (documents[0].annotations.size))[annotations.size - 3].click
         after_click_scroll = scroll_position(element)
 
         expect(after_click_scroll - original_scroll).to be > 0
