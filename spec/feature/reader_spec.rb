@@ -340,10 +340,19 @@ RSpec.feature "Reader" do
       scenario "Jump to to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
+        annoation = documents[1].annotations[0]
+
         click_button("expand-#{documents[1].id}-comments-button")
-        click_button("jumpToComment#{documents[1].annotations[0].id}")
-        page = documents[1].annotations[0].page
-        expect(in_viewport("pageContainer#{page}")).to be true
+        click_button("jumpToComment#{annoation.id}")
+
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+        page_container = "commentIcon-container-#{annoation.id}"
+
+        # wait for comment annotations to load
+        all(".commentIcon-container", wait: 3, count: 1)
+
+        expect(in_viewport(page_container)).to be true
       end
 
       scenario "Scroll to comment" do
@@ -362,7 +371,7 @@ RSpec.feature "Reader" do
         original_scroll = scroll_position(element)
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: (annotations.size - 1))[annotations.size - 2].click
+        all(".commentIcon-container", wait: 3, count: (annotations.size - 1))[annotations.size - 3].click
         after_click_scroll = scroll_position(element)
 
         expect(after_click_scroll - original_scroll).to be > 0
@@ -370,7 +379,7 @@ RSpec.feature "Reader" do
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
-        id = "#{annotations[annotations.size - 2].id}-filter-1"
+        id = "#{annotations[annotations.size - 3].id}-filter-1"
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
