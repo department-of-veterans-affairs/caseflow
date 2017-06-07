@@ -6,6 +6,7 @@ class Fakes::Initializer
       Hearing.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
+      User.case_assignment_repository = Fakes::CaseAssignmentRepository
     end
 
     def setup!(rails_env)
