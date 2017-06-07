@@ -347,12 +347,12 @@ RSpec.feature "Reader" do
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
-        page_container = "commentIcon-container-#{annoation.id}"
+        comment_icon_id = "commentIcon-container-#{annoation.id}"
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect(in_viewport(page_container)).to be true
+        expect(in_viewport(comment_icon_id)).to be true
       end
 
       scenario "Scroll to comment" do
