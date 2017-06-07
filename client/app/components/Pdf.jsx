@@ -607,16 +607,19 @@ export class Pdf extends React.PureComponent {
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   getPageCoordinatesOfMouseEvent(event, container) {
-    const unconstrainedPageX = event.pageX - container.left;
-    const unconstrainedPageY = event.pageY - container.top;
-    const constrainedPageX =
-      Math.min(unconstrainedPageX, container.right - container.left - ANNOTATION_ICON_SIDE_LENGTH);
-    const constrainedPageY =
-      Math.min(unconstrainedPageY, container.bottom - container.top - ANNOTATION_ICON_SIDE_LENGTH);
+    const constrainedScreenCoords = {
+      x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
+      y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
+    };
+
+    const pageCoords = {
+      x: constrainedScreenCoords.x - container.left,
+      y: constrainedScreenCoords.y - container.top
+    };
 
     return {
-      xPosition: constrainedPageX / this.props.scale,
-      yPosition: constrainedPageY / this.props.scale
+      xPosition: pageCoords.x / this.props.scale,
+      yPosition: pageCoords.y / this.props.scale
     };
   }
 
