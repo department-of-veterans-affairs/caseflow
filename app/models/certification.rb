@@ -81,13 +81,20 @@ class Certification < ActiveRecord::Base
     )
   end
 
+  def update_vacols_poa!
+    rep_type = poa_correct_in_bgs ? bgs_representative_type : representative_type
+    rep_name = poa_correct_in_bgs ? bgs_representative_name : representative_name
+
+    appeal.power_of_attorney.update_vacols_rep_info!(
+      appeal: appeal,
+      representative_type: rep_type
+      representative_name: rep_name
+    )
+  end
+
   def complete!(user_id)
-    unless poa_correct_in_vacols
-      appeal.power_of_attorney.update_vacols_rep_info!(
-        appeal: appeal,
-        representative_type: representative_type,
-        representative_name: representative_name
-      )
+    if FeatureToggle.enabled?(:certification_v2, user: RequestStore[:current_user])
+      update_vacols_poa! unless (poa_matches || poa_correct_in_vacols)
     end
     appeal.certify!
     update_attributes!(completed_at: Time.zone.now, user_id: user_id)
