@@ -7,9 +7,9 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { closeAnnotationDeleteModal, deleteAnnotation, movePlacingAnnotation,
+import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
-import { isUserEditingText } from '../reader/utils';
+import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
@@ -31,7 +31,23 @@ export class PdfViewer extends React.Component {
     }[event.key];
 
     if (this.props.isPlacingAnnotation && direction) {
-      this.props.movePlacingAnnotation(direction);
+      const moveAmountPx = 5;
+      const movementDirection = _.includes(
+        [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
+        direction
+      ) ? -1 : 1;
+      const movementDimension = _.includes(
+        [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
+        direction
+      ) ? 'y' : 'x';
+
+      const {pageIndex, x, y} = update(this.props.placingAnnotationIconCoords, {
+        [movementDimension]: {
+          $apply: (coord) => coord + (moveAmountPx * movementDirection)
+        }
+      });
+
+      this.props.showPlaceAnnotationIcon(pageIndex, x, y);
 
       return;
     }
@@ -154,12 +170,13 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
+  ..._.pick(state, 'placingAnnotationIconCoords'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    movePlacingAnnotation,
+    showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
     deleteAnnotation
   }, dispatch),
