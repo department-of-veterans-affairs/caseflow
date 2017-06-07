@@ -16,20 +16,15 @@ class SessionsController < ApplicationController
           "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
         }
       end
+      @redirect_to = session["return_to"] || root_path
     else
       return redirect_to(ENV["SSO_URL"]) unless current_user
     end
   end
 
-  def create
-    unless current_user.authenticate(authentication_params)
-      flash[:error] = "The username and password you entered don't match. Please try again."
-      return redirect_to login_path
-    end
-
-    # The presence of the regional_office field is used to mark a user as logged in.
-    session[:regional_office] = current_user.regional_office
-    redirect_to session["return_to"] || root_path
+  def update
+    session[:regional_office] = params["regional_office"]
+    render json: {}
   end
 
   def destroy
