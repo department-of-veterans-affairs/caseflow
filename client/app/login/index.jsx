@@ -21,6 +21,9 @@ export default class Login extends React.PureComponent {
         regional_office: this.state.regionalOfficeCode
       }
     }).then(
+      // TODO: After redirecting, Rails sends the user right back to this page.
+      // Clearly, something is not being updated correctly, because it still thinks 
+      // that the user needs to come back here.
       () => window.location = this.props.redirectTo,
       (err) => {
         this.setState({isLoggingIn: false});
