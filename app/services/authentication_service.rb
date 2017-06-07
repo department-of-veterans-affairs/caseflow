@@ -4,6 +4,7 @@ class AuthenticationService
   end
 
   def self.authenticate_vacols(regional_office, password)
+    puts "try to auth VACOLS ================="
     db = Rails.application.config.database_configuration["#{Rails.env}_vacols"]
 
     begin
