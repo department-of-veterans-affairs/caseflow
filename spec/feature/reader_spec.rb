@@ -340,14 +340,14 @@ RSpec.feature "Reader" do
       scenario "Jump to to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        annoation = documents[1].annotations[0]
+        annotation = documents[1].annotations[0]
 
         click_button("expand-#{documents[1].id}-comments-button")
-        click_button("jumpToComment#{annoation.id}")
+        click_button("jumpToComment#{annotation.id}")
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
-        comment_icon_id = "commentIcon-container-#{annoation.id}"
+        comment_icon_id = "commentIcon-container-#{annotation.id}"
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
@@ -618,7 +618,7 @@ RSpec.feature "Reader" do
 
     scenario "When user search term is not found" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      search_query = "does not exist in annoations"
+      search_query = "does not exist in annotations"
       fill_in "searchBar", with: search_query
 
       expect(page).to have_content("Search results not found")
