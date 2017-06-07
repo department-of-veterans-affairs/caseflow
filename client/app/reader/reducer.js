@@ -761,11 +761,23 @@ export const reducer = (state = initialState, action = {}) => {
       {
         ui: {
           pdf: {
-            viewKeyboardShortcuts: !state.ui.pdfSidebar.viewKeyboardShortcuts
+            viewKeyboardShortcuts: true
           }
         }
       }
     );
+    case Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL:
+      return _.merge(
+        {},
+        state,
+        {
+          ui: {
+            pdf: {
+              viewKeyboardShortcuts: false
+            }
+          }
+        }
+      );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
   case Constants.CLEAR_ALL_SEARCH:

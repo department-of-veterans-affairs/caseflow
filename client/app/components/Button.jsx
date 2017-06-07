@@ -85,7 +85,10 @@ Button.propTypes = {
   id: PropTypes.string,
   linkStyle: PropTypes.bool,
   loading: PropTypes.bool,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]).isRequired,
   onClick: PropTypes.func,
   type: PropTypes.string
 };

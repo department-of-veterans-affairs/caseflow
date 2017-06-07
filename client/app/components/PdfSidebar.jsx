@@ -19,7 +19,7 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
-import { plusIcon } from './RenderFunctions';
+import { plusIcon, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from './RenderFunctions';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -129,9 +129,9 @@ export class PdfSidebar extends React.Component {
 
     const scrollInstructions = [
       { scrollInstruction: "Page up",
-        shortcut: <span><code>alt</code> + up arrow</span> },
+        shortcut: <span><code>alt</code> + <ArrowUp /></span> },
       { scrollInstruction: "Page down",
-        shortcut: <span><code>alt</code> + down arrow</span> }
+        shortcut: <span><code>alt</code> + <ArrowDown /></span> }
     ]
 
     const scrollColumns = [{ header: "Scroll",
@@ -143,17 +143,17 @@ export class PdfSidebar extends React.Component {
 
     const commentInstructions = [
       { commentInstruction: "Add comment mode",
-        shortcut: <span><code>alt</code> + up arrow</span> },
+        shortcut: <span><code>alt</code> + <ArrowUp /></span> },
       { commentInstruction: "Move comment up",
-        shortcut: <span><code>alt</code> + down arrow</span> },
+        shortcut: <span><ArrowUp /></span> },
       { commentInstruction: "Move comment down",
-        shortcut: <span><code>alt</code> + down arrow</span> },
+        shortcut: <span><ArrowDown /></span> },
       { commentInstruction: "Move comment left",
-        shortcut: <span><code>alt</code> + down arrow</span> },
+        shortcut: <span><ArrowLeft /></span> },
       { commentInstruction: "Move comment right",
-        shortcut: <span><code>alt</code> + down arrow</span> },
+        shortcut: <span><ArrowRight /></span> },
       { commentInstruction: "Place a comment",
-        shortcut: <span><code>alt</code> + down arrow</span> }
+        shortcut: <span><code>alt</code> + <code>enter</code></span> }
     ]
 
     const commentColumns = [{ header: "Add/ edit comment",
@@ -165,9 +165,9 @@ export class PdfSidebar extends React.Component {
 
     const documentsInstructions = [
       { documentsInstruction: "Next document",
-        shortcut: <span><code>alt</code> + up arrow</span> },
+        shortcut: <span><ArrowRight /></span> },
       { documentsInstruction: "Previous document",
-        shortcut: <span><code>alt</code> + down arrow</span> }
+        shortcut: <span><ArrowLeft /></span> }
     ]
 
     const documentsColumns = [{ header: "View documents",
@@ -251,7 +251,8 @@ export class PdfSidebar extends React.Component {
         </div>
         <div className="cf-pdf-center-text cf-keyboard-shortcuts">
           <Button
-              name="View keyboard shortcuts"
+              id="cf-open-keyboard-modal"
+              name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
               onClick={this.props.handleOpenShortcutsModal}
               classNames={['cf-btn-link']}
           />
@@ -259,9 +260,10 @@ export class PdfSidebar extends React.Component {
             buttons = {[
               { classNames: ['usa-button', 'usa-button-secondary'],
                 name: 'Thanks, got it!',
+                onClick: this.props.handleCloseShortcutsModal
               }
             ]}
-            closeHandler={!this.props.handleOpenShortcutsModal}
+            closeHandler={this.props.handleCloseShortcutsModal}
             title="Keyboard shortcuts">
             <Table
               summary=" "
@@ -293,6 +295,7 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
+  handleCloseShortcutsModal: PropTypes.func,
   handleOpenShortcutsModal: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
@@ -367,6 +370,11 @@ const mapDispatchToProps = (dispatch) => ({
   handleOpenShortcutsModal() {
     dispatch({
       type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
+    });
+  },
+  handleCloseShortcutsModal() {
+    dispatch({
+      type: Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL
     });
   }
 });

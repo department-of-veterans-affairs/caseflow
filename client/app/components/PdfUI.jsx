@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, ArrowLeft, ArrowRight, LeftChevron } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { openDocumentInNewTab } from '../reader/utils';
@@ -62,7 +62,7 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button']}
               onClick={this.props.showPdf(this.props.prevDocId)}
               ariaLabel="previous PDF">
-              <ArrowLeft /><span className="left-button-label">Previous</span>
+              <PageArrowLeft /><span className="left-button-label">Previous</span>
             </Button>
           </div> }
         <div className="cf-pdf-buttons-center">
@@ -79,7 +79,7 @@ export class PdfUI extends React.Component {
               classNames={['cf-pdf-button cf-right-side']}
               onClick={this.props.showPdf(this.props.nextDocId)}
               ariaLabel="next PDF">
-              <span className="right-button-label">Next</span><ArrowRight />
+              <span className="right-button-label">Next</span><PageArrowRight />
             </Button>
           </div> }
       </div>;
@@ -212,6 +212,11 @@ const mapDispatchToProps = (dispatch) => ({
   handleOpenShortcutsModal() {
     dispatch({
       type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
+    });
+  },
+  handleCloseShortcutsModal() {
+    dispatch({
+      type: Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL
     });
   }
 });
