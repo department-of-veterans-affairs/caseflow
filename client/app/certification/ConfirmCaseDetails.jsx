@@ -97,11 +97,11 @@ const organizationNamesOptions = [
 
 // TODO: We should give each question a constant name.
 const ERRORS = {
-  poaMatches: `Please select yes or no.`,
-  poaCorrectLocation: `Please select an option.`,
-  representativeType: `Please select a representative type.`,
-  representativeName: `Please select a service organization's name.`,
-  organizationName: `Please select an organization.`
+  poaMatches: 'Please select yes or no.',
+  poaCorrectLocation: 'Please select an option.',
+  representativeType: 'Please select a representative type.',
+  representativeName: 'Please select a service organization\'s name.',
+  organizationName: 'Please select an organization.'
 };
 
 /*
@@ -152,15 +152,18 @@ export class ConfirmCaseDetails extends React.Component {
       erroredFields.push('poaCorrectLocation');
     }
 
-    if (poaCorrectLocation === Constants.poaCorrectLocation.NONE && ValidatorsUtil.requiredValidator(representativeType)) {
+    if (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+     ValidatorsUtil.requiredValidator(representativeType)) {
       erroredFields.push('representativeType');
     }
 
-    if (representativeType === Constants.representativeTypes.ORGANIZATION && ValidatorsUtil.requiredValidator(organizationName)) {
+    if (representativeType === Constants.representativeTypes.ORGANIZATION &&
+      ValidatorsUtil.requiredValidator(organizationName)) {
       erroredFields.push('organizationName');
     }
 
-    if (organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION && ValidatorsUtil.requiredValidator(representativeName)) {
+    if (organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+     ValidatorsUtil.requiredValidator(representativeName)) {
       erroredFields.push('representativeName');
     }
 
@@ -177,16 +180,16 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
-    let representativeType, representativeName;
+    let representativeName, representativeType;
 
     // Send updates only if neither VBMS nor VACOLS info is correct
     if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.NONE) {
       representativeType = this.props.representativeType;
       if (this.props.representativeType === Constants.representativeTypes.ORGANIZATION) {
-        if(this.props.organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) {
-          representativeName = this.props.organizationName;
-        } else {
+        if (this.props.organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) {
           representativeName = this.props.representativeName;
+        } else {
+          representativeName = this.props.organizationName;
         }
       }
     }
@@ -200,14 +203,14 @@ export class ConfirmCaseDetails extends React.Component {
     });
   }
 
-  getDisplayText(value) {
+  static getDisplayText(value) {
     const hash = {};
 
     representativeTypeOptions.map((item) =>
       hash[item.value] = item.displayText);
 
     return hash[value];
-  };
+  }
 
   isFieldErrored(fieldName) {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
@@ -222,7 +225,7 @@ export class ConfirmCaseDetails extends React.Component {
     }
   }
 
-  /* eslint max-statements:[{ "ignoreTopLevelFunctions": true }]*/
+  /* eslint max-statements: ["error", 13]*/
   render() {
     let {
       poaMatches,
@@ -284,9 +287,9 @@ export class ConfirmCaseDetails extends React.Component {
     ];
 
     const representativeTypeMessage =
-        <p>Since you selected <strong>{this.getDisplayText(representativeType)}</strong>, make sure you update
-        the representative's name and address information in VACOLS before continuing. Caseflow will update
-         the representative type in VACOLS.</p>;
+        <p>Since you selected <strong>{ConfirmCaseDetails.getDisplayText(representativeType)}</strong>, make sure
+         you update the representative's name and address information in VACOLS before continuing.
+        Caseflow will update the representative type in VACOLS.</p>;
 
     const unlistedServiceMessage =
         <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
@@ -359,7 +362,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             <TextField
-              name={`Enter the service organization's name:`}
+              name={'Enter the service organization\'s name:'}
               value={representativeName}
               errorMessage={(this.isFieldErrored('representativeName') ? ERRORS.representativeName : null)}
               required={true}
