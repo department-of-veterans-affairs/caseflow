@@ -201,12 +201,12 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   getDisplayText(value) {
-      const hash = {};
+    const hash = {};
 
-      representativeTypeOptions.map((item) =>
-        hash[item.value] = item.displayText);
+    representativeTypeOptions.map((item) =>
+      hash[item.value] = item.displayText);
 
-      return hash[value];
+    return hash[value];
   };
 
   isFieldErrored(fieldName) {
