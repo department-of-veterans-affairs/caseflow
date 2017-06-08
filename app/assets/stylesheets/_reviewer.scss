@@ -508,3 +508,7 @@ div[id=cf-keyboard-modal] {
     overflow: auto;
   }
 }
+
+.cf-table-borderless + .cf-keyboard-modal-table thead th {
+  width: 23%
+}

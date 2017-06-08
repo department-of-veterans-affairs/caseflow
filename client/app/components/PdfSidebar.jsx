@@ -225,17 +225,20 @@ export class PdfSidebar extends React.Component {
                   summary=" "
                   columns={scrollColumns}
                   rowObjects={scrollInstructions}
-                  slowReRendersAreOk={true}/>
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
                 <Table
                   summary=" "
                   columns={commentColumns}
                   rowObjects={commentInstructions}
-                  slowReRendersAreOk={true}/>
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
                 <Table
                   summary=" "
                   columns={documentsColumns}
                   rowObjects={documentsInstructions}
-                  slowReRendersAreOk={true}/>
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
               </div>
             </Modal>
         </div>
