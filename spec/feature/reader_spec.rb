@@ -8,6 +8,10 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def scroll_element_to_view(element)
+  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
+end
+
 def scroll_to_bottom(element)
   page.driver.evaluate_script <<-EOS
     function() {
@@ -412,6 +416,28 @@ RSpec.feature "Reader" do
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
+      end
+
+      scenario "Scrolling pages changes page numbers" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[1].type
+        expect(page).to have_css(".page")
+        scroll_element_to_view("pageContainer3")
+        expect(find_field("page-progress-indicator-input").value).to eq "3"
+      end
+
+      scenario "Switch between pages" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[1].type
+
+        fill_in "page-progress-indicator-input", with: "4\n"
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
+        fill_in "page-progress-indicator-input", with: "100e\n"
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
       end
     end
 

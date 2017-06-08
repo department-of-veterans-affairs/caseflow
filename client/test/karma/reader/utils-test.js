@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { moveModel } from '../../../app/reader/utils';
+import { moveModel, isValidWholeNumber } from '../../../app/reader/utils';
 
 describe('Reader utils', () => {
   describe('moveModel', () => {
@@ -33,5 +33,17 @@ describe('Reader utils', () => {
         annotations: {}
       });
     });
+  });
+  describe('isValidWholeNumber', () => {
+
+    /* eslint-disable no-unused-expressions */
+    it('checks if number is a valid number', () => {
+      expect(isValidWholeNumber(10)).to.be.true;
+      expect(isValidWholeNumber('er')).to.be.false;
+      expect(isValidWholeNumber('10')).to.be.true;
+      expect(isValidWholeNumber('-10abc')).to.be.false;
+    });
+
+    /* eslint-disable no-unused-expressions */
   });
 });

@@ -26,6 +26,8 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
+const COVER_SCROLL_HEIGHT = 120;
+
 const NUM_PAGES_TO_PRERENDER = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -221,11 +223,17 @@ export class Pdf extends React.PureComponent {
     this.performFunctionOnEachPage((boundingRect, index) => {
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+      // jumpToPageNumber check is added to not update the page number when the
+      // jump to page scroll is activated.
+      if (!this.props.jumpToPageNumber && boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
         this.onPageChange(index + 1);
       }
     });
+
+    if (this.props.jumpToPageNumber) {
+      this.props.resetJumpToPage();
+    }
     this.renderInViewPages();
   }
 
@@ -440,11 +448,22 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  scrollToPage(pageNumber) {
+    this.scrollWindow.scrollTop =
+      this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
+      this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
+  }
 
   componentDidUpdate = () => {
     this.renderInViewPages();
     this.prerenderPages();
 
+    // if jump to page number is provided
+    // render the page and jump to the page
+    if (this.props.jumpToPageNumber) {
+      this.scrollToPage(this.props.jumpToPageNumber);
+      this.onPageChange(this.props.jumpToPageNumber);
+    }
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
         this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
