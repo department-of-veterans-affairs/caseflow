@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
   end
 
   def update
-    current_user.authenticate(regional_office: params["regional_office"], password: '')
+    current_user.authenticate(regional_office: params["regional_office"])
      # The presence of the regional_office field is used to mark a user as logged in.
     session[:regional_office] = current_user.regional_office
     render json: {}
