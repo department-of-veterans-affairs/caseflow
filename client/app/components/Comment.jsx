@@ -50,6 +50,7 @@ export class Comment extends React.Component {
     if (this.props.onJumpToComment) {
       jumpToSectionButton = <Button
           name="jumpToComment"
+          id={`jumpToComment${this.props.uuid}`}
           classNames={['cf-btn-link comment-control-button']}
           onClick={this.props.onJumpToComment}>
           Jump to section
