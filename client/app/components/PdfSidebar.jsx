@@ -208,33 +208,37 @@ export class PdfSidebar extends React.Component {
               onClick={this.props.handleOpenShortcutsModal}
               classNames={['cf-btn-link']}
           />
-          { this.props.viewKeyboardShortcuts && <Modal
-            buttons = {[
-              { classNames: ['usa-button', 'usa-button-secondary'],
-                name: 'Thanks, got it!',
-                onClick: this.props.handleCloseShortcutsModal
-              }
-            ]}
-            closeHandler={this.props.handleCloseShortcutsModal}
-            title="Keyboard shortcuts"
-            noDivider={true}
-            id="cf-keyboard-modal">
-            <Table
-              summary=" "
-              columns={scrollColumns}
-              rowObjects={scrollInstructions}
-              slowReRendersAreOk={true}/>
-            <Table
-              summary=" "
-              columns={commentColumns}
-              rowObjects={commentInstructions}
-              slowReRendersAreOk={true}/>
-            <Table
-              summary=" "
-              columns={documentsColumns}
-              rowObjects={documentsInstructions}
-              slowReRendersAreOk={true}/>
-          </Modal>
+        { this.props.viewKeyboardShortcuts && <div className="cf-modal-scroll">
+          <Modal
+              buttons = {[
+                { classNames: ['usa-button', 'usa-button-secondary'],
+                  name: 'Thanks, got it!',
+                  onClick: this.props.handleCloseShortcutsModal
+                }
+              ]}
+              closeHandler={this.props.handleCloseShortcutsModal}
+              title="Keyboard shortcuts"
+              noDivider={true}
+              id="cf-keyboard-modal">
+              <div className="cf-keyboard-modal-scroll">
+                <Table
+                  summary=" "
+                  columns={scrollColumns}
+                  rowObjects={scrollInstructions}
+                  slowReRendersAreOk={true}/>
+                <Table
+                  summary=" "
+                  columns={commentColumns}
+                  rowObjects={commentInstructions}
+                  slowReRendersAreOk={true}/>
+                <Table
+                  summary=" "
+                  columns={documentsColumns}
+                  rowObjects={documentsInstructions}
+                  slowReRendersAreOk={true}/>
+              </div>
+            </Modal>
+        </div>
         }
         </div>
       </div>;

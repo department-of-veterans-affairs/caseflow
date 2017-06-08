@@ -487,8 +487,24 @@ input[type="search"].cf-search-input-with-close {
   bottom: 0;
   position: absolute;
   margin-left: 50px;
+
+  .cf-btn-link {
+    &:hover {
+      background-color: $caseflow-background;
+    }
+  }
 }
 
 div[id=cf-keyboard-modal] {
   height: 580px;
+  overflow: auto;
+  max-height: 540px;
+  display: block;
+}
+
+.cf-modal-scroll {
+  .cf-keyboard-modal-scroll {
+    max-height: 330px;
+    overflow: auto;
+  }
 }
