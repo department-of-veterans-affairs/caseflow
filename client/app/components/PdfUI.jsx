@@ -198,11 +198,7 @@ export class PdfUI extends React.Component {
           scale={this.state.scale}
           onPageChange={this.onPageChange}
           prefetchFiles={this.props.prefetchFiles}
-<<<<<<< HEAD
-          onCommentScrolledTo={this.props.onCommentScrolledTo}
           resetJumpToPage={this.props.resetJumpToPage}
-=======
->>>>>>> master
         />
       </div>
       { this.getPdfFooter(this.props, this.state) }
