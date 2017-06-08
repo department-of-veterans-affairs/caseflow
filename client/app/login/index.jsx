@@ -17,7 +17,7 @@ export default class Login extends React.PureComponent {
   handleClickLogin = () => {
     this.setState({isLoggingIn: true});
     ApiUtil.patch('/sessions/update', {
-      query: {
+      data: {
         regional_office: this.state.regionalOfficeCode
       }
     }).then(
