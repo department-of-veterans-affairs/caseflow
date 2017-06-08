@@ -58,9 +58,9 @@ class PowerOfAttorneyRepository
   def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
     VACOLS::Representative.update_vacols_rep_name!(
       bfkey: case_record.bfkey,
-      first_name: first_name,
-      middle_initial: middle_initial,
-      last_name: last_name
+      first_name: first_name[0,23],
+      middle_initial: middle_initial[0,3],
+      last_name: last_name[0,39]
     )
   end
 
