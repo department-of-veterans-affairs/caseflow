@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
-    ro_is_ambiguous_from_station_office? ? @regional_office : station_office 
+    ro_is_ambiguous_from_station_office? ? @regional_office : station_offices
   end
 
   def ro_is_ambiguous_from_station_office?
