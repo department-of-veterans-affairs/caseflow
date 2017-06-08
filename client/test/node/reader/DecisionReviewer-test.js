@@ -93,6 +93,23 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-backToDocuments').simulate('click');
         expect(wrapper.find('PdfListView')).to.have.length(1);
       }));
+
+      it('View keyboard shortcuts modal loads', asyncTest(async () => {
+        // Open modal
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp');
+        await pause();
+
+        expect(wrapper.find('PdfViewer')).to.have.length(1);
+
+        wrapper.find('#cf-open-keyboard-modal').simulate('click');
+        expect(wrapper.text()).to.include('Keyboard shortcuts');
+
+        // Close modal
+        wrapper.find('#Keyboard-shortcuts-button-id-0').simulate('click');
+        expect(wrapper.find('.cf-modal-body')).to.have.length(0);
+      }));
     });
 
     context('navigation buttons', () => {

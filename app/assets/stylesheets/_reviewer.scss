@@ -495,7 +495,7 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
-div[id=cf-keyboard-modal] {
+[id=cf-keyboard-modal] {
   height: 580px;
   overflow: auto;
   display: block;
@@ -514,5 +514,5 @@ div[id=cf-keyboard-modal] {
 }
 
 .cf-table-borderless + .cf-keyboard-modal-table thead th {
-  width: 23%
+  width: 23%;
 }
