@@ -30,10 +30,9 @@ RSpec.feature "Login" do
     find("#react-select-2--option-0").click
   end
 
-  scenario "with valid credentials", :focus => true do
+  scenario "with valid credentials" do
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_content("Please select the regional office you are logging in from.")
-    # sleep(inspection_timeout=100)
     select_ro_from_dropdown
     click_on "Log in"
     expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
@@ -48,7 +47,7 @@ RSpec.feature "Login" do
     select_ro_from_dropdown
     click_on "Log in"
     
-    click_on "ANNE MERICA (DSUSER)"
+    click_on "ANNE MERICA (RO05)"
     click_on "Sign out"
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_current_path("/login")
