@@ -8,6 +8,10 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def scroll_element_to_view(element)
+  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
+end
+
 def scroll_to_bottom(element)
   page.driver.evaluate_script <<-EOS
     function() {
@@ -308,6 +312,12 @@ RSpec.feature "Reader" do
             comment: "hello world",
             document_id: documents[0].id,
             y: 750
+          ),
+          Generators::Annotation.create(
+            comment: "nice comment",
+            document_id: documents[1].id,
+            y: 300,
+            page: 3
           )
         ]
       end
@@ -331,6 +341,24 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
+      scenario "Jump to section for a comment" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        annotation = documents[1].annotations[0]
+
+        click_button("expand-#{documents[1].id}-comments-button")
+        click_button("jumpToComment#{annotation.id}")
+
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+        comment_icon_id = "commentIcon-container-#{annotation.id}"
+
+        # wait for comment annotations to load
+        all(".commentIcon-container", wait: 3, count: 1)
+
+        expect(in_viewport(comment_icon_id)).to be true
+      end
+
       scenario "Scroll to comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -347,7 +375,7 @@ RSpec.feature "Reader" do
         original_scroll = scroll_position(element)
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: annotations.size)[annotations.size - 2].click
+        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 3].click
         after_click_scroll = scroll_position(element)
 
         expect(after_click_scroll - original_scroll).to be > 0
@@ -355,7 +383,7 @@ RSpec.feature "Reader" do
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
-        id = "#{annotations[annotations.size - 2].id}-filter-1"
+        id = "#{annotations[annotations.size - 3].id}-filter-1"
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
@@ -388,6 +416,28 @@ RSpec.feature "Reader" do
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
+      end
+
+      scenario "Scrolling pages changes page numbers" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[1].type
+        expect(page).to have_css(".page")
+        scroll_element_to_view("pageContainer3")
+        expect(find_field("page-progress-indicator-input").value).to eq "3"
+      end
+
+      scenario "Switch between pages" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[1].type
+
+        fill_in "page-progress-indicator-input", with: "4\n"
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
+        fill_in "page-progress-indicator-input", with: "100e\n"
+        expect(in_viewport("pageContainer4")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "4"
       end
     end
 
@@ -594,7 +644,7 @@ RSpec.feature "Reader" do
 
     scenario "When user search term is not found" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      search_query = "does not exist in annoations"
+      search_query = "does not exist in annotations"
       fill_in "searchBar", with: search_query
 
       expect(page).to have_content("Search results not found")

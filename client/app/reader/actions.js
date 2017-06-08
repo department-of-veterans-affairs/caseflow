@@ -160,6 +160,18 @@ export const updateNewAnnotationContent = (content) => ({
   }
 });
 
+export const jumpToPage = (pageNumber, docId) => ({
+  type: Constants.JUMP_TO_PAGE,
+  payload: {
+    pageNumber,
+    docId
+  }
+});
+
+export const resetJumpToPage = () => ({
+  type: Constants.RESET_JUMP_TO_PAGE
+});
+
 export const requestEditAnnotation = (annotation) => (dispatch) => {
   // If the user removed all text content in the annotation, ask them if they're
   // intending to delete it.

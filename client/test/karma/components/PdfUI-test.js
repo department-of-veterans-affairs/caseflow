@@ -1,8 +1,9 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { PdfUI } from '../../../app/components/PdfUI';
 import sinon from 'sinon';
+
+import { PdfUI } from '../../../app/components/PdfUI';
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
@@ -68,15 +69,6 @@ describe('PdfUI', () => {
         wrapper.instance().onPageChange(currentPage, numPages);
         expect(wrapper.state('currentPage')).to.equal(currentPage);
         expect(wrapper.state('numPages')).to.equal(numPages);
-      });
-
-      it('updates the UI with the new page location', () => {
-        let currentPage = 2;
-        let numPages = 4;
-
-        wrapper.setProps({ pdfsReadyToShow: { [doc.id]: true } });
-        wrapper.instance().onPageChange(currentPage, numPages);
-        expect(wrapper.text()).to.include(`Page ${currentPage} of ${numPages}`);
       });
     });
 
