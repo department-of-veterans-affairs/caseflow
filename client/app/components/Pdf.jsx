@@ -448,7 +448,7 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  renderAndScrollToPage(pageNumber) {
+  scrollToPage(pageNumber) {
     this.scrollWindow.scrollTop =
       this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
@@ -461,7 +461,7 @@ export class Pdf extends React.PureComponent {
     // if jump to page number is provided
     // render the page and jump to the page
     if (this.props.jumpToPageNumber) {
-      this.renderAndScrollToPage(this.props.jumpToPageNumber);
+      this.scrollToPage(this.props.jumpToPageNumber);
       this.onPageChange(this.props.jumpToPageNumber);
     }
     if (this.props.scrollToComment) {
