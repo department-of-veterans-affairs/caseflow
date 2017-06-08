@@ -133,8 +133,6 @@ class ApplicationController < ActionController::Base
   def verify_authentication
     return true if current_user && current_user.authenticated?
 
-    puts "======= redirect to login path"
-
     session["return_to"] = request.original_url
     redirect_to login_path
   end
