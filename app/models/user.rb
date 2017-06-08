@@ -67,9 +67,7 @@ class User < ActiveRecord::Base
     !regional_office.blank?
   end
 
-  # This method is used for VACOLS authentication
-  def authenticate(regional_office:, password:)
-    # return false unless User.authenticate_vacols(regional_office, password)
+  def authenticate(regional_office:)
     @regional_office = regional_office.upcase
   end
 
