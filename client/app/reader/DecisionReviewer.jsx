@@ -113,10 +113,6 @@ export class DecisionReviewer extends React.PureComponent {
     this.props.onScrollToComment(comment);
   }
 
-  onCommentScrolledTo = () => {
-    this.props.onScrollToComment(null);
-  }
-
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -142,7 +138,6 @@ export class DecisionReviewer extends React.PureComponent {
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        onCommentScrolledTo={this.onCommentScrolledTo}
         documentPathBase={`/reader/appeal/${vacolsId}/documents`}
         {...props}
       />
