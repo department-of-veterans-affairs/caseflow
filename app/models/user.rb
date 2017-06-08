@@ -67,7 +67,9 @@ class User < ActiveRecord::Base
     !regional_office.blank?
   end
 
-  def authenticate(regional_office:)
+  # This method is used for VACOLS authentication
+  def authenticate(regional_office:, password:)
+    # return false unless User.authenticate_vacols(regional_office, password)
     @regional_office = regional_office.upcase
   end
 
@@ -116,6 +118,8 @@ class User < ActiveRecord::Base
 
   class << self
     attr_writer :case_assignment_repository
+    attr_writer :authentication_service
+    delegate :authenticate_vacols, to: :authentication_service
 
     # Empty method used for testing purposes
     def before_set_user
@@ -130,7 +134,7 @@ class User < ActiveRecord::Base
     end
 
     def from_session(session, request)
-      user = session["user"] ||= nil
+      user = session["user"] ||= authentication_service.default_user_session
 
       return nil if user.nil?
 
@@ -145,6 +149,10 @@ class User < ActiveRecord::Base
         u.regional_office = session[:regional_office]
         u.save
       end
+    end
+
+    def authentication_service
+      @authentication_service ||= AuthenticationService
     end
 
     def case_assignment_repository
