@@ -106,7 +106,7 @@ class CertificationsController < ApplicationController
   end
 
   def check_confirm_case_data
-    certification.representative_type && certification.representative_name
+    certification.representative_type
   end
 
   def check_confirm_hearing_data
