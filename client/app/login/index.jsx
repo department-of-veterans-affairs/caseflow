@@ -48,7 +48,6 @@ export default class Login extends React.PureComponent {
         value={this.state.regionalOfficeCode} />
 
       <Button
-        type="submit"
         disabled={!this.state.regionalOfficeCode}
         onClick={this.handleClickLogin}
         name="Log in"

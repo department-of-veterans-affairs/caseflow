@@ -4,7 +4,6 @@ RSpec.feature "Login" do
   let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
   before do
-    Fakes::AuthenticationService.vacols_regional_offices = { "DSUSER" => "pa55word!" }
     Fakes::AuthenticationService.user_session = {
       "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405", "email" => "test@example.com"
     }
@@ -26,41 +25,29 @@ RSpec.feature "Login" do
     expect(user.reload.email).to eq "world@example.com"
   end
 
-  scenario "with valid credentials" do
-    visit "certifications/new/#{appeal.vacols_id}"
-    # vacols login
-    expect(page).to have_content("VACOLS credentials")
-    fill_in "VACOLS Login ID", with: "DSUSER"
-    fill_in "VACOLS Password", with: "pa55word!"
-    click_on "Login"
-    expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
-    expect(find("#menu-trigger")).to have_content("ANNE MERICA (DSUSER)")
+  def select_ro_from_dropdown
+    find(".Select-control").click
+    find("#react-select-2--option-0").click
   end
 
-  scenario "with invalid credentials" do
+  scenario "with valid credentials", :focus => true do
     visit "certifications/new/#{appeal.vacols_id}"
-
-    # vacols login
-    fill_in "VACOLS Login ID", with: "DSUSER"
-    fill_in "VACOLS Password", with: "bad password"
-    click_on "Login"
-
-    expect(page).to have_current_path(login_path)
-    expect(find(".usa-alert-body")).to have_content("The username and password you entered don't match")
-
-    visit "certifications/new/#{appeal.vacols_id}"
-    expect(page).to have_current_path(login_path)
+    expect(page).to have_content("Please select the regional office you are logging in from.")
+    # sleep(inspection_timeout=100)
+    select_ro_from_dropdown
+    click_on "Log in"
+    expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
+    expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO05)")
   end
 
   scenario "logging out redirects to home page" do
     visit "certifications/new/#{appeal.vacols_id}"
 
     # vacols login
-    expect(page).to have_content("VACOLS credentials")
-    fill_in "VACOLS Login ID", with: "DSUSER"
-    fill_in "VACOLS Password", with: "pa55word!"
-    click_on "Login"
-
+    expect(page).to have_content("Please select the regional office you are logging in from.")
+    select_ro_from_dropdown
+    click_on "Log in"
+    
     click_on "ANNE MERICA (DSUSER)"
     click_on "Sign out"
     visit "certifications/new/#{appeal.vacols_id}"
@@ -70,9 +57,8 @@ RSpec.feature "Login" do
   scenario "email should be set on login" do
     user = User.create(css_id: "ANNE MERICA", station_id: "405")
     visit "certifications/new/#{appeal.vacols_id}"
-    fill_in "VACOLS Login ID", with: "DSUSER"
-    fill_in "VACOLS Password", with: "pa55word!"
-    click_on "Login"
+    select_ro_from_dropdown
+    click_on "Log in"
     expect(user.reload.email).to eq "test@example.com"
   end
 

@@ -67,10 +67,6 @@ class User < ActiveRecord::Base
     !regional_office.blank?
   end
 
-  def authenticate(regional_office:)
-    @regional_office = regional_office.upcase
-  end
-
   def attributes
     super.merge(display_name: display_name)
   end
