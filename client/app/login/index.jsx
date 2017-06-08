@@ -58,5 +58,6 @@ export default class Login extends React.PureComponent {
 }
 
 Login.propTypes = {
+  redirectTo: PropTypes.string.isRequired,
   regionalOfficeOptions: PropTypes.array.isRequired
 };
