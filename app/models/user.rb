@@ -112,8 +112,6 @@ class User < ActiveRecord::Base
     VACOLS::RegionalOffice::STATIONS[station_id]
   end
 
-  private
-
   class << self
     attr_writer :case_assignment_repository
     attr_writer :authentication_service

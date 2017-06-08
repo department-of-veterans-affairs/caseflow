@@ -9,9 +9,7 @@ class SessionsController < ApplicationController
       return render "errors/500", layout: "application", status: 503
     end
 
-    unless current_user
-      return redirect_to(ENV["SSO_URL"]) 
-    end
+    return redirect_to(ENV["SSO_URL"]) unless current_user
 
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
     # CSS will give us the station office ID. Some station office IDs correspond to multiple
@@ -19,7 +17,7 @@ class SessionsController < ApplicationController
     if current_user.ro_is_ambiguous_from_station_office?
       @regional_office_options = current_user.station_offices.map do |regional_office_code|
         {
-          "regionalOfficeCode" => regional_office_code,  
+          "regionalOfficeCode" => regional_office_code,
           "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
         }
       end
@@ -31,7 +29,7 @@ class SessionsController < ApplicationController
 
   def update
     current_user.authenticate(regional_office: params["regional_office"])
-     # The presence of the regional_office field is used to mark a user as logged in.
+    # The presence of the regional_office field is used to mark a user as logged in.
     session[:regional_office] = current_user.regional_office
     render json: {}
   end
