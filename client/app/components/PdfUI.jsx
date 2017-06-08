@@ -84,7 +84,7 @@ export class PdfUI extends React.Component {
             Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
           </span>
         </div>
-       
+
           <div className="cf-pdf-footer-buttons-right">
            { this.props.nextDocId &&
             <Button
