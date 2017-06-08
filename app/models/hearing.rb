@@ -4,13 +4,10 @@ class Hearing < ActiveRecord::Base
 
   attr_accessor :date, :type, :venue_key, :vacols_record, :closed_at, :disposition
 
-  def attributes
-    {
-      date: date,
-      type: type,
-      venue: venue
-    }
-  end
+  belongs_to :appeal
+  belongs_to :user # the judge
+  has_many :issues, foreign_key: :appeal_id, primary_key: :appeal_id
+  accepts_nested_attributes_for :issues
 
   def venue
     self.class.venues[venue_key]
@@ -22,6 +19,20 @@ class Hearing < ActiveRecord::Base
 
   def scheduled_pending?
     date && !closed?
+  end
+
+  def request_type
+    type != :central_office ? type.to_s.capitalize : "CO"
+  end
+
+  def appellant_name
+    # This returns a better format than Appeal#appellant_name's
+    # "<first_name>, <middle_initial>, <last_name>".
+
+    if appeal.appellant_first_name
+      name = "#{appeal.appellant_last_name}, #{appeal.appellant_first_name}"
+      name.concat " #{appeal.appellant_middle_initial}." if appeal.appellant_middle_initial
+    end
   end
 
   class << self

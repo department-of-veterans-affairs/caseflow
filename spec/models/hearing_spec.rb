@@ -33,4 +33,62 @@ describe Hearing do
       expect(subject.disposition).to eq(:no_show)
     end
   end
+
+  context ".update" do
+    subject { hearing.update(hearing_hash) }
+    let(:hearing) { Generators::Hearing.build }
+    let(:issue) { hearing.appeal.issues.first }
+    let(:hearing_hash) do
+      {
+        worksheet_military_service: "Vietnam 1968 - 1970",
+        issues_attributes: [
+          {
+            hearing_worksheet_status: :remand,
+            hearing_worksheet_vha: true
+          }
+        ]
+      }
+    end
+
+    it "updates nested attributes (issues)" do
+      expect(hearing.issues.count).to eq(0)
+      subject # do update
+      expect(hearing.issues.count).to eq(1)
+
+      expect(hearing.issues.first.hearing_worksheet_status).to eq("remand")
+      expect(hearing.issues.first.hearing_worksheet_vha).to be_truthy
+
+      # test that a 2nd save updates the same record, rather than create new one
+      hearing_issue_id = hearing.issues.first.id
+      hearing_hash[:issues_attributes][0][:hearing_worksheet_status] = :deny
+      hearing_hash[:issues_attributes][0][:id] = hearing_issue_id
+
+      hearing.update(hearing_hash)
+
+      expect(hearing.issues.count).to eq(1)
+      expect(hearing.issues.first.id).to eq(hearing_issue_id)
+      expect(hearing.issues.first.hearing_worksheet_status).to eq("deny")
+    end
+  end
+
+  context "#request_type" do
+    it "returns 'CO' for :central_office" do
+      hearing = Hearing.new(type: :central_office)
+      expect(hearing.request_type).to eql("CO")
+    end
+
+    it "otherwise returns type in sentence case" do
+      hearing = Hearing.new(type: :video)
+      expect(hearing.request_type).to eql("Video")
+    end
+  end
+
+  context "#appellant_name" do
+    let(:hearing) { Generators::Hearing.build }
+
+    it "returns appellant name" do
+      found = /^(\w+)(, )(\w+)((, )(\w+)(\W*.*$))*/.match(hearing.appellant_name)
+      expect(found).to be_truthy.or(eql(nil))
+    end
+  end
 end

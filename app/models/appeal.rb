@@ -1,6 +1,5 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
-
   has_many :tasks
 
   class MultipleDecisionError < StandardError; end
@@ -188,7 +187,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def ssocs
-    @ssocs ||= ssoc_dates.map { |ssoc_date| fuzzy_matched_document("SSOC", ssoc_date) }
+    # an appeal might have multiple SSOC documents so match vacols date
+    # to each VBMS document
+    @ssocs ||= ssoc_dates.sort.inject([]) do |docs, ssoc_date|
+      docs << fuzzy_matched_document("SSOC", ssoc_date, excluding: docs)
+    end
   end
 
   def certified?
@@ -291,10 +294,18 @@ class Appeal < ActiveRecord::Base
     @documents_by_type = {}
   end
 
+  attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  # VACOLS stores the VBA veteran unique identifier a little
+  # differently from BGS and VBMS. vbms_id correlates to the
+  # VACOLS formatted veteran identifier, sanitized_vbms_id
+  # correlates to the VBMS/BGS veteran identifier, which is
+  # sometimes called file_number.
+  #
+  # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
@@ -336,12 +347,16 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def fuzzy_matched_document(type, vacols_datetime)
+  def fuzzy_matched_document(type, vacols_datetime, excluding: [])
     return nil unless vacols_datetime
-
     Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
-      doc.fuzzy_match_vbms_document_from(documents)
+      doc.fuzzy_match_vbms_document_from(exclude_and_sort_documents(excluding))
     end
+  end
+
+  def exclude_and_sort_documents(excluding)
+    excluding_ids = excluding.map(&:vbms_document_id)
+    documents.reject { |doc| excluding_ids.include? doc.vbms_document_id }.sort_by(&:received_at)
   end
 
   # List of all end products for the appeal's veteran.
@@ -371,9 +386,9 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if appellant_ssn.length < 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
-      repository.appeals_by_appellant_ssn(appellant_ssn)
+      repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
                 .sort_by(&:latest_event_date)
                 .reverse
@@ -397,6 +412,27 @@ class Appeal < ActiveRecord::Base
       repository.certify(appeal: appeal, certification: certification)
       repository.upload_document_to_vbms(appeal, form8)
       repository.clean_document(form8.pdf_location)
+    end
+
+    # TODO: Move to AppealMapper?
+    def convert_file_number_to_vacols(file_number)
+      return "#{file_number}S" if file_number.length == 9
+      return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
+
+      fail Caseflow::Error::InvalidFileNumber
+    end
+
+    private
+
+    # Because SSN is not accurate in VACOLS, we pull the file
+    # number from BGS for the SSN and use that to look appeals
+    # up in VACOLS
+    def vbms_id_for_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
+
+      fail ActiveRecord::RecordNotFound unless file_number
+
+      convert_file_number_to_vacols(file_number)
     end
   end
 end

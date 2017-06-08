@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170525191011) do
+ActiveRecord::Schema.define(version: 20170602182637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,13 @@ ActiveRecord::Schema.define(version: 20170525191011) do
     t.boolean  "poa_matches"
     t.boolean  "poa_correct_in_vacols"
     t.boolean  "poa_correct_in_bgs"
+    t.string   "bgs_rep_address_line_1"
+    t.string   "bgs_rep_address_line_2"
+    t.string   "bgs_rep_address_line_3"
+    t.string   "bgs_rep_city"
+    t.string   "bgs_rep_country"
+    t.string   "bgs_rep_state"
+    t.string   "bgs_rep_zip"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
@@ -226,7 +233,20 @@ ActiveRecord::Schema.define(version: 20170525191011) do
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
-    t.string  "vacols_id", null: false
+    t.string  "vacols_id",                       null: false
+    t.string  "worksheet_witness"
+    t.string  "worksheet_contentions"
+    t.string  "worksheet_evidence"
+    t.string  "worksheet_military_service"
+    t.string  "worksheet_comments_for_attorney"
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.integer "hearing_worksheet_status"
+    t.boolean "hearing_worksheet_reopen", default: false
+    t.boolean "hearing_worksheet_vha",    default: false
   end
 
   create_table "tags", force: :cascade do |t|

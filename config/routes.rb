@@ -69,7 +69,11 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index]
-    get 'dockets/:date', to: 'dockets#docket'
+    get 'dockets/:date', to: 'dockets#show'
+  end
+
+  resources :hearings, only: []  do
+    resource :worksheet, only: [:update]
   end
 
   patch "certifications" => "certifications#create"

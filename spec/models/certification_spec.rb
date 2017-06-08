@@ -272,4 +272,24 @@ describe Certification do
       end
     end
   end
+
+  context "#bgs_rep_address_found?" do
+    subject { certification.bgs_rep_address_found? }
+
+    it "returns true when bgs address is found" do
+      expect(subject).to eq true
+    end
+  end
+
+  context "#fetch_power_of_attorney!" do
+    subject { certification }
+
+    it "returns true when bgs address is found" do
+      certification.fetch_power_of_attorney!
+      expect(subject.bgs_rep_city).to eq "SAN FRANCISCO"
+      expect(subject.bgs_representative_type).to eq "Attorney"
+      expect(subject.bgs_representative_name).to eq "Clarence Darrow"
+      expect(subject.vacols_representative_name).to eq "The American Legion"
+    end
+  end
 end

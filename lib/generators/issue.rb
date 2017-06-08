@@ -18,7 +18,17 @@ class Generators::Issue
     end
 
     def build(attrs = {})
-      ::Issue.new(default_attrs.merge(attrs))
+      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || Generators::Appeal.create.id
+
+      issue = ::Issue.new(default_attrs.merge(attrs))
+
+      if issue.appeal.vacols_id
+        Fakes::AppealRepository.issue_records ||= {}
+        Fakes::AppealRepository.issue_records[issue.appeal.vacols_id] ||= []
+        Fakes::AppealRepository.issue_records[issue.appeal.vacols_id].push(issue)
+      end
+
+      issue
     end
   end
 end
