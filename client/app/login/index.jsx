@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
+import StatusMessage from '../components/StatusMessage';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
 
@@ -8,6 +9,7 @@ export default class Login extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      logInHasFailed: false,
       isLoggingIn: false,
       regionalOfficeCode: null
     };
@@ -22,10 +24,11 @@ export default class Login extends React.PureComponent {
       }
     }).then(
       () => window.location = this.props.redirectTo,
-      (err) => {
-        this.setState({ isLoggingIn: false });
-        // eslint-disable-next-line no-console
-        console.log(err);
+      () => {
+        this.setState({ 
+          isLoggingIn: false, 
+          logInHasFailed: true 
+        });
       }
     );
   }
@@ -38,21 +41,32 @@ export default class Login extends React.PureComponent {
     }));
 
     return <div className="cf-app-segment">
-      <h1>Welcome to Caseflow!</h1>
-      <p>Please select the regional office you are logging in from.</p>
+      { this.state.logInHasFailed ?
+          <StatusMessage
+            title="Technical Difficulties">
+            It looks like Caseflow is experiencing technical difficulties right now.<br />
+            Please <a href="">refresh the page</a> and try again.
+          </StatusMessage> :
 
-      <SearchableDropdown
-        name="Regional office selector"
-        options={options} searchable={false}
-        onChange={this.handleSelectRegionalOffice}
-        value={this.state.regionalOfficeCode} />
+          <div>
+            <h1>Welcome to Caseflow!</h1>
+            <p>Please select the regional office you are logging in from.</p>
 
-      <Button
-        disabled={!this.state.regionalOfficeCode}
-        onClick={this.handleClickLogin}
-        name="Log in"
-        loading={this.state.isLoggingIn}
-        loadingText="Logging in" />
+            <SearchableDropdown
+              name="Regional office selector"
+              options={options} searchable={false}
+              onChange={this.handleSelectRegionalOffice}
+              value={this.state.regionalOfficeCode} />
+
+            <Button
+              disabled={!this.state.regionalOfficeCode}
+              onClick={this.handleClickLogin}
+              name="Log in"
+              loading={this.state.isLoggingIn}
+              loadingText="Logging in" />
+          </div>
+      }
+
     </div>;
   }
 }
