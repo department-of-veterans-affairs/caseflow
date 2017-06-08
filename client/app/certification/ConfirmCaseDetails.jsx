@@ -10,6 +10,8 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import Table from '../components/Table';
 import Footer from './Footer';
+import Dropdown from '../components/Dropdown';
+import TextField from '../components/TextField';
 
 const poaMatchesOptions = [
   { displayText: 'Yes',
@@ -27,10 +29,79 @@ const poaCorrectLocationOptions = [
     value: Constants.poaCorrectLocation.NONE }
 ];
 
+const representativeTypeOptions = [
+  { displayText: 'Attorney',
+    value: Constants.representativeTypes.ATTORNEY },
+  { displayText: 'Agent',
+    value: Constants.representativeTypes.AGENT },
+  { displayText: 'Service organization',
+    value: Constants.representativeTypes.ORGANIZATION },
+  { displayText: 'Other',
+    value: Constants.representativeTypes.OTHER },
+  { displayText: 'No representative',
+    value: Constants.representativeTypes.NONE }
+];
+
+const organizationNamesOptions = [
+  { displayText: 'The American Legion',
+    value: Constants.organizationNames.THE_AMERICAN_LEGION },
+  { displayText: 'AMVETS',
+    value: Constants.organizationNames.AMVETS },
+  { displayText: 'American Red Cross',
+    value: Constants.organizationNames.AMERICAN_RED_CROSS },
+  { displayText: 'Disabled American Veterans',
+    value: Constants.organizationNames.DISABLED_AMERICAN_VETERANS },
+  { displayText: 'Jewish War Veterans',
+    value: Constants.organizationNames.JEWISH_WAR_VETERANS },
+  { displayText: 'Military Order of the Purple Heart',
+    value: Constants.organizationNames.MILITARY_ORDER_OF_THE_PURPLE_HEART },
+  { displayText: 'Paralyzed Veterans of America',
+    value: Constants.organizationNames.PARALYZED_VETERANS_OF_AMERICA },
+  { displayText: 'Veterans of Foreign Wars',
+    value: Constants.organizationNames.VETERANS_OF_FOREIGN_WARS },
+  { displayText: 'State Service Organization(s)',
+    value: Constants.organizationNames.STATE_SERVICE_ORGANIZATION },
+  { displayText: 'Maryland Veterans Commission',
+    value: Constants.organizationNames.MARYLAND_VETERANS_COMMISSION },
+  { displayText: 'Virginia Department of Veterans Affairs',
+    value: Constants.organizationNames.VIRGINIA_DEPARTMENT_OF_VETERANS_AFFAIRS },
+  { displayText: 'Navy Mutual Aid Association',
+    value: Constants.organizationNames.NAVY_MUTUAL_AID_ASSOCIATION },
+  { displayText: 'Non-Commissioned Officers Association',
+    value: Constants.organizationNames.NON_COMMISSIONED_OFFICERS_ASSOCIATION },
+  { displayText: 'Other Service Organization',
+    value: Constants.organizationNames.OTHER_SERVICE_ORGANIZATION },
+  { displayText: 'Army & Air Force Mutual Aid Assn.',
+    value: Constants.organizationNames.ARMY_AND_AIR_FORCE_MUTUAL_AID_ASSN },
+  { displayText: 'Catholic War Veterans',
+    value: Constants.organizationNames.CATHOLIC_WAR_VETERANS },
+  { displayText: 'Fleet Reserve Association',
+    value: Constants.organizationNames.FLEET_RESERVE_ASSOCIATION },
+  { displayText: 'Marine Corp League',
+    value: Constants.organizationNames.MARINE_CORP_LEAGUE },
+  { displayText: 'Vietnam Veterans of America',
+    value: Constants.organizationNames.VIETNAM_VETERANS_OF_AMERICA },
+  { displayText: 'American Ex-Prisoners of War',
+    value: Constants.organizationNames.AMERICAN_EX_PRISONERS_OF_WAR },
+  { displayText: 'Blinded Veterans Association',
+    value: Constants.organizationNames.BLINDED_VETERANS_ASSOCIATION },
+  { displayText: 'National Veterans Legal Services Program',
+    value: Constants.organizationNames.NATIONAL_VETERANS_LEGAL_SERVICES_PROGRAM },
+  { displayText: 'National Veterans Organization of America',
+    value: Constants.organizationNames.NATIONAL_VETERANS_ORGANIZATION_OF_AMERICA },
+  { displayText: 'Wounded Warrior Project',
+    value: Constants.organizationNames.WOUNDED_WARRIOR_PROJECT },
+  { displayText: 'Unlisted service organization',
+    value: Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION }
+];
+
 // TODO: We should give each question a constant name.
 const ERRORS = {
   poaMatches: 'Please select yes or no.',
-  poaCorrectLocation: 'Please select an option.'
+  poaCorrectLocation: 'Please select an option.',
+  representativeType: 'Please select a representative type.',
+  representativeName: 'Please select a service organization\'s name.',
+  organizationName: 'Please select an organization.'
 };
 
 /*
@@ -65,7 +136,10 @@ export class ConfirmCaseDetails extends React.Component {
     // modules.
     let {
       poaMatches,
-      poaCorrectLocation
+      poaCorrectLocation,
+      representativeType,
+      organizationName,
+      representativeName
     } = this.props;
 
     const erroredFields = [];
@@ -76,6 +150,21 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (poaMatches === Constants.poaMatches.NO_MATCH && ValidatorsUtil.requiredValidator(poaCorrectLocation)) {
       erroredFields.push('poaCorrectLocation');
+    }
+
+    if (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+     ValidatorsUtil.requiredValidator(representativeType)) {
+      erroredFields.push('representativeType');
+    }
+
+    if (representativeType === Constants.representativeTypes.ORGANIZATION &&
+      ValidatorsUtil.requiredValidator(organizationName)) {
+      erroredFields.push('organizationName');
+    }
+
+    if (organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+     ValidatorsUtil.requiredValidator(representativeName)) {
+      erroredFields.push('representativeName');
     }
 
     return erroredFields;
@@ -91,13 +180,18 @@ export class ConfirmCaseDetails extends React.Component {
       return;
     }
 
-    let representativeName = this.props.vacolsRepresentativeName;
-    let representativeType = this.props.vacolsRepresentativeType;
+    let representativeName, representativeType;
 
-    if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
-      this.props.poaMatches === Constants.poaMatches.NO_MATCH) {
-      representativeName = this.props.bgsRepresentativeName;
-      representativeType = this.props.bgsRepresentativeType;
+    // Send updates only if neither VBMS nor VACOLS info is correct
+    if (this.props.poaCorrectLocation === Constants.poaCorrectLocation.NONE) {
+      representativeType = this.props.representativeType;
+      if (this.props.representativeType === Constants.representativeTypes.ORGANIZATION) {
+        if (this.props.organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) {
+          representativeName = this.props.representativeName;
+        } else {
+          representativeName = this.props.organizationName;
+        }
+      }
     }
 
     this.props.certificationUpdateStart({
@@ -107,6 +201,15 @@ export class ConfirmCaseDetails extends React.Component {
       poaCorrectLocation: this.props.poaCorrectLocation,
       vacolsId: this.props.match.params.vacols_id
     });
+  }
+
+  static getDisplayText(value) {
+    const hash = {};
+
+    representativeTypeOptions.map((item) =>
+      hash[item.value] = item.displayText);
+
+    return hash[value];
   }
 
   isFieldErrored(fieldName) {
@@ -122,12 +225,19 @@ export class ConfirmCaseDetails extends React.Component {
     }
   }
 
+  /* eslint max-statements: ["error", 13]*/
   render() {
     let {
       poaMatches,
       changePoaMatches,
       poaCorrectLocation,
+      representativeType,
+      representativeName,
+      organizationName,
       changePoaCorrectLocation,
+      changeOrganizationName,
+      changeRepresentativeType,
+      changeRepresentativeName,
       bgsRepresentativeType,
       bgsRepresentativeName,
       vacolsRepresentativeType,
@@ -167,14 +277,25 @@ export class ConfirmCaseDetails extends React.Component {
 
     let appellantInfoRowObjects = [
       {
-        vbms: bgsRepresentativeName,
-        vacols: vacolsRepresentativeName
+        vbms: bgsRepresentativeName || 'Representative name not found',
+        vacols: vacolsRepresentativeName || 'Representative name not found'
       },
       {
-        vbms: bgsRepresentativeType,
-        vacols: vacolsRepresentativeType
+        vbms: bgsRepresentativeType || 'Representative type not found',
+        vacols: vacolsRepresentativeType || 'Representative type not found'
       }
     ];
+
+    const representativeTypeMessage =
+        <p>Since you selected <strong>{ConfirmCaseDetails.getDisplayText(representativeType)}</strong>, make sure
+         you update the representative's name and address information in VACOLS before continuing.
+        Caseflow will update the representative type in VACOLS.</p>;
+
+    const unlistedServiceMessage =
+        <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
+         the representative's address information in VACOLS before continuing. Caseflow will update
+         the representative type and name in VACOLS.</p>;
+
 
     return <div>
         <div className="cf-app-segment cf-app-segment--alt">
@@ -216,6 +337,39 @@ export class ConfirmCaseDetails extends React.Component {
           }
 
           {
+            poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+            <RadioField
+              name="What type of representative did the appellant request for this appeal?"
+              options={representativeTypeOptions}
+              value={representativeType}
+              onChange={changeRepresentativeType}
+              errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
+              required={true}
+            />
+          }
+
+          {
+            representativeType === Constants.representativeTypes.ORGANIZATION &&
+            <Dropdown
+              name="Service organization name"
+              options={organizationNamesOptions}
+              value={organizationName}
+              onChange={changeOrganizationName}
+              errorMessage={this.isFieldErrored('organizationName') ? ERRORS.organizationName : null}
+              required={true}
+            />
+          }
+          {
+            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+            <TextField
+              name={'Enter the service organization\'s name:'}
+              value={representativeName}
+              errorMessage={(this.isFieldErrored('representativeName') ? ERRORS.representativeName : null)}
+              required={true}
+              onChange={changeRepresentativeName}/>
+          }
+
+          {
             poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
             'Great! Caseflow will keep the representative information as it exists now in VACOLS.'
           }
@@ -225,9 +379,21 @@ export class ConfirmCaseDetails extends React.Component {
               'in VACOLS with information from VBMS.'
           }
           {
-            poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
-            'Please go to VACOLS and manually enter the correct representative information.'
+            (representativeType === Constants.representativeTypes.ATTORNEY ||
+              representativeType === Constants.representativeTypes.AGENT ||
+              representativeType === Constants.representativeTypes.OTHER) &&
+            representativeTypeMessage
           }
+          {
+            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+            unlistedServiceMessage
+          }
+          {
+            (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
+            `Great! Caseflow will update the representative type, name, and address
+             information for the selected service organization in VACOLS.`
+          }
+
         </div>
 
         <Footer
@@ -268,6 +434,8 @@ const mapDispatchToProps = (dispatch) => ({
 
   changeRepresentativeName: (name) => dispatch(actions.changeRepresentativeName(name)),
 
+  changeOrganizationName: (name) => dispatch(actions.changeOrganizationName(name)),
+
   changeRepresentativeType: (type) => dispatch(actions.changeRepresentativeType(type)),
 
   changeOtherRepresentativeType: (other) => {
@@ -287,6 +455,7 @@ const mapStateToProps = (state) => ({
   serverError: state.serverError,
   representativeType: state.representativeType,
   representativeName: state.representativeName,
+  organizationName: state.organizationName,
   bgsRepresentativeType: state.bgsRepresentativeType,
   bgsRepresentativeName: state.bgsRepresentativeName,
   bgsPoaAddressFound: state.bgsPoaAddressFound,

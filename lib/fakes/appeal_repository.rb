@@ -251,9 +251,11 @@ class Fakes::AppealRepository
   def self.seed_appeal_ready_to_certify!
     nod, soc, form9, ssoc1, ssoc2 = certification_documents
 
+    form9.vbms_document_id = "2"
+
     Generators::Appeal.build(
       vacols_id: "123C",
-      vbms_id: "1111",
+      vbms_id: "111223333S",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,
@@ -271,6 +273,7 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vacols_id: "456C",
+      vbms_id: "111224444S",
       vacols_record: {
         template: :ready_to_certify,
         nod_date: nod.received_at,

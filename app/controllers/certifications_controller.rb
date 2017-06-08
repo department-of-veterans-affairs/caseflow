@@ -58,7 +58,7 @@ class CertificationsController < ApplicationController
       certifying_official_title: certification.certifying_official_title
     )
     form8.save_pdf!
-    @certification.complete!(current_user.id)
+    certification.complete!(current_user.id)
     render json: {}
   end
 
@@ -102,11 +102,7 @@ class CertificationsController < ApplicationController
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
   def validate_data_presence_v2
-    fail Caseflow::Error::CertificationMissingData unless check_confirm_case_data && check_confirm_hearing_data
-  end
-
-  def check_confirm_case_data
-    certification.representative_type && certification.representative_name
+    fail Caseflow::Error::CertificationMissingData unless check_confirm_hearing_data
   end
 
   def check_confirm_hearing_data
