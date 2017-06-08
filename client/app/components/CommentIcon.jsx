@@ -33,6 +33,7 @@ export class CommentIcon extends React.Component {
         top: this.props.position.y
       }}
       className="commentIcon-container"
+      id={`commentIcon-container-${this.props.comment.uuid}`}
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>

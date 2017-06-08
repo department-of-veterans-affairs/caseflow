@@ -21,7 +21,9 @@ export default class TextField extends React.Component {
       validationError,
       invisible,
       placeholder,
-      title
+      title,
+      onKeyPress,
+      maxLength
     } = this.props;
 
     let textInputClass = className.concat(
@@ -51,14 +53,16 @@ export default class TextField extends React.Component {
         name={name}
         id={name}
         onChange={this.onChange}
+        onKeyPress={onKeyPress}
         type={type}
         value={value}
         readOnly={readOnly}
         placeholder={placeholder}
         title={title}
+        maxLength={maxLength}
       />
 
-      {(validationError !== false) &&
+      {(validationError) &&
         <div className="cf-validation">
           <span>{validationError}</span>
         </div>
