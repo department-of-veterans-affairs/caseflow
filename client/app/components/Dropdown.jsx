@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class DropDown extends React.Component {
+export default class Dropdown extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.value);
   }
@@ -25,9 +25,9 @@ export default class DropDown extends React.Component {
       <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
         {options.map((option, index) =>
           <option
-            value={option}
-            id={`${name}_${option}`}
-            key={index}>{option}
+            value={option.value}
+            id={`${name}_${option.value}`}
+            key={index}>{option.displayText}
           </option>
         )}
       </select>
@@ -35,7 +35,7 @@ export default class DropDown extends React.Component {
   }
 }
 
-DropDown.propTypes = {
+Dropdown.propTypes = {
   errorMessage: PropTypes.string,
   label: PropTypes.string,
   name: PropTypes.string.isRequired,

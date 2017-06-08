@@ -23,6 +23,13 @@ export const changeRepresentativeType = (representativeType) => ({
   }
 });
 
+export const changeOrganizationName = (organizationName) => ({
+  type: Constants.CHANGE_ORGANIZATION_NAME,
+  payload: {
+    organizationName
+  }
+});
+
 export const changeOtherRepresentativeType = (otherRepresentativeType) => ({
   type: Constants.CHANGE_OTHER_REPRESENTATIVE_TYPE,
   payload: {
@@ -69,6 +76,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     poa_correct_in_vacols: poaCorrectInVacols,
     poa_correct_in_bgs: poaCorrectInBgs
   };
+
   /* eslint-enable "camelcase" */
 
   ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).

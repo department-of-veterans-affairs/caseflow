@@ -9,6 +9,10 @@ export const changeRepresentativeType = (state, action) => {
   if (state.representativeType !== Constants.representativeTypes.OTHER) {
     update.otherRepresentativeType = null;
   }
+  if (state.representativeType === Constants.representativeTypes.ORGANIZATION) {
+    update.organizationName = null;
+    update.representativeName = null;
+  }
 
   return Object.assign({}, state, update);
 };
@@ -19,6 +23,12 @@ export const changeRepresentativeName = (state, action) => {
   });
 };
 
+export const changeOrganizationName = (state, action) => {
+  return Object.assign({}, state, {
+    organizationName: action.payload.organizationName
+  });
+};
+
 export const changeOtherRepresentativeType = (state, action) => {
   return Object.assign({}, state, {
     otherRepresentativeType: action.payload.otherRepresentativeType
@@ -26,13 +36,24 @@ export const changeOtherRepresentativeType = (state, action) => {
 };
 
 export const changePoaMatches = (state, action) => {
-  return Object.assign({}, state, {
-    poaMatches: action.payload.poaMatches
-  });
+  const update = {
+    poaMatches: action.payload.poaMatches,
+    poaCorrectLocation: null,
+    organizationName: null,
+    representativeName: null,
+    representativeType: null
+  };
+
+  return Object.assign({}, state, update);
 };
 
 export const changePoaCorrectLocation = (state, action) => {
-  return Object.assign({}, state, {
-    poaCorrectLocation: action.payload.poaCorrectLocation
-  });
+  const update = {
+    poaCorrectLocation: action.payload.poaCorrectLocation,
+    organizationName: null,
+    representativeName: null,
+    representativeType: null
+  };
+
+  return Object.assign({}, state, update);
 };

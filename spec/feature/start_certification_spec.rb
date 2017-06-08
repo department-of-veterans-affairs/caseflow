@@ -130,6 +130,49 @@ RSpec.feature "Start Certification" do
       end
 
       click_button("Continue")
+      expect(page).to have_content("Please select a representative type.")
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "Attorney").click
+      end
+      expect(page).to have_content("Since you selected Attorney")
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "Agent").click
+      end
+      expect(page).to have_content("Since you selected Agent")
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "Other").click
+      end
+      expect(page).to have_content("Since you selected Other")
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "No representative").click
+      end
+      expect(page).to_not have_content("Since you selected")
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "Service organization").click
+      end
+      expect(page).to have_content("Service organization name")
+      click_button("Continue")
+      expect(page).to have_content("Please select an organization.")
+      select "AMVETS", from: "Service organization name"
+      expect(page).to have_content("Great! Caseflow will update")
+      click_button("Continue")
+      expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+      page.go_back
+      within_fieldset("Does the representative information from VBMS and VACOLS match?") do
+        find("label", text: "No").click
+      end
+      within_fieldset("Which information source shows the correct representative for this appeal?") do
+        find("label", text: "None").click
+      end
+      within_fieldset("What type of representative did the appellant request for this appeal? ") do
+        find("label", text: "Service organization").click
+      end
+      select "Unlisted service organization", from: "Service organization name"
+      expect(page).to_not have_content("Since you selected Unlisted")
+      click_button("Continue")
+      expect(page).to have_content("Please select a service organization's name.")
+      fill_in "Enter the service organization's name:", with: "Test"
+      click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
 
       # go back to the case datails page
@@ -140,6 +183,11 @@ RSpec.feature "Start Certification" do
       within_fieldset("Which information source shows the correct representative for this appeal?") do
         expect(find_field("None", visible: false)).to be_checked
       end
+      within_fieldset("What type of representative did the appellant request for this appeal?") do
+        expect(find_field("Service organization", visible: false)).to be_checked
+      end
+      expect(page).to have_content("Unlisted service organization")
+      expect(find_field("Enter the service organization's name:").value).to eq("Test")
       click_button("Continue")
 
       within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
