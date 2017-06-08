@@ -90,12 +90,7 @@ class PowerOfAttorneyRepository
         last_name: split_representative_name[2]
       )
     else
-      update_vacols_rep_name!(
-        case_record: appeal.case_record,
-        first_name: '',
-        middle_initial: '',
-        last_name: ''
-      )
+      update_vacols_rep_name!(case_record: appeal.case_record, first_name: "", middle_initial: "", last_name: "")
       update_vacols_rep_address_one!(case_record: appeal.case_record, address_one: representative_name)
     end
   end
