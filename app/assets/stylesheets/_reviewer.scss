@@ -486,7 +486,7 @@ input[type="search"].cf-search-input-with-close {
 .cf-keyboard-shortcuts {
   bottom: 0;
   position: absolute;
-  margin-left: 50px;
+  margin-left: 70px;
 
   .cf-btn-link {
     &:hover {
@@ -498,13 +498,17 @@ input[type="search"].cf-search-input-with-close {
 div[id=cf-keyboard-modal] {
   height: 580px;
   overflow: auto;
-  max-height: 540px;
   display: block;
+
+  svg {
+    vertical-align: middle;
+    margin-right: 5px;
+  }
 }
 
 .cf-modal-scroll {
   .cf-keyboard-modal-scroll {
-    max-height: 330px;
+    max-height: 370px;
     overflow: auto;
   }
 }

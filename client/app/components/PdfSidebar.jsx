@@ -201,7 +201,7 @@ export class PdfSidebar extends React.Component {
             {comments}
           </div>
         </div>
-        <div className="cf-pdf-center-text cf-keyboard-shortcuts">
+        <div className="cf-keyboard-shortcuts">
           <Button
               id="cf-open-keyboard-modal"
               name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
