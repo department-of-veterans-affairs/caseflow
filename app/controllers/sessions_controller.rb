@@ -22,9 +22,10 @@ class SessionsController < ApplicationController
         }
       end
       @redirect_to = session["return_to"] || root_path
-    else
-      redirect_to(session["return_to"] || root_path)
+      return
     end
+
+    redirect_to(session["return_to"] || root_path)
   end
 
   def update
