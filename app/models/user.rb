@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
+  # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     ro_is_ambiguous_from_station_office? ? @regional_office : station_office 
   end
@@ -69,8 +69,7 @@ class User < ActiveRecord::Base
 
   # This method is used for VACOLS authentication
   def authenticate(regional_office:, password:)
-    return false unless User.authenticate_vacols(regional_office, password)
-
+    # return false unless User.authenticate_vacols(regional_office, password)
     @regional_office = regional_office.upcase
   end
 

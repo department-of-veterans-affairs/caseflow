@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
   end
 
   def update
-    session[:regional_office] = params["regional_office"]
+    current_user.authenticate(params["regional_office"])
     render json: {}
   end
 
