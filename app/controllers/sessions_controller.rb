@@ -47,8 +47,4 @@ class SessionsController < ApplicationController
   end
 
   private
-
-  def authentication_params
-    { regional_office: params["regional_office"], password: params["password"] }
-  end
 end
