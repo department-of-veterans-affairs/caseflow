@@ -268,6 +268,26 @@ class Fakes::AppealRepository
     )
   end
 
+  def self.seed_appeal_ready_to_certify_2!
+    nod, soc, form9, ssoc1, ssoc2 = certification_documents
+
+    form9.vbms_document_id = "2"
+
+    Generators::Appeal.build(
+      vacols_id: "125C",
+      vbms_id: "111225555",
+      vacols_record: {
+        template: :ready_to_certify,
+        nod_date: nod.received_at,
+        soc_date: soc.received_at + 2.days,
+        form9_date: form9.received_at,
+        ssoc_dates: [ssoc1.received_at, ssoc2.received_at],
+        appellant_ssn: "111223344"
+      },
+      documents: [nod, soc, form9, ssoc1, ssoc2]
+    )
+  end
+
   def self.seed_appeal_mismatched_documents!
     nod, soc, form9 = certification_documents
 
@@ -335,6 +355,7 @@ class Fakes::AppealRepository
 
   def self.seed_certification_data!
     seed_appeal_ready_to_certify!
+    seed_appeal_ready_to_certify_2!
     seed_appeal_mismatched_documents!
     seed_appeal_already_certified!
     seed_appeal_ready_to_certify_with_informal_form9!
