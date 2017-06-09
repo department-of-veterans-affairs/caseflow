@@ -1,7 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Session", :type => :request do
-
+RSpec.describe "Session", type: :request do
   let(:appeal) { Generators::Appeal.build(vacols_record: :ready_to_certify) }
 
   before do
@@ -19,7 +18,7 @@ RSpec.describe "Session", :type => :request do
 
   context "when regional office is set" do
     it "user should be authenticated" do
-      patch "/sessions/update", :regional_office => "RO05"
+      patch "/sessions/update", regional_office: "RO05"
       expect(status).to eq 200
       get "/certifications/new/#{appeal.vacols_id}"
       expect(status).to_not eq 302

@@ -25,9 +25,9 @@ export default class Login extends React.PureComponent {
     }).then(
       () => window.location = this.props.redirectTo,
       () => {
-        this.setState({ 
-          isLoggingIn: false, 
-          logInHasFailed: true 
+        this.setState({
+          isLoggingIn: false,
+          logInHasFailed: true
         });
       }
     );

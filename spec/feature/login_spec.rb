@@ -31,7 +31,8 @@ RSpec.feature "Login" do
   end
 
   # https://stackoverflow.com/questions/36472930/session-sometimes-not-persisting-in-capybara-selenium-test
-  scenario "with valid credentials", :skip => "This test sometimes fails because sessions do not persist across requests" do
+  scenario "with valid credentials",
+           skip: "This test sometimes fails because sessions do not persist across requests" do
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_content("Please select the regional office you are logging in from.")
     select_ro_from_dropdown
@@ -40,14 +41,15 @@ RSpec.feature "Login" do
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO05)")
   end
 
-  scenario "logging out redirects to home page", :skip => "This test sometimes fails because sessions do not persist across requests"  do
+  scenario "logging out redirects to home page",
+           skip: "This test sometimes fails because sessions do not persist across requests" do
     visit "certifications/new/#{appeal.vacols_id}"
 
     # vacols login
     expect(page).to have_content("Please select the regional office you are logging in from.")
     select_ro_from_dropdown
     click_on "Log in"
-    
+
     click_on "ANNE MERICA (RO05)"
     click_on "Sign out"
     visit "certifications/new/#{appeal.vacols_id}"
