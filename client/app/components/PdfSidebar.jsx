@@ -200,49 +200,49 @@ export class PdfSidebar extends React.Component {
                 onSaveCommentEdit={this.props.createAnnotation} />}
             {comments}
           </div>
-        </div>
-        <div className="cf-keyboard-shortcuts">
-          <Button
-              id="cf-open-keyboard-modal"
-              name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-              onClick={this.props.handleOpenShortcutsModal}
-              classNames={['cf-btn-link']}
-          />
-        { this.props.viewKeyboardShortcuts && <div className="cf-modal-scroll">
-          <Modal
-              buttons = {[
-                { classNames: ['usa-button', 'usa-button-secondary'],
-                  name: 'Thanks, got it!',
-                  onClick: this.props.handleCloseShortcutsModal
-                }
-              ]}
-              closeHandler={this.props.handleCloseShortcutsModal}
-              title="Keyboard shortcuts"
-              noDivider={true}
-              id="cf-keyboard-modal">
-              <div className="cf-keyboard-modal-scroll">
-                <Table
-                  summary=" "
-                  columns={scrollColumns}
-                  rowObjects={scrollInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-                <Table
-                  summary=" "
-                  columns={commentColumns}
-                  rowObjects={commentInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-                <Table
-                  summary=" "
-                  columns={documentsColumns}
-                  rowObjects={documentsInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-              </div>
-            </Modal>
-        </div>
-        }
+          <div className="cf-keyboard-shortcuts">
+            <Button
+                id="cf-open-keyboard-modal"
+                name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+                onClick={this.props.handleOpenShortcutsModal}
+                classNames={['cf-btn-link']}
+            />
+          { this.props.viewKeyboardShortcuts && <div className="cf-modal-scroll">
+            <Modal
+                buttons = {[
+                  { classNames: ['usa-button', 'usa-button-secondary'],
+                    name: 'Thanks, got it!',
+                    onClick: this.props.handleCloseShortcutsModal
+                  }
+                ]}
+                closeHandler={this.props.handleCloseShortcutsModal}
+                title="Keyboard shortcuts"
+                noDivider={true}
+                id="cf-keyboard-modal">
+                <div className="cf-keyboard-modal-scroll">
+                  <Table
+                    summary=" "
+                    columns={scrollColumns}
+                    rowObjects={scrollInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                  <Table
+                    summary=" "
+                    columns={commentColumns}
+                    rowObjects={commentInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                  <Table
+                    summary=" "
+                    columns={documentsColumns}
+                    rowObjects={documentsInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                </div>
+              </Modal>
+          </div>
+          }
+          </div>
         </div>
       </div>;
   }
