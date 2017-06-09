@@ -14,18 +14,19 @@ class SessionsController < ApplicationController
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
     # CSS will give us the station office ID. Some station office IDs correspond to multiple
     # RO IDs. In this case, we present a list of ROs to the user and ask which one they are.
-    if current_user.ro_is_ambiguous_from_station_office?
-      @regional_office_options = current_user.station_offices.map do |regional_office_code|
-        {
-          "regionalOfficeCode" => regional_office_code,
-          "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
-        }
-      end
-      @redirect_to = session["return_to"] || root_path
+    unless current_user.ro_is_ambiguous_from_station_office?
+      redirect_to(session["return_to"] || root_path)
       return
     end
 
-    redirect_to(session["return_to"] || root_path)
+    @regional_office_options = current_user.station_offices.map do |regional_office_code|
+      {
+        "regionalOfficeCode" => regional_office_code,
+        "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
+      }
+    end
+    @redirect_to = session["return_to"] || root_path
+
   end
 
   def update
