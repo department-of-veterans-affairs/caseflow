@@ -129,11 +129,13 @@ describe PowerOfAttorneyRepository do
       it "calls update_vacols_rep_address with the correct arguments" do
         expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_address!).with(
           case_record: nil,
-          address_one: "This is not a name!",
-          address_two: "122 Mullberry St. PO BOX 123 Daisies",
-          city: "Arlington",
-          state: "VA",
-          zip: "22202"
+          address: {
+            address_one: "This is not a name!",
+            address_two: "122 Mullberry St. PO BOX 123 Daisies",
+            city: "Arlington",
+            state: "VA",
+            zip: "22202"
+          }
         )
       end
 
@@ -175,11 +177,13 @@ describe PowerOfAttorneyRepository do
       it "calls update_vacols_rep_address with the correct arguments" do
         expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_address!).with(
           case_record: nil,
-          address_one: "122 Mullberry St.",
-          address_two: "PO BOX 123 Daisies",
-          city: "Arlington",
-          state: "VA",
-          zip: "22202"
+          address: {
+            address_one: "122 Mullberry St.",
+            address_two: "PO BOX 123 Daisies",
+            city: "Arlington",
+            state: "VA",
+            zip: "22202"
+          }
         )
       end
     end

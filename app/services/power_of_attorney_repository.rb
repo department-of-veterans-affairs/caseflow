@@ -55,14 +55,16 @@ class PowerOfAttorneyRepository
     )
   end
 
-  def self.update_vacols_rep_address!(case_record:, address_one:, address_two:, city:, state:, zip:)
+  def self.update_vacols_rep_address!(case_record:, address:)
     VACOLS::Representative.update_vacols_rep_address!(
       bfkey: case_record.bfkey,
-      address_one: address_one[0, 50],
-      address_two: address_two[0, 50],
-      city: city[0, 20],
-      state: state[0, 4],
-      zip: zip[0, 10]
+      address: {
+        address_one: address[:address_one][0, 50],
+        address_two: address[:address_two][0, 50],
+        city: address[:city][0, 20],
+        state: address[:state][0, 4],
+        zip: address[:zip][0, 10]
+      }
     )
   end
   # :nocov:
@@ -80,11 +82,13 @@ class PowerOfAttorneyRepository
     address_one, address_two = get_address_one_and_two(representative_name, address)
     update_vacols_rep_address!(
       case_record: appeal.case_record,
-      address_one: address_one,
-      address_two: address_two,
-      city: address[:city] || "",
-      state: address[:state] || "",
-      zip: address[:zip] || ""
+      address: {
+        address_one: address_one,
+        address_two: address_two,
+        city: address[:city] || "",
+        state: address[:state] || "",
+        zip: address[:zip] || ""
+      }
     )
   end
 
@@ -102,17 +106,16 @@ class PowerOfAttorneyRepository
       address_two = address.values_at(:address_line_2, :address_line_3)
     end
 
-    return address_one || "", address_two.join(" ").strip
+    [address_one || "", address_two.join(" ").strip]
   end
 
   def self.split_representative_name(representative_name)
     return "", "", "" unless representative_is_person?(representative_name)
-
     split_name = representative_name.strip.split(" ")
-    if first_last_name?(representative_name)
-      return split_name[0], "", split_name[1]
-    end
-    return split_name[0], split_name[1], split_name[2]
+
+    return split_name[0], "", split_name[1] if first_last_name?(representative_name)
+
+    [split_name[0], split_name[1], split_name[2]]
   end
 
   def self.first_last_name?(representative_name)

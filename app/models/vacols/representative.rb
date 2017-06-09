@@ -47,14 +47,15 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_address!(bfkey:, address_one:, address_two:, city:, state:, zip:)
+  # rubocop:disable Metrics/MethodLength
+  def self.update_vacols_rep_address!(bfkey:, address:)
     conn = connection
 
-    address_one = conn.quote(address_one)
-    address_two = conn.quote(address_two)
-    city = conn.quote(city)
-    state = conn.quote(state)
-    zip = conn.quote(zip)
+    address_one = conn.quote(address[:address_one])
+    address_two = conn.quote(address[:address_two])
+    city = conn.quote(address[:city])
+    state = conn.quote(address[:state])
+    zip = conn.quote(address[:zip])
     case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_rep_address! #{case_id}",
@@ -73,4 +74,5 @@ class VACOLS::Representative < VACOLS::Record
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
