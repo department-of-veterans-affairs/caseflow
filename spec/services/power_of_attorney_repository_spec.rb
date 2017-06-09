@@ -116,6 +116,15 @@ describe PowerOfAttorneyRepository do
           zip: "22202"
         )
       end
+
+      it "calls update_vacols_rep_name with the correct arguments" do
+        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
+          case_record: nil,
+          first_name: nil,
+          middle_initial: nil,
+          last_name: nil
+        )
+      end
     end
 
     context "when representaive is a person" do
