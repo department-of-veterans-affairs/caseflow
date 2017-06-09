@@ -29,9 +29,14 @@ class SessionsController < ApplicationController
   end
 
   def update
-    current_user.regional_office = params["regional_office"].upcase
+    regional_office = params["regional_office"]
+    unless regional_office
+      render json: {"error": "Required parameter 'regional_office' is missing."}, status: 400
+      return
+    end
+
     # The presence of the regional_office field is used to mark a user as logged in.
-    session[:regional_office] = current_user.regional_office
+    session[:regional_office] = current_user.regional_office = regional_office.upcase
     render json: {}
   end
 

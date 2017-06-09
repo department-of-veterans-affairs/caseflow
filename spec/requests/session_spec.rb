@@ -16,6 +16,15 @@ RSpec.describe "Session", type: :request do
     end
   end
 
+  context "error handling" do
+    it "returns a 400 when the regional_office param is not set" do
+      patch "/sessions/update"
+      expect(status).to eq 400
+      json = JSON.parse(response.body)
+      expect(json["error"]).to eq("Required parameter 'regional_office' is missing.")
+    end
+  end
+
   context "when regional office is set" do
     it "user should be authenticated" do
       patch "/sessions/update", regional_office: "RO05"
