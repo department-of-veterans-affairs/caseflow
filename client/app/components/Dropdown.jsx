@@ -14,6 +14,7 @@ export default class Dropdown extends React.Component {
       options,
       required,
       value,
+      defaultText,
       readOnly
     } = this.props;
 
@@ -23,6 +24,7 @@ export default class Dropdown extends React.Component {
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
+        { defaultText && <option defaultValue hidden>{defaultText}</option>}
         {options.map((option, index) =>
           <option
             value={option.value}
