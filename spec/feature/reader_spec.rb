@@ -525,6 +525,19 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
+    scenario "Open and close keyboard shortcuts modal" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      # Open modal
+      click_on "View keyboard shortcuts"
+      expect(page).to have_css(".cf-modal")
+
+      # Close modal
+      click_on "Thanks, got it!"
+      expect(page).to_not have_css(".cf-modal")
+    end
+
     scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 

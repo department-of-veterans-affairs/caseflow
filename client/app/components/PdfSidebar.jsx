@@ -35,7 +35,18 @@ export class PdfSidebar extends React.Component {
     super(props);
 
     this.commentElements = {};
+    this.state = {
+      modal: false
+    }
   }
+
+  handleModalOpen = () => {
+    this.setState({ modal: true });
+  };
+
+  handleModalClose = () => {
+    this.setState({ modal: false });
+  };
 
   componentDidUpdate = () => {
     if (this.props.scrollToSidebarComment) {
@@ -204,18 +215,18 @@ export class PdfSidebar extends React.Component {
             <Button
                 id="cf-open-keyboard-modal"
                 name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-                onClick={this.props.handleOpenShortcutsModal}
+                onClick={this.handleModalOpen}
                 classNames={['cf-btn-link']}
             />
-          { this.props.viewKeyboardShortcuts && <div className="cf-modal-scroll">
+          { this.state.modal && <div className="cf-modal-scroll">
             <Modal
                 buttons = {[
                   { classNames: ['usa-button', 'usa-button-secondary'],
                     name: 'Thanks, got it!',
-                    onClick: this.props.handleCloseShortcutsModal
+                    onClick: this.handleModalClose
                   }
                 ]}
-                closeHandler={this.props.handleCloseShortcutsModal}
+                closeHandler={this.handleModalClose}
                 title="Keyboard shortcuts"
                 noDivider={true}
                 id="cf-keyboard-modal">
@@ -267,8 +278,7 @@ PdfSidebar.propTypes = {
   scrollToSidebarComment: PropTypes.shape({
     id: PropTypes.number
   }),
-  hidePdfSidebar: PropTypes.bool,
-  viewKeyboardShortcuts: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -279,8 +289,7 @@ const mapStateToProps = (state, ownProps) => {
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
     documents: state.documents,
-    tagOptions: state.tagOptions,
-    viewKeyboardShortcuts: state.ui.pdf.viewKeyboardShortcuts
+    tagOptions: state.tagOptions
   };
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -326,16 +335,6 @@ const mapDispatchToProps = (dispatch) => ({
   handleTogglePdfSidebar() {
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
-    });
-  },
-  handleOpenShortcutsModal() {
-    dispatch({
-      type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
-    });
-  },
-  handleCloseShortcutsModal() {
-    dispatch({
-      type: Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL
     });
   }
 });

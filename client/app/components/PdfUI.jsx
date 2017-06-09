@@ -223,16 +223,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
     });
-  },
-  handleOpenShortcutsModal() {
-    dispatch({
-      type: Constants.OPEN_VIEW_KEYBOARD_SHORTCUTS_MODAL
-    });
-  },
-  handleCloseShortcutsModal() {
-    dispatch({
-      type: Constants.CLOSE_VIEW_KEYBOARD_SHORTCUTS_MODAL
-    });
   }
 });
 
