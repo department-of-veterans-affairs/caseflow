@@ -88,7 +88,15 @@ class Certification < ActiveRecord::Base
     appeal.power_of_attorney.update_vacols_rep_info!(
       appeal: appeal,
       representative_type: rep_type,
-      representative_name: rep_name
+      representative_name: rep_name,
+      address: {
+        address_line_1: bgs_rep_address_line_1,
+        address_line_2: bgs_rep_address_line_2,
+        address_line_3: bgs_rep_address_line_3,
+        city: bgs_rep_city,
+        state: bgs_rep_state,
+        zip: bgs_rep_zip
+      }
     )
   end
 
