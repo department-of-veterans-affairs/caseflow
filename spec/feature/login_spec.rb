@@ -30,6 +30,7 @@ RSpec.feature "Login" do
     find("#react-select-2--option-0").click
   end
 
+  # :nocov:
   # https://stackoverflow.com/questions/36472930/session-sometimes-not-persisting-in-capybara-selenium-test
   scenario "with valid credentials",
            skip: "This test sometimes fails because sessions do not persist across requests" do
@@ -55,6 +56,7 @@ RSpec.feature "Login" do
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_current_path("/login")
   end
+  # :nocov:
 
   scenario "email should be set on login" do
     user = User.create(css_id: "ANNE MERICA", station_id: "405")
