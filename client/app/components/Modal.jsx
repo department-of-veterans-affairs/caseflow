@@ -115,6 +115,7 @@ Modal.defaultProps = {
 
 Modal.propTypes = {
   buttons: PropTypes.arrayOf(PropTypes.object),
+  id: PropTypes.string,
   label: PropTypes.string,
   noDivider: PropTypes.bool,
   specialContent: PropTypes.func,

@@ -38,7 +38,7 @@ export class PdfSidebar extends React.Component {
     this.state = {
       modal: false
     }
-  }
+  };
 
   handleModalOpen = () => {
     this.setState({ modal: true });
@@ -232,19 +232,16 @@ export class PdfSidebar extends React.Component {
                 id="cf-keyboard-modal">
                 <div className="cf-keyboard-modal-scroll">
                   <Table
-                    summary=" "
                     columns={scrollColumns}
                     rowObjects={scrollInstructions}
                     slowReRendersAreOk={true}
                     className="cf-keyboard-modal-table"/>
                   <Table
-                    summary=" "
                     columns={commentColumns}
                     rowObjects={commentInstructions}
                     slowReRendersAreOk={true}
                     className="cf-keyboard-modal-table"/>
                   <Table
-                    summary=" "
                     columns={documentsColumns}
                     rowObjects={documentsInstructions}
                     slowReRendersAreOk={true}
