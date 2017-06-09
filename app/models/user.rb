@@ -25,9 +25,15 @@ class User < ActiveRecord::Base
     end
   end
 
-  # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
+  # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
-    station_offices.is_a?(String) ? station_offices : @regional_office
+    upcase = ->(str) { str ? str.upcase : str }
+
+    ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
+  end
+
+  def ro_is_ambiguous_from_station_office?
+    station_offices.is_a?(Array)
   end
 
   def timezone
@@ -61,13 +67,6 @@ class User < ActiveRecord::Base
 
   def authenticated?
     !regional_office.blank?
-  end
-
-  # This method is used for VACOLS authentication
-  def authenticate(regional_office:, password:)
-    return false unless User.authenticate_vacols(regional_office, password)
-
-    @regional_office = regional_office.upcase
   end
 
   def attributes
@@ -106,8 +105,6 @@ class User < ActiveRecord::Base
   def to_hash
     serializable_hash
   end
-
-  private
 
   def station_offices
     VACOLS::RegionalOffice::STATIONS[station_id]
