@@ -240,6 +240,7 @@ export class ConfirmCaseDetails extends React.Component {
       changeRepresentativeName,
       bgsRepresentativeType,
       bgsRepresentativeName,
+      bgsPoaAddressFound,
       vacolsRepresentativeType,
       vacolsRepresentativeName,
       loading,
@@ -376,8 +377,15 @@ export class ConfirmCaseDetails extends React.Component {
           }
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+            bgsPoaAddressFound === true &&
             'Great! Caseflow will update the representative name, type, and address ' +
               'in VACOLS with information from VBMS.'
+          }
+          {
+            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+            bgsPoaAddressFound === false &&
+            'Caseflow could not find an address for the representative in VBMS.' +
+            'Update the representative’s address in VACOLS before continuing.'
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
