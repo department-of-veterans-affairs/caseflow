@@ -32,5 +32,16 @@ RSpec.describe "Session", type: :request do
       get "/certifications/new/#{appeal.vacols_id}"
       expect(status).to_not eq 302
     end
+
+    it "user should be able to log out" do
+      patch "/sessions/update", regional_office: "RO05"
+      expect(status).to eq 200
+      get "/certifications/new/#{appeal.vacols_id}"
+      expect(status).to_not eq 302
+      get "/logout"
+      expect(status).to eq 302
+      get "/certifications/new/#{appeal.vacols_id}"
+      expect(status).to eq 302
+    end
   end
 end
