@@ -49,20 +49,20 @@ class PowerOfAttorneyRepository
   def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
     VACOLS::Representative.update_vacols_rep_name!(
       bfkey: case_record.bfkey,
-      first_name: first_name[0, 23],
-      middle_initial: middle_initial[0, 3],
-      last_name: last_name[0, 39]
+      first_name: first_name[0, 24],
+      middle_initial: middle_initial[0, 4],
+      last_name: last_name[0, 40]
     )
   end
 
   def self.update_vacols_rep_address!(case_record:, address_one:, address_two:, city:, state:, zip:)
     VACOLS::Representative.update_vacols_rep_address!(
       bfkey: case_record.bfkey,
-      address_one: address_one,
-      address_two: address_two,
-      city: city,
-      state: state,
-      zip: zip
+      address_one: address_one[0, 50],
+      address_two: address_two[0, 50],
+      city: city[0, 20],
+      state: state[0, 4],
+      zip: zip[0, 10]
     )
   end
   # :nocov:
@@ -82,15 +82,14 @@ class PowerOfAttorneyRepository
       case_record: appeal.case_record,
       address_one: address_one,
       address_two: address_two,
-      city: address[:city],
-      state: address[:state],
-      zip: address[:zip]
+      city: address[:city] || "",
+      state: address[:state] || "",
+      zip: address[:zip] || ""
     )
   end
 
   def self.get_address_one_and_two(representative_name, address)
-    return if address.values.compact.empty?
-     # for non-person representative name, put the name in REP.REPADDR1
+    # for non-person representative name, put the name in REP.REPADDR1
     # then all 3 BGS addresses go to REP.REPADDR2
     address_one = representative_name
     address_two = address.values_at(:address_line_1, :address_line_2, :address_line_3)
@@ -103,11 +102,11 @@ class PowerOfAttorneyRepository
       address_two = address.values_at(:address_line_2, :address_line_3)
     end
 
-    return address_one, address_two.join(" ").strip
+    return address_one || "", address_two.join(" ").strip
   end
 
   def self.split_representative_name(representative_name)
-    return unless representative_is_person?(representative_name)
+    return "", "", "" unless representative_is_person?(representative_name)
 
     split_name = representative_name.strip.split(" ")
     if first_last_name?(representative_name)

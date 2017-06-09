@@ -64,6 +64,26 @@ describe PowerOfAttorneyRepository do
       end
     end
 
+    context "when representaive is not a person" do
+      let(:representative_name) { "Services" }
+      let(:address) do
+        {
+          address_line_1: nil,
+          address_line_2: nil,
+          address_line_3: nil,
+          city: nil,
+          state: nil,
+          zip: nil
+        }
+      end
+
+      it "should contain correct info in address_one and address_two" do
+        address_one, address_two = subject
+        expect(address_one).to eq "Services"
+        expect(address_two).to eq ""
+      end
+    end
+
     context "when address is empty" do
       let(:representative_name) { "Jack Kidwell" }
       let(:address) do
@@ -79,8 +99,8 @@ describe PowerOfAttorneyRepository do
 
       it "should contain correct info in address_one and address_two" do
         address_one, address_two = subject
-        expect(address_one).to eq nil
-        expect(address_two).to eq nil
+        expect(address_one).to eq ""
+        expect(address_two).to eq ""
       end
     end
   end
@@ -120,9 +140,9 @@ describe PowerOfAttorneyRepository do
       it "calls update_vacols_rep_name with the correct arguments" do
         expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
           case_record: nil,
-          first_name: nil,
-          middle_initial: nil,
-          last_name: nil
+          first_name: "",
+          middle_initial: "",
+          last_name: ""
         )
       end
     end
