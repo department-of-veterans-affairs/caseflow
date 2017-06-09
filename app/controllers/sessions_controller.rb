@@ -26,13 +26,12 @@ class SessionsController < ApplicationController
       }
     end
     @redirect_to = session["return_to"] || root_path
-
   end
 
   def update
     regional_office = params["regional_office"]
     unless regional_office
-      render json: {"error": "Required parameter 'regional_office' is missing."}, status: 400
+      render json: { "error": "Required parameter 'regional_office' is missing." }, status: 400
       return
     end
 
@@ -46,6 +45,4 @@ class SessionsController < ApplicationController
     session.delete("user")
     redirect_to "/"
   end
-
-  private
 end
