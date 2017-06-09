@@ -89,7 +89,6 @@ Rails.application.routes.draw do
 
   get "health-check", to: "health_checks#show"
   get "login" => "sessions#new"
-  get "sessions/update" => "sessions#update"
   get "logout" => "sessions#destroy"
 
   get 'whats-new' => 'whats_new#show'
