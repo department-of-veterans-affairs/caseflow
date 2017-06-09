@@ -94,7 +94,7 @@ class Certification < ActiveRecord::Base
 
   def complete!(user_id)
     if FeatureToggle.enabled?(:certification_v2, user: RequestStore[:current_user])
-      update_vacols_poa! unless poa_matches || poa_correct_in_vacols
+      update_vacols_poa! if !poa_matches && !poa_correct_in_vacols
     end
     appeal.certify!
     update_attributes!(completed_at: Time.zone.now, user_id: user_id)
