@@ -462,7 +462,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Banana. Banana who", wait: 4)
     end
 
-    scenario "Zooming changes the size of pages" do
+    skip "Zooming changes the size of pages" do
       scroll_amount = 500
       zoom_rate = 1.3
 
