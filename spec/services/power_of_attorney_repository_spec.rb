@@ -44,7 +44,7 @@ describe PowerOfAttorneyRepository do
   context ".get_address_one_and_two" do
     subject { PowerOfAttorney.repository.get_address_one_and_two(representative_name, address) }
 
-    context "when representaive is a person" do
+    context "when representative is a person" do
       let(:representative_name) { "Jack Kidwell" }
       let(:address) do
         {
@@ -64,7 +64,7 @@ describe PowerOfAttorneyRepository do
       end
     end
 
-    context "when representaive is not a person" do
+    context "when representative is not a person" do
       let(:representative_name) { "Services" }
       let(:address) do
         {
@@ -111,7 +111,7 @@ describe PowerOfAttorneyRepository do
       allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_address!).and_call_original
     end
 
-    context "when representaive is not a person" do
+    context "when representative is not a person" do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: Appeal.new(vacols_id: "123C"),
@@ -147,7 +147,7 @@ describe PowerOfAttorneyRepository do
       end
     end
 
-    context "when representaive is a person" do
+    context "when representative is a person" do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: Appeal.new(vacols_id: "123C"),
