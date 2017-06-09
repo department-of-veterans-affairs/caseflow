@@ -26,10 +26,10 @@ export class PdfViewer extends React.Component {
       return;
     }
 
-    if (event.key === 'PageArrowLeft') {
+    if (event.key === 'ArrowLeft') {
       this.props.showPdf(this.prevDocId())();
     }
-    if (event.key === 'PageArrowRight') {
+    if (event.key === 'ArrowRight') {
       this.props.showPdf(this.nextDocId())();
     }
   }
