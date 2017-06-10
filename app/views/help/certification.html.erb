@@ -98,7 +98,7 @@
 		<%= image_tag 'help/caseflow-login.png', {class: "cf-help-image", alt: 'VACOLS Login dialog'} %>
 	  </p>
 
-	  <% if FeatureToggle.enabled?(:certification_v2) %>
+	  <% if FeatureToggle.enabled?(:certification_v2, user: current_user) %>
 		
 		<h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
 		  eFolder?</h2>
