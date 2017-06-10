@@ -385,8 +385,9 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
-            'Caseflow could not find an address for the representative in VBMS. ' +
-            'Update the representative’s address in VACOLS before continuing.'
+            `Caseflow could not find an address for the representative in VBMS. After
+             the certification is complete in Caseflow, update the representative’s
+             address in VACOLS.`
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
