@@ -72,6 +72,7 @@ class SeedDB
   end
 
   def create_default_users
+    @users.push(User.create(css_id: "Reader", station_id: "405", full_name: "VBMS Station ID maps to multiple VACOLS IDs"))
     @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Cave Johnson"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "284", full_name: "Bob Contoso"))

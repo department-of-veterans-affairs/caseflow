@@ -60,7 +60,7 @@ class PowerOfAttorney
     # case_record.bfso
   end
 
-  def update_vacols_rep_info!(appeal:, representative_type:, representative_name:)
+  def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = PowerOfAttorney.repository
     vacols_rep_type = if representative_type == "Service Organization"
                         # We set the rep type to the service organization name, unless we don't have a record
@@ -73,7 +73,7 @@ class PowerOfAttorney
     repo.update_vacols_rep_type!(case_record: appeal.case_record, vacols_rep_type: vacols_rep_type)
 
     if repo.rep_name_found_in_rep_table?(vacols_rep_type)
-      repo.update_vacols_rep_table!(appeal: appeal, representative_name: representative_name)
+      repo.update_vacols_rep_table!(appeal: appeal, representative_name: representative_name, address: address)
     end
   end
 

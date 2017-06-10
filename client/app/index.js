@@ -9,16 +9,18 @@ import BaseContainer from './containers/BaseContainer';
 import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
+import Login from './login';
 
 const COMPONENTS = {
   BaseContainer,
   Certification,
   ManageEstablishClaim,
+  Login,
   Hearings
 };
 
 // This removes HMR's stupid red error page, which "eats" the errors and
-// you lose valuable information about the line it occurred on from the source map
+// you lose valuable information about the line it occurred on from the source map.
 delete AppContainer.prototype.unstable_handleError;
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -37,6 +39,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   if (module.hot) {
     module.hot.accept([
       './containers/BaseContainer',
+      './login/index',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
       './hearings/index'
@@ -44,6 +47,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   }
 };
 
-_.forOwn(COMPONENTS, (component, name) => {
-  ReactOnRails.register({ [name]: componentWrapper(component) });
-});
+_.forOwn(
+  COMPONENTS,
+  (component, name) => ReactOnRails.register({ [name]: componentWrapper(component) })
+);
