@@ -1,3 +1,5 @@
+// TODO refactor into smaller files
+/* eslint max-lines: ["error", 500]*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -171,7 +173,6 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   onClickContinue() {
-
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
