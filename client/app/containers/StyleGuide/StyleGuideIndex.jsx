@@ -4,7 +4,6 @@ import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideButton from './StyleGuideButton';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
-import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';

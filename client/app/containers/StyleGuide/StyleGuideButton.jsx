@@ -4,15 +4,15 @@ import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideButton extends React.Component {
-render = () => {
-  return <div>
+  render = () => {
+    return <div>
     <StyleGuideComponentTitle
       title="Buttons"
       id="buttons"
       link="StyleGuideButton.jsx"
     />
 
-    <h3>Primary Buttons</h3>
+    <h3>Primary buttons</h3>
     <div className="usa-grid">
      <div className="usa-width-one-third">
      <h3 className="styleguide-grey-header">Default</h3>
@@ -52,9 +52,9 @@ render = () => {
           classNames={['usa-button-secondary usa-button-active']}>
           Sign up
         </Button>
-     </div>
+    </div>
     </div><br/><br/>
-    <h3>Secondary Buttons</h3>
+    <h3>Secondary buttons</h3>
     <div className="usa-grid">
     <div className="usa-width-one-third">
     <h3 className="styleguide-grey-header">Default</h3>
@@ -74,14 +74,24 @@ render = () => {
     </div>
     <div className="usa-width-one-third">
     <h3 className="styleguide-grey-header">Active</h3>
-      <Button
-        name="signup-9"
-        classNames={['usa-button-outline usa-button-active']}>
-        Sign up
-      </Button>
+       <Button
+         name="signup-9"
+         classNames={['usa-button-outline usa-button-active']}>
+         Sign up
+       </Button>
+    </div>
+    </div><br/><br/>
+    <h3>Disabled button</h3>
+    <div className="usa-grid">
+    <div className="usa-width-one-third">
+       <Button
+         name="signup-10"
+         classNames={['usa-button-disabled']}>
+         Sign up
+       </Button>
     </div>
     </div>
     <StyleGuideLinkButton />
     </div>;
- }
+  }
 }

@@ -6,7 +6,7 @@ let StyleGuideLinkButton = () => {
   return <div>
     <br/>
     <StyleGuideComponentTitle
-      title="Link Buttons"
+      title="Link buttons"
       id="link_buttons"
       link="StyleGuideLinkButton.jsx"
       isSubsection={true}
