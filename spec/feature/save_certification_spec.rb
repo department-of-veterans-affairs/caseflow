@@ -531,7 +531,6 @@ RSpec.feature "Save Certification" do
         end
         click_button("Continue")
         expect(page).to have_content "Please select an option."
-
       end
       scenario "on the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
