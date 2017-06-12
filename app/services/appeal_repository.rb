@@ -221,6 +221,8 @@ class AppealRepository
     "98"
   end
 
+
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -239,7 +241,7 @@ class AppealRepository
       # "ready for hearing" in certification.
       appeal.case_record.bftbind = "X" if vacols_value == "2"
       # bfdocind is the "Video Hearing" checkbox
-      appeal.case_record.bfdocind = "X" if preference_attrs[:video_hearing]
+      appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "X" : nil
     else
       appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
     end
