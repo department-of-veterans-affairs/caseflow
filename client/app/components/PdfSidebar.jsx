@@ -264,8 +264,6 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
-  handleCloseShortcutsModal: PropTypes.func,
-  handleOpenShortcutsModal: PropTypes.func,
   handleTogglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
