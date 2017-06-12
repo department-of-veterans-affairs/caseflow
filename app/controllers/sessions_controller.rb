@@ -10,28 +10,39 @@ class SessionsController < ApplicationController
     end
 
     return redirect_to(ENV["SSO_URL"]) unless current_user
+
+    # In order to use Caseflow, we need to know what regional office (RO) the user is from.
+    # CSS will give us the station office ID. Some station office IDs correspond to multiple
+    # RO IDs. In this case, we present a list of ROs to the user and ask which one they are.
+    unless current_user.ro_is_ambiguous_from_station_office?
+      redirect_to(session["return_to"] || root_path)
+      return
+    end
+
+    @regional_office_options = current_user.station_offices.map do |regional_office_code|
+      {
+        "regionalOfficeCode" => regional_office_code,
+        "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
+      }
+    end
+    @redirect_to = session["return_to"] || root_path
   end
 
-  def create
-    unless current_user.authenticate(authentication_params)
-      flash[:error] = "The username and password you entered don't match, please try again."
-      return redirect_to login_path
+  def update
+    regional_office = params["regional_office"]
+    unless regional_office
+      render json: { "error": "Required parameter 'regional_office' is missing." }, status: 400
+      return
     end
 
     # The presence of the regional_office field is used to mark a user as logged in.
-    session[:regional_office] = current_user.regional_office
-    redirect_to session["return_to"] || root_path
+    session[:regional_office] = current_user.regional_office = regional_office.upcase
+    render json: {}
   end
 
   def destroy
     session.delete(:regional_office)
     session.delete("user")
     redirect_to "/"
-  end
-
-  private
-
-  def authentication_params
-    { regional_office: params["regional_office"], password: params["password"] }
   end
 end

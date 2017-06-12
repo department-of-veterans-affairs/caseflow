@@ -10,6 +10,7 @@ import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
+import { formatDateStr } from '../util/DateUtil';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -149,7 +150,7 @@ class UnconnectedSignAndCertify extends React.Component {
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
             name={'Date:'}
-            value={certificationDate}
+            value={formatDateStr(certificationDate)}
             readOnly={true}
           />
         </div>

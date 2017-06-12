@@ -484,7 +484,7 @@ RSpec.feature "Save Certification" do
         within_fieldset("Title of certifying official") do
           expect(find_field("Veterans Service Representative", visible: false)).to be_checked
         end
-        expect(find_field("Date").value).to eq Time.zone.today.strftime("%Y-%m-%d")
+        expect(find_field("Date").value).to eq Time.zone.today.strftime("%m/%d/%Y")
       end
 
       scenario "Trying to skip steps" do
