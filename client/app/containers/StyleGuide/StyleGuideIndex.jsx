@@ -2,6 +2,7 @@ import React from 'react';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideButton from './StyleGuideButton';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
@@ -158,10 +159,7 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideColors />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Buttons"
-          id="buttons" />
-        <StyleGuideLinkButton />
+        <StyleGuideButton />
         <div className="cf-help-divider"></div>
         <StyleGuideSearch />
         <div className="cf-help-divider"></div>

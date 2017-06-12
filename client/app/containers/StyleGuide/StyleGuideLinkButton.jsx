@@ -6,7 +6,7 @@ let StyleGuideLinkButton = () => {
   return <div>
     <br/>
     <StyleGuideComponentTitle
-      title="Link buttons"
+      title="Link Buttons"
       id="link_buttons"
       link="StyleGuideLinkButton.jsx"
       isSubsection={true}
@@ -14,11 +14,6 @@ let StyleGuideLinkButton = () => {
     <div className="usa-grid">
       <div className="usa-width-one-third">
         <h3 className="styleguide-grey-header">Default</h3>
-        <Button
-          name="signup-1"
-          classNames={['usa-button-outline']}>
-          Sign up
-        </Button><br/><br/>
         <Button
           name="signup-2"
           classNames={['cf-btn-link']}>
@@ -28,11 +23,6 @@ let StyleGuideLinkButton = () => {
       <div className="usa-width-one-third">
         <h3 className="styleguide-grey-header">Hover</h3>
         <Button
-          name="signup-3"
-          classNames={['usa-button-outline usa-button-hover']}>
-          Sign up
-        </Button><br/><br/>
-        <Button
           name="signup-4"
           classNames={['cf-btn-link button-hover']}>
           Sign up
@@ -40,11 +30,6 @@ let StyleGuideLinkButton = () => {
       </div>
       <div className="usa-width-one-third">
         <h3 className="styleguide-grey-header">Active</h3>
-        <Button
-          name="signup-5"
-          classNames={['usa-button-outline usa-button-active']}>
-          Sign up
-        </Button><br/><br/>
         <Button
           name="signup-6"
           classNames={['cf-btn-link button-active']}>
