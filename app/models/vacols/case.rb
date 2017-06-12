@@ -106,6 +106,8 @@ class VACOLS::Case < VACOLS::Record
     VIDEO: { vacols_value: "2", video_hearing: true },
     TRAVEL_BOARD: { vacols_value: "2" },
     WASHINGTON_DC: { vacols_value: "1" },
+    # when the hearing type is not specified,
+    # default to a video hearing.
     HEARING_TYPE_NOT_SPECIFIED: { vacols_value: "2", video_hearing: true },
     NO_HEARING_DESIRED: { vacols_value: "5" },
     HEARING_CANCELLED: { vacols_value: "5" },
