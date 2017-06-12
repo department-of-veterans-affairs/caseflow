@@ -40,11 +40,11 @@ export class PdfSidebar extends React.Component {
     };
   }
 
-  handleKeyboardModalOpen = () => {
+  showKeyboardModal = () => {
     this.setState({ modal: true });
   };
 
-  handleKeyboardModalClose = () => {
+  hideKeyboardModal = () => {
     this.setState({ modal: false });
   };
 
@@ -215,7 +215,7 @@ export class PdfSidebar extends React.Component {
             <Button
                 id="cf-open-keyboard-modal"
                 name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-                onClick={this.handleKeyboardModalOpen}
+                onClick={this.showKeyboardModal}
                 classNames={['cf-btn-link']}
             />
           { this.state.modal && <div className="cf-modal-scroll">
@@ -223,10 +223,10 @@ export class PdfSidebar extends React.Component {
                 buttons = {[
                   { classNames: ['usa-button', 'usa-button-secondary'],
                     name: 'Thanks, got it!',
-                    onClick: this.handleKeyboardModalClose
+                    onClick: this.hideKeyboardModal
                   }
                 ]}
-                closeHandler={this.handleKeyboardModalClose}
+                closeHandler={this.hideKeyboardModal}
                 title="Keyboard shortcuts"
                 noDivider={true}
                 id="cf-keyboard-modal">

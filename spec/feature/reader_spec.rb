@@ -532,6 +532,7 @@ RSpec.feature "Reader" do
       # Open modal
       click_on "View keyboard shortcuts"
       expect(page).to have_css(".cf-modal")
+      expect(page).to have_content("Place a comment")
 
       # Close modal
       click_on "Thanks, got it!"
