@@ -4,6 +4,7 @@ class VACOLS::RegionalOffice < VACOLS::Record
 
   # Maps CSS Station # to RO id
   STATIONS = {
+    "101" => "VACO",
     "301" => "RO01",
     "402" => "RO02",
     "304" => "RO04",
