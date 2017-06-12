@@ -156,7 +156,8 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "RO97" => { city: "ARC", state: "DC", timezone: "America/New_York" },
     "RO98" => { city: "National Cemetery Administration - St. Louis", state: "MO", timezone: "America/Chicago" },
     "RO99" => { city: "VHA CO", state: "DC", timezone: "America/New_York" },
-    "DSUSER" => { city: "Digital Service HQ", state: "DC", timezone: "America/New_York" }
+    "DSUSER" => { city: "Digital Service HQ", state: "DC", timezone: "America/New_York" },
+    "VACO" => { city: "Washington", state: "DC", timezone: "America/New_York" }
   }.freeze
   ROS = CITIES.keys.freeze
 
