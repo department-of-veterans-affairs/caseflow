@@ -250,6 +250,5 @@ PdfUI.propTypes = {
   selectCurrentPdf: PropTypes.func,
   showDocumentsListNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  hidePdfSidebar: PropTypes.bool,
-  viewKeyboardShortcuts: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool
 };
