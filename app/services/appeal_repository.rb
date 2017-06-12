@@ -221,8 +221,6 @@ class AppealRepository
     "98"
   end
 
-
-
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
