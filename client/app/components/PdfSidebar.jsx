@@ -37,8 +37,8 @@ export class PdfSidebar extends React.Component {
     this.commentElements = {};
     this.state = {
       modal: false
-    }
-  };
+    };
+  }
 
   handleKeyboardModalOpen = () => {
     this.setState({ modal: true });
