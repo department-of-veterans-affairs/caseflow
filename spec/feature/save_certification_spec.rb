@@ -531,6 +531,7 @@ RSpec.feature "Save Certification" do
         end
         click_button("Continue")
         expect(page).to have_content "Please select an option."
+
       end
       scenario "on the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
@@ -557,6 +558,9 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
         expect(page).to have_content "Please enter the title of the certifying official."
+        fill_in "Name of certifying official", with: "12345678901234567890123456789012345678901"
+        click_button("Continue")
+        expect(page).to have_content("Maximum length of certifying official\'s name reached.")
       end
     end
   end
