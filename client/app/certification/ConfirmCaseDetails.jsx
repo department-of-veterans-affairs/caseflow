@@ -1,3 +1,5 @@
+// TODO refactor into smaller files
+/* eslint max-lines: ["error", 500]*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -171,7 +173,6 @@ export class ConfirmCaseDetails extends React.Component {
   }
 
   onClickContinue() {
-
     const erroredFields = this.getValidationErrors();
 
     if (erroredFields.length) {
@@ -240,6 +241,7 @@ export class ConfirmCaseDetails extends React.Component {
       changeRepresentativeName,
       bgsRepresentativeType,
       bgsRepresentativeName,
+      bgsPoaAddressFound,
       vacolsRepresentativeType,
       vacolsRepresentativeName,
       loading,
@@ -288,12 +290,12 @@ export class ConfirmCaseDetails extends React.Component {
 
     const representativeTypeMessage =
         <p>Since you selected <strong>{ConfirmCaseDetails.getDisplayText(representativeType)}</strong>, make sure
-         you update the representative's name and address information in VACOLS before continuing.
+         you update the representative's name and address information in VACOLS after the appeal is certified.
         Caseflow will update the representative type in VACOLS.</p>;
 
     const unlistedServiceMessage =
         <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
-         the representative's address information in VACOLS before continuing. Caseflow will update
+         the representative's address information in VACOLS after the appeal is certified. Caseflow will update
          the representative type and name in VACOLS.</p>;
 
 
@@ -376,8 +378,16 @@ export class ConfirmCaseDetails extends React.Component {
           }
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+            bgsPoaAddressFound === true &&
             'Great! Caseflow will update the representative name, type, and address ' +
               'in VACOLS with information from VBMS.'
+          }
+          {
+            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+            bgsPoaAddressFound === false &&
+            `Caseflow could not find an address for the representative in VBMS. After
+             this appeal is certified in Caseflow, the representative’s address
+             will need to be updated in VACOLS.`
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
@@ -390,9 +400,12 @@ export class ConfirmCaseDetails extends React.Component {
             unlistedServiceMessage
           }
           {
+            // TODO: change this message when we can fetch addresses.
             (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
-            `Great! Caseflow will update the representative type, name, and address
-             information for the selected service organization in VACOLS.`
+            `Great! Caseflow will update the representative type and name
+             information for the selected service organization in VACOLS. After
+             this appeal is certified in Caseflow, the representative’s address
+             will need to be updated in VACOLS.`
           }
 
         </div>
