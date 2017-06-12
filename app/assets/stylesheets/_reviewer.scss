@@ -191,12 +191,15 @@ svg[aria-hidden=true],
   // Other margins that are involved add up to 28px, so we add an
   // additional margin to make it 40.
   $outer-margin: 12px;
+  $footer-button-width: 100px;
 
   .cf-pdf-footer-buttons-right {
+    width: $footer-button-width;
     margin-right: $outer-margin;
   }
 
   .cf-pdf-footer-buttons-left {
+    width: $footer-button-width;
     margin-left: $outer-margin;
   }
 

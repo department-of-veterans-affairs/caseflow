@@ -60,8 +60,7 @@ export class PdfUI extends React.Component {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
       return <div className="cf-pdf-footer cf-pdf-toolbar">
-        { this.props.prevDocId &&
-          <div className="cf-pdf-footer-buttons-left">
+          { this.props.prevDocId && <div className="cf-pdf-footer-buttons-left">
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
@@ -84,8 +83,8 @@ export class PdfUI extends React.Component {
             Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
           </span>
         </div>
-        { this.props.nextDocId &&
-          <div className="cf-pdf-footer-buttons-right">
+
+           { this.props.nextDocId && <div className="cf-pdf-footer-buttons-right">
             <Button
               name="next"
               classNames={['cf-pdf-button cf-right-side']}
