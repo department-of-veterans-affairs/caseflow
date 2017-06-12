@@ -465,7 +465,8 @@ RSpec.feature "Reader" do
     # this test being skipped because it often fails during the CI process
     # and it needs to be revaluated and fixed at a later time.
     # :nocov:
-    skip "Zooming changes the size of pages" do
+    skip "This test sometimes fails because it cannot find the expected
+      text (Zooming changes the size of pages)" do
       scroll_amount = 500
       zoom_rate = 1.3
 
