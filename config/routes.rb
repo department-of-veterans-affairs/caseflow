@@ -68,8 +68,7 @@ Rails.application.routes.draw do
   end
 
   namespace :hearings do
-    resources :dockets, only: [:index]
-    get 'dockets/:date', to: 'dockets#show'
+    resources :dockets, only: [:index, :show]
   end
 
   resources :hearings, only: []  do

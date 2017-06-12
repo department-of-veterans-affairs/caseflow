@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Checkbox from '../components/Checkbox';
+import TextareaField from '../components/TextareaField';
 import moment from 'moment';
 import 'moment-timezone';
 
@@ -106,13 +107,13 @@ export class Docket extends React.Component {
             </td>
             <td className="cf-hearings-docket-appellant">
               <b>{hearing.appellant}</b>
-              <a href="#">{hearing.appellantId}</a>
+              <a href="#">{hearing.vbms_id}</a>
             </td>
             <td className="cf-hearings-docket-rep">{hearing.representative}</td>
             <td className="cf-hearings-docket-actions" rowSpan="2">
               <SearchableDropdown
                 label="Disposition"
-                name="disposition"
+                name={`disposition_${index}`}
                 options={dispositionOptions}
                 onChange={() => {
                   return true;
@@ -121,7 +122,7 @@ export class Docket extends React.Component {
               />
               <SearchableDropdown
                 label="Hold Open"
-                name="hold"
+                name={`hold_${index}`}
                 options={holdOptions}
                 onChange={() => {
                   return true;
@@ -130,7 +131,7 @@ export class Docket extends React.Component {
               />
               <SearchableDropdown
                 label="AOD"
-                name="aod"
+                name={`aod_${index}`}
                 options={aodOptions}
                 onChange={() => {
                   return true;
@@ -141,7 +142,7 @@ export class Docket extends React.Component {
                 <Checkbox
                   label="Transcript Requested"
                   vertical={true}
-                  name="transcript_requested_{index}"
+                  name={`transcript_requested_${index}`}
                   onChange={() => {
                     return true;
                   }}
@@ -153,8 +154,17 @@ export class Docket extends React.Component {
           <tr>
             <td></td>
             <td colSpan="2" className="cf-hearings-docket-notes">
-              <label>Notes&nbsp;&nbsp;</label>
-              <div className="text"><textarea></textarea></div>
+              <div>
+                <TextareaField
+                  id={`notes_${index}`}
+                  label="Notes"
+                  name={`notes_${index}`}
+                  value=""
+                  onChange={() => {
+                    return true;
+                  }}
+                />
+              </div>
             </td>
           </tr>
         </tbody>

@@ -10,7 +10,7 @@ describe Judge do
     let(:user) { Generators::User.create }
     let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.days.from_now) }
     let!(:hearing) { Generators::Hearing.create(user: user, date: 1.day.from_now) }
-    let!(:hearing_same_date) { Generators::Hearing.create(user: user, date: 1.day.from_now) }
+    let!(:hearing_same_date) { Generators::Hearing.create(user: user, date: 1.day.from_now + 3.minutes) }
     let!(:hearing_another_judge) { Generators::Hearing.create(user: Generators::User.create, date: 2.days.from_now) }
 
     it "returns an array of hearing dockets in chronological order" do
@@ -26,8 +26,8 @@ describe Judge do
     end
 
     it "returns dockets with hearings grouped by date" do
-      expect(subject.first.hearings.map(&:date)).to all(eq(subject.first.date))
-      expect(subject.last.hearings.map(&:date)).to all(eq(subject.last.date))
+      expect(subject.first.hearings.map { |h| h.date.end_of_day }).to all(eq(subject.first.date.end_of_day))
+      expect(subject.last.hearings.map { |h| h.date.end_of_day }).to all(eq(subject.last.date.end_of_day))
     end
 
     it "excludes hearings for another judge" do
@@ -40,7 +40,7 @@ describe Judge do
     subject { Judge.new(user).docket(date) }
 
     let(:user) { Generators::User.create }
-    let(:date) { Time.zone.now.strftime("%Y-%m-%d") }
+    let(:date) { 1.hour.from_now }
 
     let!(:hearings) do
       [

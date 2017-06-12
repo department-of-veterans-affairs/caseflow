@@ -32,5 +32,16 @@ class HearingsController < ApplicationController
   def set_application
     RequestStore.store[:application] = "hearings"
   end
+
+  def date_from(param)
+    # date should be YYYY-MM-DD
+    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ param
+
+    begin
+      param.to_date
+    rescue ArgumentError
+      nil
+    end
+  end
   # :nocov:
 end

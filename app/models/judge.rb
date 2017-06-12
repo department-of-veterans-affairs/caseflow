@@ -7,12 +7,13 @@ class Judge
   def upcoming_dockets
     @upcoming_dockets ||= upcoming_hearings_grouped_by_date.map do |_date, hearings|
       HearingDocket.from_hearings(hearings)
-    end.sort_by(&:date)
+    end
   end
 
   def docket(date)
     @docket ||= upcoming_hearings_on(date).map do |hearing|
       {
+        id: hearing.id,
         vbms_id: hearing.appeal.vbms_id,
         vacols_id: hearing.vacols_id,
         date: hearing.date,
@@ -31,16 +32,12 @@ class Judge
   end
 
   def upcoming_hearings_on(date)
-    date_parts = date.split("-").map(&:to_i)
-
-    day = Time.zone.local(date_parts[0], date_parts[1], date_parts[2])
-
     upcoming_hearings.select do |hearing|
-      hearing.date.between?(day, day.end_of_day)
-    end.sort_by(&:date)
+      hearing.date.between?(date, date.end_of_day)
+    end
   end
 
   def upcoming_hearings
-    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id)
+    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id).sort_by(&:date)
   end
 end

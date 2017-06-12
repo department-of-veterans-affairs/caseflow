@@ -10,9 +10,11 @@ class Hearings::DocketsController < HearingsController
   end
 
   def show
-    return not_found unless date_is_valid
+    date = date_from(params[:id])
 
-    @current_user_docket ||= Judge.new(current_user).docket(params[:date])
+    return not_found unless date
+
+    @current_user_docket ||= Judge.new(current_user).docket(date)
 
     # Judge#docket can be empty if given the wrong date so...
     return not_found if @current_user_docket.empty?
@@ -44,15 +46,5 @@ class Hearings::DocketsController < HearingsController
 
   def set_application
     RequestStore.store[:application] = "hearings"
-  end
-
-  def date_is_valid
-    # date should be YYYY-MM-DD
-    return false unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ params[:date]
-
-    # YYYY cannot be 0000 and month/day cannot be 00
-    return false if /0000|-00/ =~ params[:date]
-
-    true
   end
 end

@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "Hearings" do
+  let!(:current_user) do
+    User.authenticate!(roles: ["Hearings"])
+  end
+
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
@@ -8,10 +12,6 @@ RSpec.feature "Hearings" do
   end
 
   context "Schedule" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["Hearings"])
-    end
-
     before do
       current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
 
@@ -71,6 +71,33 @@ RSpec.feature "Hearings" do
       current_user.update!(vacols_id: nil)
       visit "/hearings/dockets"
       expect(page).to have_content("Page not found")
+    end
+  end
+
+  context "Daily Docket" do
+    before do
+      current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
+
+      Generators::Hearing.build(
+        user: current_user,
+        date: 5.days.from_now,
+        type: "video"
+      )
+    end
+
+    scenario "Shows information on each docket" do
+      visit "/hearings/dockets/2017-01-05"
+      expect(page).to have_content("Daily Docket")
+    end
+
+    scenario "Shows 404 error for  missing docket" do
+      visit "/hearings/dockets/2017-1-7"
+      expect(page).to have_content("Error 404")
+    end
+
+    scenario "Shows 404 error for invalid docket" do
+      visit "/hearings/dockets/0000-00-00"
+      expect(page).to have_content("Error 404")
     end
   end
 end
