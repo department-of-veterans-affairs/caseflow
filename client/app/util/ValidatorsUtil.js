@@ -3,6 +3,9 @@ This is a duplicate of logic found in the validators folder and in
 BaseForm.jsx. As we move more towards using Redux, these validators
 better fit our expected patterns.
  */
+
+const MAX_LENGTH = 40;
+
 const ValidatorsUtil = {
 
   requiredValidator(value) {
@@ -10,7 +13,7 @@ const ValidatorsUtil = {
   },
 
   lengthValidator(value) {
-    return value.trim().length > 40;
+    return value.trim().length > MAX_LENGTH;
   },
 
   dateValidator(value) {
