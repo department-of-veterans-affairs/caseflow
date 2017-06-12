@@ -466,7 +466,7 @@ RSpec.feature "Reader" do
     # and it needs to be revaluated and fixed at a later time.
     # :nocov:
     scenario "Zooming changes the size of pages",
-      skip: "This test sometimes fails because it cannot find the expected text" do
+             skip: "This test sometimes fails because it cannot find the expected text" do
       scroll_amount = 500
       zoom_rate = 1.3
 
