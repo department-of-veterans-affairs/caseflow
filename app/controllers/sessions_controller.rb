@@ -31,7 +31,7 @@ class SessionsController < ApplicationController
     end
     @redirect_to = session["return_to"] || root_path
   end
-  
+
   def update
     regional_office = params["regional_office"]
 
