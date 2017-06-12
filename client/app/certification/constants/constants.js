@@ -48,6 +48,7 @@ export const form9Types = {
 };
 
 // representation for the appellant
+// TODO: We need to map these more closely with the rep types we pull in from BGS and VACOLS.
 export const representativeTypes = {
   ATTORNEY: 'ATTORNEY',
   AGENT: 'AGENT',
