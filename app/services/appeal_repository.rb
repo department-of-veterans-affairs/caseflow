@@ -235,12 +235,10 @@ class AppealRepository
     # Certification v2 - use the hearing preference that the user confirms.
     if FeatureToggle.enabled?(:certification_v2, user: RequestStore[:current_user])
       preference_attrs = VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[certification.hearing_preference.to_sym]
-      vacols_value = preference_attrs[:vacols_value]
-      appeal.case_record.bfhr = vacols_value
-      # Both video and travel board hearings get marked as
-      # "ready for hearing" in certification.
-      appeal.case_record.bftbind = "X" if vacols_value == "2"
-      # bfdocind is the "Video Hearing" checkbox
+      appeal.case_record.bfhr = preference_attrs[:vacols_value]
+      # "Ready for hearing" checkbox
+      appeal.case_record.bftbind = preference_attrs[:ready_for_hearing] ? "X" : nil
+      # "Video hearing" checkbox
       appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "X" : nil
     else
       appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
