@@ -233,6 +233,13 @@ pre {
   }
 }
 
+.cf-sg-searchbar-example {
+  [type="label"].usa-sr-only {
+    position: relative;
+    left: auto;
+  }
+}
+
 .cf-sg-loader {
   .loadingContainer-positioning {
     height: auto;
@@ -243,5 +250,3 @@ pre {
   width: 400px;
   height: 400px;
 }
-
-

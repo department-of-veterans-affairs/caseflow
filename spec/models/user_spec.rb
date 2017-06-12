@@ -3,7 +3,7 @@ require "rails_helper"
 User.authentication_service = Fakes::AuthenticationService
 
 describe User do
-  let(:session) { { "user" => { "id" => "123", "station_id" => "456" } } }
+  let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
   let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
   before { Fakes::AuthenticationService.user_session = nil }
 
@@ -52,8 +52,8 @@ describe User do
   context "#timezone" do
     context "when ro is set" do
       subject { user.timezone }
-      before { user.regional_office = "RO26" }
-      it { is_expected.to eq("America/Indiana/Indianapolis") }
+      before { user.regional_office = "RO84" }
+      it { is_expected.to eq("America/New_York") }
     end
 
     context "when ro isn't set" do
@@ -180,44 +180,12 @@ describe User do
   end
 
   context "#authenticate" do
-    subject { user.authenticate(regional_office: "rO21", password: password) }
-    before do
-      Fakes::AuthenticationService.vacols_regional_offices = {
-        "RO21" => "pinkpowerranger" }
-    end
+    subject { user.regional_office = "rO21" }
 
     context "when user enters lowercase RO" do
-      let(:password) { "pinkpowerranger" }
-
       it "sets regional_office in the session" do
         is_expected.to be_truthy
         expect(user.regional_office).to eq("RO21")
-      end
-    end
-  end
-
-  context "#authenticate" do
-    subject { user.authenticate(regional_office: "RO21", password: password) }
-    before do
-      Fakes::AuthenticationService.vacols_regional_offices = {
-        "RO21" => "pinkpowerranger" }
-    end
-
-    context "when vacols authentication passes" do
-      let(:password) { "pinkpowerranger" }
-
-      it "sets regional_office in the session" do
-        is_expected.to be_truthy
-        expect(user.regional_office).to eq("RO21")
-      end
-    end
-
-    context "when vacols authentication fails" do
-      let(:password) { "redpowerranger" }
-
-      it "doesn't set regional_office in the session" do
-        is_expected.to be_falsey
-        expect(user.regional_office).to be_nil
       end
     end
   end
