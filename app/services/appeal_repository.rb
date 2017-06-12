@@ -238,6 +238,8 @@ class AppealRepository
       # Both video and travel board hearings get marked as
       # "ready for hearing" in certification.
       appeal.case_record.bftbind = "X" if vacols_value == "2"
+      # bfdocind is the "Video Hearing" checkbox
+      appeal.case_record.bfdocind = "X" if preference_attrs[:video_hearing]
     else
       appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
     end
