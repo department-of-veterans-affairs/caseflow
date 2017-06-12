@@ -462,6 +462,9 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Banana. Banana who", wait: 4)
     end
 
+    # this test being skipped because it often fails during the CI process
+    # and it needs to be revaluated and fixed at a later time.
+    # :nocov:
     skip "Zooming changes the size of pages" do
       scroll_amount = 500
       zoom_rate = 1.3
@@ -512,6 +515,7 @@ RSpec.feature "Reader" do
       height_difference = get_size("pageContainer1")[:height].round - get_size("scrollWindow")[:height].round
       expect(height_difference.abs).to be < size_margin_of_error
     end
+    # :nocov:
 
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
