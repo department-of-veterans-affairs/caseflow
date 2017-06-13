@@ -18,6 +18,15 @@ export default class Dropdown extends React.Component {
       readOnly
     } = this.props;
 
+    // Use empty string instead of null or undefined,
+    // otherwise React displays the following error:
+    //
+    // "`value` prop on `input` should not be null.
+    // Consider using the empty string to clear the component
+    // or `undefined` for uncontrolled components."
+    //
+    value = (value === null || typeof value === 'undefined') ? '' : value;
+
     return <div className="cf-form-dropdown">
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}

@@ -68,7 +68,7 @@ class ExternalApi::BGSService
       bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                           service: :bgs,
                                           name: "address.find_by_participant_id") do
-        client.address.find_by_participant_id(participant_id)
+        client.address.find_all_by_participant_id(participant_id)
       end
       # handle no address found
       @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
