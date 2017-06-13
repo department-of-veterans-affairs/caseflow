@@ -162,7 +162,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    system 'free'
     Timecop.return
     Rails.cache.clear
   end
