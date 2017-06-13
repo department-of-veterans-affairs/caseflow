@@ -22,7 +22,7 @@ export default class StyleGuideButton extends React.Component {
           Sign up
         </Button><br/><br/>
         <Button
-          name="signup-2"
+          name="signup-button"
           classNames={['usa-button-secondary']}>
           Sign up
         </Button>
@@ -35,7 +35,7 @@ export default class StyleGuideButton extends React.Component {
           Sign up
         </Button><br/><br/>
         <Button
-          name="signup-4"
+          name="signup-hover"
           classNames={['usa-button-secondary usa-button-hover']}>
           Sign up
         </Button>
@@ -43,12 +43,12 @@ export default class StyleGuideButton extends React.Component {
     <div className="usa-width-one-third">
     <h3 className="styleguide-grey-header">Active</h3>
         <Button
-          name="signup-5"
+          name="signup-active"
           classNames={['usa-button-active']}>
           Sign up
         </Button><br/><br/>
         <Button
-          name="signup-6"
+          name="signup-secondary"
           classNames={['usa-button-secondary usa-button-active']}>
           Sign up
         </Button>
@@ -59,7 +59,7 @@ export default class StyleGuideButton extends React.Component {
     <div className="usa-width-one-third">
     <h3 className="styleguide-grey-header">Default</h3>
         <Button
-          name="signup-7"
+          name="signup-outline"
           classNames={['usa-button-outline']}>
           Sign up
         </Button>
@@ -67,7 +67,7 @@ export default class StyleGuideButton extends React.Component {
     <div className="usa-width-one-third">
     <h3 className="styleguide-grey-header">Hover</h3>
         <Button
-          name="signup-8"
+          name="signup-"
           classNames={['usa-button-outline usa-button-hover']}>
           Sign up
         </Button>
@@ -85,7 +85,7 @@ export default class StyleGuideButton extends React.Component {
     <div className="usa-grid">
     <div className="usa-width-one-third">
        <Button
-         name="signup-10"
+         name="signup-disabled"
          classNames={['usa-button-disabled']}>
          Sign up
        </Button>
