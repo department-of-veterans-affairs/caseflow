@@ -2,6 +2,7 @@ require "csv"
 require "parallel"
 
 class Report
+  # :nocov:
   def self.table_row(record)
     table_columns.map { |k| record.send(k) }
   end
@@ -34,4 +35,5 @@ class Report
       end
     end
   end
+  # :nocov:
 end
