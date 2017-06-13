@@ -26,7 +26,7 @@ export default class UnpreparedTasksIndex extends React.Component {
         valueFunction: (task) => formatDate(task.cached_serialized_decision_date)
       },
       {
-        header: 'Days in Queue',
+        header: 'Days Since Outcoding',
         valueFunction: (task) => `${task.days_since_creation} days`
       }
     ];
