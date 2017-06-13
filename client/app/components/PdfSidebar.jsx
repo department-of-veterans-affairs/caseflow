@@ -36,8 +36,7 @@ export class PdfSidebar extends React.Component {
 
     this.commentElements = {};
     this.state = {
-      modal: false,
-      modalButton: false
+      modal: false
     };
   }
 
@@ -211,7 +210,7 @@ export class PdfSidebar extends React.Component {
             {comments}
           </div>
           <div className="cf-keyboard-shortcuts">
-            { this.state.modalButton && <Button
+            { false && <Button
                 id="cf-open-keyboard-modal"
                 name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
                 onClick={this.toggleKeyboardModal}
