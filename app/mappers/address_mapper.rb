@@ -1,6 +1,6 @@
 module AddressMapper
   def get_address_from_bgs_address(bgs_address)
-    return if !bgs_address
+    return {} unless bgs_address
     {
       address_line_1: bgs_address[:addrs_one_txt],
       address_line_2: bgs_address[:addrs_two_txt],
