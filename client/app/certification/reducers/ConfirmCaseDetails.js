@@ -1,20 +1,10 @@
 import * as Constants from '../constants/constants';
+import * as CertificationReducers from './Certification';
 
 /* eslint max-statements: ["error", 14]*/
-export const updateErroredFields = (fieldName, state) => {
-  const newErroredFields = state.erroredFields || [];
-  const index = newErroredFields.indexOf(fieldName);
-
-  if (index !== -1) {
-    newErroredFields.splice(index, 1);
-  }
-
-  return newErroredFields;
-};
-
 export const changeRepresentativeType = (state, action) => {
   const update = {};
-  const updatedErroredFields = updateErroredFields('representativeType', state);
+  const updatedErroredFields = CertificationReducers.updateErroredFields('representativeType', state);
 
   update.erroredFields = updatedErroredFields;
   update.representativeType = action.payload.representativeType;
@@ -35,9 +25,9 @@ export const changeRepresentativeName = (state, action) => {
   let updatedErroredFields = state.erroredFields || [];
 
   if (updatedErroredFields.indexOf('representativeName') === -1) {
-    updatedErroredFields = updateErroredFields('representativeNameLength', state);
+    updatedErroredFields = CertificationReducers.updateErroredFields('representativeNameLength', state);
   } else {
-    updatedErroredFields = updateErroredFields('representativeName', state);
+    updatedErroredFields = CertificationReducers.updateErroredFields('representativeName', state);
   }
 
   return Object.assign({}, state, {
@@ -47,7 +37,7 @@ export const changeRepresentativeName = (state, action) => {
 };
 
 export const changeOrganizationName = (state, action) => {
-  const updatedErroredFields = updateErroredFields('organizationName', state);
+  const updatedErroredFields = CertificationReducers.updateErroredFields('organizationName', state);
 
   return Object.assign({}, state, {
     organizationName: action.payload.organizationName,
@@ -62,7 +52,7 @@ export const changeOtherRepresentativeType = (state, action) => {
 };
 
 export const changePoaMatches = (state, action) => {
-  const updatedErroredFields = updateErroredFields('poaMatches', state);
+  const updatedErroredFields = CertificationReducers.updateErroredFields('poaMatches', state);
 
   const update = {
     poaMatches: action.payload.poaMatches,
@@ -77,7 +67,7 @@ export const changePoaMatches = (state, action) => {
 };
 
 export const changePoaCorrectLocation = (state, action) => {
-  const updatedErroredFields = updateErroredFields('poaCorrectLocation', state);
+  const updatedErroredFields = CertificationReducers.updateErroredFields('poaCorrectLocation', state);
 
   const update = {
     poaCorrectLocation: action.payload.poaCorrectLocation,
