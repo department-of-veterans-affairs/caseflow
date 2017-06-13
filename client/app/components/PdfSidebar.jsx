@@ -8,6 +8,8 @@ import EditComment from '../components/EditComment';
 import _ from 'lodash';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
+import Table from '../components/Table';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -17,7 +19,9 @@ import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
-import { plusIcon } from './RenderFunctions';
+import { plusIcon, Keyboard } from './RenderFunctions';
+import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -31,6 +35,15 @@ export class PdfSidebar extends React.Component {
     super(props);
 
     this.commentElements = {};
+    this.state = {
+      modal: false
+    };
+  }
+
+  toggleKeyboardModal = () => {
+    this.setState((prevState) => ({
+      modal: !prevState.modal
+    }));
   }
 
   componentDidUpdate = () => {
@@ -195,6 +208,46 @@ export class PdfSidebar extends React.Component {
                 onCancelCommentEdit={this.props.stopPlacingAnnotation}
                 onSaveCommentEdit={this.props.createAnnotation} />}
             {comments}
+          </div>
+          <div className="cf-keyboard-shortcuts">
+            <Button
+                id="cf-open-keyboard-modal"
+                name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+                onClick={this.toggleKeyboardModal}
+                classNames={['cf-btn-link']}
+            />
+          { this.state.modal && <div className="cf-modal-scroll">
+            <Modal
+                buttons = {[
+                  { classNames: ['usa-button', 'usa-button-secondary'],
+                    name: 'Thanks, got it!',
+                    onClick: this.toggleKeyboardModal
+                  }
+                ]}
+                closeHandler={this.toggleKeyboardModal}
+                title="Keyboard shortcuts"
+                noDivider={true}
+                id="cf-keyboard-modal">
+                <div className="cf-keyboard-modal-scroll">
+                  <Table
+                    columns={scrollColumns}
+                    rowObjects={scrollInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                  <Table
+                    columns={commentColumns}
+                    rowObjects={commentInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                  <Table
+                    columns={documentsColumns}
+                    rowObjects={documentsInstructions}
+                    slowReRendersAreOk={true}
+                    className="cf-keyboard-modal-table"/>
+                </div>
+              </Modal>
+          </div>
+          }
           </div>
         </div>
       </div>;
