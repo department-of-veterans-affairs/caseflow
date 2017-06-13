@@ -241,6 +241,33 @@ describe Certification do
     end
   end
 
+  context ".find_by_vacols_id" do
+    let(:vacols_id) { "1122" }
+    let!(:certification) { Certification.create(vacols_id: vacols_id) }
+
+    subject { Certification.find_by_vacols_id(vacols_id) }
+
+    context "when certification exists and it has not been cancelled before" do
+      it "loads that certification " do
+        expect(subject.id).to eq(certification.id)
+      end
+    end
+
+    context "when certification exists and it has been cancelled before" do
+      let!(:certification_cancellation) do
+        CertificationCancellation.create(
+          certification_id: certification.id,
+          cancellation_reason: "test",
+          email: "test@gmail.com"
+        )
+      end
+
+      it "does not find one" do
+        expect(subject).to eq nil
+      end
+    end
+  end
+
   context ".find_or_create_by_vacols_id" do
     let(:vacols_id) { "1122" }
     subject { Certification.find_or_create_by_vacols_id(vacols_id) }

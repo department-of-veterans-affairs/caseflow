@@ -91,11 +91,11 @@ class Document < ActiveRecord::Base
   end
 
   def content
-    @content ||= fetch_and_cache_document_from_vbms
+    @content ||= fetch_content
   end
 
   def serve
-    File.binwrite(default_path, content) unless File.exist?(default_path)
+    File.binwrite(default_path, content)
     default_path
   end
 
