@@ -10,6 +10,7 @@ import * as certificationActions from './actions/Certification';
 import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
+import { formatDateStr } from '../util/DateUtil';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -33,7 +34,8 @@ const ERRORS = {
   certifyingUsername: 'Please enter the organizational element.',
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
   certifyingOfficialTitle: 'Please enter the title of the certifying official.',
-  certificationDate: "Please enter today's date."
+  certificationDate: "Please enter today's date.",
+  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.'
 };
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -50,6 +52,8 @@ class UnconnectedSignAndCertify extends React.Component {
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialName)) {
       erroredFields.push('certifyingOfficialName');
+    } else if (ValidatorsUtil.lengthValidator(this.props.certifyingOfficialName)) {
+      erroredFields.push('certifyingOfficialNameLength');
     }
 
     if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitle)) {
@@ -77,6 +81,16 @@ class UnconnectedSignAndCertify extends React.Component {
 
   isFieldErrored(fieldName) {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
+  }
+
+  calculateErrorMessage() {
+    if (this.isFieldErrored('certifyingOfficialName')) {
+      return ERRORS.certifyingOfficialName;
+    } else if (this.isFieldErrored('certifyingOfficialNameLength')) {
+      return ERRORS.certifyingOfficialNameLength;
+    }
+
+    return null;
   }
 
   componentDidUpdate () {
@@ -137,7 +151,7 @@ class UnconnectedSignAndCertify extends React.Component {
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
-            errorMessage={(this.isFieldErrored('certifyingOfficialName') ? ERRORS.certifyingOfficialName : null)}
+            errorMessage={this.calculateErrorMessage()}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
@@ -149,7 +163,7 @@ class UnconnectedSignAndCertify extends React.Component {
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           <DateSelector
             name={'Date:'}
-            value={certificationDate}
+            value={formatDateStr(certificationDate)}
             readOnly={true}
           />
         </div>

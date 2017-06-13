@@ -95,6 +95,7 @@ class Form8PdfService
     form9_date: "Field32[2]",
     representative: "TextField1[4]",
     hearing_preference: {
+      "HEARING_CANCELLED" => "CheckBox21[0]",
       "NO_HEARING_DESIRED" => "CheckBox21[0]",
       "VIDEO" => "CheckBox21[1]",
       "WASHINGTON_DC" => "CheckBox21[2]",

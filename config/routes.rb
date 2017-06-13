@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
-  resources :sessions, only: [:new, :create]
+  resources :sessions, only: [:new, :update]
   resources :certifications, path_names: { new: "new/:vacols_id" } do
     get 'pdf', on: :member
     get 'form9_pdf', on: :member
@@ -124,6 +124,7 @@ Rails.application.routes.draw do
       resources :setup, only: [:index]
       post "setup-uncertify-appeal" => "setup#uncertify_appeal"
       post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
+      post "setup-toggle-features" => "setup#toggle_features"
       get "setup-delete-test-data" => "setup#delete_test_data"
     end
 

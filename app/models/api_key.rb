@@ -19,7 +19,7 @@ class ApiKey < ActiveRecord::Base
   private
 
   def generate_key_string
-    self.key_string = SecureRandom.uuid.delete("-")
+    self.key_string ||= SecureRandom.uuid.delete("-")
     self.key_digest = self.class.digest_key_string(key_string)
   end
 end

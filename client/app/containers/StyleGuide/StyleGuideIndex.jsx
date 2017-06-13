@@ -11,6 +11,7 @@ import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
+import StyleGuideSearch from './StyleGuideSearch';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
@@ -162,9 +163,7 @@ export default function StyleGuideIndex() {
           id="buttons" />
         <StyleGuideLinkButton />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Search"
-          id="search" />
+        <StyleGuideSearch />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
         <div className="cf-help-divider"></div>

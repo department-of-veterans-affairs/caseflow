@@ -4,6 +4,7 @@ class Test::SetupController < ApplicationController
   def index
     @certification_appeal = "UNCERTIFY_ME"
     @dispatch_appeal = "DISPATCH_ME"
+    @feature_name = "FEATURE"
   end
 
   def uncertify_appeal
@@ -31,7 +32,12 @@ class Test::SetupController < ApplicationController
     TestDataService.prepare_claims_establishment!(vacols_id: @dispatch_appeal.vacols_id,
                                                   cancel_eps: cancel_eps,
                                                   decision_type: decision_type)
-    redirect_to establish_claims_path
+    if @dispatch_appeal.nil?
+      flash[:error] = "Well... #{test_appeal_id} didn't work"
+    else
+      flash[:success] = "Reset Date and Location for Appeal: #{test_appeal_id}"
+    end
+    redirect_to action: "index"
   end
 
   def delete_test_data
@@ -44,11 +50,27 @@ class Test::SetupController < ApplicationController
     redirect_to action: "index"
   end
 
+  # :nocov:
+  def toggle_features
+    feature = params["FEATURE"][:feature_name].to_sym
+    enabled = FeatureToggle.enabled?(feature, user: current_user)
+    toggle = FeatureToggle.enable!(feature, users: [current_user.css_id])
+    toggle = FeatureToggle.disable!(feature, users: [current_user.css_id]) if enabled
+
+    if enabled && toggle
+      flash[:success] = "Feature #{feature} disabled!"
+    elsif !enabled && toggle
+      flash[:success] = "Feature #{feature} enabled!"
+    else
+      flash[:error] = "Failed to toggle #{feature}!"
+    end
+    redirect_to action: "index"
+  end
+
   private
 
-  # :nocov:
   def require_non_prod
     redirect_to "/unauthorized" unless test_user?
   end
-  # :nocov"
+  # :nocov:
 end

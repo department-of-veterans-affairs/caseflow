@@ -72,6 +72,7 @@ class SeedDB
   end
 
   def create_default_users
+    @users.push(User.create(css_id: "Reader", station_id: "405", full_name: "VBMS Station ID maps to multiple VACOLS IDs"))
     @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Cave Johnson"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "284", full_name: "Bob Contoso"))
@@ -103,8 +104,12 @@ class SeedDB
     Generators::Hearing.create
   end
 
+  def create_api_key
+    ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
+  end
+
   def clean_db
-    DatabaseCleaner.clean_with(:truncation, {:except => %w[api_keys]})
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   def seed
@@ -116,6 +121,7 @@ class SeedDB
     create_annotations
     create_tags
     create_hearings
+    create_api_key
   end
 end
 
