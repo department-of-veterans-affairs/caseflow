@@ -170,12 +170,15 @@ RSpec.feature "Start Certification" do
       select "Unlisted service organization", from: "Service organization name"
       expect(page).to_not have_content("Since you selected Unlisted")
       click_button("Continue")
-      expect(page).to have_content("Please select a service organization's name.")
+      expect(page).to have_content("Please enter a service organization's name.")
+      fill_in "Enter the service organization's name:", with: "12345678901234567890123456789012345678901"
+      click_button("Continue")
+      expect(page).to have_content("Maximum length of organization name reached.")
       fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
 
-      # go back to the case datails page
+      # go back to the case details page
       page.go_back
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
         expect(find_field("No", visible: false)).to be_checked
