@@ -32,9 +32,9 @@ export const changeRepresentativeType = (state, action) => {
 };
 
 export const changeRepresentativeName = (state, action) => {
-  let updatedErroredFields = [];
+  let updatedErroredFields = state.erroredFields || [];
 
-  if (state.erroredFields.indexOf('representativeName') === -1) {
+  if (updatedErroredFields.indexOf('representativeName') === -1) {
     updatedErroredFields = updateErroredFields('representativeNameLength', state);
   } else {
     updatedErroredFields = updateErroredFields('representativeName', state);
