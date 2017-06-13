@@ -175,7 +175,7 @@ Table.propTypes = {
   rowClassNames: PropTypes.func,
   keyGetter: PropTypes.func,
   slowReRendersAreOk: PropTypes.bool,
-  summary: PropTypes.string.isRequired,
+  summary: PropTypes.string,
   headerClassName: PropTypes.string,
   className: PropTypes.string,
   caption: PropTypes.string,
