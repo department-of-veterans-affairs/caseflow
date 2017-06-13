@@ -218,12 +218,18 @@ class Certification < ActiveRecord::Base
   end
 
   class << self
-    # Return existing certification only if it was not cancelled before
     def find_or_create_by_vacols_id(vacols_id)
+      find_by_vacols_id(vacols_id) || create!(vacols_id: vacols_id)
+    end
+
+    # Return existing certification only if it was not cancelled before
+    def find_by_vacols_id(vacols_id)
       Certification.join_cancellations
                    .where(certification_cancellations: { certification_id: nil })
-                   .find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
+                   .find_by(vacols_id: vacols_id)
     end
+
+
 
     def join_cancellations
       Certification.joins("LEFT OUTER JOIN certification_cancellations ON
