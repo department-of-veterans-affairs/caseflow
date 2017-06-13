@@ -2,8 +2,8 @@ import * as Constants from '../constants/constants';
 
 /* eslint max-statements: ["error", 14]*/
 export const updateErroredFields = (fieldName, state) => {
-  const index = state.erroredFields.indexOf(fieldName);
-  const newErroredFields = state.erroredFields;
+  const newErroredFields = state.erroredFields || [];
+  const index = newErroredFields.indexOf(fieldName);
 
   if (index !== -1) {
     newErroredFields.splice(index, 1);
