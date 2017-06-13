@@ -2,6 +2,7 @@
 # a GET /metrics request is made. This ensures we regularly
 # get a snapshot of instance information
 class MetricsCollector
+  # :nocov:
   def initialize(app)
     @app = app
   end
@@ -53,4 +54,5 @@ class MetricsCollector
     PrometheusService.background_jobs.set({ type: "failed" }, stats.failed)
     PrometheusService.background_jobs.set({ type: "default_queue_latency" }, stats.default_queue_latency)
   end
+  # :nocov: 
 end
