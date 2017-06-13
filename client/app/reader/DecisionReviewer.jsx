@@ -8,6 +8,7 @@ import Perf from 'react-addons-perf';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
+import CaseSelect from './CaseSelect';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -149,6 +150,10 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
+  routedCaseSelect = () => {
+    return <CaseSelect />
+  }
+
   rootRoute = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -165,6 +170,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <Route path="/:vacolsId/documents" render={this.rootRoute} />
+      <Route exact path="/" render={this.routedCaseSelect} />
     </Router>;
   }
 }
