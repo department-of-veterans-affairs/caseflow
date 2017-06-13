@@ -18,7 +18,6 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
-const RENDER_WITHIN_SCROLL = 5000;
 
 // These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be

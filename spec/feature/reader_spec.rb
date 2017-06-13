@@ -84,14 +84,14 @@ RSpec.feature "Reader" do
           filename: "My BVA Decision",
           type: "BVA Decision",
           received_at: 7.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: 6,
           category_procedural: true
         ),
         Generators::Document.create(
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 2,
+          vbms_document_id: 5,
           category_medical: true,
           category_other: true
         ),
@@ -430,7 +430,7 @@ RSpec.feature "Reader" do
       scenario "Switch between pages" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on documents[1].type
+        click_on documents[2].type
 
         fill_in "page-progress-indicator-input", with: "4\n"
         expect(in_viewport("pageContainer4")).to be true
@@ -448,18 +448,17 @@ RSpec.feature "Reader" do
     # given page renders. The scrolling is irrelevant. It's also unclear this is how
     # we should be rendering pages. So for now, let's skip this test to avoid
     # non-deterministic failures.
-    skip "Scrolling renders pages" do
+    scenario "Scrolling renders pages" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      click_on documents[0].type
-      expect(page).to have_css(".page")
+      click_on documents[1].type
 
-      # Expect only the first page to be reneder on first load
-      # But if we scroll second page should be rendered and
-      # we should be able to find text from the second page.
-      expect(page).to_not have_content("Banana. Banana who")
-      scroll_to("scrollWindow", 500)
-      expect(page).to have_content("Banana. Banana who", wait: 4)
+      # Expect the 103 page to only be rendered once scrolled to.
+      expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+
+      fill_in "page-progress-indicator-input", with: "23\n"
+
+      expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
     end
 
     # this test being skipped because it often fails during the CI process
@@ -680,7 +679,7 @@ RSpec.feature "Reader" do
       DownloadHelpers.wait_for_download
       download = DownloadHelpers.downloaded?
       expect(download).to be_truthy
-      expect(filename).to have_content("BVA Decision-5")
+      expect(filename).to have_content("BVA Decision-6")
       DownloadHelpers.clear_downloads
     end
   end
