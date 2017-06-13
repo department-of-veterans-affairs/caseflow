@@ -1,5 +1,4 @@
 class RegionalOfficeRepository
-  # :nocov:
   def self.find(ro_id, _args = {})
     office_record = MetricsService.record("VACOLS: loaded RO #{ro_id}",
                                           service: :vacols,
@@ -19,5 +18,4 @@ class RegionalOfficeRepository
     end
     ros.map { |v| RegionalOffice.from_record(office_record: v) }
   end
-  # :nocov:
 end
