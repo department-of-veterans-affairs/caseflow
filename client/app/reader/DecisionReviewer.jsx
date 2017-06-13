@@ -153,7 +153,7 @@ export class DecisionReviewer extends React.PureComponent {
     const { vacolsId } = props.match.params;
 
     return <LoadingScreen vacolsId={vacolsId}>
-      <div className="section--document-list">
+      <div>
         <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
         <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
       </div>
@@ -164,7 +164,7 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
+      <div className="section--document-list">
         <Route path="/:vacolsId/documents" render={this.rootRoute} />
         <Route exact path="/" render={this.routedCaseSelect} />
       </div>

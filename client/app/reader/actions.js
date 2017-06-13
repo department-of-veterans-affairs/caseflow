@@ -27,6 +27,11 @@ export const onReceiveAnnotations = (annotations) => ({
   payload: { annotations }
 });
 
+export const onReceiveAssignments = (assignments) => ({
+  type: Constants.RECEIVE_ASSIGNMENTS,
+  payload: { assignments }
+});
+
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
   payload: {

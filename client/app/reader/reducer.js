@@ -108,6 +108,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  assignments: null,
   initialDataLoadingFail: false,
   ui: {
     pendingAnnotations: {},
@@ -219,6 +220,13 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_ASSIGNMENTS:
+  return update(state,
+    {
+      assignments: {
+        $set: action.payload.assignments
+      }
+    });
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
