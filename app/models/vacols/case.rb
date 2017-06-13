@@ -104,7 +104,7 @@ class VACOLS::Case < VACOLS::Record
 
   HEARING_PREFERENCE_TYPES_V2 = {
     VIDEO: { vacols_value: "2", video_hearing: true, ready_for_hearing: true },
-    TRAVEL_BOARD: { vacols_value: "2", ready_for_hearing: true},
+    TRAVEL_BOARD: { vacols_value: "2", ready_for_hearing: true },
     WASHINGTON_DC: { vacols_value: "1" },
     # when the hearing type is not specified,
     # default to a video hearing.
