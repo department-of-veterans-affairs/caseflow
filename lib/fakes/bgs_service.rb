@@ -180,6 +180,23 @@ class Fakes::BGSService
     []
   end
 
+  def self.power_of_attorney_records
+    {
+      "111225555" =>
+        {
+          file_number: "111225555",
+          power_of_attorney:
+            {
+              legacy_poa_cd: "3QQ",
+              nm: "Clarence Darrow",
+              org_type_nm: "POA Attorney",
+              ptcpnt_id: "ERROR-ID"
+            },
+          ptcpnt_id: "600085545"
+        }
+    }
+  end
+
   def self.clean!
     self.ssn_not_found = false
   end

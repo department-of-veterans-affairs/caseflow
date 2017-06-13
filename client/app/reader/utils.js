@@ -67,6 +67,10 @@ export const moveModel = (state, srcPath, destPath, id) =>
     }
   );
 
+export const isValidWholeNumber = (number) => {
+  return !isNaN(number) && number % 1 === 0;
+};
+
 export const sortAnnotations = (annotations) =>
   _(annotations).
     sortBy('page', 'y').

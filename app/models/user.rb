@@ -25,9 +25,15 @@ class User < ActiveRecord::Base
     end
   end
 
-  # If RO is unambiguous from station_office, use that RO. Otherwise, use user defined RO
+  # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
-    station_offices.is_a?(String) ? station_offices : @regional_office
+    upcase = ->(str) { str ? str.upcase : str }
+
+    ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
+  end
+
+  def ro_is_ambiguous_from_station_office?
+    station_offices.is_a?(Array)
   end
 
   def timezone
@@ -63,13 +69,6 @@ class User < ActiveRecord::Base
     !regional_office.blank?
   end
 
-  # This method is used for VACOLS authentication
-  def authenticate(regional_office:, password:)
-    return false unless User.authenticate_vacols(regional_office, password)
-
-    @regional_office = regional_office.upcase
-  end
-
   def attributes
     super.merge(display_name: display_name)
   end
@@ -99,17 +98,20 @@ class User < ActiveRecord::Base
     tasks.to_complete.find_by(type: task_type)
   end
 
+  def current_case_assignments
+    self.class.case_assignment_repository.load_from_vacols(vacols_id)
+  end
+
   def to_hash
     serializable_hash
   end
-
-  private
 
   def station_offices
     VACOLS::RegionalOffice::STATIONS[station_id]
   end
 
   class << self
+    attr_writer :case_assignment_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -145,6 +147,10 @@ class User < ActiveRecord::Base
 
     def authentication_service
       @authentication_service ||= AuthenticationService
+    end
+
+    def case_assignment_repository
+      @case_assignment_repository ||= CaseAssignmentRepository
     end
   end
 end
