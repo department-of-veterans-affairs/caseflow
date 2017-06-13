@@ -700,12 +700,8 @@ RSpec.feature "Reader" do
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
-    scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      click_on documents.first.type
-
-      (num_documents - 1).times { find("#button-next").click }
+    scenario "Open the last document on the page and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
       click_on "Back to all documents"
 
