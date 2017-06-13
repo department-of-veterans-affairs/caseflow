@@ -1,4 +1,5 @@
 class VACOLS::Note < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.assign"
   self.primary_key = "tasknum"
 
@@ -70,4 +71,5 @@ class VACOLS::Note < VACOLS::Record
     fail(InvalidNotelengthError) if text.length > 280
     fail InvalidNoteCodeError unless CODE_ACTKEY_MAPPING[note_code]
   end
+  # :nocov:
 end
