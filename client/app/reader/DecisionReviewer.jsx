@@ -169,8 +169,10 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <Route path="/:vacolsId/documents" render={this.rootRoute} />
-      <Route exact path="/" render={this.routedCaseSelect} />
+      <div>
+        <Route path="/:vacolsId/documents" render={this.rootRoute} />
+        <Route exact path="/" render={this.routedCaseSelect} />
+      </div>
     </Router>;
   }
 }
