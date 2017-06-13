@@ -1,5 +1,5 @@
 // TODO refactor into smaller files
-/* eslint max-lines: ["error", 500]*/
+/* eslint max-lines: ["error", 510]*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -102,8 +102,9 @@ const ERRORS = {
   poaMatches: 'Please select yes or no.',
   poaCorrectLocation: 'Please select an option.',
   representativeType: 'Please select a representative type.',
-  representativeName: 'Please select a service organization\'s name.',
-  organizationName: 'Please select an organization.'
+  representativeName: 'Please enter a service organization\'s name.',
+  organizationName: 'Please select an organization.',
+  representativeNameLength: 'Maximum length of organization name reached.'
 };
 
 /*
@@ -167,7 +168,11 @@ export class ConfirmCaseDetails extends React.Component {
     if (organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
      ValidatorsUtil.requiredValidator(representativeName)) {
       erroredFields.push('representativeName');
+    } else if (organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+         ValidatorsUtil.lengthValidator(representativeName)) {
+      erroredFields.push('representativeNameLength');
     }
+
 
     return erroredFields;
   }
@@ -217,6 +222,16 @@ export class ConfirmCaseDetails extends React.Component {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
   }
 
+  calculateErrorMessage() {
+    if (this.isFieldErrored('representativeName')) {
+      return ERRORS.representativeName;
+    } else if (this.isFieldErrored('representativeNameLength')) {
+      return ERRORS.representativeNameLength;
+    }
+
+    return null;
+  }
+
   componentDidUpdate () {
     if (this.props.scrollToError && this.props.erroredFields) {
       ValidatorsUtil.scrollToAndFocusFirstError();
@@ -226,7 +241,7 @@ export class ConfirmCaseDetails extends React.Component {
     }
   }
 
-  /* eslint max-statements: ["error", 13]*/
+  /* eslint max-statements: ["error", 14]*/
   render() {
     let {
       poaMatches,
@@ -367,7 +382,7 @@ export class ConfirmCaseDetails extends React.Component {
             <TextField
               name={'Enter the service organization\'s name:'}
               value={representativeName}
-              errorMessage={(this.isFieldErrored('representativeName') ? ERRORS.representativeName : null)}
+              errorMessage={this.calculateErrorMessage()}
               required={true}
               onChange={changeRepresentativeName}/>
           }
