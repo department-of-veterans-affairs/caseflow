@@ -229,8 +229,6 @@ class Certification < ActiveRecord::Base
                    .find_by(vacols_id: vacols_id)
     end
 
-
-
     def join_cancellations
       Certification.joins("LEFT OUTER JOIN certification_cancellations ON
         certifications.id = certification_cancellations.certification_id")
