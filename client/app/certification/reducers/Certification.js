@@ -49,3 +49,14 @@ export const toggleCancellationModal = (state) => {
     showCancellationModal: !showModal
   });
 };
+
+export const clearErroredField = (fieldName, state) => {
+  const newErroredFields = state.erroredFields || [];
+  const index = newErroredFields.indexOf(fieldName);
+
+  if (index !== -1) {
+    newErroredFields.splice(index, 1);
+  }
+
+  return newErroredFields;
+};
