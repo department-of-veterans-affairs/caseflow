@@ -359,7 +359,7 @@ export class Pdf extends React.PureComponent {
 
     this.setUpPdf(this.props.file);
 
-    // focusing the scroll window when the component first loads
+    // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
   }
 
@@ -388,8 +388,8 @@ export class Pdf extends React.PureComponent {
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
-      
-      // focusing the scroll window when the document changes
+
+      // focus the scroll window when the document changes.
       this.scrollWindow.focus();
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
