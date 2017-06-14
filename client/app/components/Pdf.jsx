@@ -198,6 +198,10 @@ export class Pdf extends React.PureComponent {
             ..._.pick(viewport, ['width', 'height'])
           });
 
+          // Since we don't know a page's size until we render it, we either use the
+          // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
+          // or the dimensions of the first page we successfully render. This allows
+          // us to accurately represent the size of pages we haven't rendered yet.
           if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
             this.defaultWidth = viewport.width;
             this.defaultHeight = viewport.height;
@@ -274,11 +278,8 @@ export class Pdf extends React.PureComponent {
     let minPageDistance = Number.MAX_SAFE_INTEGER;
 
     this.performFunctionOnEachPage((boundingRect, index) => {
-      // This renders each page as it comes into view. i.e. when
-      // the top of the next page is within a thousand pixels of
-      // the current view we render it. If the bottom of the page
-      // above is within a thousand pixels of the current view
-      // we also render it.
+      // This renders the next "closest" page. Where closest is defined as how
+      // far the page is from the viewport.
       if (!this.isRendering[index]) {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
