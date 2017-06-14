@@ -20,7 +20,7 @@ export class LoadingScreen extends React.Component {
       const documents = returnedObject.appealDocuments;
       const { annotations } = returnedObject;
 
-      this.props.onReceiveDocs(documents);
+      this.props.onReceiveDocs(documents, this.props.vacolsId);
       this.props.onReceiveAnnotations(annotations);
 
       const downloadDocuments = (documentUrls, index) => {
@@ -40,7 +40,7 @@ export class LoadingScreen extends React.Component {
   }
 
   render() {
-    if (this.props.documentsLoaded) {
+    if (this.props.loadedAppealId === this.props.vacolsId) {
       return this.props.children;
     }
 
@@ -66,7 +66,7 @@ export class LoadingScreen extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'initialDataLoadingFail'),
-  documentsLoaded: _.size(state.documents)
+  loadedAppealId: state.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (

@@ -109,6 +109,7 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   assignments: null,
+  loadedAppealId: null,
   initialDataLoadingFail: false,
   ui: {
     pendingAnnotations: {},
@@ -191,7 +192,7 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documents: {
-          $set: _(action.payload).
+          $set: _(action.payload.documents).
             map((doc) => [
               doc.id, {
                 ...doc,
@@ -201,6 +202,9 @@ export const reducer = (state = initialState, action = {}) => {
             ]).
             fromPairs().
             value()
+        },
+        loadedAppealId: {
+          $set: action.payload.vacolsId
         }
       }
     ));

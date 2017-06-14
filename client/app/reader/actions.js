@@ -12,12 +12,15 @@ export const onInitialDataLoadingFail = () => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE
 });
 
-export const onReceiveDocs = (documents) => (
+export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
-      payload: documents
+      payload: {
+        documents,
+        vacolsId
+      }
     });
   }
 );

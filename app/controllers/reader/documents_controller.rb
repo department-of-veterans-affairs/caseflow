@@ -1,4 +1,4 @@
-class Reader::DocumentsController < ApplicationController
+class Reader::DocumentsController < Reader::AppealController
   before_action :verify_access, :verify_reader_feature_enabled, :set_application
 
   def index
@@ -65,16 +65,8 @@ class Reader::DocumentsController < ApplicationController
   helper_method :single_document
   # :nocov:
 
-  def logo_name
-    "Reader"
-  end
-
   def appeal_id
     params[:appeal_id]
-  end
-
-  def logo_path
-    reader_appeal_documents_path(appeal_id: appeal_id)
   end
 
   def verify_reader_feature_enabled

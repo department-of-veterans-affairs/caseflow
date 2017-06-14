@@ -3,6 +3,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
   has_one :staff, foreign_key: :sattyid, primary_key: :deatty
   has_one :case, foreign_key: :bfkey, primary_key: :defolder
+  belongs_to :correspondent, through: :case
 
   class << self
     def unsigned_cases_for_user(vacols_user_id)
@@ -16,8 +17,11 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "deassign as date_assigned",
              "dereceive as date_received",
              "staff.slogid as vacols_user_id",
-             "brieff.bfddec as signed_date")
-        .joins(:staff, :case)
+             "brieff.bfddec as signed_date",
+             "brieff.bfcorlid as veteran_id",
+             "corres.snamef as veteran_first_name",
+             "corres.snamel as veteran_last_name")
+        .joins(:staff, :case, :correspondent)
     end
   end
 end
