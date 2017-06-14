@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import * as Constants from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
-import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
+import Link from '../components/Link';
+
 
 class CaseSelect extends React.PureComponent {
   getAssignmentColumn = () => {
@@ -21,7 +22,12 @@ class CaseSelect extends React.PureComponent {
       {
         header: 'View Case File',
         valueFunction: (row) => {
-          return <Link to={`/${row.vacols_id}/documents`}>View Case</Link>;
+          return <Button
+            name="view doc"
+            classNames={['usa-button-outline']}
+            to={`/${row.vacols_id}/documents`}>
+              View Case
+            </Button>;
         }
       }
     ];
