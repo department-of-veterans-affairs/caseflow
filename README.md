@@ -121,7 +121,7 @@ First you'll need to install the libraries required to connect to the VACOLS Ora
 
 3) Setup both packages according to the Oracle documentation:
 ```
-export DYLD_LIBRARY_PATH=/opt/oracle/instantclient_11_2`
+export OCI_DIR=/opt/oracle/instantclient_12_1
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 ```
@@ -142,7 +142,7 @@ for Fedora based OS.
 
  1. Setup both packages according to the Oracle documentation:
 ```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2`
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2` <-- Not sure if this is still valid. It has recently changed for MAC. See above.
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
