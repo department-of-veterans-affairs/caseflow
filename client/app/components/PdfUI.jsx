@@ -37,7 +37,7 @@ export class PdfUI extends React.Component {
 
   /* eslint-disable class-methods-use-this */
   componentDidMount() {
-    // focusing the scroll window the component first loads
+    // focusing the scroll window when the component first loads
     document.getElementById('scrollWindow').focus();
   }
   /* eslint-enable */
