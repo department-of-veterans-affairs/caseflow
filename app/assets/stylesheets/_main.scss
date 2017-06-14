@@ -409,3 +409,9 @@ select {
 .cf-title-meta-right {
   line-height: 3em;
 }
+
+.cf-btn-link{
+  &:hover {
+    background-color: transparent;
+  }
+}
