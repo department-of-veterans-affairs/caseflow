@@ -427,38 +427,26 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      scenario "Switch between pages" do
+      scenario "Switch between pages to ensure rendering" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on documents[2].type
+        click_on documents[1].type
 
-        fill_in "page-progress-indicator-input", with: "4\n"
-        expect(in_viewport("pageContainer4")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "4"
-        fill_in "page-progress-indicator-input", with: "100e\n"
-        expect(in_viewport("pageContainer4")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "4"
+        # Expect the 103 page to only be rendered once scrolled to.
+        expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+
+        fill_in "page-progress-indicator-input", with: "23\n"
+
+        expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+
+        expect(in_viewport("pageContainer23")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+        # Entering invalid values leaves the viewer on the same page.
+        fill_in "page-progress-indicator-input", with: "abcd\n"
+        expect(in_viewport("pageContainer23")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "23"
       end
-    end
-
-    # This test is not really testing what we want. In fact it only works because
-    # of a race condition. Currently all pages are being loaded regardless of scroll
-    # position, because of a bug introduced with zooming. Therefore this only works
-    # if the line checking that "Banana. Banana who" doesn't exist runs before the
-    # given page renders. The scrolling is irrelevant. It's also unclear this is how
-    # we should be rendering pages. So for now, let's skip this test to avoid
-    # non-deterministic failures.
-    scenario "Scrolling renders pages" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      click_on documents[1].type
-
-      # Expect the 103 page to only be rendered once scrolled to.
-      expect(find("#pageContainer23")).to_not have_content("Rating Decision")
-
-      fill_in "page-progress-indicator-input", with: "23\n"
-
-      expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
     end
 
     # this test being skipped because it often fails during the CI process
