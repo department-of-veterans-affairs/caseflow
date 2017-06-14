@@ -358,6 +358,9 @@ export class Pdf extends React.PureComponent {
     window.addEventListener('resize', this.renderInViewPages);
 
     this.setUpPdf(this.props.file);
+
+    // focus the scroll window when the component initially loads.
+    this.scrollWindow.focus();
   }
 
   comopnentWillUnmount = () => {
@@ -385,6 +388,9 @@ export class Pdf extends React.PureComponent {
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
+
+      // focus the scroll window when the document changes.
+      this.scrollWindow.focus();
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
@@ -603,6 +609,7 @@ export class Pdf extends React.PureComponent {
 
     return <div
       id="scrollWindow"
+      tabIndex="0"
       className="cf-pdf-scroll-view"
       onScroll={_.debounce(this.scrollEvent, 0)}
       ref={this.getScrollWindowRef}>
