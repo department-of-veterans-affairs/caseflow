@@ -35,7 +35,8 @@ const ERRORS = {
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
   certifyingOfficialTitle: 'Please enter the title of the certifying official.',
   certificationDate: "Please enter today's date.",
-  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.'
+  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.',
+  certifyingOfficialTitleOther: 'Please enter the title of the certifying official.'
 };
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -60,6 +61,11 @@ class UnconnectedSignAndCertify extends React.Component {
       erroredFields.push('certifyingOfficialTitle');
     }
 
+    if (this.props.certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER &&
+      !this.props.certifyingOfficialTitleOther) {
+      erroredFields.push('certifyingOfficialTitleOther');
+    }
+
     return erroredFields;
   }
 
@@ -75,6 +81,7 @@ class UnconnectedSignAndCertify extends React.Component {
     this.props.certificationUpdateStart({
       certifyingOfficialName: this.props.certifyingOfficialName,
       certifyingOfficialTitle: this.props.certifyingOfficialTitle,
+      certifyingOfficialTitleOther: this.props.certifyingOfficialTitleOther,
       vacolsId: this.props.match.params.vacols_id
     });
   }
@@ -109,6 +116,7 @@ class UnconnectedSignAndCertify extends React.Component {
       certifyingUsername,
       certifyingOfficialName,
       certifyingOfficialTitle,
+      certifyingOfficialTitleOther,
       certificationDate,
       loading,
       updateSucceeded,
@@ -131,6 +139,9 @@ class UnconnectedSignAndCertify extends React.Component {
       return <Redirect
         to={'/certifications/error'}/>;
     }
+
+    const shouldDisplayCertifyingOfficialTitleOther =
+      certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER;
 
     return <div>
       <form>
@@ -161,6 +172,16 @@ class UnconnectedSignAndCertify extends React.Component {
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
+          {
+            shouldDisplayCertifyingOfficialTitleOther &&
+            <TextField
+              name={'Specify other title of certifying official:'}
+              value={certifyingOfficialTitleOther}
+              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ? ERRORS.certifyingOfficialTitleOther : null)}
+              required={true}
+              onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
+            />
+          }
           <DateSelector
             name={'Date:'}
             value={formatDateStr(certificationDate)}
@@ -199,6 +220,7 @@ const mapStateToProps = (state) => ({
   certifyingUsername: state.certifyingUsername,
   certifyingOfficialName: state.certifyingOfficialName,
   certifyingOfficialTitle: state.certifyingOfficialTitle,
+  certifyingOfficialTitleOther: state.certifyingOfficialTitleOther,
   certificationDate: state.certificationDate,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
@@ -219,6 +241,7 @@ SignAndCertify.propTypes = {
   certifyingUsername: PropTypes.string,
   certifyingOfficialName: PropTypes.string,
   certifyingOfficialTitle: PropTypes.string,
+  certifyingOfficialTitleOther: PropTypes.string,
   certificationDate: PropTypes.string,
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
