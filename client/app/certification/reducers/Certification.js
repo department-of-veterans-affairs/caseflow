@@ -50,7 +50,7 @@ export const toggleCancellationModal = (state) => {
   });
 };
 
-export const updateErroredFields = (fieldName, state) => {
+export const clearErroredField = (fieldName, state) => {
   const newErroredFields = state.erroredFields || [];
   const index = newErroredFields.indexOf(fieldName);
 
