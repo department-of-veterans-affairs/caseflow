@@ -531,7 +531,7 @@ RSpec.feature "Reader" do
     end
 
     scenario "Open and close keyboard shortcuts modal",
-      skip: "Another ticket is in place to fix keyboard events" do
+             skip: "Another ticket is in place to fix keyboard events" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
