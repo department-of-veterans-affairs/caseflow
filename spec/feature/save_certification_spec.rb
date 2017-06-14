@@ -529,9 +529,33 @@ RSpec.feature "Save Certification" do
         within_fieldset("Does the representative information from VBMS and VACOLS match?") do
           find("label", text: "No").click
         end
+        expect(page).to_not have_content "Please select yes or no."
         click_button("Continue")
         expect(page).to have_content "Please select an option."
+        within_fieldset("Which information source shows the correct representative for this appeal?") do
+          find("label", text: "None").click
+        end
+        expect(page).to_not have_content "Please select an option."
+        click_button("Continue")
+        expect(page).to have_content("Please select a representative type.")
+        within_fieldset("What type of representative did the appellant request for this appeal? ") do
+          find("label", text: "Service organization").click
+        end
+        expect(page).to_not have_content("Please select a representative type.")
+        click_button("Continue")
+        expect(page).to have_content("Please select an organization.")
+        select "Unlisted service organization", from: "Service organization name"
+        expect(page).to_not have_content("Please select an organization.")
+        click_button("Continue")
+        expect(page).to have_content("Please enter a service organization's name.")
+        fill_in "Enter the service organization's name:", with: "12345678901234567890123456789012345678901"
+        expect(page).to_not have_content("Please enter a service organization's name.")
+        click_button("Continue")
+        expect(page).to have_content("Maximum length of organization name reached.")
+        fill_in "Enter the service organization's name:", with: "Test"
+        expect(page).to_not have_content("Please enter a service organization's name.")
       end
+
       scenario "on the confirm hearing page" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         click_button("Continue")
@@ -552,6 +576,7 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
         expect(page).to have_content "Please select a hearing preference."
       end
+
       scenario "on the save and certify page" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         click_button("Continue")
