@@ -35,14 +35,20 @@ export class PdfUI extends React.Component {
     };
   }
 
+  /* eslint-disable class-methods-use-this */
+  componentDidMount() {
+    // focusing the scroll window the component first loads
+    document.getElementById('scrollWindow').focus();
+  }
+  /* eslint-enable */
+
   componentDidUpdate(prevProps) {
     // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id) {
+      // focusing the scroll window when the document changes
+      document.getElementById('scrollWindow').focus();
       if (this.props.isPlacingAnnotation) {
         this.props.stopPlacingAnnotation();
-
-        // focus on the scroll window when a pdf changes
-        document.getElementById('scrollWindow').focus();
       }
       this.props.resetJumpToPage();
     }
