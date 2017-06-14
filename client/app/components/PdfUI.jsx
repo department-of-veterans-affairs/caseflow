@@ -60,15 +60,17 @@ export class PdfUI extends React.Component {
       const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
 
       return <div className="cf-pdf-footer cf-pdf-toolbar">
-          { this.props.prevDocId && <div className="cf-pdf-footer-buttons-left">
-            <Button
-              name="previous"
-              classNames={['cf-pdf-button']}
-              onClick={this.props.showPdf(this.props.prevDocId)}
-              ariaLabel="previous PDF">
-              <PageArrowLeft /><span className="left-button-label">Previous</span>
-            </Button>
-          </div> }
+          <div className="cf-pdf-footer-buttons-left">
+            { this.props.prevDocId &&
+              <Button
+                name="previous"
+                classNames={['cf-pdf-button']}
+                onClick={this.props.showPdf(this.props.prevDocId)}
+                ariaLabel="previous PDF">
+                <PageArrowLeft /><span className="left-button-label">Previous</span>
+              </Button>
+            }
+          </div>
         <div className="cf-pdf-buttons-center">
           <span className="page-progress-indicator">
             <PdfUIPageNumInput
@@ -83,16 +85,17 @@ export class PdfUI extends React.Component {
             Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
           </span>
         </div>
-
-           { this.props.nextDocId && <div className="cf-pdf-footer-buttons-right">
-            <Button
-              name="next"
-              classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.showPdf(this.props.nextDocId)}
-              ariaLabel="next PDF">
-              <span className="right-button-label">Next</span><PageArrowRight />
-            </Button>
-          </div> }
+            <div className="cf-pdf-footer-buttons-right">
+              { this.props.nextDocId &&
+                <Button
+                  name="next"
+                  classNames={['cf-pdf-button cf-right-side']}
+                  onClick={this.props.showPdf(this.props.nextDocId)}
+                  ariaLabel="next PDF">
+                  <span className="right-button-label">Next</span><PageArrowRight />
+                </Button>
+              }
+          </div>
       </div>;
     }
 
