@@ -218,8 +218,15 @@ select {
 }
 
 // Candidate for commons
-.cf-btn-link.cf-no-padding {
-  padding: 0;
+.cf-btn-link {
+
+  .cf-no-padding {
+    padding: 0;
+  }
+
+  &:hover {
+    background-color: transparent;
+  }
 }
 
 .cf-react-loading-indicator {
