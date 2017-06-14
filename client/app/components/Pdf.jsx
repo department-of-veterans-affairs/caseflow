@@ -603,6 +603,7 @@ export class Pdf extends React.PureComponent {
 
     return <div
       id="scrollWindow"
+      tabIndex="0"
       className="cf-pdf-scroll-view"
       onScroll={_.debounce(this.scrollEvent, 0)}
       ref={this.getScrollWindowRef}>

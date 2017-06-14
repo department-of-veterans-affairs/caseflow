@@ -40,6 +40,9 @@ export class PdfUI extends React.Component {
     if (prevProps.doc.id !== this.props.doc.id) {
       if (this.props.isPlacingAnnotation) {
         this.props.stopPlacingAnnotation();
+
+        // focus on the scroll window when a pdf changes
+        document.getElementById('scrollWindow').focus();
       }
       this.props.resetJumpToPage();
     }
