@@ -29,7 +29,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   // Rails key names.
   /* eslint-disable camelcase */
 
-  var certifyingOfficialTitle;
+  let certifyingOfficialTitle;
 
   if (params.certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER) {
     certifyingOfficialTitle = params.certifyingOfficialTitleOther;

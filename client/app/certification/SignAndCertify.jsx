@@ -35,8 +35,7 @@ const ERRORS = {
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
   certifyingOfficialTitle: 'Please enter the title of the certifying official.',
   certificationDate: "Please enter today's date.",
-  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.',
-  certifyingOfficialTitleOther: 'Please enter the title of the certifying official.'
+  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.'
 };
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -177,7 +176,7 @@ class UnconnectedSignAndCertify extends React.Component {
             <TextField
               name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
-              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ? ERRORS.certifyingOfficialTitleOther : null)}
+              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ? ERRORS.certifyingOfficialTitle : null)}
               required={true}
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />

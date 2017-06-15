@@ -146,15 +146,17 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   } else if (poaCorrectInVacols === false && poaCorrectInBgs === false) {
     return null;
   }
+
   return null;
 };
 
 const certifyingOfficialTitle = function(title) {
   if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
     return Constants.certifyingOfficialTitles.OTHER;
-  } else {
-    return title;
   }
+
+  return title;
+
 };
 
 const certifyingOfficialTitleOther = function(title) {
