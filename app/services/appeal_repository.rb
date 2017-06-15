@@ -145,6 +145,16 @@ class AppealRepository
 
     full_grants.map { |case_record| build_appeal(case_record) }
   end
+
+  def self.pa_full_grants(outcoded_after:)
+    full_grants = MetricsService.record("VACOLS:  pa_full_grants #{outcoded_after}",
+                                        service: :vacols,
+                                        name: "pa_full_grants") do
+      VACOLS::Case.pa_full_grants(outcoded_after: outcoded_after)
+    end
+
+    full_grants.map { |case_record| build_appeal(case_record) }
+  end
   # :nocov:
 
   def self.ssoc_dates_from(case_record)
