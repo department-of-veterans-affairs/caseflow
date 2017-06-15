@@ -4,6 +4,7 @@ class Reader::AppealController < ApplicationController
       format.html { return render(:index) }
       format.json do
         MetricsService.record "Get assignments for #{current_user.vacols_id}" do
+          
           render json: {
             cases: current_user.current_case_assignments
           }

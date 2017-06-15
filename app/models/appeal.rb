@@ -1,6 +1,7 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   has_many :tasks
+  has_many :appeal_views
 
   class MultipleDecisionError < StandardError; end
 
@@ -27,6 +28,10 @@ class Appeal < ActiveRecord::Base
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
+
+  # These are only set when you pull in a case from the Case Assignment Repository
+  attr_accessor :date_assigned, :date_received, :signed_date
+      
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -335,6 +340,14 @@ class Appeal < ActiveRecord::Base
 
   def latest_event_date
     events.last.try(:date)
+  end
+  
+  def self.create_appeal_without_lazy_load(hash)
+    appeal = Appeal.new()
+    appeal.vacols_load_status == :success
+    hash.each do |key, value|
+      appeal.key = value
+    end
   end
 
   private
