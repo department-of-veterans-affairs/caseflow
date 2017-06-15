@@ -1,5 +1,6 @@
 import StringUtil from './StringUtil';
 import moment from 'moment';
+// https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another/5306832#5306832
 import 'array.prototype.move';
 import _ from 'lodash';
 
