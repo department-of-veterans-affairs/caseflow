@@ -21,19 +21,21 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   moment(dateString, dateFormat).format(expectedFormat)
 );
 
+const YEAR_INDEX = 0;
+const MONTH_INDEX = 1;
+const DAY_INDEX = 2;
+const DASH = '-';
+const SLASH = '/';
+
 export const doDatesMatch = (date, query) => {
-  const DAY_INDEX = 2;
-  const DASH = '-';
-  const SLASH = '/';
 
   // date format passed in needs be in YYYY-MM-DD
   // example: 2016-06-12
-  let docDateTokens = date.split(DASH);
+  const docDateTokens = date.split(DASH);
 
   // move year to the end of the array to match
   // MM-DD-YYYY format
-  docDateTokens.move(0, DAY_INDEX);
-
+  const updatedDocDateTokens = [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
   let searchQueryTokens = query.toLowerCase().split(DASH);
 
   // if no dashes exist in the query
@@ -44,7 +46,7 @@ export const doDatesMatch = (date, query) => {
   let hasMatched = true;
 
   searchQueryTokens.forEach((queryToken, index) => {
-    if (!_.includes(docDateTokens[index], queryToken)) {
+    if (!_.includes(updatedDocDateTokens[index], queryToken)) {
       hasMatched = false;
     }
   });
