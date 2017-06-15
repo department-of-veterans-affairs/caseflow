@@ -7,8 +7,8 @@ import StringUtil from './StringUtil';
 const ApiUtil = {
 
   // Converts camelCase to snake_case
-  convertToSnakeCase(data = {}) {
-    if (typeof data !== 'object') {
+  convertToSnakeCase(data) {
+    if (typeof data !== 'object' || data === null) {
       return data;
     }
     let result = {};
