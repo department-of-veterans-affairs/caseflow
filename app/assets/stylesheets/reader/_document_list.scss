@@ -83,18 +83,18 @@ $tag-backgrond-color: #d6d7d9;
   .cf-document-list-header-row tr {
     display: block;
 
-    th > span > button {
-      display: flex;
-      background-color: $color-white;
-      color: $color-gray-dark;
-      padding: 0;
-      margin: 0;
-      line-height: normal;
-    }
-
     th > div {
       display: flex;
     }
+  }
+
+  .cf-document-list-button-header {
+    display: flex;
+    background-color: $color-white;
+    color: $color-gray-dark;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
   }
 
   .cf-document-list-body {

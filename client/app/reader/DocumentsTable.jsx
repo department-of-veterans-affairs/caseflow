@@ -279,6 +279,7 @@ class DocumentsTable extends React.Component {
         cellClass: 'receipt-date-column',
         header: <Button
           id="receipt-date-header"
+          classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
         </Button>,
@@ -289,7 +290,9 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'doc-type-column',
-        header: <Button id="type-header" onClick={() => this.props.changeSortState('type')}>
+        header: <Button id="type-header"
+        classNames={['cf-document-list-button-header']}
+        onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
