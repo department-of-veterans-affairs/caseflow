@@ -229,6 +229,13 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   }
 });
 
+export const setPageCoordBounds = (coordBounds) => ({
+  type: Constants.SET_PAGE_COORD_BOUNDS,
+  payload: {
+    coordBounds
+  }
+});
+
 export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
 
 export const createAnnotation = (annotation) => (dispatch) => {

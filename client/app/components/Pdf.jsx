@@ -11,7 +11,7 @@ import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow,
+import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
@@ -484,6 +484,7 @@ export class Pdf extends React.PureComponent {
 
     // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
+    this.updatePageBounds();
   }
 
   comopnentWillUnmount() {
@@ -605,6 +606,27 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
         this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
     }
+    this.updatePageBounds();
+  }
+
+  updatePageBounds = () => {
+    const newPageBounds = _.map(this.pageElements, (pageElem, pageIndex) => {
+      const boundingRect = pageElem.pageContainer.getBoundingClientRect();
+      const upperBound = {
+        x: boundingRect.right, 
+        y: boundingRect.bottom
+      };
+      const upperBoundPageCoords = pageCoordsOfScreenCoords(upperBound, boundingRect);
+
+      // I think we need to scale the coords, too.
+      return {
+        pageIndex: Number(pageIndex),
+        right: upperBoundPageCoords.x,
+        bottom: upperBoundPageCoords.y
+      };
+    });
+
+    this.props.setPageCoordBounds(newPageBounds);
   }
 
   // Move the comment when it's dropped on a page
@@ -782,6 +804,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
+    setPageCoordBounds,
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,

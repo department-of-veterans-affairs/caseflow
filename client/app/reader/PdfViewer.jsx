@@ -50,6 +50,11 @@ export class PdfViewer extends React.Component {
         }
       });
 
+      // const constrainedCoords = {
+      //   x: _.clamp(scaledPageCoords.x, 0, this.props.scaledPageCoordsBounds.right),
+      //   y: _.clamp(scaledPageCoords.y, 0, this.props.scaledPageCoordsBounds.bottom),
+      // };
+
       this.props.showPlaceAnnotationIcon(pageIndex, scaledPageCoords);
 
       return;

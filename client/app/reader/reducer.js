@@ -107,8 +107,17 @@ const getExpandAllState = (documents) => {
   return Boolean(allExpanded);
 };
 
+/*
+{
+    left: 0,
+    right: Infinity,
+    top: 0,
+    bottom: Infinity
+  }*/
+
 export const initialState = {
   initialDataLoadingFail: false,
+  scaledPageCoordsBounds: [],
   placingAnnotationIconScaledPageCoords: null,
   ui: {
     pendingAnnotations: {},
@@ -560,6 +569,12 @@ export const reducer = (state = initialState, action = {}) => {
         pendingEditingAnnotations: {
           $unset: action.payload.annotationId
         }
+      }
+    });
+  case Constants.SET_PAGE_COORD_BOUNDS:
+    return update(state, {
+      scaledPageCoordsBounds: {
+        $set: action.payload.coordBounds
       }
     });
   case Constants.PLACE_ANNOTATION:
