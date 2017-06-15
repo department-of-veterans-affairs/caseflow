@@ -251,8 +251,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'categories-column',
         header: <div
-          id="categories-header"
-          className="document-list-header-categories">
+          id="categories-header">
           Categories <FilterIcon
             label="Filter by category"
             idPrefix="category"
@@ -279,7 +278,6 @@ class DocumentsTable extends React.Component {
         cellClass: 'receipt-date-column',
         header: <div
           id="receipt-date-header"
-          className="document-list-header-recepit-date"
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
         </div>,
