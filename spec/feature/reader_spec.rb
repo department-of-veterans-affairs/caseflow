@@ -530,6 +530,21 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
+    scenario "Open and close keyboard shortcuts modal",
+             skip: "Another ticket is in place to fix keyboard events" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      # Open modal
+      click_on "View keyboard shortcuts"
+      expect(page).to have_css(".cf-modal")
+      expect(page).to have_content("Place a comment")
+
+      # Close modal
+      click_on "Thanks, got it!"
+      expect(page).to_not have_css(".cf-modal")
+    end
+
     scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -700,12 +715,8 @@ RSpec.feature "Reader" do
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
-    scenario "Open a document, navigate using buttons to see a new doc, and return to list" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      click_on documents.first.type
-
-      (num_documents - 1).times { find("#button-next").click }
+    scenario "Open the last document on the page and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
       click_on "Back to all documents"
 
