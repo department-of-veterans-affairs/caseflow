@@ -65,6 +65,8 @@ const PAGE_WIDTH = 1;
 // able to expand/contract the height of the pages as we zoom.
 const PAGE_HEIGHT = 1056;
 
+const COVER_SCROLL_HEIGHT = 120;
+
 const NUM_PAGES_TO_PRERENDER = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -260,11 +262,17 @@ export class Pdf extends React.PureComponent {
     this.performFunctionOnEachPage((boundingRect, index) => {
       // You are on this page, if the top of the page is above the middle
       // and the bottom of the page is below the middle
-      if (boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+      // jumpToPageNumber check is added to not update the page number when the
+      // jump to page scroll is activated.
+      if (!this.props.jumpToPageNumber && boundingRect.top < this.scrollWindow.clientHeight / 2 &&
           boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
         this.onPageChange(index + 1);
       }
     });
+
+    if (this.props.jumpToPageNumber) {
+      this.props.resetJumpToPage();
+    }
     this.renderInViewPages();
   }
 
@@ -473,6 +481,9 @@ export class Pdf extends React.PureComponent {
     window.addEventListener('keydown', this.keyListener);
 
     this.setUpPdf(this.props.file);
+
+    // focus the scroll window when the component initially loads.
+    this.scrollWindow.focus();
   }
 
   comopnentWillUnmount() {
@@ -501,6 +512,9 @@ export class Pdf extends React.PureComponent {
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
+
+      // focus the scroll window when the document changes.
+      this.scrollWindow.focus();
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
@@ -564,16 +578,26 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  scrollToPage(pageNumber) {
+    this.scrollWindow.scrollTop =
+      this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect().top +
+      this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
+  }
 
   componentDidUpdate = () => {
     this.renderInViewPages();
     this.prerenderPages();
 
+    // if jump to page number is provided
+    // render the page and jump to the page
+    if (this.props.jumpToPageNumber) {
+      this.scrollToPage(this.props.jumpToPageNumber);
+      this.onPageChange(this.props.jumpToPageNumber);
+    }
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId &&
         this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
         this.onJumpToComment(this.props.scrollToComment);
-        this.props.onCommentScrolledTo();
       }
     }
 
@@ -734,6 +758,7 @@ export class Pdf extends React.PureComponent {
 
     return <div
       id="scrollWindow"
+      tabIndex="0"
       className="cf-pdf-scroll-view"
       onScroll={_.debounce(this.scrollEvent, 0)}
       ref={this.getScrollWindowRef}>
@@ -792,7 +817,6 @@ Pdf.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
   scrollToComment: PropTypes.shape({
     id: PropTypes.number,
     page: PropTypes.number,

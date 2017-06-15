@@ -34,6 +34,7 @@ export class CommentIcon extends React.Component {
       }}
       data-placing-annotation-icon={this.props.comment.isPlacingAnnotationIcon}
       className="commentIcon-container"
+      id={`commentIcon-container-${this.props.comment.uuid}`}
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>

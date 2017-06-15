@@ -37,32 +37,45 @@ class VACOLS::Representative < VACOLS::Record
                           name: "update_vacols_rep_first_name") do
       conn.transaction do
         conn.execute(<<-SQL)
-          UPDATE REP
-          SET REPFIRST = #{first_name},
-              REPMI = #{middle_initial},
-              REPLAST = #{last_name}
-          WHERE REPKEY = #{case_id}
+          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
+          WHEN MATCHED THEN
+            UPDATE SET REPFIRST=#{first_name}, REPMI=#{middle_initial}, REPLAST=#{last_name}
+          WHEN NOT MATCHED THEN INSERT (REPKEY, REPFIRST, REPMI, REPLAST)
+            VALUES ( #{case_id}, #{first_name}, #{middle_initial}, #{last_name} )
         SQL
       end
     end
   end
 
-  def self.update_vacols_rep_address_one!(bfkey:, address_one:)
+  # rubocop:disable Metrics/MethodLength
+  def self.update_vacols_rep_address!(bfkey:, address:)
     conn = connection
 
-    address_one = conn.quote(address_one)
+    address_one = conn.quote(address[:address_one])
+    address_two = conn.quote(address[:address_two])
+    city = conn.quote(address[:city])
+    state = conn.quote(address[:state])
+    zip = conn.quote(address[:zip])
     case_id = conn.quote(bfkey)
 
-    MetricsService.record("VACOLS: update_vacols_rep_address_one! #{case_id}",
+    MetricsService.record("VACOLS: update_vacols_rep_address! #{case_id}",
                           service: :vacols,
-                          name: "update_vacols_rep_address_one") do
+                          name: "update_vacols_rep_address") do
       conn.transaction do
         conn.execute(<<-SQL)
-          UPDATE REP
-          SET REPADDR1 = #{address_one}
-          WHERE REPKEY = #{case_id}
+          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
+          WHEN MATCHED THEN
+            UPDATE
+            SET REPADDR1 = #{address_one},
+                REPADDR2 = #{address_two},
+                REPCITY = #{city},
+                REPST = #{state},
+                REPZIP = #{zip}
+          WHEN NOT MATCHED THEN INSERT (REPKEY, REPADDR1, REPADDR2, REPCITY, REPST, REPZIP)
+            VALUES ( #{case_id}, #{address_one}, #{address_two}, #{city}, #{state}, #{zip} )
         SQL
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

@@ -27,6 +27,7 @@ export const DocumentListHeader = (props) => {
           onChange={props.setSearch}
           onClearSearch={props.clearSearch}
           value={props.docFilterCriteria.searchQuery}
+          size="small"
         />
       </div>
       <div className="usa-width-one-third num-of-documents">
@@ -83,4 +84,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);
-

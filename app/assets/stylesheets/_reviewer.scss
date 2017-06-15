@@ -190,24 +190,46 @@ svg[aria-hidden=true],
   // We want the buttons to be 40px from the outer edge of the toolbar.
   // Other margins that are involved add up to 28px, so we add an
   // additional margin to make it 40.
-  $outer-margin: 12px;
+  $left-outer-margin: 12px;
+  $right-outer-margin: 20px;
+  $footer-button-width: 100px;
 
   .cf-pdf-footer-buttons-right {
-    margin-right: $outer-margin;
+    width: $footer-button-width;
+    margin-right: $right-outer-margin;
   }
 
   .cf-pdf-footer-buttons-left {
-    margin-left: $outer-margin;
+    width: $footer-button-width;
+    margin-left: $left-outer-margin;
   }
 
   .cf-pdf-buttons-center {
     $spacing: 25px;
-
     margin-left: auto;
     margin-right: auto;
 
     .page-progress-indicator {
       margin-right: $spacing;
+    }
+
+    .page-progress-indicator-input {
+      > input {
+        width: 48px;
+        height: 22px;
+        display: inline-block;
+        color: $color-white;
+        background-color: $color-gray;
+        border: 1px solid $color-white;
+        text-align: center;
+        margin: 5px;
+        padding: 0;
+      }
+
+      > label {
+        display: inline-block;
+      }
+
     }
 
     .doc-list-progress-indicator {
@@ -477,4 +499,51 @@ input[type="search"].cf-search-input-with-close {
 
 .cf-pdf-center-text {
   text-align: center;
+}
+
+.cf-keyboard-shortcuts {
+  bottom: 0;
+  position: relative;
+  margin-left: 40px;
+  height: 50px;
+
+  .cf-btn-link {
+    &:hover {
+      background-color: $caseflow-background;
+    }
+  }
+
+  svg {
+    vertical-align: bottom;
+    margin-right: 4px;
+  }
+}
+
+[id=cf-keyboard-modal] {
+  height: 580px;
+  overflow: auto;
+  display: block;
+
+  // Candidate for commons
+  table {
+    margin: 0 0 2em;
+  }
+
+  // Candidate for commons - all modals should have dark gray x
+  .cf-icon-close {
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+.cf-modal-scroll {
+  .cf-keyboard-modal-scroll {
+    max-height: 370px;
+    overflow: auto;
+  }
+}
+
+.cf-table-borderless + .cf-keyboard-modal-table thead th {
+  width: 23%;
 }

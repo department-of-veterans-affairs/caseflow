@@ -2,8 +2,8 @@ import React from 'react';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideButton from './StyleGuideButton';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
-import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
@@ -11,6 +11,7 @@ import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
+import StyleGuideSearch from './StyleGuideSearch';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
@@ -157,14 +158,9 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideColors />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Buttons"
-          id="buttons" />
-        <StyleGuideLinkButton />
+        <StyleGuideButton />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Search"
-          id="search" />
+        <StyleGuideSearch />
         <div className="cf-help-divider"></div>
         <StyleGuideSearchableDropdown />
         <div className="cf-help-divider"></div>

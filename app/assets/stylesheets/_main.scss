@@ -218,8 +218,15 @@ select {
 }
 
 // Candidate for commons
-.cf-btn-link.cf-no-padding {
-  padding: 0;
+.cf-btn-link {
+
+  .cf-no-padding {
+    padding: 0;
+  }
+
+  &:hover {
+    background-color: transparent;
+  }
 }
 
 .cf-react-loading-indicator {
@@ -379,6 +386,28 @@ select {
       td {
         border: 0;
         padding: 0;
+      }
+    }
+  }
+}
+
+.usa-search {
+  &.usa-search-big {
+    [type="submit"] {
+      background-image: none;
+
+      &[class*="cf-loading"] {
+        width: 14rem;
+      }
+    }
+  }
+
+  &.usa-search-small {
+    [type="submit"] {
+
+      &[class*="cf-loading"] {
+        width: 13rem;
+        background-image: none;
       }
     }
   }
