@@ -3,7 +3,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
   has_one :staff, foreign_key: :sattyid, primary_key: :deatty
   has_one :case, foreign_key: :bfkey, primary_key: :defolder
-  belongs_to :correspondent, through: :case
+  has_one :correspondent, through: :case
 
   class << self
     def unsigned_cases_for_user(vacols_user_id)
