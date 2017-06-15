@@ -8,7 +8,7 @@ import { doDatesMatch } from '../util/DateUtil';
 const metadataContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery) ||
   doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery));
-}
+};
 
 const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
