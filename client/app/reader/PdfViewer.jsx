@@ -177,6 +177,8 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
+  // If I add the necessary state here, we get stuck in a render loop.
+  // I think we need a shouldComponentUpdate.
   ..._.pick(state, 'placingAnnotationIconScaledPageCoords'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
