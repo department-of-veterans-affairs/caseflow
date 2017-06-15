@@ -1,10 +1,14 @@
 import * as Constants from './constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
+import _ from 'lodash';
+import 'array.prototype.move';
+import { doDatesMatch } from '../util/DateUtil';
 
-const metadataContainsString = (searchQuery, doc) =>
-  doc.type.toLowerCase().includes(searchQuery) ||
-  doc.receivedAt.toLowerCase().includes(searchQuery);
+const metadataContainsString = (searchQuery, doc) => {
+  return (doc.type.toLowerCase().includes(searchQuery) ||
+  doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery));
+}
 
 const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
