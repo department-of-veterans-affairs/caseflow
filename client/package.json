@@ -28,6 +28,7 @@
     "client/node_modules"
   ],
   "dependencies": {
+    "array.prototype.move": "0.0.4",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.4.1",
     "babel-polyfill": "^6.23.0",
