@@ -18,8 +18,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "dereceive as date_received",
              "staff.slogid as vacols_user_id",
              "brieff.bfddec as signed_date",
-             "brieff.bfcorlid as veteran_id",
+             "brieff.bfcorlid as vbms_id",
              "corres.snamef as veteran_first_name",
+             "corres.snamemi as veteran_middle_initial",
              "corres.snamel as veteran_last_name")
         .joins(:staff, :case, :correspondent)
     end

@@ -6,13 +6,14 @@ export default class Link extends React.Component {
   render() {
     let {
       to,
+      className,
       children
     } = this.props;
 
     return <ReduxLink
         to={to}
         type="button"
-        className="usa-button-outline"
+        className={className}
       >
         {children}
       </ReduxLink>;
@@ -20,5 +21,7 @@ export default class Link extends React.Component {
 }
 
 Link.propTypes = {
-  to: PropTypes.string
+  to: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.node
 };

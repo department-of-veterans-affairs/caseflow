@@ -42,6 +42,10 @@ module AssociatedVacolsModel
     check_and_load_vacols_data!
   end
 
+  def turn_off_lazy_loading
+    @vacols_load_status = :disabled
+  end
+
   private
 
   def perform_vacols_request

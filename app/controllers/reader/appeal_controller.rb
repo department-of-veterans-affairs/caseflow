@@ -4,9 +4,8 @@ class Reader::AppealController < ApplicationController
       format.html { return render(:index) }
       format.json do
         MetricsService.record "Get assignments for #{current_user.vacols_id}" do
-          
           render json: {
-            cases: current_user.current_case_assignments
+            cases: appeals
           }
         end
       end
@@ -17,8 +16,22 @@ class Reader::AppealController < ApplicationController
     "Reader"
   end
 
-  def appeal_id
-    params[:appeal_id]
+  def appeals
+    appeals = current_user.current_case_assignments
+
+    appeal_ids = appeals.map(&:id)
+    opened_appeals_hash = current_user.appeal_views.where(appeal_id: appeal_ids)
+                            .each_with_object({}) do |appeal_view, object|
+      object[appeal_view.appeal_id] = true
+    end
+
+    appeals.map do |appeal|
+      appeal.serializable_hash(
+        methods: [:veteran_full_name]
+      ).tap do |hash|
+        hash[:viewed] = opened_appeals_hash[appeal.id]
+      end
+    end
   end
 
   def logo_path

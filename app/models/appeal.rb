@@ -343,11 +343,10 @@ class Appeal < ActiveRecord::Base
   end
   
   def self.create_appeal_without_lazy_load(hash)
-    appeal = Appeal.new()
-    appeal.vacols_load_status == :success
-    hash.each do |key, value|
-      appeal.key = value
-    end
+    appeal = Appeal.find_or_create_by_vacols_id(hash[:vacols_id])
+    appeal.turn_off_lazy_loading
+    appeal.assign_attributes(hash)
+    appeal
   end
 
   private

@@ -13,20 +13,27 @@ class CaseSelect extends React.PureComponent {
     return [
       {
         header: 'Veteran',
-        valueName: 'veteran_name'
+        valueName: 'veteran_full_name'
       },
       {
         header: 'Veteran ID',
-        valueName: 'veteran_id'
+        valueName: 'vbms_id'
       },
       {
         header: 'View Case File',
         valueFunction: (row) => {
+          let buttonText = 'New';
+          let buttonClass = 'usa-button';
+
+          if (row.viewed) {
+            buttonText = 'Continue';
+            buttonClass = 'usa-button-outline';
+          }
           return <Link
             name="view doc"
-            classNames={['usa-button-outline']}
+            className={buttonClass}
             to={`/${row.vacols_id}/documents`}>
-              View Case
+              {buttonText}
             </Link>;
         }
       }

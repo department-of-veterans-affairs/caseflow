@@ -6,7 +6,7 @@ class Reader::DocumentsController < Reader::AppealController
       format.html { return render(:index) }
       format.json do
       AppealView.find_or_create_by(
-        appeal_id: appeal_id,
+        appeal_id: appeal.id,
         user_id: current_user.id).tap do |t|
         if !t.first_viewed_at
           t.update!(first_viewed_at: Time.zone.now, last_viewed_at: Time.zone.now)
