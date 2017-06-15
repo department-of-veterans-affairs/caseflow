@@ -1,7 +1,6 @@
 import * as Constants from './constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import _ from 'lodash';
 import 'array.prototype.move';
 import { doDatesMatch } from '../util/DateUtil';
 
