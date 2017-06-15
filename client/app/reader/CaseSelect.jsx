@@ -22,12 +22,12 @@ class CaseSelect extends React.PureComponent {
       {
         header: 'View Case File',
         valueFunction: (row) => {
-          return <Button
+          return <Link
             name="view doc"
             classNames={['usa-button-outline']}
             to={`/${row.vacols_id}/documents`}>
               View Case
-            </Button>;
+            </Link>;
         }
       }
     ];

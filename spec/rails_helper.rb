@@ -40,8 +40,14 @@ require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
 download_directory = Rails.root.join("tmp/downloads")
+cache_directory = Rails.root.join("tmp/browser_cache")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
+if File.directory?(cache_directory)
+  FileUtils.rm_r cache_directory
+else
+  Dir.mkdir cache_directory
+end
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
@@ -51,6 +57,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
       download: {
         prompt_for_download: false,
         default_directory: download_directory
+      },
+      browser: {
+        disk_cache_dir: cache_directory
       }
     }
   }

@@ -366,7 +366,8 @@ export class ConfirmCaseDetails extends React.Component {
           }
 
           {
-            representativeType === Constants.representativeTypes.ORGANIZATION &&
+            (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+              representativeType === Constants.representativeTypes.ORGANIZATION) &&
             <Dropdown
               name="Service organization name"
               options={organizationNamesOptions}

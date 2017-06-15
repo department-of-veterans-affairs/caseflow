@@ -124,6 +124,7 @@ Rails.application.routes.draw do
       resources :setup, only: [:index]
       post "setup-uncertify-appeal" => "setup#uncertify_appeal"
       post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
+      post "setup-toggle-features" => "setup#toggle_features"
       get "setup-delete-test-data" => "setup#delete_test_data"
     end
 
