@@ -1,5 +1,6 @@
 import StringUtil from './StringUtil';
 import moment from 'moment';
+import 'array.prototype.move';
 import _ from 'lodash';
 
 const ZERO_INDEX_MONTH_OFFSET = 1;
