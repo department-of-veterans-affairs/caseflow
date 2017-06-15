@@ -83,7 +83,7 @@ $tag-backgrond-color: #d6d7d9;
   .cf-document-list-header-row tr {
     display: block;
 
-    th > button {
+    th > span > button {
       display: flex;
       background-color: $color-white;
       color: $color-gray-dark;

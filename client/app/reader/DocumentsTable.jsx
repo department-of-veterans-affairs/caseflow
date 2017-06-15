@@ -8,6 +8,7 @@ import { openDocumentInNewTab } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
+import Button from '../components/Button';
 import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
@@ -276,11 +277,11 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'receipt-date-column',
-        header: <button
+        header: <Button
           id="receipt-date-header"
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
-        </button>,
+        </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
             {formatDateStr(doc.receivedAt)}
@@ -288,9 +289,9 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'doc-type-column',
-        header: <button id="type-header" onClick={() => this.props.changeSortState('type')}>
+        header: <Button id="type-header" onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
-        </button>,
+        </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
             href={this.singleDocumentView}

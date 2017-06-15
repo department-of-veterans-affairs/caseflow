@@ -221,15 +221,6 @@ RSpec.feature "Reader" do
       expect_dropdown_filter_to_be_visible
 
       expect(find("#procedural", visible: false).checked?).to be false
-
-      find("#receipt-date-header").send_keys :enter
-      expect((find :xpath, "//*[@id='table-row-1']/td[3]/span")).to have_text(7.days.ago.strftime("%m/%d/%Y"))
-
-      # This resets the date header to original setup for next test
-      find("#receipt-date-header").send_keys :enter
-
-      find("#type-header").send_keys :enter
-      expect((find :xpath, "//*[@id='table-row-1']/td[4]/b/a")).to have_text("BVA Decision")
     end
 
     scenario "Add comment" do
