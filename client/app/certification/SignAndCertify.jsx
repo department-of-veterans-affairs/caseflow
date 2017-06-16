@@ -176,7 +176,8 @@ class UnconnectedSignAndCertify extends React.Component {
             <TextField
               name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
-              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ? ERRORS.certifyingOfficialTitle : null)}
+              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ?
+                                              ERRORS.certifyingOfficialTitle : null)}
               required={true}
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />
