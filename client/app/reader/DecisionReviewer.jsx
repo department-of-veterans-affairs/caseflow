@@ -146,7 +146,7 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   routedCaseSelect = () => {
-    return <CaseSelect />
+    return <CaseSelect />;
   }
 
   rootRoute = (props) => {

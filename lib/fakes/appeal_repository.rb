@@ -209,7 +209,6 @@ class Fakes::AppealRepository
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-
     seed_certification_data! if app_name == "Certification"
     seed_establish_claim_data! if app_name == "Dispatch"
     seed_reader_data! if app_name == "Reader"

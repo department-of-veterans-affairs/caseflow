@@ -5,15 +5,15 @@ class Reader::DocumentsController < Reader::AppealController
     respond_to do |format|
       format.html { return render(:index) }
       format.json do
-      AppealView.find_or_create_by(
-        appeal_id: appeal.id,
-        user_id: current_user.id).tap do |t|
-        if !t.first_viewed_at
-          t.update!(first_viewed_at: Time.zone.now, last_viewed_at: Time.zone.now)
-        else
-          t.update!(last_viewed_at: Time.zone.now)
+        AppealView.find_or_create_by(
+          appeal_id: appeal.id,
+          user_id: current_user.id).tap do |t|
+          if !t.first_viewed_at
+            t.update!(first_viewed_at: Time.zone.now, last_viewed_at: Time.zone.now)
+          else
+            t.update!(last_viewed_at: Time.zone.now)
+          end
         end
-      end
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,

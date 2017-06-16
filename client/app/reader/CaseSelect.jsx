@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as Constants from './constants';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
+import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
   getAssignmentColumn = () => {
@@ -48,6 +48,7 @@ class CaseSelect extends React.PureComponent {
     if (!this.props.assignments) {
       return <div></div>;
     }
+
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">

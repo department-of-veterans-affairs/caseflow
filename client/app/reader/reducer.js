@@ -225,12 +225,12 @@ export const reducer = (state = initialState, action = {}) => {
       }
     ));
   case Constants.RECEIVE_ASSIGNMENTS:
-  return update(state,
-    {
-      assignments: {
-        $set: action.payload.assignments
-      }
-    });
+    return update(state,
+      {
+        assignments: {
+          $set: action.payload.assignments
+        }
+      });
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {

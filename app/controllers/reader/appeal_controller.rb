@@ -21,7 +21,7 @@ class Reader::AppealController < ApplicationController
 
     appeal_ids = appeals.map(&:id)
     opened_appeals_hash = current_user.appeal_views.where(appeal_id: appeal_ids)
-                            .each_with_object({}) do |appeal_view, object|
+                                      .each_with_object({}) do |appeal_view, object|
       object[appeal_view.appeal_id] = true
     end
 

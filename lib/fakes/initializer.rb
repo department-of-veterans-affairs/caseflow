@@ -32,7 +32,7 @@ class Fakes::Initializer
       }
 
       Fakes::AppealRepository.seed!(app_name: app_name)
-      Fakes::HearingRepository.seed! if (app_name == "Hearing Prep")
+      Fakes::HearingRepository.seed! if app_name == "Hearing Prep"
     end
   end
 end

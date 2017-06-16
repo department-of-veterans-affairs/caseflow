@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link as ReduxLink} from 'react-router-dom';
+import { Link as ReduxLink } from 'react-router-dom';
 
 export default class Link extends React.Component {
   className = (button) => {
-    switch(button) {
-      case 'primary':
-        return 'usa-button';
-      case 'secondary':
-        return 'usa-button-outline';
-      case 'disabled':
-        return 'usa-button-disabled';
+    switch (button) {
+    case 'primary':
+      return 'usa-button';
+    case 'secondary':
+      return 'usa-button-outline';
+    case 'disabled':
+      return 'usa-button-disabled';
+    default:
+      return '';
     }
   }
 
@@ -21,7 +23,7 @@ export default class Link extends React.Component {
       children
     } = this.props;
 
-    const type = button ? "button" : null;
+    const type = button ? 'button' : null;
     const className = this.className(button);
 
     if (button === 'disabled') {
@@ -31,15 +33,16 @@ export default class Link extends React.Component {
       >
         {children}
       </p>;
-    } else {
-      return <ReduxLink
+    }
+
+    return <ReduxLink
         to={to}
         type={type}
         className={className}
       >
         {children}
       </ReduxLink>;
-    }
+
   }
 }
 
