@@ -4,7 +4,10 @@ import ApiUtil from '../../../app/util/ApiUtil';
 describe('ApiUtil', () => {
   context('.convertToSnakeCase', () => {
 
-    let camelCaseObject = {
+    const camelCaseObject = {
+      emptyStringField: '',
+      falseField: false,
+      undefinedField: undefined,
       vacolsId: null,
       vacolsName: {
         firstName: 'Jane',
@@ -12,7 +15,10 @@ describe('ApiUtil', () => {
       }
     };
 
-    let snakeCaseObject = {
+    const snakeCaseObject = {
+      empty_string_field: '',
+      false_field: false,
+      undefined_field: undefined,
       vacols_id: null,
       vacols_name: {
         first_name: 'Jane',
@@ -21,15 +27,15 @@ describe('ApiUtil', () => {
     };
 
     it('returns a correctly formatted object', () => {
-      expect(ApiUtil.convertToSnakeCase(camelCaseObject)).to.eql(snakeCaseObject);
+      expect(ApiUtil.convertToSnakeCase(camelCaseObject)).to.deep.equal(snakeCaseObject);
     });
 
     it('returns an empty object', () => {
-      expect(ApiUtil.convertToSnakeCase({})).to.eql({});
+      expect(ApiUtil.convertToSnakeCase({})).to.deep.equal({});
     });
 
     it('returns a null object', () => {
-      expect(ApiUtil.convertToSnakeCase(null)).to.eql(null);
+      expect(ApiUtil.convertToSnakeCase(null)).to.deep.equal(null);
     });
   });
 });

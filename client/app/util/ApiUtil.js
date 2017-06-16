@@ -2,13 +2,14 @@ import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
 import StringUtil from './StringUtil';
+import _ from 'lodash';
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
 
   // Converts camelCase to snake_case
   convertToSnakeCase(data) {
-    if (typeof data !== 'object' || data === null) {
+    if (!_.isObject(data)) {
       return data;
     }
     let result = {};
