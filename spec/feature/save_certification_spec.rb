@@ -434,8 +434,10 @@ RSpec.feature "Save Certification" do
 
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
-          find("label", text: "Veterans Service Representative").click
+          find("label", text: "Other").click
         end
+
+        fill_in "Specify other title of certifying official", with: "President"
 
         click_button("Continue")
         expect(page).to have_content "Success"
@@ -464,8 +466,9 @@ RSpec.feature "Save Certification" do
 
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
-          find("label", text: "Veterans Service Representative").click
+          find("label", text: "Other").click
         end
+        fill_in "Specify other title of certifying official", with: "President"
 
         click_button("Continue")
         expect(page).to have_content "Success"
@@ -482,8 +485,10 @@ RSpec.feature "Save Certification" do
         expect(find_field("Name of certifying official").value).to eq "Tom Cruz"
 
         within_fieldset("Title of certifying official") do
-          expect(find_field("Veterans Service Representative", visible: false)).to be_checked
+          expect(find_field("Other", visible: false)).to be_checked
         end
+        expect(find_field("Specify other title of certifying official").value).to eq "President"
+
         expect(find_field("Date").value).to eq Time.zone.today.strftime("%m/%d/%Y")
       end
 

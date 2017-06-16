@@ -59,7 +59,7 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "459" => "RO59",
     "460" => "RO60",
     "362" => "RO62",
-    "363" => "RO63",
+    "463" => "RO63",
     "372" => "RO72",
     "373" => "RO73",
     "377" => "RO77",
