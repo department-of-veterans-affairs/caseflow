@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 
-
 class CaseSelect extends React.PureComponent {
   getAssignmentColumn = () => {
     return [
@@ -23,15 +22,16 @@ class CaseSelect extends React.PureComponent {
         header: 'View Case File',
         valueFunction: (row) => {
           let buttonText = 'New';
-          let buttonClass = 'usa-button';
+          let buttonType = 'primary';
 
           if (row.viewed) {
             buttonText = 'Continue';
-            buttonClass = 'usa-button-outline';
+            buttonType = 'secondary';
           }
+
           return <Link
             name="view doc"
-            className={buttonClass}
+            button={buttonType}
             to={`/${row.vacols_id}/documents`}>
               {buttonText}
             </Link>;
