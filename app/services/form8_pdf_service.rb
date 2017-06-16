@@ -97,6 +97,7 @@ class Form8PdfService
     hearing_preference: {
       "HEARING_CANCELLED" => "CheckBox21[0]",
       "NO_HEARING_DESIRED" => "CheckBox21[0]",
+      "HEARING_TYPE_NOT_SPECIFIED" => "CheckBox21[1]",
       "VIDEO" => "CheckBox21[1]",
       "WASHINGTON_DC" => "CheckBox21[2]",
       "TRAVEL_BOARD" => "CheckBox21[3]",
