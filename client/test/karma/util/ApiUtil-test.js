@@ -4,6 +4,7 @@ import ApiUtil from '../../../app/util/ApiUtil';
 describe('ApiUtil', () => {
   context('.convertToSnakeCase', () => {
 
+    /* eslint-disable no-undefined */
     const camelCaseObject = {
       emptyStringField: '',
       falseField: false,
@@ -25,6 +26,7 @@ describe('ApiUtil', () => {
         last_name: 'Smith'
       }
     };
+    /* eslint-enable no-undefined */
 
     it('returns a correctly formatted object', () => {
       expect(ApiUtil.convertToSnakeCase(camelCaseObject)).to.deep.equal(snakeCaseObject);
