@@ -154,6 +154,7 @@ const certifyingOfficialTitle = function(title) {
   if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
     return Constants.certifyingOfficialTitles.OTHER;
   }
+
   return title;
 };
 
