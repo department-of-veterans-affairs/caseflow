@@ -60,6 +60,15 @@ describe AssociatedVacolsModel do
     end
   end
 
+  context "#turn_off_lazy_loading" do
+    before { model.turn_off_lazy_loading }
+
+    it "will not load data when check_and_load_vacols_data is called" do
+      expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
+      expect(model.check_and_load_vacols_data!).to be_truthy
+    end
+  end
+
   context "#check_and_load_vacols_data!" do
     subject { model.check_and_load_vacols_data! }
 

@@ -341,13 +341,6 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
-  def self.create_appeal_without_lazy_load(hash)
-    appeal = Appeal.find_or_create_by_vacols_id(hash[:vacols_id])
-    appeal.turn_off_lazy_loading
-    appeal.assign_attributes(hash)
-    appeal
-  end
-
   private
 
   def matched_document(type, vacols_datetime)
@@ -431,6 +424,13 @@ class Appeal < ActiveRecord::Base
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
 
       fail Caseflow::Error::InvalidFileNumber
+    end
+
+    def create_appeal_without_lazy_load(hash)
+      appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
+      appeal.turn_off_lazy_loading
+      appeal.assign_attributes(hash)
+      appeal
     end
 
     private

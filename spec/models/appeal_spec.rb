@@ -890,4 +890,25 @@ describe Appeal do
       end
     end
   end
+
+  context ".create_appeal_without_lazy_load" do
+    let(:date) { Time.zone.today }
+    let(:saved_appeal) do
+      Generators::Appeal.build(
+        vacols_record: { veteran_first_name: "George" }
+      )
+    end
+    let(:appeal) do
+      Appeal.create_appeal_without_lazy_load(vacols_id: saved_appeal.vacols_id,
+                                             signed_date: date)
+    end
+
+    it "creates an appeals object with attributes" do
+      expect(appeal.signed_date).to eq(date)
+    end
+
+    it "appeal does not lazy load vacols data" do
+      expect(appeal.veteran_first_name).to be_nil
+    end
+  end
 end

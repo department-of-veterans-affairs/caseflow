@@ -1,7 +1,9 @@
 class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
+  cattr_accessor :appeal_records
+
   # rubocop:disable MethodLength
   def self.load_from_vacols(_user_id)
-    [
+    appeal_records || [
       Appeal.create_appeal_without_lazy_load(vacols_id: "reader_id1",
                                              date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
                                              date_received: "2013-05-31 00:00:00 UTC".to_datetime,

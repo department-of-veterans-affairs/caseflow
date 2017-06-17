@@ -104,6 +104,33 @@ RSpec.feature "Reader" do
       ]
     end
 
+    context "Welcome gate page" do
+      let(:appeal2) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+      end
+
+      before do
+        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+      end
+
+      scenario "Enter a case" do
+        visit "/reader/appeal"
+
+        expect(page).to have_content(appeal.veteran_last_name)
+        expect(page).to have_content(appeal.vbms_id)
+
+        click_on "New", match: :first
+
+        expect(page).to have_content("Documents")
+
+        click_on "Caseflow Reader"
+
+        click_on "Continue"
+
+        expect(page).to have_content("Documents")
+      end
+    end
+
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
