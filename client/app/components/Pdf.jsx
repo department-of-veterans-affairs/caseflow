@@ -16,6 +16,7 @@ import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import deepDiff from 'deep-diff';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 
@@ -585,7 +586,11 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
-  componentDidUpdate = () => {
+  componentShouldUpdate(nextProps, nextState) {
+    return !(_.isEqual(this.props, nextProps) && _.isEqual(this.state, nextState));
+  }
+
+  componentDidUpdate(prevProps) {
     this.renderInViewPages();
     this.prerenderPages();
 
@@ -606,7 +611,16 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
         this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
     }
-    this.updatePageBounds();
+
+    const getPropsWithoutPlacingAnnotationIconCoords =
+      (props) => _.omit(props, 'placingAnnotationIconScaledPageCoords');
+
+    if (!_.isEqual(
+      getPropsWithoutPlacingAnnotationIconCoords(this.props),
+      getPropsWithoutPlacingAnnotationIconCoords(prevProps))
+    ) {
+      this.updatePageBounds();
+    }
   }
 
   updatePageBounds = () => {
