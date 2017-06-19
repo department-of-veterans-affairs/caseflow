@@ -9,13 +9,13 @@ class Fakes::Initializer
       User.case_assignment_repository = Fakes::CaseAssignmentRepository
     end
 
-    def setup!(rails_env)
-      development! if rails_env.development? || rails_env.demo?
+    def setup!(rails_env, app_name: nil)
+      development!(app_name: app_name) if rails_env.development? || rails_env.demo?
     end
 
     private
 
-    def development!
+    def development!(app_name: nil)
       load!
 
       User.authentication_service.vacols_regional_offices = {
@@ -31,8 +31,8 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
-      Fakes::AppealRepository.seed!
-      Fakes::HearingRepository.seed!
+      Fakes::AppealRepository.seed!(app_name: app_name)
+      Fakes::HearingRepository.seed! if app_name == "Hearing Prep"
     end
   end
 end
