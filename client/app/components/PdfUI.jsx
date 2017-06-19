@@ -65,9 +65,9 @@ export class PdfUI extends React.Component {
           onPageChange={this.onPageChange}
         />
         of {this.state.numPages}
-      </span>
+      </span>;
     } else {
-      return 'Loading Document';
+      return <em>Loading document...</em>;
     }
   }
 
