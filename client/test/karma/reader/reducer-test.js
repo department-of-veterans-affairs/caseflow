@@ -285,10 +285,13 @@ describe('Reader reducer', () => {
       const state = reduceActions([
         {
           type: Constants.RECEIVE_DOCUMENTS,
-          payload: [{
-            id: docId,
-            tags: []
-          }]
+          payload: {
+            documents: [{
+              id: docId,
+              tags: []
+            }],
+            vacolsId: 1
+          }
         },
         {
           type: Constants.REQUEST_CREATE_ANNOTATION,
@@ -369,10 +372,13 @@ describe('Reader reducer', () => {
       const state = reduceActions([
         {
           type: Constants.RECEIVE_DOCUMENTS,
-          payload: [{
-            id: 0,
-            tags: []
-          }]
+          payload: {
+            documents: [{
+              id: 0,
+              tags: []
+            }],
+            vacolsId: 1
+          }
         },
         {
           type: Constants.REQUEST_NEW_TAG_CREATION,

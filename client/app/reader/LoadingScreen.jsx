@@ -40,7 +40,7 @@ export class LoadingScreen extends React.Component {
   }
 
   render() {
-    if (this.props.loadedAppealId === this.props.vacolsId) {
+    if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
       return this.props.children;
     }
 
