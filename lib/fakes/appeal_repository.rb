@@ -209,9 +209,9 @@ class Fakes::AppealRepository
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-    seed_certification_data! if app_name.nil? || app_name == "Certification"
-    seed_establish_claim_data! if app_name.nil? || app_name == "Dispatch"
-    seed_reader_data! if app_name.nil? || app_name == "Reader"
+    seed_certification_data! if app_name.nil? || app_name == "certification"
+    seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
+    seed_reader_data! if app_name.nil? || app_name == "reader"
   end
 
   def self.certification_documents
@@ -238,7 +238,7 @@ class Fakes::AppealRepository
 
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
-    10.times.each do |i|
+    50.times.each do |i|
       Generators::Appeal.build(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
