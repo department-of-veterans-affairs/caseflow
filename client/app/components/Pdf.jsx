@@ -37,7 +37,7 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
-const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
+export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   x: (x - pageBoundingBox.left) / scale,
   y: (y - pageBoundingBox.top) / scale
 });
