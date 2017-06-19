@@ -453,6 +453,11 @@ svg[aria-hidden=true],
 .cf-pdf-open-menu {
   flex: 0 0 auto;
   margin-left: 5px;
+
+  [type=button] {
+    margin-left: 20px;
+    margin-right: 15px;
+  }
 }
 
 .cf-pdf-doc-type-button-container {
