@@ -356,7 +356,9 @@ class Appeal < ActiveRecord::Base
 
   def exclude_and_sort_documents(excluding)
     excluding_ids = excluding.map(&:vbms_document_id)
-    documents.reject { |doc| excluding_ids.include? doc.vbms_document_id }.sort_by(&:received_at)
+    documents.reject do |doc|
+      excluding_ids.include?(doc.vbms_document_id) || doc.received_at.nil?
+    end.sort_by(&:received_at)
   end
 
   # List of all end products for the appeal's veteran.
