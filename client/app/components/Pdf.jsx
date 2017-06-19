@@ -29,6 +29,9 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
  *
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
+ * 
+ * The relationship between screen and page coordinates is defined by where the PDF page is within the whole app,
+ * and what the current scale factor is.
  *
  * All coordinates in our codebase should have `page` or `screen` in the name, to make it clear which
  * coordinate system they belong to. All converting between coordinate systems should be done with
@@ -632,15 +635,11 @@ export class Pdf extends React.PureComponent {
     // at the first page, and know that all pages were the same. That would simplify
     // the code, but it is not an assumption we're making at this time.
     const newPageBounds = _(this.pageElements).
-      map((pageElem, pageIndex) => {
-        const boundingRect = pageElem.pageContainer.getBoundingClientRect();
-
-        return {
-          pageIndex: Number(pageIndex),
-          right: boundingRect.width,
-          bottom: boundingRect.height
-        };
-      }).
+      map((pageElem, pageIndex) => ({
+        pageIndex: Number(pageIndex),
+        // Bug: We act as if these are page bounds, but they're really the location of the page upper bound *in screen space*.
+        ..._.pick(pageElem.pageContainer.getBoundingClientRect(), 'width', 'height')
+      })).
       keyBy('pageIndex').
       value();
 

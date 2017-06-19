@@ -55,8 +55,8 @@ export class PdfViewer extends React.Component {
       const pageCoordsBounds = this.props.pageCoordsBounds[pageIndex];
 
       const constrainedCoords = {
-        x: _.clamp(pageCoords.x, 0, pageCoordsBounds.right - Constants.ANNOTATION_ICON_SIDE_LENGTH),
-        y: _.clamp(pageCoords.y, 0, pageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH)
+        x: _.clamp(pageCoords.x, 0, pageCoordsBounds.width - Constants.ANNOTATION_ICON_SIDE_LENGTH),
+        y: _.clamp(pageCoords.y, 0, pageCoordsBounds.height - Constants.ANNOTATION_ICON_SIDE_LENGTH)
       };
 
       if (!_.isEqual(origCoords, constrainedCoords)) {
