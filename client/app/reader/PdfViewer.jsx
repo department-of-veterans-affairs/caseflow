@@ -59,6 +59,10 @@ export class PdfViewer extends React.Component {
 
       this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
 
+      // If the user is placing an annotation, we do not also want
+      // to be panning around on the page view with the arrow keys.
+      event.preventDefault();
+
       return;
     }
 
