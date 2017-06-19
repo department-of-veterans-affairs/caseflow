@@ -1,4 +1,5 @@
 class CaseAssignmentRepository
+  # :nocov:
   def self.load_from_vacols(user_id)
     VACOLS::CaseAssignment.unsigned_cases_for_user(user_id).map do |assignment|
       Appeal.create_appeal_without_lazy_load(vacols_id: assignment.vacols_id,
@@ -11,4 +12,5 @@ class CaseAssignmentRepository
                                              vbms_id: assignment.vbms_id)
     end
   end
+  # :nocov:
 end
