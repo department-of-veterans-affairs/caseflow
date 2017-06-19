@@ -54,6 +54,12 @@ export class PdfViewer extends React.Component {
 
       const pageCoordsBounds = this.props.pageCoordsBounds[pageIndex];
 
+      // This calculation is not quite right, because we are not using the scale 
+      // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
+      // you're able to place the annotation with the keyboard looking progressively
+      // weirder as you get further from zoom level 0. I am not going to fix this issue
+      // now, because `scale` is stored in the state of `PdfUI`, and this PR is already
+      // too massive. This can be a follow-up issue.
       const constrainedCoords = {
         x: _.clamp(pageCoords.x, 0, pageCoordsBounds.width - Constants.ANNOTATION_ICON_SIDE_LENGTH),
         y: _.clamp(pageCoords.y, 0, pageCoordsBounds.height - Constants.ANNOTATION_ICON_SIDE_LENGTH)

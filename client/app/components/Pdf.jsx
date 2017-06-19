@@ -619,27 +619,39 @@ export class Pdf extends React.PureComponent {
         this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
     }
 
-    const getPropsWithoutPlacingAnnotationIconCoords =
-      (props) => _.omit(props, 'placingAnnotationIconPageCoords');
+    const getPropsAffectingPageBounds = (props) => _.omit(props, 'placingAnnotationIconPageCoords', 'scale');
 
     if (!_.isEqual(
-      getPropsWithoutPlacingAnnotationIconCoords(this.props),
-      getPropsWithoutPlacingAnnotationIconCoords(prevProps))
+      getPropsAffectingPageBounds(this.props),
+      getPropsAffectingPageBounds(prevProps))
     ) {
       this.updatePageBounds();
     }
   }
 
   updatePageBounds = () => {
+    // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
+    // because that's what the page bounds are before rendering completes. Somehow, this does not
+    // cause a problem, so I'm not going to figure out now how to make it fire with the right values.
+    // But if you are seeing issues, that could be why.
+
     // If we knew that all pages would be the same size, then we could just look
     // at the first page, and know that all pages were the same. That would simplify
     // the code, but it is not an assumption we're making at this time.
     const newPageBounds = _(this.pageElements).
-      map((pageElem, pageIndex) => ({
-        pageIndex: Number(pageIndex),
-        // Bug: We act as if these are page bounds, but they're really the location of the page upper bound *in root space*.
-        ..._.pick(pageElem.pageContainer.getBoundingClientRect(), 'width', 'height')
-      })).
+      map((pageElem, pageIndex) => {
+        const {right, bottom} = pageElem.pageContainer.getBoundingClientRect();
+        const pageCoords = pageCoordsOfRootCoords({
+          x: right, 
+          y: bottom
+        }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
+
+        return {
+          pageIndex: Number(pageIndex),
+          width: pageCoords.x,
+          height: pageCoords.y
+        };
+      }).
       keyBy('pageIndex').
       value();
 
