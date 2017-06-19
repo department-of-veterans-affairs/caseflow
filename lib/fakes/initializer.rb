@@ -19,7 +19,7 @@ class Fakes::Initializer
         # When running other rake commands (e.g. `rake db:seed`), we do **NOT**
         # want to seed the fakes because
         #   1) it's unnecessary and slows down the command
-        #   2) it can cause the seed data we put into postres vacols_ids to become
+        #   2) it can cause the seed data we put into postgres vacols_ids to become
         #      unaligned with what we put into our in-memory VACOLS "DB"
         if Rails.const_defined?("Console") || Rails.const_defined?("Server")
           load_fakes_and_seed!
