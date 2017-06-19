@@ -147,6 +147,18 @@ describe Appeal do
         it { is_expected.to be_falsy }
       end
 
+      context "when received_at is nil" do
+        before do
+          appeal.documents += [
+            Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
+          ]
+          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+        end
+
+        it { is_expected.to be_falsy }
+      end
+
       context "and ssoc dates match" do
         before do
           # vbms documents
