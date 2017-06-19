@@ -14,12 +14,10 @@ import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
+import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
-
-// If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
-const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
 const getScaledCoords = ({ x, y }, scale) => ({
   x: x / scale,
