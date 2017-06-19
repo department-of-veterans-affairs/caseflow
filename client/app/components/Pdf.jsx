@@ -612,7 +612,7 @@ export class Pdf extends React.PureComponent {
       map((pageElem, pageIndex) => {
         const boundingRect = pageElem.pageContainer.getBoundingClientRect();
         const upperBound = {
-          x: boundingRect.right, 
+          x: boundingRect.right,
           y: boundingRect.bottom
         };
         const upperBoundPageCoords = pageCoordsOfScreenCoords(upperBound, boundingRect);

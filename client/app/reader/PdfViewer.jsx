@@ -54,7 +54,7 @@ export class PdfViewer extends React.Component {
 
       const constrainedCoords = {
         x: _.clamp(scaledPageCoords.x, 0, scaledPageCoordsBounds.right - Constants.ANNOTATION_ICON_SIDE_LENGTH),
-        y: _.clamp(scaledPageCoords.y, 0, scaledPageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH),
+        y: _.clamp(scaledPageCoords.y, 0, scaledPageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH)
       };
 
       this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
