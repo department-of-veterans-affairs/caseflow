@@ -474,16 +474,13 @@ export class Pdf extends React.PureComponent {
     const pageIndex = _(this.pageElements).
       map('pageContainer').
       indexOf(event.currentTarget);
-    const { xPosition, yPosition } = this.getPageCoordinatesOfMouseEvent(
+    const pageCoords = this.getPageCoordinatesOfMouseEvent(
       event,
       event.currentTarget.getBoundingClientRect()
     );
 
     if (this.props.isPlacingAnnotation) {
-      this.props.showPlaceAnnotationIcon(pageIndex, {
-        x: xPosition,
-        y: yPosition
-      });
+      this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
     }
   }
 
@@ -696,12 +693,7 @@ export class Pdf extends React.PureComponent {
       y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
     };
 
-    const pageCoords = pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
-
-    return {
-      xPosition: pageCoords.x,
-      yPosition: pageCoords.y
-    };
+    return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
   }
 
   // eslint-disable-next-line max-statements
@@ -751,14 +743,14 @@ export class Pdf extends React.PureComponent {
           return;
         }
 
-        const { xPosition, yPosition } = this.getPageCoordinatesOfMouseEvent(
+        const { x, y } = this.getPageCoordinatesOfMouseEvent(
           event,
           this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect()
         );
 
         this.props.placeAnnotation(pageNumber, {
-          xPosition,
-          yPosition
+          xPosition: x,
+          yPosition: y
         }, this.props.documentId);
       };
 
