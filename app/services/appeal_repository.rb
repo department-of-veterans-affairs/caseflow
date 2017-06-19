@@ -113,7 +113,8 @@ class AppealRepository
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
-      outcoding_date: normalize_vacols_date(folder_record.tioctime)
+      outcoding_date: normalize_vacols_date(folder_record.tioctime),
+      private_attorney_or_agent: case_record.bfso == "T"
     )
 
     appeal
@@ -141,16 +142,6 @@ class AppealRepository
                                         service: :vacols,
                                         name: "amc_full_grants") do
       VACOLS::Case.amc_full_grants(outcoded_after: outcoded_after)
-    end
-
-    full_grants.map { |case_record| build_appeal(case_record) }
-  end
-
-  def self.pa_full_grants(outcoded_after:)
-    full_grants = MetricsService.record("VACOLS:  pa_full_grants #{outcoded_after}",
-                                        service: :vacols,
-                                        name: "pa_full_grants") do
-      VACOLS::Case.pa_full_grants(outcoded_after: outcoded_after)
     end
 
     full_grants.map { |case_record| build_appeal(case_record) }

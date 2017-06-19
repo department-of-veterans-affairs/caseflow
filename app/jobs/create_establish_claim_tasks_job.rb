@@ -10,14 +10,6 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
       end
     end
 
-    # fetch all full grants with a private attorney
-    if FeatureToggle.enabled?(:dispatch_full_grants_with_pa)
-      AppealRepository.pa_full_grants(outcoded_after: full_grant_outcoded_after).each do |appeal|
-        appeal.private_attorney_or_agent = true
-        EstablishClaim.find_or_create_by(appeal: appeal)
-      end
-    end
-
     # fetch all partial grants
     if FeatureToggle.enabled?(:dispatch_partial_grants_remands)
       AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
