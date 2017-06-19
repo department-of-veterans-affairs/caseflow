@@ -18,11 +18,13 @@ import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
+const vacolsId = 'reader_id1';
+
 // This is the route history preset in react router
 // prior to tests running
 const INITIAL_ENTRIES = [
-  '/reader_id1/documents',
-  `/reader_id1/documents/${documents[0].id}`
+  `/${vacolsId}/documents`,
+  `/${vacolsId}/documents/${documents[0].id}`
 ];
 
 /* eslint-disable camelcase */
@@ -42,7 +44,7 @@ describe('DecisionReviewer', () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
       // the API call to the index endpoint.
-      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveDocs(documents, vacolsId));
       store.dispatch(onReceiveAnnotations(annotations));
     };
 
