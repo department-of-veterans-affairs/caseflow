@@ -117,8 +117,8 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   initialDataLoadingFail: false,
-  scaledPageCoordsBounds: {},
-  placingAnnotationIconScaledPageCoords: null,
+  pageCoordsBounds: {},
+  placingAnnotationIconPageCoords: null,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -573,7 +573,7 @@ export const reducer = (state = initialState, action = {}) => {
     });
   case Constants.SET_PAGE_COORD_BOUNDS:
     return update(state, {
-      scaledPageCoordsBounds: {
+      pageCoordsBounds: {
         $set: action.payload.coordBounds
       }
     });
@@ -602,16 +602,16 @@ export const reducer = (state = initialState, action = {}) => {
     });
   case Constants.SHOW_PLACE_ANNOTATION_ICON:
     return update(state, {
-      placingAnnotationIconScaledPageCoords: {
+      placingAnnotationIconPageCoords: {
         $set: {
           pageIndex: action.payload.pageIndex,
-          ...action.payload.scaledPageCoords
+          ...action.payload.pageCoords
         }
       }
     });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
-      placingAnnotationIconScaledPageCoords: {
+      placingAnnotationIconPageCoords: {
         $set: null
       },
       ui: {

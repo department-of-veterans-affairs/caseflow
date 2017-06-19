@@ -1,7 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { Pdf, getInitialAnnotationIconCoords } from '../../../app/components/Pdf';
+import { Pdf, getInitialAnnotationIconPageCoords } from '../../../app/components/Pdf';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -89,7 +89,7 @@ describe('Pdf', () => {
     });
   });
 
-  describe('getInitialAnnotationIconCoords', () => {
+  describe('getInitialAnnotationIconPageCoords', () => {
     describe('zoom = 1', () => {
       it('centers the icon when the page is contained entirely by the scroll window', () => {
         const pageBox = {
@@ -105,7 +105,7 @@ describe('Pdf', () => {
           right: 900
         };
 
-        expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
+        expect(getInitialAnnotationIconPageCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
           y: 180,
           x: 30
         });
@@ -125,7 +125,7 @@ describe('Pdf', () => {
           right: 700
         };
 
-        expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
+        expect(getInitialAnnotationIconPageCoords(pageBox, scrollWindowBox, 1)).to.deep.equal({
           y: 730,
           x: 830
         });
@@ -147,7 +147,7 @@ describe('Pdf', () => {
           right: 900
         };
 
-        expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
+        expect(getInitialAnnotationIconPageCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
           y: 80,
           x: 5
         });
@@ -167,7 +167,7 @@ describe('Pdf', () => {
           right: 700
         };
 
-        expect(getInitialAnnotationIconCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
+        expect(getInitialAnnotationIconPageCoords(pageBox, scrollWindowBox, 2)).to.deep.equal({
           y: 380,
           x: 430
         });

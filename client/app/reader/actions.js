@@ -209,11 +209,11 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
-export const showPlaceAnnotationIcon = (pageIndex, scaledPageCoords) => ({
+export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   type: Constants.SHOW_PLACE_ANNOTATION_ICON,
   payload: {
     pageIndex,
-    scaledPageCoords
+    pageCoords
   }
 });
 

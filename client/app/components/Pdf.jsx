@@ -19,17 +19,27 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 
-const getScaledCoords = ({ x, y }, scale) => ({
-  x: x / scale,
-  y: y / scale
+/**
+ * We do a lot of work with coordinates to render PDFs.
+ * It is important to keep the various coordinate systems straight.
+ * Here are the systems we use:
+ *
+ *    Screen coordinates: The root coordinate system.
+ *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
+ *
+ *    Page coordinates: A coordinate system for a given PDF page.
+ *      (0, 0) is the top left hand corner of that PDF page.
+ *
+ * All coordinates in our codebase should have `page` or `screen` in the name, to make it clear which
+ * coordinate system they belong to. All converting between coordinate systems should be done with
+ * the proper helper functions.
+ */
+const pageCoordsOfScreenCoords = ({ x, y }, pageBoundingBox, scale) => ({
+  x: (x - pageBoundingBox.left) / scale,
+  y: (y - pageBoundingBox.top) / scale
 });
 
-const pageCoordsOfScreenCoords = ({ x, y }, pageBoundingBox) => ({
-  x: x - pageBoundingBox.left,
-  y: y - pageBoundingBox.top
-});
-
-export const getInitialAnnotationIconScaledPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
+export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
   const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
@@ -40,14 +50,13 @@ export const getInitialAnnotationIconScaledPageCoords = (iconPageBoundingBox, sc
     y: _.mean([topBound, bottomBound])
   };
 
-  const pageCoords = pageCoordsOfScreenCoords(screenCoords, iconPageBoundingBox);
-  const scaledCoords = getScaledCoords(pageCoords, scale);
+  const pageCoords = pageCoordsOfScreenCoords(screenCoords, iconPageBoundingBox, scale);
 
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
   return {
-    x: scaledCoords.x - annotationIconOffset,
-    y: scaledCoords.y - annotationIconOffset
+    x: pageCoords.x - annotationIconOffset,
+    y: pageCoords.y - annotationIconOffset
   };
 };
 
@@ -418,21 +427,21 @@ export class Pdf extends React.PureComponent {
     const iconPageBoundingBox =
       this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
 
-    const scaledPageCoords = getInitialAnnotationIconScaledPageCoords(
+    const pageCoords = getInitialAnnotationIconPageCoords(
       iconPageBoundingBox,
       scrollWindowBoundingRect,
       this.props.scale
     );
 
-    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, scaledPageCoords);
+    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
   }
 
   handleAltEnter = () => {
     this.props.placeAnnotation(
-      pageNumberOfPageIndex(this.props.placingAnnotationIconScaledPageCoords.pageIndex),
+      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
       {
-        xPosition: this.props.placingAnnotationIconScaledPageCoords.x,
-        yPosition: this.props.placingAnnotationIconScaledPageCoords.y
+        xPosition: this.props.placingAnnotationIconPageCoords.x,
+        yPosition: this.props.placingAnnotationIconPageCoords.y
       },
       this.props.documentId
     );
@@ -585,10 +594,6 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
-  componentShouldUpdate(nextProps, nextState) {
-    return !(_.isEqual(this.props, nextProps) && _.isEqual(this.state, nextState));
-  }
-
   componentDidUpdate(prevProps) {
     this.renderInViewPages();
     this.prerenderPages();
@@ -612,7 +617,7 @@ export class Pdf extends React.PureComponent {
     }
 
     const getPropsWithoutPlacingAnnotationIconCoords =
-      (props) => _.omit(props, 'placingAnnotationIconScaledPageCoords');
+      (props) => _.omit(props, 'placingAnnotationIconPageCoords');
 
     if (!_.isEqual(
       getPropsWithoutPlacingAnnotationIconCoords(this.props),
@@ -679,22 +684,22 @@ export class Pdf extends React.PureComponent {
       y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
     };
 
-    const coords = getScaledCoords(pageCoordsOfScreenCoords(constrainedScreenCoords, container), this.props.scale);
+    const pageCoords = pageCoordsOfScreenCoords(constrainedScreenCoords, container, this.props.scale);
 
     return {
-      xPosition: coords.x,
-      yPosition: coords.y
+      xPosition: pageCoords.x,
+      yPosition: pageCoords.y
     };
   }
 
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconScaledPageCoords && this.props.isPlacingAnnotation ?
+    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
       this.props.comments.concat([{
         temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconScaledPageCoords.pageIndex + 1,
+        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
         isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconScaledPageCoords, 'x', 'y')
+        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
       }]) :
       this.props.comments;
 
@@ -811,7 +816,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconScaledPageCoords'),
+  ..._.pick(state, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });

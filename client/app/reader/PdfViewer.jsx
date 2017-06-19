@@ -41,22 +41,22 @@ export class PdfViewer extends React.Component {
         direction
       ) ? 'y' : 'x';
 
-      const origCoords = _.pick(this.props.placingAnnotationIconScaledPageCoords, 'x', 'y');
+      const origCoords = _.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y');
 
       const {
         pageIndex,
-        ...scaledPageCoords
-      } = update(this.props.placingAnnotationIconScaledPageCoords, {
+        ...pageCoords
+      } = update(this.props.placingAnnotationIconPageCoords, {
         [movementDimension]: {
           $apply: (coord) => coord + (moveAmountPx * movementDirection)
         }
       });
 
-      const scaledPageCoordsBounds = this.props.scaledPageCoordsBounds[pageIndex];
+      const pageCoordsBounds = this.props.pageCoordsBounds[pageIndex];
 
       const constrainedCoords = {
-        x: _.clamp(scaledPageCoords.x, 0, scaledPageCoordsBounds.right - Constants.ANNOTATION_ICON_SIDE_LENGTH),
-        y: _.clamp(scaledPageCoords.y, 0, scaledPageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH)
+        x: _.clamp(pageCoords.x, 0, pageCoordsBounds.right - Constants.ANNOTATION_ICON_SIDE_LENGTH),
+        y: _.clamp(pageCoords.y, 0, pageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH)
       };
 
       if (!_.isEqual(origCoords, constrainedCoords)) {
@@ -124,7 +124,7 @@ export class PdfViewer extends React.Component {
   showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
 
   shouldComponentUpdate(nextProps, nextState) {
-    const getRenderProps = (props) => _.omit(props, 'scaledPageCoordsBounds');
+    const getRenderProps = (props) => _.omit(props, 'pageCoordsBounds');
 
     return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
   }
@@ -193,7 +193,7 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  ..._.pick(state, 'placingAnnotationIconScaledPageCoords', 'scaledPageCoordsBounds'),
+  ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
