@@ -16,7 +16,6 @@ import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import deepDiff from 'deep-diff';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 
@@ -630,17 +629,11 @@ export class Pdf extends React.PureComponent {
     const newPageBounds = _(this.pageElements).
       map((pageElem, pageIndex) => {
         const boundingRect = pageElem.pageContainer.getBoundingClientRect();
-        const upperBound = {
-          x: boundingRect.right,
-          y: boundingRect.bottom
-        };
-        const upperBoundPageCoords = pageCoordsOfScreenCoords(upperBound, boundingRect);
 
-        // I think we need to scale the coords, too.
         return {
           pageIndex: Number(pageIndex),
-          right: upperBoundPageCoords.x,
-          bottom: upperBoundPageCoords.y
+          right: boundingRect.width,
+          bottom: boundingRect.height
         };
       }).
       keyBy('pageIndex').
