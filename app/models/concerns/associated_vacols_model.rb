@@ -59,6 +59,6 @@ module AssociatedVacolsModel
   end
 
   def vacols_success?
-    @vacols_load_status == :success || :disabled
+    @vacols_load_status == :success || @vacols_load_status == :disabled
   end
 end
