@@ -35,7 +35,8 @@ const ERRORS = {
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
   certifyingOfficialTitle: 'Please enter the title of the certifying official.',
   certificationDate: "Please enter today's date.",
-  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.'
+  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.',
+  certifyingOfficialTitleOtherLength: 'Maximum length of certifying official\'s title reached.'
 };
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -60,9 +61,12 @@ class UnconnectedSignAndCertify extends React.Component {
       erroredFields.push('certifyingOfficialTitle');
     }
 
-    if (this.props.certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER &&
-      !this.props.certifyingOfficialTitleOther) {
-      erroredFields.push('certifyingOfficialTitleOther');
+    if (this.props.certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER) {
+      if (ValidatorsUtil.requiredValidator(this.props.certifyingOfficialTitleOther)) {
+        erroredFields.push('certifyingOfficialTitleOther');
+      } else if (ValidatorsUtil.lengthValidator(this.props.certifyingOfficialTitleOther)) {
+        erroredFields.push('certifyingOfficialTitleOtherLength');
+      }
     }
 
     return erroredFields;
@@ -89,13 +93,21 @@ class UnconnectedSignAndCertify extends React.Component {
     return this.props.erroredFields && this.props.erroredFields.includes(fieldName);
   }
 
-  calculateErrorMessage() {
+  certifyingOfficialNameError() {
     if (this.isFieldErrored('certifyingOfficialName')) {
       return ERRORS.certifyingOfficialName;
     } else if (this.isFieldErrored('certifyingOfficialNameLength')) {
       return ERRORS.certifyingOfficialNameLength;
     }
+    return null;
+  }
 
+  certifyingOfficialTitleOtherError() {
+    if (this.isFieldErrored('certifyingOfficialTitleOther')) {
+      return ERRORS.certifyingOfficialTitle;
+    } else if (this.isFieldErrored('certifyingOfficialTitleOtherLength')) {
+      return ERRORS.certifyingOfficialTitleOtherLength;
+    }
     return null;
   }
 
@@ -161,7 +173,7 @@ class UnconnectedSignAndCertify extends React.Component {
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
-            errorMessage={this.calculateErrorMessage()}
+            errorMessage={this.certifyingOfficialNameError()}
             required={true}
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
@@ -176,8 +188,7 @@ class UnconnectedSignAndCertify extends React.Component {
             <TextField
               name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
-              errorMessage={(this.isFieldErrored('certifyingOfficialTitleOther') ?
-                                              ERRORS.certifyingOfficialTitle : null)}
+              errorMessage={this.certifyingOfficialTitleOtherError()}
               required={true}
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />
