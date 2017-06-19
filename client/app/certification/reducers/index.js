@@ -148,7 +148,20 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   }
 
   return null;
+};
 
+const certifyingOfficialTitle = function(title) {
+  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
+    return Constants.certifyingOfficialTitles.OTHER;
+  }
+
+  return title;
+};
+
+const certifyingOfficialTitleOther = function(title) {
+  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
+    return title;
+  }
 };
 
 const parseDocumentFromApi = (doc = {}, index) => ({
@@ -187,5 +200,6 @@ export const mapDataToInitialState = (state) => ({
   certifyingUsername: state.certifying_username,
   certificationDate: state.certification_date,
   certifyingOfficialName: state.certifying_official_name,
-  certifyingOfficialTitle: state.certifying_official_title
+  certifyingOfficialTitle: certifyingOfficialTitle(state.certifying_official_title),
+  certifyingOfficialTitleOther: certifyingOfficialTitleOther(state.certifying_official_title)
 });

@@ -187,6 +187,7 @@ ActiveRecord::Schema.define(version: 20170615162530) do
     t.string   "agent_accredited"
     t.string   "form_646_of_record"
     t.string   "form_646_not_of_record_explanation"
+    t.string   "hearing_preference"
     t.string   "hearing_requested"
     t.string   "hearing_held"
     t.string   "hearing_transcript_on_file"
@@ -194,6 +195,8 @@ ActiveRecord::Schema.define(version: 20170615162530) do
     t.string   "contested_claims_procedures_applicable"
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
+    t.date     "nod_date"
+    t.date     "form9_date"
     t.string   "ssoc_required"
     t.text     "record_other_explanation"
     t.text     "remarks"
@@ -232,9 +235,6 @@ ActiveRecord::Schema.define(version: 20170615162530) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "certifying_official_title_specify_other"
-    t.string   "hearing_preference"
-    t.date     "nod_date"
-    t.date     "form9_date"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
