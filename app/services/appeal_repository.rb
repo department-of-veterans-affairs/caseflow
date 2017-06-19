@@ -202,7 +202,7 @@ class AppealRepository
     send_and_log_request(veteran_hash[:file_number], request)
   end
 
-  def self.update_vacols_after_dispatch!(appeal:, vacols_note: nil)
+  def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
     VACOLS::Case.transaction do
       update_location_after_dispatch!(appeal: appeal)
 
