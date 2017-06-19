@@ -209,9 +209,9 @@ class Fakes::AppealRepository
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-    seed_certification_data! if app_name == "Certification"
-    seed_establish_claim_data! if app_name == "Dispatch"
-    seed_reader_data! if app_name == "Reader"
+    seed_certification_data! if app_name.nil? || app_name == "Certification"
+    seed_establish_claim_data! if app_name.nil? || app_name == "Dispatch"
+    seed_reader_data! if app_name.nil? || app_name == "Reader"
   end
 
   def self.certification_documents
@@ -402,8 +402,6 @@ class Fakes::AppealRepository
 
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
-    FeatureToggle.enable!(:reader)
-
     Generators::Appeal.build(
       vacols_id: "reader_id1",
       vbms_id: "reader_id1",
