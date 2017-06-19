@@ -24,20 +24,20 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
  * It is important to keep the various coordinate systems straight.
  * Here are the systems we use:
  *
- *    Screen coordinates: The root coordinate system.
+ *    Root coordinates: The coordinate system for the entire app.
  *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
  *
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
  * 
- * The relationship between screen and page coordinates is defined by where the PDF page is within the whole app,
+ * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
  * and what the current scale factor is.
  *
- * All coordinates in our codebase should have `page` or `screen` in the name, to make it clear which
+ * All coordinates in our codebase should have `page` or `root` in the name, to make it clear which
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
-const pageCoordsOfScreenCoords = ({ x, y }, pageBoundingBox, scale) => ({
+const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   x: (x - pageBoundingBox.left) / scale,
   y: (y - pageBoundingBox.top) / scale
 });
@@ -48,12 +48,12 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
   const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
   const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
 
-  const screenCoords = {
+  const rootCoords = {
     x: _.mean([leftBound, rightBound]),
     y: _.mean([topBound, bottomBound])
   };
 
-  const pageCoords = pageCoordsOfScreenCoords(screenCoords, iconPageBoundingBox, scale);
+  const pageCoords = pageCoordsOfRootCoords(rootCoords, iconPageBoundingBox, scale);
 
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
@@ -637,7 +637,7 @@ export class Pdf extends React.PureComponent {
     const newPageBounds = _(this.pageElements).
       map((pageElem, pageIndex) => ({
         pageIndex: Number(pageIndex),
-        // Bug: We act as if these are page bounds, but they're really the location of the page upper bound *in screen space*.
+        // Bug: We act as if these are page bounds, but they're really the location of the page upper bound *in root space*.
         ..._.pick(pageElem.pageContainer.getBoundingClientRect(), 'width', 'height')
       })).
       keyBy('pageIndex').
@@ -678,12 +678,12 @@ export class Pdf extends React.PureComponent {
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   getPageCoordinatesOfMouseEvent(event, container) {
-    const constrainedScreenCoords = {
+    const constrainedRootCoords = {
       x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
       y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
     };
 
-    const pageCoords = pageCoordsOfScreenCoords(constrainedScreenCoords, container, this.props.scale);
+    const pageCoords = pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
 
     return {
       xPosition: pageCoords.x,
