@@ -206,6 +206,8 @@ class Fakes::AppealRepository
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 

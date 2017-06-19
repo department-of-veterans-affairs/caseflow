@@ -18,7 +18,7 @@ class Fakes::Initializer
         # like `rake db:seed`, we do **NOT** want to seed the fakes yet, as we
         # must first seed the caseflow postgres DB for things to properly be
         # aligned
-        if Rails.const_defined?('Console') || Rails.const_defined?('Server')
+        if Rails.const_defined?("Console") || Rails.const_defined?("Server")
           load_fakes_and_seed!
         else
           load!
