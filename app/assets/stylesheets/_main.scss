@@ -414,19 +414,33 @@ select {
 }
 
 .cf-title-meta-right {
-  line-height: 3em;
+  line-height: 1em;
+  margin-bottom: 1.76em;
 
-  * {
+  .title,
+  .meta {
+    display: inline-block;
     vertical-align: middle;
+    margin: 0;
+  }
+
+  .title {
+    width: 70%;
   }
 
   .meta {
+    width: 30%;
+    text-align: right;
     font-size: 1.118em;
 
     .value {
       font-size: 1.263em;
       position: relative;
-      top: -.1em;
+      top: .1em;
     }
   }
+}
+
+.vbms-id {
+  color: $color-gray-light;
 }
