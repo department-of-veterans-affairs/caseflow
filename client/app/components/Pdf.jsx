@@ -610,6 +610,9 @@ export class Pdf extends React.PureComponent {
   }
 
   updatePageBounds = () => {
+    // If we knew that all pages would be the same size, then we could just look
+    // at the first page, and know that all pages were the same. That would simplify
+    // the code, but it is not an assumption we're making at this time.
     const newPageBounds = _(this.pageElements).
       map((pageElem, pageIndex) => {
         const boundingRect = pageElem.pageContainer.getBoundingClientRect();
