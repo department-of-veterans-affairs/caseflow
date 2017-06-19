@@ -21,7 +21,7 @@ class Fakes::HearingRepository
 
   def self.seed!
     user = User.find_by_vacols_id("LROTH")
-    50.times.each do |i|
+    10.times.each do |i|
       type = VACOLS::CaseHearing::HEARING_TYPES.values[i % 3]
       Generators::Hearing.build(
         type: type,

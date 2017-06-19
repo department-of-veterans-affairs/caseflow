@@ -238,7 +238,7 @@ class Fakes::AppealRepository
 
   def self.seed_establish_claim_data!
     # Make every other case have two decision documents
-    50.times.each do |i|
+    10.times.each do |i|
       Generators::Appeal.build(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",

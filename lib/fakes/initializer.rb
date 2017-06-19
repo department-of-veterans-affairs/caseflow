@@ -11,7 +11,19 @@ class Fakes::Initializer
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
-      load_fakes_and_seed! if rails_env.development? || rails_env.demo?
+      if rails_env.development? || rails_env.demo?
+
+        # If we are booting up the rails console or server,
+        # we also want to load the fakes. When running other rake commands
+        # like `rake db:seed`, we do **NOT** want to seed the fakes yet, as we
+        # must first seed the caseflow postgres DB for things to properly be
+        # aligned
+        if Rails.const_defined?('Console') || Rails.const_defined?('Server')
+          load_fakes_and_seed!
+        else
+          load!
+        end
+      end
     end
 
     # This setup method is called on every request during development
