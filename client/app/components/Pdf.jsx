@@ -29,7 +29,7 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
  *
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
- * 
+ *
  * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
  * and what the current scale factor is.
  *
@@ -640,9 +640,9 @@ export class Pdf extends React.PureComponent {
     // the code, but it is not an assumption we're making at this time.
     const newPageBounds = _(this.pageElements).
       map((pageElem, pageIndex) => {
-        const {right, bottom} = pageElem.pageContainer.getBoundingClientRect();
+        const { right, bottom } = pageElem.pageContainer.getBoundingClientRect();
         const pageCoords = pageCoordsOfRootCoords({
-          x: right, 
+          x: right,
           y: bottom
         }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
 
