@@ -48,7 +48,9 @@ export default class CanceledTasksIndex extends React.Component {
     return <div className="cf-app-segment cf-app-segment--alt">
       <div className="cf-title-meta-right">
         <h1 className="cf-push-left">Canceled EPs</h1>
-        <div className="cf-push-right">{ dateRange() }</div>
+        <div className="cf-push-right">
+          <span className="meta">{ dateRange() }</span>
+        </div>
       </div>
 
       <div className="usa-grid-full">

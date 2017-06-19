@@ -415,4 +415,18 @@ select {
 
 .cf-title-meta-right {
   line-height: 3em;
+
+  * {
+    vertical-align: middle;
+  }
+
+  .meta {
+    font-size: 1.118em;
+
+    .value {
+      font-size: 1.263em;
+      position: relative;
+      top: -.1em;
+    }
+  }
 }
