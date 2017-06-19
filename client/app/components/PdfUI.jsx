@@ -55,51 +55,58 @@ export class PdfUI extends React.Component {
 
   singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
 
-  getPdfFooter = () => {
+  getPageIndicator = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
-      const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+      return <span>
+        <PdfUIPageNumInput
+          currentPage={this.state.currentPage}
+          numPages={this.state.numPages}
+          docId={this.props.doc.id}
+          onPageChange={this.onPageChange}
+        />
+        of {this.state.numPages}
+      </span>
+    } else {
+      return 'Loading Document';
+    }
+  }
 
-      return <div className="cf-pdf-footer cf-pdf-toolbar">
-          <div className="cf-pdf-footer-buttons-left">
-            { this.props.prevDocId &&
+  getPdfFooter = () => {
+    const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+
+    return <div className="cf-pdf-footer cf-pdf-toolbar">
+        <div className="cf-pdf-footer-buttons-left">
+          { this.props.prevDocId &&
+            <Button
+              name="previous"
+              classNames={['cf-pdf-button']}
+              onClick={this.props.showPdf(this.props.prevDocId)}
+              ariaLabel="previous PDF">
+              <PageArrowLeft /><span className="left-button-label">Previous</span>
+            </Button>
+          }
+        </div>
+      <div className="cf-pdf-buttons-center">
+        <span className="page-progress-indicator">
+          { this.getPageIndicator() }
+        </span>
+        |
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+        </span>
+      </div>
+          <div className="cf-pdf-footer-buttons-right">
+            { this.props.nextDocId &&
               <Button
-                name="previous"
-                classNames={['cf-pdf-button']}
-                onClick={this.props.showPdf(this.props.prevDocId)}
-                ariaLabel="previous PDF">
-                <PageArrowLeft /><span className="left-button-label">Previous</span>
+                name="next"
+                classNames={['cf-pdf-button cf-right-side']}
+                onClick={this.props.showPdf(this.props.nextDocId)}
+                ariaLabel="next PDF">
+                <span className="right-button-label">Next</span><PageArrowRight />
               </Button>
             }
-          </div>
-        <div className="cf-pdf-buttons-center">
-          <span className="page-progress-indicator">
-            <PdfUIPageNumInput
-              currentPage={this.state.currentPage}
-              numPages={this.state.numPages}
-              docId={this.props.doc.id}
-              onPageChange={this.onPageChange}
-            />
-            of {this.state.numPages}</span>
-          |
-          <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
-            Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
-          </span>
         </div>
-            <div className="cf-pdf-footer-buttons-right">
-              { this.props.nextDocId &&
-                <Button
-                  name="next"
-                  classNames={['cf-pdf-button cf-right-side']}
-                  onClick={this.props.showPdf(this.props.nextDocId)}
-                  ariaLabel="next PDF">
-                  <span className="right-button-label">Next</span><PageArrowRight />
-                </Button>
-              }
-          </div>
-      </div>;
-    }
-
-    return '';
+    </div>;
   }
 
   fitToScreen = () => {
