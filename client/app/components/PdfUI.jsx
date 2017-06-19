@@ -203,7 +203,7 @@ export class PdfUI extends React.Component {
           resetJumpToPage={this.props.resetJumpToPage}
         />
       </div>
-      { this.getPdfFooter(this.props, this.state) }
+      { this.getPdfFooter() }
     </div>;
   }
 }
