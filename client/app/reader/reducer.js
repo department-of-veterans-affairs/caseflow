@@ -107,14 +107,6 @@ const getExpandAllState = (documents) => {
   return Boolean(allExpanded);
 };
 
-/*
-{
-    left: 0,
-    right: Infinity,
-    top: 0,
-    bottom: Infinity
-  }*/
-
 export const initialState = {
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
