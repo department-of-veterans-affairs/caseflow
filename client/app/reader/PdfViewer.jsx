@@ -41,6 +41,8 @@ export class PdfViewer extends React.Component {
         direction
       ) ? 'y' : 'x';
 
+      const origCoords = _.pick(this.props.placingAnnotationIconScaledPageCoords, 'x', 'y');
+
       const {
         pageIndex,
         ...scaledPageCoords
@@ -57,7 +59,9 @@ export class PdfViewer extends React.Component {
         y: _.clamp(scaledPageCoords.y, 0, scaledPageCoordsBounds.bottom - Constants.ANNOTATION_ICON_SIDE_LENGTH)
       };
 
-      this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
+      if (!_.isEqual(origCoords, constrainedCoords)) {
+        this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
+      }
 
       // If the user is placing an annotation, we do not also want
       // to be panning around on the page view with the arrow keys.
