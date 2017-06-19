@@ -610,23 +610,28 @@ export class Pdf extends React.PureComponent {
   }
 
   updatePageBounds = () => {
-    const newPageBounds = _.map(this.pageElements, (pageElem, pageIndex) => {
-      const boundingRect = pageElem.pageContainer.getBoundingClientRect();
-      const upperBound = {
-        x: boundingRect.right, 
-        y: boundingRect.bottom
-      };
-      const upperBoundPageCoords = pageCoordsOfScreenCoords(upperBound, boundingRect);
+    const newPageBounds = _(this.pageElements).
+      map((pageElem, pageIndex) => {
+        const boundingRect = pageElem.pageContainer.getBoundingClientRect();
+        const upperBound = {
+          x: boundingRect.right, 
+          y: boundingRect.bottom
+        };
+        const upperBoundPageCoords = pageCoordsOfScreenCoords(upperBound, boundingRect);
 
-      // I think we need to scale the coords, too.
-      return {
-        pageIndex: Number(pageIndex),
-        right: upperBoundPageCoords.x,
-        bottom: upperBoundPageCoords.y
-      };
-    });
+        // I think we need to scale the coords, too.
+        return {
+          pageIndex: Number(pageIndex),
+          right: upperBoundPageCoords.x,
+          bottom: upperBoundPageCoords.y
+        };
+      }).
+      keyBy('pageIndex').
+      value();
 
-    this.props.setPageCoordBounds(newPageBounds);
+    if (_.size(newPageBounds)) {
+      this.props.setPageCoordBounds(newPageBounds);
+    }
   }
 
   // Move the comment when it's dropped on a page

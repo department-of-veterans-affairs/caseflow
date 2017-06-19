@@ -117,7 +117,7 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   initialDataLoadingFail: false,
-  scaledPageCoordsBounds: [],
+  scaledPageCoordsBounds: {},
   placingAnnotationIconScaledPageCoords: null,
   ui: {
     pendingAnnotations: {},

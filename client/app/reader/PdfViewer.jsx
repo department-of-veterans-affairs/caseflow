@@ -50,12 +50,14 @@ export class PdfViewer extends React.Component {
         }
       });
 
-      // const constrainedCoords = {
-      //   x: _.clamp(scaledPageCoords.x, 0, this.props.scaledPageCoordsBounds.right),
-      //   y: _.clamp(scaledPageCoords.y, 0, this.props.scaledPageCoordsBounds.bottom),
-      // };
+      const scaledPageCoordsBounds = this.props.scaledPageCoordsBounds[pageIndex];
 
-      this.props.showPlaceAnnotationIcon(pageIndex, scaledPageCoords);
+      const constrainedCoords = {
+        x: _.clamp(scaledPageCoords.x, 0, scaledPageCoordsBounds.right),
+        y: _.clamp(scaledPageCoords.y, 0, scaledPageCoordsBounds.bottom),
+      };
+
+      this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
 
       return;
     }
@@ -112,6 +114,12 @@ export class PdfViewer extends React.Component {
   ]).map(documentPath)
 
   showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const getRenderProps = (props) => _.omit(props, 'scaledPageCoordsBounds');
+
+    return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
+  }
 
   render() {
     const doc = this.selectedDoc();
@@ -177,9 +185,7 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  // If I add the necessary state here, we get stuck in a render loop.
-  // I think we need a shouldComponentUpdate.
-  ..._.pick(state, 'placingAnnotationIconScaledPageCoords'),
+  ..._.pick(state, 'placingAnnotationIconScaledPageCoords', 'scaledPageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
