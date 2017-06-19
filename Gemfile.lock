@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 53bc0cb27be95072c5c8c777d0f4b8a45a13113b
-  ref: 53bc0cb27be95072c5c8c777d0f4b8a45a13113b
+  revision: c9680d17fff3d5070b12bfd3146319a57b5b8c4c
+  ref: c9680d17fff3d5070b12bfd3146319a57b5b8c4c
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -112,13 +112,13 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.9.17)
-      aws-sdk-resources (= 2.9.17)
-    aws-sdk-core (2.9.17)
+    aws-sdk (2.9.42)
+      aws-sdk-resources (= 2.9.42)
+    aws-sdk-core (2.9.42)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.9.17)
-      aws-sdk-core (= 2.9.17)
+    aws-sdk-resources (2.9.42)
+      aws-sdk-core (= 2.9.42)
     aws-sigv4 (1.0.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -147,7 +147,7 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
-    d3-rails (4.8.0)
+    d3-rails (4.9.1)
       railties (>= 3.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
