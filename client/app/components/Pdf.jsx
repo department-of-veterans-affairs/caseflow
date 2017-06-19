@@ -467,10 +467,12 @@ export class Pdf extends React.PureComponent {
       event.currentTarget.getBoundingClientRect()
     );
 
-    this.props.showPlaceAnnotationIcon(pageIndex, {
-      x: xPosition,
-      y: yPosition
-    });
+    if (this.props.isPlacingAnnotation) {
+      this.props.showPlaceAnnotationIcon(pageIndex, {
+        x: xPosition,
+        y: yPosition
+      });
+    }
   }
 
   componentDidMount() {
