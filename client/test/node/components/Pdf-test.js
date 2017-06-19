@@ -36,6 +36,7 @@ describe('Pdf', () => {
         file="test.pdf"
         id={pdfId}
         setPdfReadyToShow={_.noop}
+        setPageCoordBounds={_.noop}
         pdfWorker="noworker"
         scale={1}
         onPageChange={onPageChange}
